@@ -9,11 +9,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
+import com.intellij.refactoring.rename.api.RenameValidationResult
+import com.intellij.refactoring.rename.api.RenameValidator
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.CSS_PROPERTIES
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
-import com.intellij.webSymbols.query.WebSymbolsCompoundScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
@@ -24,6 +25,7 @@ import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.entities.source.Angular2SourceUtil
+import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
@@ -134,6 +136,9 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsS
         mapOf("Value" to it)
       } ?: emptyMap()
 
+    override fun validator(): RenameValidator =
+      CustomCssPropertyNameValidator
+
     override fun createDocumentation(location: PsiElement?): WebSymbolDocumentation? =
       WebSymbolDocumentation.create(
         this,
@@ -149,6 +154,18 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsS
     override fun hashCode(): Int =
       attribute.hashCode()
 
+  }
+
+  object CustomCssPropertyNameValidator : RenameValidator {
+    override fun validate(newName: String): RenameValidationResult =
+      when {
+        !newName.startsWith("--") ->
+          RenameValidationResult.invalid(Angular2Bundle.message("angular.symbol.css-custom-property.error.rename.must-start-with-two-dashes"))
+        newName.length <= 2 ->
+          RenameValidationResult.invalid(Angular2Bundle.message("angular.symbol.css-custom-property.error.rename.must-not-be-empty"))
+        else ->
+          RenameValidationResult.ok()
+      }
   }
 
 }

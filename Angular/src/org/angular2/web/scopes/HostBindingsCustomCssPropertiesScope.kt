@@ -11,6 +11,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.elementType
+import com.intellij.refactoring.rename.api.RenameValidator
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.CSS_PROPERTIES
@@ -26,6 +27,7 @@ import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.web.Angular2SymbolOrigin
+import org.angular2.web.scopes.HtmlAttributesCustomCssPropertiesScope.CustomCssPropertyNameValidator
 import org.jetbrains.annotations.Nls
 
 class HostBindingsCustomCssPropertiesScope(decorator: ES6Decorator) :
@@ -94,6 +96,9 @@ class HostBindingsCustomCssPropertiesScope(decorator: ES6Decorator) :
       get() = CSS_PROPERTIES.kind
 
     override val name: @NlsSafe String = info.name
+
+    override fun validator(): RenameValidator =
+      CustomCssPropertyNameValidator
 
     override val descriptionSections: Map<@Nls String, @Nls String>
       get() = property.value?.asSafely<JSLiteralExpression>()?.stringValue
