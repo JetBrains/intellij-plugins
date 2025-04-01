@@ -44,7 +44,7 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsS
   override val providedSymbolKinds: Set<WebSymbolQualifiedKind>
     get() = setOf(CSS_PROPERTIES)
 
-  override fun createPointer(): Pointer<out WebSymbolsCompoundScope> {
+  override fun createPointer(): Pointer<HtmlAttributesCustomCssPropertiesScope> {
     val locationPtr = location.createSmartPointer()
     return Pointer {
       val location = locationPtr.dereference() ?: return@Pointer null

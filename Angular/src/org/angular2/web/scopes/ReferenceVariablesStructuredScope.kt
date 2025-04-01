@@ -13,7 +13,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.JS_SYMBOLS
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.query.WebSymbolsCompoundScope
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -61,7 +60,7 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : WebSymbolsStruct
     return result
   }
 
-  override fun createPointer(): Pointer<out WebSymbolsCompoundScope> {
+  override fun createPointer(): Pointer<ReferenceVariablesStructuredScope> {
     val locationPtr = location.createSmartPointer()
     return Pointer {
       val location = locationPtr.dereference() ?: return@Pointer null
