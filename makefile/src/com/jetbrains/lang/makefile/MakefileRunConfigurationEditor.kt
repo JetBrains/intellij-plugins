@@ -7,7 +7,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.FixedSizeButton
-import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -26,9 +25,9 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
   private val filenameField = TextFieldWithBrowseButton()
   private val targetCompletionProvider = TextFieldWithAutoCompletion.StringsCompletionProvider(emptyList(), MakefileTargetIcon)
   private val targetField = TextFieldWithAutoCompletion(project, targetCompletionProvider, true, "")
-  private val argumentsField = ExpandableTextField()
+  private val argumentsField = ExpandableTextField().apply { columns = 0 }
   private val workingDirectoryField = TextFieldWithBrowseButton()
-  private val environmentVarsComponent = EnvironmentVariablesComponent()
+  private val environmentVarsComponent = EnvironmentVariablesComponent().apply { remove(label) }
 
   private val panel: JPanel by lazy {
     FormBuilder.createFormBuilder()
@@ -37,9 +36,9 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
         .setVerticalGap(UIUtil.DEFAULT_VGAP)
         .addLabeledComponent(MakefileLangBundle.message("run.configuration.editor.filename.label"), filenameField)
         .addLabeledComponent(MakefileLangBundle.message("run.configuration.editor.target.label"), targetField)
-        .addComponent(LabeledComponent.create(argumentsField, MakefileLangBundle.message("run.configuration.editor.arguments.label")))
+        .addLabeledComponent(MakefileLangBundle.message("run.configuration.editor.arguments.label"), argumentsField)
         .addLabeledComponent(MakefileLangBundle.message("run.configuration.editor.working.directory.label"), createComponentWithMacroBrowse(workingDirectoryField))
-        .addComponent(environmentVarsComponent)
+        .addLabeledComponent(MakefileLangBundle.message("run.configuration.editor.environment.label"), environmentVarsComponent)
         .panel
   }
 
@@ -69,7 +68,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
     targetCompletionProvider.setItems(emptyList())
   }
 
-  override fun createEditor() = panel
+  override fun createEditor(): JPanel = panel
 
   override fun applyEditorTo(configuration: MakefileRunConfiguration) {
     configuration.filename = filenameField.text
