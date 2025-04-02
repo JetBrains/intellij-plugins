@@ -80,7 +80,7 @@ class HCLInspectionSuppressorTest : BasePlatformTestCase() {
       resource "aws_servicequotas_service_quota" "managed_by_code" {
         for_each = local.quotas_to_manage_by_code
 
-        quota_code   = each.value.<caret>quota_code
+        quota_code   = each.value.quota_code
         service_code = each.value.service_code
         value        = "test"
       }

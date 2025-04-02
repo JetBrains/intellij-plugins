@@ -7,7 +7,6 @@ import com.intellij.codeInspection.InspectionSuppressor
 import com.intellij.codeInspection.SuppressQuickFix
 import com.intellij.codeInspection.SuppressionUtil
 import com.intellij.codeInspection.util.IntentionName
-import com.intellij.openapi.application.ReadAction
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import org.intellij.terraform.hcl.HCLBundle
@@ -17,25 +16,19 @@ import org.intellij.terraform.hcl.psi.HCLProperty
 import java.util.regex.Pattern
 
 internal class HCLInspectionSuppressor : InspectionSuppressor {
-  override fun isSuppressedFor(element: PsiElement, toolId: String): Boolean = ReadAction.compute<Boolean, RuntimeException> {
-    if (getSuppressedInBlock(element, toolId) != null) {
-      return@compute true
-    }
-    if (getSuppressedProperty(element, toolId) != null) {
-      return@compute true
-    }
-    false
+  override fun isSuppressedFor(element: PsiElement, toolId: String): Boolean {
+    return getSuppressedInBlock(element, toolId) != null || getSuppressedProperty(element, toolId) != null
   }
 
   private fun getSuppressedInBlock(element: PsiElement, toolId: String): PsiElement? {
-    return SuppressionUtil.getStatementToolSuppressedIn(element, toolId, HCLBlock::class.java, getInLineCommentPattern(element))
+    return SuppressionUtil.getStatementToolSuppressedIn(element, toolId, HCLBlock::class.java, getInlineCommentPattern(element))
   }
 
   private fun getSuppressedProperty(element: PsiElement, toolId: String): PsiElement? {
-    return SuppressionUtil.getStatementToolSuppressedIn(element, toolId, HCLProperty::class.java, getInLineCommentPattern(element))
+    return SuppressionUtil.getStatementToolSuppressedIn(element, toolId, HCLProperty::class.java, getInlineCommentPattern(element))
   }
 
-  private fun getInLineCommentPattern(element: PsiElement): Pattern {
+  private fun getInlineCommentPattern(element: PsiElement): Pattern {
     val settings = CodeStyle.getCustomSettings(element.containingFile, HclCodeStyleSettings::class.java)
     val commenterChar = settings.LINE_COMMENTER_CHARACTER.prefix
     return Pattern.compile(commenterChar + SuppressionUtil.COMMON_SUPPRESS_REGEXP + ".*")
