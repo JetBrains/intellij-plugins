@@ -45,6 +45,12 @@ interface MethodCallExpression<T : BaseExpression> : BaseExpression {
   val method: Identifier? get() = callee as? Identifier
 }
 
+interface ProviderDefinedFunction<T : BaseExpression> : BaseExpression {
+  val provider: Identifier
+  val function: Identifier
+  val parameterList: ParameterList<T>
+}
+
 interface CollectionExpression<T : BaseExpression> : BaseExpression {
   val elements: List<T>
 }

@@ -9,6 +9,7 @@ import org.intellij.terraform.hcl.psi.common.LiteralExpression;
 import org.intellij.terraform.hcl.psi.common.MethodCallExpression;
 import org.intellij.terraform.hcl.psi.common.BinaryExpression;
 import org.intellij.terraform.hcl.psi.common.CollectionExpression;
+import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.intellij.terraform.hcl.psi.common.ParenthesizedExpression;
 import org.intellij.terraform.hcl.psi.common.IndexSelectExpression;
@@ -62,6 +63,7 @@ public class HCLElementVisitor extends PsiElementVisitor {
 
   public void visitDefinedMethodExpression(@NotNull HCLDefinedMethodExpression o) {
     visitExpression(o);
+    // visitProviderDefinedFunction(o);
   }
 
   public void visitExpression(@NotNull HCLExpression o) {

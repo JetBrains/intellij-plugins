@@ -29,8 +29,28 @@ public class HCLDefinedMethodExpressionImpl extends HCLExpressionImpl implements
 
   @Override
   @NotNull
-  public List<HCLExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, HCLExpression.class);
+  public List<HCLIdentifier> getIdentifierList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, HCLIdentifier.class);
+  }
+
+  @Override
+  @NotNull
+  public HCLIdentifier getProvider() {
+    List<HCLIdentifier> p1 = getIdentifierList();
+    return p1.get(0);
+  }
+
+  @Override
+  @Nullable
+  public HCLIdentifier getFunction() {
+    List<HCLIdentifier> p1 = getIdentifierList();
+    return p1.size() < 2 ? null : p1.get(1);
+  }
+
+  @Override
+  @NotNull
+  public HCLParameterList getParameterList() {
+    return findNotNullChildByClass(HCLParameterList.class);
   }
 
 }

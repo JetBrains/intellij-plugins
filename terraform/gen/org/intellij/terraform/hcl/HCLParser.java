@@ -1093,7 +1093,7 @@ public class HCLParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // "provider" COLON_COLON identifier COLON_COLON MethodCallExpression
+  // "provider" COLON_COLON identifier COLON_COLON identifier ParameterList
   public static boolean DefinedMethodExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "DefinedMethodExpression")) return false;
     boolean r;
@@ -1102,7 +1102,8 @@ public class HCLParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, COLON_COLON);
     r = r && identifier(b, l + 1);
     r = r && consumeToken(b, COLON_COLON);
-    r = r && Expression(b, l + 1, 10);
+    r = r && identifier(b, l + 1);
+    r = r && ParameterList(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
