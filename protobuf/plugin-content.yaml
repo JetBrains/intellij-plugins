@@ -1,9 +1,4 @@
 - name: lib/protoeditor.jar
-  projectLibraries:
-  - name: google.protobuf.java.util
-    files:
-    - name: $MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java-util/3/protobuf-java-util-3.jar
-    reason: <- intellij.protoeditor.core
   modules:
   - name: intellij.protoeditor
   - name: intellij.protoeditor.core
@@ -12,3 +7,7 @@
   - name: intellij.protoeditor.go
   - name: intellij.protoeditor.python
   - name: intellij.protoeditor.jvm
+  library: google.protobuf.java.util
+  files:
+  - name: $MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java-util/3/protobuf-java-util-3.jar
+  reason: <- intellij.protoeditor.core

@@ -1,8 +1,7 @@
 - name: lib/vuejs.jar
-  projectLibraries:
-  - name: commons-text
-    files:
-    - name: $MAVEN_REPOSITORY$/org/apache/commons/commons-text/1/commons-text-1.jar
-    reason: <- intellij.vuejs
   modules:
   - name: intellij.vuejs
+  library: commons-text
+  files:
+  - name: $MAVEN_REPOSITORY$/org/apache/commons/commons-text/1/commons-text-1.jar
+  reason: <- intellij.vuejs
