@@ -28,8 +28,9 @@ class Angular2HtmlFile(viewProvider: FileViewProvider, fileElementType: IFileEle
   override fun getJSConfig(): JSConfig? {
     val importGraphIncludedFile = Angular2SourceUtil.findComponentClass(this)?.containingFile
     if (importGraphIncludedFile == null) {
-      if (ApplicationManager.getApplication().isUnitTestMode && !NodeModuleUtil.hasNodeModulesInPath(this)) {
-        return TypeScriptConfigUtil.getParentConfigWithName(virtualFile, TypeScriptConfig.TS_CONFIG_JSON)
+      if (!NodeModuleUtil.hasNodeModulesInPath(this)) {
+        return (TypeScriptConfigUtil.getParentConfigWithName(virtualFile, "tsconfig.app.json")
+                ?: TypeScriptConfigUtil.getParentConfigWithName(virtualFile, TypeScriptConfig.TS_CONFIG_JSON))
           ?.let { TypeScriptConfigService.Provider.get(project).parseConfigFile(it) }
       }
       return null
