@@ -1,11 +1,3 @@
-- name: lib/osgi namespaces.jar
-  library: OSGi namespaces
-  module: intellij.osgi
-  files:
-  - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.contract-1.jar
-  - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.implementation-1.jar
-  - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.extender-1.jar
-  - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.service-1.jar
 - name: lib/osgi-jps.jar
   modules:
   - name: intellij.osgi.jps
@@ -21,3 +13,9 @@
 - name: lib/osgi.jar
   modules:
   - name: intellij.osgi
+    libraries:
+      OSGi namespaces:
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.contract-1.jar
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.implementation-1.jar
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.extender-1.jar
+      - name: $PROJECT_DIR$/contrib/osmorc/lib/org.osgi.namespace.service-1.jar
