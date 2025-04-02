@@ -4,8 +4,8 @@ package com.jetbrains.lang.dart.ide.findUsages;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.intellij.navigation.NavigationItemFileStatus;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
+import com.intellij.openapi.actionSystem.DataSink;
+import com.intellij.openapi.actionSystem.UiDataProvider;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,13 +18,11 @@ import com.intellij.usages.UsageGroup;
 import com.intellij.usages.UsageView;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-class DartComponentUsageGroup implements UsageGroup, DataProvider {
+class DartComponentUsageGroup implements UsageGroup, UiDataProvider {
   private final VirtualFile myFile;
   private final SmartPsiElementPointer<DartComponent> myElementPointer;
   private final @NlsSafe String myText;
@@ -61,27 +59,14 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
   }
 
   @Override
-  public @Nullable Object getData(@NotNull String dataId) {
-    if (PlatformCoreDataKeys.BGT_DATA_PROVIDER.is(dataId)) {
-      return (DataProvider)this::getSlowData;
-    }
-    return null;
-  }
-
-  private @Nullable Object getSlowData(@NonNls String dataId) {
-    if (CommonDataKeys.PSI_ELEMENT.is(dataId)) {
+  public void uiDataSnapshot(@NotNull DataSink sink) {
+    sink.lazy(CommonDataKeys.PSI_ELEMENT, () -> {
+      return getNameElement();
+    });
+    sink.lazy(UsageView.USAGE_INFO_KEY, () -> {
       final DartComponentName nameElement = getNameElement();
-      if (nameElement != null) {
-        return nameElement;
-      }
-    }
-    if (UsageView.USAGE_INFO_KEY.is(dataId)) {
-      final DartComponentName nameElement = getNameElement();
-      if (nameElement != null) {
-        return new UsageInfo(nameElement);
-      }
-    }
-    return null;
+      return nameElement != null ? new UsageInfo(nameElement) : null;
+    });
   }
 
   @Override
