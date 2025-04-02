@@ -88,7 +88,7 @@ class TsLintLanguageService(
     }.asCompletableFuture()
   }
 
-  override fun createLanguageServiceQueueBlocking(): JSLanguageServiceQueue {
+  override suspend fun createLanguageServiceQueue(): JSLanguageServiceQueue {
     return JSLanguageServiceQueueImpl(
       myProject,
       Protocol(this.nodePackage, myWorkingDirectory, myProject),

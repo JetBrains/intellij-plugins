@@ -105,7 +105,7 @@ class PrettierLanguageServiceImpl(
     return PrettierLanguageService.ResolveConfigResult.config(prettierConfig)
   }
 
-  override fun createLanguageServiceQueueBlocking(): JSLanguageServiceQueue =
+  override suspend fun createLanguageServiceQueue(): JSLanguageServiceQueue =
     JSLanguageServiceQueueImpl(myProject,
                                Protocol(myProject, Consumer { o: Any? -> }),
                                null,
