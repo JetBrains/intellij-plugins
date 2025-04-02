@@ -1,0 +1,3 @@
+--test2 (typeText='cssCustomProperty.ts'; priority=111.0; typeGreyed)
+--test3 (typeText='cssCustomProperty.ts'; priority=110.0; typeGreyed)
+--main-bg-color (typeText='some.css:2'; priority=110.0; typeGreyed)

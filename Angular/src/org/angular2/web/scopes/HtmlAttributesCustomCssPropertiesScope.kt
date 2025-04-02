@@ -1,37 +1,26 @@
 package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.refactoring.rename.api.RenameValidationResult
-import com.intellij.refactoring.rename.api.RenameValidator
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.CSS_PROPERTIES
-import com.intellij.webSymbols.documentation.WebSymbolDocumentation
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
-import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2Framework
-import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind
-import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.entities.source.Angular2SourceUtil
-import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
 import org.angular2.lang.html.psi.PropertyBindingType
-import org.angular2.web.Angular2SymbolOrigin
-import org.jetbrains.annotations.Nls
 
 class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsStructuredScope<PsiElement, PsiFile>(location) {
 
@@ -91,7 +80,7 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsS
   }
 
   companion object {
-    fun createCustomCssProperty(attribute: XmlAttribute): WebSymbolDeclaredInPsi? {
+    fun createCustomCssProperty(attribute: XmlAttribute): AbstractAngular2CustomCssProperty<XmlAttribute>? {
       val info = Angular2AttributeNameParser.parse(attribute.name)
       if (info is Angular2AttributeNameParser.PropertyBindingInfo
           && info.bindingType == PropertyBindingType.STYLE
@@ -104,68 +93,22 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsS
   }
 
   private class CustomCssPropertyDefinedInAttribute(
-    private val attribute: XmlAttribute,
+    attribute: XmlAttribute,
     info: Angular2AttributeNameParser.PropertyBindingInfo,
-  ) : WebSymbolDeclaredInPsi {
+  ) : AbstractAngular2CustomCssProperty<XmlAttribute>(attribute, info) {
 
-    override val sourceElement: PsiElement
-      get() = attribute
+    override fun getInitialOffset(): Int = 0
 
-    override val textRangeInSourceElement: TextRange? = TextRange(info.nameOffset, info.nameOffset + info.name.length)
+    override val valueText: String?
+      get() = sourceElement.value
 
-    override fun createPointer(): Pointer<out WebSymbolDeclaredInPsi> {
-      val attributePtr = attribute.createSmartPointer()
+    override fun createPointer(): Pointer<out AbstractAngular2CustomCssProperty<XmlAttribute>> {
+      val attributePtr = sourceElement.createSmartPointer()
       return Pointer {
         attributePtr.dereference()?.let { createCustomCssProperty(it) }
       }
     }
-
-    override val origin: WebSymbolOrigin
-      get() = Angular2SymbolOrigin.empty
-
-    override val namespace: @NlsSafe SymbolNamespace
-      get() = CSS_PROPERTIES.namespace
-
-    override val kind: @NlsSafe SymbolKind
-      get() = CSS_PROPERTIES.kind
-
-    override val name: @NlsSafe String = info.name
-
-    override val descriptionSections: Map<@Nls String, @Nls String>
-      get() = attribute.value?.withColor(Angular2Language, attribute)?.let {
-        mapOf("Value" to it)
-      } ?: emptyMap()
-
-    override fun validator(): RenameValidator =
-      CustomCssPropertyNameValidator
-
-    override fun createDocumentation(location: PsiElement?): WebSymbolDocumentation? =
-      WebSymbolDocumentation.create(
-        this,
-        location,
-        definition = "css property ".withColor(TextAttributesKind.TS_KEYWORD, attribute) + name.withColor(TextAttributesKind.CSS_PROPERTY, attribute)
-      )
-
-    override fun equals(other: Any?): Boolean =
-      other === this ||
-      other is CustomCssPropertyDefinedInAttribute
-      && other.attribute == attribute
-
-    override fun hashCode(): Int =
-      attribute.hashCode()
-
   }
-
-  object CustomCssPropertyNameValidator : RenameValidator {
-    override fun validate(newName: String): RenameValidationResult =
-      when {
-        !newName.startsWith("--") ->
-          RenameValidationResult.invalid(Angular2Bundle.message("angular.symbol.css-custom-property.error.rename.must-start-with-two-dashes"))
-        newName.length <= 2 ->
-          RenameValidationResult.invalid(Angular2Bundle.message("angular.symbol.css-custom-property.error.rename.must-not-be-empty"))
-        else ->
-          RenameValidationResult.ok()
-      }
-  }
-
 }
+
+

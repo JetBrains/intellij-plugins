@@ -1,0 +1,7 @@
+span {
+  --test<caret>2: blue
+}
+
+span.bar {
+  --test2: red
+}

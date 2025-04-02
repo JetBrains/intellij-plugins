@@ -1,0 +1,7 @@
+span {
+  --foo: blue
+}
+
+span.bar {
+  --foo: red
+}

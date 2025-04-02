@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.TestDialog
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.lang.Angular2Bundle
 
 class Angular2RenameTest : Angular2TestCase("refactoring/rename", false) {
 
@@ -267,4 +268,23 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename", false) {
 
   fun testConstructorAttribute() =
     checkSymbolRename("test", dir = false)
+
+  fun testCssCustomProperty() =
+    checkSymbolRename("--foo", dir = false)
+
+  fun testCssCustomPropertyWrongName() =
+    assertThrows(IllegalArgumentException::class.java, Angular2Bundle.message("angular.symbol.css-custom-property.error.rename.must-start-with-two-dashes")) {
+      checkSymbolRename("cssCustomProperty.ts", "foo", dir = false)
+    }
+
+  fun testCssCustomPropertyEmptyName() =
+    assertThrows(IllegalArgumentException::class.java, Angular2Bundle.message("angular.symbol.css-custom-property.error.rename.must-not-be-empty")) {
+      checkSymbolRename("cssCustomProperty.ts", "--", dir = false)
+    }
+
+  fun testCssCustomPropertyFromCss() =
+    checkSymbolRename("test.css", "--foo", dir = true)
+
+  fun testCssCustomPropertyFromCssHostBinding() =
+    checkSymbolRename("cssCustomProperty.ts", "--foo", dir = true)
 }

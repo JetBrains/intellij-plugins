@@ -360,6 +360,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testNgDeepSemantic() =
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "css", checkSymbolNames = true, checkInformation = false, checkWarnings = false, checkWeakWarnings = false)
 
+  fun testCssCustomProperty() =
+    checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

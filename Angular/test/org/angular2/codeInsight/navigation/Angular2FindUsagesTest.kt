@@ -27,4 +27,7 @@ class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages", false) 
 
   fun testComponentClassUsagesInTemplates() = checkUsages()
 
+  fun testCssCustomProperty() = checkUsages()
+
+  fun testCssCustomPropertyFromCss() = checkUsages()
 }

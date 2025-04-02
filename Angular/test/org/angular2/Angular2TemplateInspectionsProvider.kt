@@ -10,6 +10,8 @@ import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.javascript.modules.TypeScriptCheckImportInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
+import com.intellij.psi.css.inspections.CssUnknownPropertyInspection
+import com.intellij.psi.css.inspections.invalid.CssUnresolvedCustomPropertyInspection
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 import org.angular2.inspections.*
@@ -59,7 +61,10 @@ class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) :
       HtmlWrongAttributeValueInspection::class.java,
       RequiredAttributesInspection::class.java,
       // XML
-      CheckEmptyTagInspection::class.java
+      CheckEmptyTagInspection::class.java,
+      // CSS
+      CssUnknownPropertyInspection::class.java,
+      CssUnresolvedCustomPropertyInspection::class.java,
     )
 
     if (!strict) return inspections

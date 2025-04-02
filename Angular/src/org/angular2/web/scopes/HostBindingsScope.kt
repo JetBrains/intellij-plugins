@@ -49,7 +49,8 @@ class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualified
         DirectiveElementSelectorsScope(file),
         DirectiveAttributeSelectorsScope(file),
         getStandardHtmlElementSymbolsScope(file.project),
-        getWebSymbolsCssScopeForTagClasses(location, relatedStylesheets)
+        getWebSymbolsCssScopeForTagClasses(location, relatedStylesheets),
+        HostBindingsCustomCssPropertiesScope(location),
       )
       val elementNames = directive?.selector?.simpleSelectors
         ?.mapNotNull { it.elementName?.trim()?.takeIf { it.isNotEmpty() && it != "*" } }

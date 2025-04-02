@@ -8,6 +8,7 @@ import com.intellij.webSymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
+import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
 import org.angular2.Angular2TsConfigFile
 
 class Angular2CompletionTest : Angular2TestCase("completion", true) {
@@ -307,6 +308,9 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1, extension = "ts",
                  lookupItemFilter = { it.lookupString == "index" || it.lookupString == "last" || it.lookupString == "ngForOf"},
                  checkDocumentation = true)
+
+  fun testCssCustomProperty() =
+    doLookupTest(ANGULAR_CORE_19_2_0, extension = "ts", checkDocumentation = true, dir = true)
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
