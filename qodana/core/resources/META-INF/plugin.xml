@@ -334,6 +334,9 @@
     <extensionPoint name="customPluginsForKtsClasspathProvider"
                     interface="org.jetbrains.qodana.inspectionKts.CustomPluginsForKtsClasspathProvider"
                     dynamic="true"/>
+    <extensionPoint name="globalFlowFingerprintCalculator"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.CustomGlobalFlowFingerprintCalculator"
+                    dynamic="true"/>
 
   </extensionPoints>
 

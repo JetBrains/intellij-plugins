@@ -14,6 +14,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.Problem
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.ProblemType
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.CustomGlobalFlowFingerprintCalculator.Companion.withCustomPartialFingerprints
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
@@ -153,6 +154,7 @@ private suspend fun convertFlowFromXmlFormat(problem: Element, macroManager: Pat
     .withLocations(fragmentLocations)
     .withGraphs(setOf(Graph().withNodes(nodes).withEdges(edges)))
     .withPartialFingerprints()
+    .withCustomPartialFingerprints()
 }
 
 private fun computeSources(problem: Element) = problem.getChild("sources").getChildren("source").map {

@@ -7,7 +7,7 @@ import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.Node
 import com.jetbrains.qodana.sarif.model.Region
 
-internal class SafeHasher(private val hasher: Hasher) {
+class SafeHasher(private val hasher: Hasher) {
   fun put(value: Int?) {
     if (value != null) hasher.putInt(value)
   }
@@ -17,7 +17,7 @@ internal class SafeHasher(private val hasher: Hasher) {
   }
 }
 
-internal fun HashFunction.hash(f: (SafeHasher) -> Unit): String =
+fun HashFunction.hash(f: (SafeHasher) -> Unit): String =
   newHasher()
     .apply { f(SafeHasher(this)) }
     .hash()
@@ -26,7 +26,7 @@ internal fun HashFunction.hash(f: (SafeHasher) -> Unit): String =
 internal fun <T : Any> Collection<T?>?.forEachNotNull(f: (T) -> Unit) =
   this?.asSequence()?.filterNotNull()?.forEach { f(it) }
 
-internal fun Location.hash(hasher: SafeHasher) {
+fun Location.hash(hasher: SafeHasher) {
   hasher.put(physicalLocation?.artifactLocation?.uri)
   hasher.put(physicalLocation?.artifactLocation?.uriBaseId)
 
