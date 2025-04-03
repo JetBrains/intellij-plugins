@@ -10,6 +10,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.plugins.ruby.RBundle
 import org.jetbrains.plugins.ruby.ruby.RModuleUtil
@@ -50,6 +51,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
     }
   }
 
+  @RequiresEdt
   override fun getSdkForProject(project: Project, selectedSdk: Sdk?): Sdk? {
     return try {
       super.getSdkForProject(project, selectedSdk)
@@ -79,6 +81,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
     }
   }
 
+  @RequiresEdt
   override fun applyProjectSdk(sdk: Sdk, project: Project) {
     super.applyProjectSdk(sdk, project)
     RModuleUtil.getInstance().changeModuleSdk(sdk, project.module)
