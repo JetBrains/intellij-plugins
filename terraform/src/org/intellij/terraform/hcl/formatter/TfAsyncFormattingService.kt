@@ -8,6 +8,7 @@ import com.intellij.formatting.service.FormattingService
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.runBlockingCancellable
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.eel.execute
 import com.intellij.platform.eel.getOrThrow
 import com.intellij.platform.eel.provider.getEelDescriptor
@@ -15,6 +16,8 @@ import com.intellij.platform.eel.provider.utils.readWholeText
 import com.intellij.platform.eel.provider.utils.sendWholeText
 import com.intellij.psi.PsiFile
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.config.Constants.TF_FMT
 import org.intellij.terraform.config.TerraformFileType
@@ -23,6 +26,8 @@ import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.runtime.TfToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.cancellation.CancellationException
 
 internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
@@ -43,50 +48,60 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
     val toolType = getApplicableToolType(virtualFile)
 
     return object : FormattingTask {
+      private var job: Job? = null
+      private val isCanceled: AtomicBoolean = AtomicBoolean(false)
+
       override fun run() {
-        try {
-          val isToolConfigured = runBlockingCancellable {
-            TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
-          }
+        runBlockingCancellable {
+          job = launch {
+            if (isCanceled.get()) return@launch
 
-          if (!isToolConfigured) {
-            showIncorrectPathNotification(project, toolType)
-            throw ProcessCanceledException()
-          }
+            try {
+              val isToolConfigured = TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
 
-          runBlockingCancellable {
-            withContext(Dispatchers.IO) {
-              val exePath = toolType.getToolSettings(project).toolPath
-
-              val eelApi = project.getEelDescriptor().upgrade()
-              val process = eelApi.exec.execute(exePath).args("fmt", "-").getOrThrow()
-
-              process.stdin.sendWholeText(request.documentText).getOrThrow()
-              process.stdin.close()
-
-              val formattedText = process.stdout.readWholeText().getOrThrow()
-              val exitCode = process.exitCode.await()
-
-              if (exitCode == 0) {
-                request.onTextReady(formattedText)
+              if (!isToolConfigured) {
+                showIncorrectPathNotification(project, toolType)
+                throw ProcessCanceledException()
               }
-              else {
-                request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), process.stderr.readWholeText().getOrThrow())
+
+              withContext(Dispatchers.IO) {
+                val exePath = toolType.getToolSettings(project).toolPath
+                val eelApi = project.getEelDescriptor().upgrade()
+                val process = eelApi.exec.execute(exePath).args("fmt", "-").getOrThrow()
+
+                process.stdin.sendWholeText(request.documentText).getOrThrow()
+                process.stdin.close()
+
+                val formattedText = process.stdout.readWholeText().getOrThrow()
+                val exitCode = process.exitCode.await()
+
+                if (exitCode == 0) {
+                  request.onTextReady(formattedText)
+                }
+                else {
+                  @NlsSafe val errorMessage = process.stderr.readWholeText().getOrThrow()
+                  request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), errorMessage)
+                }
               }
             }
+            catch (e: CancellationException) {
+              throw e
+            }
+            catch (e: ProcessCanceledException) {
+              throw e
+            }
+            catch (e: Exception) {
+              logger<TfAsyncFormattingService>().warn("Failed to run FormattingTask", e)
+              request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName),
+                              HCLBundle.message("terraform.formatter.error.message", virtualFile.name, toolType.executableName))
+            }
           }
-        }
-        catch (e: ProcessCanceledException) {
-          throw e
-        }
-        catch (e: Exception) {
-          logger<TfAsyncFormattingService>().warn("Failed to run FormattingTask", e)
-          request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName),
-                          HCLBundle.message("terraform.formatter.error.message", virtualFile.name, toolType.executableName))
         }
       }
 
       override fun cancel(): Boolean {
+        isCanceled.set(true)
+        job?.cancel()
         return true
       }
 
