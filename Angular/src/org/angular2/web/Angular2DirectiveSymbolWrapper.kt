@@ -26,6 +26,7 @@ open class Angular2DirectiveSymbolWrapper private constructor(
   delegate: Angular2Symbol,
   private val forcedPriority: WebSymbol.Priority? = null,
   private val location: PsiFile,
+  val isMatchedDirective: Boolean = false,
 ) : Angular2SymbolDelegate<Angular2Symbol>(delegate) {
 
   companion object {
@@ -34,13 +35,17 @@ open class Angular2DirectiveSymbolWrapper private constructor(
       directive: Angular2Directive,
       delegate: Angular2Symbol,
       location: PsiFile,
+      isMatchedDirective: Boolean = false,
       forcedPriority: WebSymbol.Priority? = null,
     ): Angular2DirectiveSymbolWrapper =
       when (delegate) {
-        is PsiSourcedWebSymbol -> Angular2PsiSourcedDirectiveSymbolWrapper(directive, delegate, forcedPriority, location)
-        else -> Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location)
+        is PsiSourcedWebSymbol -> Angular2PsiSourcedDirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective)
+        else -> Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective)
       }
   }
+
+  override val required: Boolean?
+    get() = isMatchedDirective && super.required == true
 
   override val priority: WebSymbol.Priority?
     get() = forcedPriority ?: super.priority
@@ -88,17 +93,19 @@ open class Angular2DirectiveSymbolWrapper private constructor(
       delegate: Angular2Symbol,
       forcedPriority: WebSymbol.Priority?,
       location: PsiFile,
+      isMatchedDirective: Boolean,
     ) -> T,
   ): Pointer<T> {
     val directivePtr = directive.createPointer()
     val delegatePtr = delegate.createPointer()
     val forcedPriority = this.forcedPriority
     val locationPtr = location.createSmartPointer()
+    val isMatchedDirective = this.isMatchedDirective
     return Pointer {
       val directive = directivePtr.dereference() ?: return@Pointer null
       val delegate = delegatePtr.dereference() ?: return@Pointer null
       val location = locationPtr.dereference() ?: return@Pointer null
-      create(directive, delegate, forcedPriority, location)
+      create(directive, delegate, forcedPriority, location, isMatchedDirective)
     }
   }
 
@@ -107,7 +114,8 @@ open class Angular2DirectiveSymbolWrapper private constructor(
     delegate: Angular2Symbol,
     forcedPriority: WebSymbol.Priority?,
     location: PsiFile,
-  ) : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location), PsiSourcedWebSymbol {
+    isMatchedDirective: Boolean,
+  ) : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective), PsiSourcedWebSymbol {
 
     override val source: PsiElement?
       get() = (this.delegate as PsiSourcedWebSymbol).source

@@ -52,7 +52,7 @@ abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T)
       matchDirectives().forEach { directive ->
         directive.exportAs.forEach { consumer(it.value) }
         collectSymbols(directive, isTemplateTagContext) { symbol ->
-          consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, dataHolder.containingFile, WebSymbol.Priority.HIGHEST))
+          consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, dataHolder.containingFile, true, WebSymbol.Priority.HIGHEST))
         }
       }
     }
