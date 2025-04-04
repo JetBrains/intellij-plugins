@@ -2,6 +2,7 @@
 package org.angular2.entities
 
 import com.intellij.javascript.webSymbols.documentation.JSWebSymbolWithSubstitutor
+import com.intellij.javascript.webSymbols.jsType
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -9,17 +10,25 @@ import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
+import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
+import com.intellij.psi.css.impl.CssNamedItemPresentation
 import com.intellij.psi.util.contextOfType
 import com.intellij.util.ThreeState
+import com.intellij.util.applyIf
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
+import icons.AngularIcons
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
+import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.lang.types.BindingsTypeResolver
 import org.angular2.web.Angular2Symbol
+import org.angular2.web.NG_DIRECTIVE_INPUTS
+import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSWebSymbolWithSubstitutor {
@@ -36,6 +45,21 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSWebSymb
 
   val isSignalProperty: Boolean
     get() = false
+
+  override val presentation: TargetPresentation
+    get() = TargetPresentation
+      .builder(name + (rawJsType?.getTypeText(JSType.TypeTextFormat.PRESENTABLE)?.let { ": $it" } ?: ""))
+      .icon(AngularIcons.Angular2)
+      .containerText(
+        when (qualifiedKind) {
+          NG_DIRECTIVE_INPUTS -> Angular2Bundle.message("angular.entity.directive.input")
+          NG_DIRECTIVE_OUTPUTS ->  Angular2Bundle.message("angular.entity.directive.output")
+          NG_DIRECTIVE_IN_OUTS ->  Angular2Bundle.message("angular.entity.directive.inout")
+          else ->  Angular2Bundle.message("angular.entity.directive.property")
+        })
+      .locationText((sourceElement as? NavigatablePsiElement)?.presentation?.locationString
+                    ?: CssNamedItemPresentation.getLocationString(sourceElement))
+      .presentation()
 
   override val searchTarget: WebSymbolSearchTarget?
     get() = WebSymbolSearchTarget.create(this)
