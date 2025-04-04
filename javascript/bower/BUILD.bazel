@@ -24,7 +24,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/util/jdom",
     "@community//platform/core-ui",
-    "@community//json",
+    "@community//json/backend",
   ],
   runtime_deps = [":bower_resources"]
 )

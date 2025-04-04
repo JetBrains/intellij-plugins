@@ -35,7 +35,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
-    "@community//json",
+    "@community//json/backend",
   ],
   runtime_deps = [
     ":tslint_resources",
@@ -70,7 +70,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
-    "@community//json",
+    "@community//json/backend",
   ],
   runtime_deps = [
     ":tslint_resources",
