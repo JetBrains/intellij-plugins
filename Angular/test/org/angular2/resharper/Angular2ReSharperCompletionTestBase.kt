@@ -2,7 +2,7 @@
 package org.angular2.resharper
 
 import com.intellij.lang.javascript.resharper.TypeScriptReSharperCompletionTestBase
-import com.intellij.lang.resharper.ReSharperTestUtil
+import com.intellij.lang.resharper.tests.ReSharperTestUtil
 import com.intellij.testFramework.TestDataPath
 import org.angular2.Angular2TestUtil
 

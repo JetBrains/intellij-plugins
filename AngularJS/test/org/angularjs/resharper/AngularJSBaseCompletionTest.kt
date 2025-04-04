@@ -1,8 +1,8 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.resharper
 
-import com.intellij.lang.resharper.ReSharperCompletionTestCase
-import com.intellij.lang.resharper.ReSharperTestUtil
+import com.intellij.lang.resharper.tests.ReSharperCompletionTestCase
+import com.intellij.lang.resharper.tests.ReSharperTestUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.Disposer
