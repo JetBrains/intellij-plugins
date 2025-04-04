@@ -1,3 +1,8 @@
+<div></div>
+<div appValidateEqual="1"></div>
+<div appValidateEqual="1" reverse="12"></div>
+<div <warning descr="Attribute reverse is not allowed here">reverse</warning>="12"></div>
+
 <app-sub-component dataTestIdContexts="my-test-id" testAttrs="foo" />
 <<warning descr="Element app-sub-component doesn't have required attribute dataTestIdContexts">app-sub-component</warning> />
 <<warning descr="Element app-sub-component doesn't have required attribute dataTestIdContexts">app-sub-component</warning> <warning descr="Attribute dataTestIdContext is not allowed here">dataTestIdContext</warning>="my-test-id" <warning descr="Attribute testAttr is not allowed here">testAttr</warning>="foo"/>

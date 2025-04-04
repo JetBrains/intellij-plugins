@@ -1,5 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import {Attribute, ChangeDetectionStrategy, Component, HostAttributeToken, inject} from '@angular/core';
+import {Attribute, Directive, Component, HostAttributeToken, inject} from '@angular/core';
+
+@Directive({
+  selector: '[appValidateEqual]',
+  standalone: true
+})
+export class EqualValidator {
+  validateEqual = inject(new HostAttributeToken('appValidateEqual'));
+  reverse = inject(new HostAttributeToken('reverse'), {optional: true});
+}
 
 @Component({
   selector: 'app-sub-component',
