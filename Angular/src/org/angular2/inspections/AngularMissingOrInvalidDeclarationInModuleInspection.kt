@@ -14,13 +14,11 @@ import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.PIPE_DEC
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
+import org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
 import org.angular2.codeInsight.Angular2HighlightingUtils.renderEntityList
-import org.angular2.entities.Angular2ClassBasedEntity
-import org.angular2.entities.Angular2Declaration
-import org.angular2.entities.Angular2EntitiesProvider
-import org.angular2.entities.Angular2FrameworkHandler
+import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceModule
 import org.angular2.inspections.quickfixes.ConvertToStandaloneNonStandaloneQuickFix
 import org.angular2.lang.Angular2Bundle
@@ -33,11 +31,10 @@ class AngularMissingOrInvalidDeclarationInModuleInspection : LocalInspectionTool
         if (isAngularEntityDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, PIPE_DEC)
             && !TestFinderHelper.isTest(decorator)) {
           val declaration = Angular2EntitiesProvider.getEntity(decorator) as? Angular2Declaration
-          if (declaration != null) {
-            if (declaration.isStandalone) {
-              return
-            }
-
+          if (declaration != null
+              && !declaration.isStandalone
+              && (declaration !is Angular2Directive || declaration is Angular2Component || getObjectLiteralInitializer(decorator) != null)
+          ) {
             val modules = declaration.allDeclaringModules
             if (Angular2FrameworkHandler.EP_NAME.extensionList
                 .any { h -> h.suppressModuleInspectionErrors(modules, declaration) }) {

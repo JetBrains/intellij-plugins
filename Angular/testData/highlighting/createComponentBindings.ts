@@ -25,9 +25,7 @@ export class Comp {
   event = new EventEmitter<{value: number}>();
 }
 
-@Directive({
-  selector: '[foo]'
-})
+@Directive()
 export class Dir {
   value = model(12);
 

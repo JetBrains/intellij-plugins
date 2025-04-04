@@ -203,7 +203,6 @@ object Angular2DecoratorUtil {
     val decoratorName = decorator.decoratorName
     return (decoratorName != null
             && contains(decoratorName, *names)
-            && (decoratorName != DIRECTIVE_DEC || getObjectLiteralInitializer(decorator) != null)
             && (allowAbstractClasses || getClassForDecoratorElement(decorator)?.attributeList?.hasModifier(JSAttributeList.ModifierType.ABSTRACT) != true)
            )
            && Angular2LangUtil.isAngular2Context(decorator)
