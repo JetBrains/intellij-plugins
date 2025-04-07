@@ -688,6 +688,63 @@
           }
         },
         {
+          "ruleId": "WrongPackageStatement",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Missing package statement: 'sub'",
+            "markdown": "Missing package statement: 'sub'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "C"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 78,
+                  "snippet": {
+                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testYaml profile with include global inspection",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e128322093d1af1a",
+            "equalIndicator/v1": "a0e82c27ec81ce63aae12152605cf9293b39d7c97ff92bc680c66dea16275951"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
           "ruleId": "unused",
           "kind": "fail",
           "level": "warning",

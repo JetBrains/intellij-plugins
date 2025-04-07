@@ -688,6 +688,63 @@
           }
         },
         {
+          "ruleId": "WrongPackageStatement",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Missing package statement: 'sub'",
+            "markdown": "Missing package statement: 'sub'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7,
+                  "charOffset": 6,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "C"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 78,
+                  "snippet": {
+                    "text": "class C {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude global inspection in qodana-yaml",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "697781967d75440f",
+            "equalIndicator/v1": "0f72bb99ee4f0a643613c629516369e33966d35fc2da5df4144f49ad71ef03dc"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
           "ruleId": "unused",
           "kind": "fail",
           "level": "warning",

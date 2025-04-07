@@ -743,6 +743,63 @@
               "JAVA"
             ]
           }
+        },
+        {
+          "ruleId": "WrongPackageStatement",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Missing package statement: 'sub'",
+            "markdown": "Missing package statement: 'sub'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/sub/C.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 7,
+                  "charOffset": 33,
+                  "charLength": 1,
+                  "snippet": {
+                    "text": "C"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 105,
+                  "snippet": {
+                    "text": "import java.util.ArrayList\nclass C {\n  public static void main() {\n    System.out.println(\"Hello world\");"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testInclude inspection in qodana-yaml with path",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "40067194758ce502",
+            "equalIndicator/v1": "5340e92672d964e7a11a61037a8519c8a24efc6f8b8e460955986ca3600bfa00"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
         }
       ],
       "automationDetails": {
