@@ -365,6 +365,10 @@ class TypeModel(
     return functions.findBinary(name) { it.name }
   }
 
+  fun getProviderFunction(provider: String, functionName: String): TfFunction? {
+    return providerDefinedFunctions.find { it.name == functionName && it.providerType == provider }
+  }
+
   fun getByFQN(fqn: String, psiElement: PsiElement? = null): PropertyOrBlockType? {
     val parts = fqn.split('.')
     if (parts.size < 2) return null

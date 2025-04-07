@@ -51,12 +51,12 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
     }
 
     private val UnaryNumberOps = TokenSet.create(
-        HILElementTypes.OP_PLUS, HILElementTypes.OP_MINUS,
-        HCLElementTypes.OP_PLUS, HCLElementTypes.OP_MINUS
+      HILElementTypes.OP_PLUS, HILElementTypes.OP_MINUS,
+      HCLElementTypes.OP_PLUS, HCLElementTypes.OP_MINUS
     )
     private val UnaryBooleanOps = TokenSet.create(
-        HILElementTypes.OP_NOT,
-        HCLElementTypes.OP_NOT
+      HILElementTypes.OP_NOT,
+      HCLElementTypes.OP_NOT
     )
 
     private fun doGetType(e: UnaryExpression<*>): Type? {
@@ -71,14 +71,14 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
     }
 
     private val BinaryNumberOps = TokenSet.create(
-        HILElementTypes.IL_BINARY_ADDITION_EXPRESSION, HILElementTypes.IL_BINARY_MULTIPLY_EXPRESSION,
-        HCLElementTypes.BINARY_ADDITION_EXPRESSION, HCLElementTypes.BINARY_MULTIPLY_EXPRESSION
+      HILElementTypes.IL_BINARY_ADDITION_EXPRESSION, HILElementTypes.IL_BINARY_MULTIPLY_EXPRESSION,
+      HCLElementTypes.BINARY_ADDITION_EXPRESSION, HCLElementTypes.BINARY_MULTIPLY_EXPRESSION
     )
     private val BinaryBooleanOps = TokenSet.create(
-        HILElementTypes.IL_BINARY_RELATIONAL_EXPRESSION, HILElementTypes.IL_BINARY_EQUALITY_EXPRESSION,
-        HILElementTypes.IL_BINARY_AND_EXPRESSION, HILElementTypes.IL_BINARY_OR_EXPRESSION,
-        HCLElementTypes.BINARY_RELATIONAL_EXPRESSION, HCLElementTypes.BINARY_EQUALITY_EXPRESSION,
-        HCLElementTypes.BINARY_AND_EXPRESSION, HCLElementTypes.BINARY_OR_EXPRESSION
+      HILElementTypes.IL_BINARY_RELATIONAL_EXPRESSION, HILElementTypes.IL_BINARY_EQUALITY_EXPRESSION,
+      HILElementTypes.IL_BINARY_AND_EXPRESSION, HILElementTypes.IL_BINARY_OR_EXPRESSION,
+      HCLElementTypes.BINARY_RELATIONAL_EXPRESSION, HCLElementTypes.BINARY_EQUALITY_EXPRESSION,
+      HCLElementTypes.BINARY_AND_EXPRESSION, HCLElementTypes.BINARY_OR_EXPRESSION
     )
 
     private fun doGetType(e: BinaryExpression<*>): Type? {
@@ -228,7 +228,8 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
             if (references.isNotEmpty()) {
               // e.g. for variable reference of dynamic block identifier
               LOG.warn("Element: ${e.text} From-References: $references")
-            } else {
+            }
+            else {
               // TODO: Support not only resources
               // TODO: Add properties defined in block as well
               val block = module.findResources(from.name, name).firstOrNull() ?: return Types.Invalid
@@ -301,6 +302,13 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       return Types.Any
     }
 
+    private fun doGetType(e: ProviderDefinedFunction<*>): Type? {
+      val providerName = e.provider.name ?: return Types.Any
+      val functionName = e.function.name ?: return Types.Any
+
+      return TypeModelProvider.getModel(e).getProviderFunction(providerName, functionName)?.returnType ?: return Types.Any
+    }
+
     private fun doGetType(e: HCLForExpression): Type? {
       return when (e) {
         is HCLForObjectExpression -> {
@@ -308,7 +316,8 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
           // Using MapType instead of ObjectType as it'simpossible to determine key names without evaluation
           if (e.isGrouping) {
             MapType(ListType(valueType))
-          } else {
+          }
+          else {
             MapType(valueType)
           }
         }
@@ -342,7 +351,8 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
             is ObjectType -> getCommonSupertype(containerType.elements?.values ?: emptyList()) ?: Types.Any
             else -> null
           }
-        } else {
+        }
+        else {
           // Array index or Object key
           when {
             isListType(containerType) -> Types.Number
@@ -370,6 +380,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       is BinaryExpression<*> -> doGetType(e)?.let { CachedValueProvider.Result.create(it, e) }
       is ConditionalExpression<*> -> doGetType(e)?.let { CachedValueProvider.Result.create(it, e) }
       is SelectExpression<*> -> doGetType(e)?.let { CachedValueProvider.Result.create(it, e) }
+      is ProviderDefinedFunction<*> -> doGetType(e)?.let { CachedValueProvider.Result.create(it, e) }
       is MethodCallExpression<*> -> doGetType(e)?.let { CachedValueProvider.Result.create(it, e) }
       is ParameterList<*> -> doGetType(e)?.let { CachedValueProvider.Result.create(it, e) }
       is CollectionExpression<*> -> doGetType(e)?.let { CachedValueProvider.Result.create(it, e) }
