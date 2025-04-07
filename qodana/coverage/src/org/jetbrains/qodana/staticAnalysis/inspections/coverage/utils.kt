@@ -36,6 +36,7 @@ import kotlin.io.path.exists
 internal val CLASS_ENGINES = setOf("JavaCoverageEngine", "XMLReportEngine")
 internal val COVERAGE_INSPECTIONS_NAMES = setOf("JsCoverageInspection", "JvmCoverageInspection", "PhpCoverageInspection",
                                        "PyCoverageInspection", "GoCoverageInspection", "NetCoverageInspection")
+private const val REMAP_CHECK_FILES_CNT = 3
 
 fun normalizeFilePath(path: String): String {
   var filePath = path
@@ -230,7 +231,7 @@ private fun remapCoverage(project: Project, bundle: CoverageSuitesBundle) {
     val roots = ReadAction.compute<Array<VirtualFile>, Throwable> { rootManager.contentRoots }
     for (contentRoot in roots) {
       val files: Set<String> = data.classes.keys
-      val pathToRemap = findPathToRemap(files, contentRoot)
+      val pathToRemap = findPathToRemap(files, contentRoot, REMAP_CHECK_FILES_CNT)
       if (pathToRemap != null) {
         // just replace paths for every file
         data = remapData(data, pathToRemap, contentRoot.path)
@@ -247,12 +248,12 @@ private fun applyNewDataToBundle(bundle: CoverageSuitesBundle, data: ProjectData
   }
 }
 
-fun findPathToRemap(files: Set<String>, contentRoot: VirtualFile): String? {
+fun findPathToRemap(files: Set<String>, contentRoot: VirtualFile, checkFilesCount: Int): String? {
   val comparator = Comparator.comparingInt { o: String? ->
     StringUtil.countChars(o!!, '/')
   }
   val sortedFiles = ContainerUtil.reverse(ContainerUtil.sorted(files, comparator))
-  val suspects: List<String> = sortedFiles.subList(0, Math.min(3, sortedFiles.size))
+  val suspects: List<String> = sortedFiles.subList(0, checkFilesCount.coerceAtMost(sortedFiles.size))
   var pathToRemap: String? = null
   for (suspect in suspects) {
     val pathParts = suspect.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
