@@ -51,18 +51,18 @@ private fun templateKotlinInspectionKts(filename: String): String {
         // skip kts files
         val isKts = psiFile.name.endsWith(".kts")
         if (isKts) return@localInspection
-
+    
         // get all functions in not ignored classes
         val functions = psiFile.descendantsOfType<KtNamedFunction>()
             .filter { function -> !isInIgnoredClass(function) }
-
+    
         functions.forEach { function: KtNamedFunction ->
             // get all variables declared in function
             val variables = function.descendantsOfType<KtProperty>()
             variables.forEach { variable: KtProperty ->
                 // get variable's type FQN
                 val variableTypeFqn = analyze(variable) {
-                    variable.getReturnKtType().expandedClassSymbol?.getFQN() ?: return@forEach
+                    variable.returnType.expandedSymbol?.getFQN() ?: return@forEach
                 }
                 val declarationText = if (variable.isVar) "var" else "val"
                 val message = "This is a variable ${'$'}{variable.name} in function ${'$'}{function.name} of type ${'$'}variableTypeFqn declared as ${'$'}declarationText. $inspectionName"
@@ -70,23 +70,23 @@ private fun templateKotlinInspectionKts(filename: String): String {
             }
         }
     }
-
+    
     // skip function in classes which inherit from class with some FQN
     fun isInIgnoredClass(function: KtNamedFunction): Boolean {
         if (function.isTopLevel) return false
-
+    
         val fqnToIgnore = "ignored.fully.qualified.name"
         val containingClass = function.parent?.parent as? KtClass ?: return false
         analyze(containingClass) {
             // check this class
-            val classSymbol = containingClass.getClassOrObjectSymbol() ?: return false
+            val classSymbol = containingClass.classSymbol ?: return false
             if (classSymbol.getFQN() == fqnToIgnore) {
                 return true
             }
-
+    
             // check supers
             return classSymbol.superTypes.any { superType ->
-                val superClassSymbol = superType.expandedClassSymbol ?: return@any false
+                val superClassSymbol = superType.expandedSymbol ?: return@any false
                 superClassSymbol.getFQN() == fqnToIgnore
             }
         }
