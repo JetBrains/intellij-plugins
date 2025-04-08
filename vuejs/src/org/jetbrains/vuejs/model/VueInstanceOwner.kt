@@ -230,9 +230,11 @@ private fun buildOptionsType(
 
     fun visitInstanceOwner(instanceOwner: VueInstanceOwner): Boolean {
       when (val initializer = (instanceOwner as? VueSourceEntity)?.initializer) {
-        is JSObjectLiteralExpression -> result.add(JSTypeofTypeImpl(
-          initializer, JSTypeSourceFactory.createTypeSource(initializer, false)))
-        is JSFile -> result.add(JSModuleTypeImpl(initializer, false))
+        is JSObjectLiteralExpression,
+          -> result += JSTypeofTypeImpl(initializer, JSTypeSourceFactory.createTypeSource(initializer, false))
+
+        is JSFile,
+          -> result += JSModuleTypeImpl(initializer, false)
       }
       return true
     }
@@ -242,8 +244,8 @@ private fun buildOptionsType(
 }
 
 private fun buildEmitType(instance: VueInstanceOwner): JSType {
-  val source =
-    JSTypeSourceFactory.createTypeSource(instance.source!!, true).copyWithNewLanguage(JSTypeSource.SourceLanguage.TS)
+  val source = JSTypeSourceFactory.createTypeSource(instance.source!!, true)
+    .copyWithNewLanguage(JSTypeSource.SourceLanguage.TS)
   val emitCalls = instance.asSafely<VueContainer>()?.emits ?: emptyList()
   val hasUniqueSignatures = emitCalls.any { it.params.isNotEmpty() || it.hasStrictSignature }
 
