@@ -1,6 +1,5 @@
 <idea-plugin package="org.jetbrains.qodana.staticAnalysis.inspections.coverage">
   <dependencies>
-    <plugin id="org.intellij.qodana"/>
     <module name="intellij.platform.coverage"/>
   </dependencies>
 
