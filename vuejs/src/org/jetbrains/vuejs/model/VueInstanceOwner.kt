@@ -303,15 +303,22 @@ private fun mergeSignatures(
 ): JSRecordType.PropertySignature {
   val existingType = existing.jsType
   val updatedType = updated.jsType
-  val type: JSType? = if (existingType == null || updatedType == null)
-    null
-  else
+  val type: JSType? = if (existingType != null && updatedType != null)
     JSCompositeTypeFactory.createUnionType(existingType.source, existingType, updatedType)
+  else
+    null
+
   return PropertySignatureImpl(
-    existing.memberName, type, existing.isOptional && updated.isOptional,
-    false, JSRecordMemberSourceFactory.createSource(existing.memberSource.allSourceElements +
-                                                    updated.memberSource.allSourceElements,
-                                                    JSRecordType.MemberSourceKind.Union, true))
+    existing.memberName,
+    type,
+    existing.isOptional && updated.isOptional,
+    false,
+    JSRecordMemberSourceFactory.createSource(
+      existing.memberSource.allSourceElements + updated.memberSource.allSourceElements,
+      JSRecordType.MemberSourceKind.Union,
+      true,
+    )
+  )
 }
 
 private fun mergePut(
