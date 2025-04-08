@@ -209,10 +209,10 @@ private fun buildSlotsType(
     .toList()
     .let { JSRecordTypeImpl(typeSource, it) }
 
-  return if (originalType == null)
-    slotsType
-  else
+  return if (originalType != null)
     JSCompositeTypeFactory.createIntersectionType(listOf(originalType, slotsType), typeSource)
+  else
+    slotsType
 }
 
 private fun buildOptionsType(
