@@ -203,13 +203,12 @@ private fun buildSlotsType(
   val typeSource = JSTypeSourceFactory.createTypeSource(instance.source!!, false)
   val slots = (instance as? VueContainer)?.slots ?: return originalType ?: JSAnyType.get(typeSource)
   val slotType = resolveSymbolFromNodeModule(instance.source, VUE_MODULE, "Slot", JSTypedEntity::class.java)?.jsType
-  val slotsType = slots.asSequence().filter {
-    it.pattern == null
-  }.map {
-    PropertySignatureImpl(it.name, slotType, true, true, it.source)
-  }
+  val slotsType = slots.asSequence()
+    .filter { it.pattern == null }
+    .map { PropertySignatureImpl(it.name, slotType, true, true, it.source) }
     .toList()
     .let { JSRecordTypeImpl(typeSource, it) }
+
   return if (originalType == null)
     slotsType
   else
