@@ -76,7 +76,7 @@ private fun contributeCustomProperties(
 private fun contributeDefaultInstanceProperties(
   source: PsiElement,
   result: MutableMap<String, JSRecordType.PropertySignature>,
-): MutableMap<String, JSRecordType.PropertySignature> {
+) {
   val defaultInstanceType = getDefaultVueComponentInstanceType(source)
   if (defaultInstanceType != null) {
     defaultInstanceType.asRecordType()
@@ -92,7 +92,6 @@ private fun contributeDefaultInstanceProperties(
       result[it] = createImplicitPropertySignature(it, null, source, kind = JSImplicitElement.Type.Function)
     }
   }
-  return result
 }
 
 private fun contributePropertiesFromProviders(
