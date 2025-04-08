@@ -20,7 +20,7 @@ class VueTypedGlobal(override val delegate: VueGlobal,
   private val typedGlobalComponents: Map<String, VueComponent> =
     CachedValuesManager.getCachedValue(source) {
       val result = resolveSymbolFromAugmentations(source, VUE_MODULE, GLOBAL_COMPONENTS)
-        .mapValues { VueTypedComponent(it.value as PsiElement, it.key) }
+        .mapValues { VueTypedComponent(it.value, it.key) }
 
       CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
     }
