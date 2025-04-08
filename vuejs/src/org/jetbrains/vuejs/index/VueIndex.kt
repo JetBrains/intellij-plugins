@@ -72,11 +72,13 @@ fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JS
 
 internal fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
-data class VueIndexData(val originalName: String,
-                        val nameQualifiedReference: String,
-                        val descriptorQualifiedReference: String,
-                        val indexedAccessUsed: Boolean,
-                        val isGlobal: Boolean)
+data class VueIndexData(
+  val originalName: String,
+  val nameQualifiedReference: String,
+  val descriptorQualifiedReference: String,
+  val indexedAccessUsed: Boolean,
+  val isGlobal: Boolean,
+)
 
 private fun splitAndUnescape(s: String): List<String> {
   val result = ArrayList<String>(4)
@@ -120,11 +122,13 @@ fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
   return VueIndexData(originalName, nameQualifiedReference, descriptorQualifiedReference, indexedAccessUsed, isGlobal)
 }
 
-fun serializeUserStringData(originalName: String,
-                            nameQualifiedReference: String,
-                            descriptorQualifiedReference: String,
-                            indexedAccessUsed: Boolean,
-                            isGlobal: Boolean): String {
+fun serializeUserStringData(
+  originalName: String,
+  nameQualifiedReference: String,
+  descriptorQualifiedReference: String,
+  indexedAccessUsed: Boolean,
+  isGlobal: Boolean,
+): String {
   return buildString {
     append(escapePart(originalName))
     append(DELIMITER)
