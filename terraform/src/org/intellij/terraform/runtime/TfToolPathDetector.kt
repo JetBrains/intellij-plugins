@@ -10,7 +10,7 @@ import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.platform.eel.provider.asNioPath
 import com.intellij.platform.eel.provider.getEelDescriptor
-import com.intellij.platform.eel.provider.utils.where
+import com.intellij.platform.eel.where
 import com.intellij.platform.util.progress.withProgressText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
