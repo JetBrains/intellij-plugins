@@ -14,8 +14,11 @@ import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.*
 import java.util.*
 
-class VueTypedGlobal(override val delegate: VueGlobal,
-                     override val source: PsiElement) : VueDelegatedEntitiesContainer<VueGlobal>(), VueGlobal {
+class VueTypedGlobal(
+  override val delegate: VueGlobal,
+  override val source: PsiElement,
+) : VueDelegatedEntitiesContainer<VueGlobal>(),
+    VueGlobal {
 
   private val typedGlobalComponents: Map<String, VueComponent> =
     CachedValuesManager.getCachedValue(source) {
