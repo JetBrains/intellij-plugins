@@ -4,7 +4,7 @@
   <vendor>JetBrains</vendor>
   <category>Test Tools</category>
 
-  <depends>com.intellij.modules.java</depends>
+  <depends>com.intellij.java</depends>
   <depends>com.intellij.properties</depends>
   <depends>com.intellij.modules.json</depends>
 

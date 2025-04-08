@@ -7,7 +7,7 @@
         To use the compiler, go to <span class="menupath">'File | Settings/Preferences | Build, Execution, Deployment | Compiler | Java Compiler'</span> and select 'Javac with error-prone' in 'Use compiler' box.
       ]]>
   </description>
-  <depends>com.intellij.modules.java</depends>
+  <depends>com.intellij.java</depends>
   <vendor>JetBrains</vendor>
 
   <resource-bundle>messages.ErrorProneBundle</resource-bundle>
