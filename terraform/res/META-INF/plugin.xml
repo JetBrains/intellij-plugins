@@ -31,6 +31,24 @@
     ]]></description>
 
   <change-notes><![CDATA[
+    2025.1
+    <ul>
+      <li>
+        Added support for <strong>provider-defined functions</strong>, ensuring a more robust and feature-complete experience when working with Terraform configurations.
+      </li>
+      <li>
+        Improved actions in Terraform files, enhancing the overall usability and working experience with actions in Terraform files.
+      </li>
+      <li>
+        Interactive gutter actions for OpenTofu’s .tofu configuration files were added: Init, Validate, Plan, Apply, and Destroy, putting your infrastructure commands at your fingertips.
+      </li>
+      <li>
+        Improved the user experience for automatically detecting the Terraform executable, simplifying initial setup and configuration.
+      </li>
+      <li>
+        Resolved the provider version update issue that was specific to Windows machines, ensuring a seamless workflow across platforms.
+      </li>
+    </ul>
     2024.3
     <ul>
       <li>
