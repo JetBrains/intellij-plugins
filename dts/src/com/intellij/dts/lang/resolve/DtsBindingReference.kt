@@ -30,7 +30,7 @@ class DtsBindingReference(private val element: DtsString) : PsiSymbolReference, 
     return DtsUtil.singleResult { DtsBindingSymbol(binding) }
   }
 
-  override fun getCompletionVariants(): MutableCollection<LookupElement> {
+  override fun getCompletionVariants(): Collection<LookupElement> {
     val project = element.project
     val variants = mutableListOf<LookupElement>()
     val provider = DtsZephyrBindingProvider.of(project)
