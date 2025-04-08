@@ -27,6 +27,11 @@ const val CUSTOM_PROPERTIES: String = "ComponentCustomProperties"
 
 val VUE_DEFAULT_EXTENSIONS_WITH_DOT = arrayOf(VUE_FILE_EXTENSION)
 
+val VUE_MODULE_FILTER: (String) -> Boolean = { moduleName ->
+  moduleName == VUE_MODULE
+  || moduleName.startsWith("@vue/")
+}
+
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"
 const val GLOBAL_BINDING_MARK: String = "*"
