@@ -196,7 +196,10 @@ private fun contributeComponentProperties(
   mergePut(result, injects)
 }
 
-private fun buildSlotsType(instance: VueInstanceOwner, originalType: JSType?): JSType {
+private fun buildSlotsType(
+  instance: VueInstanceOwner,
+  originalType: JSType?,
+): JSType {
   val typeSource = JSTypeSourceFactory.createTypeSource(instance.source!!, false)
   val slots = (instance as? VueContainer)?.slots ?: return originalType ?: JSAnyType.get(typeSource)
   val slotType = resolveSymbolFromNodeModule(instance.source, VUE_MODULE, "Slot", JSTypedEntity::class.java)?.jsType
@@ -213,7 +216,10 @@ private fun buildSlotsType(instance: VueInstanceOwner, originalType: JSType?): J
     JSCompositeTypeFactory.createIntersectionType(listOf(originalType, slotsType), typeSource)
 }
 
-private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?): JSType {
+private fun buildOptionsType(
+  instance: VueInstanceOwner,
+  originalType: JSType?,
+): JSType {
   val result = mutableListOf<JSType>()
   originalType?.let(result::add)
   instance.acceptEntities(object : VueModelVisitor() {
