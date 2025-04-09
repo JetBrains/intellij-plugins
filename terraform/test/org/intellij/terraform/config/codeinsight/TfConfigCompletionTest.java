@@ -181,22 +181,26 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
     }
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret>\n}", base);
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret> = \"name\"\n}", "size", "location");
-    doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret> = true\n}", "allow_extension_operations", "bypass_platform_safety_checks_on_user_schedule_enabled");
+    doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret> = true\n}", "allow_extension_operations",
+                          "bypass_platform_safety_checks_on_user_schedule_enabled");
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret> {}\n}", "additional_capabilities");
 
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n\"<caret>\"\n}", base);
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n\"<caret>\" = \"name\"\n}", "size", "location");
-    doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n\"<caret>\" = true\n}", "allow_extension_operations", "bypass_platform_safety_checks_on_user_schedule_enabled");
+    doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n\"<caret>\" = true\n}", "allow_extension_operations",
+                          "bypass_platform_safety_checks_on_user_schedule_enabled");
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n\"<caret>\" {}\n}", "additional_capabilities");
 
     // Should understand interpolation result
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret> = \"${true}\"\n}", strings -> {
-      then(strings).contains("allow_extension_operations", "bypass_platform_safety_checks_on_user_schedule_enabled").doesNotContain("additional_capabilities", "size", "location");
+      then(strings).contains("allow_extension_operations", "bypass_platform_safety_checks_on_user_schedule_enabled")
+        .doesNotContain("additional_capabilities", "size", "location");
       return true;
     });
     // Or not
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret> = \"${}\"\n}", strings -> {
-      then(strings).contains("allow_extension_operations", "bypass_platform_safety_checks_on_user_schedule_enabled", "size", "location").doesNotContain("additional_capabilities");
+      then(strings).contains("allow_extension_operations", "bypass_platform_safety_checks_on_user_schedule_enabled", "size", "location")
+        .doesNotContain("additional_capabilities");
       return true;
     });
   }
@@ -393,7 +397,9 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
 
   public void testDataSourceCommonPropertyCompletionFromModel() throws Exception {
     final HashSet<String> base = new HashSet<>(COMMON_DATA_SOURCE_PROPERTIES);
-    final DataSourceType type = TypeModelProvider.Companion.getGlobalModel().getDataSourceType("azurerm_kubernetes_cluster_node_pool", null);
+    final DataSourceType type = TypeModelProvider.Companion.getGlobalModel()
+      .getDataSourceType("azurerm_kubernetes_cluster_node_pool", null);
+
     assertNotNull(type);
     for (PropertyOrBlockType it : type.getProperties().values()) {
       if (it.getConfigurable()) base.add(it.getName());
@@ -836,7 +842,8 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
       String provider = resourceType.getProvider().getFullName();
       return "%s %s".formatted(name, provider);
     }).collect(Collectors.toSet());
-    assertEquals(lookupStrings, Set.of("aws_ec2_host jandillenkofer/aws","aws_ec2_host hashicorp/aws", "aws_ec2_host msalman899/aws", "awscc_ec2_host hashicorp/awscc"));
+    assertEquals(lookupStrings, Set.of("aws_ec2_host jandillenkofer/aws", "aws_ec2_host hashicorp/aws", "aws_ec2_host msalman899/aws",
+                                       "awscc_ec2_host hashicorp/awscc"));
   }
 
   public void testTerraformBlockCompletion() {
@@ -862,27 +869,52 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
   public void testProviderFunctionsCompletion() {
     doBasicCompletionTest(
       """
-      resource "kubernetes_manifest" "example" {
-        manifest = manifest_d<caret>
-      }
-      """, 2, "provider::kubernetes::manifest_decode", "provider::kubernetes::manifest_decode_multi"
+        resource "kubernetes_manifest" "example" {
+          manifest = manifest_d<caret>
+        }
+        """, 2, "provider::kubernetes::manifest_decode", "provider::kubernetes::manifest_decode_multi"
     );
 
     doBasicCompletionTest(
       """
-      locals {
-        tfvars = decode_tf<caret>
-      }
-      """, 1, "provider::terraform::decode_tfvars"
+        locals {
+          tfvars = decode_tf<caret>
+        }
+        """, 1, "provider::terraform::decode_tfvars"
     );
 
     doBasicCompletionTest(
       """
-      resource "some_resource" "name" {
-        enabled = assert<caret>
-      }
-      """, "provider::assert::true"
+        resource "some_resource" "name" {
+          enabled = assert<caret>
+        }
+        """, "provider::assert::true"
     );
   }
 
+  public void testTypeOfProviderDefinedFunctions() {
+    doBasicCompletionTest(
+      """
+        resource "aws_ecr_repository" "hashicups" {
+          name = "hashicups"
+        
+          image_scanning_configuration {
+            scan_on_push = true
+          }
+        }
+        
+        output "hashicups_ecr_repository_account_id" {
+          value = provider::aws::arn_parse(aws_ecr_repository.hashicups.arn).<caret>
+        }
+        """, 0
+    );
+
+    doBasicCompletionTest(
+      """
+        output "example" {
+          value = provider::aws::trim_iam_role_path("arn:aws:iam::444455556666:role/with/path/example").<caret>
+        }
+        """, 0
+    );
+  }
 }
