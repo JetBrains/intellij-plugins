@@ -40,7 +40,7 @@ public class HCLObjectImpl extends HCLContainerImpl implements HCLObject {
   }
 
   @Override
-  public @Nullable ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     return HCLPsiImplUtilJ.getPresentation(this);
   }
 

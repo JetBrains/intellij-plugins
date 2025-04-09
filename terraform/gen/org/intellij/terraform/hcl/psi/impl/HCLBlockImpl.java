@@ -48,7 +48,7 @@ public class HCLBlockImpl extends HCLBlockMixin implements HCLBlock {
   }
 
   @Override
-  public @Nullable ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     return HCLPsiImplUtilJ.getPresentation(this);
   }
 

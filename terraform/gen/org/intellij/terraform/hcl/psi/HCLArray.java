@@ -9,7 +9,7 @@ import com.intellij.navigation.ItemPresentation;
 
 public interface HCLArray extends HCLContainer, CollectionExpression<HCLExpression> {
 
-  @Nullable ItemPresentation getPresentation();
+  @NotNull ItemPresentation getPresentation();
 
   @NotNull
   List<HCLExpression> getElements();

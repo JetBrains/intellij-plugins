@@ -2,6 +2,7 @@
 package org.intellij.terraform.hcl.psi.impl
 
 import com.intellij.lang.ASTNode
+import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
@@ -34,5 +35,9 @@ abstract class HCLBlockMixin(node: ASTNode) : HCLValueWithReferencesMixin(node),
 
   override fun isEquivalentTo(another: PsiElement?): Boolean {
     return this === another || another === nameIdentifier
+  }
+
+  override fun getPresentation(): ItemPresentation {
+    return HCLPsiImplUtilJ.getPresentation(this)
   }
 }

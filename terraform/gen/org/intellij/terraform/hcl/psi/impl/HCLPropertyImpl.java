@@ -43,7 +43,7 @@ public class HCLPropertyImpl extends HCLPropertyMixin implements HCLProperty {
   }
 
   @Override
-  public @Nullable ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     return HCLPsiImplUtilJ.getPresentation(this);
   }
 

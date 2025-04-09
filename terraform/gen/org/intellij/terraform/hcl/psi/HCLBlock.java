@@ -17,6 +17,6 @@ public interface HCLBlock extends HCLElement, PsiNameIdentifierOwner {
 
   @Nullable HCLObject getObject();
 
-  @Nullable ItemPresentation getPresentation();
+  @NotNull ItemPresentation getPresentation();
 
 }

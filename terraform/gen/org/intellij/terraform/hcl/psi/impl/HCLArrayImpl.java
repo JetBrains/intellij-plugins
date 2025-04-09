@@ -29,7 +29,7 @@ public class HCLArrayImpl extends HCLContainerImpl implements HCLArray {
   }
 
   @Override
-  public @Nullable ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     return HCLPsiImplUtilJ.getPresentation(this);
   }
 

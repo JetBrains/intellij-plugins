@@ -15,6 +15,6 @@ public interface HCLProperty extends HCLElement, PsiNameIdentifierOwner {
 
   @Nullable HCLExpression getValue();
 
-  @Nullable ItemPresentation getPresentation();
+  @NotNull ItemPresentation getPresentation();
 
 }

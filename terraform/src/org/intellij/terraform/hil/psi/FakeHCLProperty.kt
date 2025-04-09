@@ -1,10 +1,12 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.psi
 
+import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.impl.HCLPsiImplUtilJ
 
 open class FakeHCLProperty(private val _name: String, _parent: PsiElement, val dynamic: Boolean = false) : RenameableFakePsiElement(
   _parent), HCLProperty {
@@ -38,6 +40,10 @@ open class FakeHCLProperty(private val _name: String, _parent: PsiElement, val d
 
   override fun isWritable(): Boolean {
     return false
+  }
+
+  override fun getPresentation(): ItemPresentation {
+    return HCLPsiImplUtilJ.getPresentation(this)
   }
 }
 

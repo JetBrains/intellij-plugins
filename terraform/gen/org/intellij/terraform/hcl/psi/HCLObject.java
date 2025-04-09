@@ -14,7 +14,7 @@ public interface HCLObject extends HCLContainer, CollectionExpression<HCLExpress
 
   @Nullable HCLProperty findProperty(@NotNull String name);
 
-  @Nullable ItemPresentation getPresentation();
+  @NotNull ItemPresentation getPresentation();
 
   @NotNull List<HCLBlock> getBlockList();
 
