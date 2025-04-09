@@ -25,5 +25,7 @@ final class DartSearchableOptionContributor extends SearchableOptionContributor 
                          "Dart SDK path", "dart.settings", null, false);
     processor.addOptions("Dart pub webdev server port", null,
                          "Dart webdev server port", "dart.settings", null, false);
+    processor.addOptions(DartBundle.message("code.style.settings.label.line.length"), null,
+                         DartBundle.message("code.style.settings.label.line.length"), "preferences.sourceCode.Dart", null, false);
   }
 }
