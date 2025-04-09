@@ -122,6 +122,7 @@ jvm_library(
     "@lib//:jsoup",
     "@community//platform/core-ui",
     "@community//plugins/yaml",
+    "@community//plugins/yaml:yaml_test_lib",
     "@community//platform/external-process-auth-helper:externalProcessAuthHelper",
     "@community//platform/external-process-auth-helper:externalProcessAuthHelper_test_lib",
     "@community//json/backend",

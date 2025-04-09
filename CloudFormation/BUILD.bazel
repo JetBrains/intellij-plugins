@@ -39,6 +39,7 @@ jvm_library(
     "@community//plugins/yaml/backend:backend_test_lib",
     "@community//platform/core-api:core",
     "@community//plugins/yaml",
+    "@community//plugins/yaml:yaml_test_lib",
     "@community//json/backend",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",

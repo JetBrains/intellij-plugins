@@ -104,6 +104,7 @@ jvm_library(
     "@lib//:fastutil-min",
     "@community//java/testFramework",
     "@community//plugins/yaml",
+    "@community//plugins/yaml:yaml_test_lib",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/platform-util-netty:ide-util-netty",
     "@community//platform/testFramework",
