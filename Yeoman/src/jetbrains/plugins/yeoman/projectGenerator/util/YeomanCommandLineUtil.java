@@ -134,7 +134,7 @@ public final class YeomanCommandLineUtil {
     try {
       NodeJsInterpreter interpreter = NodeJsInterpreterManager.getInstance(project).getInterpreterOrThrow();
       NodePackage npmPackage = NpmUtil.resolvePackageRefOrThrow(NodePackageRef.create(NpmUtil.NPM_PACKAGE_NAME), project, interpreter);
-      return NpmUtil.createNpmCommandLine(workingDirectory,
+      return NpmUtil.createNpmCommandLine(workingDirectory.toPath(),
                                           interpreter,
                                           npmPackage,
                                           NpmCommand.EXEC,
@@ -153,7 +153,7 @@ public final class YeomanCommandLineUtil {
     assert interpreter != null;
 
     try {
-      return NpmUtil.createNpmCommandLine(project, workingDirectory, interpreter, NpmCommand.INSTALL, Collections.emptyList());
+      return NpmUtil.createNpmCommandLine(project, workingDirectory.toPath(), interpreter, NpmCommand.INSTALL, Collections.emptyList());
     }
     catch (ExecutionException e) {
       throw new RuntimeException(e.getMessage(), e);
