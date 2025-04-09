@@ -14,6 +14,8 @@ inspections:
     enabled: true
   - inspection: QodanaKotlinSanity
     enabled: true
+    ignore:
+      - "**.kts"
   - inspection: PhpLanguageLevelInspection
     enabled: true
   - inspection: PyUnresolvedReferencesInspection
