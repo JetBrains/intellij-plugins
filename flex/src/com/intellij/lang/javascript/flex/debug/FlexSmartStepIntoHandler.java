@@ -177,7 +177,7 @@ final class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmar
   }
 
   @Override
-  public String getPopupTitle(@NotNull XSourcePosition position) {
+  public String getPopupTitle() {
     return FlexBundle.message("popup.title.step.into.function");
   }
 
