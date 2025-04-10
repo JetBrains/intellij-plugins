@@ -21,7 +21,9 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.modifier.CodeStyleSettingsModifier
 import com.intellij.psi.codeStyle.modifier.CodeStyleStatusBarUIContributor
 import com.intellij.psi.codeStyle.modifier.TransientCodeStyleSettings
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.function.Consumer
+import kotlin.time.Duration.Companion.milliseconds
 
 private val LOG: Logger
   get() = logger<PrettierCodeStyleSettingsModifier>()
@@ -64,8 +66,8 @@ private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
 
   private fun doModifySettings(settings: TransientCodeStyleSettings, psiFile: PsiFile): Boolean {
     val prettierConfig = runBlockingCancellable {
-      resolveConfigForFile(psiFile)
-    }?.config ?: return false
+      resolveConfigForFileWithTimeout(psiFile)
+    } ?: return false
 
     val changedBasic = applyBasicPrettierMappings(settings, prettierConfig)
 
@@ -85,6 +87,12 @@ private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
       LOG.debug { "No changes for ${psiFile.name}" }
       return false
     }
+  }
+
+  private suspend fun resolveConfigForFileWithTimeout(psiFile: PsiFile): PrettierConfig? {
+    return withTimeoutOrNull(500.milliseconds) {
+      resolveConfigForFile(psiFile)
+    }?.config
   }
 
   private fun getAdvancedCodeStyleConfigurators(): List<PrettierCodeStyleConfigurator> {

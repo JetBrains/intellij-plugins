@@ -7,8 +7,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import kotlinx.coroutines.future.await
-import kotlinx.coroutines.withTimeoutOrNull
-import kotlin.time.Duration.Companion.milliseconds
 
 internal suspend fun resolveConfigForFile(file: PsiFile): PrettierLanguageService.ResolveConfigResult? {
   val project = file.project
@@ -20,9 +18,7 @@ internal suspend fun resolveConfigForFile(file: PsiFile): PrettierLanguageServic
   val service = PrettierLanguageService.getInstance(project, file.virtualFile, nodePackage)
   val future = service.resolveConfig(filePath, nodePackage) ?: return null
 
-  return withTimeoutOrNull(500.milliseconds) {
-    future.await()
-  }
+  return future.await()
 }
 
 internal fun ensureConfigsSaved(virtualFiles: List<VirtualFile>, project: Project) {
