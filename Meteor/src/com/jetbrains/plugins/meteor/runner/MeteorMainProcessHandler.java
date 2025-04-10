@@ -3,8 +3,8 @@ package com.jetbrains.plugins.meteor.runner;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.KillableColoredProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
@@ -25,7 +25,7 @@ public class MeteorMainProcessHandler extends KillableColoredProcessHandler {
 
   public MeteorMainProcessHandler(@NotNull GeneralCommandLine commandLine) throws ExecutionException {
     super(commandLine);
-    addProcessListener(new ProcessAdapter() {
+    addProcessListener(new ProcessListener() {
       @Override
       public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
         addMessage(event, outputType);

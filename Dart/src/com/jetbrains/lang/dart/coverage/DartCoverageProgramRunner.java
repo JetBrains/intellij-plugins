@@ -102,7 +102,7 @@ public final class DartCoverageProgramRunner extends GenericProgramRunner {
     try {
       final ProcessHandler coverageProcess = new OSProcessHandler(commandLine);
 
-      coverageProcess.addProcessListener(new ProcessAdapter() {
+      coverageProcess.addProcessListener(new ProcessListener() {
         @Override
         public void onTextAvailable(final @NotNull ProcessEvent event, final @NotNull Key outputType) {
           LOG.debug(event.getText());

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.DefaultExecutionResult;
@@ -7,9 +7,9 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
@@ -202,7 +202,7 @@ public class FlexRunner extends FlexBaseRunner {
       return null;
     }
     flexUnitConnection.addListener(new FlexUnitListener(executionResult.getProcessHandler()));
-    executionResult.getProcessHandler().addProcessListener(new ProcessAdapter() {
+    executionResult.getProcessHandler().addProcessListener(new ProcessListener() {
       @Override
       public void processWillTerminate(@NotNull ProcessEvent event, boolean willBeDestroyed) {
         flexUnitConnection.write("Finish");

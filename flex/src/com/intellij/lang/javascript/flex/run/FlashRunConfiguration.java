@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionException;
@@ -6,8 +6,8 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configuration.EmptyRunProfileState;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -213,7 +213,7 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
         JavaCommandLineStateUtil.startProcess(FlexBaseRunner.createAdlCommandLine(myProject, myRunnerParameters, bc, airRuntimePath));
 
       if (needToRemoveAirRuntimeDir && airRuntimeDirForFlexmojosSdk != null) {
-        processHandler.addProcessListener(new ProcessAdapter() {
+        processHandler.addProcessListener(new ProcessListener() {
           @Override
           public void processTerminated(final @NotNull ProcessEvent event) {
             FlexUtils.removeFileLater(airRuntimeDirForFlexmojosSdk);

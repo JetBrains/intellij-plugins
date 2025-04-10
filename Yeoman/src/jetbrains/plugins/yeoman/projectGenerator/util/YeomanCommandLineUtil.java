@@ -43,7 +43,7 @@ public final class YeomanCommandLineUtil {
         indicator.setText(commandLine.getCommandLineString());
         final ProcessOutput output = new ProcessOutput();
         try {
-          ProcessListener listener = new ProcessAdapter() {
+          ProcessListener listener = new ProcessListener() {
             @Override
             public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
               String text = event.getText().trim();
@@ -72,7 +72,7 @@ public final class YeomanCommandLineUtil {
             }, TimeUnit.SECONDS.toMillis(1));
           }
 
-          processHandler.addProcessListener(new ProcessAdapter() {
+          processHandler.addProcessListener(new ProcessListener() {
             @Override
             public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
               if (outputType == ProcessOutputTypes.STDERR) {

@@ -180,7 +180,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
       LOG.debug(builder.command().toString());
       myP4dProcess = builder.start();
       OSProcessHandler handler = new OSProcessHandler(myP4dProcess, builder.command().toString());
-      handler.addProcessListener(new ProcessAdapter() {
+      handler.addProcessListener(new ProcessListener() {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           LOG.debug("P4D process " + event.getText());

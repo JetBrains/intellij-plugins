@@ -4,9 +4,9 @@ package com.jetbrains.lang.dart.ide.runner.server.vmService;
 import com.google.common.base.Charsets;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -218,7 +218,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       myOpenObservatoryAction.setUrl(debugUrl);
     }
     else if (DebugType.CLI == myDebugType) {
-      getProcessHandler().addProcessListener(new ProcessAdapter() {
+      getProcessHandler().addProcessListener(new ProcessListener() {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";
@@ -241,7 +241,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       });
     }
     else if (DebugType.WEBDEV == myDebugType) {
-      getProcessHandler().addProcessListener(new ProcessAdapter() {
+      getProcessHandler().addProcessListener(new ProcessListener() {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           try {

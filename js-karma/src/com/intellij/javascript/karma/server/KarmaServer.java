@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.server;
 
 import com.google.gson.JsonElement;
@@ -81,7 +81,7 @@ public final class KarmaServer {
 
     final int processHashCode = System.identityHashCode(processHandler.getProcess());
     LOG.info("Karma server " + processHashCode + " started successfully: " + processHandler.getCommandLineForLog());
-    processHandler.addProcessListener(new ProcessAdapter() {
+    processHandler.addProcessListener(new ProcessListener() {
       @Override
       public void processTerminated(final @NotNull ProcessEvent event) {
         LOG.info("Karma server " + processHashCode + " terminated with exit code " + event.getExitCode());

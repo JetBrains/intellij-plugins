@@ -106,7 +106,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       }
     };
 
-    processHandler.addProcessListener(new ProcessAdapter() {
+    processHandler.addProcessListener(new ProcessListener() {
       @Override
       public void onTextAvailable(final @NotNull ProcessEvent event, final @NotNull Key outputType) {
         final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";

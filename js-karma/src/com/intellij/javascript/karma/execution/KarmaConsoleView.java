@@ -1,12 +1,12 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.process.NopProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.TestTreeView;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
@@ -82,7 +82,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     }
     if (myProcessHandler instanceof NopProcessHandler) {
       KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this);
-      myProcessHandler.addProcessListener(new ProcessAdapter() {
+      myProcessHandler.addProcessListener(new ProcessListener() {
         @Override
         public void processTerminated(@NotNull ProcessEvent event) {
           Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, KarmaConsoleView.this);
@@ -93,7 +93,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         }
       }, this);
     }
-    myServer.getProcessHandler().addProcessListener(new ProcessAdapter() {
+    myServer.getProcessHandler().addProcessListener(new ProcessListener() {
       @Override
       public void processTerminated(@NotNull ProcessEvent event) {
         if (!myProcessHandler.isProcessTerminated()) {

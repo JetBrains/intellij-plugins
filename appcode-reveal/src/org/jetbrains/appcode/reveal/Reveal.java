@@ -1,11 +1,11 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.ide.script.IdeScriptException;
@@ -180,7 +180,7 @@ public final class Reveal {
       }
 
       CapturingProcessHandler handler = new CapturingProcessHandler(new GeneralCommandLine(args));
-      handler.addProcessListener(new ProcessAdapter() {
+      handler.addProcessListener(new ProcessListener() {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           if (outputType == ProcessOutputTypes.STDERR) {

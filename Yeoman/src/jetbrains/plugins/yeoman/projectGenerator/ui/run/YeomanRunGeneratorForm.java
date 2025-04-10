@@ -4,8 +4,8 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.KillableColoredProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
@@ -137,7 +137,7 @@ public class YeomanRunGeneratorForm implements Disposable {
     final GeneralCommandLine commandLine = createCommandLine();
     try {
       myProcessHandler = new KillableColoredProcessHandler(commandLine);
-      myProcessHandler.addProcessListener(new ProcessAdapter() {
+      myProcessHandler.addProcessListener(new ProcessListener() {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           LOGGER.debug(event.getText());

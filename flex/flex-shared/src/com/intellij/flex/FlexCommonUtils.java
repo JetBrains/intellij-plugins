@@ -1,10 +1,10 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.execution.process.BaseOSProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.flex.model.JpsFlexCompilerProjectExtension;
 import com.intellij.flex.model.bc.*;
@@ -910,7 +910,7 @@ public final class FlexCommonUtils {
       final Process process = Runtime.getRuntime().exec(cmdarray);
       final BaseOSProcessHandler handler = new BaseOSProcessHandler(process, StringUtil.join(cmdarray, " "), Charset.defaultCharset());
 
-      handler.addProcessListener(new ProcessAdapter() {
+      handler.addProcessListener(new ProcessListener() {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           if (outputType != ProcessOutputTypes.SYSTEM) {

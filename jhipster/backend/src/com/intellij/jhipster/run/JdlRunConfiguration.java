@@ -67,7 +67,7 @@ public final class JdlRunConfiguration extends RunConfigurationBase<JdlRunConfig
         }
 
         var processHandler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine);
-        processHandler.addProcessListener(new ProcessAdapter() {
+        processHandler.addProcessListener(new ProcessListener() {
           @Override
           public void processTerminated(@NotNull ProcessEvent event) {
             // we generated something, let's check

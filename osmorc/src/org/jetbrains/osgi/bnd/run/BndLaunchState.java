@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
@@ -9,8 +9,8 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
@@ -105,7 +105,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
     HotSwapUI hotSwapManager = HotSwapUI.getInstance(myProject);
     hotSwapManager.addListener(this);
 
-    handler.addProcessListener(new ProcessAdapter() {
+    handler.addProcessListener(new ProcessListener() {
       @Override
       public void processTerminated(@NotNull ProcessEvent event) {
         connection.disconnect();
