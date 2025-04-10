@@ -61,9 +61,9 @@ import org.angular2.Angular2DecoratorUtil.isHostBinding
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.ivy.Angular2IvySymbolDef
 import org.angular2.entities.source.Angular2SourceUtil.isStylesheet
+import org.angular2.isCustomCssPropertyBinding
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
-import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.web.scopes.CREATE_COMPONENT_FUN
 import org.angular2.web.scopes.INPUT_BINDING_FUN
 import org.angular2.web.scopes.OUTPUT_BINDING_FUN
@@ -402,10 +402,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     info: Angular2AttributeNameParser.AttributeInfo,
     provider: PsiElement, outData: JSElementIndexingDataImpl?,
   ): JSElementIndexingDataImpl? =
-    if (info is Angular2AttributeNameParser.PropertyBindingInfo
-        && info.bindingType == PropertyBindingType.STYLE
-        && info.name.startsWith("--")
-    )
+    if (isCustomCssPropertyBinding(info))
       (outData ?: JSElementIndexingDataImpl())
         .apply {
           addImplicitElement(

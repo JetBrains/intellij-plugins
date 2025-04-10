@@ -1,0 +1,6 @@
+div {
+  color: var(<error descr="Cannot resolve '--test1' custom property">--test1</error>);
+  background-color: var(--test2);
+  font: var(--test3);
+  font-size: var(--test4);
+}

@@ -1,5 +1,6 @@
 package org.angular2.web.scopes
 
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -10,14 +11,13 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbol.Companion.CSS_PROPERTIES
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
-import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
-import org.angular2.lang.html.psi.PropertyBindingType
+import org.angular2.web.scopes.Angular2CustomCssPropertiesScope.Companion.createCustomCssProperty
 
 class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsStructuredScope<PsiElement, PsiFile>(location) {
 
   override val rootPsiElement: PsiFile?
-    get() = location.containingFile
+    get() = location.containingFile.takeIf { InjectedLanguageManager.getInstance(location.project).isInjectedFragment(it) }
 
   override val scopesBuilderProvider: (PsiFile, WebSymbolsPsiScopesHolder) -> PsiElementVisitor?
     get() = provider@{ file, holder ->
@@ -53,37 +53,6 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsS
       createCustomCssProperty(attribute)?.let { holder.currentScope { addSymbol(it) } }
     }
 
-  }
-
-  companion object {
-    fun createCustomCssProperty(attribute: XmlAttribute): AbstractAngular2CustomCssProperty<XmlAttribute>? {
-      val info = Angular2AttributeNameParser.parse(attribute.name)
-      if (info is Angular2AttributeNameParser.PropertyBindingInfo
-          && info.bindingType == PropertyBindingType.STYLE
-          && info.name.startsWith("--")
-          && info.name.length > 2) {
-        return CustomCssPropertyDefinedInAttribute(attribute, info)
-      }
-      return null
-    }
-  }
-
-  private class CustomCssPropertyDefinedInAttribute(
-    attribute: XmlAttribute,
-    info: Angular2AttributeNameParser.PropertyBindingInfo,
-  ) : AbstractAngular2CustomCssProperty<XmlAttribute>(attribute, info) {
-
-    override fun getInitialOffset(): Int = 0
-
-    override val valueText: String?
-      get() = sourceElement.value
-
-    override fun createPointer(): Pointer<out AbstractAngular2CustomCssProperty<XmlAttribute>> {
-      val attributePtr = sourceElement.createSmartPointer()
-      return Pointer {
-        attributePtr.dereference()?.let { createCustomCssProperty(it) }
-      }
-    }
   }
 }
 
