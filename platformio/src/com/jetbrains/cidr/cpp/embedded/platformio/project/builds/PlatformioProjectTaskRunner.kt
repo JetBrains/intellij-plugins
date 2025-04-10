@@ -36,7 +36,7 @@ import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
 import java.nio.file.Path
 
-const val EXECUTION_TIMEOUT_MS = 10 * 3600 * 1000 /*10 hrs*/
+const val EXECUTION_TIMEOUT_MS: Int = 10 * 3600 * 1000 /*10 hrs*/
 
 class PlatformioProjectTaskRunner : CidrProjectTaskRunner() {
   override val buildSystemId: String = ID.id
@@ -132,7 +132,7 @@ class PlatformioTaskRunner : CidrTaskRunner {
       }
 
     }
-    catch (e: ProcessCanceledException) {
+    catch (_: ProcessCanceledException) {
       buildProgress.fail()
       promise.setResult(TaskRunnerResults.ABORTED)
     }

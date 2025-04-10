@@ -24,19 +24,19 @@ abstract class PlatformioAction(text: () -> @Nls String,
 
 class PlatformioMonitorAction : PlatformioAction({ ClionEmbeddedPlatformioBundle.message("task.monitor") }, { "pio device monitor" },
                                                  pioIcon(AllIcons.Nodes.Console)) {
-  override fun actionPerformed(e: AnActionEvent) =
+  override fun actionPerformed(e: AnActionEvent): Unit =
     actionPerformedKillAlreadyRunning(e, false, true, false, "device", "monitor")
 }
 
 class PlatformioPkgUpdateAction : PlatformioAction({ ClionEmbeddedPlatformioBundle.message("platformio.update") }, { "pio pkg update" },
                                                    pioIcon(AllIcons.Actions.Download)) {
-  override fun actionPerformed(e: AnActionEvent) =
+  override fun actionPerformed(e: AnActionEvent): Unit =
     actionPerformed(e, true, false, false, "pkg", "update")
 }
 
 class PlatformioCheckAction : PlatformioAction({ ClionEmbeddedPlatformioBundle.message("task.check") }, { "pio check" },
                                                pioIcon(AllIcons.Actions.ProjectWideAnalysisOn)) {
-  override fun actionPerformed(e: AnActionEvent) =
+  override fun actionPerformed(e: AnActionEvent): Unit =
     actionPerformed(e, false, true, true, "check")
 }
 

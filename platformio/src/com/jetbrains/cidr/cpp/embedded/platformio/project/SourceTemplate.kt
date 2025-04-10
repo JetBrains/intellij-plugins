@@ -33,7 +33,7 @@ enum class SourceTemplate(val fileName: String, val content: String) {
       return if (platformsNames.contains("arduino")) ARDUINO else GENERIC
     }
 
-    val EMPTY_BOARD_INFO = BoardInfo(GENERIC, emptyList())
+    val EMPTY_BOARD_INFO: BoardInfo = BoardInfo(GENERIC, emptyList())
   }
 }
 

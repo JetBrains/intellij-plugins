@@ -10,6 +10,7 @@ import com.intellij.openapi.externalSystem.ExternalSystemManager
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.impl.FileTypeOverrider
 import com.intellij.openapi.project.Project
@@ -52,12 +53,7 @@ class PlatformioManager :
     FILE_CHOOSER_DESCRIPTOR
 
   companion object {
-    private val FILE_CHOOSER_DESCRIPTOR = object : FileChooserDescriptor(true,
-                                                                         false,
-                                                                         false,
-                                                                         false,
-                                                                         false,
-                                                                         false) {}
+    private val FILE_CHOOSER_DESCRIPTOR = FileChooserDescriptorFactory.singleFile()
 
     private fun executionSettingsFor(): PlatformioExecutionSettings {
       return PlatformioExecutionSettings()

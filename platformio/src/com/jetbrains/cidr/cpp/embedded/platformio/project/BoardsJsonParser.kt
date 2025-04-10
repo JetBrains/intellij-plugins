@@ -5,9 +5,9 @@ import java.util.*
 
 object BoardsJsonParser {
   /**
-   * Parses boards list into vendor->board->framework(optional) structure.
+   * Parses boards list into vendor -> board -> framework(optional) structure.
    *
-   * @return virtual root of parsed tree
+   * @return virtual root of the parsed tree
    */
   fun parse(text: CharSequence): DeviceTreeNode {
     val boardsByVendor: SortedMap<String, DeviceTreeNode> = TreeMap(java.lang.String.CASE_INSENSITIVE_ORDER)

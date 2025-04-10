@@ -73,7 +73,7 @@ private class PlatformioProjectMigrationConverter(val context: ConversionContext
       override fun process(settings: WorkspaceSettings) {
         val elementsToDelete =
           arrayOf("CMakePresetLoader", "CMakeReloadState", "CMakeRunConfigurationManager")
-            .map { settings.getComponentElement(it) }.filterNotNull().toList()
+            .mapNotNull { settings.getComponentElement(it) }.toList()
         elementsToDelete.forEach { it.detach() }
       }
     }

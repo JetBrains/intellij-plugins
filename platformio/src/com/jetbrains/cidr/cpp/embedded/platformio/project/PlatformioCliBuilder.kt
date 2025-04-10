@@ -16,7 +16,7 @@ import java.nio.file.Path
 
 private const val POSIX_HOME_ENV_VAR_NAME = "HOME"
 private const val WIN_HOME_ENV_VAR_NAME = "USERPROFILE"
-const val ENV_PATH = "PATH"
+const val ENV_PATH: String = "PATH"
 
 class PlatformioCliBuilder(
   usePty:Boolean,
