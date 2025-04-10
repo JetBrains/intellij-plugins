@@ -4,7 +4,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ResourceUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.*
 
-class PlatformioBoardsParserTest : UsefulTestCase() {
+class TestPlatformioBoardsParser : UsefulTestCase() {
   private var myJson: String? = null
 
   @Throws(Exception::class)
