@@ -1,4 +1,0 @@
-<cssCustomPropertyFromCss.ts:(0,155):(130,137)>	--test2
-<cssCustomPropertyFromCss.ts:(0,155):(69,76)>	--test2
-<test.css:(0,53):(39,46)>	--test2
-<test.css:(0,53):(9,16)>	--test2
