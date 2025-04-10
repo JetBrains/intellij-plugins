@@ -78,3 +78,5 @@ fun <T : PsiElement> PsiElement?.getParent(aClass: Class<T>, strict: Boolean = t
   if (this == null) return null
   return PsiTreeUtil.getParentOfType(this, aClass, strict)
 }
+
+internal fun <T: PsiNamedElement> T.getNameOrText(): String = this.name ?: this.text

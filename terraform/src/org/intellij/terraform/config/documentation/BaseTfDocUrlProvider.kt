@@ -13,7 +13,8 @@ import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.psi.TfDocumentPsi
 import org.intellij.terraform.hcl.psi.*
-
+import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction
+import org.intellij.terraform.hcl.psi.getNameOrText
 
 internal abstract class BaseTfDocUrlProvider {
 
@@ -26,6 +27,9 @@ internal abstract class BaseTfDocUrlProvider {
 
     @JvmStatic
     val PROVIDER: String = "provider"
+
+    @JvmStatic
+    val FUNCTION: String = "function"
   }
 
   internal suspend fun getDocumentationUrl(pointer: SmartPsiElementPointer<PsiElement>): List<String?> {
@@ -34,6 +38,7 @@ internal abstract class BaseTfDocUrlProvider {
       HCL_RESOURCE_IDENTIFIER -> listOf(getDocUrl(blockData, RESOURCES))
       HCL_DATASOURCE_IDENTIFIER -> listOf(getDocUrl(blockData, DATASOURCES))
       HCL_PROVIDER_IDENTIFIER -> listOf(getDocUrl(blockData, PROVIDER))
+      FUNCTION -> listOf(getDocUrl(blockData, FUNCTION))
       else -> emptyList()
     }
   }
@@ -46,6 +51,11 @@ internal abstract class BaseTfDocUrlProvider {
 
   private suspend fun buildBlockData(pointer: SmartPsiElementPointer<PsiElement>): BlockData = readAction {
     val element = pointer.element ?: return@readAction BlockData("", "", null, null)
+    val parent = element.parent
+    if (parent is ProviderDefinedFunction<*>) {
+      return@readAction getBlockDataForFunction(parent)
+    }
+
     val (block, parameter) = when (element) {
       is HCLBlock -> {
         Pair(element, null)
@@ -74,8 +84,7 @@ internal abstract class BaseTfDocUrlProvider {
     return parentBlock?.let { Pair(it, paramName) }
   }
 
-  private fun getProviderData(element: PsiElement,
-                              identifier: String): ProviderData? {
+  private fun getProviderData(element: PsiElement, identifier: String): ProviderData? {
     val provider = getProvider(identifier, element) ?: return null
     return ProviderData(provider.namespace, provider.type, provider.version.ifEmpty { LATEST_VERSION })
   }
@@ -85,5 +94,13 @@ internal abstract class BaseTfDocUrlProvider {
 
     val model = TypeModelProvider.getModel(element)
     return model.getProviderType(identifier, element)
+  }
+
+  private fun getBlockDataForFunction(definedFunc: ProviderDefinedFunction<*>): BlockData {
+    val providerName = definedFunc.provider.getNameOrText()
+    val functionName = definedFunc.function.getNameOrText()
+
+    val providerData = getProviderData(definedFunc, providerName)
+    return BlockData(functionName, FUNCTION, null, providerData)
   }
 }
