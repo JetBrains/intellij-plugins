@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.python
+package org.jetbrains.qodana.python.community
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager

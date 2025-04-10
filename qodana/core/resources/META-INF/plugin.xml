@@ -27,7 +27,8 @@
     <module name="intellij.qodana.inspectionKts.kotlin"/>
     <module name="intellij.qodana.js"/>
     <module name="intellij.qodana.php"/>
-    <module name="intellij.qodana.python"/>
+    <module name="intellij.qodana.python.community"/>
+    <module name="intellij.qodana.python.coverage"/>
     <module name="intellij.qodana.jvm.dev"/>
     <module name="intellij.qodana.jvm.gradle"/>
     <module name="intellij.qodana.jvm.groovy"/>

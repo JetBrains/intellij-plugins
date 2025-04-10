@@ -1,0 +1,10 @@
+<idea-plugin package="org.jetbrains.qodana.python.community">
+  <dependencies>
+    <plugin id="com.intellij.modules.lang" />
+    <plugin id="PythonCore"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="org.jetbrains.qodana.python.community.QodanaPycharmPythonPathActivity"/>
+  </extensions>
+</idea-plugin>

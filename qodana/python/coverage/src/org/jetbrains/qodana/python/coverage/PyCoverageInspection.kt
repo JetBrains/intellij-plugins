@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.python
+package org.jetbrains.qodana.python.coverage
 
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.options.OptPane
@@ -6,9 +6,9 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import com.intellij.rt.coverage.data.ProjectData
 import com.intellij.python.pro.coverage.PyCoverageEngine
 import com.intellij.rt.coverage.data.ClassData
+import com.intellij.rt.coverage.data.ProjectData
 import com.jetbrains.python.psi.*
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
