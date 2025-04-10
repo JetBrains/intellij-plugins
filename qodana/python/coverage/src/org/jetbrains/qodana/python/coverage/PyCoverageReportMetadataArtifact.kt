@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.python
+package org.jetbrains.qodana.python.coverage
 
 import com.intellij.python.pro.coverage.PyCoverageEngine
 import org.jetbrains.qodana.coverage.CoverageEngineType

@@ -1,12 +1,12 @@
-package org.jetbrains.qodana.python
+package org.jetbrains.qodana.python.coverage
 
 import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageRunner
 import com.intellij.coverage.CoverageSuitesBundle
+import com.intellij.python.pro.coverage.PyCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.python.pro.coverage.PyCoverageEngine
 import junit.framework.TestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud

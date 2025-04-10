@@ -1,16 +1,16 @@
-package org.jetbrains.qodana.python
+package org.jetbrains.qodana.python.coverage
 
 import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageSuitesBundle
 import com.intellij.openapi.project.Project
-import com.intellij.rt.coverage.util.ProjectDataLoader
 import com.intellij.python.pro.coverage.PyCoverageEngine
+import com.intellij.rt.coverage.util.ProjectDataLoader
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageCloudArtifactsProcessor
 import org.jetbrains.qodana.coverage.CoverageMetaDataArtifact
 import org.jetbrains.qodana.report.ReportMetadata
+import org.jetbrains.qodana.staticAnalysis.inspections.coverage.CoverageCloudArtifactsProcessor
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
 
 class PyCoverageArtifactProcessor: CoverageCloudArtifactsProcessor {
