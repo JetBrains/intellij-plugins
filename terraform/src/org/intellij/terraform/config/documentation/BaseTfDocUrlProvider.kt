@@ -29,7 +29,7 @@ internal abstract class BaseTfDocUrlProvider {
     val PROVIDER: String = "provider"
 
     @JvmStatic
-    val FUNCTION: String = "function"
+    val FUNCTION: String = "functions"
   }
 
   internal suspend fun getDocumentationUrl(pointer: SmartPsiElementPointer<PsiElement>): List<String?> {
@@ -51,10 +51,7 @@ internal abstract class BaseTfDocUrlProvider {
 
   private suspend fun buildBlockData(pointer: SmartPsiElementPointer<PsiElement>): BlockData = readAction {
     val element = pointer.element ?: return@readAction BlockData("", "", null, null)
-    val parent = element.parent
-    if (parent is ProviderDefinedFunction<*>) {
-      return@readAction getBlockDataForFunction(parent)
-    }
+    getBlockDataIfProviderFunction(element)?.let { return@readAction it }
 
     val (block, parameter) = when (element) {
       is HCLBlock -> {
@@ -96,11 +93,13 @@ internal abstract class BaseTfDocUrlProvider {
     return model.getProviderType(identifier, element)
   }
 
-  private fun getBlockDataForFunction(definedFunc: ProviderDefinedFunction<*>): BlockData {
-    val providerName = definedFunc.provider.getNameOrText()
-    val functionName = definedFunc.function.getNameOrText()
+  private fun getBlockDataIfProviderFunction(element: PsiElement): BlockData? {
+    val function = element as? ProviderDefinedFunction<*> ?: element.parent as? ProviderDefinedFunction<*>  ?: return null
 
-    val providerData = getProviderData(definedFunc, providerName)
+    val providerName = function.provider.getNameOrText()
+    val functionName = function.function.getNameOrText()
+
+    val providerData = getProviderData(function, providerName)
     return BlockData(functionName, FUNCTION, null, providerData)
   }
 }

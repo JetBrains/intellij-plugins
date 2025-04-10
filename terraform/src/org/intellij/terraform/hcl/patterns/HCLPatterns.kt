@@ -9,9 +9,9 @@ import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
-import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction
 
 object HCLPatterns {
   val Nothing: ElementPattern<PsiElement> = StandardPatterns.alwaysFalse()
@@ -48,15 +48,18 @@ object HCLPatterns {
         }
       })
 
+  val ProviderFunctionNameCapture: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement(PsiElement::class.java)
+    .inFile(File).with(
+      object : PatternCondition<PsiElement>("function name in providerDefinedFunction") {
+        override fun accepts(identifier: PsiElement, context: ProcessingContext?): Boolean {
+          val parent = identifier.parent
+          if (parent !is ProviderDefinedFunction<*>) return false
+
+          return parent.function === identifier
+        }
+      }
+    )
+
   val FileOrBlock: ElementPattern<PsiElement> = PlatformPatterns.or(File, Block)
   val PropertyOrBlock: ElementPattern<PsiElement> = PlatformPatterns.or(Property, Block)
-
-  val HashesStringLiterals: PsiElementPattern.Capture<HCLStringLiteral> =
-    PlatformPatterns.psiElement(HCLStringLiteral::class.java)
-      .withSuperParent(1, HCLArray::class.java)
-      .withSuperParent(2, TfPsiPatterns.propertyWithName("hashes"))
-      .withSuperParent(3, HCLObject::class.java)
-      .withSuperParent(4, PlatformPatterns.psiElement(HCLBlock::class.java)
-        .with(TfPsiPatterns.createBlockPattern("provider"))
-      )
 }

@@ -15,6 +15,7 @@ internal object TfWebDocUrlProvider : BaseTfDocUrlProvider() {
       PROVIDER -> "$baseDocUrl${blockData.parameter?.let { "#$it" } ?: ""}"
       RESOURCES, DATASOURCES -> "$baseDocUrl/$context/${blockData.identifier?.let { TypeModel.getResourceName(it) } ?: return null}" +
                                 (blockData.parameter?.let { "#$it" } ?: "")
+      FUNCTION -> "$baseDocUrl/$context/${blockData.identifier}"
       else -> null
     }
   }

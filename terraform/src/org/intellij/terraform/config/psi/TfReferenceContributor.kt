@@ -96,6 +96,9 @@ class TfReferenceContributor : PsiReferenceContributor() {
         .and(HCLPatterns.BlockTypeIdentifierLiteral)
         .inFile(TerraformConfigFile)
       , WebDocumentationReferenceProvider)
+
+    // Documentation reference for provider-defined functions
+    registrar.registerReferenceProvider(HCLPatterns.ProviderFunctionNameCapture, WebDocumentationReferenceProvider)
   }
 }
 

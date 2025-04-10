@@ -16,11 +16,12 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
+import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction
 
 internal class TfDocumentPsi(val element: PsiElement,
                              private val text: String) : FakePsiElement(), HCLElement, SyntheticElement {
 
-  private val parentElement: HCLBlock? = element.parentOfType<HCLBlock>(true)
+  private val parentElement: PsiElement? = element.parent as? ProviderDefinedFunction<*> ?: element.parentOfType<HCLBlock>(true)
 
   private val parentPointer: SmartPsiElementPointer<PsiElement>? = parentElement?.createSmartPointer() //assuming that PsiElement is created under ReadAction in platform code
 

@@ -46,7 +46,7 @@ internal class TfMdDocUrlProvider(private val coroutineScope: CoroutineScope) : 
       RESOURCES, DATASOURCES -> providerData.docs.firstOrNull {
         it.category == context && (it.title == blockData.identifier?.let { TypeModel.getResourceName(it) } || it.title == blockData.identifier)
       }
-      FUNCTION -> providerData.docs.firstOrNull { it.category == "functions" && it.title == blockData.identifier }
+      FUNCTION -> providerData.docs.firstOrNull { it.category == FUNCTION && it.title == blockData.identifier }
       else -> null
     }?.let { docMetadata ->
       "${providerData.source.replace(GITHUB_PREFIX, GITHUB_RAW_FILES_URL)}/${providerData.tag}/${docMetadata.path}"
