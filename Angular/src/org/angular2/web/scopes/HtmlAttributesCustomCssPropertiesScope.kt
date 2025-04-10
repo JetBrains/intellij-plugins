@@ -7,17 +7,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.CSS_PROPERTIES
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
-import org.angular2.Angular2DecoratorUtil
-import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
-import org.angular2.Angular2Framework
-import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
 import org.angular2.lang.html.psi.PropertyBindingType
@@ -46,22 +38,6 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsS
   private class CustomCssPropertyTemplateScopeBuilder(
     private val holder: WebSymbolsPsiScopesHolder,
   ) : Angular2HtmlRecursiveElementVisitor() {
-
-    override fun visitFile(file: PsiFile) {
-      Angular2SourceUtil.findComponentClass(file)
-        ?.let { Angular2DecoratorUtil.findDecorator(it, COMPONENT_DEC) }
-        ?.let { HostBindingsCustomCssPropertiesScope(it) }
-        ?.getSymbols(CSS_PROPERTIES,
-                     WebSymbolsListSymbolsQueryParams.create(
-                       WebSymbolsQueryExecutorFactory.createCustom()
-                         .setFramework(Angular2Framework.ID)
-                         .allowResolve(true)
-                         .create(), false),
-                     Stack())
-        ?.filterIsInstance<WebSymbol>()
-        ?.forEach { symbol -> holder.currentScope { addSymbol(symbol) } }
-      super.visitFile(file)
-    }
 
     override fun visitXmlTag(tag: XmlTag) {
       holder.pushScope(tag)

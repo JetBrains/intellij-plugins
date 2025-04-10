@@ -1,5 +1,6 @@
 package org.angular2.web.scopes
 
+import com.intellij.css.frontback.icons.CssFrontbackApiIcons
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.navigation.SymbolNavigationService
@@ -18,7 +19,6 @@ import com.intellij.webSymbols.WebSymbol.Companion.CSS_PROPERTIES
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import com.intellij.webSymbols.utils.qualifiedKind
-import icons.AngularIcons
 import org.angular2.codeInsight.Angular2HighlightingUtils
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.lang.Angular2Bundle
@@ -78,8 +78,8 @@ abstract class AbstractAngular2CustomCssProperty<T : PsiElement>(
   @Suppress("HardCodedStringLiteral")
   override val presentation: TargetPresentation =
     TargetPresentation.builder(name.removePrefix("--"))
-      .icon(AngularIcons.Angular2)
-      .locationText(CssNamedItemPresentation.getLocationString(sourceElement))
+      .icon(CssFrontbackApiIcons.Custom_property)
+      .containerText(CssNamedItemPresentation.getLocationString(sourceElement))
       .presentation()
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =

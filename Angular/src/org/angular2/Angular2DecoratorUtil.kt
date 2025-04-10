@@ -70,7 +70,7 @@ object Angular2DecoratorUtil {
   const val ALIAS_PROP: String = "alias"
   const val TRANSFORM_PROP: String = "transform"
   const val DIRECTIVE_PROP: String = "directive"
-  const val HOST_ATTRIBUTE_TOKEN_CLASS: String ="HostAttributeToken"
+  const val HOST_ATTRIBUTE_TOKEN_CLASS: String = "HostAttributeToken"
 
   @JvmStatic
   fun isLiteralInNgDecorator(element: PsiElement?, propertyName: String, vararg decoratorNames: String): Boolean {
@@ -238,15 +238,16 @@ object Angular2DecoratorUtil {
       ?.let { isHostBinding(it) } == true
 
   fun isAngularEntityInitializerProperty(property: JSProperty, allowAbstractClasses: Boolean, vararg names: String): Boolean =
-    property.parent?.asSafely<JSObjectLiteralExpression>()
-      ?.parent?.asSafely<JSArgumentList>()
-      ?.parent?.asSafely<JSCallExpression>()
-      ?.parent?.asSafely<ES6Decorator>()
+    property.context?.asSafely<JSObjectLiteralExpression>()
+      ?.context?.let {
+        if (it is JSArgumentList) it.context else it
+      }?.asSafely<JSCallExpression>()
+      ?.context?.asSafely<ES6Decorator>()
       ?.let { isAngularEntityDecorator(it, allowAbstractClasses, *names) } == true
 
   fun isHostBinding(property: JSProperty): Boolean =
-    property.parent?.asSafely<JSObjectLiteralExpression>()
-      ?.parent?.asSafely<JSProperty>()
+    property.context?.asSafely<JSObjectLiteralExpression>()
+      ?.context?.asSafely<JSProperty>()
       ?.takeIf { it.name == HOST_PROP }
       ?.let { isAngularEntityInitializerProperty(it, true, COMPONENT_DEC, DIRECTIVE_DEC) } == true
 
