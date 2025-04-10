@@ -1,18 +1,26 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.psi.impl
 
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.impl.source.xml.XmlAttributeImpl
+import com.intellij.psi.impl.source.xml.XmlStubBasedAttributeBase
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTokenType
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
-import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
+import org.angular2.lang.html.stub.Angular2HtmlAttributeStubElementType
+import org.angular2.lang.html.stub.impl.Angular2HtmlBoundAttributeStubImpl
 import org.jetbrains.annotations.NonNls
 
-internal open class Angular2HtmlBoundAttributeImpl(elementType: Angular2HtmlElementTypes.Angular2ElementType)
-  : XmlAttributeImpl(elementType), Angular2HtmlBoundAttribute {
+internal open class Angular2HtmlBoundAttributeImpl
+  : XmlStubBasedAttributeBase<Angular2HtmlBoundAttributeStubImpl>, Angular2HtmlBoundAttribute {
+
+  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: Angular2HtmlAttributeStubElementType)
+    : super(stub, nodeType)
+
+  constructor(node: ASTNode) : super(node)
+
   override fun getNameElement(): XmlElement? {
     val result = super.getNameElement()
     return if (result == null
@@ -34,6 +42,18 @@ internal open class Angular2HtmlBoundAttributeImpl(elementType: Angular2HtmlElem
       }
       return info
     }
+
+  override fun getName(): String {
+    getGreenStub()
+      ?.let { return it.getName() }
+    return super.getName()
+  }
+
+  override fun getValue(): String? {
+    getGreenStub()
+      ?.let { return it.getValue() }
+    return super.getValue()
+  }
 
   override fun toString(): String {
     return javaClass.simpleName.removeSuffix(IMPL_SUFFIX) + " " + attributeInfo.toString()

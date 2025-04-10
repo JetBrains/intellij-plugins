@@ -1,17 +1,25 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.psi.impl
 
+import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlElement
-import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.parser.Angular2HtmlVarAttrTokenType
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlLet
+import org.angular2.lang.html.stub.Angular2HtmlAttributeStubElementType
+import org.angular2.lang.html.stub.impl.Angular2HtmlBoundAttributeStubImpl
 
-internal class Angular2HtmlLetImpl(type: Angular2HtmlElementTypes.Angular2ElementType) : Angular2HtmlBoundAttributeImpl(type), Angular2HtmlLet {
+internal class Angular2HtmlLetImpl : Angular2HtmlBoundAttributeImpl, Angular2HtmlLet {
+
+  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: Angular2HtmlAttributeStubElementType)
+    : super(stub, nodeType)
+
+  constructor(node: ASTNode) : super(node)
+
   override fun getNameElement(): XmlElement? {
     val res = super.getNameElement()
     return if (res == null && firstChild.node.elementType === Angular2HtmlVarAttrTokenType.LET) {

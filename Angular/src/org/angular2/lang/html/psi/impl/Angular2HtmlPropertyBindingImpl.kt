@@ -1,18 +1,26 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.psi.impl
 
+import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
-import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
+import org.angular2.lang.html.stub.Angular2HtmlAttributeStubElementType
+import org.angular2.lang.html.stub.impl.Angular2HtmlBoundAttributeStubImpl
 
-internal class Angular2HtmlPropertyBindingImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
-  : Angular2HtmlPropertyBindingBase(type), Angular2HtmlPropertyBinding {
+internal class Angular2HtmlPropertyBindingImpl : Angular2HtmlPropertyBindingBase, Angular2HtmlPropertyBinding {
+
+
+  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: Angular2HtmlAttributeStubElementType)
+    : super(stub, nodeType)
+
+  constructor(node: ASTNode) : super(node)
+
   override fun getReferences(hints: PsiReferenceService.Hints): Array<PsiReference> {
     if (bindingType == PropertyBindingType.CLASS) {
       if (hints.offsetInElement != null) {

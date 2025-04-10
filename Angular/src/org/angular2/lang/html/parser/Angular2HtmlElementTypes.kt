@@ -2,11 +2,9 @@
 package org.angular2.lang.html.parser
 
 import com.intellij.lang.ASTNode
-import com.intellij.psi.impl.source.xml.XmlAttributeImpl
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.xml.IXmlAttributeElementType
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.impl.*
@@ -22,9 +20,6 @@ internal interface Angular2HtmlElementTypes : Angular2HtmlTokenTypes, Angular2Ht
     }
   }
 
-  class Angular2AttributeElementType(debugName: @NonNls String, myClassConstructor: Function<Angular2ElementType, XmlAttributeImpl>)
-    : Angular2ElementType(debugName, myClassConstructor), IXmlAttributeElementType
-
   companion object {
     @JvmField
     val EXPANSION_FORM: IElementType = Angular2ElementType("NG:EXPANSION_FORM") { node ->
@@ -39,36 +34,6 @@ internal interface Angular2HtmlElementTypes : Angular2HtmlTokenTypes, Angular2Ht
     @JvmField
     val EXPANSION_FORM_CASE_CONTENT: IElementType = Angular2ElementType("NG:EXPANSION_FORM_CASE_CONTENT") { node ->
       Angular2HtmlExpansionFormCaseContentImpl(node)
-    }
-
-    @JvmField
-    val EVENT: IElementType = Angular2AttributeElementType("NG:EVENT") { node ->
-      Angular2HtmlEventImpl(node)
-    }
-
-    @JvmField
-    val BANANA_BOX_BINDING: IElementType = Angular2AttributeElementType("NG:BANANA_BOX_BINDING") { node ->
-      Angular2HtmlBananaBoxBindingImpl(node)
-    }
-
-    @JvmField
-    val PROPERTY_BINDING: IElementType = Angular2AttributeElementType("NG:PROPERTY_BINDING") { node ->
-      Angular2HtmlPropertyBindingImpl(node)
-    }
-
-    @JvmField
-    val REFERENCE: IElementType = Angular2AttributeElementType("NG:REFERENCE") { node ->
-      Angular2HtmlReferenceImpl(node)
-    }
-
-    @JvmField
-    val LET: IElementType = Angular2AttributeElementType("NG:LET") { node ->
-      Angular2HtmlLetImpl(node)
-    }
-
-    @JvmField
-    val TEMPLATE_BINDINGS: IElementType = Angular2AttributeElementType("NG:TEMPLATE_BINDINGS") { node ->
-      Angular2HtmlTemplateBindingsImpl(node)
     }
 
     @JvmField
@@ -88,12 +53,12 @@ internal interface Angular2HtmlElementTypes : Angular2HtmlTokenTypes, Angular2Ht
 
     @JvmField
     val ALL_ATTRIBUTES = TokenSet.create(
-      EVENT,
-      BANANA_BOX_BINDING,
-      PROPERTY_BINDING,
-      TEMPLATE_BINDINGS,
-      LET,
-      REFERENCE
+      Angular2HtmlStubElementTypes.EVENT,
+      Angular2HtmlStubElementTypes.BANANA_BOX_BINDING,
+      Angular2HtmlStubElementTypes.PROPERTY_BINDING,
+      Angular2HtmlStubElementTypes.TEMPLATE_BINDINGS,
+      Angular2HtmlStubElementTypes.LET,
+      Angular2HtmlStubElementTypes.REFERENCE
     )
   }
 }
