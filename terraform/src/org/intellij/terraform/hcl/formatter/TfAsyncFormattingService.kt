@@ -11,11 +11,11 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.eel.EelProcess
-import com.intellij.platform.eel.execute
 import com.intellij.platform.eel.getOrThrow
 import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.utils.readWholeText
 import com.intellij.platform.eel.provider.utils.sendWholeText
+import com.intellij.platform.eel.spawnProcess
 import com.intellij.psi.PsiFile
 import kotlinx.coroutines.*
 import org.intellij.terraform.config.Constants.TF_FMT
@@ -60,7 +60,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
               try {
                 withContext(Dispatchers.IO) {
                   val eelApi = project.getEelDescriptor().upgrade()
-                  process = eelApi.exec.execute(exePath).args("fmt", "-").getOrThrow()
+                  process = eelApi.exec.spawnProcess(exePath).args("fmt", "-").eelIt()
 
                   process.stdin.sendWholeText(request.documentText).getOrThrow()
                   process.stdin.close()
