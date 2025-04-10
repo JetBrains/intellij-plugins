@@ -7,8 +7,8 @@ terraform {
 }
 
 provider "datadog" {
-  api_key = "3e673868-2d0f-4441-9b27-9517218a5a76"
-  app_key = "01J2BDM4ZMYPNSC9YXBMM18HK9"
+  api_key = "0a000000-0a0a-0000-0a00-0000000a0a00"
+  app_key = "00A0AAA0AAAAAAA0AAAAA00AA0"
 }
 
 resource "datadog_synthetics_test" "example" {
