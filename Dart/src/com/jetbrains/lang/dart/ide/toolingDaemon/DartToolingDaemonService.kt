@@ -70,7 +70,8 @@ class DartToolingDaemonService private constructor(val project: Project, cs: Cor
   private val eventDispatcher: EventDispatcher<DartToolingDaemonListener> = EventDispatcher.create(DartToolingDaemonListener::class.java)
 
   private var activeLocationChangeEventSupported: Boolean = false
-  private val activeLocationChangeHandler: DartActiveLocationChangeHandler by lazy {
+
+  init {
     DartActiveLocationChangeHandler(this, cs)
   }
 
@@ -236,12 +237,6 @@ class DartToolingDaemonService private constructor(val project: Project, cs: Cor
     }
 
     return rootUris
-  }
-
-  fun sendActiveLocationChangeEvent() {
-    if (activeLocationChangeEventSupported) {
-      activeLocationChangeHandler.sendActiveLocationChangeEvent()
-    }
   }
 
   override fun dispose() {
