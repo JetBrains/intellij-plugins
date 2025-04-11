@@ -509,7 +509,7 @@ public final class DartAnalysisServerService implements Disposable {
     return Registry.is("dart.macros.support", false) && StringUtil.compareVersionNumbers(sdkVersion, MIN_FILE_URI_SDK_VERSION) >= 0;
   }
 
-  private static boolean isDartSdkVersionSufficientForWorkspaceApplyEdits(@NotNull String sdkVersion) {
+  public static boolean isDartSdkVersionSufficientForWorkspaceApplyEdits(@NotNull String sdkVersion) {
     return StringUtil.compareVersionNumbers(sdkVersion, MIN_WORKSPACE_APPLY_EDITS_SDK_VERSION) >= 0;
   }
 
