@@ -8,16 +8,32 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
-internal class DartActiveLocationChangeHandler(private val dtdService: DartToolingDaemonService, private var cs: CoroutineScope) {
+internal class DartActiveLocationChangeHandler(private val dtdService: DartToolingDaemonService, cs: CoroutineScope) {
   private var activeLocationNullSent: Boolean = false
 
-  internal fun sendActiveLocationChangeEvent() {
+  private val activeLocationChangeFlow: MutableSharedFlow<Unit> =
+    MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+
+  init {
     cs.launch {
-      doSendActiveLocationChangeEvent()
+      activeLocationChangeFlow
+        .debounce(300.milliseconds)
+        .collectLatest {
+          doSendActiveLocationChangeEvent()
+        }
     }
+  }
+
+  internal fun sendActiveLocationChangeEvent() {
+    activeLocationChangeFlow.tryEmit(Unit)
   }
 
   private suspend fun doSendActiveLocationChangeEvent() {
