@@ -4,7 +4,12 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.event.*
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
@@ -30,10 +35,30 @@ internal class DartActiveLocationChangeHandler(private val dtdService: DartTooli
           doSendActiveLocationChangeEvent()
         }
     }
-  }
 
-  internal fun sendActiveLocationChangeEvent() {
-    activeLocationChangeFlow.tryEmit(Unit)
+    val listener = object : DocumentListener, CaretListener, SelectionListener, FileEditorManagerListener {
+      private fun emitActiveLocationChange() {
+        activeLocationChangeFlow.tryEmit(Unit)
+      }
+
+      override fun documentChanged(event: DocumentEvent) = emitActiveLocationChange()
+      override fun caretPositionChanged(event: CaretEvent) = emitActiveLocationChange()
+      override fun caretAdded(event: CaretEvent) = emitActiveLocationChange()
+      override fun caretRemoved(event: CaretEvent) = emitActiveLocationChange()
+      override fun selectionChanged(e: SelectionEvent) = emitActiveLocationChange()
+      override fun fileOpened(source: FileEditorManager, file: VirtualFile) = emitActiveLocationChange()
+      override fun fileClosed(source: FileEditorManager, file: VirtualFile) = emitActiveLocationChange()
+      override fun selectionChanged(event: FileEditorManagerEvent) = emitActiveLocationChange()
+    }
+
+    EditorFactory.getInstance().eventMulticaster.apply {
+      addDocumentListener(listener, dtdService)
+      addCaretListener(listener, dtdService)
+      addSelectionListener(listener, dtdService)
+    }
+
+    dtdService.project.messageBus.connect(dtdService)
+      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, listener)
   }
 
   private suspend fun doSendActiveLocationChangeEvent() {
