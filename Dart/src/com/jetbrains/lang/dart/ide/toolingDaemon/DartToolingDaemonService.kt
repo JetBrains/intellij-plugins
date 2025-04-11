@@ -23,8 +23,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.EventDispatcher
+import com.intellij.util.PathUtil
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresReadLock
@@ -39,19 +41,20 @@ import de.roderick.weberknecht.WebSocket
 import de.roderick.weberknecht.WebSocketEventHandler
 import de.roderick.weberknecht.WebSocketException
 import de.roderick.weberknecht.WebSocketMessage
+import kotlinx.coroutines.CoroutineScope
 import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
 import java.util.concurrent.atomic.AtomicInteger
 
 @Service(Service.Level.PROJECT)
-class DartToolingDaemonService private constructor(private val project: Project) : Disposable {
+class DartToolingDaemonService private constructor(val project: Project, cs: CoroutineScope) : Disposable {
 
   private lateinit var dtdProcessHandler: KillableProcessHandler
   private var serviceRunning = false
 
   private lateinit var webSocket: WebSocket
-  var webSocketReady = false
+  var webSocketReady: Boolean = false
     private set
 
   var uri: String? = null
@@ -66,6 +69,11 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private val eventDispatcher: EventDispatcher<DartToolingDaemonListener> = EventDispatcher.create(DartToolingDaemonListener::class.java)
 
+  private var activeLocationChangeEventSupported: Boolean = false
+  private val activeLocationChangeHandler: DartActiveLocationChangeHandler by lazy {
+    DartActiveLocationChangeHandler(this, cs)
+  }
+
   @Throws(ExecutionException::class)
   fun startService() {
     if (serviceRunning) {
@@ -74,6 +82,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
     }
 
     val sdk = DartSdk.getDartSdk(project)?.takeIf { isDartSdkVersionSufficient(it) } ?: return
+
+    activeLocationChangeEventSupported = DartAnalysisServerService.isDartSdkVersionSufficientForWorkspaceApplyEdits(sdk.version)
 
     val commandLine = GeneralCommandLine().withWorkDirectory(sdk.homePath)
     commandLine.exePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk))
@@ -168,7 +178,8 @@ class DartToolingDaemonService private constructor(private val project: Project)
     response.addProperty("id", id)
     if (error == null) {
       response.add("result", result)
-    } else {
+    }
+    else {
       response.add("error", error)
     }
 
@@ -178,7 +189,7 @@ class DartToolingDaemonService private constructor(private val project: Project)
   }
 
   @Suppress("unused") // for the Flutter plugin
-  fun addToolingDaemonListener(listener: DartToolingDaemonListener, parentDisposable: Disposable) =
+  fun addToolingDaemonListener(listener: DartToolingDaemonListener, parentDisposable: Disposable): Unit =
     eventDispatcher.addListener(listener, parentDisposable)
 
   fun ensureRootsUpToDate() {
@@ -208,8 +219,6 @@ class DartToolingDaemonService private constructor(private val project: Project)
   @RequiresBackgroundThread
   /**
    * A simplified version of [com.jetbrains.lang.dart.analyzer.DartServerRootsHandler.calcIncludedAndExcludedDartRootPaths].
-   * URIs are constructed in the same way as in [com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.getLocalFileUri]
-   * but without falling back to plain OS-dependent paths for older SDK versions.
    */
   private fun calcRootUris(): List<String> {
     DartSdk.getDartSdk(project) ?: return emptyList()
@@ -220,15 +229,19 @@ class DartToolingDaemonService private constructor(private val project: Project)
         val contentEntryUrl = contentEntry.url
         if (contentEntryUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR)) {
           val rootPath = VfsUtilCore.urlToPath(contentEntryUrl)
-          val escapedPath = URLUtil.encodePath(rootPath)
-          val rootUrl = VirtualFileManager.constructUrl(URLUtil.FILE_PROTOCOL, escapedPath)
-          val rootUri = VfsUtil.toUri(rootUrl)?.toString() ?: rootUrl
+          val rootUri = getLocalFileUri(rootPath)
           rootUris.add(rootUri)
         }
       }
     }
 
     return rootUris
+  }
+
+  fun sendActiveLocationChangeEvent() {
+    if (activeLocationChangeEventSupported) {
+      activeLocationChangeHandler.sendActiveLocationChangeEvent()
+    }
   }
 
   override fun dispose() {
@@ -239,6 +252,19 @@ class DartToolingDaemonService private constructor(private val project: Project)
 
   private fun isDartSdkVersionSufficient(sdk: DartSdk): Boolean =
     StringUtil.compareVersionNumbers(sdk.version, MIN_SDK_VERSION) >= 0
+
+  fun getFileUri(file: VirtualFile): String = getLocalFileUri(file.path)
+
+  /**
+   * URIs are constructed in the same way as in [DartAnalysisServerService.getLocalFileUri]
+   * but without falling back to plain OS-dependent paths for older SDK versions.
+   */
+  private fun getLocalFileUri(localFilePath: String): String {
+    val escapedPath = URLUtil.encodePath(PathUtil.toSystemIndependentName(localFilePath))
+    val url = VirtualFileManager.constructUrl(URLUtil.FILE_PROTOCOL, escapedPath)
+    val uri = VfsUtil.toUri(url)
+    return uri?.toString() ?: url
+  }
 
 
   private inner class DtdProcessListener : ProcessListener {
