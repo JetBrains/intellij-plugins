@@ -22,6 +22,7 @@ CDK_ROW_TEMPLATE (typeText='"<ng-container cdkCellOutlet></ng-container>"'; prio
 CDK_TABLE (typeText='InjectionToken<any>'; priority=0.0; bold)
 CDK_TABLE_TEMPLATE (typeText='"\n  <ng-content select=\"caption\"></ng-content>\n  <ng-content select=\"colgroup, col\"></ng-content>\n  <ng-container headerRowOutlet></ng-container>\n  <ng-container rowOutlet></ng-container>\n  <ng-container noDataRowOutlet></ng-container>\n  <ng-container footerRowOutlet></ng-container>\n"'; priority=0.0; bold)
 CDK_TREE_NODE_OUTLET_NODE (typeText=null; priority=0.0; bold)
+CSSNestedDeclarations (typeText='CSSNestedDeclarations'; priority=0.0; bold)
 CSSStyleDeclaration (typeText='CSSStyleDeclaration'; priority=0.0; bold)
 CanvasRenderingContext2D (typeText='CanvasRenderingContext2D'; priority=0.0; bold)
 CdkAccordion (typeText=null; priority=0.0; bold)
