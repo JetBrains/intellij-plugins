@@ -2284,7 +2284,8 @@ public final class DartAnalysisServerService implements Disposable {
         registerPostfixCompletionTemplates();
 
         myDtdUri = null;
-        String dtdUri = DartToolingDaemonService.getInstance(myProject).getUri();
+        DartToolingDaemonService dtdService = myProject.getServiceIfCreated(DartToolingDaemonService.class);
+        String dtdUri = dtdService != null ? dtdService.getUri() : null;
         if (dtdUri != null) {
           connectToDtd(dtdUri);
         }
