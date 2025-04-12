@@ -15,15 +15,18 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.staticAnalysis.QodanaLinterProjectActivity
 
+private const val QODANA_PYTHON_PATH_ENV = "QODANA_PYTHON_PATH"
+private const val QODANA_PYTHON_PATH_PROPERTY = "qodana.python.path"
+
 class QodanaPycharmPythonPathActivity : QodanaLinterProjectActivity() {
   object Key : ActivityKey {
-    override val presentableName: String = "${PySdkFromEnvironmentVariable.PYCHARM_PYTHON_PATH_ENV} environment update"
+    override val presentableName: String = "$QODANA_PYTHON_PATH_ENV environment update"
   }
 
   override suspend fun run(project: Project) {
     coroutineScope {
       project.trackActivity(Key) {
-        val pycharmPythonPath = PySdkFromEnvironmentVariable.getPycharmPythonPathProperty()
+        val pycharmPythonPath = pythonPath()
         if (pycharmPythonPath.isNullOrEmpty()) {
           return@trackActivity
         }
@@ -56,5 +59,11 @@ class QodanaPycharmPythonPathActivity : QodanaLinterProjectActivity() {
       }
       awaitCancellation()
     }
+  }
+
+  private fun pythonPath(): String? {
+    return System.getenv(QODANA_PYTHON_PATH_ENV)
+           ?: System.getProperty(QODANA_PYTHON_PATH_PROPERTY)
+           ?: PySdkFromEnvironmentVariable.getPycharmPythonPathProperty()
   }
 }
