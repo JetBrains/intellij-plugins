@@ -107,7 +107,8 @@
   - name: intellij.qodana.inspectionKts.kotlin
   - name: intellij.qodana.js
   - name: intellij.qodana.php
-  - name: intellij.qodana.python
+  - name: intellij.qodana.python.community
+  - name: intellij.qodana.python.coverage
   - name: intellij.qodana.jvm.dev
   - name: intellij.qodana.jvm.gradle
   - name: intellij.qodana.jvm.groovy
