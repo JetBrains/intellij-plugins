@@ -82,7 +82,7 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
           processHandler.waitFor()
         }
       }
-      doRun(project.service<PlatformioService>(), text.invoke(), commandLine, reloadProject)
+      doRun(project.service<PlatformioService>(), text(), commandLine, reloadProject)
     }
   }
 
@@ -101,18 +101,18 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
 }
 
 class OpenSettings(private val project: Project?) : Runnable, ActionListener {
-  override fun run() =
+  override fun run(): Unit =
     ShowSettingsUtil.getInstance().showSettingsDialog(project, PlatformioConfigurable::class.java)
 
-  override fun actionPerformed(e: ActionEvent) = run()
+  override fun actionPerformed(e: ActionEvent): Unit = run()
 }
 
 object OpenInstallGuide : Runnable, ActionListener {
-  const val URL = "https://docs.platformio.org/en/latest/core/installation.html"
-  override fun run() =
+  const val URL: String = "https://docs.platformio.org/en/latest/core/installation.html"
+  override fun run(): Unit =
     BrowserUtil.browse(URL)
 
-  override fun actionPerformed(e: ActionEvent) = run()
+  override fun actionPerformed(e: ActionEvent): Unit = run()
 }
 
 fun notifyPlatformioNotFound(project: Project?) {

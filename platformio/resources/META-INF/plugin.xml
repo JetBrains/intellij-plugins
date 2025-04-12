@@ -52,8 +52,6 @@
                        id="PlatformioProjectTaskRunner"/>
     <registryKey key="PlatformIO.system.in.process" defaultValue="true" restartRequired="true"
                  description="Whether IDE should use 'in-process' mode for PlatformIO"/>
-    <registryKey key="PlatformIO.use.webview" defaultValue="false" restartRequired="false"
-                 description="Whether IDE should display `pio home` in a dialog and use `pio home` for new project creation"/>
     <externalIconProvider key="PlatformIO" implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioIconProvider"/>
     <postStartupActivity implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace$PlatformioStartupActivity"/>
     <fileTypeOverrider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioFileTypeDetector"/>

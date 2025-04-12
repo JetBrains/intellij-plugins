@@ -30,7 +30,6 @@
     <orderEntry type="module" module-name="intellij.cidr.util" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
-    <orderEntry type="library" name="Java-WebSocket" level="project" />
     <orderEntry type="library" name="eclipse.lsp4j.jsonrpc" level="project" />
     <orderEntry type="library" name="jediterm-core" level="project" />
     <orderEntry type="library" name="jediterm-ui" level="project" />

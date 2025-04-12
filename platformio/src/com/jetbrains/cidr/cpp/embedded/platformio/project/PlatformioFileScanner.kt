@@ -129,9 +129,10 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
       confBuilder.withFileConfiguration(it)
     }
 
+
     publishMessage(ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.sources", fileList.size),
                    parentEventId = scanFilesEventId,
-                   details = fileList.joinToString("\n"))
+                   details = @Suppress("HardCodedStringLiteral") fileList.joinToString("\n"))
   }
 
   internal fun scanLibraries(
@@ -159,7 +160,7 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
       }
     }
     publishMessage(message = ClionEmbeddedPlatformioBundle.message("build.event.message.parsed.libraries", parsedLibPaths.size),
-                   details = parsedLibPaths.values.joinToString("\n"),
+                   details = @Suppress("HardCodedStringLiteral") parsedLibPaths.values.joinToString("\n"),
                    parentEventId = scanLibId)
     return parsedLibPaths
   }

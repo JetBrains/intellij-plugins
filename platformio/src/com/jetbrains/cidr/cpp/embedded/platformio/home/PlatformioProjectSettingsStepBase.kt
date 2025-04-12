@@ -20,7 +20,7 @@ abstract class PlatformioProjectSettingsStepBase(projectGenerator: DirectoryProj
 
   enum class Presense { UNKNOWN, YES, NO }
 
-  protected val platformioPresent = AtomicProperty(Presense.UNKNOWN)
+  protected val platformioPresent: AtomicProperty<Presense> = AtomicProperty(Presense.UNKNOWN)
 
   private val platformioWatcher: ScheduledExecutorService = ConcurrencyUtil.newSingleScheduledThreadExecutor("PlatformIO watcher")
 

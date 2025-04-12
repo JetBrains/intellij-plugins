@@ -183,8 +183,8 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         }
         platformioService.setTargets(addUploadIfMissing(targets.orEmpty()))
 
-        val buildDirectory: File = calcBuildDir(projectDir, platformioSection)
-        platformioService.buildDirectory = buildDirectory.toPath()
+        val buildDirectory: Path = calcBuildDir(projectDir, platformioSection)
+        platformioService.buildDirectory = buildDirectory
         val name = pioActiveMetadata["env_name"] as String
         val confBuilder = ExternalResolveConfigurationBuilder(id = name, configName = "PlatformIO", buildWorkingDir = projectDir.toNioPath().toFile())
           .withVariants(name)
@@ -331,14 +331,14 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     return listOf(cLanguageConfiguration, cxxLanguageConfiguration)
   }
 
-  private fun calcBuildDir(projectDir: VirtualFile, platformioSection: Map<String, Any>): File {
+  private fun calcBuildDir(projectDir: VirtualFile, platformioSection: Map<String, Any>): Path {
     val buildDirName = platformioSection["build_dir"].asSafely<String>()
 
     if (buildDirName != null) {
-      return projectDir.toNioPath().resolve(buildDirName).toFile()
+      return projectDir.toNioPath().resolve(buildDirName)
     }
     val workspaceDirName = platformioSection["workspace_dir"].asSafely<String>() ?: ".pio"
-    return projectDir.toNioPath().resolve(workspaceDirName).resolve("build").toFile()
+    return projectDir.toNioPath().resolve(workspaceDirName).resolve("build")
   }
 
   private fun cliGenerateProject(project: Project,

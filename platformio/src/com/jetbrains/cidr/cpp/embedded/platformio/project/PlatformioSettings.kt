@@ -34,7 +34,7 @@ class PlatformioSettings(project: Project) :
     return state
   }
 
-  override fun loadState(state: PlatformioSettingsState) = super.loadState(state)
+  override fun loadState(state: PlatformioSettingsState): Unit = super.loadState(state)
 
 }
 
