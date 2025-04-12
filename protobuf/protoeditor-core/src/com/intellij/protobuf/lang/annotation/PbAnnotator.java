@@ -21,6 +21,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.protobuf.ide.highlighter.PbSyntaxHighlighter;
 import com.intellij.protobuf.ide.settings.PbProjectSettings;
@@ -35,6 +37,7 @@ import com.intellij.protobuf.lang.resolve.PbFileResolver;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.protobuf.lang.util.ValueTester;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
@@ -45,7 +48,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** General proto element error annotations. */
-public class PbAnnotator implements Annotator {
+public final class PbAnnotator implements Annotator, DumbAware {
 
   // Allowable map key types, as defined in descriptor.cc.
   private static final ImmutableSet<BuiltInType> ALLOWED_KEY_TYPES =
@@ -270,6 +273,8 @@ public class PbAnnotator implements Annotator {
   }
 
   private static void annotateMapFieldEnumValueType(PbMapField mapField, AnnotationHolder holder) {
+    if (DumbService.isDumb(mapField.getProject())) return;
+
     PbTypeName valueType = mapField.getValueType();
     if (valueType == null) {
       return;
@@ -295,9 +300,8 @@ public class PbAnnotator implements Annotator {
     }
   }
 
-  private static void annotateGroupDefinition(
-      PbGroupDefinition groupDefinition, AnnotationHolder holder) {
-    // Groups are a message type + a field. However, the field is not part of the PSI tree and
+  private static void annotateGroupDefinition(PbGroupDefinition groupDefinition, AnnotationHolder holder) {
+    // Groups are a message type plus a field. However, the field is not part of the PSI tree and
     // aren't traversed by the annotator normally. Check the field here.
     for (PbSymbol sibling : groupDefinition.getAdditionalSiblings()) {
       if (sibling instanceof PbField) {
@@ -306,8 +310,7 @@ public class PbAnnotator implements Annotator {
     }
   }
 
-  private static void annotateEnumDefinition(
-      PbEnumDefinition enumDefinition, AnnotationHolder holder) {
+  private static void annotateEnumDefinition(PbEnumDefinition enumDefinition, AnnotationHolder holder) {
     PsiElement name = enumDefinition.getNameIdentifier();
     if (name == null) {
       return;
@@ -409,6 +412,8 @@ public class PbAnnotator implements Annotator {
   }
 
   private static void annotateMessageSetExtensionField(PbField field, AnnotationHolder holder) {
+    if (DumbService.isDumb(field.getProject())) return;
+
     PbTypeName extendeeType = field.getExtendee();
     if (extendeeType == null) {
       return;
@@ -484,6 +489,8 @@ public class PbAnnotator implements Annotator {
   }
 
   private static void annotateOptionNameReference(PbOptionName name, AnnotationHolder holder) {
+    if (DumbService.isDumb(name.getProject())) return;
+
     PsiElement symbol = name.getSymbol();
     switch (SharedAnnotations.getReferenceState(name.getEffectiveReference())) {
       case VALID, NULL -> { }
@@ -499,6 +506,8 @@ public class PbAnnotator implements Annotator {
   }
 
   private static void annotateTypeName(PbTypeName name, AnnotationHolder holder) {
+    if (DumbService.isDumb(name.getProject())) return;
+
     // A type name must be either a built-in type or a NamedTypeElement (message or enum).
     if (name instanceof PbMessageTypeName) {
       // Must be a message type.
@@ -523,8 +532,8 @@ public class PbAnnotator implements Annotator {
   // For example, in "option (myopt).foo.bar = 3;", "foo" would be given an error annotation if
   // it referred to a repeated message. Repeated messages must be initialized using aggregate
   // values: "option (myopt).foo = { bar: 3 };"
-  private static void annotateRepeatedMessageFieldInitialization(
-      PbOptionName name, AnnotationHolder holder) {
+  private static void annotateRepeatedMessageFieldInitialization(PbOptionName name, AnnotationHolder holder) {
+    if (DumbService.isDumb(name.getProject())) return;
 
     if (!(name.getParent() instanceof PbOptionName)) {
       // This check only applies to qualifier names. E.g., "foo" and "bar" in "foo.bar.baz".
@@ -712,7 +721,8 @@ public class PbAnnotator implements Annotator {
         conflictFiles.add(otherFile);
       }
     }
-    if (!conflictFiles.isEmpty()) {
+    PsiFile psiFile = holder.getCurrentAnnotationSession().getFile();
+    if (!conflictFiles.isEmpty() && !DumbService.isDumb(psiFile.getProject())) {
       // Figure out the import path (as written in the import statement) for the first-listed
       // conflicting import.
       String importName = getFirstImportName(file, conflictFiles);

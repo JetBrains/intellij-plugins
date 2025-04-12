@@ -19,6 +19,7 @@ import com.google.common.base.Ascii;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.protobuf.lang.PbLangBundle;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto2Syntax;
 
 /** Annotations specific to proto2 syntax level. */
-public class Proto2Annotator implements Annotator {
+public final class Proto2Annotator implements Annotator, DumbAware {
   @Override
   public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     // Only operate on proto3 files.

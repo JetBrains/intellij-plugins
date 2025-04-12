@@ -19,6 +19,8 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.ProtoNumberValue.SourceType;
 import com.intellij.psi.PsiElement;
@@ -42,24 +44,24 @@ import java.util.Objects;
  *   }
  * </pre>
  */
-public class PbHighlightingAnnotator implements Annotator {
+public final class PbHighlightingAnnotator implements Annotator, DumbAware {
 
   @Override
   public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
 
     element.accept(
         new PbVisitor() {
-
           @Override
           public void visitIdentifierValue(@NotNull PbIdentifierValue value) {
             PsiReference ref = value.getReference();
             // First, check to see if this is an enum value.
             if (ref != null) {
-              // A non-null reference means this could be an enum value, if it resolves.
-              if (ref.resolve() != null) {
+              // A non-null reference means this could be an enum value if it resolves.
+              if (!DumbService.isDumb(value.getProject()) && ref.resolve() != null) {
                 setHighlighting(value, holder, PbSyntaxHighlighter.ENUM_VALUE);
               }
-            } else {
+            }
+            else {
               // No reference - check to see if it should be highlighted as a special built-in value
               ProtoNumberValue numberValue = value.getAsNumber();
               if (numberValue != null) {

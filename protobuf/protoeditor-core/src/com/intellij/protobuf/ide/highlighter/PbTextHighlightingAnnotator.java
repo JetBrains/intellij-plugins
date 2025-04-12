@@ -19,6 +19,8 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.ProtoNumberValue.SourceType;
 import com.intellij.psi.PsiElement;
@@ -26,7 +28,7 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 
 /** A small highlighting annotator for text format elements. */
-public class PbTextHighlightingAnnotator implements Annotator {
+public final class PbTextHighlightingAnnotator implements Annotator, DumbAware {
 
   @Override
   public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
@@ -37,11 +39,12 @@ public class PbTextHighlightingAnnotator implements Annotator {
             PsiReference ref = identifier.getReference();
             // First, check to see if this is an enum value.
             if (ref != null) {
-              // A non-null reference means this could be an enum value, if it resolves.
-              if (ref.resolve() != null) {
+              // A non-null reference means this could be an enum value if it resolves.
+              if (!DumbService.isDumb(identifier.getProject()) && ref.resolve() != null) {
                 setHighlighting(identifier, holder, getEnumValueKey(identifier));
               }
-            } else {
+            }
+            else {
               // No reference - check to see if it should be highlighted as a special built-in
               // value
               ProtoNumberValue numberValue = identifier.getAsNumber();

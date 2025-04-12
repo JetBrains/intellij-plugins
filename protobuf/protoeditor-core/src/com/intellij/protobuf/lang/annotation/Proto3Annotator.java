@@ -20,6 +20,8 @@ import com.google.common.collect.Multimap;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbLangBundle;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
@@ -36,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.protobuf.lang.psi.SyntaxLevelKt.isDeprecatedProto3Syntax;
 
 /** Annotations specific to proto3 syntax level. */
-public class Proto3Annotator implements Annotator {
+public final class Proto3Annotator implements Annotator, DumbAware {
   @Override
   public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     // Only operate on proto3 files.
@@ -116,8 +118,9 @@ public class Proto3Annotator implements Annotator {
   /*
    * Extend definitions are only allowed for extending descriptor options.
    */
-  private static void annotateExtendDefinition(
-    PbExtendDefinition extendDefinition, AnnotationHolder holder) {
+  private static void annotateExtendDefinition(PbExtendDefinition extendDefinition, AnnotationHolder holder) {
+    if (DumbService.isDumb(extendDefinition.getProject())) return;
+
     Descriptor descriptor = Descriptor.locate(extendDefinition.getPbFile());
     if (descriptor == null) {
       return;
@@ -182,7 +185,7 @@ public class Proto3Annotator implements Annotator {
     }
 
     PbTypeName fieldType = field.getTypeName();
-    if (fieldType != null) {
+    if (fieldType != null && !DumbService.isDumb(field.getProject())) {
       PbNamedTypeElement enumDef =
         PbPsiUtil.resolveRefToType(fieldType.getEffectiveReference(), PbEnumDefinition.class);
       if (enumDef != null) {
@@ -240,7 +243,7 @@ public class Proto3Annotator implements Annotator {
       return;
     }
 
-    if (PbPsiUtil.isDescriptorOption(optionExpression, "cc_api_compatibility")) {
+    if (PbPsiUtil.isDescriptorOption(optionExpression, "cc_api_compatibility") && !DumbService.isDumb(optionName.getProject())) {
       PbIdentifierValue identifierValue = optionExpression.getIdentifierValue();
       if (identifierValue == null) {
         return;
