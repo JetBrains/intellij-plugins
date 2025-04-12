@@ -57,7 +57,8 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
   @Override
   public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     SettingsEditorGroup<CucumberJavaRunConfiguration> group = new SettingsEditorGroup<>();
-    group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new CucumberJavaApplicationConfigurable(getProject()));
+    group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"),
+                    new CucumberJavaApplicationConfigurable(getProject()));
     JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
     group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<>());
     return group;
@@ -162,7 +163,8 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
       if (VersionComparatorUtil.compare(cucumberCoreVersion, String.valueOf(i)) >= 0) {
         if (cucumberJvmFormatterClassPath.endsWith(".jar")) {
           result.add(cucumberJvmFormatterClassPath.replace(".jar", i + ".jar"));
-        } else {
+        }
+        else {
           // Running IDEA from sources
           result.add(cucumberJvmFormatterClassPath + i);
         }
@@ -230,7 +232,9 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
             ProgressManager.getInstance().run(task);
           }
           else {
-            ApplicationManager.getApplication().runReadAction(() -> myCucumberGlueProvider.calculateGlue(glue -> CucumberJavaUtil.addGlue(glue, glues)));
+            ApplicationManager.getApplication().runReadAction(() -> myCucumberGlueProvider.calculateGlue(glue -> {
+              CucumberJavaUtil.addGlue(glue, glues);
+            }));
           }
           getOptions().setGlue(StringUtil.join(glues, " "));
           myCucumberGlueProvider = null;

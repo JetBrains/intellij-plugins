@@ -23,6 +23,8 @@ import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.CUCUMBER_1_1_
 
 
 public final class CucumberJavaVersionUtil {
+  public static final String CUCUMBER_CORE_VERSION_7 = "7";
+  public static final String CUCUMBER_CORE_VERSION_6 = "6";
   public static final String CUCUMBER_CORE_VERSION_5 = "5";
   public static final String CUCUMBER_CORE_VERSION_4_5 = "4.5";
   public static final String CUCUMBER_CORE_VERSION_4 = "4";
@@ -37,6 +39,11 @@ public final class CucumberJavaVersionUtil {
   private static final Logger LOG = Logger.getInstance(CucumberJavaVersionUtil.class);
 
   static {
+    // We detect the cucumber-core version in the project by checking what classes were added between the versions.
+    // Example: https://github.com/cucumber/cucumber-jvm/compare/v5.0.0...v6.0.0
+
+    VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.core.backend.SourceReference", CUCUMBER_CORE_VERSION_7));
+    VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.core.exception.ExceptionUtils", CUCUMBER_CORE_VERSION_6));
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.plugin.event.EventHandler", CUCUMBER_CORE_VERSION_5));
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.core.cli.Main", CUCUMBER_CORE_VERSION_4_5));
     VERSION_CLASS_MARKERS.add(Pair.create("cucumber.api.event.ConcurrentEventListener", CUCUMBER_CORE_VERSION_4));
@@ -48,9 +55,10 @@ public final class CucumberJavaVersionUtil {
   }
 
   /**
-   * Computes and caches version of attached Cucumber Java library.
-   * If {@code module} is not null module's scope with libraries used to look for Cucumber-Core library,
-   * {@code project}'s scope used otherwise.
+   * Computes and caches the version of the attached Cucumber Java library.
+   * <p>
+   * If {@code module} is not null, then the module's scope with libraries is used to look for {@code io-cucumber:cucumber-core} library.
+   * Otherwise, the {@code project}'s scope is used.
    */
   public static @NotNull String getCucumberCoreVersion(@Nullable Module module, @NotNull Project project) {
     CachedValuesManager manager = CachedValuesManager.getManager(project);
@@ -71,6 +79,10 @@ public final class CucumberJavaVersionUtil {
 
   public static boolean isCucumber3OrMore(@NotNull Module module) {
     return VersionComparatorUtil.compare(getCucumberCoreVersion(module, module.getProject()), CUCUMBER_CORE_VERSION_3) >= 0;
+  }
+
+  public static boolean isCucumber60orMore(@NotNull Module module) {
+    return VersionComparatorUtil.compare(getCucumberCoreVersion(module, module.getProject()), CUCUMBER_CORE_VERSION_6) >= 0;
   }
 
   private static @NotNull String computeCucumberCoreVersion(@Nullable Module module, @NotNull Project project) {

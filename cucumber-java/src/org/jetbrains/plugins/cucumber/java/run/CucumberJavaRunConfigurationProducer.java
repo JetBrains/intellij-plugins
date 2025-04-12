@@ -58,8 +58,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
                                                                                             "io.cucumber.java.DefaultDataTableEntryTransformer",
                                                                                             "io.cucumber.java.DefaultDataTableCellTransformer");
 
-  public static final Set<String> CONFIGURATION_ANNOTATION_NAMES = ContainerUtil.newHashSet("io.cucumber.spring.CucumberContextConfiguration",
-                                                                                            "io.cucumber.spring.ScenarioScope");
+  public static final Set<String> CONFIGURATION_ANNOTATION_NAMES =
+    ContainerUtil.newHashSet("io.cucumber.spring.CucumberContextConfiguration",
+                             "io.cucumber.spring.ScenarioScope");
 
   @Override
   public @NotNull ConfigurationFactory getConfigurationFactory() {
@@ -115,21 +116,25 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
 
     configuration.setCucumberCoreVersion(getCucumberCoreVersion(module, module.getProject()));
 
+    String cucumberCoreVersion = configuration.getCucumberCoreVersion();
     if (configuration.getMainClassName() == null) {
-      configuration.setMainClassName(getCucumberMainClass(configuration.getCucumberCoreVersion()));
+      configuration.setMainClassName(getCucumberMainClass(cucumberCoreVersion));
     }
     if (JavaPsiFacade.getInstance(project).findClass(configuration.getMainClassName(), GlobalSearchScope.allScope(project)) == null) {
       LOG.debug("Failed to find main cucumber class: ", configuration.getMainClassName());
       return false;
     }
     if (StringUtil.isEmpty(configuration.getGlue())) {
-      configuration.setGlueProvider(getGlueProvider(element));
+      if (isCucumber60orMore(module)) {
+        // Cucumber can automatically find glue packages since v6. See IDEA-243074
+        configuration.setGlueProvider(getGlueProvider(element));
+      }
     }
     configuration.setNameFilter(getNameFilter(context));
     configuration.setFilePath(virtualFile.getPath());
     String programParametersFromDefaultConfiguration = StringUtil.defaultIfEmpty(configuration.getProgramParameters(), "");
     if (StringUtil.isEmpty(programParametersFromDefaultConfiguration)) {
-      configuration.setProgramParameters(getSMFormatterOptions(configuration.getCucumberCoreVersion()));
+      configuration.setProgramParameters(getSMFormatterOptions(cucumberCoreVersion));
     }
 
     if (configuration.getNameFilter() != null && !configuration.getNameFilter().isEmpty()) {

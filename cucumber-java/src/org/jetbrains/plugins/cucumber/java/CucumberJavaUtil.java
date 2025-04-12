@@ -79,7 +79,7 @@ public final class CucumberJavaUtil {
   public static final MapParameterTypeManager JAVA_DEFAULT_PARAMETER_TYPE_MANAGER = new MapParameterTypeManager(STANDARD_PARAMETER_TYPES);
 
   /**
-   * Checks if expression should be considered as a CucumberExpression or as a RegEx
+   * Checks if the expression should be considered as a CucumberExpression or as a RegEx
    * @see <a href="https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/heuristics.adoc">heuristic from cucumber library</a>
    * @see <a href="https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/src/main/java/io/cucumber/cucumberexpressions/ExpressionFactory.java>implementation in cucumber library</a>
    */

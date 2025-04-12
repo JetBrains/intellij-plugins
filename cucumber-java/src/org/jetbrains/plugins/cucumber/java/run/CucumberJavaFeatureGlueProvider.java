@@ -18,6 +18,10 @@ public class CucumberJavaFeatureGlueProvider implements CucumberGlueProvider {
     myElement = element;
   }
 
+  /**
+   * @param consumer Function that is called with the fully qualified name of a package containing Cucumber glue definitions.
+   *                 If there is >1 such package, this function will be called for each one of them.
+   */
   @Override
   public void calculateGlue(@NotNull Consumer<String> consumer) {
     PsiFile file = myElement.getContainingFile();
