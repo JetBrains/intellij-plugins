@@ -1,12 +1,13 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.references
 
+import com.intellij.javascript.JSBuiltInTypeEngineEvaluation
 import com.intellij.javascript.webSymbols.symbols.asWebSymbol
 import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
+import com.intellij.model.psi.PsiSymbolReferenceHints
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
@@ -20,7 +21,7 @@ import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 class Angular2DirectivePropertyLiteralReferencesProvider : PsiWebSymbolReferenceProvider<JSLiteralExpression> {
 
-  override fun getOffsetsToReferencedSymbols(psiElement: JSLiteralExpression): Map<Int, WebSymbol> {
+  override fun getOffsetsToReferencedSymbols(psiElement: JSLiteralExpression, hints: PsiSymbolReferenceHints): Map<Int, WebSymbol> {
     val stringValue = psiElement.stubSafeStringValue ?: return emptyMap()
     val colonIndex = stringValue.indexOf(':').takeIf { it >= 0 } ?: stringValue.length
     val startOffset = StringUtil.skipWhitespaceForward(stringValue, 0)
@@ -28,6 +29,12 @@ class Angular2DirectivePropertyLiteralReferencesProvider : PsiWebSymbolReference
     if (startOffset >= endOffset)
       return emptyMap()
 
+    return JSBuiltInTypeEngineEvaluation.forceBuiltInTypeEngineIfNeeded(psiElement, hints) {
+      map(psiElement, stringValue, startOffset, endOffset)
+    }
+  }
+
+  private fun map(psiElement: JSLiteralExpression, stringValue: String, startOffset: Int, endOffset: Int): Map<Int, WebSymbol> {
     val (kind, directive, hostDirective) = getPropertyDeclarationOrReferenceKindAndDirective(psiElement, false)
                                            ?: return emptyMap()
     if (kind != INPUTS_PROP && kind != OUTPUTS_PROP)
@@ -35,24 +42,21 @@ class Angular2DirectivePropertyLiteralReferencesProvider : PsiWebSymbolReference
 
     val name = stringValue.substring(startOffset, endOffset)
 
-    return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(psiElement) {
-      if (hostDirective) {
-        val properties = (if (kind == INPUTS_PROP) directive.inputs else directive.outputs)
-        val symbol = properties.find { it.name == name }
-                     ?: PsiWebSymbolReferenceProvider.unresolvedSymbol(if (kind == INPUTS_PROP) NG_DIRECTIVE_INPUTS else NG_DIRECTIVE_OUTPUTS, name)
-        mapOf(startOffset + 1 to symbol)
-      }
-      else {
-        val symbol = directive
-                       .asSafely<Angular2ClassBasedDirective>()
-                       ?.typeScriptClass
-                       ?.asWebSymbol()
-                       ?.getMatchingJSPropertySymbols(name, null)
-                       ?.find { it.source is JSAttributeListOwner }
-                     ?: return@withTypeEvaluationLocation emptyMap()
-        mapOf(startOffset + 1 to symbol)
-      }
+    return if (hostDirective) {
+      val properties = (if (kind == INPUTS_PROP) directive.inputs else directive.outputs)
+      val symbol = properties.find { it.name == name }
+                   ?: PsiWebSymbolReferenceProvider.unresolvedSymbol(if (kind == INPUTS_PROP) NG_DIRECTIVE_INPUTS else NG_DIRECTIVE_OUTPUTS, name)
+      mapOf(startOffset + 1 to symbol)
+    }
+    else {
+      val symbol = directive
+                     .asSafely<Angular2ClassBasedDirective>()
+                     ?.typeScriptClass
+                     ?.asWebSymbol()
+                     ?.getMatchingJSPropertySymbols(name, null)
+                     ?.find { it.source is JSAttributeListOwner }
+                   ?: return emptyMap()
+      mapOf(startOffset + 1 to symbol)
     }
   }
-
 }

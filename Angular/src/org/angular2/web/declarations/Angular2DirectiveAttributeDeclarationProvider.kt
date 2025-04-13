@@ -1,5 +1,6 @@
 package org.angular2.web.declarations
 
+import com.intellij.javascript.JSBuiltInTypeEngineEvaluation
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSLiteralExpression
@@ -7,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
+import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
@@ -22,13 +24,19 @@ class Angular2DirectiveAttributeDeclarationProvider : WebSymbolDeclarationProvid
                ?: return emptyList()
 
     return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) {
-      Angular2EntitiesProvider . getDirective (PsiTreeUtil.getParentOfType(element, TypeScriptClass::class.java))
+      Angular2EntitiesProvider.getDirective(PsiTreeUtil.getParentOfType(element, TypeScriptClass::class.java))
         ?.attributes
         ?.find { it.name == name && it.sourceElement == element }
         ?.asSafely<WebSymbolDeclaredInPsi>()
         ?.declaration
         ?.let { listOf(it) }
       ?: emptyList()
+    }
+  }
+
+  override fun getEquivalentDeclarations(element: PsiElement, offsetInElement: Int, target: WebSymbol): Collection<WebSymbolDeclaration> {
+    return JSBuiltInTypeEngineEvaluation.forceBuiltInTypeEngineIfNeeded(element, target.psiContext) {
+      super.getEquivalentDeclarations(element, offsetInElement, target)
     }
   }
 }
