@@ -11,29 +11,49 @@ import org.jetbrains.vuejs.model.VueInstanceOwner
 import org.jetbrains.vuejs.model.VueNamedEntity
 import java.util.*
 
-class VueComponentInstanceType(source: JSTypeSource,
-                               private val instanceOwner: VueInstanceOwner,
-                               typeMembers: List<PropertySignature>)
-  : JSTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
+class VueComponentInstanceType(
+  source: JSTypeSource,
+  private val instanceOwner: VueInstanceOwner,
+  typeMembers: List<PropertySignature>,
+) : JSTypeBaseImpl(source),
+    JSCodeBasedType,
+    JSTypeWithIncompleteSubstitution {
 
-  private val typeMembers = typeMembers.toList()
-  private val membersNames = typeMembers.map { it.memberName }
+  private val typeMembers: List<PropertySignature> =
+    typeMembers.toList()
 
-  override fun copyWithNewSource(source: JSTypeSource): JSType = VueComponentInstanceType(source, instanceOwner, typeMembers)
+  private val membersNames: List<String> =
+    typeMembers.map { it.memberName }
+
+  override fun copyWithNewSource(source: JSTypeSource): JSType =
+    VueComponentInstanceType(
+      source = source,
+      instanceOwner = instanceOwner,
+      typeMembers = typeMembers,
+    )
 
   override fun acceptChildren(visitor: JSRecursiveTypeVisitor) {
     typeMembers.forEach { it.acceptChildren(visitor) }
   }
 
-  override fun hashCodeImpl(): Int = Objects.hashCode(membersNames.toTypedArray()) * 31 + instanceOwner.hashCode()
+  override fun hashCodeImpl(): Int =
+    Objects.hashCode(membersNames.toTypedArray()) * 31 +
+    instanceOwner.hashCode()
 
-  override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean {
-    return (type is VueComponentInstanceType
-            && type.instanceOwner == instanceOwner
-            && type.membersNames == membersNames)
+  override fun isEquivalentToWithSameClass(
+    type: JSType,
+    context: ProcessingContext?,
+    allowResolve: Boolean,
+  ): Boolean {
+    return type is VueComponentInstanceType
+           && type.instanceOwner == instanceOwner
+           && type.membersNames == membersNames
   }
 
-  override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
+  override fun buildTypeTextImpl(
+    format: JSType.TypeTextFormat,
+    builder: JSTypeTextBuilder,
+  ) {
     if (format == JSType.TypeTextFormat.SIMPLE) {
       builder.append("#VueComponentInstanceType: ")
         .append(instanceOwner.javaClass.simpleName)
@@ -48,5 +68,6 @@ class VueComponentInstanceType(source: JSTypeSource,
     substitute().buildTypeText(format, builder)
   }
 
-  override fun substituteCompletely(): JSType = JSSimpleRecordTypeImpl(source, typeMembers)
+  override fun substituteCompletely(): JSType =
+    JSSimpleRecordTypeImpl(source, typeMembers)
 }
