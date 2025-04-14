@@ -12,9 +12,8 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.index.GLOBAL_COMPONENTS
 import org.jetbrains.vuejs.index.VUE_MODULE_FILTER
 import org.jetbrains.vuejs.model.*
-import java.util.*
 
-class VueTypedGlobal(
+data class VueTypedGlobal(
   override val delegate: VueGlobal,
   override val source: PsiElement,
 ) : VueDelegatedEntitiesContainer<VueGlobal>(),
@@ -58,15 +57,6 @@ class VueTypedGlobal(
       VueTypedGlobal(delegate, source)
     }
   }
-
-  override fun equals(other: Any?): Boolean =
-    other === this ||
-    other is VueTypedGlobal
-    && other.delegate == delegate
-    && other.source == source
-
-  override fun hashCode(): Int =
-    Objects.hash(delegate, source)
 
   override val parents: List<VueEntitiesContainer>
     get() = emptyList()
