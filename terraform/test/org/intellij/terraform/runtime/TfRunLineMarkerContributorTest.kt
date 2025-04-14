@@ -9,6 +9,19 @@ import com.intellij.ui.IconManager
 
 internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
 
+  override fun tearDown() {
+    try {
+      val runManager = RunManager.getInstance(project)
+      runManager.allSettings.forEach { runManager.removeConfiguration(it) }
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
+  }
+
   fun testSimpleLineMarker() {
     myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject("simple.tf", "src/simple.tf"))
     val file = myFixture.file
@@ -70,8 +83,6 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
       return
     }
     assertEquals(actions.size, updatedGutter.actions.size)
-    val runManager = RunManager.getInstance(project)
-    runManager.allSettings.forEach { runManager.removeConfiguration(it) }
   }
 
   private fun runActionsAndCheckNames(actions: Array<AnAction>?) {
