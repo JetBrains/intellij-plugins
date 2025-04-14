@@ -303,10 +303,11 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
     }
 
     private fun doGetType(e: ProviderDefinedFunction<*>): Type? {
-      val providerName = e.provider.name ?: return Types.Any
-      val functionName = e.function.name ?: return Types.Any
+      val providerName = e.provider.getNameOrText()
+      val functionName = e.function.getNameOrText()
 
-      return TypeModelProvider.getModel(e).getProviderFunction(providerName, functionName)?.returnType ?: return Types.Any
+      val model = TypeModelProvider.getModel(e)
+      return model.getProviderFunction(providerName, functionName)?.returnType ?: return Types.Any
     }
 
     private fun doGetType(e: HCLForExpression): Type? {
