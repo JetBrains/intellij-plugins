@@ -3,6 +3,7 @@ package org.angular2.inspections.actions
 
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate
 import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor
+import com.intellij.lang.javascript.psi.util.runWithTimeout
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
@@ -21,10 +22,12 @@ import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
 import org.jetbrains.annotations.ApiStatus.Internal
 
-class NgModuleImportAction internal constructor(editor: Editor?,
-                                                element: PsiElement,
-                                                @NlsContexts.Command actionName: String,
-                                                codeCompletion: Boolean) //NON-NLS
+class NgModuleImportAction internal constructor(
+  editor: Editor?,
+  element: PsiElement,
+  @NlsContexts.Command actionName: String,
+  codeCompletion: Boolean,
+) //NON-NLS
   : Angular2NgModuleSelectAction(editor, element, "NgModule", actionName, codeCompletion) {
 
   override fun getModuleSelectionPopupTitle(): String {
@@ -43,12 +46,14 @@ class NgModuleImportAction internal constructor(editor: Editor?,
     return declarationsToModuleImports(context, importableDeclarations, scope)
   }
 
-  override fun runAction(editor: Editor?,
-                         candidate: JSImportCandidateWithExecutor,
-                         place: PsiElement) {
+  override fun runAction(
+    editor: Editor?,
+    candidate: JSImportCandidateWithExecutor,
+    place: PsiElement,
+  ) {
     val scope = Angular2DeclarationsScope(context)
     val importsOwner = scope.importsOwner
-    if (importsOwner == null || !scope.isInSource(importsOwner)) {
+    if (importsOwner == null || runWithTimeout(750) { scope.isInSource(importsOwner) } != true) {
       return
     }
     Angular2ImportsHandler.getFor(importsOwner)
@@ -59,9 +64,11 @@ class NgModuleImportAction internal constructor(editor: Editor?,
   companion object {
 
     @Internal
-    fun declarationsToModuleImports(context: PsiElement,
-                                    declarations: Collection<Angular2Declaration>,
-                                    scope: Angular2DeclarationsScope): List<Angular2ModuleImportCandidate> {
+    fun declarationsToModuleImports(
+      context: PsiElement,
+      declarations: Collection<Angular2Declaration>,
+      scope: Angular2DeclarationsScope,
+    ): List<Angular2ModuleImportCandidate> {
       val distanceCalculator = DistanceCalculator()
       val moduleToDeclarationDistances = MultiMap<Angular2Module, Int>()
       declarations.forEach { declaration ->
