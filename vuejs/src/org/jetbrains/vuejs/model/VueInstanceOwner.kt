@@ -58,13 +58,19 @@ private val VUE_INSTANCE_METHODS: List<String> = listOf(
 
 private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
   val source = instance.source ?: return null
+
   val result = mutableMapOf<String, JSRecordType.PropertySignature>()
   contributeCustomProperties(source, result)
   contributeDefaultInstanceProperties(source, result)
   contributeComponentProperties(instance, source, result)
   replaceStandardProperty(INSTANCE_REFS_PROP, VueRefsType(createStrictTypeSource(source), instance), source, result)
   contributePropertiesFromProviders(instance, result)
-  return VueComponentInstanceType(JSTypeSourceFactory.createTypeSource(source, true), instance, result.values.toList())
+
+  return VueComponentInstanceType(
+    source = JSTypeSourceFactory.createTypeSource(source, true),
+    instanceOwner = instance,
+    typeMembers = result.values.toList(),
+  )
 }
 
 private fun contributeCustomProperties(
