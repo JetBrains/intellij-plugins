@@ -59,11 +59,11 @@ internal class InspectionKtsClasspathService(scope: CoroutineScope) {
       if (!isUnderDependenciesRoot(file)) return null
 
       return GlobalSearchScope.union(
-        arrayOf(
+        listOfNotNull(
           ScriptDependencyAware.getInstance(project).getFirstScriptsSdk()?.toKaLibraryModule(project)?.contentScope,
           KotlinSourceFilterScope.libraryClasses(jarsDependenciesScope, project),
           GlobalSearchScope.fileScope(project, file),
-        )
+        ).toTypedArray()
       )
     }
 
