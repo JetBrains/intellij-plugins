@@ -12,12 +12,15 @@ public interface HCLDefinedMethodExpression extends HCLExpression, ProviderDefin
   List<HCLIdentifier> getIdentifierList();
 
   @NotNull
+  HCLIdentifier getKeyword();
+
+  @Nullable
   HCLIdentifier getProvider();
 
   @Nullable
   HCLIdentifier getFunction();
 
-  @NotNull
+  @Nullable
   HCLParameterList getParameterList();
 
 }

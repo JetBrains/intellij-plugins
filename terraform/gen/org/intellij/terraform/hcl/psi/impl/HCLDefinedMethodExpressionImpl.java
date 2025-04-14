@@ -35,22 +35,29 @@ public class HCLDefinedMethodExpressionImpl extends HCLExpressionImpl implements
 
   @Override
   @NotNull
-  public HCLIdentifier getProvider() {
+  public HCLIdentifier getKeyword() {
     List<HCLIdentifier> p1 = getIdentifierList();
     return p1.get(0);
   }
 
   @Override
   @Nullable
-  public HCLIdentifier getFunction() {
+  public HCLIdentifier getProvider() {
     List<HCLIdentifier> p1 = getIdentifierList();
     return p1.size() < 2 ? null : p1.get(1);
   }
 
   @Override
-  @NotNull
+  @Nullable
+  public HCLIdentifier getFunction() {
+    List<HCLIdentifier> p1 = getIdentifierList();
+    return p1.size() < 3 ? null : p1.get(2);
+  }
+
+  @Override
+  @Nullable
   public HCLParameterList getParameterList() {
-    return findNotNullChildByClass(HCLParameterList.class);
+    return findChildByClass(HCLParameterList.class);
   }
 
 }

@@ -507,6 +507,26 @@ public class HCLParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // !('}'|Expression)
+  static boolean not_brace_or_next_expression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "not_brace_or_next_expression")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !not_brace_or_next_expression_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '}'|Expression
+  private static boolean not_brace_or_next_expression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "not_brace_or_next_expression_0")) return false;
+    boolean r;
+    r = consumeToken(b, R_CURLY);
+    if (!r) r = Expression(b, l + 1, -1);
+    return r;
+  }
+
+  /* ********************************************************** */
   // !('}'|value)
   static boolean not_brace_or_next_value(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "not_brace_or_next_value")) return false;
@@ -891,7 +911,7 @@ public class HCLParser implements PsiParser, LightPsiParser {
   // 9: ATOM(ForObjectExpression)
   // 10: PREFIX(UnaryExpression)
   // 11: POSTFIX(MethodCallExpression)
-  // 12: ATOM(DefinedMethodExpression)
+  // 12: BINARY(DefinedMethodExpression)
   // 13: POSTFIX(SelectExpression)
   // 14: POSTFIX(IndexSelectExpression)
   // 15: ATOM(CollectionValue)
@@ -906,7 +926,6 @@ public class HCLParser implements PsiParser, LightPsiParser {
     if (!r) r = ForArrayExpression(b, l + 1);
     if (!r) r = ForObjectExpression(b, l + 1);
     if (!r) r = UnaryExpression(b, l + 1);
-    if (!r) r = DefinedMethodExpression(b, l + 1);
     if (!r) r = CollectionValue(b, l + 1);
     if (!r) r = Variable(b, l + 1);
     if (!r) r = literal(b, l + 1);
@@ -952,6 +971,11 @@ public class HCLParser implements PsiParser, LightPsiParser {
       else if (g < 11 && leftMarkerIs(b, IDENTIFIER) && ParameterList(b, l + 1)) {
         r = true;
         exit_section_(b, l, m, METHOD_CALL_EXPRESSION, r, true, null);
+      }
+      else if (g < 12 && leftMarkerIs(b, IDENTIFIER) && consumeTokenSmart(b, COLON_COLON)) {
+        r = report_error_(b, Expression(b, l, 12));
+        r = DefinedMethodExpression_1(b, l + 1) && r;
+        exit_section_(b, l, m, DEFINED_METHOD_EXPRESSION, r, true, null);
       }
       else if (g < 13 && SelectExpression_0(b, l + 1)) {
         r = true;
@@ -1093,18 +1117,15 @@ public class HCLParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // "provider" COLON_COLON identifier COLON_COLON identifier ParameterList
-  public static boolean DefinedMethodExpression(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "DefinedMethodExpression")) return false;
+  // COLON_COLON identifier ParameterList
+  private static boolean DefinedMethodExpression_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "DefinedMethodExpression_1")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, DEFINED_METHOD_EXPRESSION, "<defined method expression>");
-    r = consumeTokenSmart(b, "provider");
-    r = r && consumeToken(b, COLON_COLON);
-    r = r && identifier(b, l + 1);
-    r = r && consumeToken(b, COLON_COLON);
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COLON_COLON);
     r = r && identifier(b, l + 1);
     r = r && ParameterList(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, null, r);
     return r;
   }
 

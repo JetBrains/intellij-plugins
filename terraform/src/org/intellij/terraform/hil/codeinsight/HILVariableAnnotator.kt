@@ -11,6 +11,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLElementTypes
@@ -18,6 +19,7 @@ import org.intellij.terraform.hcl.psi.HCLFile
 import org.intellij.terraform.hcl.psi.HCLForObjectExpression
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
+import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction
 import org.intellij.terraform.hcl.psi.common.SelectExpression
 import org.intellij.terraform.hil.HILElementTypes
 import org.intellij.terraform.hil.HILSyntaxHighlighter
@@ -42,6 +44,10 @@ class HILVariableAnnotator : Annotator, DumbAware {
         holder.newAnnotation(HighlightSeverity.ERROR,
                              HCLBundle.message("hil.variable.annotator.expanded.function.argument.must.be.immediately.followed.by.closing.parentheses")).create()
       }
+      return
+    }
+
+    if (isProviderDefinedFunction(element, holder)) {
       return
     }
 
@@ -83,6 +89,16 @@ class HILVariableAnnotator : Annotator, DumbAware {
     }
   }
 
+  private fun isProviderDefinedFunction(element: PsiElement, holder: AnnotationHolder): Boolean {
+    val parent = element.parent as? ProviderDefinedFunction<*> ?: return false
+    if (element !is Identifier || parent.keyword !== element) return false
+
+    if (element.text != HCL_PROVIDER_IDENTIFIER) {
+      holder.newAnnotation(HighlightSeverity.ERROR, HCLBundle.message("hil.annotator.provider.defined.function.keyword")).create()
+      return true
+    }
+    return false
+  }
 }
 
 fun isScopeElementReference(element: Identifier, parent: SelectExpression<*>): Boolean {

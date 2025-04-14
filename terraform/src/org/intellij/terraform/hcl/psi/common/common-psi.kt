@@ -46,6 +46,7 @@ interface MethodCallExpression<T : BaseExpression> : BaseExpression {
 }
 
 interface ProviderDefinedFunction<T : BaseExpression> : BaseExpression {
+  val keyword: Identifier
   val provider: Identifier
   val function: Identifier
   val parameterList: ParameterList<T>
