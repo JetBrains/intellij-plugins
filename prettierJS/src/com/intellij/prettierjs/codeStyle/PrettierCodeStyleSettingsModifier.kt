@@ -21,6 +21,8 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.modifier.CodeStyleSettingsModifier
 import com.intellij.psi.codeStyle.modifier.CodeStyleStatusBarUIContributor
 import com.intellij.psi.codeStyle.modifier.TransientCodeStyleSettings
+import com.intellij.util.application
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import java.util.function.Consumer
 
 private val LOG: Logger
@@ -31,6 +33,7 @@ private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
     val project = psiFile.project
     val file = psiFile.virtualFile
 
+    if (!application.isReadAccessAllowed) return false
     if (project.isDisposed) return false
     if (!PrettierConfiguration.getInstance(project).codeStyleSettingsModifierEnabled) return false
     if (!PrettierUtil.isFormattingAllowedForFile(project, file)) return false
@@ -62,6 +65,7 @@ private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
     return PrettierCodeStyleStatusBarUIContributor()
   }
 
+  @RequiresReadLock
   private fun doModifySettings(settings: TransientCodeStyleSettings, psiFile: PsiFile): Boolean {
     val prettierConfig = runBlockingCancellable {
       resolveConfigForFile(psiFile)
