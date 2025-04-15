@@ -13,13 +13,110 @@
  */
 package com.google.dart.server.internal.remote;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-import com.google.dart.server.*;
+import com.google.dart.server.AnalysisServerListener;
+import com.google.dart.server.AnalysisServerSocket;
+import com.google.dart.server.AnalysisServerStatusListener;
+import com.google.dart.server.BasicConsumer;
+import com.google.dart.server.BulkFixesConsumer;
+import com.google.dart.server.Consumer;
+import com.google.dart.server.CreateContextConsumer;
+import com.google.dart.server.DartLspTextDocumentContentConsumer;
+import com.google.dart.server.DartLspWorkspaceApplyEditRequestConsumer;
+import com.google.dart.server.FindElementReferencesConsumer;
+import com.google.dart.server.FindMemberDeclarationsConsumer;
+import com.google.dart.server.FindMemberReferencesConsumer;
+import com.google.dart.server.FindTopLevelDeclarationsConsumer;
+import com.google.dart.server.FormatConsumer;
+import com.google.dart.server.GetAssistsConsumer;
+import com.google.dart.server.GetAvailableRefactoringsConsumer;
+import com.google.dart.server.GetDiagnosticsConsumer;
+import com.google.dart.server.GetElementDeclarationsConsumer;
+import com.google.dart.server.GetErrorsConsumer;
+import com.google.dart.server.GetFixesConsumer;
+import com.google.dart.server.GetHoverConsumer;
+import com.google.dart.server.GetImportedElementsConsumer;
+import com.google.dart.server.GetLibraryDependenciesConsumer;
+import com.google.dart.server.GetNavigationConsumer;
+import com.google.dart.server.GetPostfixCompletionConsumer;
+import com.google.dart.server.GetReachableSourcesConsumer;
+import com.google.dart.server.GetRefactoringConsumer;
+import com.google.dart.server.GetRuntimeCompletionConsumer;
+import com.google.dart.server.GetServerPortConsumer;
+import com.google.dart.server.GetSignatureConsumer;
+import com.google.dart.server.GetStatementCompletionConsumer;
+import com.google.dart.server.GetSuggestionDetailsConsumer;
+import com.google.dart.server.GetSuggestionDetailsConsumer2;
+import com.google.dart.server.GetSuggestionsConsumer;
+import com.google.dart.server.GetSuggestionsConsumer2;
+import com.google.dart.server.GetTypeHierarchyConsumer;
+import com.google.dart.server.GetVersionConsumer;
+import com.google.dart.server.GetWidgetDescriptionConsumer;
+import com.google.dart.server.ImportElementsConsumer;
+import com.google.dart.server.IsEnabledConsumer;
+import com.google.dart.server.IsPostfixCompletionApplicableConsumer;
+import com.google.dart.server.JsonConsumer;
+import com.google.dart.server.ListPostfixCompletionTemplatesConsumer;
+import com.google.dart.server.MapUriConsumer;
+import com.google.dart.server.OrganizeDirectivesConsumer;
+import com.google.dart.server.RequestListener;
+import com.google.dart.server.ResponseListener;
+import com.google.dart.server.SetWidgetPropertyValueConsumer;
+import com.google.dart.server.ShowMessageRequestConsumer;
+import com.google.dart.server.SortMembersConsumer;
+import com.google.dart.server.UpdateContentConsumer;
 import com.google.dart.server.generated.AnalysisServer;
 import com.google.dart.server.internal.BroadcastAnalysisServerListener;
-import com.google.dart.server.internal.remote.processor.*;
+import com.google.dart.server.internal.remote.processor.AnalysisErrorsProcessor;
+import com.google.dart.server.internal.remote.processor.AssistsProcessor;
+import com.google.dart.server.internal.remote.processor.CompletionIdProcessor;
+import com.google.dart.server.internal.remote.processor.CompletionIdProcessor2;
+import com.google.dart.server.internal.remote.processor.CreateContextProcessor;
+import com.google.dart.server.internal.remote.processor.DartLspTextDocumentContentProcessor;
+import com.google.dart.server.internal.remote.processor.FindElementReferencesProcessor;
+import com.google.dart.server.internal.remote.processor.FindMemberDeclarationsProcessor;
+import com.google.dart.server.internal.remote.processor.FindMemberReferencesProcessor;
+import com.google.dart.server.internal.remote.processor.FindTopLevelDeclarationsProcessor;
+import com.google.dart.server.internal.remote.processor.FixesProcessor;
+import com.google.dart.server.internal.remote.processor.FormatProcessor;
+import com.google.dart.server.internal.remote.processor.GetImportedElementsProcessor;
+import com.google.dart.server.internal.remote.processor.GetNavigationProcessor;
+import com.google.dart.server.internal.remote.processor.GetRefactoringProcessor;
+import com.google.dart.server.internal.remote.processor.GetRuntimeCompletionProcessor;
+import com.google.dart.server.internal.remote.processor.GetServerPortProcessor;
+import com.google.dart.server.internal.remote.processor.GetSuggestionDetailsProcessor;
+import com.google.dart.server.internal.remote.processor.GetSuggestionDetailsProcessor2;
+import com.google.dart.server.internal.remote.processor.HoverProcessor;
+import com.google.dart.server.internal.remote.processor.ImportElementsProcessor;
+import com.google.dart.server.internal.remote.processor.IsPostfixCompletionApplicableProcessor;
+import com.google.dart.server.internal.remote.processor.LibraryDependenciesProcessor;
+import com.google.dart.server.internal.remote.processor.ListPostfixCompletionTemplatesProcessor;
+import com.google.dart.server.internal.remote.processor.MapUriProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisAnalyzedFilesProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisClosingLabelsProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisErrorsProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisFlushResultsProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisHighlightsProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisImplementedProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisNavigationProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisOccurrencesProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisOutlineProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationAnalysisOverridesProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationCompletionAvailableSuggestionsProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationCompletionExistingImportsProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationCompletionResultsProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationExecutionLaunchDataProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationLspProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationSearchResultsProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationServerConnectedProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationServerErrorProcessor;
+import com.google.dart.server.internal.remote.processor.NotificationServerStatusProcessor;
+import com.google.dart.server.internal.remote.processor.OrganizeDirectivesProcessor;
+import com.google.dart.server.internal.remote.processor.PostfixCompletionProcessor;
+import com.google.dart.server.internal.remote.processor.RefactoringGetAvailableProcessor;
+import com.google.dart.server.internal.remote.processor.SortMembersProcessor;
+import com.google.dart.server.internal.remote.processor.StatementCompletionProcessor;
+import com.google.dart.server.internal.remote.processor.TypeHierarchyProcessor;
+import com.google.dart.server.internal.remote.processor.VersionProcessor;
 import com.google.dart.server.internal.remote.utilities.RequestUtilities;
 import com.google.dart.server.internal.remote.utilities.ResponseUtilities;
 import com.google.dart.server.utilities.general.StringUtilities;
@@ -30,12 +127,30 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.dartlang.analysis.server.protocol.*;
+import org.dartlang.analysis.server.protocol.AnalysisOptions;
+import org.dartlang.analysis.server.protocol.DartLspApplyWorkspaceEditParams;
+import org.dartlang.analysis.server.protocol.DartLspApplyWorkspaceEditResult;
+import org.dartlang.analysis.server.protocol.DartLspPosition;
+import org.dartlang.analysis.server.protocol.DartLspRange;
+import org.dartlang.analysis.server.protocol.DartLspTextEdit;
+import org.dartlang.analysis.server.protocol.DartLspWorkspaceEdit;
+import org.dartlang.analysis.server.protocol.FlutterWidgetPropertyValue;
+import org.dartlang.analysis.server.protocol.ImportedElements;
+import org.dartlang.analysis.server.protocol.LibraryPathSet;
+import org.dartlang.analysis.server.protocol.MessageAction;
+import org.dartlang.analysis.server.protocol.RefactoringOptions;
+import org.dartlang.analysis.server.protocol.RequestError;
+import org.dartlang.analysis.server.protocol.RuntimeCompletionExpression;
+import org.dartlang.analysis.server.protocol.RuntimeCompletionVariable;
 import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Version;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -105,13 +220,13 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
 
   private final List<ResponseListener> responseListenerList = new ArrayList<>();
 
-  private final List<AnalysisServerStatusListener> statusListenerList = new ArrayList<AnalysisServerStatusListener>();
+  private final List<AnalysisServerStatusListener> statusListenerList = new ArrayList<>();
 
   /**
    * A mapping between {@link String} ids' and the associated {@link Consumer} that was passed when
    * the request was made.
    */
-  private final Map<String, Consumer> consumerMap = Maps.newHashMap();
+  private final Map<String, Consumer> consumerMap = new HashMap<>();
 
   /**
    * The object used to synchronize access to {@link #consumerMap}.
@@ -126,7 +241,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   /**
    * A mapping between "getRefactoring" request ids and the requested refactoring kinds.
    */
-  private final Map<String, String> requestToRefactoringKindMap = Maps.newHashMap();
+  private final Map<String, String> requestToRefactoringKindMap = new HashMap<>();
 
   /**
    * The thread that restarts an unresponsive server or {@code null} if it has not been started.
@@ -265,7 +380,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   public void analysis_setSubscriptions(Map<String, List<String>> subscriptions) {
     String id = generateUniqueId();
     if (subscriptions == null) {
-      subscriptions = Maps.newHashMap();
+      subscriptions = new HashMap<>();
     }
     sendRequestToServer(id, RequestUtilities.generateAnalysisSetSubscriptions(id, subscriptions));
   }
@@ -274,7 +389,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   public void analysis_updateContent(Map<String, Object> files, UpdateContentConsumer consumer) {
     String id = generateUniqueId();
     if (files == null) {
-      files = Maps.newHashMap();
+      files = new HashMap<>();
     }
     sendRequestToServer(id, RequestUtilities.generateAnalysisUpdateContent(id, files), consumer);
   }
@@ -636,13 +751,6 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
   public void start() throws Exception {
     startServer();
     startWatcher(5000);
-  }
-
-  @VisibleForTesting
-  public void test_waitForWorkerComplete() {
-    while (!consumerMap.isEmpty()) {
-      Thread.yield();
-    }
   }
 
   /**
@@ -1087,7 +1195,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
 
   private void notifyRequestListeners(JsonObject request) {
     synchronized (requestListenerList) {
-      List<RequestListener> listeners = ImmutableList.copyOf(requestListenerList);
+      List<RequestListener> listeners = List.copyOf(requestListenerList);
       for (RequestListener listener : listeners) {
         listener.onRequest(request.toString());
       }
@@ -1096,7 +1204,7 @@ public abstract class RemoteAnalysisServerImpl implements AnalysisServer {
 
   private void notifyResponseListeners(JsonObject response) {
     synchronized (responseListenerList) {
-      List<ResponseListener> listeners = ImmutableList.copyOf(responseListenerList);
+      List<ResponseListener> listeners = List.copyOf(responseListenerList);
       for (ResponseListener listener : listeners) {
         listener.onResponse(response.toString());
       }
