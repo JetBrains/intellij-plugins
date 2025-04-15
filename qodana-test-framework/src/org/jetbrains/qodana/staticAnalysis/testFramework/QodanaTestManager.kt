@@ -60,7 +60,7 @@ class QodanaTestManager {
     testData = testData_
     InspectionProfileImpl.INIT_INSPECTIONS = true
     val yamlPath = defaultConfigPath(testData.getTestDataPath(""))
-    val projectPath = testData_.project.guessProjectDir()?.toNioPath() ?: testData_.projectPath
+    val projectPath = guessProjectDir(testData_)
     val yamlConfig = runBlocking {
       yamlPath?.let { path ->
         QodanaYamlReader.load(path).getOrThrow().withAbsoluteProfilePath(projectPath, yamlPath)
@@ -91,6 +91,15 @@ class QodanaTestManager {
     reinstantiateInspectionRelatedServices(testData.project, testData.testRootDisposable)
     updateQodanaConfig(testData.projectPath, testData.outputPath) { it }
     return qodanaConfig
+  }
+
+  private fun guessProjectDir(testData_: TestData): Path {
+    val default = testData_.projectPath
+    try {
+      return testData_.project.guessProjectDir()?.toNioPath() ?: default
+    } catch (_: UnsupportedOperationException) {
+      return default
+    }
   }
 
   private fun setSystemProperties() {

@@ -39,7 +39,7 @@ class Border(offset: Int, line: Int, val text: String, private val lineBorder: I
   }
 }
 
-internal fun getContextRegion(problem: CommonDescriptor,
+fun getContextRegion(problem: CommonDescriptor,
                               text: String,
                               linesMargin: Int = CONTEXT_MAX_LINES_MARGIN,
                               fileLanguage: Language? = null): Region? {

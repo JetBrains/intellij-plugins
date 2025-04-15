@@ -16,15 +16,18 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.CustomGlobalFlowFingerprintCalculator.Companion.withCustomPartialFingerprints
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
+import org.jetbrains.qodana.staticAnalysis.sarif.CommonDescriptor
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.withPartialFingerprints
 import org.jetbrains.qodana.staticAnalysis.sarif.getArtifactLocation
+import org.jetbrains.qodana.staticAnalysis.sarif.getContextRegion
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 import org.jetbrains.qodana.staticAnalysis.sarif.loadTextFromVirtualFile
 import java.nio.file.Path
 
 private val vulnerableFlowMessage = Message().withText("Vulnerable code flow").withMarkdown("Vulnerable code flow")
+private const val FQN_ATTRIBUTE_NAME: String = "step_fqn" // used in fingerprint computation
 
 /**
  * Responsible for handling FlowInspection.xml and FlowInspection_aggregate.xml files
@@ -110,9 +113,10 @@ private suspend fun convertFlowFromXmlFormat(problem: Element, macroManager: Pat
       val markerStart = marker.getAttributeValue("start").toInt()
       val markerEnd = marker.getAttributeValue("end").toInt()
       val markerOrder = marker.getAttributeValue("order")
+      val markerFqn = marker.getAttributeValue(FQN_ATTRIBUTE_NAME)
       val location =
         getLocationByAttributes(fragmentFile, markerLine, markerColumn, markerStart, markerEnd, problemLocation.language!!,
-                                macroManager)
+                                macroManager, false)
       if (location != null) {
         val successors = marker.getChild("successors")?.getChildren("marker")?.map(Element::getText)
         val predecessors = marker.getChild("predecessors")?.getChildren("marker")?.map(Element::getText)
@@ -121,6 +125,7 @@ private suspend fun convertFlowFromXmlFormat(problem: Element, macroManager: Pat
           Node(markerOrder)
             .withLocation(location)
             .withProperties(PropertyBag()
+                              .also { it[FQN_ATTRIBUTE_NAME] = markerFqn }
                               .also { it["successors"] = successors }
                               .also { it["predecessors"] = predecessors }
                               .also { it["sanitized_vulnerabilities"] = sanitizedVulnerabilities })
@@ -136,7 +141,7 @@ private suspend fun convertFlowFromXmlFormat(problem: Element, macroManager: Pat
       markerRelationships.add(LocationRelationship().withTarget(markerOrder.toInt()).withKinds(setOf("includes")))
     }
     getLocationByAttributes(fragmentFile, fragmentLine, fragmentColumn, fragmentStart, fragmentEnd, problemLocation.language!!,
-                            macroManager)
+                            macroManager, true)
       ?.withRelationships(markerRelationships)?.let {
         fragmentLocations.add(it)
       }
@@ -174,7 +179,7 @@ private fun computeTarget(problem: Element): Map<String, Any?> {
   val targetParams = target.getChild("parameters")?.getChildren("parameter")?.firstOrNull()?.getAttributeValue("name")
   return mapOf(
     "text" to targetText,
-    "fqn" to targetFqn,
+    "fqn" to targetFqn, // is used in UI. intentionally don't want to pollute with Java/Kotlin FQNs
     "vulnerabilities" to vulnerabilityValues,
     "parameters" to targetParams
   )
@@ -183,7 +188,7 @@ private fun computeTarget(problem: Element): Map<String, Any?> {
 private fun getLocationByAttributes(fileUrl: String,
                                     line: Int, column: Int, startCharOffset: Int,
                                     endCharOffset: Int, language: String,
-                                    macroManager: PathMacroManager): Location? {
+                                    macroManager: PathMacroManager, skipContextRegion: Boolean): Location? {
   val artifactLocation = getArtifactLocation(fileUrl)
   val physicalLocation = PhysicalLocation().withArtifactLocation(artifactLocation)
   val virtualFile = VirtualFileManager.getInstance().findFileByUrl(macroManager.expandPath(fileUrl))
@@ -191,9 +196,14 @@ private fun getLocationByAttributes(fileUrl: String,
   if (text != null) {
     val startOffset = StringUtil.lineColToOffset(text, line - 1, column - 1)
     val length = endCharOffset - startCharOffset
+    val snippetTxt = text.subSequence(startOffset, startOffset + length) as String?
     val snippet = ArtifactContent().withText(text.subSequence(startOffset, startOffset + length) as String?)
+    val problem = CommonDescriptor(fileUrl, line, column - 1, length, snippetTxt, language)
     physicalLocation
       .withRegion(getFlowProblemRegion(startOffset, column, length, line, language, snippet))
+      .let {
+        if (!skipContextRegion) it.withContextRegion(getContextRegion(problem, text, 1))
+      }
   }
   return Location()
     .withPhysicalLocation(physicalLocation)
