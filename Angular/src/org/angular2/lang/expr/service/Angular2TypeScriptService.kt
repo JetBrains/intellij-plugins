@@ -20,6 +20,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWi
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.Position
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.Range
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptTypeRequestKind
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptInlayHintsResponse
@@ -271,9 +272,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     override val service: TypeScriptService
       get() = this@Angular2TypeScriptService
 
-    override fun getElementType(element: PsiElement, isContextual: Boolean, virtualFile: VirtualFile, projectFile: VirtualFile?): JSType? =
+    override fun getElementType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind, virtualFile: VirtualFile, projectFile: VirtualFile?): JSType? =
       if (element !is JSElement && element.parent !is JSElement) null
-      else super.getElementType(element, isContextual, virtualFile, projectFile)
+      else super.getElementType(element, typeRequestKind, virtualFile, projectFile)
 
     override suspend fun commitDocuments(updateContext: UpdateContextInfo) {
       super.commitDocuments(updateContext)

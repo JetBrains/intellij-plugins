@@ -1,6 +1,6 @@
 import {type CodeInformation, Language, type SourceScript} from "@volar/language-core"
 import type * as TS from "./tsserverlibrary.shim"
-import type {GetElementTypeResponse, Range} from "tsc-ide-plugin/protocol"
+import type {GetElementTypeResponse, Range, TypeRequestKind} from "tsc-ide-plugin/protocol"
 import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"
 import {type TypeScriptServiceScript} from "@volar/typescript"
@@ -88,7 +88,7 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     fileName: string,
     startOffset: number,
     endOffset: number,
-    isContextual: boolean,
+    typeRequestKind: TypeRequestKind,
     forceReturnType: boolean,
     cancellationToken: TS.CancellationToken,
     reverseMapper?: ReverseMapper,
@@ -105,12 +105,12 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     if (serviceScript && sourceFile && generatedFile) {
       const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, startOffset, endOffset, (it) => it.types);
       if (generatedRange !== undefined) {
-        return webStormGetElementType(ts, targetScript.id, generatedRange[0], generatedRange[1], isContextual, forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
+        return webStormGetElementType(ts, targetScript.id, generatedRange[0], generatedRange[1], typeRequestKind, forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
       }
       return undefined;
     }
     else {
-      return webStormGetElementType(ts, fileName, startOffset, endOffset, isContextual, forceReturnType, cancellationToken, reverseMapper)
+      return webStormGetElementType(ts, fileName, startOffset, endOffset, typeRequestKind, forceReturnType, cancellationToken, reverseMapper)
     }
   }
 
@@ -155,7 +155,7 @@ export function decorateNgLanguageServiceExtensions(
     let startOffset = ts.getPositionOfLineAndCharacter(generatedFile, range.start.line, range.start.character)
     let endOffset = ts.getPositionOfLineAndCharacter(generatedFile, range.end.line, range.end.character)
 
-    return webStormGetElementType(ts, fileName, startOffset, endOffset, false, forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
+    return webStormGetElementType(ts, fileName, startOffset, endOffset, "Default", forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
   }
 }
 
