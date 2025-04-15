@@ -29,6 +29,7 @@ jvm_library(
   runtime_deps = [
     ":appcode-reveal_resources",
     ":appcode-reveal_resources_1",
+    "//CIDR-appcode/appcode/swiftDebugger",
   ]
 )
 ### auto-generated section `build intellij.appcode.reveal` end
