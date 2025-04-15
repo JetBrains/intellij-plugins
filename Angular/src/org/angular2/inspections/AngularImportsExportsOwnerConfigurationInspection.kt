@@ -6,11 +6,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
-import com.intellij.lang.javascript.psi.JSElementVisitor
-import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
-import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.psi.PsiElement
@@ -33,7 +29,6 @@ import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
-import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlLabel
@@ -44,6 +39,7 @@ import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResu
 import org.angular2.inspections.quickfixes.ConvertToStandaloneNonStandaloneQuickFix
 import org.angular2.inspections.quickfixes.MoveDeclarationOfStandaloneToImportsQuickFix
 import org.angular2.inspections.quickfixes.RemoveEntityImportQuickFix
+import org.angular2.inspections.quickfixes.WrapWithForwardRefQuickFix
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
@@ -128,15 +124,15 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
     }
   }
 
-  private abstract class ImportExportValidator<T : Angular2Entity> protected constructor(
+  private abstract class ImportExportValidator<T : Angular2Entity>(
     decorator: ES6Decorator,
     results: ValidationResults<ProblemType>,
     entityClass: Class<T>,
     propertyName: String,
-    protected val importsOwner: Angular2ImportsOwner,
+    val importsOwner: Angular2ImportsOwner,
   ) : Angular2SourceEntityListValidator<T, ProblemType>(decorator, results, entityClass, propertyName) {
 
-    protected fun checkCyclicDependencies(owner: Angular2ImportsOwner) {
+    fun checkCyclicDependencies(owner: Angular2ImportsOwner) {
       val cycleTrack = Stack<Angular2ImportsOwner>()
       val processedContainers = HashSet<Angular2ImportsOwner>()
       val dfsStack = Stack<MutableList<Angular2ImportsOwner>>()
@@ -153,20 +149,31 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
           val toProcess = curNode.removeAt(curNode.size - 1)
           if (toProcess === this.importsOwner) {
             cycleTrack.push(this.importsOwner)
+            val quickFixes =
+              if (this.importsOwner is Angular2Component)
+                arrayOf(WrapWithForwardRefQuickFix())
+              else
+                emptyArray()
+
             registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, Angular2Bundle.htmlMessage(
               "angular.inspection.cyclic-module-dependency.message.cycle",
               cycleTrack.joinToString(
                 " " + Angular2Bundle.message(
                   "angular.inspection.cyclic-module-dependency.message.separator") + " ") { it.htmlClassName }
-            ))
+            ), *quickFixes)
             return
           }
           if (processedContainers.add(toProcess)) {
             cycleTrack.push(toProcess)
             val dependencies = ArrayList<Angular2ImportsOwner>()
-            toProcess.asSafely<Angular2Module>()
-              ?.exports?.filterIsInstance<Angular2ImportsOwner>()?.forEach { dependencies.add(it) }
-            toProcess.imports.filterIsInstance<Angular2ImportsOwner>().forEach { dependencies.add(it) }
+            toProcess.asSafely<Angular2Module>()?.exports?.forEach {
+              if (it is Angular2ImportsOwner) dependencies.add(it)
+            }
+            val forwardRefImports = toProcess.forwardRefImports
+            toProcess.imports.forEach {
+              if (it is Angular2ImportsOwner && !forwardRefImports.contains(it))
+                dependencies.add(it)
+            }
             dfsStack.push(dependencies)
           }
         }
@@ -191,8 +198,8 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
                         Angular2Bundle.htmlMessage("angular.inspection.cyclic-module-dependency.message.self-import", entity.htmlLabel))
       }
-      else if (entity is Angular2Module || (entity is Angular2Component && entity.isStandalone)) {
-        checkCyclicDependencies(entity as Angular2ImportsOwner)
+      else if (entity is Angular2Module || (entity is Angular2Component && entity.isStandalone && !hasForwardRefCall())) {
+        checkCyclicDependencies(entity)
       }
       else if (!Angular2EntityUtils.isImportableEntity(entity)) {
         registerProblem(
@@ -324,7 +331,8 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         override fun visitElement(element: PsiElement) {
           if (element is Angular2EmbeddedExpression) {
             element.acceptChildren(expressionVisitor)
-          } else if (element is JSLiteralExpression && element.language !is Angular2Language) {
+          }
+          else if (element is JSLiteralExpression && element.language !is Angular2Language) {
             // Pug support
             visitInjectedExpressions(element)
           }

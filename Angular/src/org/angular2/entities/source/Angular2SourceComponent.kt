@@ -32,6 +32,12 @@ class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplic
     else
       emptySet()
 
+  override val forwardRefImports: Set<Angular2Entity>
+    get() = if (isStandalone)
+      moduleResolver.forwardRefImports
+    else
+      emptySet()
+
   override val isScopeFullyResolved: Boolean
     get() = if (isStandalone)
       moduleResolver.isScopeFullyResolved

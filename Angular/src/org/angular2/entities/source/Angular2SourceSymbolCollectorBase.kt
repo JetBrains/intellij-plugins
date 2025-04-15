@@ -10,15 +10,18 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.containers.Stack
+import org.angular2.Angular2DecoratorUtil.isForwardRefCall
 import org.angular2.entities.Angular2Entity
 
 abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
-  entityClass: Class<T>, private val source: PsiElement
+  entityClass: Class<T>, private val source: PsiElement,
 ) : Angular2SourceEntityListProcessor<T>(entityClass, source) {
 
   private var isFullyResolved = true
   private val dependencies = HashSet<PsiElement>()
-  private val resolveQueue = Stack<PsiElement?>()
+  private val resolveQueue = Stack<Pair<PsiElement?, Boolean>>()
+
+  protected var isForwardRefEntity: Boolean = false
 
   fun collect(property: JSProperty?): Result<R> =
     if (property == null)
@@ -50,21 +53,23 @@ abstract class Angular2SourceSymbolCollectorBase<T : Angular2Entity, R>(
     }
     val visited = HashSet<PsiElement>()
     processCacheDependency(source)
-    resolveQueue.push(value)
+    resolveQueue.push(value to false)
     while (!resolveQueue.empty()) {
       ProgressManager.checkCanceled()
-      val element = resolveQueue.pop()
+      var (element, isForwardRef) = resolveQueue.pop()
       if (element == null || !visited.add(element)) {
         // Protect against cyclic references or visiting same thing several times
         continue
       }
       processCacheDependency(element)
       val children = resolve(element)
+      isForwardRef = isForwardRef || isForwardRefCall(element)
       if (children.isEmpty()) {
+        isForwardRefEntity = isForwardRef
         element.accept(resultsVisitor)
       }
       else {
-        resolveQueue.addAll(children)
+        resolveQueue.addAll(children.map { it to isForwardRef })
       }
     }
     return createResult(isFullyResolved, dependencies)

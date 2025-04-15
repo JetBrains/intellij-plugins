@@ -12,6 +12,8 @@ package org.angular2.entities
 interface Angular2ImportsOwner : Angular2Entity {
   val imports: Set<Angular2Entity>
 
+  val forwardRefImports: Set<Angular2Entity> get() = emptySet()
+
   val declarationsInScope: Set<Angular2Declaration>
 
   val isScopeFullyResolved: Boolean

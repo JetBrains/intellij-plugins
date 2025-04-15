@@ -55,12 +55,16 @@ class Angular2SourceModule(decorator: ES6Decorator, implicitElement: JSImplicitE
     : Angular2SourceSymbolCollectorBase<T, Angular2ResolvedSymbolsSet<T>>(entityClass, decorator) {
 
     private val myResult = HashSet<T>()
+    private val myForwardRefResult = HashSet<T>()
 
     override fun createResult(isFullyResolved: Boolean, dependencies: Set<PsiElement>): Result<Angular2ResolvedSymbolsSet<T>> =
-      Angular2ResolvedSymbolsSet.createResult(myResult, isFullyResolved, dependencies)
+      Angular2ResolvedSymbolsSet.createResult(myResult, myForwardRefResult, isFullyResolved, dependencies)
 
     override fun processAcceptableEntity(entity: T) {
       myResult.add(entity)
+      if (isForwardRefEntity) {
+        myForwardRefResult.add(entity)
+      }
     }
 
   }

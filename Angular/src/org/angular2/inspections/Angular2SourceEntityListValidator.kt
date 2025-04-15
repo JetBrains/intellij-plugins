@@ -12,6 +12,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.containers.TreeTraversal
 import org.angular2.Angular2DecoratorUtil.getProperty
+import org.angular2.Angular2DecoratorUtil.isForwardRefCall
 import org.angular2.entities.Angular2Entity
 import org.angular2.entities.source.Angular2SourceEntityListProcessor
 import org.jetbrains.annotations.Nls
@@ -44,6 +45,9 @@ protected constructor(private val decorator: ES6Decorator,
       }
     }
   }
+
+  protected fun hasForwardRefCall(): Boolean =
+    myIterator.backtrace().any { isForwardRefCall(it) }
 
   private fun locateProblemElement(): PsiElement {
     val file = decorator.containingFile.originalFile
