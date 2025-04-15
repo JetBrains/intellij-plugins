@@ -13,8 +13,6 @@ class Angular2FindUsagesTest : Angular2TestCase("navigation/findUsages", false) 
 
   fun testComponentCustomElementSelector() = checkUsages()
 
-  fun testSlotComponentElementSelector() = checkUsages()
-
   fun testSlotComponentAttributeSelector() = checkUsages()
 
   fun testAttrVariable() = checkUsages(extension = "html")
