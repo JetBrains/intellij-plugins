@@ -50,10 +50,8 @@ class Angular2NgContentSelectorsTest : Angular2CodeInsightFixtureTestCase() {
   fun testResolutionSource() {
     myFixture.configureByFiles("resolution.html", "component.ts", "package.json")
     for (test in listOf(
-      Pair("<fo<caret>o b>", "foo,[bar]"),
-      Pair("<fo<caret>o c>", "foo,[bar]"),
       Pair("<div b<caret>ar", "foo,[bar]"),
-      Pair("<bar f<caret>oo", "bar[foo]"),
+      Pair("<div f<caret>oo", "div[foo]"),
       Pair("<span g<caret>oo", ":not([goo])")
     )) {
       try {
@@ -65,6 +63,6 @@ class Angular2NgContentSelectorsTest : Angular2CodeInsightFixtureTestCase() {
     }
     UsefulTestCase.assertInstanceOf(myFixture.resolveReference("<fo<caret>o a>"), HtmlTag::class.java)
     UsefulTestCase.assertInstanceOf(myFixture.resolveReference("<go<caret>o"), HtmlTag::class.java)
-    Angular2TestUtil.assertUnresolvedReference("<div f<caret>oo", myFixture)
+    Angular2TestUtil.assertUnresolvedReference("<span f<caret>oo", myFixture)
   }
 }

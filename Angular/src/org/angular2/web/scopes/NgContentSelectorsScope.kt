@@ -18,8 +18,7 @@ class NgContentSelectorsScope(tag: XmlTag)
   : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
-    qualifiedKind == NG_DIRECTIVE_ELEMENT_SELECTORS
-    || qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+    qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
   override fun createPointer(): Pointer<NgContentSelectorsScope> {
     val tag = dataHolder.createSmartPointer()
@@ -35,7 +34,6 @@ class NgContentSelectorsScope(tag: XmlTag)
     Angular2CodeInsightUtils.getAvailableNgContentSelectorsSequence(tag, Angular2DeclarationsScope(tag))
       .forEach { selector ->
         val elementSelector = selector.element
-        elementSelector?.let(consumer)
         if (elementSelector == null || elementSelector.name.equals(tagName, true)) {
           selector.notSelectors.flatMap { it.attributes }
             .plus(selector.attributes)
