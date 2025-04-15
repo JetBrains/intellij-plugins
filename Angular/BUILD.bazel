@@ -70,6 +70,7 @@ jvm_library(
     "//webcore/impl:webide-impl",
     "@community//platform/xdebugger-api:debugger",
     "@lib//:opentelemetry",
+    "//CSS/frontback/css-psi-impl:css-frontback-psi",
   ],
   runtime_deps = [
     ":angular_resources",
@@ -149,6 +150,7 @@ jvm_library(
     "@lib//:opentelemetry",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
     "@community//xml/testFramework",
+    "//CSS/frontback/css-psi-impl:css-frontback-psi",
   ],
   runtime_deps = [
     ":angular_resources",

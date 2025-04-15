@@ -67,6 +67,7 @@ jvm_library(
     "@community//platform/util/jdom",
     "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
     "@community//platform/util/text-matching",
+    "//CSS/frontback/css-psi-impl:css-frontback-psi",
   ],
   runtime_deps = [
     ":flex_resources",
