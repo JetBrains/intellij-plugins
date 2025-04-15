@@ -23,6 +23,7 @@ import com.intellij.util.ArrayUtil.contains
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
 import org.angular2.index.TS_CLASS_TOKENS
+import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
 
@@ -121,6 +122,9 @@ object Angular2DecoratorUtil {
     }
     return false
   }
+
+  fun isForwardRefCall(element: PsiElement): Boolean =
+    element is JSCallExpression && getFunctionNameFromIndex(element) == FORWARD_REF_FUN
 
   /**
    * Returns null for all literals other than string, supports string concatenation.

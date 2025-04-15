@@ -25,7 +25,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil.addIfNotNull
 import com.intellij.util.containers.addIfNotNull
-import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.isForwardRefCall
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2Entity
 import org.angular2.entities.Angular2Module
@@ -37,7 +37,6 @@ import org.angular2.entities.metadata.psi.Angular2MetadataFunction
 import org.angular2.entities.metadata.psi.Angular2MetadataModule
 import org.angular2.entities.metadata.psi.Angular2MetadataObject
 import org.angular2.entities.metadata.psi.Angular2MetadataReference
-import org.angular2.index.getFunctionNameFromIndex
 
 abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
   private val myAcceptableEntityClass: Class<T>,
@@ -148,7 +147,7 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
       }
 
       override fun visitJSCallExpression(node: JSCallExpression) {
-        if (getFunctionNameFromIndex(node) == Angular2DecoratorUtil.FORWARD_REF_FUN) {
+        if (isForwardRefCall(node)) {
           addIfNotNull(result, node.stubSafeCallArguments.firstOrNull())
         }
         else {
@@ -324,8 +323,10 @@ abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(
     }
   }
 
-  private fun evaluateModuleWithProvidersType(ngModuleSignature: JSRecordType.PropertySignature,
-                                              functionTypeSource: JSTypeSource): JSType? {
+  private fun evaluateModuleWithProvidersType(
+    ngModuleSignature: JSRecordType.PropertySignature,
+    functionTypeSource: JSTypeSource,
+  ): JSType? {
     val result = ngModuleSignature.jsType
     if (result !is JSGenericTypeImpl) return result
 

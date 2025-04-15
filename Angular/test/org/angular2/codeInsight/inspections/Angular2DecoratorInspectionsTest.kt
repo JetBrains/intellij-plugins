@@ -8,6 +8,7 @@ import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TestUtil
 import org.angular2.inspections.*
+import org.angular2.lang.Angular2Bundle
 
 /**
  * @see Angular2TsInspectionsTest
@@ -163,6 +164,13 @@ class Angular2DecoratorInspectionsTest : Angular2CodeInsightFixtureTestCase() {
   fun testRecursiveImportExport() {
     doTest(AngularRecursiveModuleImportExportInspection::class.java,
            "recursive-import-export.a.ts", "recursive-import-export.b.ts")
+  }
+
+  fun testRecursiveImportExportForwardRef() {
+    myFixture.configureDependencies(Angular2TestModule.ANGULAR_CORE_19_2_0)
+    doTest(1, "[Parent<caret>Component]", Angular2Bundle.message("angular.quickfix.wrap-with-forwardRef.family"),
+           AngularRecursiveModuleImportExportInspection::class.java,
+           "recursive-import-export-forward-ref.ts")
   }
 
   fun testUndeclaredExport() {

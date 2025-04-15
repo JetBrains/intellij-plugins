@@ -30,6 +30,9 @@ class Angular2ModuleResolver<T : PsiElement>(private val mySourceSupplier: () ->
   val imports: Set<Angular2Entity>
     get() = getResolvedModuleList(IMPORTS_KEY).symbols
 
+  val forwardRefImports: Set<Angular2Entity>
+    get() = getResolvedModuleList(IMPORTS_KEY).forwardRefSymbols
+
   val exports: Set<Angular2Entity>
     get() = getResolvedModuleList(EXPORTS_KEY).symbols
 
