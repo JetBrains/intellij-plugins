@@ -5,9 +5,15 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.vfs.toNioPathOrNull
+import com.intellij.testFramework.TestModeFlags
 import com.intellij.ui.IconManager
 
 internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
+
+  override fun setUp() {
+    super.setUp()
+    TestModeFlags.set(TF_RUN_MOCK, true, testRootDisposable)
+  }
 
   override fun tearDown() {
     try {
