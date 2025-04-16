@@ -35,16 +35,16 @@ class QodanaMavenReimporter : QodanaWorkflowExtension {
     }
     else {
       if (forceReimport) {
-        LOG.warn("Re-importing maven project after configuration")
+        LOG.info("Re-importing maven project after configuration")
         if (mavenProjects.isEmpty()) {
-          LOG.warn("Trying to re-import the project as maven")
+          LOG.info("Trying to re-import the project as maven")
           importProject(project)
-          LOG.warn("Maven re-import finished")
+          LOG.info("Maven re-import finished")
           if (projectsManager.projects.isEmpty()) {
-            LOG.warn("No maven projects were imported")
+            LOG.info("No maven projects were imported")
           }
           else {
-            LOG.warn("Consider projects as reimported")
+            LOG.info("Consider projects as reimported")
           }
         } else {
           reimportMavenProjects(mavenProjects, project, projectsManager)
@@ -52,13 +52,13 @@ class QodanaMavenReimporter : QodanaWorkflowExtension {
       }
     }
 
-    LOG.warn("Await end of dumb mode")
+    LOG.info("Await end of dumb mode")
     val futureDumb = CompletableDeferred<Unit>()
     DumbService.getInstance(project).runWhenSmart {
       futureDumb.complete(Unit)
     }
     futureDumb.await()
-    LOG.warn("Now running in smart mode")
+    LOG.info("Now running in smart mode")
   }
 
 
@@ -67,7 +67,7 @@ class QodanaMavenReimporter : QodanaWorkflowExtension {
     project: Project,
     projectsManager: MavenProjectsManager,
   ) {
-    LOG.warn("Re-importing maven project after configuration: ${mavenProjects.map { it.displayName }}")
+    LOG.info("Re-importing maven project after configuration: ${mavenProjects.map { it.displayName }}")
     val future = CompletableDeferred<Unit>()
     val disposable = Disposer.newDisposable("QodanaMavenReimporterDisposable")
     MavenProjectsManager.getInstance(project).addManagerListener(object : MavenProjectsManager.Listener {
@@ -75,11 +75,11 @@ class QodanaMavenReimporter : QodanaWorkflowExtension {
         future.complete(Unit)
       }
     }, disposable)
-    LOG.warn("Scheduling force update maven project")
+    LOG.info("Scheduling force update maven project")
     projectsManager.scheduleForceUpdateMavenProjects(mavenProjects)
-    LOG.warn("Awaiting for maven project import completion")
+    LOG.info("Awaiting for maven project import completion")
     future.await()
-    LOG.warn("Maven project reimport completed")
+    LOG.info("Maven project reimport completed")
     Disposer.dispose(disposable)
   }
 
