@@ -50,6 +50,8 @@ import kotlin.time.Duration.Companion.minutes
 private const val LOG_CONFIGURATION_ACTIVITIES_PERIOD_MINUTES = "qodana.log.configuration.period.minutes"
 private const val REGISTRY_STARTUP_TIMEOUT_MINUTES = "batch.inspections.startup.activities.timeout"
 
+private val LOG = logger<QodanaProjectLoader>()
+
 class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   suspend fun openProject(config: QodanaConfig): Project {
     QodanaWorkflowExtension.callBeforeProjectOpened(config)
@@ -93,8 +95,9 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   suspend fun configureProject(config: QodanaConfig, project: Project) {
     runActivityWithTiming(QodanaActivityKind.PROJECT_CONFIGURATION) {
       doConfigure(project)
+      LOG.info("Configured project")
+      QodanaWorkflowExtension.callAfterConfiguration(config, project)
     }
-    QodanaWorkflowExtension.callAfterConfiguration(config, project)
   }
 
   private suspend fun runConfigurators(config: QodanaConfig, project: Project) {
