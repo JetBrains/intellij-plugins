@@ -66,4 +66,6 @@ class Angular2GotoDeclarationTest : Angular2TestCase("navigation/declaration", f
   fun testForBlockImplicitVariable() = checkGotoDeclaration("<!--target--><caret>@for",
                                                             Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html")
 
+  fun testPrivateSetter() = checkGotoDeclaration("get <caret>bar(): number")
+
 }
