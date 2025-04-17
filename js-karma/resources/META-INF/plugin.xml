@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin allow-bundled-update="true">
   <id>Karma</id>
   <name>Karma</name>
   <description><![CDATA[

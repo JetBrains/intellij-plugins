@@ -1,19 +1,20 @@
-<idea-plugin>
+<idea-plugin allow-bundled-update="true">
   <!--suppress PluginXmlCapitalization -->
   <name>Next.js</name>
   <id>intellij.nextjs</id>
+  <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
   <resource-bundle>messages.NextJsBundle</resource-bundle>
   <description><![CDATA[
-    <h4>Support for Next.js framework</h4>
-    <b>Features:</b>
-    <p>* Reference resolution in Link components and tags</p>
-    <p>* Auto-excluding .next directory</p>
-    <p>* New project generator</p>
-    <p>* Don't report any exports as unused inside <code>app</code> dir </p>
-    ]]>
-  </description>
-  <vendor>JetBrains</vendor>
+    <h4>Provides advanced features for Next.js:</h4>
+    <ul>
+      <li>Reference resolution in Link components and tags</li>
+      <li>Auto-excluding .next directory</li>
+      <li>New project generator</li>
+      <li>Don't report any exports as unused inside <code>app</code> dir</li>
+    </ul>
+  ]]></description>
+
   <depends>com.intellij.modules.platform</depends>
   <depends>JavaScript</depends>
   <extensions defaultExtensionNs="com.intellij">

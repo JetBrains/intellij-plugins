@@ -1,4 +1,4 @@
-<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/prettierJS">
+<idea-plugin allow-bundled-update="true">
   <id>intellij.prettierJS</id>
   <name>Prettier</name>
   <description><![CDATA[
