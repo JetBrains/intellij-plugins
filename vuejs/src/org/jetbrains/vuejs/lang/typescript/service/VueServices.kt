@@ -6,11 +6,7 @@ import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
-import com.intellij.lang.typescript.lsp.JSServiceSetActivationRule
-import com.intellij.lang.typescript.lsp.LspServerLoader
-import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
-import com.intellij.lang.typescript.lsp.PackageVersion
-import com.intellij.lang.typescript.lsp.getTypeScriptServiceDirectory
+import com.intellij.lang.typescript.lsp.*
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
@@ -25,13 +21,17 @@ import org.jetbrains.vuejs.options.VueSettings
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
+private val vueLspServerPackageVersion = PackageVersion.bundled<VueLspServerPackageDescriptor>(
+  version = "2.2.8",
+  pluginPath = "vuejs",
+  localPath = "vue-language-server",
+  isBundledEnabled = { Registry.`is`("vue.language.server.bundled.enabled") },
+)
 
 private object VueLspServerPackageDescriptor : LspServerPackageDescriptor(
-  "@vue/language-server",
-  PackageVersion.bundled<VueLspServerPackageDescriptor>("2.2.8", "vuejs", "vue-language-server") {
-    Registry.`is`("vue.language.server.bundled.enabled")
-  },
-  "/bin/vue-language-server.js"
+  name = "@vue/language-server",
+  defaultVersion = vueLspServerPackageVersion,
+  defaultPackageRelativePath = "/bin/vue-language-server.js",
 ) {
   override val registryVersion: String get() = Registry.stringValue("vue.language.server.default.version")
 }
