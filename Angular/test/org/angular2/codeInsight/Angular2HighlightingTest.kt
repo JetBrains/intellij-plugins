@@ -351,6 +351,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testHostAttributeToken() =
     checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "app.component.html")
 
+  fun testHostAttributeTokenInline() =
+    checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
+
   fun testCreateComponentBindings() =
     checkHighlighting(ANGULAR_CORE_20_0_0_NEXT_3, extension = "ts")
 
