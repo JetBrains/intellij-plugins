@@ -37,6 +37,7 @@ import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.SIMPLE_BINDING
 import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.TEMPLATE_BINDINGS
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
+import java.util.function.Consumer
 
 class Angular2Injector : MultiHostInjector {
   internal object Holder {
@@ -169,16 +170,17 @@ class Angular2Injector : MultiHostInjector {
     val decorator = PsiTreeUtil.getContextOfType(ancestor, ES6Decorator::class.java)
     if (decorator != null) {
       if (isAngularEntityDecorator(decorator, true, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC)) {
-        inject(registrar, context, language, fileExtension)
-        JSFormattableInjectionUtil.setReformattableInjection(context, language)
+        inject(registrar, context, language, fileExtension) {
+          JSFormattableInjectionUtil.setReformattableInjection(context, it)
+        }
       }
     }
   }
 
 
   private fun inject(registrar: MultiHostRegistrar, context: JSLiteralExpression, language: Language,
-                     extension: String?) {
-    JSInjectionUtil.injectInQuotedLiteral(registrar, language, extension, context, null, null)
+                     extension: String?, customizer: Consumer<MultiHostRegistrar>? = null) {
+    JSInjectionUtil.injectInQuotedLiteral(registrar, language, extension, context, null, null, customizer)
   }
 
   private fun isPropertyWithName(element: PsiElement, requiredName: String): Boolean {

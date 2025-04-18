@@ -148,8 +148,9 @@ internal class VueInjector : MultiHostInjector {
       JSInjectionUtil.injectInQuotedLiteral(registrar,
                                             VueLanguage.INSTANCE,
                                             "${braces.first}.${braces.second}${INJECTED_FILE_SUFFIX}",
-                                            context, null, null)
-      JSFormattableInjectionUtil.setReformattableInjection(context, VueLanguage.INSTANCE)
+                                            context, null, null) {
+        JSFormattableInjectionUtil.setReformattableInjection(context, it)
+      }
     }
 
   }
