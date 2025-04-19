@@ -28,7 +28,6 @@ import org.jetbrains.qodana.cloud.openBrowserWithCurrentQodanaCloudFrontend
 import org.jetbrains.qodana.cloud.project.*
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.cloudclient.asSuccess
-import org.jetbrains.qodana.cloudclient.v1.QDCloudSchema
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.coroutines.qodanaProjectScope
 import org.jetbrains.qodana.extensions.RepositoryInfoProvider
@@ -49,10 +48,9 @@ import javax.swing.event.ChangeEvent
 private const val SCROLL_THRESHOLD_FRACTION = 0.7f
 
 class LinkCloudProjectView(
-  private val scope: CoroutineScope,
+  scope: CoroutineScope,
   private val project: Project,
   val viewModel: LinkCloudProjectViewModel,
-  private val afterProjectCreation: () -> Unit = {}
 ) {
   private val viewOfCurrentState = Wrapper()
 
@@ -82,7 +80,7 @@ class LinkCloudProjectView(
   }
 
   private fun createSelectCloudProjectView(scope: CoroutineScope, authorized: UserState.Authorized): JComponent {
-    val view = SelectCloudProjectView(scope, project, authorized, ::filterOrganizations, ::onProjectCreated, viewModel::setSelectedProject)
+    val view = SelectCloudProjectView(scope, project, authorized, viewModel::setSelectedProject)
     _emptyStateFlow.value = view.emptyStateFlow
     return view.getView()
   }
@@ -130,14 +128,6 @@ class LinkCloudProjectView(
       false,
       SourceLinkState.LINK_VIEW
     )
-  }
-
-  // Organizations filter may be will be used later
-  private fun filterOrganizations(qodanaCloudOrganizationResponse: QDCloudSchema.Organization): Boolean = true
-
-  private fun onProjectCreated(cloudProjectData: CloudProjectData) {
-    viewModel.linkWithCloudProject(scope, cloudProjectData)
-    afterProjectCreation.invoke()
   }
 
   fun getView(): JPanel = viewOfCurrentState
@@ -197,11 +187,9 @@ class LinkCloudProjectViewModel(private val project: Project, scope: CoroutineSc
 }
 
 private class SelectCloudProjectView(
-  private val scope: CoroutineScope,
+  scope: CoroutineScope,
   private val project: Project,
   private val authorized: UserState.Authorized,
-  private val organizationsFilter: (QDCloudSchema.Organization) -> Boolean,
-  private val onProjectCreated: (CloudProjectData) -> Unit,
   private val onProjectSelected: (CloudProjectData?) -> Unit
 ) {
   private val _emptyStateFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -391,13 +379,6 @@ private class SelectCloudProjectView(
             filterAppliedFlow.value = it.isSelected
           }
         }
-      }
-      button(QodanaBundle.message("qodana.link.project.dialog.new.project.button")) {
-        CreateProjectDialog(project, organizationsFilter, onProjectCreated).show()
-      }.applyToComponent {
-        // In the future, we may want to support creation of projects in IDE but not now
-        isEnabled = false
-        isVisible = false
       }
     }
     row {
