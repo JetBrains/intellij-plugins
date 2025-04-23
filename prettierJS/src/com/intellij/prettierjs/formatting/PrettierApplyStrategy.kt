@@ -4,7 +4,6 @@ package com.intellij.prettierjs.formatting
 import com.intellij.codeStyle.AbstractConvertLineSeparatorsAction
 import com.intellij.diff.util.DiffRangeUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.LineSeparator
 
@@ -13,13 +12,8 @@ internal interface PrettierApplyFormattingStrategy {
 
   companion object {
     fun from(context: PrettierFormattingContext): PrettierApplyFormattingStrategy {
-      return if (Registry.`is`("prettier.use.diff.formatting")) {
-        val diff = computeFormattingDiff(context)
-        DiffBased(diff)
-      }
-      else {
-        ReplaceAll
-      }
+      val diff = computeFormattingDiff(context)
+      return DiffBased(diff)
     }
   }
 
@@ -28,13 +22,6 @@ internal interface PrettierApplyFormattingStrategy {
   ) : PrettierApplyFormattingStrategy {
     override fun apply(project: Project, virtualFile: VirtualFile, context: PrettierFormattingContext): Boolean {
       applyTextDifferencesToDocument(context, formattingDiff)
-      return updateLineSeparatorIfNeeded(project, virtualFile, context.detectedLineSeparator)
-    }
-  }
-
-  object ReplaceAll : PrettierApplyFormattingStrategy {
-    override fun apply(project: Project, virtualFile: VirtualFile, context: PrettierFormattingContext): Boolean {
-      context.document.setText(context.formattedContent)
       return updateLineSeparatorIfNeeded(project, virtualFile, context.detectedLineSeparator)
     }
   }

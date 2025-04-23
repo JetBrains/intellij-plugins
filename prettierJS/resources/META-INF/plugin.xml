@@ -57,10 +57,6 @@
     <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
     <postFormatProcessor implementation="com.intellij.prettierjs.PrettierPostFormatProcessor"/>
 
-    <registryKey key="prettier.use.diff.formatting"
-                 defaultValue="true"
-                 description="If set to true, Prettier applies changes as a diff instead of replacing the whole text."/>
-
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.JSPrettierCodeStyleInstaller"/>
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.HtmlPrettierCodeStyleInstaller"/>
     <eslint.ruleMappersFactory implementation="com.intellij.prettierjs.eslint.PrettierEslintRuleMappersFactory"/>
