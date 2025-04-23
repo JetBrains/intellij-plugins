@@ -31,27 +31,27 @@ public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
   }
 
   public void testUnambiguousImportsOnTheFly() {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-    boolean oldHintsEnabled = CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY;
-
-    CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY = false;
     boolean old = ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly();
     ActionScriptAutoImportOptionsProvider.setAddUnambiguousImportsOnTheFly(true);
     try {
-      DaemonCodeAnalyzerSettings.getInstance().setImportHintEnabled(true);
+      ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
+      CodeInsightSettings.runWithTemporarySettings(settings -> {
+        settings.ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY = false;
+        DaemonCodeAnalyzerSettings.getInstance().setImportHintEnabled(true);
 
-      final String testName = getTestName(false);
-      myFixture.configureByFiles(testName + ".as", testName + "_2.as");
-      myFixture.type(" ");
-      myFixture.type("\b");
-      myFixture.doHighlighting();
-      CodeInsightTestFixtureImpl.waitForLazyQuickFixesUnderCaret(myFixture.getFile(), myFixture.getEditor());
-      UIUtil.dispatchAllInvocationEvents();
-      myFixture.checkResultByFile(testName + "_after.as");
+        final String testName = getTestName(false);
+        myFixture.configureByFiles(testName + ".as", testName + "_2.as");
+        myFixture.type(" ");
+        myFixture.type("\b");
+        myFixture.doHighlighting();
+        CodeInsightTestFixtureImpl.waitForLazyQuickFixesUnderCaret(myFixture.getFile(), myFixture.getEditor());
+        UIUtil.dispatchAllInvocationEvents();
+        myFixture.checkResultByFile(testName + "_after.as");
+        return null;
+      });
     }
     finally {
       ActionScriptAutoImportOptionsProvider.setAddUnambiguousImportsOnTheFly(old);
-      CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY = oldHintsEnabled;
     }
   }
 

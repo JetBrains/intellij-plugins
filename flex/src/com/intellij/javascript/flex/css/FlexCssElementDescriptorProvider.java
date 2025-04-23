@@ -78,10 +78,10 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     CssElementDescriptorFactory2 descriptorFactory = CssElementDescriptorFactory2.getInstance();
     CssStringValue singleStringValue = descriptorFactory.createStringValueDescriptor(null, 1, 1, null);
 
-    CssGroupValue embedFunctionValue = descriptorFactory.createGroupValue(CssGroupValue.Type.OR, 1, 1, null, null);
+    CssGroupValue embedFunctionValue = descriptorFactory.createGroupValue(CssGroupValue.Type.OR, 1, 1, null, null, null);
 
     CssValueDescriptor commaSeparator = descriptorFactory.createTextValueDescriptor(",", 1, 1, null);
-    CssGroupValue attributes = descriptorFactory.createGroupValue(CssGroupValue.Type.AND, 1, 1, embedFunctionValue, commaSeparator);
+    CssGroupValue attributes = descriptorFactory.createGroupValue(CssGroupValue.Type.AND, 1, 1, embedFunctionValue, commaSeparator, null);
     attributes.addChild(createAttributeValueDescriptor("source", true, descriptorFactory, attributes));
     attributes.addChild(createAttributeValueDescriptor("mimeType", false, descriptorFactory, attributes));
     attributes.addChild(createBooleanAttributeValueDescriptor("smoothing", false, descriptorFactory, attributes));
@@ -104,7 +104,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
   private static CssGroupValue createAttributeValueDescriptor(@NotNull String attributeName, boolean required,
                                                               @NotNull CssElementDescriptorFactory2 descriptorFactory,
                                                               @NotNull CssGroupValue parent) {
-    CssGroupValue attributeValue = descriptorFactory.createGroupValue(CssGroupValue.Type.ALL, required ? 1 : 0, 1, parent, null);
+    CssGroupValue attributeValue = descriptorFactory.createGroupValue(CssGroupValue.Type.ALL, required ? 1 : 0, 1, parent, null, null);
     attributeValue.addChild(descriptorFactory.createNameValueDescriptor(attributeName, attributeName, 1, 1, attributeValue));
     attributeValue.addChild(descriptorFactory.createTextValueDescriptor("=", 1, 1, attributeValue));
     attributeValue.addChild(descriptorFactory.createStringValueDescriptor(null, 1, 1, attributeValue));
@@ -114,11 +114,11 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
   private static CssGroupValue createBooleanAttributeValueDescriptor(@NotNull String attributeName, boolean required,
                                                                      @NotNull CssElementDescriptorFactory2 descriptorFactory,
                                                                      @NotNull CssGroupValue parent) {
-    CssGroupValue attributeValue = descriptorFactory.createGroupValue(CssGroupValue.Type.ALL, required ? 1 : 0, 1, parent, null);
+    CssGroupValue attributeValue = descriptorFactory.createGroupValue(CssGroupValue.Type.ALL, required ? 1 : 0, 1, parent, null, null);
     attributeValue.addChild(descriptorFactory.createNameValueDescriptor(attributeName, attributeName, 1, 1, attributeValue));
     attributeValue.addChild(descriptorFactory.createTextValueDescriptor("=", 1, 1, attributeValue));
 
-    CssGroupValue booleanValue = descriptorFactory.createGroupValue(CssGroupValue.Type.OR, 1, 1, attributeValue, null);
+    CssGroupValue booleanValue = descriptorFactory.createGroupValue(CssGroupValue.Type.OR, 1, 1, attributeValue, null, null);
     booleanValue.addChild(descriptorFactory.createStringValueDescriptor("true", 1, 1, booleanValue));
     booleanValue.addChild(descriptorFactory.createStringValueDescriptor("false", 1, 1, booleanValue));
 

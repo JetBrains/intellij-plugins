@@ -418,7 +418,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     addValuesFromEnumerations2(infos, children);
     addValuesFromTypes2(infos, formats, children);
 
-    CssGroupValue result = CssElementDescriptorFactory2.getInstance().createGroupValue(CssGroupValue.Type.OR, -1, 1, null, null);
+    CssGroupValue result = CssElementDescriptorFactory2.getInstance().createGroupValue(CssGroupValue.Type.OR, -1, 1, null, null, null);
     if (!children.isEmpty()) {
       for (CssValueDescriptor child : children) {
         result.addChild(CssValueDescriptorModificator.withParent(child, result));
