@@ -1,9 +1,10 @@
 ### auto-generated section `build intellij.cloudFormation.metadataCrawler` start
 load("@rules_java//java:defs.bzl", "java_library")
-load("@rules_jvm//:jvm.bzl", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_test")
 
-jvm_test(
-  name = "cloudFormation-metadataCrawler_test",
+jvm_library(
+  name = "cloudFormation-metadataCrawler_test_lib",
+  visibility = ["//visibility:public"],
   srcs = glob(["src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
@@ -17,5 +18,10 @@ jvm_test(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
   ]
+)
+
+jvm_test(
+  name = "cloudFormation-metadataCrawler_test",
+  runtime_deps = [":cloudFormation-metadataCrawler_test_lib"]
 )
 ### auto-generated section `build intellij.cloudFormation.metadataCrawler` end
