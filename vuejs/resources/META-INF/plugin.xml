@@ -1,4 +1,4 @@
-<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/vuejs" package="org.jetbrains.vuejs">
+<idea-plugin package="org.jetbrains.vuejs" allow-bundled-update="true">
   <!--suppress PluginXmlCapitalization -->
   <name>Vue.js</name>
   <id>org.jetbrains.plugins.vue</id>

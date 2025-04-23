@@ -1,14 +1,22 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.psi.impl
 
+import com.intellij.lang.ASTNode
 import com.intellij.psi.util.PsiTreeUtil
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
-import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.PropertyBindingType
+import org.angular2.lang.html.stub.Angular2HtmlAttributeStubElementType
+import org.angular2.lang.html.stub.impl.Angular2HtmlBoundAttributeStubImpl
 
-internal abstract class Angular2HtmlPropertyBindingBase(type: Angular2HtmlElementTypes.Angular2ElementType) : Angular2HtmlBoundAttributeImpl(type) {
+internal abstract class Angular2HtmlPropertyBindingBase : Angular2HtmlBoundAttributeImpl {
+
+  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: Angular2HtmlAttributeStubElementType)
+    : super(stub, nodeType)
+
+  constructor(node: ASTNode) : super(node)
+
   val propertyName: String
     get() = attributeInfo.name
   val bindingType: PropertyBindingType

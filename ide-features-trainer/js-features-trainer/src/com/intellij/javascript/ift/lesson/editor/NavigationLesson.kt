@@ -89,7 +89,7 @@ class NavigationLesson
           trigger(it)
         }
         task("GotoAction") {
-          text(JsLessonsBundle.message("js.editor.navigation.search.everywhere.tabs", strong(ActionsBundle.message("action.SearchEverywhere.text")), action("EditorTab"), strong(IdeBundle.message("searcheverywhere.allelements.tab.name")), strong(IdeBundle.message("search.everywhere.group.name.actions")), strong(IdeBundle.message("search.everywhere.group.name.files")), action(it)))
+          text(JsLessonsBundle.message("js.editor.navigation.search.everywhere.tabs", strong(ActionsBundle.message("action.SearchEverywhere.text")), action("EditorTab"), strong(IdeBundle.message("searcheverywhere.all.elements.tab.name")), strong(IdeBundle.message("search.everywhere.group.name.actions")), strong(IdeBundle.message("search.everywhere.group.name.files")), action(it)))
           trigger(it)
         }
         task {

@@ -10,6 +10,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.util.text.StringUtilRt;
@@ -24,7 +25,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 
-public class TsLintErrorFixAction extends JSLinterFixSingleErrorBaseAction {
+public class TsLintErrorFixAction extends JSLinterFixSingleErrorBaseAction implements DumbAware {
 
   @SafeFieldForPreview
   private final @NotNull TsLinterError myError;

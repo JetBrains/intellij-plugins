@@ -34,8 +34,7 @@ private val DIALOG_SIZE = JBUI.size(630, 650)
 class LinkCloudProjectDialog(project: Project) : DialogWrapper(project, false) {
   private val scope: CoroutineScope = project.qodanaProjectScope.childScope(ModalityState.any().asContextElement())
 
-  private val linkCloudProjectView =
-    LinkCloudProjectView(scope, project, LinkCloudProjectViewModel(project, scope), afterProjectCreation = { close(OK_EXIT_CODE) })
+  private val linkCloudProjectView = LinkCloudProjectView(scope, project, LinkCloudProjectViewModel(project, scope))
 
   private val createAction = object : AbstractAction(QodanaBundle.message("qodana.link.project.dialog.create.project")) {
     override fun actionPerformed(e: ActionEvent?) {

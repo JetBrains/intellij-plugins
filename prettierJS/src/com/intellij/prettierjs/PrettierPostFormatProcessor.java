@@ -34,13 +34,13 @@ public final class PrettierPostFormatProcessor implements PostFormatProcessor {
     return rangeToReformat;
   }
 
-  private static boolean isApplicable(@NotNull PsiFile psiFile) {
+  static boolean isApplicable(@NotNull PsiFile psiFile) {
+    VirtualFile file = psiFile.getVirtualFile();
+    if (file == null) return false;
+
     Project project = psiFile.getProject();
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
     if (!configuration.isRunOnReformat()) return false;
-
-    VirtualFile file = psiFile.getVirtualFile();
-    if (file == null) return false;
 
     FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(file);
     if (fileEditor instanceof TextEditor) {

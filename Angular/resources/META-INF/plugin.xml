@@ -159,6 +159,8 @@
     <stubIndex implementation="org.angular2.index.Angular2IvyPipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2IvyDirectiveIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2IvyModuleIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2CustomCssPropertyInJsIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2CustomCssPropertyInHtmlAttributeIndex"/>
     <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory" order="before JavaScript"/>
     <psi.referenceContributor language="TypeScript" implementation="org.angular2.codeInsight.refs.Angular2TSReferencesContributor"/>
     <psi.referenceContributor language="HtmlCompatible" implementation="org.angular2.codeInsight.refs.Angular2HtmlReferencesContributor"/>
@@ -444,7 +446,7 @@
     <dialectSpecificHandlersFactory language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
 
     <!-- Angular 2 Expression language contributions -->
-    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="22"/>
+    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="23"/>
     <frameworkSpecificHandler language="Angular2" implementationClass="org.angular2.lang.expr.Angular2JSFrameworkSpecificHandler"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>

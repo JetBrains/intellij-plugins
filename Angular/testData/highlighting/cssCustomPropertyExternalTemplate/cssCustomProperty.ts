@@ -1,15 +1,16 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import {Component} from '@angular/core';
+import {Component, HostBinding} from '@angular/core';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  template: `
-    <div [style.--<caret>test2]="'#ff0000'">
-      <span style="color: var(--test2)">Test</span>
-    </div>
-    <span style="color: var(--test2)">Test2</span>
-  `
+  templateUrl: "./component.html",
+  host: {
+    "[style.--test3]": "'#ffd000'",
+  }
 })
 export class AppComponent {
+  @HostBinding("style.--test4")
+  foo: string = "bar";
+
 }

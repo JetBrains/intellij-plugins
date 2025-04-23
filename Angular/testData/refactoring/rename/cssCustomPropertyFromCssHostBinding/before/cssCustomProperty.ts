@@ -5,10 +5,10 @@ import {Component} from '@angular/core';
   selector: 'app-root',
   standalone: true,
   template: `
-    <div [style.--test2]="'#ff0000'">
-      <span style="color: var(--test2)">Test</span>
-    </div>
-    <span style="color: var(--<caret>test2)">Test2</span>
+      <div [style.--test2]="'#ff0000'">
+          <span style="color: var(--test2)">Test</span>
+      </div>
+      <span style="color: var(--<caret>test2)">Test2</span>
   `,
   host: {
     "[style.--test2]": "'#ffd000'"

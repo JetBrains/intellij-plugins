@@ -70,7 +70,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
         is XmlElement -> calculateHtmlScopes(location)
         is CssElement -> calculateCssScopes(location)
         else -> emptyList()
-      }
+      } + Angular2CustomCssPropertiesScope(location.containingFile)
     }
     else emptyList()
 

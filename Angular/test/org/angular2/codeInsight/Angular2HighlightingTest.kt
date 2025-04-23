@@ -366,6 +366,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testCssCustomProperty() =
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 
+  fun testCssCustomPropertyExternalTemplate() =
+    checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "test.css")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

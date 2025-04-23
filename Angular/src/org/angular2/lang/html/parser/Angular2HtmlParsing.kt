@@ -322,7 +322,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
           break
         }
         if (tt === Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR && result === XmlElementType.XML_ATTRIBUTE) {
-          result = Angular2HtmlElementTypes.PROPERTY_BINDING
+          result = Angular2HtmlStubElementTypes.PROPERTY_BINDING
         }
         when (tt) {
           XmlTokenType.XML_BAD_CHARACTER -> {
@@ -538,19 +538,19 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
     private val DATA_TOKENS = TokenSet.create(XmlTokenType.XML_COMMA, XmlTokenType.XML_DATA_CHARACTERS)
     private fun getAttributeContentType(type: IElementType, name: String): IElementType? =
       when (type) {
-        Angular2HtmlElementTypes.PROPERTY_BINDING, Angular2HtmlElementTypes.BANANA_BOX_BINDING -> {
+        Angular2HtmlStubElementTypes.PROPERTY_BINDING, Angular2HtmlStubElementTypes.BANANA_BOX_BINDING -> {
           Angular2EmbeddedExprTokenType.BINDING_EXPR
         }
-        Angular2HtmlElementTypes.EVENT -> {
+        Angular2HtmlStubElementTypes.EVENT -> {
           Angular2EmbeddedExprTokenType.ACTION_EXPR
         }
-        Angular2HtmlElementTypes.TEMPLATE_BINDINGS -> {
+        Angular2HtmlStubElementTypes.TEMPLATE_BINDINGS -> {
           createTemplateBindings(name)
         }
         Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR -> {
           Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR
         }
-        Angular2HtmlElementTypes.REFERENCE, Angular2HtmlElementTypes.LET, XmlElementType.XML_ATTRIBUTE -> {
+        Angular2HtmlStubElementTypes.REFERENCE, Angular2HtmlStubElementTypes.LET, XmlElementType.XML_ATTRIBUTE -> {
           null
         }
         else -> {

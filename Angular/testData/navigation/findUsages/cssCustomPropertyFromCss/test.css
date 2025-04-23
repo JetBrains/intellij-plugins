@@ -1,7 +1,0 @@
-span {
-  --test2: blue
-}
-
-span.bar {
-  --test2: red
-}
