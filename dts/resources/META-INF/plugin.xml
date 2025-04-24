@@ -7,7 +7,7 @@
 
   <depends>com.intellij.modules.platform</depends>
 
-  <depends optional="true" config-file="dts-withCLion.xml">com.intellij.modules.clion</depends>
+  <depends optional="true" config-file="dts-withCLion.xml">com.intellij.clion.cmake</depends>
 
   <resource-bundle>messages.DtsBundle</resource-bundle>
 
