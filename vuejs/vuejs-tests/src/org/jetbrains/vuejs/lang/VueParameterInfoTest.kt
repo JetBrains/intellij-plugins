@@ -26,6 +26,6 @@ class VueParameterInfoTest : BasePlatformTestCase() {
                                        "    import {isApiResponse} from 'api'\n" +
                                        "    isApiResponse(<caret>)\n" +
                                        "</script>")
-    assertEquals("<b>s: String</b>, b: boolean", myFixture.parameterInfoAtCaret)
+    assertEquals("<b>s: String,</b> b: boolean", myFixture.parameterInfoAtCaret)
   }
 }
