@@ -103,12 +103,11 @@ public class JadeParsingWithoutErrorsSuite extends TestSuite {
     return new JadeParsingWithoutErrorsSuite();
   }
 
-  @SuppressWarnings("JUnitTestCaseWithNoTests")
+  @SuppressWarnings({"JUnitTestCaseWithNoTests", "JUnitMalformedDeclaration"})
   private static class JadeLightParserTest extends JadeBaseParsingTestCase {
     private final File myFile;
     private final String myFileName;
 
-    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
     JadeLightParserTest(File file) {
       super();
       myFile = file;

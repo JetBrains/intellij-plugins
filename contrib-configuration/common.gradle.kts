@@ -1,5 +1,6 @@
 repositories {
   mavenCentral()
+  maven("https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
 rootProject.extensions.add("platform.version", "LATEST-EAP-SNAPSHOT")
