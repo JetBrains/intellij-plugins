@@ -12,11 +12,11 @@ public class JadeTestUtil {
     return contribPath + "/jade/testData/";
   }
 
-  public static String getLexerTestDirPath() {
-    return getBaseTestDataPath().substring(IdeaTestExecutionPolicy.getHomePathWithPolicy().length());
-  }
-
   public static String getContribPath() {
+    File f = new File("testData");
+    if (f.exists()) {
+      return f.getAbsoluteFile().getParentFile().getParent();
+    }
     final String homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy();
     if (new File(homePath, "contrib/.gitignore").isFile()) {
       return homePath + File.separatorChar + "contrib";

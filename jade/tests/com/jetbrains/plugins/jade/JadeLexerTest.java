@@ -43,7 +43,11 @@ public class JadeLexerTest extends LexerTestCase {
 
   @Override
   protected @NotNull String getDirPath() {
-    return JadeTestUtil.getLexerTestDirPath() + "/lexer";
+    return JadeTestUtil.getBaseTestDataPath() + "/lexer";
+  }
+
+  protected @NotNull String getPathToTestDataFile(@NotNull String extension) {
+    return getDirPath() + "/" + getTestName(true) + extension;
   }
 
   public void testSimple() {
