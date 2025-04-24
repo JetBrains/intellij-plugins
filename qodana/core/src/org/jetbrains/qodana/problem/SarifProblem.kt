@@ -36,6 +36,7 @@ data class SarifProblem(
   val endColumn: Int?,
   val charLength: Int?,
   val relativePathToFile: String,
+  val traces: Collection<SarifTrace>,
   val message: String,
   val qodanaSeverity: QodanaSeverity,
   val inspectionId: String,
@@ -152,17 +153,7 @@ private fun fromResultWithLocation(
     return null
   }
 
-  val fixedUri = if (location.physicalLocation.artifactLocation.uriBaseId == null) {
-    try {
-      Paths.get(location.physicalLocation.artifactLocation.uri).pathString.removePrefix(absoluteSrcDirPrefix)
-    }
-    catch (_ : InvalidPathException) {
-      return null
-    }
-  }
-  else {
-    location.physicalLocation.artifactLocation.uri
-  }
+  val fixedUri = getLocationWithoutPrefix(location, absoluteSrcDirPrefix) ?: return null
 
   return SarifProblem(
     /** Line and column are zero-based values */
@@ -171,6 +162,7 @@ private fun fromResultWithLocation(
     endLine = location.physicalLocation.region?.endLine?.minus(1),
     endColumn = location.physicalLocation.region?.endColumn?.minus(1),
     charLength = location.physicalLocation.region?.charLength,
+    traces = result.buildTraces(absoluteSrcDirPrefix),
     relativePathToFile = fixedUri,
     message = result.buildProblemMessage(),
     qodanaSeverity = result.qodanaSeverity,
@@ -180,6 +172,19 @@ private fun fromResultWithLocation(
     revisionId = revisionId
   )
 }
+
+private fun getLocationWithoutPrefix(location: Location, absoluteSrcDirPrefix: String) =
+  if (location.physicalLocation.artifactLocation.uriBaseId == null) {
+    try {
+      Paths.get(location.physicalLocation.artifactLocation.uri).pathString.removePrefix(absoluteSrcDirPrefix)
+    }
+    catch (_ : InvalidPathException) {
+      null
+    }
+  }
+  else {
+    location.physicalLocation.artifactLocation.uri
+  }
 
 private fun getAbsolutPathsPrefix(project: Project, reportResults: List<Result>, projectPath: String?): String {
   projectPath ?: return ""
@@ -248,4 +253,25 @@ private fun getPossibleTaintAnalysisSinksResultsAndLocations(
       location?.let { result to it }
     }
     .toList()
+}
+
+private fun Result.buildTraces(absoluteSrcDirPrefix: String) = buildList {
+  for (graph in graphs) {
+    val nodes = graph.nodes.sortedBy { it.id.toIntOrNull() }.mapNotNull { node ->
+      SarifTrace.Node(
+        startLine = node.location.physicalLocation.region.startLine?.minus(1),
+        startColumn = node.location.physicalLocation.region.startColumn?.minus(1),
+        charLength = node.location.physicalLocation.region.charLength,
+        relativePathToFile = getLocationWithoutPrefix(node.location, absoluteSrcDirPrefix)
+      )
+    }
+    if (nodes.isNotEmpty()) {
+      add(SarifTrace(message.text, nodes))
+    }
+  }
+}
+
+data class SarifTrace(val description: String, val nodes: Collection<Node>) {
+  data class Node(
+    val startLine: Int?, val startColumn: Int?, val charLength: Int?, val relativePathToFile: String?)
 }

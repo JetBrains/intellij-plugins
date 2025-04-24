@@ -195,6 +195,11 @@ internal class QodanaReportHighlightingPass(
 
     builder.registerFix(QodanaRootIgnoreIntention(), ignoreActions, null, null, null)
 
+    val customActions = QodanaHighlightInfoActionProvider.provide(element, problem)
+    customActions.forEach {
+      builder.registerFix(it, null, null, null, null)
+    }
+
     val highlight = builder
       .range(textRange)
       .needsUpdateOnTyping(true)

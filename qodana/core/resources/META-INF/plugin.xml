@@ -267,6 +267,9 @@
     <extensionPoint name="highlightingListener"
                     interface="org.jetbrains.qodana.highlight.QodanaHighlightingListener"
                     dynamic="true"/>
+    <extensionPoint name="highlightInfoActionProvider"
+                    interface="org.jetbrains.qodana.highlight.QodanaHighlightInfoActionProvider"
+                    dynamic="true"/>
     <extensionPoint name="externalToolsConfigurationProvider"
                     interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsConfigurationProvider"
                     dynamic="true"/>
