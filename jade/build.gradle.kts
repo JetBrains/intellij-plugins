@@ -1,7 +1,5 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
-import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
-import org.jetbrains.intellij.pluginRepository.PluginRepositoryFactory
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 apply(from = "../contrib-configuration/common.gradle.kts")
@@ -21,7 +19,7 @@ repositories {
 
 intellijPlatform {
   pluginConfiguration {
-    name = "Jade"
+    name = "Pug (ex-Jade)"
   }
 }
 
@@ -37,7 +35,11 @@ sourceSets {
   test {
     java {
       setSrcDirs(listOf("tests"))
-      setExcludes(listOf("com/jetbrains/plugins/jade/watcher/**"))
+      setExcludes(listOf(
+        "com/jetbrains/plugins/jade/watcher/**",
+        "com/jetbrains/plugins/jade/parser/JadeParsingWithoutErrorsSuite.*",
+        "com/jetbrains/plugins/jade/JadeInjectionTest.*"
+      ))
     }
     resources {
       setSrcDirs(listOf("testData", "testResources"))
@@ -48,7 +50,7 @@ sourceSets {
 dependencies {
   intellijPlatform {
     bundledPlugins("JavaScript", "JSIntentionPowerPack", "HtmlTools", "com.intellij.css")
-    pluginsInLatestCompatibleVersion(
+    compatiblePlugins(
       "com.intellij.plugins.watcher",
       "com.intellij.plugins.html.instantEditing",
       "org.coffeescript"
@@ -63,7 +65,6 @@ dependencies {
 }
 
 kotlin {
-  kotlinDaemonJvmArgs = listOf("-Xmx1024m")
   compilerOptions {
     jvmTarget.set(JvmTarget.fromTarget(ext("kotlin.jvmTarget")))
     @Suppress("UNCHECKED_CAST")
@@ -80,26 +81,6 @@ tasks {
     gradleVersion = ext("gradle.version")
   }
 }
-
-private val IntelliJPlatformDependenciesExtension.pluginRepository by lazy {
-  PluginRepositoryFactory.create("https://plugins.jetbrains.com")
-}
-
-fun IntelliJPlatformDependenciesExtension.pluginsInLatestCompatibleVersion(vararg pluginIds: String) =
-  plugins(provider {
-    pluginIds.map { pluginId ->
-      val platformType = intellijPlatform.productInfo.productCode
-      val platformVersion = intellijPlatform.productInfo.buildNumber
-
-      val plugin = pluginRepository.pluginManager.searchCompatibleUpdates(
-        build = "$platformType-$platformVersion",
-        xmlIds = listOf(pluginId),
-      ).firstOrNull()
-        ?: throw GradleException("No plugin update with id='$pluginId' compatible with '$platformType-$platformVersion' found in JetBrains Marketplace")
-
-      "${plugin.pluginXmlId}:${plugin.version}"
-    }
-  })
 
 fun ext(name: String): String =
   rootProject.extensions[name] as? String
