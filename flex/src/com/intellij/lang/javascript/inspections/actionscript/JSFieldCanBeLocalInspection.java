@@ -34,7 +34,7 @@ public final class JSFieldCanBeLocalInspection extends JSInspection {
   private static final Logger LOG = Logger.getInstance(JSFieldCanBeLocalInspection.class);
 
   @Override
-  protected @NotNull PsiElementVisitor createVisitor(final ProblemsHolder holder, final LocalInspectionToolSession session) {
+  protected @NotNull PsiElementVisitor createVisitor(final @NotNull ProblemsHolder holder, final @NotNull LocalInspectionToolSession session) {
     return new MyVisitor(holder);
   }
 

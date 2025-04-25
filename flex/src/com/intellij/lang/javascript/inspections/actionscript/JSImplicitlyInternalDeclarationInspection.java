@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public final class JSImplicitlyInternalDeclarationInspection extends JSInspection {
 
   @Override
-  protected @NotNull JSElementVisitor createVisitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+  protected @NotNull JSElementVisitor createVisitor(final @NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
     return new JSElementVisitor() {
       @Override
       public void visitJSClass(@NotNull JSClass aClass) {
