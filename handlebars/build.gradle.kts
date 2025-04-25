@@ -46,6 +46,8 @@ dependencies {
     jetbrainsRuntime()
     intellijIdeaUltimate(ext("platform.version"), useInstaller = false)
     testFramework(TestFrameworkType.Platform)
+    testFramework(TestFrameworkType.Plugin.XML)
+    testFramework(TestFrameworkType.Plugin.JavaScript)
   }
   testImplementation("junit:junit:${ext("junit.version")}")
 }
