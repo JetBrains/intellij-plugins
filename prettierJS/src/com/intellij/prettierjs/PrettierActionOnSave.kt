@@ -58,7 +58,7 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
       ensureConfigsSaved(listOf(file), project)
     }
 
-    val result = ReformatWithPrettierAction.performRequestForFile(psiFile, null) ?: return
+    val result = ReformatWithPrettierAction.performRequestForFile(psiFile, null, null) ?: return
     val formattedContent = result.result ?: return
 
     val formattingContext = createFormattingContext(

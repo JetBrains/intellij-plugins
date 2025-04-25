@@ -139,7 +139,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
                               : null;
 
     ensureConfigsSaved(Collections.singletonList(vFile), project);
-    ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable = () -> performRequestForFile(file, range);
+    ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable = () -> performRequestForFile(file, range, null);
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
       .runProcessWithProgressSynchronously(computable, PrettierBundle.message("progress.title"), true, project);
@@ -196,7 +196,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
 
     VirtualFile vFile = file.getVirtualFile();
     ensureConfigsSaved(Collections.singletonList(vFile), project);
-    PrettierLanguageService.FormatResult result = performRequestForFile(file, range);
+    PrettierLanguageService.FormatResult result = performRequestForFile(file, range, null);
     if (result != null) {
       int delta = applyFormatResult(project, vFile, result);
       if (delta < 0 && range.getLength() < Math.abs(delta)) {
@@ -248,7 +248,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
           return Collections.emptyMap();
         }
 
-        PrettierLanguageService.FormatResult result = performRequestForFile(currentFile, null);
+        PrettierLanguageService.FormatResult result = performRequestForFile(currentFile, null, null);
         // timed out. show notification?
         if (result == null) {
           continue;
@@ -286,6 +286,26 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     }
   }
 
+  static @Nullable String processFileAsFormattingTask(@NotNull PsiFile psiFile, @NotNull String text, @NotNull TextRange range) {
+    ProgressManager.checkCanceled();
+
+    VirtualFile vFile = psiFile.getVirtualFile();
+    if (vFile == null) return null;
+
+    Project project = psiFile.getProject();
+
+    ApplicationManager.getApplication().invokeAndWait(() -> {
+      ensureConfigsSaved(Collections.singletonList(vFile), project);
+    });
+
+    PrettierLanguageService.FormatResult result = performRequestForFile(psiFile, range, text);
+    if (result != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported && result.result != null) {
+      return StringUtil.convertLineSeparators(result.result);
+    }
+
+    return null;
+  }
+
   /**
    * @param result (new text length) - (old text length)
    */
@@ -311,7 +331,11 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     return 0;
   }
 
-  static @Nullable PrettierLanguageService.FormatResult performRequestForFile(@NotNull PsiFile currentFile, @Nullable TextRange range) {
+  static @Nullable PrettierLanguageService.FormatResult performRequestForFile(
+    @NotNull PsiFile currentFile,
+    @Nullable TextRange range,
+    @Nullable String forcedInitialText
+  ) {
     boolean edt = ApplicationManager.getApplication().isDispatchThread();
     if (!edt && ApplicationManager.getApplication().isReadAccessAllowed()) {
       LOG.error("JSLanguageServiceUtil.awaitFuture() under read action may cause deadlock");
@@ -330,11 +354,16 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
       VirtualFile currentVFile = currentFile.getVirtualFile();
       filePath.set(LocalFilePath.asLocalFilePath(currentVFile.toNioPath()));
 
-      // PsiFile might be not committed at this point, take text from document
-      Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
-      if (document == null) return;
-
-      CharSequence content = document.getImmutableCharSequence();
+      CharSequence content;
+      if (forcedInitialText != null) {
+        content = forcedInitialText;
+      }
+      else {
+        // PsiFile might be not committed at this point, take text from document
+        Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
+        if (document == null) return;
+        content = document.getImmutableCharSequence();
+      }
 
       if (range != null && range.getStartOffset() == 0 && range.getLength() == content.length()) {
         // Prettier may remove trailing line break in Vue (WEB-56144, https://github.com/prettier/prettier/issues/13399).

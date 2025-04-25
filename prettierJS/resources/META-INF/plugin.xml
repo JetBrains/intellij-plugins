@@ -57,6 +57,16 @@
     <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
     <postFormatProcessor implementation="com.intellij.prettierjs.PrettierPostFormatProcessor"/>
 
+    <registryKey key="prettier.use.async.formatting.service" defaultValue="true"
+                 description="Enable or disable the Prettier asynchronous formatting service. When enabled, the post format processor is disabled."/>
+    <formattingService id="PrettierFormattingService" implementation="com.intellij.prettierjs.PrettierFormattingService"/>
+
+    <notificationGroup id="Prettier"
+                       displayType="BALLOON"
+                       isLogByDefault="false"
+                       bundle="messages.PrettierBundle"
+                       key="notification.group"/>
+
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.JSPrettierCodeStyleInstaller"/>
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.HtmlPrettierCodeStyleInstaller"/>
     <eslint.ruleMappersFactory implementation="com.intellij.prettierjs.eslint.PrettierEslintRuleMappersFactory"/>
