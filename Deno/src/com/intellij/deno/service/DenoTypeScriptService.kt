@@ -6,6 +6,7 @@ import com.intellij.deno.isDenoEnableForContextDirectory
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
+import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptService
@@ -18,11 +19,11 @@ import com.intellij.psi.PsiFile
 
 class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServiceProvider {
 
-  override fun isHighlightingCandidate(file: VirtualFile) = TypeScriptLanguageServiceUtil.isTypeScriptFileType(file.fileType)
+  override fun isHighlightingCandidate(file: VirtualFile): Boolean = TypeScriptLanguageServiceUtil.isTypeScriptFileType(file.fileType)
 
-  override fun getService(file: VirtualFile) = allServices.firstOrNull()
+  override fun getService(file: VirtualFile): TypeScriptService? = allServices.firstOrNull()
 
-  override val allServices
+  override val allServices: List<TypeScriptService>
     get() = if (DenoSettings.getService(project).isUseDeno()) listOf(DenoTypeScriptService.getInstance(project)) else emptyList()
 }
 
