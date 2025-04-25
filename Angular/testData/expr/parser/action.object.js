@@ -9,3 +9,4 @@
 { a }
 { break }
 { "a" = "b"}
+"foo" in {bar: 12}

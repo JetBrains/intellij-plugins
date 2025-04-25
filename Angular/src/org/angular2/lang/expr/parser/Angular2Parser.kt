@@ -304,7 +304,7 @@ class Angular2Parser private constructor(
         return true
       }
       val definitionExpr = builder.mark()
-      if (!parseConditionalExpression(false)) {
+      if (!parseConditionalExpression(true)) {
         definitionExpr.drop()
         expr.drop()
         return false

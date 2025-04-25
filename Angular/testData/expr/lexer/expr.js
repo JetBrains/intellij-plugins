@@ -4,4 +4,5 @@ aaa ^ 333
 as.title
 aaa?.foo
 aaa!.foo
+foo in bar
 let todo of todoService.todos | started : status | search : term

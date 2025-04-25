@@ -47,3 +47,26 @@ JSFile:test.keywords.binding
   Angular2Binding
     JSReferenceExpression
       PsiElement(JS:IDENTIFIER)('thisus')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSPrefixExpression
+      PsiElement(JS:TYPEOF_KEYWORD)('typeof')
+      PsiErrorElement:Expression expected
+        <empty list>
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('typeofus')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    PsiErrorElement:Expression expected
+      <empty list>
+    PsiElement(JS:IN_KEYWORD)('in')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('ins')

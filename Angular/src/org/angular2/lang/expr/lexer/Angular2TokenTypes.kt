@@ -26,7 +26,8 @@ interface Angular2TokenTypes {
     val KEYWORDS: TokenSet = TokenSet.create(JSTokenTypes.VAR_KEYWORD, JSTokenTypes.LET_KEYWORD, JSTokenTypes.AS_KEYWORD, JSTokenTypes.NULL_KEYWORD,
                                              JSTokenTypes.UNDEFINED_KEYWORD, JSTokenTypes.TRUE_KEYWORD, JSTokenTypes.FALSE_KEYWORD,
                                              JSTokenTypes.IF_KEYWORD,
-                                             JSTokenTypes.ELSE_KEYWORD, JSTokenTypes.THIS_KEYWORD, BLOCK_PARAMETER_NAME)
+                                             JSTokenTypes.ELSE_KEYWORD, JSTokenTypes.THIS_KEYWORD, BLOCK_PARAMETER_NAME,
+                                             JSTokenTypes.TYPE_KEYWORD, JSTokenTypes.IN_KEYWORD)
 
     @JvmField
     val STRING_PART_SPECIAL_SEQ: TokenSet = TokenSet.create(ESCAPE_SEQUENCE, INVALID_ESCAPE_SEQUENCE, XML_CHAR_ENTITY_REF)

@@ -118,6 +118,7 @@ LINE_TERMINATOR_SEQUENCE=\R
   "else"                      { return ELSE_KEYWORD; }
   "this"                      { return THIS_KEYWORD; }
   "typeof"                    { return TYPEOF_KEYWORD; }
+  "in"                        { return IN_KEYWORD; }
 
   "as"/(\.)                   { return IDENTIFIER; }
   {IDENT}                     { return IDENTIFIER; }

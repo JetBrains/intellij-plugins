@@ -170,3 +170,22 @@ JSFile:test.object.action
             JSLiteralExpression
               PsiElement(JS:STRING_LITERAL)('"b"')
         PsiElement(JS:RBRACE)('}')
+------
+JSFile:test.object.action
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"foo"')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:IN_KEYWORD)('in')
+        PsiWhiteSpace(' ')
+        JSObjectLiteralExpression
+          PsiElement(JS:LBRACE)('{')
+          JSProperty
+            PsiElement(JS:IDENTIFIER)('bar')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+          PsiElement(JS:RBRACE)('}')
