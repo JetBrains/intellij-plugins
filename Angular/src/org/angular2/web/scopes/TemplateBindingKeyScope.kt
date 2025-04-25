@@ -36,6 +36,7 @@ import org.angular2.web.NG_TEMPLATE_BINDINGS
 class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
   : WebSymbolsScopeWithCache<Angular2TemplateBindingKey, Unit>(Angular2Framework.ID, binding.project, binding, Unit) {
 
+  @OptIn(IntellijInternalApi::class)
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     val templateBindings = dataHolder.parentOfType<Angular2TemplateBindings>() ?: return

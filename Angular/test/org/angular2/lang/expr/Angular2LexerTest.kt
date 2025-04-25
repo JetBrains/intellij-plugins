@@ -2,18 +2,17 @@
 package org.angular2.lang.expr
 
 import com.intellij.lang.javascript.JSElementTypeServiceHelper.registerJSElementTypeServices
-import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocCustomTagsHandlerEP
 import com.intellij.lexer.Lexer
 import com.intellij.mock.MockApplication
-import com.intellij.testFramework.LexerTestCase
 import org.angular2.Angular2TestUtil
+import org.angular2.AngularLexerTestCase
 import org.angular2.codeInsight.blocks.BLOCK_DEFER
 import org.angular2.codeInsight.blocks.BLOCK_IF
 import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.jetbrains.annotations.NonNls
 
-class Angular2LexerTest : LexerTestCase() {
+class Angular2LexerTest : AngularLexerTestCase() {
   private var lexerFactory: () -> Lexer = { Angular2Lexer(Angular2Lexer.RegularBinding) }
 
   fun testIdent() {
