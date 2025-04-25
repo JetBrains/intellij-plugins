@@ -18,6 +18,7 @@ public class JadeMetaJsLexerTest extends LexerTestCase {
     return JadeTestUtil.getBaseTestDataPath() + "/lexer/metaJs";
   }
 
+  @Override
   protected @NotNull String getPathToTestDataFile(@NotNull String extension) {
     return getDirPath() + "/" + getTestName(true) + extension;
   }
