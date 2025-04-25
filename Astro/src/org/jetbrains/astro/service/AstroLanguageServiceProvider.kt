@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.service
 
-import com.intellij.lang.javascript.service.JSLanguageServiceProvider
+import com.intellij.lang.typescript.languageService.TypeScriptServiceProvider
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.openapi.Disposable
@@ -12,13 +12,11 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.astro.lang.AstroFileType
 
-internal class AstroLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
+internal class AstroLanguageServiceProvider(project: Project) : TypeScriptServiceProvider() {
   private val lspService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<AstroServiceWrapper>() }
 
   override val allServices: List<TypeScriptService>
     get() = listOf(lspService.service)
-
-  override fun getService(file: VirtualFile): TypeScriptService? = allServices.firstOrNull { it.isAcceptable(file) }
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean =
     TypeScriptLanguageServiceUtil.isJavaScriptOrTypeScriptFileType(file.fileType)
