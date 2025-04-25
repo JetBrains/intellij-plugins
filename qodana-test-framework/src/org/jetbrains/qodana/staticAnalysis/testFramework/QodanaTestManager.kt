@@ -5,13 +5,13 @@ package org.jetbrains.qodana.staticAnalysis.testFramework
 import com.intellij.codeInspection.ex.InspectionProfileImpl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.LoadingOrder
+import com.intellij.openapi.observable.util.setSystemProperty
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Computable
-import com.intellij.openapi.util.Disposer
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Result
@@ -94,10 +94,7 @@ class QodanaTestManager {
   }
 
   private fun setSystemProperties() {
-    System.setProperty(SARIF_AUTOMATION_GUID_PROPERTY, "tests")
-    Disposer.register(testData.testRootDisposable) {
-      System.clearProperty(SARIF_AUTOMATION_GUID_PROPERTY)
-    }
+    setSystemProperty(SARIF_AUTOMATION_GUID_PROPERTY, "tests", testData.testRootDisposable)
   }
 
   private fun mockEnv() {
