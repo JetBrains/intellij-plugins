@@ -3,6 +3,7 @@ package org.angular2.web.scopes
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.psi.createSmartPointer
@@ -33,6 +34,7 @@ import org.angular2.web.NG_TEMPLATE_BINDINGS
 class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
   : WebSymbolsScopeWithCache<Angular2TemplateBindingKey, Unit>(Angular2Framework.ID, binding.project, binding, Unit) {
 
+  @OptIn(IntellijInternalApi::class)
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     val templateBindings = dataHolder.parentOfType<Angular2TemplateBindings>() ?: return

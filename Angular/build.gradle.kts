@@ -1,5 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.models.Coordinates
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 apply(from = "../contrib-configuration/common.gradle.kts")
@@ -41,11 +42,15 @@ sourceSets {
 
 dependencies {
   intellijPlatform {
-    bundledPlugins("JavaScript", "JSIntentionPowerPack", "HtmlTools", "com.intellij.css", "com.intellij.diagram", "tslint", "intellij.webpack")
-
+    bundledPlugins("JavaScript", "JSIntentionPowerPack", "HtmlTools", "com.intellij.css",
+                   "com.intellij.diagram", "tslint", "intellij.webpack", "org.jetbrains.plugins.sass")
     jetbrainsRuntime()
     intellijIdeaUltimate(ext("platform.version"), useInstaller = false)
     testFramework(TestFrameworkType.Platform)
+    testFramework(TestFrameworkType.Plugin.XML)
+    testFramework(TestFrameworkType.Plugin.JavaScript)
+    platformDependency(Coordinates("com.jetbrains.intellij.platform", "web-symbols-test-framework"))
+    platformDependency(Coordinates("com.jetbrains.intellij.resharper", "resharper-test-framework"))
   }
   testImplementation("com.mscharhag.oleaster:oleaster-matcher:0.2.0")
   testImplementation("com.mscharhag.oleaster:oleaster-runner:0.2.0")

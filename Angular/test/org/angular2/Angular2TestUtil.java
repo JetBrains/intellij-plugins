@@ -35,10 +35,14 @@ public final class Angular2TestUtil {
   }
 
   public static String getLexerTestDirPath() {
-    return getBaseTestDataPath().substring(IdeaTestExecutionPolicy.getHomePathWithPolicy().length());
+    return getBaseTestDataPath();
   }
 
   private static String getContribPath() {
+    File f = new File("testData");
+    if (f.exists()) {
+      return f.getAbsoluteFile().getParentFile().getParent();
+    }
     final String homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy();
     if (new File(homePath, "contrib/.gitignore").isFile()) {
       return homePath + File.separatorChar + "contrib";
