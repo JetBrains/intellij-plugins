@@ -357,7 +357,7 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
   }
 
   override fun getPathToTestDataFile(extension: String): String {
-    val basePath = IdeaTestExecutionPolicy.getHomePathWithPolicy() + "/" + dirPath
+    val basePath = dirPath
     val fileName = getTestName(true) + extension
     // Iterate over syntax versions starting from the `templateSyntax` down to V_2
     return Angular2TemplateSyntax.entries.toList().asReversed().asSequence()

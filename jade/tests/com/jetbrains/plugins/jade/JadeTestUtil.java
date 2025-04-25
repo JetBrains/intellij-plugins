@@ -15,7 +15,10 @@ public class JadeTestUtil {
   public static String getContribPath() {
     File f = new File("testData");
     if (f.exists()) {
-      return f.getAbsoluteFile().getParentFile().getParent();
+      File parent = f.getAbsoluteFile().getParentFile();
+      if (parent.getName().equals("jade")) {
+        return parent.getParent();
+      }
     }
     final String homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy();
     if (new File(homePath, "contrib/.gitignore").isFile()) {

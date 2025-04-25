@@ -41,7 +41,10 @@ public final class Angular2TestUtil {
   private static String getContribPath() {
     File f = new File("testData");
     if (f.exists()) {
-      return f.getAbsoluteFile().getParentFile().getParent();
+      File parent = f.getAbsoluteFile().getParentFile();
+      if (parent.getName().equals("Angular")) {
+        return parent.getParent();
+      }
     }
     final String homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy();
     if (new File(homePath, "contrib/.gitignore").isFile()) {
