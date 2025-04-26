@@ -6,6 +6,5 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Frontend-specific extensions -->
     <navbar implementation="com.intellij.jhipster.JdlNavbarExtension"/>
-    <editorNotificationProvider implementation="com.intellij.jhipster.JdlUpgradeNotification"/>
   </extensions>
 </idea-plugin>
