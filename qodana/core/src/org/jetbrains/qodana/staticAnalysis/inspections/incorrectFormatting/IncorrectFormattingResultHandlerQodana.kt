@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemDescriptorBase
 import com.intellij.codeInspection.incorrectFormatting.IncorrectFormattingInspectionHelper
 import com.intellij.codeInspection.incorrectFormatting.IncorrectFormattingResultHandler
 import org.jetbrains.qodana.staticAnalysis.sarif.CONTEXT_MAX_LINES_MARGIN
+import org.jetbrains.qodana.staticAnalysis.sarif.MAX_CONTEXT_CHARS_LENGTH
 import kotlin.collections.isNotEmpty
 
 class IncorrectFormattingResultHandlerQodana : IncorrectFormattingResultHandler {
@@ -24,9 +25,21 @@ class IncorrectFormattingResultHandlerQodana : IncorrectFormattingResultHandler 
     val selectedDescriptors = selectDescriptorsForSnippets(allProblems, selectedSnippetsAmount, maximumSnippetSize)
     return arrayOf(
       helper.createGlobalReport().withRelatedLocations(
-        selectedDescriptors.map { problemDescriptor ->
-          ProblemRelatedLocation(problemDescriptor as ProblemDescriptorBase)
-        }
+        selectedDescriptors
+          .mapNotNull { problemDescriptor ->
+            (problemDescriptor as? ProblemDescriptorBase)?.let { ProblemRelatedLocation(it) }
+          }
+          .groupBy { it.getLineNumber() }
+          .flatMap { (_, descriptors) ->
+            val minOffsetInGroup = descriptors.minByOrNull { it.getOffset() ?: Int.MAX_VALUE }?.getOffset() ?: 0
+            // for long lines only the first problems are added, so the report is not very big
+            // added to the report problems are located in the margin of the MAX_CONTEXT_CHARS_LENGTH
+            // from the first problem in line
+            descriptors.filter { descriptor ->
+              val currentOffset = descriptor.getOffset() ?: return@filter false
+              currentOffset - minOffsetInGroup <= MAX_CONTEXT_CHARS_LENGTH
+            }
+          }
       )
     )
   }
@@ -34,7 +47,7 @@ class IncorrectFormattingResultHandlerQodana : IncorrectFormattingResultHandler 
   private fun selectDescriptorsForSnippets(
     descriptors: Array<ProblemDescriptor>,
     snippetsAmount: Int,
-    maximumSnippetSize: Int
+    maximumSnippetSize: Int,
   ): List<ProblemDescriptor> {
     val sortedDescriptors = descriptors.sortedBy { it.lineNumber }
 
