@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.typed
 
-import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromAugmentations
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolPropertiesFromAugmentations
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -21,7 +21,7 @@ data class VueTypedGlobal(
 
   private val typedGlobalComponents: Map<String, VueComponent> =
     CachedValuesManager.getCachedValue(source) {
-      val result = resolveSymbolFromAugmentations(source, VUE_CORE_MODULES, GLOBAL_COMPONENTS)
+      val result = resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, GLOBAL_COMPONENTS)
         .mapValues { VueTypedComponent(it.value, it.key) }
 
       CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)

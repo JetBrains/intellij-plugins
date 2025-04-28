@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromAugmentations
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolPropertiesFromAugmentations
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
@@ -77,7 +77,7 @@ private fun contributeCustomProperties(
   source: PsiElement,
   result: MutableMap<String, JSRecordType.PropertySignature>,
 ) {
-  result.putAll(resolveSymbolFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES))
+  result.putAll(resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES))
 }
 
 private fun contributeDefaultInstanceProperties(
