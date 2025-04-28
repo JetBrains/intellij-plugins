@@ -1,8 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolPropertiesFromAugmentations
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolMethodsFromAugmentations
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolPropertiesFromAugmentations
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
@@ -66,10 +67,13 @@ private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
   replaceStandardProperty(INSTANCE_REFS_PROP, VueRefsType(createStrictTypeSource(source), instance), source, result)
   contributePropertiesFromProviders(instance, result)
 
+  val properties = result.values.toList()
+  val methods = getCustomMethods(source, properties)
+
   return VueComponentInstanceType(
     source = JSTypeSourceFactory.createTypeSource(source, true),
     instanceOwner = instance,
-    typeMembers = result.values.toList(),
+    typeMembers = properties + methods,
   )
 }
 
@@ -78,6 +82,18 @@ private fun contributeCustomProperties(
   result: MutableMap<String, JSRecordType.PropertySignature>,
 ) {
   result.putAll(resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES))
+}
+
+private fun getCustomMethods(
+  source: PsiElement,
+  properties: List<JSRecordType.PropertySignature>,
+): List<JSRecordType.PropertySignature> {
+  val propertyNames = properties.asSequence()
+    .map { it.memberName }
+    .toSet()
+
+  return resolveSymbolMethodsFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES)
+    .filter { it.memberName !in propertyNames }
 }
 
 private fun contributeDefaultInstanceProperties(
