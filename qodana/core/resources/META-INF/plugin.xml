@@ -338,7 +338,9 @@
     <extensionPoint name="globalFlowFingerprintCalculator"
                     interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.CustomGlobalFlowFingerprintCalculator"
                     dynamic="true"/>
-
+    <extensionPoint name="loggingActivity"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.log.QodanaLoggingActivity"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.intellij.qodana">
@@ -391,6 +393,8 @@
     <metricsAggregator implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.CyclomaticComplexityMetricAggregator"/>
     <metricTable implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.database.tables.LinesOfCodeMetricTable"/>
     <metricTable implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.database.tables.CyclomaticComplexityMetricTable"/>
+
+    <loggingActivity implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.log.QodanaThreadDumpLoggingActivity"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
