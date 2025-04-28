@@ -63,7 +63,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//plugins/properties/properties-psi-impl:backend-psi",
     "@community//platform/platform-util-io:ide-util-io",
-    "//plugins/uml:diagram-impl",
+    "//plugins/uml/impl:diagram-impl",
     "@community//platform/util/jdom",
     "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
     "@community//platform/util/text-matching",

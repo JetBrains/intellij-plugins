@@ -15,7 +15,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "//plugins/JavaScriptLanguage:javascript-tests-ex_test_lib",
-    "//plugins/uml:diagram-impl",
+    "//plugins/uml/impl:diagram-impl",
     "//contrib/flex",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
