@@ -38,9 +38,11 @@ suspend fun <T> runTaskAndLogTime(progressName: String, action: suspend () -> T)
           ConsoleLog.info("Keep running $progressName ... so far ${cookie.formatDuration()}")
         }
       }
-      QodanaLoggingActivity.EP_NAME.extensionList.forEach {
-        launch {
-          it.executeActivity(progressName, cookie)
+      supervisorScope {
+        QodanaLoggingActivity.EP_NAME.extensionList.forEach {
+          launch {
+            it.executeActivity(progressName, cookie)
+          }
         }
       }
     }
