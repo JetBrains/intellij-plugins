@@ -30,6 +30,7 @@ val VUE_DEFAULT_EXTENSIONS_WITH_DOT = arrayOf(VUE_FILE_EXTENSION)
 val VUE_CORE_MODULES: Set<String> = setOf(
   VUE_MODULE,
   "@vue/runtime-core",
+  "@vue/runtime-dom",
 )
 
 const val GLOBAL: String = "global"
