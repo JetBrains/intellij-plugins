@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiInvalidElementAccessException
 import com.intellij.psi.impl.PsiFileEx
-import com.intellij.psi.impl.PsiManagerImpl
+import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.file.PsiBinaryFileImpl
 import com.intellij.psi.impl.source.PsiFileWithStubSupport
 import com.intellij.psi.impl.source.StubbedSpine
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NonNls
 import java.lang.ref.SoftReference
 
 class MetadataFileImpl(fileViewProvider: FileViewProvider, private val myFileType: MetadataJsonFileType) : PsiBinaryFileImpl(
-  fileViewProvider.manager as PsiManagerImpl, fileViewProvider), PsiFileWithStubSupport, PsiFileEx {
+  fileViewProvider.manager as PsiManagerEx, fileViewProvider), PsiFileWithStubSupport, PsiFileEx {
 
   @Volatile
   private var myStub: SoftReference<StubTree>? = null

@@ -196,7 +196,7 @@ class VueComponentTest : BasePlatformTestCase() {
    */
   private fun unloadAst(file: PsiFile): PsiFileImpl {
     val vFile = file.viewProvider.virtualFile
-    (psiManager as PsiManagerImpl).cleanupForNextTest()
+    (psiManager as PsiManagerEx).cleanupForNextTest()
     val newFile = psiManager.findFile(vFile) as PsiFileImpl
     assertNull(newFile.treeElement)
     assertFalse(file.isValid)
