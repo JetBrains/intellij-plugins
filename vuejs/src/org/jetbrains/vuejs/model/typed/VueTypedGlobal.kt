@@ -10,7 +10,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.index.GLOBAL_COMPONENTS
-import org.jetbrains.vuejs.index.VUE_MODULE_FILTER
+import org.jetbrains.vuejs.index.VUE_CORE_MODULES
 import org.jetbrains.vuejs.model.*
 
 data class VueTypedGlobal(
@@ -21,7 +21,7 @@ data class VueTypedGlobal(
 
   private val typedGlobalComponents: Map<String, VueComponent> =
     CachedValuesManager.getCachedValue(source) {
-      val result = resolveSymbolFromAugmentations(source, VUE_MODULE_FILTER, GLOBAL_COMPONENTS)
+      val result = resolveSymbolFromAugmentations(source, VUE_CORE_MODULES, GLOBAL_COMPONENTS)
         .mapValues { VueTypedComponent(it.value, it.key) }
 
       CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)

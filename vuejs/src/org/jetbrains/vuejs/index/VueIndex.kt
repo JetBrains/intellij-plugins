@@ -27,10 +27,10 @@ const val CUSTOM_PROPERTIES: String = "ComponentCustomProperties"
 
 val VUE_DEFAULT_EXTENSIONS_WITH_DOT = arrayOf(VUE_FILE_EXTENSION)
 
-val VUE_MODULE_FILTER: (String) -> Boolean = { moduleName ->
-  moduleName == VUE_MODULE
-  || moduleName.startsWith("@vue/")
-}
+val VUE_CORE_MODULES: Set<String> = setOf(
+  VUE_MODULE,
+  "@vue/runtime-core",
+)
 
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"
@@ -149,4 +149,3 @@ fun serializeUserStringData(
 private fun escapePart(part: String): String {
   return StringUtil.escapeChars(part, '\\', DELIMITER)
 }
-
