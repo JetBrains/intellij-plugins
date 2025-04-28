@@ -392,6 +392,7 @@
     <metricTable implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.database.tables.CyclomaticComplexityMetricTable"/>
 
     <loggingActivity implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.log.QodanaThreadDumpLoggingActivity"/>
+    <loggingActivity implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.log.QodanaMemorySnapshotLoggingActivity"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
