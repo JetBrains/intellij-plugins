@@ -1,9 +1,6 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
-import com.intellij.diagnostic.ThreadDumper
-import com.intellij.diagnostic.dumpCoroutines
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.text.Formats
 import kotlinx.coroutines.cancelAndJoin
@@ -11,17 +8,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.time.delay
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.log.QodanaLoggingActivity
 import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
 import org.jline.utils.WCWidth.wcwidth
-import java.io.File
-import java.io.IOException
 import java.io.PrintStream
 import java.time.Duration
 import kotlin.math.max
 
 private val terminal: Terminal = TerminalBuilder.terminal()
-private val LOG_INTERVAL: Duration = Duration.ofMinutes(10)
 private val CONSOLE_INTERVAL: Duration = Duration.ofSeconds(30)
 private const val DEFAULT_TERMINAL_LENGTH = 80
 
@@ -36,26 +31,23 @@ suspend fun <T> runTaskAndLogTime(progressName: String, action: suspend () -> T)
       System.setOut(interactiveOut)
     }
 
-    val loggerJob = launch(StaticAnalysisDispatchers.IO) {
+    val loggingJob = launch(StaticAnalysisDispatchers.IO) {
       launch {
         while (true) {
           delay(CONSOLE_INTERVAL)
           ConsoleLog.info("Keep running $progressName ... so far ${cookie.formatDuration()}")
         }
       }
-
-      launch {
-        while (true) {
-          delay(LOG_INTERVAL)
-          val prefix = "keep running $progressName ... so far ${cookie.formatDuration()}"
-          dumpThreads(prefix, "too-long-wait-thread-dump-${System.currentTimeMillis()}.txt")
+      QodanaLoggingActivity.EP_NAME.extensionList.forEach {
+        launch {
+          it.executeActivity(progressName, cookie)
         }
       }
     }
 
     try {
       val result = action()
-      loggerJob.cancelAndJoin()
+      loggingJob.cancelAndJoin()
       return@supervisorScope result
     }
     finally {
@@ -65,20 +57,6 @@ suspend fun <T> runTaskAndLogTime(progressName: String, action: suspend () -> T)
       if (isInteractiveOutput()) println()
       ConsoleLog.info("The $progressName stage completed in ${cookie.formatDuration()}")
     }
-  }
-}
-
-fun dumpThreads(prefix: String, fileName: String) {
-  val threadDump = ThreadDumper.dumpThreadsToString()
-  val coroutines = dumpCoroutines()
-
-  try {
-    val logFile = File(PathManager.getLogPath(), fileName)
-    logFile.parentFile?.mkdirs()
-    logFile.writeText("$prefix\n\n$threadDump\n\nCoroutines dump: $coroutines")
-  }
-  catch (e: IOException) {
-    logger<QodanaInspectionApplication>().warn("Failed writing thread dump file", e)
   }
 }
 
