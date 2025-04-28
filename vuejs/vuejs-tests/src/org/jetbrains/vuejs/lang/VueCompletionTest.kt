@@ -2383,6 +2383,14 @@ export default {
     assertContainsElements(myFixture.lookupElementStrings!!, "attributeFromCustomProps")
   }
 
+  fun testComponentCustomPropertiesWithFunctionOverloads() {
+    myFixture.configureVueDependencies()
+    myFixture.copyDirectoryToProject("componentCustomPropertiesWithFunctionOverloads", "")
+    myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "\$methodFromCustomProps")
+  }
+
   fun testDefineSlotsProperties() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.configureByFile(getTestName(true) + ".vue")
