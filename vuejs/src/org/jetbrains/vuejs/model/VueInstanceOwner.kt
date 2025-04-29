@@ -7,6 +7,7 @@ import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolPropertiesFr
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSTypedEntity
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
@@ -60,7 +61,7 @@ private val VUE_INSTANCE_METHODS: List<String> = listOf(
 private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
   val source = instance.source ?: return null
 
-  val result = mutableMapOf<String, JSRecordType.PropertySignature>()
+  val result = mutableMapOf<String, PropertySignature>()
   contributeCustomProperties(source, result)
   contributeDefaultInstanceProperties(source, result)
   contributeComponentProperties(instance, source, result)
@@ -79,15 +80,15 @@ private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
 
 private fun contributeCustomProperties(
   source: PsiElement,
-  result: MutableMap<String, JSRecordType.PropertySignature>,
+  result: MutableMap<String, PropertySignature>,
 ) {
   result.putAll(resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES))
 }
 
 private fun getCustomMethods(
   source: PsiElement,
-  properties: List<JSRecordType.PropertySignature>,
-): List<JSRecordType.PropertySignature> {
+  properties: List<PropertySignature>,
+): List<PropertySignature> {
   val propertyNames = properties.asSequence()
     .map { it.memberName }
     .toSet()
@@ -98,7 +99,7 @@ private fun getCustomMethods(
 
 private fun contributeDefaultInstanceProperties(
   source: PsiElement,
-  result: MutableMap<String, JSRecordType.PropertySignature>,
+  result: MutableMap<String, PropertySignature>,
 ) {
   val defaultInstanceType = getDefaultVueComponentInstanceType(source)
   if (defaultInstanceType != null) {
@@ -119,7 +120,7 @@ private fun contributeDefaultInstanceProperties(
 
 private fun contributePropertiesFromProviders(
   instance: VueInstanceOwner,
-  result: MutableMap<String, JSRecordType.PropertySignature>,
+  result: MutableMap<String, PropertySignature>,
 ) {
   val unmodifiableResult = Collections.unmodifiableMap(result)
   VueContainerInfoProvider.getProviders().asSequence()
@@ -130,15 +131,15 @@ private fun contributePropertiesFromProviders(
 private fun contributeComponentProperties(
   instance: VueInstanceOwner,
   source: PsiElement,
-  result: MutableMap<String, JSRecordType.PropertySignature>,
+  result: MutableMap<String, PropertySignature>,
 ) {
   val proximityMap = mutableMapOf<String, VueModelVisitor.Proximity>()
 
-  val props = mutableMapOf<String, JSRecordType.PropertySignature>()
-  val computed = mutableMapOf<String, JSRecordType.PropertySignature>()
-  val data = mutableMapOf<String, JSRecordType.PropertySignature>()
-  val methods = mutableMapOf<String, JSRecordType.PropertySignature>()
-  val injects = mutableMapOf<String, JSRecordType.PropertySignature>()
+  val props = mutableMapOf<String, PropertySignature>()
+  val computed = mutableMapOf<String, PropertySignature>()
+  val data = mutableMapOf<String, PropertySignature>()
+  val methods = mutableMapOf<String, PropertySignature>()
+  val injects = mutableMapOf<String, PropertySignature>()
 
   val provides by lazy(LazyThreadSafetyMode.NONE) { instance.global.provides }
 
@@ -178,7 +179,7 @@ private fun contributeComponentProperties(
       private fun process(
         symbol: VueNamedSymbol,
         proximity: Proximity,
-        dest: MutableMap<String, JSRecordType.PropertySignature>,
+        dest: MutableMap<String, PropertySignature>,
         isReadOnly: Boolean,
         type: JSType? = null,
         source: PsiElement? = null,
@@ -301,9 +302,9 @@ private fun buildEmitType(instance: VueInstanceOwner): JSType {
 
 private fun replaceStandardProperty(
   propName: String,
-  properties: List<JSRecordType.PropertySignature>,
+  properties: List<PropertySignature>,
   defaultSource: PsiElement,
-  result: MutableMap<String, JSRecordType.PropertySignature>,
+  result: MutableMap<String, PropertySignature>,
 ) {
   val propSource = result[propName]?.memberSource?.singleElement ?: defaultSource
   result[propName] = createImplicitPropertySignature(
@@ -314,16 +315,16 @@ private fun replaceStandardProperty(
   propName: String,
   type: JSType,
   defaultSource: PsiElement,
-  result: MutableMap<String, JSRecordType.PropertySignature>,
+  result: MutableMap<String, PropertySignature>,
 ) {
   val propSource = result[propName]?.memberSource?.singleElement ?: defaultSource
   result[propName] = createImplicitPropertySignature(propName, type, propSource)
 }
 
 private fun mergeSignatures(
-  existing: JSRecordType.PropertySignature,
-  updated: JSRecordType.PropertySignature,
-): JSRecordType.PropertySignature {
+  existing: PropertySignature,
+  updated: PropertySignature,
+): PropertySignature {
   val existingType = existing.jsType
   val updatedType = updated.jsType
   val type: JSType? = if (existingType != null && updatedType != null)
@@ -345,8 +346,8 @@ private fun mergeSignatures(
 }
 
 private fun mergePut(
-  result: MutableMap<String, JSRecordType.PropertySignature>,
-  contributions: MutableMap<String, JSRecordType.PropertySignature>,
+  result: MutableMap<String, PropertySignature>,
+  contributions: MutableMap<String, PropertySignature>,
 ) {
   for ((name, value) in contributions) {
     result.merge(name, value, ::mergeSignatures)
@@ -360,7 +361,7 @@ fun createImplicitPropertySignature(
   equivalentToSource: Boolean = false,
   isReadOnly: Boolean = false,
   kind: JSImplicitElement.Type = JSImplicitElement.Type.Property,
-): JSRecordType.PropertySignature {
+): PropertySignature {
   return PropertySignatureImpl(
     name,
     type,
