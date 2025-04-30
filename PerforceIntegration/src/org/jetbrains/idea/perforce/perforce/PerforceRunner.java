@@ -1540,7 +1540,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     if (execResult.getExitCode() != 0) {
       checkError(execResult, connection);
     }
-    return new OutputMessageParser(execResult.getStdout()).myLines;
+    return OutputMessageParser.readOutputLines(execResult.getStdout());
   }
 
   private CommandArguments createFilelogArgs(boolean showBranches, final @Nullable P4Connection connection) throws VcsException {
@@ -1638,26 +1638,26 @@ public final class PerforceRunner implements PerforceRunnerI {
     checkError(execResult, connection);
     final String stdout = execResult.getStdout();
     SPECIFICATION_LOG.debug(stdout);
-    return new OutputMessageParser(stdout).myLines;
+    return OutputMessageParser.readOutputLines(stdout);
   }
 
   public List<String> getJobs(final P4Connection connection, final JobsSearchSpecificator specificator) throws VcsException {
     final String[] strings = specificator.addParams(new String[]{"jobs", "-l"});
     final ExecResult execResult = executeP4Command(strings, connection);
     checkError(execResult, connection);
-    return new OutputMessageParser(execResult.getStdout()).myLines;
+    return OutputMessageParser.readOutputLines(execResult.getStdout());
   }
 
   public List<String> getJobDetails(final PerforceJob job) throws VcsException {
     final ExecResult execResult = executeP4Command(new String[] {"job", "-o", job.getName()}, job.getConnection());
     checkError(execResult, job.getConnection());
-    return new OutputMessageParser(execResult.getStdout()).myLines;
+    return OutputMessageParser.readOutputLines(execResult.getStdout());
   }
 
   public List<String> getJobsForChange(final @NotNull P4Connection connection, final long number) throws VcsException {
     final ExecResult execResult = executeP4Command(new String[] {"fixes", "-c", String.valueOf(number)}, connection);
     checkError(execResult, connection);
-    return new OutputMessageParser(execResult.getStdout()).myLines;
+    return OutputMessageParser.readOutputLines(execResult.getStdout());
   }
 
   public void addJobForList(final @NotNull P4Connection connection, final long number, final String name) throws VcsException {

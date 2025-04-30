@@ -25,6 +25,6 @@ internal class P4SharedInVcsChecker : VcsSharedChecker {
       LOG.debug("Failed to check changes under ${dir}, P4 command ${p4args.joinToString(" ")}, result $execResult")
     }
 
-    return OutputMessageParser(execResult.stdout).myLines.isNotEmpty()
+    return OutputMessageParser.readOutputLines(execResult.stdout).isNotEmpty()
   }
 }

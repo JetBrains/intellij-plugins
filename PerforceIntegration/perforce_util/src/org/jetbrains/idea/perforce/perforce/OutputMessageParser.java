@@ -136,6 +136,10 @@ public class OutputMessageParser {
     }
   }
 
+  public static List<String> readOutputLines(String stdout) {
+    return new OutputMessageParser(stdout).myLines;
+  }
+
   public static List<P4Revision> processLogOutput(String output, final boolean newDateFormat) throws DateTimeParseException {
     ArrayList<P4Revision> result = new ArrayList<>();
     final OutputMessageParser parser = new OutputMessageParser(output);
