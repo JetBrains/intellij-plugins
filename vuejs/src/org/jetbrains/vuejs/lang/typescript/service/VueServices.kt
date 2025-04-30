@@ -22,7 +22,7 @@ import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
 private val vueLspServerPackageVersion = PackageVersion.bundled<VueLspServerPackageDescriptor>(
-  version = "2.2.8",
+  version = "2.2.10",
   pluginPath = "vuejs",
   localPath = "vue-language-server",
   isBundledEnabled = { Registry.`is`("vue.language.server.bundled.enabled") },
