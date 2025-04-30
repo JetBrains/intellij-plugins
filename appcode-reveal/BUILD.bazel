@@ -19,12 +19,18 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
+    "@lib//:kotlin-stdlib",
     "//CIDR-appcode/appcode",
     "@community//platform/statistics",
     "@community//platform/ide-core-impl",
     "@community//platform/platform-util-io:ide-util-io",
     "//CIDR/cidr-debugger",
     "@community//platform/util/jdom",
+    "@community//platform/util:util-ui",
+    "//CIDR/cidr-projectModel",
+    "//CIDR/cidr-runner",
+    "//CIDR/cidr-workspaceModel",
+    "@community//platform/core-impl",
   ],
   runtime_deps = [
     ":appcode-reveal_resources",
