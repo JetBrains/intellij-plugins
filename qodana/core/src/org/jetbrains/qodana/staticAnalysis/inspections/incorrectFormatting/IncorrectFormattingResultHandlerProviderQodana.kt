@@ -11,7 +11,7 @@ class IncorrectFormattingResultHandlerProviderQodana: IncorrectFormattingResultH
   }
 
   override fun getApplicableResultHandler(globalContext: GlobalInspectionContext): IncorrectFormattingResultHandler? {
-    val newOutputProperty = java.lang.Boolean.getBoolean(QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY)
+    val newOutputProperty = java.lang.Boolean.parseBoolean(System.getProperty(QODANA_ENABLE_NEW_INCORRECT_FORMATTING_OUTPUT_PROPERTY, "true"));
     return if (newOutputProperty && globalContext is QodanaGlobalInspectionContext) {
       IncorrectFormattingResultHandlerQodana()
     } else null
