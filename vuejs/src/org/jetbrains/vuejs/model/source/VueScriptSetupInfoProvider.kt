@@ -450,6 +450,18 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
 }
 
+private val STUB_SAFE_DEFINE_METHOD_NAMES: Set<String> = setOf(
+  DEFINE_PROPS_FUN,
+  DEFINE_EMITS_FUN,
+  DEFINE_SLOTS_FUN,
+  DEFINE_EXPOSE_FUN,
+  WITH_DEFAULTS_FUN,
+  DEFINE_MODEL_FUN,
+  INJECT_FUN,
+  PROVIDE_FUN,
+  DEFINE_OPTIONS_FUN,
+)
+
 fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
   (this as? JSStubElementImpl<*>)?.stub?.let { moduleStub ->
     return moduleStub.childrenStubs.asSequence().flatMap { stub ->
@@ -471,7 +483,8 @@ fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
     }
   }
 
-  return this.children.asSequence().filterIsInstance<JSStatement>()
+  return children.asSequence()
+    .filterIsInstance<JSStatement>()
     .flatMap { it.children.asSequence() }
     .map {
       when (it) {
@@ -481,13 +494,5 @@ fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
       }
     }
     .filterIsInstance<JSCallExpression>()
-    .mapNotNull { call ->
-      when ((call.methodExpression as? JSReferenceExpression)?.referenceName) {
-        DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_SLOTS_FUN, DEFINE_EXPOSE_FUN,
-        WITH_DEFAULTS_FUN, DEFINE_MODEL_FUN, INJECT_FUN, PROVIDE_FUN, DEFINE_OPTIONS_FUN -> {
-          call
-        }
-        else -> null
-      }
-    }
+    .filter { call -> (call.methodExpression as? JSReferenceExpression)?.referenceName in STUB_SAFE_DEFINE_METHOD_NAMES }
 }
