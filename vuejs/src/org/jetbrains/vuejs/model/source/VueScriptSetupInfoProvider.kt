@@ -252,6 +252,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         }
       }
 
+      val emitType = JSResolveUtil.getElementJSType(call)?.asRecordType()
+                     ?: return emptyList()
+
       val eventSources =
         arg.asSafely<JSObjectLiteralExpression>()
           ?.let { JSResolveUtil.getElementJSType(it) }
@@ -260,22 +263,19 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
           ?.associate { it.memberName to it.memberSource.singleElement }
         ?: emptyMap()
 
-      return JSResolveUtil
-               .getElementJSType(call)
-               ?.asRecordType()
-               ?.callSignatures
-               ?.mapNotNull { callSignature ->
-                 callSignature
-                   .functionType
-                   .parameters.getOrNull(0)
-                   ?.inferredType
-                   ?.asSafely<JSStringLiteralTypeImpl>()
-                   ?.let {
-                     val name = unquoteWithoutUnescapingStringLiteralValue(it.valueAsString)
-                     val source = eventSources[name] ?: it.sourceElement
-                     VueScriptSetupTypedEvent(name, source, callSignature.functionType)
-                   }
-               } ?: emptyList()
+      return emitType.callSignatures
+        .mapNotNull { callSignature ->
+          callSignature
+            .functionType
+            .parameters.getOrNull(0)
+            ?.inferredType
+            ?.asSafely<JSStringLiteralTypeImpl>()
+            ?.let {
+              val name = unquoteWithoutUnescapingStringLiteralValue(it.valueAsString)
+              val source = eventSources[name] ?: it.sourceElement
+              VueScriptSetupTypedEvent(name, source, callSignature.functionType)
+            }
+        }
     }
 
     private fun analyzeDefineSlots(call: JSCallExpression): List<VueSlot> =
