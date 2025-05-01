@@ -6,8 +6,8 @@ import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.*
 
-const val EMIT_METHOD_EVENT_PARAM = "event"
-const val EMIT_METHOD_REST_PARAM = "args"
+const val EMIT_METHOD_EVENT_PARAM: String = "event"
+const val EMIT_METHOD_REST_PARAM: String = "args"
 
 val VueEmitCall.callSignature: JSFunctionType
   get() = createFunctionType(true)
@@ -37,14 +37,14 @@ fun createDefaultEmitCallSignature(source: JSTypeSource): JSFunctionType =
   TypeScriptJSFunctionTypeImpl(source, emptyList(), listOf(createEmitEventParam(source), createEmitRestParam(source)), null,
                                JSNamedTypeFactory.createVoidType(source))
 
-fun createEmitEventParam(name: String, source: JSTypeSource) =
+fun createEmitEventParam(name: String, source: JSTypeSource): JSParameterTypeDecorator =
   createEmitEventParam(JSStringLiteralTypeImpl(name, false, source))
 
-fun createEmitEventParam(source: JSTypeSource) =
+fun createEmitEventParam(source: JSTypeSource): JSParameterTypeDecorator =
   createEmitEventParam(JSNamedTypeFactory.createStringPrimitiveType(source))
 
-fun createEmitEventParam(type: JSType) =
+fun createEmitEventParam(type: JSType): JSParameterTypeDecorator =
   JSParameterTypeDecoratorImpl(EMIT_METHOD_EVENT_PARAM, type, false, false, true)
 
-fun createEmitRestParam(source: JSTypeSource) =
+fun createEmitRestParam(source: JSTypeSource): JSParameterTypeDecorator =
   JSParameterTypeDecoratorImpl(EMIT_METHOD_REST_PARAM, JSAnyType.get(source), false, true, true)
