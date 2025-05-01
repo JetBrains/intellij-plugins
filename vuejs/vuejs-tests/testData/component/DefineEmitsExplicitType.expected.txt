@@ -5,7 +5,7 @@
  },
  emits: [
   {
-   class: "VueScriptSetupTypedEvent",
+   class: "VueScriptSetupCallSignatureEvent",
    name: "add",
    eventJSType: "(value: number) => void",
    params: [
@@ -18,7 +18,7 @@
    callSignature: "(event: "add", value: number) => void",
   },
   {
-   class: "VueScriptSetupTypedEvent",
+   class: "VueScriptSetupCallSignatureEvent",
    name: "change",
    eventJSType: "() => void",
    params: [],
@@ -26,7 +26,7 @@
    callSignature: "(event: "change") => void",
   },
   {
-   class: "VueScriptSetupTypedEvent",
+   class: "VueScriptSetupCallSignatureEvent",
    name: "delete",
    eventJSType: "(uuid: string) => void",
    params: [
