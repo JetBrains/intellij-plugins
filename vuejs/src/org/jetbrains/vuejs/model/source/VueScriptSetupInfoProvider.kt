@@ -242,10 +242,10 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     }
 
     private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
-      val arg = call.stubSafeCallArguments.getOrNull(0)
+      val options = call.stubSafeCallArguments.getOrNull(0)
 
-      if (arg is JSArrayLiteralExpression) {
-        return arg.stubSafeChildren.mapNotNull { literal ->
+      if (options is JSArrayLiteralExpression) {
+        return options.stubSafeChildren.mapNotNull { literal ->
           (literal as? JSLiteralExpression)
             ?.significantValue
             ?.let { VueScriptSetupLiteralBasedEvent(unquoteWithoutUnescapingStringLiteralValue(it), literal) }
@@ -256,7 +256,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
                      ?: return emptyList()
 
       val eventSources =
-        arg.asSafely<JSObjectLiteralExpression>()
+        options.asSafely<JSObjectLiteralExpression>()
           ?.let { JSResolveUtil.getElementJSType(it) }
           ?.asRecordType()
           ?.properties
