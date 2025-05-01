@@ -330,8 +330,10 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     override fun hashCode(): Int = module.hashCode()
   }
 
-  private class VueScriptSetupInputProperty(private val propertySignature: JSRecordType.PropertySignature,
-                                            private val hasOuterDefault: Boolean) : VueInputProperty {
+  private class VueScriptSetupInputProperty(
+    private val propertySignature: JSRecordType.PropertySignature,
+    private val hasOuterDefault: Boolean,
+  ) : VueInputProperty {
     override val name: String
       get() = propertySignature.memberName
 
@@ -360,8 +362,10 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
   }
 
-  private class VueScriptSetupLiteralBasedEvent(override val name: String,
-                                                override val source: PsiElement?) : VueEmitCall
+  private class VueScriptSetupLiteralBasedEvent(
+    override val name: String,
+    override val source: PsiElement?,
+  ) : VueEmitCall
 
   private class VueScriptSetupTypedEvent(
     override val name: String,
@@ -375,10 +379,12 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       get() = true
   }
 
-  private class VueScriptSetupModelDecl(override val name: String,
-                                        modelType: JSType,
-                                        options: JSObjectLiteralExpression?,
-                                        sourceElement: PsiElement) : VueModelDecl {
+  private class VueScriptSetupModelDecl(
+    override val name: String,
+    modelType: JSType,
+    options: JSObjectLiteralExpression?,
+    sourceElement: PsiElement,
+  ) : VueModelDecl {
 
     override val required: Boolean = getRequiredFromPropOptions(options)
 
@@ -427,9 +433,11 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     override val hasStrictSignature: Boolean = true
   }
 
-  private class VueScriptSetupSlot(override val name: String,
-                                   override val source: PsiElement?,
-                                   override val scope: JSType?) : VueSlot
+  private class VueScriptSetupSlot(
+    override val name: String,
+    override val source: PsiElement?,
+    override val scope: JSType?,
+  ) : VueSlot
 
   private data class VueScriptSetupStructure(
     val components: Map<String, VueComponent>,
