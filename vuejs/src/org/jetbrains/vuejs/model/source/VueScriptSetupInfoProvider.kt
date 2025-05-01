@@ -273,7 +273,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             ?.let {
               val name = unquoteWithoutUnescapingStringLiteralValue(it.valueAsString)
               val source = eventSources[name] ?: it.sourceElement
-              VueScriptSetupTypedEvent(name, source, callSignature.functionType)
+              VueScriptSetupCallSignatureEvent(name, source, callSignature.functionType)
             }
         }
     }
@@ -367,7 +367,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     override val source: PsiElement?,
   ) : VueEmitCall
 
-  private class VueScriptSetupTypedEvent(
+  private class VueScriptSetupCallSignatureEvent(
     override val name: String,
     override val source: PsiElement?,
     private val eventSignature: JSFunctionType,
