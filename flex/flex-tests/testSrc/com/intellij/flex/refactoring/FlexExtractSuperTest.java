@@ -317,7 +317,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     AnActionEvent e = TestActionEvent.createTestEvent(action, dataContext);
     // warm up injections
     InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), myFixture.getCaretOffset());
-    ActionUtil.performDumbAwareUpdate(action, e, false);
+    ActionUtil.updateAction(action, e);
     assertEquals("Action " + actionId + " should be " + (enabled ? "enabled" : "disabled") + " at position " + pos, enabled,
                  e.getPresentation().isEnabled());
   }

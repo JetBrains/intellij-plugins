@@ -201,9 +201,9 @@ class VueClassicTypeScriptServiceTest : TypeScriptServiceTestBase() {
         else -> null
       }
     }
-    ActionUtil.performDumbAwareUpdate(action, e, false)
+    ActionUtil.updateAction(action, e)
     assertTrue(e.presentation.isEnabledAndVisible)
-    ActionUtil.performActionDumbAwareWithCallbacks(action, e)
+    ActionUtil.performAction(action, e)
     TestCase.assertEquals("newTest.vue", myFixture.file.name)
     WriteAction.runAndWait<Throwable> {
       // We must set contents again, as previous call to `myFixture.checkHighlighting()` removed all markers.
