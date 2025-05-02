@@ -48,7 +48,7 @@ class MakefileCodeBlockSupportHandlerTest : BasePlatformTestCase() {
     doTest()
 
   private fun doTest() {
-    IdentifierHighlighterPassFactory.doWithHighlightingEnabled(project, testRootDisposable) {
+    IdentifierHighlighterPassFactory.doWithHighlightingEnabled(project) {
       val testName = testName.methodName
       myFixture.configureByFile("$testName.$DEFAULT_EXTENSION")
       EditorTestUtil.checkEditorHighlighting(myFixture,
