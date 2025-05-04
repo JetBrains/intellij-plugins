@@ -15,6 +15,7 @@ jvm_library(
   deps = [
     "@community//platform/core-api:core",
     "//CIDR/clion",
+    "//CIDR/clion-cmake",
     "@community//platform/platform-util-io:ide-util-io",
     "//platform/ssh-ui",
     "@community//platform/core-impl",
