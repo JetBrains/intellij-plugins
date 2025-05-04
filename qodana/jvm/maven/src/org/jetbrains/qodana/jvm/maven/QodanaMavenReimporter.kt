@@ -13,6 +13,7 @@ import org.jetbrains.idea.maven.buildtool.MavenSyncSpec
 import org.jetbrains.idea.maven.model.MavenExplicitProfiles
 import org.jetbrains.idea.maven.project.MavenProject
 import org.jetbrains.idea.maven.project.MavenProjectsManager
+import org.jetbrains.idea.maven.utils.MavenSimpleProjectComponent
 import org.jetbrains.idea.maven.utils.MavenUtil
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.workflow.QodanaWorkflowExtension
@@ -24,10 +25,14 @@ class QodanaMavenReimporter : QodanaWorkflowExtension {
   }
 
   override suspend fun afterConfiguration(config: QodanaConfig, project: Project) {
+    val forceReimport = java.lang.Boolean.getBoolean("qodana.trigger.maven.import")
+    if (MavenSimpleProjectComponent.isNormalProjectInHeadless() && !forceReimport) {
+      return
+    }
+
     val projectsManager = MavenProjectsManager.getInstance(project)
     val mavenProjects = projectsManager.projects
 
-    val forceReimport = java.lang.Boolean.getBoolean("qodana.trigger.maven.import")
     val alreadyImported = project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == true
 
     if (!alreadyImported && !mavenProjects.isEmpty()) {
