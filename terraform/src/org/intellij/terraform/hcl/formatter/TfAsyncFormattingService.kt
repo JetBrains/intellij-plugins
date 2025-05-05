@@ -5,10 +5,13 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
-import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.runBlockingCancellable
+import com.intellij.openapi.progress.runBlockingMaybeCancellable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.platform.eel.EelProcess
 import com.intellij.platform.eel.execute
 import com.intellij.platform.eel.getOrThrow
 import com.intellij.platform.eel.provider.getEelDescriptor
@@ -24,10 +27,9 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TfToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
-import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.coroutines.cancellation.CancellationException
 
 internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
@@ -49,25 +51,19 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
 
     return object : FormattingTask {
       private var job: Job? = null
-      private val isCanceled: AtomicBoolean = AtomicBoolean(false)
+      private var eelProcess: EelProcess? = null
 
       override fun run() {
+        configureTfPath(project, toolType)
+        val exePath = toolType.getToolSettings(project).toolPath
+
         runBlockingCancellable {
           job = launch {
-            if (isCanceled.get()) return@launch
-
             try {
-              val isToolConfigured = TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
-
-              if (!isToolConfigured) {
-                showIncorrectPathNotification(project, toolType)
-                throw ProcessCanceledException()
-              }
-
               withContext(Dispatchers.IO) {
-                val exePath = toolType.getToolSettings(project).toolPath
                 val eelApi = project.getEelDescriptor().upgrade()
-                val process = eelApi.exec.execute(exePath).args("fmt", "-").getOrThrow()
+                eelProcess = eelApi.exec.execute(exePath).args("fmt", "-").getOrThrow()
+                val process = eelProcess ?: throw ProcessCanceledException()
 
                 process.stdin.sendWholeText(request.documentText).getOrThrow()
                 process.stdin.close()
@@ -84,28 +80,43 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
                 }
               }
             }
-            catch (e: CancellationException) {
-              throw e
-            }
-            catch (e: ProcessCanceledException) {
-              throw e
-            }
             catch (e: Exception) {
-              logger<TfAsyncFormattingService>().warn("Failed to run FormattingTask", e)
               request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName),
                               HCLBundle.message("terraform.formatter.error.message", virtualFile.name, toolType.executableName))
+              throw e
             }
           }
         }
       }
 
       override fun cancel(): Boolean {
-        isCanceled.set(true)
         job?.cancel()
+        eelProcess?.let { killProcess(it) }
         return true
       }
 
       override fun isRunUnderProgress(): Boolean = true
+    }
+  }
+
+  private fun configureTfPath(project: Project, toolType: TfToolType) {
+    val isToolConfigured = runBlockingCancellable {
+      TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
+    }
+
+    if (!isToolConfigured) {
+      showIncorrectPathNotification(project, toolType)
+      throw ProcessCanceledException()
+    }
+  }
+
+  private fun killProcess(process: EelProcess) {
+    ApplicationManager.getApplication().executeOnPooledThread {
+      runBlockingMaybeCancellable {
+        withContext(Dispatchers.IO) {
+          process.kill()
+        }
+      }
     }
   }
 }
