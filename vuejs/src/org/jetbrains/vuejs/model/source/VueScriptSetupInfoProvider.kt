@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSParameterTypeDecoratorImpl
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTupleType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeChildren
@@ -252,6 +253,21 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         }
       }
 
+      val typeArgument = call.typeArguments
+        .firstOrNull()
+        ?.jsType
+        ?.asRecordType()
+
+      if (typeArgument != null && typeArgument.hasProperties()) {
+        return typeArgument.properties.map {
+          VueScriptSetupPropertyContractEvent(
+            name = it.memberName,
+            source = it.memberSource.singleElement,
+            parametersType = it.jsType,
+          )
+        }
+      }
+
       val emitType = JSResolveUtil.getElementJSType(call)?.asRecordType()
                      ?: return emptyList()
 
@@ -374,6 +390,34 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
   ) : VueEmitCall {
     override val params: List<JSParameterTypeDecorator>
       get() = eventSignature.parameters.drop(1)
+
+    override val hasStrictSignature: Boolean
+      get() = true
+  }
+
+  private class VueScriptSetupPropertyContractEvent(
+    override val name: String,
+    override val source: PsiElement?,
+    private val parametersType: JSType?,
+  ) : VueEmitCall {
+    override val params: List<JSParameterTypeDecorator> by lazy {
+      if (parametersType !is JSTupleType)
+        return@lazy emptyList()
+
+      val firstOptional = parametersType.firstOptional
+      fun isOptional(index: Int): Boolean =
+        firstOptional != -1 && index >= firstOptional
+
+      parametersType.types.mapIndexed { index, type ->
+        JSParameterTypeDecoratorImpl(
+          parametersType.getNameByIndex(index),
+          type,
+          isOptional(index),
+          false,
+          type != null,
+        )
+      }
+    }
 
     override val hasStrictSignature: Boolean
       get() = true
