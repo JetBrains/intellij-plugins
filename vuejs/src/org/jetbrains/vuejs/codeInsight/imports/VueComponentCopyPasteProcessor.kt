@@ -44,6 +44,8 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
 import org.jetbrains.vuejs.model.source.NAME_PROP
 import java.awt.datatransfer.DataFlavor
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Future
 import com.intellij.openapi.util.Pair as OpenApiPair
 
 class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImportsTransferableData>() {
@@ -137,7 +139,7 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     }
   }
 
-  override fun createTransferableData(importedElements: ArrayList<ImportedElement>): VueComponentImportsTransferableData =
+  override fun createTransferableData(importedElementsFuture: Future<List<ImportedElement>>): VueComponentImportsTransferableData =
     throw UnsupportedOperationException()
 
   override fun processTransferableData(
@@ -259,9 +261,13 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
       }, { elementsToImport ->
         val pasteContext = pasteContextPtr.dereference() ?: return@scheduleOnPasteProcessing
         val exportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing
-        insertRequiredImports(pasteContext, VueComponentImportsTransferableData(ArrayList(), null, emptyList()), exportScope,
-                              elementsToImport.mapNotNull { info -> info.second?.let { OpenApiPair(info.first, it) } },
-                              VueJSLanguage.INSTANCE)
+        insertRequiredImportsWithRunnableWA(
+          pasteContext,
+          VueComponentImportsTransferableData(ArrayList(), null, emptyList()),
+          exportScope,
+          elementsToImport.mapNotNull { info -> info.second?.let { OpenApiPair(info.first, it) } },
+          VueJSLanguage.INSTANCE
+        ).run()
       }
     )
   }
@@ -280,7 +286,7 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     list: ArrayList<ImportedElement>,
     val originFilePath: String?,
     val components: List<String>,
-  ) : ES6ImportsTransferableDataBase(list) {
+  ) : ES6ImportsTransferableDataBase(CompletableFuture.completedFuture(list)) {
     override fun getFlavor(): DataFlavor {
       return VUE_COMPONENT_IMPORTS_FLAVOR
     }
