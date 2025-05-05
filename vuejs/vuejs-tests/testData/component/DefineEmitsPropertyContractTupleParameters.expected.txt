@@ -1,0 +1,94 @@
+{
+ class: "VueSourceComponent",
+ components: {
+  DefineEmitsPropertyContractTupleParameters: <recursive value of class VueSourceComponent>,
+ },
+ emits: [
+  {
+   class: "VueScriptSetupPropertyContractEvent",
+   name: "add",
+   eventJSType: "(id: number) => void",
+   params: [
+    {
+     name: "id",
+     type: "number",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "add", id: number) => void",
+  },
+  {
+   class: "VueScriptSetupPropertyContractEvent",
+   name: "add_o",
+   eventJSType: "(id?: number) => void",
+   params: [
+    {
+     name: "id",
+     type: "number",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "add_o", id?: number) => void",
+  },
+  {
+   class: "VueScriptSetupPropertyContractEvent",
+   name: "change",
+   eventJSType: "(id: number, options: unknown) => void",
+   params: [
+    {
+     name: "id",
+     type: "number",
+    },
+    {
+     name: "options",
+     type: "unknown",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "change", id: number, options: unknown) => void",
+  },
+  {
+   class: "VueScriptSetupPropertyContractEvent",
+   name: "change_o",
+   eventJSType: "(id: number, options?: unknown) => void",
+   params: [
+    {
+     name: "id",
+     type: "number",
+    },
+    {
+     name: "options",
+     type: "unknown",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "change_o", id: number, options?: unknown) => void",
+  },
+  {
+   class: "VueScriptSetupPropertyContractEvent",
+   name: "delete",
+   eventJSType: "(id: number) => void",
+   params: [
+    {
+     name: "id",
+     type: "number",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "delete", id: number) => void",
+  },
+  {
+   class: "VueScriptSetupPropertyContractEvent",
+   name: "delete_o",
+   eventJSType: "(id?: number) => void",
+   params: [
+    {
+     name: "id",
+     type: "number",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "delete_o", id?: number) => void",
+  },
+ ],
+}

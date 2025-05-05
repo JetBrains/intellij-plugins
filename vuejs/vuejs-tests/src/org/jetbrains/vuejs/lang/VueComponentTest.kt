@@ -11,7 +11,6 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
-import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.webSymbols.testFramework.DebugOutputPrinter
@@ -99,6 +98,10 @@ class VueComponentTest : BasePlatformTestCase() {
   fun testDefineEmitsObjectLiteral() = doTest()
 
   fun testDefineEmitsExplicitType() = doTest()
+
+  fun testDefineEmitsPropertyContractTupleParameters() = doTest(true)
+
+  fun testDefineEmitsPropertyContractNonTupleParameters() = doTest(true)
 
   fun testDefineComponentWithEmits() = doTest()
 
@@ -316,5 +319,3 @@ private fun Map<String, VueComponent>.filterOutLowercaseScriptSetupVariables(): 
       || it.name?.getOrNull(0)?.isUpperCase() == true
     }
   }
-
-
