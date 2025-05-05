@@ -43,6 +43,7 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueProperty
 import java.awt.datatransfer.DataFlavor
+import java.util.concurrent.Future
 
 class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExpressionsImportsTransferableData>() {
 
@@ -161,8 +162,8 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
       result
     }
 
-  override fun createTransferableData(importedElements: ArrayList<ImportedElement>): VueTemplateExpressionsImportsTransferableData =
-    VueTemplateExpressionsImportsTransferableData(importedElements)
+  override fun createTransferableData(importedElementsFuture: Future<List<ImportedElement>>): VueTemplateExpressionsImportsTransferableData =
+    VueTemplateExpressionsImportsTransferableData(importedElementsFuture)
 
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? {
     return super.getExportScope(file, caret)
@@ -180,7 +181,7 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
     ES6CreateImportUtil.addRequiredImports(destinationModule, VueJSLanguage.INSTANCE, imports)
   }
 
-  class VueTemplateExpressionsImportsTransferableData(list: ArrayList<ImportedElement>) : ES6ImportsTransferableDataBase(list) {
+  class VueTemplateExpressionsImportsTransferableData(importedElementsFuture: Future<List<ImportedElement>>) : ES6ImportsTransferableDataBase(importedElementsFuture) {
     override fun getFlavor(): DataFlavor {
       return VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR
     }

@@ -23,6 +23,7 @@ import org.jetbrains.astro.editor.AstroComponentSourceEdit
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
 import java.awt.datatransfer.DataFlavor
+import java.util.concurrent.Future
 import kotlin.Pair
 import com.intellij.openapi.util.Pair as OpenApiPair
 
@@ -79,8 +80,8 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
       AstroComponentSourceEdit.getOrCreateFrontmatterScript(file)
     }
 
-  override fun createTransferableData(importedElements: ArrayList<ImportedElement>): AstroComponentImportsTransferableData =
-    AstroComponentImportsTransferableData(importedElements)
+  override fun createTransferableData(importedElementsFuture: Future<List<ImportedElement>>): AstroComponentImportsTransferableData =
+    AstroComponentImportsTransferableData(importedElementsFuture)
 
   override fun insertRequiredImports(pasteContext: PsiElement,
                                      data: AstroComponentImportsTransferableData,
@@ -90,7 +91,7 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
     ES6CreateImportUtil.addRequiredImports(destinationModule, pasteContextLanguage, imports)
   }
 
-  class AstroComponentImportsTransferableData(list: ArrayList<ImportedElement>) : ES6ImportsTransferableDataBase(list) {
+  class AstroComponentImportsTransferableData(importedElementsFuture: Future<List<ImportedElement>>) : ES6ImportsTransferableDataBase(importedElementsFuture) {
     override fun getFlavor(): DataFlavor {
       return ASTRO_COMPONENT_IMPORTS_FLAVOR
     }
