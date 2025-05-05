@@ -6,6 +6,7 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -16,6 +17,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.getFirstInjectedFile
@@ -68,7 +70,9 @@ private fun locateTemplateInTheSameVueFile(source: PsiElement): CachedValueProvi
 private fun locateTemplateInTemplateProperty(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? =
   (source as? JSObjectLiteralExpression)
     ?.findProperty(TEMPLATE_PROP)
-    ?.value
+    ?.let {
+      AstLoadingFilter.forceAllowTreeLoading(source.containingFile, ThrowableComputable { it.value })
+    }
     ?.let { expression ->
       // Inline template
       getFirstInjectedFile(expression)
