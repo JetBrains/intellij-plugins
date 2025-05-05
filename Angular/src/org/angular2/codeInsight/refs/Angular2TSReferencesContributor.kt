@@ -34,41 +34,44 @@ internal class Angular2TSReferencesContributor : PsiReferenceContributor() {
       return Angular2TemplateReferencesProvider.Angular2SoftFileReferenceSet(element).allReferences
     }
   }
+}
 
-  private val PIPE_NAME_PATTERN = ng2LiteralInDecoratorProperty(NAME_PROP, PIPE_DEC)
+fun isAngularUrlLiteral(expression: JSLiteralExpression) =
+  STYLE_URL_PATTERN.accepts(expression) || TEMPLATE_URL_PATTERN.accepts(expression) || STYLE_URLS_PATTERN.accepts(expression)
 
-  private val STYLE_URL_PATTERN = ng2LiteralInDecoratorProperty(STYLE_URL_PROP, COMPONENT_DEC)
-  private val TEMPLATE_URL_PATTERN = ng2LiteralInDecoratorProperty(TEMPLATE_URL_PROP, COMPONENT_DEC)
+private val PIPE_NAME_PATTERN = ng2LiteralInDecoratorProperty(NAME_PROP, PIPE_DEC)
 
-  private val STYLE_URLS_PATTERN = PlatformPatterns.psiElement(JSLiteralExpression::class.java).and(FilterPattern(object : ElementFilter {
+private val STYLE_URL_PATTERN = ng2LiteralInDecoratorProperty(STYLE_URL_PROP, COMPONENT_DEC)
+private val TEMPLATE_URL_PATTERN = ng2LiteralInDecoratorProperty(TEMPLATE_URL_PROP, COMPONENT_DEC)
+
+private val STYLE_URLS_PATTERN = PlatformPatterns.psiElement(JSLiteralExpression::class.java).and(FilterPattern(object : ElementFilter {
+  override fun isAcceptable(element: Any, context: PsiElement?): Boolean {
+    return element.asSafely<JSLiteralExpression>()
+             ?.takeIf { it.isQuotedLiteral }
+             ?.parent?.asSafely<JSArrayLiteralExpression>()
+             ?.parent?.asSafely<JSProperty>()
+             ?.let { property ->
+               STYLE_URLS_PROP == property.name && Angular2LangUtil.isAngular2Context(property)
+             }
+           ?: false
+  }
+
+  override fun isClassAcceptable(hintClass: Class<*>): Boolean {
+    return true
+  }
+}))
+
+private fun ng2LiteralInDecoratorProperty(
+  propertyName: String,
+  vararg decoratorNames: String,
+): PsiElementPattern.Capture<JSLiteralExpression> {
+  return PlatformPatterns.psiElement(JSLiteralExpression::class.java).and(FilterPattern(object : ElementFilter {
     override fun isAcceptable(element: Any, context: PsiElement?): Boolean {
-      return element.asSafely<JSLiteralExpression>()
-               ?.takeIf { it.isQuotedLiteral }
-               ?.parent?.asSafely<JSArrayLiteralExpression>()
-               ?.parent?.asSafely<JSProperty>()
-               ?.let { property ->
-                 STYLE_URLS_PROP == property.name && Angular2LangUtil.isAngular2Context(property)
-               }
-             ?: false
+      return element is PsiElement && isLiteralInNgDecorator(element, propertyName, *decoratorNames)
     }
 
     override fun isClassAcceptable(hintClass: Class<*>): Boolean {
       return true
     }
   }))
-
-  private fun ng2LiteralInDecoratorProperty(
-    propertyName: String,
-    vararg decoratorNames: String,
-  ): PsiElementPattern.Capture<JSLiteralExpression> {
-    return PlatformPatterns.psiElement(JSLiteralExpression::class.java).and(FilterPattern(object : ElementFilter {
-      override fun isAcceptable(element: Any, context: PsiElement?): Boolean {
-        return element is PsiElement && isLiteralInNgDecorator(element, propertyName, *decoratorNames)
-      }
-
-      override fun isClassAcceptable(hintClass: Class<*>): Boolean {
-        return true
-      }
-    }))
-  }
 }
