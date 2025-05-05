@@ -10,7 +10,7 @@ internal class QodanaScriptDefinitionSource(val project: Project) : ScriptDefini
     get() = sequenceOf(
       ScriptDefinition.FromConfigurations(
         defaultJvmScriptingHostConfiguration,
-        QodanaKtsInspectionsScriptCompilationConfiguration(defaultJvmScriptingHostConfiguration),
+        qodanaInspectionsKtsScriptCompilationConfiguration(project, defaultJvmScriptingHostConfiguration),
         QodanaKtsInspectionsScriptEvaluationConfiguration(defaultJvmScriptingHostConfiguration)
       ).apply {
         order = Int.MIN_VALUE

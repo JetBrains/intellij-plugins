@@ -9,9 +9,12 @@ import org.jetbrains.qodana.registry.QodanaRegistry
 // QD-8717 FlexInspect (.inspection.kts): unresolved Kotlin PSI APIs if the Kotlin is present in the gradle kts project
 internal class InspectionKtsResolveScopeProvider : ResolveScopeProvider() {
   override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {
-    val inspectionKtsDependenciesService = InspectionKtsClasspathService.getInstanceIfCreated() ?: return null
-    if (!QodanaRegistry.limitedInspectionKtsDependencies) return null
+    val classpathProvider = inspectionKtsClasspathProvider(project, doInitialize = false)
+    val currentDependenciesScope = classpathProvider.currentDependenciesScope()
 
-    return inspectionKtsDependenciesService.currentDependenciesScope()?.getResolveScopeForFile(project, file)
+    if (currentDependenciesScope == null || !QodanaRegistry.limitedInspectionKtsDependencies) {
+      return null
+    }
+    return currentDependenciesScope.getResolveScopeForFile(project, file)
   }
 }

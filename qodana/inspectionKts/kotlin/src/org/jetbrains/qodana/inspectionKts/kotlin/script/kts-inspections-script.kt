@@ -1,9 +1,18 @@
 package org.jetbrains.qodana.inspectionKts.kotlin.script
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.JvmDependency
+
+internal fun qodanaInspectionsKtsScriptCompilationConfiguration(
+  project: Project,
+  hostConfiguration: ScriptingHostConfiguration
+): ScriptCompilationConfiguration {
+  val provider = inspectionKtsClasspathProvider(project, doInitialize = true)
+  return QodanaKtsInspectionsScriptCompilationConfiguration(provider, hostConfiguration)
+}
 
 /**
  * Defines the script configuration (used by resolve/highlighting/etc in IDE)
@@ -15,9 +24,10 @@ import kotlin.script.experimental.jvm.JvmDependency
  * [org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshotFile]
  *
  * The dependencies are provided in `refineConfiguration.beforeCompiling` to achieve a lazy collection of dependencies:
- * when the .inspection.kts file is actually met (for example, opened in editor), the [InspectionKtsClasspathService.collectClassPath] is called
+ * when the .inspection.kts file is actually met (for example, opened in editor), the [InspectionKtsClasspathProvider.collectClassPath] is called
  */
 internal class QodanaKtsInspectionsScriptCompilationConfiguration(
+  classpathProvider: InspectionKtsClasspathProvider,
   hostConfiguration: ScriptingHostConfiguration
 ) : ScriptCompilationConfiguration({
   defaultImports(InspectionKtsDefaultImportProvider.imports())
@@ -28,7 +38,7 @@ internal class QodanaKtsInspectionsScriptCompilationConfiguration(
   refineConfiguration {
     beforeCompiling { context ->
       ScriptCompilationConfiguration(context.compilationConfiguration) {
-        dependencies.append(JvmDependency(InspectionKtsClasspathService.getInstance().collectClassPath()))
+        dependencies.append(JvmDependency(classpathProvider.collectClassPath()))
       }.asSuccess()
     }
   }
