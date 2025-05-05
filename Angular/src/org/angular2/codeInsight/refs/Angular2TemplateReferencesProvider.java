@@ -26,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static org.angular2.codeInsight.refs.Angular2TSReferencesContributorKt.isAngularUrlLiteral;
+
 
 public class Angular2TemplateReferencesProvider extends PsiReferenceProvider {
   @Override
@@ -101,10 +103,8 @@ public class Angular2TemplateReferencesProvider extends PsiReferenceProvider {
     private static void visitFile(@Nullable PsiFile file, @NotNull Consumer<Angular2SoftFileReferenceSet> action) {
       if (file == null || file instanceof PsiCompiledElement || isBinary(file)) return;
       for (JSLiteralExpression expression : PsiTreeUtil.findChildrenOfType(file, JSLiteralExpression.class)) {
-        Angular2FileReference angular2FileReference = ContainerUtil.findInstance(expression.getReferences(),
-                                                                                 Angular2FileReference.class);
-        if (angular2FileReference != null) {
-          action.accept((Angular2SoftFileReferenceSet)angular2FileReference.getFileReferenceSet());
+        if (isAngularUrlLiteral(expression)) {
+          action.accept(new Angular2SoftFileReferenceSet(expression));
         }
       }
     }
