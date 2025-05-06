@@ -20,12 +20,12 @@ import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicInteger
 
 @Service(Service.Level.PROJECT)
-internal class RuntimeNotificationCollector {
+class RuntimeNotificationCollector {
   private val _notifications = ConcurrentLinkedDeque<Notification>()
   private val capacity = AtomicInteger(0)
   private lateinit var projectPath: Path
 
-  val notifications get() = _notifications.toList()
+  val notifications: List<Notification> get() = _notifications.toList()
 
   fun configure(config: QodanaConfig) {
     projectPath = config.projectPath
@@ -64,7 +64,7 @@ internal class RuntimeNotificationCollector {
       val logger = logger<NotificationReportContributor>()
     }
 
-    override fun contribute(run: Run, project: Project, config: QodanaConfig) =
+    override fun contribute(run: Run, project: Project, config: QodanaConfig): Unit =
       contribute(run, project.service<RuntimeNotificationCollector>())
 
     @VisibleForTesting
