@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.NlsActions
 import icons.QodanaIcons
@@ -28,7 +28,7 @@ private class ProblemsViewCloudLinkAction : DefaultActionGroup(), DumbAware {
     e.presentation.icon = getActionIcon(linkState)
     e.presentation.isPopupGroup = true
     e.presentation.isPerformGroup = true
-    e.presentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
+    e.presentation.putClientProperty(ActionUtil.HIDE_DROPDOWN_ICON, true)
 
     if (userState !is UserState.Authorized) {
       e.presentation.isEnabled = false
@@ -36,7 +36,7 @@ private class ProblemsViewCloudLinkAction : DefaultActionGroup(), DumbAware {
     }
     if (linkState is LinkState.Linked) {
       e.presentation.isPerformGroup = false
-      e.presentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, false)
+      e.presentation.putClientProperty(ActionUtil.HIDE_DROPDOWN_ICON, false)
     }
     e.presentation.isEnabled = true
   }

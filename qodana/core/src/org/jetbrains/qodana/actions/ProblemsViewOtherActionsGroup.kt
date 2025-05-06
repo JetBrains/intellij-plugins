@@ -1,12 +1,12 @@
 package org.jetbrains.qodana.actions
 
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAware
 
 class ProblemsViewOtherActionsGroup : ActionGroup(), DumbAware {
   init {
-    templatePresentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
+    templatePresentation.putClientProperty(ActionUtil.HIDE_DROPDOWN_ICON, true)
   }
 
   override fun getChildren(e: AnActionEvent?): Array<AnAction> {
