@@ -364,7 +364,6 @@
       implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector$NotificationWorkflowExtension"/>
     <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.stat.InspectionStatisticsLogger"/>
     <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.profile.ProfileDescriptionWriter"/>
-    <workflowExtension implementation="org.jetbrains.qodana.staticAnalysis.workflow.ProjectStructureErrorCollector"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.github.SetupGitHubActionsProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.gitlab.SetupGitLabCIProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.teamcity.SetupTeamcityDslProviderFactory"/>

@@ -7,16 +7,13 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import com.jetbrains.qodana.sarif.model.Message
 import com.jetbrains.qodana.sarif.model.Notification
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
-import org.jetbrains.qodana.staticAnalysis.profile.SanityInspectionGroup.Companion.SANITY_FAILURE_NOTIFICATION
 import org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector
-import org.jetbrains.qodana.staticAnalysis.sarif.withKind
-import java.time.Instant
+import org.jetbrains.qodana.staticAnalysis.sarif.notifications.createSanityNotification
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -108,14 +105,9 @@ private class Thresholds(val project: Project, config: QodanaConfig) {
       return null
     }
 
-    return Notification()
-      .withLevel(Notification.Level.ERROR)
-      .withTimeUtc(Instant.now())
-      .withMessage(
-        Message()
-          .withText(QodanaBundle.message("sanity.suspend.inspection.notification.message", skippedInspections.size, skippedInspections.joinToString(", ")))
-      )
-      .withKind(SANITY_FAILURE_NOTIFICATION)
+    return createSanityNotification(
+      QodanaBundle.message("sanity.suspend.inspection.notification.message", skippedInspections.size, skippedInspections.joinToString(", "))
+    )
   }
 }
 

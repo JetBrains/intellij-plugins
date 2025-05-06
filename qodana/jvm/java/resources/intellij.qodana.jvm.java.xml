@@ -8,6 +8,7 @@
     <qodanaScriptFactory implementation="org.jetbrains.qodana.jvm.java.migrate.MigrateClassesScriptFactory"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.jvm.java.JvmLocalTaintOutputConsumer"/>
     <workflowExtension implementation="org.jetbrains.qodana.jvm.java.QodanaJavaConfigApplier" />
+    <workflowExtension implementation="org.jetbrains.qodana.jvm.java.workflow.JvmProjectStructureChecker"/>
     <cyclomaticComplexityFileVisitor
       implementation="org.jetbrains.qodana.jvm.java.metrics.cyclomaticComplexity.JavaCyclomaticComplexityMetricFileVisitor"/>
   </extensions>
