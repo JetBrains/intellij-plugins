@@ -2,9 +2,10 @@
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.util.IntentionFamilyName
+import com.intellij.modcommand.ModCommandAction
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -44,7 +45,10 @@ internal class TfUnusedElementsInspection : LocalInspectionTool() {
 
     if (isElementUnused(element, name)) {
       val highlighted = HCLPsiUtil.getIdentifierPsi(element) ?: return
-      holder.registerProblem(highlighted, unused.inspectionMessage, ProblemHighlightType.LIKE_UNUSED_SYMBOL, unused.quickFix)
+      holder.problem(highlighted, unused.inspectionMessage)
+        .highlight(ProblemHighlightType.LIKE_UNUSED_SYMBOL)
+        .fix(unused.quickFix)
+        .register()
     }
   }
 
@@ -64,17 +68,17 @@ internal class TfUnusedElementsInspection : LocalInspectionTool() {
   private fun getHclUnusedElement(element: HCLElement, name: String): HclUnusedElement? = when {
     TfPsiPatterns.LocalProperty.accepts(element) -> object : HclUnusedElement {
       override val inspectionMessage: String = HCLBundle.message("unused.local.inspection.error.message", name)
-      override val quickFix: LocalQuickFix = RemoveLocalQuickFix(element)
+      override val quickFix: ModCommandAction = RemoveLocalQuickFix(element)
     }
 
     TfPsiPatterns.VariableRootBlock.accepts(element) -> object : HclUnusedElement {
       override val inspectionMessage: String = HCLBundle.message("unused.variable.inspection.error.message", name)
-      override val quickFix: LocalQuickFix = RemoveVariableQuickFix(element)
+      override val quickFix: ModCommandAction = RemoveVariableQuickFix(element)
     }
 
     TfPsiPatterns.DataSourceRootBlock.accepts(element) -> object : HclUnusedElement {
       override val inspectionMessage: String = HCLBundle.message("unused.data.source.inspection.error.message", name)
-      override val quickFix: LocalQuickFix = RemoveDataSourceQuickFix(element)
+      override val quickFix: ModCommandAction = RemoveDataSourceQuickFix(element)
     }
     else -> null
   }
@@ -82,17 +86,17 @@ internal class TfUnusedElementsInspection : LocalInspectionTool() {
 
 private interface HclUnusedElement {
   val inspectionMessage: String
-  val quickFix: LocalQuickFix
+  val quickFix: ModCommandAction
 }
 
 private class RemoveVariableQuickFix(element: HCLElement) : RemovePsiElementQuickFix(element) {
-  override fun getText(): String = HCLBundle.message("unused.variable.inspection.quick.fix.name")
+  override fun getFamilyName(): @IntentionFamilyName String = HCLBundle.message("unused.variable.inspection.quick.fix.name")
 }
 
 private class RemoveLocalQuickFix(element: HCLElement) : RemovePsiElementQuickFix(element) {
-  override fun getText(): String = HCLBundle.message("unused.local.inspection.quick.fix.name")
+  override fun getFamilyName(): @IntentionFamilyName String = HCLBundle.message("unused.local.inspection.quick.fix.name")
 }
 
 private class RemoveDataSourceQuickFix(element: HCLElement) : RemovePsiElementQuickFix(element) {
-  override fun getText(): String = HCLBundle.message("unused.data.source.inspection.quick.fix.name")
+  override fun getFamilyName(): @IntentionFamilyName String = HCLBundle.message("unused.data.source.inspection.quick.fix.name")
 }

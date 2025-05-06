@@ -49,8 +49,10 @@ class HCLLiteralValidnessInspection : LocalInspectionTool() {
 
       // Check that string literal is closed properly
       if (length <= 1 || text[0] != text[length - 1] || HCLPsiUtil.isEscapedChar(text, length - 1)) {
-        holder.registerProblem(element, HCLBundle.message("hcl.literal.inspection.missing.closing.quote"), ProblemHighlightType.ERROR,
-                               AddClosingQuoteQuickFix(element))
+        holder.problem(element, HCLBundle.message("hcl.literal.inspection.missing.closing.quote"))
+          .highlight(ProblemHighlightType.ERROR)
+          .fix(AddClosingQuoteQuickFix(element))
+          .register()
       }
 
       val pattern = when (element.quoteSymbol) {
@@ -85,15 +87,19 @@ class HCLLiteralValidnessInspection : LocalInspectionTool() {
               && !HCLPsiUtil.isUnderPropertyUnderPropertyWithObjectValueAndArray(element)
               && !HCLPsiUtil.isUnderPropertyInsideObjectArgument(element)
               && !HCLPsiUtil.isUnderPropertyInsideObjectConditionalExpression(element)) {
-            holder.registerProblem(element, HCLBundle.message("hcl.literal.inspection.argument.names.must.not.be.quoted"),
-                                   ProblemHighlightType.ERROR, UnwrapHCLStringQuickFix(element))
+            holder.problem(element, HCLBundle.message("hcl.literal.inspection.argument.names.must.not.be.quoted"))
+              .highlight(ProblemHighlightType.ERROR)
+              .fix(UnwrapHCLStringQuickFix(element))
+              .register()
           }
         }
       }
 
       if (element.quoteSymbol == '\'') {
-        holder.registerProblem(element, HCLBundle.message("hcl.literal.inspection.invalid.quotes"), ProblemHighlightType.ERROR,
-                               ReplaceToDoubleQuoteQuickFix(element))
+        holder.problem(element, HCLBundle.message("hcl.literal.inspection.invalid.quotes"))
+          .highlight(ProblemHighlightType.ERROR)
+          .fix(ReplaceToDoubleQuoteQuickFix(element))
+          .register()
       }
     }
 

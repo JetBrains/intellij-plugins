@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.codeinsight
 
-import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
+import com.intellij.codeInsight.intention.CommonIntentionAction
 import com.intellij.ide.lightEdit.LightEditCompatible
 import com.intellij.lang.annotation.AnnotationBuilder
 import com.intellij.lang.annotation.AnnotationHolder
@@ -28,7 +28,7 @@ class HCLLiteralAnnotator : Annotator, DumbAware, LightEditCompatible {
   private fun addBlockNameAnnotation(holder: AnnotationHolder,
                                      @Nls name: String,
                                      textAttributes: TextAttributesKey,
-                                     unifix: LocalQuickFixAndIntentionActionOnPsiElement?) {
+                                     unifix: CommonIntentionAction?) {
     var builder: AnnotationBuilder
     if (DEBUG) {
       builder = holder.newAnnotation(HighlightSeverity.INFORMATION, name).textAttributes(textAttributes)

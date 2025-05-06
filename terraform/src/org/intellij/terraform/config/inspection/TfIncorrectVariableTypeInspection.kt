@@ -2,10 +2,11 @@
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.modcommand.ModPsiUpdater
+import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.model.*
@@ -101,11 +102,11 @@ class TfIncorrectVariableTypeInspection : LocalInspectionTool() {
     }
   }
 
-  private class ChangeVariableType(val toType: String) : LocalQuickFix {
+  private class ChangeVariableType(val toType: String) : PsiUpdateModCommandQuickFix() {
     override fun getFamilyName(): String = HCLBundle.message("incorrect.variable.type.inspection.change.type.quick.fix.name", toType)
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-      val element = descriptor.psiElement as? HCLValue ?: return
+    override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
+      if (element !is HCLValue) return
       val property = element.parent as? HCLProperty ?: return
       val obj = property.parent as? HCLObject ?: return
       val typeProperty = obj.findProperty(TypeModel.Variable_Type.name)

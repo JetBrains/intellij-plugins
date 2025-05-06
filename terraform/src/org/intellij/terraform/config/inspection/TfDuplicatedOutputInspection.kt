@@ -2,12 +2,13 @@
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInsight.intention.LowPriorityAction
-import com.intellij.codeInsight.intention.preview.IntentionPreviewUtils
 import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.modcommand.ModPsiUpdater
+import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.util.NullableFunction
 import org.intellij.terraform.config.model.getTerraformModule
@@ -62,30 +63,29 @@ class TfDuplicatedOutputInspection : TfDuplicatedInspectionBase() {
       }).let { fixes.add(it) }
     }
 
-    fixes.add(DeleteOutputFix)
-    fixes.add(RenameOutputFix)
+    fixes.add(DeleteOutputFix())
+    fixes.add(RenameOutputFix())
     return fixes.toTypedArray()
   }
 
-  private object DeleteOutputFix : LocalQuickFix, LowPriorityAction {
+  private class DeleteOutputFix : PsiUpdateModCommandQuickFix(), LowPriorityAction {
     override fun getFamilyName(): String {
       return HCLBundle.message("duplicated.output.inspection.delete.output.quick.fix.name")
     }
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-      val block = descriptor.psiElement as? HCLBlock ?: return
-      IntentionPreviewUtils.write<Throwable> { block.delete() }
+    override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
+      (element as? HCLBlock)?.delete()
     }
   }
 
-  private object RenameOutputFix : Companion.RenameQuickFix() {
+  private class RenameOutputFix : PsiUpdateModCommandQuickFix() {
     override fun getFamilyName(): String {
       return HCLBundle.message("duplicated.output.inspection.rename.output.quick.fix")
     }
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-      val block = descriptor.psiElement as? HCLBlock ?: return
-      invokeRenameRefactoring(project, block)
+    override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
+      val block = element as? HCLBlock ?: return
+      updater.rename(block, listOf(block.name))
     }
   }
 }

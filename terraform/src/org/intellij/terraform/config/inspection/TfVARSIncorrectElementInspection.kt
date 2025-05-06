@@ -1,10 +1,14 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
-import com.intellij.codeInspection.*
-import com.intellij.openapi.editor.Editor
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.modcommand.ActionContext
+import com.intellij.modcommand.ModCommandAction
+import com.intellij.modcommand.ModPsiUpdater
+import com.intellij.modcommand.PsiUpdateModCommandAction
 import com.intellij.openapi.progress.ProgressIndicatorProvider
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -46,8 +50,9 @@ class TfVARSIncorrectElementInspection : LocalInspectionTool() {
       if (property.parent is HCLFile) {
         if (value !is HCLNumberLiteral && value !is HCLObject && value !is HCLArray) {
           if (value is HCLStringLiteral && value.quoteSymbol != '"') {
-            holder.registerProblem(value, HCLBundle.message("tfvars.unsupported.element.inspection.illegal.value.type.error.message"),
-                                   *getQuoteFix(value))
+            holder.problem(value, HCLBundle.message("tfvars.unsupported.element.inspection.illegal.value.type.error.message"))
+              .maybeFix(getQuoteFix(value))
+              .register()
           }
         }
         if (property.nameElement is HCLStringLiteral) {
@@ -80,24 +85,23 @@ class TfVARSIncorrectElementInspection : LocalInspectionTool() {
     }
   }
 
-  private fun getQuoteFix(element: HCLValue): Array<LocalQuickFix> {
+  private fun getQuoteFix(element: HCLValue): ModCommandAction? {
     if (element is HCLStringLiteralMixin || element is HCLIdentifier || element is HCLNullLiteral || element is HCLBooleanLiteral) {
-      return arrayOf(ConvertToHCLStringQuickFix(element))
+      return ConvertToHCLStringQuickFix(element)
     }
-    return emptyArray()
+    return null
   }
 
-  class ConvertToHCLStringQuickFix(element: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(element) {
-    override fun getText() = HCLBundle.message("tfvars.unsupported.element.inspection.convert.to.double.quoted.string.quick.fix.name")
-    override fun getFamilyName() = text
-    override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
+  class ConvertToHCLStringQuickFix(element: PsiElement) : PsiUpdateModCommandAction<PsiElement>(element) {
+    override fun getFamilyName(): @Nls String = HCLBundle.message("tfvars.unsupported.element.inspection.convert.to.double.quoted.string.quick.fix.name")
+    override fun invoke(context: ActionContext, element: PsiElement, updater: ModPsiUpdater) {
       val text: String
-      when (startElement) {
-        is HCLIdentifier, is HCLNullLiteral, is HCLBooleanLiteral -> text = startElement.text
-        is HCLStringLiteral -> text = startElement.value
+      when (element) {
+        is HCLIdentifier, is HCLNullLiteral, is HCLBooleanLiteral -> text = element.text
+        is HCLStringLiteral -> text = element.value
         else -> return
       }
-      startElement.replace(HCLElementGenerator(project).createStringLiteral(text))
+      element.replace(HCLElementGenerator(context.project).createStringLiteral(text))
     }
   }
 }

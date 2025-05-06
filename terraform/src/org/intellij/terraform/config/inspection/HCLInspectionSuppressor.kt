@@ -2,7 +2,7 @@
 package org.intellij.terraform.config.inspection
 
 import com.intellij.application.options.CodeStyle
-import com.intellij.codeInsight.daemon.impl.actions.AbstractBatchSuppressByNoInspectionCommentFix
+import com.intellij.codeInsight.daemon.impl.actions.AbstractBatchSuppressByNoInspectionCommentModCommandFix
 import com.intellij.codeInspection.InspectionSuppressor
 import com.intellij.codeInspection.SuppressQuickFix
 import com.intellij.codeInspection.SuppressionUtil
@@ -41,13 +41,13 @@ internal class HCLInspectionSuppressor : InspectionSuppressor {
   }
 }
 
-private class BlockSuppressQuickFix(toolId: String) : AbstractBatchSuppressByNoInspectionCommentFix(toolId, false) {
+private class BlockSuppressQuickFix(toolId: String) : AbstractBatchSuppressByNoInspectionCommentModCommandFix(toolId, false) {
   override fun getContainer(context: PsiElement?): HCLBlock? = context?.parentOfType<HCLBlock>()
 
   override fun getText(): @IntentionName String = HCLBundle.message("suppress.inspection.block.action.name")
 }
 
-private class PropertySuppressQuickFix(toolId: String) : AbstractBatchSuppressByNoInspectionCommentFix(toolId, false) {
+private class PropertySuppressQuickFix(toolId: String) : AbstractBatchSuppressByNoInspectionCommentModCommandFix(toolId, false) {
   override fun getContainer(context: PsiElement?): HCLProperty? = context?.parentOfType<HCLProperty>()
 
   override fun getText(): @IntentionName String = HCLBundle.message("suppress.inspection.property.action.name")

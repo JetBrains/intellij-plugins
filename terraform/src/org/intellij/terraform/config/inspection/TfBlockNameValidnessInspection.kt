@@ -4,6 +4,10 @@ package org.intellij.terraform.config.inspection
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInspection.*
+import com.intellij.modcommand.ActionContext
+import com.intellij.modcommand.ModPsiUpdater
+import com.intellij.modcommand.PsiUpdateModCommandAction
+import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -74,8 +78,8 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
       } else {
         val extra = nameElements.toList().takeLast(-1 * required)
         val range = TextRange(extra.first().startOffsetInParent, extra.last().let { it.startOffsetInParent + it.textLength })
-        holder.registerProblem(o, HCLBundle.message("block.name.validness.inspection.extra.block.name.error.message"),
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING, range, RemoveExtraNameElementsQuickFix(o))
+        holder.problem(o, HCLBundle.message("block.name.validness.inspection.extra.block.name.error.message"))
+          .range(range).fix(RemoveExtraNameElementsQuickFix(o)).register()
       }
     }
   }
@@ -104,12 +108,10 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
     }
   }
 
-  class RemoveExtraNameElementsQuickFix(element: HCLBlock) : LocalQuickFixAndIntentionActionOnPsiElement(element) {
-    override fun getText(): String = HCLBundle.message("block.name.validness.inspection.remove.name.quick.fix.name")
-    override fun getFamilyName(): String = text
+  class RemoveExtraNameElementsQuickFix(element: HCLBlock) : PsiUpdateModCommandAction<HCLBlock>(element) {
+    override fun getFamilyName(): String = HCLBundle.message("block.name.validness.inspection.remove.name.quick.fix.name")
 
-    override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-      val block = startElement as? HCLBlock ?: return
+    override fun invoke(context: ActionContext, block: HCLBlock, updater: ModPsiUpdater) {
       val obj = block.`object` ?: return
       if (!TfPsiPatterns.TerraformConfigFile.accepts(block.containingFile)) return
       val type = TfModelHelper.getAbstractBlockType(block) ?: return
@@ -122,12 +124,12 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
     }
   }
 
-  private object RenameBlockFix : TfDuplicatedInspectionBase.Companion.RenameQuickFix() {
+  private object RenameBlockFix : PsiUpdateModCommandQuickFix() {
     override fun getFamilyName(): String = HCLBundle.message("block.name.validness.inspection.rename.block.quick.fix.name")
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-      val block = descriptor.psiElement as? HCLBlock ?: return
-      invokeRenameRefactoring(project, block)
+    override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
+      val block = element as? HCLBlock ?: return
+      updater.rename(block, listOf(block.name))
     }
   }
 }

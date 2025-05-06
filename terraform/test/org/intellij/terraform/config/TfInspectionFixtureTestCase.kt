@@ -59,20 +59,24 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
             
           """.trimIndent()
 
+          val origText = myFixture.file.text
+
           if (skipCheckPreview(intentionAction))
             myFixture.launchAction(intentionAction)
           else
             myFixture.checkPreviewAndLaunchAction(intentionAction)
 
+          val newText = myFixture.file.text
           assertEqualsToFile("quickfix ${intentionAction.text} result",
                              File(File(basePath, testDir), "after_${i}_${j}")
                                .apply { mkdirs() }
                                .resolve(refEntity.name),
-                             fixInfo + myFixture.file.text)
+                             fixInfo + newText)
 
-          UndoManager.getInstance(project).undo(TextEditorProvider.getInstance().getTextEditor(editor))
-          PsiDocumentManager.getInstance(project).commitAllDocuments()
-
+          if (newText != origText) {
+            UndoManager.getInstance(project).undo(TextEditorProvider.getInstance().getTextEditor(editor))
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
+          }
         }
       }
     }
@@ -90,7 +94,6 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
   //TODO: Fix preview
   private val skipPreview = setOf(
     "Add variable 'x'",
-    "Add closing braces before an element",
     "Rename output",
     "Convert to HCL2 expression",
     "Rename variable",

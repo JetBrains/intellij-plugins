@@ -1,17 +1,16 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
-import com.intellij.codeInsight.FileModificationService
-import com.intellij.codeInspection.*
-import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.editor.Editor
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.modcommand.ActionContext
+import com.intellij.modcommand.ModPsiUpdater
+import com.intellij.modcommand.PsiUpdateModCommandAction
 import com.intellij.openapi.progress.ProgressIndicatorProvider
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiParserFacade
-import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.parentOfTypes
 import org.intellij.terraform.config.actions.TfInitAction
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil
@@ -19,7 +18,10 @@ import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
+import org.intellij.terraform.hcl.psi.HCLFile
+import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.isTerraformCompatiblePsiFile
 
 class TfUnknownBlockTypeInspection : LocalInspectionTool() {
@@ -64,9 +66,11 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
 
         // Check for non-closed root block (issue #93)
         if (TfPsiPatterns.RootBlock.accepts(parent) && TfCompletionUtil.RootBlockKeywords.contains(type)) {
-          holder.registerProblem(block.nameElements.first(),
-                                 HCLBundle.message("unknown.block.type.inspection.missing.closing.brace.error.message"),
-                                 ProblemHighlightType.GENERIC_ERROR, AddClosingBraceFix(block.nameElements.first()))
+          holder.problem(block.nameElements.first(),
+                         HCLBundle.message("unknown.block.type.inspection.missing.closing.brace.error.message"))
+            .highlight(ProblemHighlightType.GENERIC_ERROR)
+            .fix(AddClosingBraceFix(block.nameElements.first()))
+            .register()
           return
         }
         registerUnknownBlockProblem(block, holder, type)
@@ -76,47 +80,24 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
   }
 
   private fun registerUnknownBlockProblem(block: HCLBlock, holder: ProblemsHolder, type: String) {
-    holder.registerProblem(block.nameElements.first(),
-                           HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type),
-                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                           *listOfNotNull(TfInitAction.createQuickFixNotInitialized(block), RemoveBlockQuickFix(block)).toTypedArray())
+    holder.problem(block.nameElements.first(), HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type))
+      .maybeFix(TfInitAction.createQuickFixNotInitialized(block))
+      .fix(RemoveBlockQuickFix(block))
+      .register()
   }
 }
 
-class AddClosingBraceFix(before: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(before) {
-  override fun getText(): String {
-    return HCLBundle.message("unknown.block.type.inspection.add.closing.brace.quick.fix.test")
-  }
+class AddClosingBraceFix(before: PsiElement) : PsiUpdateModCommandAction<PsiElement>(before) {
+  override fun getFamilyName(): String = HCLBundle.message("unknown.block.type.inspection.add.closing.brace.quick.fix.test")
 
-  override fun getFamilyName(): String {
-    return text
-  }
-
-  override fun startInWriteAction(): Boolean {
-    return false
-  }
-
-  override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-    if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
-    WriteCommandAction.writeCommandAction(project).run<Throwable> {
-      CodeStyleManager.getInstance(project).performActionWithFormatterDisabled {
-        if (editor != null) {
-          editor.document.insertString(startElement.node.startOffset, "}\n")
-        }
-        else {
-          startElement.parent.addBefore(HCLElementGenerator(project).createObject("").lastChild, startElement)
-          startElement.parent.addBefore(PsiParserFacade.getInstance(project).createWhiteSpaceFromText("\n"), startElement)
-          file.subtreeChanged()
-        }
-      }
-    }
+  override fun invoke(context: ActionContext, element: PsiElement, updater: ModPsiUpdater) {
+    element.containingFile.fileDocument.insertString(element.node.startOffset, "}\n")
   }
 }
 
-internal class RemoveBlockQuickFix(element: HCLBlock) : LocalQuickFixOnPsiElement(element) {
-  override fun getText(): String = HCLBundle.message("unknown.block.type.inspection.quick.fix.name")
-  override fun getFamilyName(): String = text
-  override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
-    startElement.delete()
+internal class RemoveBlockQuickFix(element: HCLBlock) : PsiUpdateModCommandAction<HCLBlock>(element) {
+  override fun getFamilyName(): String = HCLBundle.message("unknown.block.type.inspection.quick.fix.name")
+  override fun invoke(context: ActionContext, element: HCLBlock, updater: ModPsiUpdater) {
+    element.delete()
   }
 }
