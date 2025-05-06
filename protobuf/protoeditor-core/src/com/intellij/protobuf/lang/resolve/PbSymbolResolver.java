@@ -15,7 +15,10 @@
  */
 package com.intellij.protobuf.lang.resolve;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.intellij.openapi.util.Condition;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbSymbol;
@@ -156,7 +159,7 @@ public class PbSymbolResolver {
     Multimap<QualifiedName, PbSymbol> filtered =
       Multimaps.filterEntries(
         symbols,
-        e -> e != null && e.getKey().getComponentCount() == 1 && condition.value(e.getValue()));
+        e -> e.getKey().getComponentCount() == 1 && condition.value(e.getValue()));
 
     // Next, convert the map into a Multimap<String, PbSymbol>
     ImmutableMultimap.Builder<String, PbSymbol> builder = ImmutableMultimap.builder();
