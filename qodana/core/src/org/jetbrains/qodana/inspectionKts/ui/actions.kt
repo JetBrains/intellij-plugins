@@ -3,9 +3,11 @@
 package org.jetbrains.qodana.inspectionKts.ui
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.impl.ActionButton
-import com.intellij.openapi.actionSystem.impl.ActionMenu
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.ui.AnimatedIcon
 import icons.QodanaIcons
@@ -83,8 +85,8 @@ internal class ExecutionErrorAction(
   override fun update(e: AnActionEvent) {
     val compiled = viewModel.compilationStatus.value as? InspectionKtsBannerViewModel.CompilationStatus.Compiled
     val executionError = compiled?.executionErrorDuringAnalysis?.value
-    e.presentation.putClientProperty(ActionMenu.SUPPRESS_SUBMENU, true)
-    e.presentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
+    e.presentation.putClientProperty(ActionUtil.SUPPRESS_SUBMENU, true)
+    e.presentation.putClientProperty(ActionUtil.HIDE_DROPDOWN_ICON, true)
     e.presentation.isPopupGroup = true
     e.presentation.isPerformGroup = false
     if (executionError == null) {
