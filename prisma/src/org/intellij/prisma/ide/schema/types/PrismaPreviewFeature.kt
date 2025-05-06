@@ -9,12 +9,10 @@ enum class PrismaPreviewFeature(val datasources: Set<PrismaDatasourceType> = Pri
   Metrics,
   MultiSchema,
   NativeDistinct,
-  OmitApi,
   PostgresqlExtensions,
-  PrismaSchemaFolder,
+  QueryCompiler,
   RelationJoins,
   StrictUndefinedChecks,
-  Tracing,
   Views,
   FullTextSearchPostgres(setOf(PrismaDatasourceType.POSTGRESQL));
 
