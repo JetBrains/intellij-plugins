@@ -294,6 +294,7 @@
                     testServiceImplementation="org.intellij.terraform.runtime.TfToolPathDetectorMock"
     />
 
+    <backgroundPostStartupActivity implementation="org.intellij.terraform.runtime.TfProjectActivity"/>
     <vfs.asyncListener implementation="org.intellij.terraform.config.model.local.LocalSchemaVfsListener"/>
     <projectFileScanner implementation="org.intellij.terraform.config.model.local.LocalSchemaIndexableFileScanner"/>
 
