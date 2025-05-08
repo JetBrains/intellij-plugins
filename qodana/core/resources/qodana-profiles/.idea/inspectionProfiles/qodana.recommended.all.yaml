@@ -44,6 +44,8 @@ groups:
       - "category:General"
       - "category:TOML"
       - "JSInspections"
+      - "category:Ruby"
+      - "category:RBS"
       - "category:Security"
 
       # qodana4cpp inspections
@@ -104,6 +106,8 @@ groups:
       - PyArgumentListInspection # QD-11389 FPs on real python projects (due to python being dynamic and not type friendly)
       - PyTypeCheckerInspection # QD-11389 FPs on real python projects (due to python being dynamic and not type friendly)
 
+      #Ruby
+      -
       #Security
       - HttpUrlsUsage # Spam
 
