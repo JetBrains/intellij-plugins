@@ -15,7 +15,7 @@ interface CustomGlobalFlowFingerprintCalculator {
 
     fun Result.withCustomPartialFingerprints(): Result = apply {
       EP_NAME.extensionList
-        .map { it.computeFingerprints(this) }
+        .mapNotNull { it.computeFingerprints(this) }
         .singleOrNull()?.let {
           partialFingerprints = it
         }
