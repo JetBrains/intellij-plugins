@@ -145,8 +145,6 @@ class PrettierLanguageServiceImpl(
       }
     }
 
-    override fun dispose() {}
-
     override fun getNodeCommandLineConfiguratorOptions(project: Project): NodeCommandLineConfigurator.Options =
       NodeCommandLineConfigurator.defaultOptions(myProject)
   }
