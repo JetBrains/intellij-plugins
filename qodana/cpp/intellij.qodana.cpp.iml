@@ -15,5 +15,6 @@
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.clion.cmake" />
     <orderEntry type="module" module-name="intellij.qodana" />
+    <orderEntry type="module" module-name="intellij.cidr.projectModel" />
   </component>
 </module>
