@@ -1,6 +1,7 @@
 <idea-plugin package="org.jetbrains.qodana.cpp">
   <dependencies>
     <plugin id="com.intellij.modules.clion.cmake"/>
+    <module name="intellij.cidr.projectModel"/>
   </dependencies>
 
   <projectListeners>
