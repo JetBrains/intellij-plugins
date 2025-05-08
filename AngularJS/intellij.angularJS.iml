@@ -79,7 +79,6 @@
     <orderEntry type="module" module-name="intellij.html.tools" />
     <orderEntry type="library" name="jackson" level="project" />
     <orderEntry type="library" name="jackson-databind" level="project" />
-    <orderEntry type="module" module-name="intellij.tslint" />
     <orderEntry type="library" name="StreamEx" level="project" />
     <orderEntry type="module" module-name="intellij.platform.graph.impl" />
     <orderEntry type="module" module-name="intellij.diagram.impl" />
