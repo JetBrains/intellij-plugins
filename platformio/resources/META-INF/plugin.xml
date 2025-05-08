@@ -21,12 +21,17 @@
 ]]>
   </description>
 
-  <depends>com.intellij.cidr.base</depends>
-  <depends>com.intellij.modules.clion</depends>
-  <depends>com.intellij.modules.externalSystem</depends>
-  <depends>com.intellij.clion.embedded</depends>
-  <depends>com.jetbrains.plugins.ini4idea</depends>
-  <depends optional="true" config-file="terminal-dep.xml">org.jetbrains.plugins.terminal</depends>
+  <dependencies>
+    <plugin id="com.intellij.cidr.base"/>
+    <plugin id="com.intellij.modules.clion"/>
+    <plugin id="com.intellij.modules.externalSystem"/>
+    <plugin id="com.intellij.clion.embedded"/>
+    <plugin id="com.jetbrains.plugins.ini4idea"/>
+  </dependencies>
+
+  <content>
+    <module name="intellij.clion.embedded.platformio.terminal"/>
+  </content>
 
   <extensions defaultExtensionNs="com.intellij">
     <configurationType order="last" id="platformio"
