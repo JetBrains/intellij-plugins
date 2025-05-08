@@ -17,6 +17,7 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.report.ValidatedSarif
 import org.jetbrains.qodana.report.isInBaseline
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
+import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.forEachNotNull
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaSeverity
 import java.io.File
 import java.nio.file.InvalidPathException
@@ -256,7 +257,7 @@ private fun getPossibleTaintAnalysisSinksResultsAndLocations(
 }
 
 private fun Result.buildTraces(absoluteSrcDirPrefix: String) = buildList {
-  for (graph in graphs) {
+  graphs.forEachNotNull { graph ->
     val nodes = graph.nodes.sortedBy { it.id.toIntOrNull() }.mapNotNull { node ->
       SarifTrace.Node(
         startLine = node.location.physicalLocation.region.startLine?.minus(1),
