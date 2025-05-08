@@ -148,9 +148,6 @@ class TsLintLanguageService(
       super.addNodeProcessAdditionalArguments(targetRun)
       targetRun.path(JSLanguageServiceUtil.getPluginDirectory(javaClass, "js")!!.absolutePath)
     }
-
-    override fun dispose() {
-    }
   }
 
   private class InitialState : JSLanguageServiceInitialState() {
