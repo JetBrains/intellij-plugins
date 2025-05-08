@@ -25,6 +25,7 @@
     <plugin id="com.intellij.cidr.base"/>
     <plugin id="com.intellij.modules.clion"/>
     <plugin id="com.intellij.modules.externalSystem"/>
+    <module name="intellij.cidr.execution"/>
     <plugin id="com.intellij.clion.embedded"/>
     <plugin id="com.jetbrains.plugins.ini4idea"/>
   </dependencies>
