@@ -16,6 +16,7 @@
   <dependencies>
     <plugin id="com.intellij.modules.appcode"/>
     <module name="intellij.cidr.workspaceModel"/>
+    <module name="intellij.cidr.projectModel"/>
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">
