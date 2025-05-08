@@ -2,13 +2,13 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
-  name = "qodana-inspectionKts-js_resources",
+  name = "js_resources",
   files = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
 jvm_library(
-  name = "qodana-inspectionKts-js",
+  name = "js",
   module_name = "intellij.qodana.inspectionKts.js",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
@@ -23,14 +23,14 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/util:util-ui",
   ],
-  runtime_deps = [":qodana-inspectionKts-js_resources"]
+  runtime_deps = [":js_resources"]
 )
 
 jvm_library(
-  name = "qodana-inspectionKts-js_test_lib",
+  name = "js_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
-  associates = [":qodana-inspectionKts-js"],
+  associates = [":js"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",
@@ -49,11 +49,11 @@ jvm_library(
     "@community//plugins/dev/intellij.dev:dev",
     "@community//platform/util:util-ui",
   ],
-  runtime_deps = [":qodana-inspectionKts-js_resources"]
+  runtime_deps = [":js_resources"]
 )
 
 jvm_test(
-  name = "qodana-inspectionKts-js_test",
-  runtime_deps = [":qodana-inspectionKts-js_test_lib"]
+  name = "js_test",
+  runtime_deps = [":js_test_lib"]
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.js` end

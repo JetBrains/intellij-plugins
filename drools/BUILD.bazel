@@ -2,13 +2,13 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
-  name = "jboss-drools_resources",
+  name = "drools_resources",
   files = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
 jvm_library(
-  name = "jboss-drools",
+  name = "drools",
   module_name = "intellij.jboss.drools",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
@@ -29,14 +29,14 @@ jvm_library(
     "@community//java/java-impl-refactorings:impl-refactorings",
     "@lib//:fastutil-min",
   ],
-  runtime_deps = [":jboss-drools_resources"]
+  runtime_deps = [":drools_resources"]
 )
 
 jvm_library(
-  name = "jboss-drools_test_lib",
+  name = "drools_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/src/**/*.kt", "tests/src/**/*.java"], allow_empty = True),
-  associates = [":jboss-drools"],
+  associates = [":drools"],
   deps = [
     "@community//platform/core-api:core",
     "@community//platform/platform-api:ide",
@@ -58,11 +58,11 @@ jvm_library(
     "@community//java/java-impl-refactorings:impl-refactorings",
     "@lib//:fastutil-min",
   ],
-  runtime_deps = [":jboss-drools_resources"]
+  runtime_deps = [":drools_resources"]
 )
 
 jvm_test(
-  name = "jboss-drools_test",
-  runtime_deps = [":jboss-drools_test_lib"]
+  name = "drools_test",
+  runtime_deps = [":drools_test_lib"]
 )
 ### auto-generated section `build intellij.jboss.drools` end

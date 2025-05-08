@@ -2,13 +2,13 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
-  name = "qodana-jvm-java_resources",
+  name = "java_resources",
   files = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
 jvm_library(
-  name = "qodana-jvm-java",
+  name = "java",
   module_name = "intellij.qodana.jvm.java",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
@@ -23,19 +23,19 @@ jvm_library(
     "@community//platform/statistics",
     "@community//java/java-impl-refactorings:impl-refactorings",
     "@community//java/idea-ui:ui",
-    "@community//platform/collaboration-tools/auth:collaborationTools-auth",
+    "@community//platform/collaboration-tools/auth",
     "//contrib/qodana/sarif",
     "@community//java/java-psi-impl:psi-impl",
     "@community//platform/backend/observation",
   ],
-  runtime_deps = [":qodana-jvm-java_resources"]
+  runtime_deps = [":java_resources"]
 )
 
 jvm_library(
-  name = "qodana-jvm-java_test_lib",
+  name = "java_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
-  associates = [":qodana-jvm-java"],
+  associates = [":java"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@lib//:assert_j",
@@ -55,17 +55,17 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//java/java-impl-refactorings:impl-refactorings",
     "@community//java/idea-ui:ui",
-    "@community//platform/collaboration-tools/auth:collaborationTools-auth",
+    "@community//platform/collaboration-tools/auth",
     "//contrib/qodana/sarif",
     "@community//java/java-psi-impl:psi-impl",
     "@community//platform/backend/observation",
     "@community//platform/backend/observation:observation_test_lib",
   ],
-  runtime_deps = [":qodana-jvm-java_resources"]
+  runtime_deps = [":java_resources"]
 )
 
 jvm_test(
-  name = "qodana-jvm-java_test",
-  runtime_deps = [":qodana-jvm-java_test_lib"]
+  name = "java_test",
+  runtime_deps = [":java_test_lib"]
 )
 ### auto-generated section `build intellij.qodana.jvm.java` end

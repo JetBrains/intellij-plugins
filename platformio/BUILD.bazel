@@ -2,24 +2,24 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
-  name = "clion-embedded-platformio_resources",
+  name = "platformio_resources",
   files = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
 jvm_resources(
-  name = "clion-embedded-platformio_test_resources",
+  name = "platformio_test_resources",
   files = glob(["test-resources/**/*"]),
   strip_prefix = "test-resources"
 )
 
 jvm_library(
-  name = "clion-embedded-platformio",
+  name = "platformio",
   module_name = "intellij.clion.embedded.platformio",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
-    "@community//platform/observable:ide-observable",
+    "@community//platform/observable",
     "//CIDR/clion-embedded",
     "@community//platform/platform-impl:ide-impl",
     "//CIDR/clion",
@@ -39,27 +39,27 @@ jvm_library(
     "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
     "@lib//:jediterm-core",
     "@lib//:jediterm-ui",
-    "@community//platform/ui.jcef:ui-jcef",
+    "@community//platform/ui.jcef",
   ],
-  runtime_deps = [":clion-embedded-platformio_resources"]
+  runtime_deps = [":platformio_resources"]
 )
 
 jvm_library(
-  name = "clion-embedded-platformio_test_lib",
+  name = "platformio_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
-  associates = [":clion-embedded-platformio"],
+  associates = [":platformio"],
   deps = [
-    "@community//platform/observable:ide-observable",
+    "@community//platform/observable",
     "//CIDR/clion-embedded",
     "//CIDR/clion-embedded:clion-embedded_test_lib",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "//CIDR/clion",
-    "//CIDR/cidr-common-testFramework/core/nolang:cidr-common-testFramework-core-nolang",
+    "//CIDR/cidr-common-testFramework/core/nolang",
     "//CIDR/cidr-debugger",
     "//CIDR/cidr-debugger:cidr-debugger_test_lib",
-    "//CIDR/cidr-common-testFramework/core:cidr-common-testFramework-core",
+    "//CIDR/cidr-common-testFramework/core",
     "//CIDR/clion-execution",
     "//CIDR/clion-execution:clion-execution_test_lib",
     "@community//platform/testFramework",
@@ -81,17 +81,17 @@ jvm_library(
     "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
     "@lib//:jediterm-core",
     "@lib//:jediterm-ui",
-    "@community//platform/ui.jcef:ui-jcef",
+    "@community//platform/ui.jcef",
     "//CIDR/clion-testFramework",
   ],
   runtime_deps = [
-    ":clion-embedded-platformio_resources",
-    ":clion-embedded-platformio_test_resources",
+    ":platformio_resources",
+    ":platformio_test_resources",
   ]
 )
 
 jvm_test(
-  name = "clion-embedded-platformio_test",
-  runtime_deps = [":clion-embedded-platformio_test_lib"]
+  name = "platformio_test",
+  runtime_deps = [":platformio_test_lib"]
 )
 ### auto-generated section `build intellij.clion.embedded.platformio` end

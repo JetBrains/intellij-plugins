@@ -38,7 +38,7 @@ jvm_library(
     ":cfml_resources",
     ":cfml_resources_1",
     "//ultimate/platform-ultimate:commercial",
-    "//plugins/javaee/web/coverage:javaee-web-coverage",
+    "//plugins/javaee/web/coverage",
   ]
 )
 

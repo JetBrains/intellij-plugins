@@ -2,13 +2,13 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
-  name = "qodana-inspectionKts-kotlin_resources",
+  name = "kotlin_resources",
   files = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
 jvm_library(
-  name = "qodana-inspectionKts-kotlin",
+  name = "kotlin",
   module_name = "intellij.qodana.inspectionKts.kotlin",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
@@ -30,17 +30,17 @@ jvm_library(
     "@community//platform/util:util-ui",
     "@community//platform/core-ui",
     "@community//plugins/kotlin/base/resources:kotlin-base-resources",
-    "@community//plugins/kotlin/base/plugin:kotlin-base-plugin",
-    "@community//plugins/kotlin/base/util:kotlin-base-util",
-    "@community//plugins/kotlin/base/project-structure:kotlin-base-project-structure",
-    "@community//plugins/kotlin/base/scripting:kotlin-base-scripting",
+    "@community//plugins/kotlin/base/plugin",
+    "@community//plugins/kotlin/base/util",
+    "@community//plugins/kotlin/base/project-structure",
+    "@community//plugins/kotlin/base/scripting",
     "@community//plugins/kotlin/scripting",
     "@community//platform/util-class-loader:util-classLoader",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/backend/workspace",
   ],
   runtime_deps = [
-    ":qodana-inspectionKts-kotlin_resources",
+    ":kotlin_resources",
     "@community//plugins/kotlin:kotlin-plugin-community-main",
   ]
 )

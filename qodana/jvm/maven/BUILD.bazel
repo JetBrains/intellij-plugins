@@ -2,13 +2,13 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
-  name = "qodana-jvm-maven_resources",
+  name = "maven_resources",
   files = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
 jvm_library(
-  name = "qodana-jvm-maven",
+  name = "maven",
   module_name = "intellij.qodana.jvm.maven",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
@@ -20,6 +20,6 @@ jvm_library(
     "//contrib/qodana",
     "@community//platform/backend/observation",
   ],
-  runtime_deps = [":qodana-jvm-maven_resources"]
+  runtime_deps = [":maven_resources"]
 )
 ### auto-generated section `build intellij.qodana.jvm.maven` end

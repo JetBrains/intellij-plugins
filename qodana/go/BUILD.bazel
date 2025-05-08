@@ -28,8 +28,8 @@ jvm_provided_library(
 )
 
 jvm_provided_library(
-  name = "go-plugin_provided",
-  lib = "//goland/intellij-go/plugin:go-plugin"
+  name = "plugin_provided",
+  lib = "//goland/intellij-go/plugin"
 )
 
 jvm_provided_library(
@@ -64,7 +64,7 @@ jvm_library(
     ":ide-impl_provided",
     ":lang-impl_provided",
     ":qodana_provided",
-    ":go-plugin_provided",
+    ":plugin_provided",
     ":go-coverage_provided",
     ":jdom_provided",
     ":coverage_provided",
@@ -88,7 +88,7 @@ jvm_library(
     "//contrib/qodana:qodana_test_lib",
     "//contrib/qodana/coverage",
     "//contrib/qodana/coverage:coverage_test_lib",
-    "//goland/intellij-go/plugin:go-plugin",
+    "//goland/intellij-go/plugin",
     "//goland/intellij-go/go-coverage",
     "@community//platform/util/jdom",
     "@community//plugins/coverage-common:coverage",

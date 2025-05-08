@@ -16,7 +16,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//platform/platform-util-io:ide-util-io",
     "@lib//:gson",
-    "//webcore/impl:webide-impl",
+    "//webcore/impl",
     "@lib//:guava",
     "@community//platform/ide-core",
     "@community//platform/lang-impl",

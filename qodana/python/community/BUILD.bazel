@@ -2,13 +2,13 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
-  name = "qodana-python-community_resources",
+  name = "community_resources",
   files = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
 jvm_library(
-  name = "qodana-python-community",
+  name = "community",
   module_name = "intellij.qodana.python.community",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
@@ -21,6 +21,6 @@ jvm_library(
     "@community//python:python-community-impl",
     "@community//platform/backend/observation",
   ],
-  runtime_deps = [":qodana-python-community_resources"]
+  runtime_deps = [":community_resources"]
 )
 ### auto-generated section `build intellij.qodana.python.community` end

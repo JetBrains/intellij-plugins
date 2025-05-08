@@ -22,7 +22,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/analysis-api:analysis",
-    "//plugins/uml/impl:diagram-impl",
+    "//plugins/uml/impl",
     "@community//platform/core-impl",
   ],
   runtime_deps = [":uml_resources"]

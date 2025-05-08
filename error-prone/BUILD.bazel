@@ -13,7 +13,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
-    "@community//java/compiler/impl:java-compiler-impl",
+    "@community//java/compiler/impl",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
     "@lib//:guava",

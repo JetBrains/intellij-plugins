@@ -2,13 +2,13 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
-  name = "qodana-jvm-kotlin_resources",
+  name = "kotlin_resources",
   files = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
 jvm_library(
-  name = "qodana-jvm-kotlin",
+  name = "kotlin",
   module_name = "intellij.qodana.jvm.kotlin",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
@@ -24,24 +24,24 @@ jvm_library(
     "@community//platform/util-class-loader:util-classLoader",
   ],
   runtime_deps = [
-    ":qodana-jvm-kotlin_resources",
+    ":kotlin_resources",
     "@community//plugins/kotlin:kotlin-plugin-community-main",
   ]
 )
 
 jvm_library(
-  name = "qodana-jvm-kotlin_test_lib",
+  name = "kotlin_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
-  associates = [":qodana-jvm-kotlin"],
+  associates = [":kotlin"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//java/compiler/openapi:java-compiler",
-    "//contrib/qodana/jvm/coverage:qodana-jvm-coverage",
-    "//contrib/qodana/jvm/coverage:qodana-jvm-coverage_test_lib",
+    "//contrib/qodana/jvm/coverage",
+    "//contrib/qodana/jvm/coverage:coverage_test_lib",
     "@community//platform/core-impl",
     "@community//platform/analysis-api:analysis",
     "@community//java/testFramework",
@@ -53,11 +53,11 @@ jvm_library(
     "@lib//:kotlinc-kotlin-compiler-common-provided",
     "@community//platform/util-class-loader:util-classLoader",
   ],
-  runtime_deps = [":qodana-jvm-kotlin_resources"]
+  runtime_deps = [":kotlin_resources"]
 )
 
 jvm_test(
-  name = "qodana-jvm-kotlin_test",
-  runtime_deps = [":qodana-jvm-kotlin_test_lib"]
+  name = "kotlin_test",
+  runtime_deps = [":kotlin_test_lib"]
 )
 ### auto-generated section `build intellij.qodana.jvm.kotlin` end
