@@ -11,6 +11,7 @@
     <plugin id="com.intellij.modules.clion"/>
     <plugin id="com.intellij.modules.clion.ide"/>
     <plugin id="com.intellij.clion.cmake"/>
+    <module name="intellij.cidr.workspaceModel"/>
   </dependencies>
 
   <module value="com.intellij.modules.clion.diagnostics"/>

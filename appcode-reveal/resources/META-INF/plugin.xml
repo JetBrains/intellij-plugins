@@ -12,7 +12,11 @@
   </description>
   
   <vendor>JetBrains</vendor>
-  <depends>com.intellij.modules.appcode</depends>
+
+  <dependencies>
+    <plugin id="com.intellij.modules.appcode"/>
+    <module name="intellij.cidr.workspaceModel"/>
+  </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">
     <statistics.counterUsagesCollector implementationClass="org.jetbrains.appcode.reveal.RevealUsageTriggerCollector"/>
