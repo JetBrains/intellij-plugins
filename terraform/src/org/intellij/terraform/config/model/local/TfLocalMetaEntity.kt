@@ -62,7 +62,7 @@ interface TfLocalMetaEntity : WorkspaceEntity {
 }
 
 //region generated code
-fun MutableEntityStorage.modifyTFLocalMetaEntity(
+fun MutableEntityStorage.modifyTfLocalMetaEntity(
   entity: TfLocalMetaEntity,
   modification: TfLocalMetaEntity.Builder.() -> Unit,
 ): TfLocalMetaEntity {

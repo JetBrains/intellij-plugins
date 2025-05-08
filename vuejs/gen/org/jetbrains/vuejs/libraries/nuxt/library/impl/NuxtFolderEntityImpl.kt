@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.library.impl
 
-import com.intellij.platform.workspace.storage.*
 import com.intellij.platform.workspace.storage.ConnectionId
 import com.intellij.platform.workspace.storage.EntitySource
 import com.intellij.platform.workspace.storage.EntityType
@@ -57,8 +56,8 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
   }
 
 
-  internal class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(
-    result), NuxtFolderEntity.Builder {
+  internal class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(result),
+                                                          NuxtFolderEntity.Builder {
     internal constructor() : this(NuxtFolderEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
