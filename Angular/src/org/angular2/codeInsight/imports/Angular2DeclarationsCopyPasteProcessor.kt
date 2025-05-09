@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtilCore
@@ -57,7 +58,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     Angular2SourceUtil.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
 
-  override fun collectTransferableData(rangesWithParents: List<Pair<PsiElement, TextRange>>): Angular2DeclarationsImportsTransferableData? {
+  override fun collectTransferableData(rangesWithParents: List<Pair<PsiElement, TextRange>>, project: Project): Angular2DeclarationsImportsTransferableData? {
     val expressionContexts = rangesWithParents.count { Angular2ExpressionsCopyPasteProcessor.Util.isExpressionContext(it.first) }
     if (expressionContexts != 0 && expressionContexts != rangesWithParents.size)
       return null
