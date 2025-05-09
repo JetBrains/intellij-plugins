@@ -19,6 +19,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/observable",
     "//CIDR/clion-embedded",
     "@community//platform/platform-impl:ide-impl",
@@ -50,6 +51,7 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":platformio"],
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/observable",
     "//CIDR/clion-embedded",
     "//CIDR/clion-embedded:clion-embedded_test_lib",

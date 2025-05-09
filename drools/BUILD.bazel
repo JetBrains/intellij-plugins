@@ -14,6 +14,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/core-api:core",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/ide-core-impl",
     "@community//platform/core-impl",
@@ -39,6 +40,7 @@ jvm_library(
   associates = [":drools"],
   deps = [
     "@community//platform/core-api:core",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/ide-core-impl",
     "@community//platform/core-impl",

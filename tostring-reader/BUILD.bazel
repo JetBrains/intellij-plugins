@@ -21,6 +21,7 @@ jvm_library(
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/lang-impl",
     "@community//platform/platform-impl:ide-impl",
@@ -38,6 +39,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//java/testFramework",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/lang-impl",
     "@community//platform/platform-impl:ide-impl",

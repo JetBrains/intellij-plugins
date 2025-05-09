@@ -14,6 +14,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "//contrib/flex/flex-shared:shared",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/ide-core-impl",
     "@community//java/compiler/openapi:java-compiler",
     "@community//platform/lang-api:lang",

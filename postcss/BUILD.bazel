@@ -25,6 +25,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-api:ide",
     "@community//platform/lang-api:lang",
@@ -56,6 +57,7 @@ jvm_library(
   srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
   associates = [":postcss"],
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-api:ide",

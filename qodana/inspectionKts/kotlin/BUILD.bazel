@@ -13,7 +13,6 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
-    "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/core-impl",

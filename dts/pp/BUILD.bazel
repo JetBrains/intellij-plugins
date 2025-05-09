@@ -21,6 +21,7 @@ jvm_library(
   deps = [
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
     "@community//platform/code-style-api:codeStyle",
@@ -41,6 +42,7 @@ jvm_library(
   deps = [
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
     "@community//platform/code-style-api:codeStyle",

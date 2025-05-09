@@ -20,6 +20,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "//contrib/dts/pp",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/util/progress",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/core-api:core",
@@ -44,6 +45,7 @@ jvm_library(
   deps = [
     "//contrib/dts/pp",
     "//contrib/dts/pp:pp_test_lib",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/util/progress",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",

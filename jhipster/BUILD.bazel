@@ -13,6 +13,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",
     "@community//platform/code-style-impl:codeStyle-impl",
@@ -34,6 +35,7 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":jhipster"],
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/code-style-api:codeStyle",

@@ -19,6 +19,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//xml/xml-psi-impl:psi-impl",
     "@community//platform/platform-impl:ide-impl",
@@ -40,7 +41,6 @@ jvm_library(
     "@community//plugins/htmltools:html-tools",
     "@lib//:jackson",
     "@lib//:jackson-databind",
-    "//contrib/tslint",
     "@lib//:stream_ex",
     "//plugins/graph:graph-impl",
     "//plugins/uml/impl",
@@ -67,6 +67,7 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":angularJS"],
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//xml/xml-psi-impl:psi-impl",
     "@community//platform/platform-impl:ide-impl",
@@ -110,8 +111,6 @@ jvm_library(
     "@community//plugins/htmltools:html-tools",
     "@lib//:jackson",
     "@lib//:jackson-databind",
-    "//contrib/tslint",
-    "//contrib/tslint:tslint_test_lib",
     "@lib//:stream_ex",
     "//plugins/graph:graph-impl",
     "//plugins/uml/impl",

@@ -19,6 +19,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-impl",
     "@community//platform/editor-ui-ex:editor-ex",
@@ -41,6 +42,7 @@ jvm_library(
   srcs = glob(["test/src/**/*.kt", "test/src/**/*.java"], allow_empty = True),
   associates = [":handlebars"],
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-impl",

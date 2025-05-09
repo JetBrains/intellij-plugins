@@ -19,6 +19,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
     "@community//xml/impl",
@@ -48,6 +49,7 @@ jvm_library(
   srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
   associates = [":cfml"],
   deps = [
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
     "//dbe/sql:database-sql-impl",
     "@community//platform/platform-impl:ide-impl",

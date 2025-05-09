@@ -21,6 +21,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "//CIDR-appcode/appcode",
+    "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/statistics",
     "@community//platform/ide-core-impl",
     "@community//platform/platform-util-io:ide-util-io",
