@@ -11,6 +11,6 @@ data class Angular2GetGeneratedElementTypeRequestArgs(
   override val forceReturnType: Boolean = false,
 ) : TypeScriptGetElementTypeRequestArgsBase {
 
-  override val typeRequestKind: TypeScriptTypeRequestKind
-    get() = TypeScriptTypeRequestKind.Default
+  override val typeRequestKind: String
+    get() = TypeScriptTypeRequestKind.Default.serialize()
 }
