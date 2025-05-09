@@ -40,6 +40,10 @@ import com.intellij.lang.javascript.validation.ActionScriptImplementedMethodProc
 import com.intellij.lang.javascript.validation.JSAnnotatorProblemReporter;
 import com.intellij.lang.javascript.validation.TypedJSAnnotatingVisitor;
 import com.intellij.lang.javascript.validation.fixes.*;
+import com.intellij.modcommand.ActionContext;
+import com.intellij.modcommand.ModCommandAction;
+import com.intellij.modcommand.ModPsiUpdater;
+import com.intellij.modcommand.PsiUpdateModCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -399,7 +403,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               (overrideNs = ActionScriptPsiImplUtil.getNamespaceValue(overrideAttrList)) != null &&
               !overrideNs.equals(ActionScriptPsiImplUtil.getNamespaceValue(attributeList))) {
             String newVisibility;
-            IntentionAction fix;
+            ModCommandAction fix;
             if (overrideNs != null) {
               newVisibility = overrideNs;
               fix = JSFixFactory.getInstance().createChangeVisibilityFix(node, null ,overrideNs);
@@ -642,7 +646,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           reportingClient.reportError(node,
                                       JavaScriptBundle.message("javascript.validation.message.interface.method.invalid.access.modifier"),
                                       ErrorReportingClient.ProblemKind.ERROR,
-                                      JSFixFactory.getInstance().createChangeVisibilityFix(implementationFunction, JSAttributeList.AccessType.PUBLIC, null)
+                                      JSFixFactory.getInstance().createChangeVisibilityFix(implementationFunction, JSAttributeList.AccessType.PUBLIC, null).asIntention()
           );
         }
 
@@ -688,7 +692,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             reportingClient.reportError(
               implementationReturnTypeExpr != null ? implementationReturnTypeExpr.getNode() : implementationFunction.findNameIdentifier(),
               msg, ErrorReportingClient.ProblemKind.ERROR,
-              new JSChangeTypeFix(implementationFunction, interfaceReturnType, "javascript.fix.message.change.return.type.to.expected"),
+              new JSChangeTypeFix(implementationFunction, interfaceReturnType, "javascript.fix.message.change.return.type.to.expected")
+                .asIntention(),
               createChangeBaseMethodSignatureFix(interfaceFunction, implementationFunction));
           }
           else if (incompatibleSignature == SignatureMatchResult.FUNCTION_KIND_DIFFERS) {
@@ -1108,38 +1113,21 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
-  private static class AddOverrideIntentionAction implements IntentionAction {
-    private final JSFunction myNode;
-
+  private static class AddOverrideIntentionAction extends PsiUpdateModCommandAction<JSFunction> {
     AddOverrideIntentionAction(final JSFunction node) {
-      myNode = node;
-    }
-
-    @Override
-    public @NotNull String getText() {
-      return JavaScriptBundle.message("javascript.fix.add.override.modifier");
+      super(node);
     }
 
     @Override
     public @NotNull String getFamilyName() {
-      return getText();
+      return JavaScriptBundle.message("javascript.fix.add.override.modifier");
     }
 
     @Override
-    public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
-      return myNode.isValid();
-    }
-
-    @Override
-    public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+    protected void invoke(@NotNull ActionContext context, @NotNull JSFunction myNode, @NotNull ModPsiUpdater updater) {
       JSAttributeListWrapper w = new JSAttributeListWrapper(myNode);
       w.overrideModifier(JSAttributeList.ModifierType.OVERRIDE, true);
       w.applyTo(myNode);
-    }
-
-    @Override
-    public boolean startInWriteAction() {
-      return true;
     }
   }
 

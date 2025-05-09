@@ -1,8 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit.inspections;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -14,6 +12,7 @@ import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.validation.fixes.JSChangeTypeFix;
+import com.intellij.modcommand.ModCommandAction;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,11 +38,10 @@ public final class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInsp
       final ASTNode nameIdentifier = method.findNameIdentifier();
       if (nameIdentifier != null) {
 
-        LocalQuickFix[] fix = canFix(method)
-                              ? new LocalQuickFix[]{
-          new JSChangeTypeFix(method, "void", "javascript.fix.set.method.return.type")} : LocalQuickFix.EMPTY_ARRAY;
-        holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testmethodreturntype.message"),
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fix);
+        ModCommandAction fix = canFix(method)
+                               ? new JSChangeTypeFix(method, "void", "javascript.fix.set.method.return.type") : null;
+        holder.problem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testmethodreturntype.message"))
+          .maybeFix(fix).register();
       }
     }
   }

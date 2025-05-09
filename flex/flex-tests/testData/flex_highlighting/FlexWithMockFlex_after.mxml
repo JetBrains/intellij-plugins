@@ -16,26 +16,22 @@
     </mx:HBox>
     <mx:Script>
 
-        override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-        }
+    override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false):void {}
+    public override function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {}
 
-        public override function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-        }
+    function copy() {
+        destination.text=source.text = ' '
+        var aaa:Function = copy_
+        addEventListener("xxx", null);
+        super.addEventListener("close", aaa);
+        destination2.text=source2.text
+    }
 
-        function copy() {
-            destination.text = source.text = ' '
-            var aaa:Function = copy_
-            addEventListener("xxx", null);
-            super.addEventListener("close", aaa);
-            destination2.text = source2.text
-        }
+    function copy_() {
+      this.addEventListener("xxx", null)
+    }
 
-        function copy_() {
-            this.addEventListener("xxx", null)
-        }
-
-        function doIt() {
-        }
+    function doIt() {}
     </mx:Script>
     <mx:Script><![CDATA[
     var a = <xxx>{zzz}</xxx>;

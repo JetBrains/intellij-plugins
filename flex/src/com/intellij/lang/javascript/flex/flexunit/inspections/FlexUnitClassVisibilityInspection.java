@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.flexunit.inspections;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -23,9 +22,9 @@ public final class FlexUnitClassVisibilityInspection extends FlexUnitClassInspec
     if (aClass.getAttributeList() == null || aClass.getAttributeList().getAccessType() != JSAttributeList.AccessType.PUBLIC) {
       final ASTNode nameIdentifier = aClass.findNameIdentifier();
       if (nameIdentifier != null) {
-        holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testclassvisibility.message"),
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                               JSFixFactory.getInstance().createChangeVisibilityFix(aClass, JSAttributeList.AccessType.PUBLIC, null));
+        holder.problem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testclassvisibility.message"))
+          .fix(JSFixFactory.getInstance().createChangeVisibilityFix(aClass, JSAttributeList.AccessType.PUBLIC, null))
+          .register();
       }
     }
   }
