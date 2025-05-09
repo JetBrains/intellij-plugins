@@ -19,6 +19,7 @@ jvm_library(
     "@community//java/compiler/openapi:java-compiler",
     "@community//platform/lang-api:lang",
     "//CSS/frontback/css-api:css-frontback",
+    "@community//platform/refactoring",
     "@community//xml/xml-structure-view-api:structureView",
     "@community//platform/usageView",
     "//plugins/JavaScriptLanguage/javascript-parser",

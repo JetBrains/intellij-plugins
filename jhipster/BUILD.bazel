@@ -14,6 +14,7 @@ jvm_library(
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/refactoring",
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",
     "@community//platform/code-style-impl:codeStyle-impl",
@@ -36,6 +37,7 @@ jvm_library(
   associates = [":jhipster"],
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/refactoring",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/code-style-api:codeStyle",

@@ -18,6 +18,7 @@ jvm_library(
     "//CSS/frontback/css-api:css-frontback",
     "@community//platform/platform-api:ide",
     "//plugins/JavaScriptLanguage/javascript-parser",
+    "@community//platform/refactoring",
     "@community//xml/xml-parser:parser",
     "@lib//:kotlin-stdlib",
     "@community//xml/xml-psi-api:psi",
