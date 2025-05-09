@@ -31,6 +31,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/usageView-impl",
     "@community//platform/util/progress",
     "@community//platform/indexing-api:indexing",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
@@ -84,6 +85,7 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test-ex/**/*.kt", "test-ex/**/*.java"], allow_empty = True),
   associates = [":angular"],
   deps = [
+    "@community//platform/usageView-impl",
     "@community//platform/util/progress",
     "@community//platform/indexing-api:indexing",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
