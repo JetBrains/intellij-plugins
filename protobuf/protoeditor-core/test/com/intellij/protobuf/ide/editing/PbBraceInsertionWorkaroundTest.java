@@ -15,10 +15,10 @@
  */
 package com.intellij.protobuf.ide.editing;
 
-import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageEditorUtil;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -409,9 +409,7 @@ public class PbBraceInsertionWorkaroundTest extends PbCodeInsightFixtureTestCase
   private void doBraceInsertionTest(String filename, String before, String after, char c) {
     myFixture.configureByText(filename, before);
     Editor editor = myFixture.getEditor();
-    if (editor instanceof EditorWindow) {
-      editor = ((EditorWindow) editor).getDelegate();
-    }
+    editor = InjectedLanguageEditorUtil.getTopLevelEditor(editor);
 
     // Type the closing brace.
     myFixture.type(c);
