@@ -22,6 +22,7 @@
 + animation-timing-function
 + appearance
 + ascent
++ ascent-override
 + aspect-ratio
 + atsc-dynamic-refresh
 + atsc-nav-down
@@ -169,8 +170,12 @@
 + cue-after
 + cue-before
 + cursor
++ cx
++ cy
++ d
 + definition-src
 + descent
++ descent-override
 + direction
 + display
 + display-inside
@@ -212,7 +217,6 @@
 + font-palette
 + font-size
 + font-size-adjust
-+ font-stretch
 + font-style
 + font-synthesis
 + font-synthesis-small-caps
@@ -268,7 +272,6 @@
 + inherits
 + initial-letter
 + initial-value
-+ initial-letter-align
 + initial-letter-wrap
 + inline-size
 + input-security
@@ -293,6 +296,7 @@
 + lighting-color
 + line-break
 + line-clamp
++ line-gap-override
 + line-grid
 + line-grid-mode
 + line-grid-progression
@@ -391,6 +395,7 @@
 + navbutton_vert_hovered
 + navbutton_vert_normal
 + navbutton_vert_pushed
++ navigation
 + negative
 + object-fit
 + object-position
@@ -439,9 +444,6 @@
 + padding-right
 + padding-top
 + page
-+ page-break-after
-+ page-break-before
-+ page-break-inside
 + page-policy
 + paint-order
 + panose-1
@@ -462,6 +464,7 @@
 + print-color-adjust
 + punctuation-trim
 + quotes
++ r
 + range
 + region-fragment
 + rendering-intent
@@ -482,6 +485,8 @@
 + ruby-overhang
 + ruby-position
 + running
++ rx
++ ry
 + scale
 + scroll-behavior
 + scroll-margin
@@ -640,6 +645,7 @@
 + transition-property
 + transition-timing-function
 + translate
++ types
 + underline-position
 + underline-thickness
 + unicode-bidi
@@ -658,6 +664,9 @@
 + vert-origin-x
 + vert-origin-y
 + vertical-align
++ view-transition-class
++ view-transition-group
++ view-transition-name
 + visibility
 + voice-balance
 + voice-duration
@@ -683,6 +692,8 @@
 + word-wrap
 + wrap-option
 + writing-mode
++ x
 + x-height
++ y
 + z-index
 + zoom
