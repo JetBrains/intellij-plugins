@@ -21,6 +21,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -32,13 +33,13 @@ import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor.Angular2ExpressionsImportsTransferableData
 import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlFile
 import java.awt.datatransfer.DataFlavor
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Future
 
 class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2ExpressionsImportsTransferableData>() {
 
@@ -84,16 +85,16 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     return true
   }
 
-  override fun collectTransferableData(rangesWithParents: List<kotlin.Pair<PsiElement, TextRange>>): Angular2ExpressionsImportsTransferableData? {
+  override fun collectTransferableData(rangesWithParents: List<kotlin.Pair<PsiElement, TextRange>>, project: Project): Angular2ExpressionsImportsTransferableData? {
     val expressionContexts = rangesWithParents.count { Util.isExpressionContext(it.first) }
     if (expressionContexts != 0 && expressionContexts != rangesWithParents.size)
       return null
     val importedElements = processTextRanges(rangesWithParents)
     return importedElements.takeIf { it.isNotEmpty() }
-      ?.let { Angular2ExpressionsImportsTransferableData(CompletableFuture.completedFuture(it.toList()), expressionContexts != 0) }
+      ?.let { Angular2ExpressionsImportsTransferableData(it.toList(), expressionContexts != 0) }
   }
 
-  override fun createTransferableData(importedElementsFuture: Future<List<ImportedElement>>): Angular2ExpressionsImportsTransferableData =
+  override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): Angular2ExpressionsImportsTransferableData =
     throw UnsupportedOperationException()
 
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
@@ -163,9 +164,9 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   }
 
   class Angular2ExpressionsImportsTransferableData(
-    importedElementsFuture: Future<List<ImportedElement>>,
+    val importedElements: List<ImportedElement>,
     val isExpressionContext: Boolean,
-  ) : ES6ImportsTransferableDataBase(importedElementsFuture) {
+  ) : ES6ImportsTransferableDataBase(CompletableDeferred(importedElements)) {
     override fun getFlavor(): DataFlavor {
       return ANGULAR2_EXPRESSIONS_IMPORTS_FLAVOR
     }
