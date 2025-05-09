@@ -16,6 +16,7 @@ import org.angular2.Angular2TestModule.*
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 import org.angular2.Angular2TsConfigFile
 import org.angular2.inspections.*
+import org.angular2.lang.Angular2Bundle
 
 /**
  * @see Angular2TsInspectionsTest
@@ -350,6 +351,57 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       myFixture.launchAction(myFixture.findSingleIntention(quickFixName))
       val lastDot = files[0].lastIndexOf('.')
       myFixture.checkResultByFile(files[0].substring(0, lastDot) + ".after" + testNr + files[0].substring(lastDot))
+    }
+  }
+
+  fun testCreateSignalInput() {
+    myFixture.enableInspections(AngularUndefinedBindingInspection::class.java)
+    doConfiguredTest(
+      ANGULAR_CORE_17_3_0,
+      configureFileName = "signal-input.ts",
+    ) {
+      myFixture.moveToOffsetBySignature("[te<caret>st]=\"test\"")
+      myFixture.launchAction(myFixture.findSingleIntention(Angular2Bundle.message("angular.quickfix.template.create-signal-input.name", "test")))
+      myFixture.checkResultByFile("signal-input.ts", "signal-input-after.ts", true)
+    }
+  }
+
+
+  fun testCreateRequiredSignalInput() {
+    myFixture.enableInspections(AngularUndefinedBindingInspection::class.java)
+    doConfiguredTest(
+      ANGULAR_CORE_17_3_0,
+      configureFileName = "signal-input-required.ts",
+    ) {
+      myFixture.moveToOffsetBySignature("[te<caret>st]=\"test\"")
+      myFixture.launchAction(myFixture.findSingleIntention(Angular2Bundle.message("angular.quickfix.template.create-required-input.name", "test")))
+      myFixture.checkResultByFile("signal-input-required.ts", "signal-input-required-after.ts", true)
+    }
+  }
+
+
+  fun testCreateModelInput() {
+    myFixture.enableInspections(AngularUndefinedBindingInspection::class.java)
+    doConfiguredTest(
+      ANGULAR_CORE_17_3_0,
+      configureFileName = "model-input.ts",
+    ) {
+      myFixture.moveToOffsetBySignature("[te<caret>st]=\"test\"")
+      myFixture.launchAction(myFixture.findSingleIntention(Angular2Bundle.message("angular.quickfix.template.create-model.name", "test")))
+      myFixture.checkResultByFile("model-input.ts", "model-input-after.ts", true)
+    }
+  }
+
+
+  fun testCreateRequiredModelInput() {
+    myFixture.enableInspections(AngularUndefinedBindingInspection::class.java)
+    doConfiguredTest(
+      ANGULAR_CORE_17_3_0,
+      configureFileName = "model-input-required.ts",
+    ) {
+      myFixture.moveToOffsetBySignature("[te<caret>st]=\"test\"")
+      myFixture.launchAction(myFixture.findSingleIntention(Angular2Bundle.message("angular.quickfix.template.create-required-model.name", "test")))
+      myFixture.checkResultByFile("model-input-required.ts", "model-input-required-after.ts", true)
     }
   }
 }

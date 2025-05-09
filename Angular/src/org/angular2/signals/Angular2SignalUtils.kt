@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.StubUnsafe
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
@@ -28,6 +29,8 @@ import org.angular2.lang.Angular2LangUtil
 object Angular2SignalUtils {
 
   const val SIGNAL_TYPE: String = "Signal"
+  const val INPUT_FUNCTION: String = "input"
+  const val MODEL_FUNCTION: String = "model"
   const val WRITABLE_SIGNAL_TYPE: String = "WritableSignal"
   const val SIGNAL_FUNCTION: String = "signal"
 
@@ -39,6 +42,18 @@ object Angular2SignalUtils {
     WebJSResolveUtil.resolveSymbolFromNodeModule(
       context, Angular2LangUtil.ANGULAR_CORE_PACKAGE, SIGNAL_TYPE,
       TypeScriptTypeAlias::class.java
+    )
+
+  fun inputFunction(context: PsiElement?): TypeScriptVariable? =
+    WebJSResolveUtil.resolveSymbolFromNodeModule(
+      context, Angular2LangUtil.ANGULAR_CORE_PACKAGE, INPUT_FUNCTION,
+      TypeScriptVariable::class.java
+    )
+
+  fun modelFunction(context: PsiElement?): TypeScriptVariable? =
+    WebJSResolveUtil.resolveSymbolFromNodeModule(
+      context, Angular2LangUtil.ANGULAR_CORE_PACKAGE, MODEL_FUNCTION,
+      TypeScriptVariable::class.java
     )
 
   fun writableSignalInterface(context: PsiElement?): TypeScriptInterface? =
@@ -55,6 +70,12 @@ object Angular2SignalUtils {
 
   fun supportsSignals(context: PsiElement?): Boolean =
     signalTypeAlias(context) != null
+
+  fun supportsInputSignals(context: PsiElement?): Boolean =
+    inputFunction(context) != null
+
+  fun supportsModels(context: PsiElement?): Boolean =
+    modelFunction(context) != null
 
   fun isSignal(targetElement: PsiElement?, place: PsiElement?, writable: Boolean = false): Boolean {
     if (targetElement == null) return false

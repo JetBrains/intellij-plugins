@@ -20,6 +20,7 @@ import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.inspections.quickfixes.CreateDirectiveInputIntentionAction
+import org.angular2.inspections.quickfixes.InputKind
 import org.angular2.inspections.quickfixes.CreateDirectiveOutputIntentionAction
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2Bundle.Companion.BUNDLE
@@ -28,6 +29,7 @@ import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
 import org.angular2.lang.html.parser.Angular2AttributeType.*
 import org.angular2.lang.html.psi.PropertyBindingType
+import org.angular2.signals.Angular2SignalUtils
 import org.jetbrains.annotations.PropertyKey
 
 class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
@@ -79,20 +81,38 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
     val messageKey: String = when (info.type) {
       EVENT -> {
         quickFixes.add(CreateDirectiveOutputIntentionAction(attribute, info.name))
+        if(Angular2SignalUtils.supportsModels(attribute)) {
+          quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL))
+          quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL_REQUIRED))
+        }
         if (templateTag)
           "angular.inspection.undefined-binding.message.embedded.event-not-emitted"
         else
           "angular.inspection.undefined-binding.message.event-not-emitted"
       }
       PROPERTY_BINDING -> {
-        quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name))
+        quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.DECORATOR))
+        if(Angular2SignalUtils.supportsInputSignals(attribute)) {
+          quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.SIGNAL))
+          quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.SIGNAL_REQUIRED))
+        }
+        if(Angular2SignalUtils.supportsModels(attribute)) {
+          quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL))
+          quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL_REQUIRED))
+        }
+
         if (templateTag)
           "angular.inspection.undefined-binding.message.embedded.property-not-provided"
         else
           "angular.inspection.undefined-binding.message.property-not-provided"
       }
-      BANANA_BOX_BINDING ->
+      BANANA_BOX_BINDING -> {
+        if(Angular2SignalUtils.supportsModels(attribute)) {
+          quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL))
+          quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL_REQUIRED))
+        }
         "angular.inspection.undefined-binding.message.banana-box-binding-not-provided"
+      }
       REGULAR -> {
         severity = ProblemHighlightType.WARNING
         if (proximity === NOT_REACHABLE)
