@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -31,6 +32,8 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.awaitAll
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor.VueTemplateExpressionsImportsTransferableData
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
@@ -43,7 +46,6 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueProperty
 import java.awt.datatransfer.DataFlavor
-import java.util.concurrent.Future
 
 class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExpressionsImportsTransferableData>() {
 
@@ -131,8 +133,10 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
       {
         val newExportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing emptyList()
         val resolveScope = JSResolveUtil.getResolveScope(newExportScope)
-        values.flatMap { data ->
-          data.importedElements
+        runBlockingCancellable {
+          values.map { it.importedElementsDeferred }.awaitAll()
+        }.flatMap { data ->
+          data
             .mapNotNull { importedElement ->
               resolveImportedElement(importedElement, newExportScope, resolveScope)
                 ?.let { Pair(it.first, it.second) }
@@ -162,8 +166,8 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
       result
     }
 
-  override fun createTransferableData(importedElementsFuture: Future<List<ImportedElement>>): VueTemplateExpressionsImportsTransferableData =
-    VueTemplateExpressionsImportsTransferableData(importedElementsFuture)
+  override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): VueTemplateExpressionsImportsTransferableData =
+    VueTemplateExpressionsImportsTransferableData(importedElementsDeferred)
 
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? {
     return super.getExportScope(file, caret)
@@ -181,7 +185,7 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
     ES6CreateImportUtil.addRequiredImports(destinationModule, VueJSLanguage.INSTANCE, imports)
   }
 
-  class VueTemplateExpressionsImportsTransferableData(importedElementsFuture: Future<List<ImportedElement>>) : ES6ImportsTransferableDataBase(importedElementsFuture) {
+  class VueTemplateExpressionsImportsTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>) : ES6ImportsTransferableDataBase(importedElementsDeferred) {
     override fun getFlavor(): DataFlavor {
       return VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR
     }

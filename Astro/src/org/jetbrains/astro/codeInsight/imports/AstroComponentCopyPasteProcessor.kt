@@ -17,13 +17,13 @@ import com.intellij.psi.XmlRecursiveElementWalkingVisitor
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.XmlTagUtil
+import kotlinx.coroutines.Deferred
 import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.codeInsight.imports.AstroComponentCopyPasteProcessor.AstroComponentImportsTransferableData
 import org.jetbrains.astro.editor.AstroComponentSourceEdit
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
 import java.awt.datatransfer.DataFlavor
-import java.util.concurrent.Future
 import kotlin.Pair
 import com.intellij.openapi.util.Pair as OpenApiPair
 
@@ -80,8 +80,8 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
       AstroComponentSourceEdit.getOrCreateFrontmatterScript(file)
     }
 
-  override fun createTransferableData(importedElementsFuture: Future<List<ImportedElement>>): AstroComponentImportsTransferableData =
-    AstroComponentImportsTransferableData(importedElementsFuture)
+  override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): AstroComponentImportsTransferableData =
+    AstroComponentImportsTransferableData(importedElementsDeferred)
 
   override fun insertRequiredImports(pasteContext: PsiElement,
                                      data: AstroComponentImportsTransferableData,
@@ -91,7 +91,7 @@ class AstroComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<AstroComponen
     ES6CreateImportUtil.addRequiredImports(destinationModule, pasteContextLanguage, imports)
   }
 
-  class AstroComponentImportsTransferableData(importedElementsFuture: Future<List<ImportedElement>>) : ES6ImportsTransferableDataBase(importedElementsFuture) {
+  class AstroComponentImportsTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>) : ES6ImportsTransferableDataBase(importedElementsDeferred) {
     override fun getFlavor(): DataFlavor {
       return ASTRO_COMPONENT_IMPORTS_FLAVOR
     }

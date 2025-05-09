@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
@@ -29,6 +30,8 @@ import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.imports.VueComponentCopyPasteProcessor.VueComponentImportsTransferableData
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -44,8 +47,6 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
 import org.jetbrains.vuejs.model.source.NAME_PROP
 import java.awt.datatransfer.DataFlavor
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Future
 import com.intellij.openapi.util.Pair as OpenApiPair
 
 class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImportsTransferableData>() {
@@ -87,7 +88,7 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
       VueComponentSourceEdit.getOrCreateScriptScope(VueModelManager.findEnclosingContainer(file))
     }
 
-  override fun collectTransferableData(rangesWithParents: List<Pair<PsiElement, TextRange>>): VueComponentImportsTransferableData? {
+  override fun collectTransferableData(rangesWithParents: List<Pair<PsiElement, TextRange>>, project: Project): VueComponentImportsTransferableData? {
     val scriptSetup = findModule(rangesWithParents[0].first, true)
     if (scriptSetup != null) {
       val elements = mutableListOf<OpenApiPair<String, ES6ImportExportDeclarationPart>>()
@@ -139,7 +140,7 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     }
   }
 
-  override fun createTransferableData(importedElementsFuture: Future<List<ImportedElement>>): VueComponentImportsTransferableData =
+  override fun createTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>): VueComponentImportsTransferableData =
     throw UnsupportedOperationException()
 
   override fun processTransferableData(
@@ -261,13 +262,9 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
       }, { elementsToImport ->
         val pasteContext = pasteContextPtr.dereference() ?: return@scheduleOnPasteProcessing
         val exportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing
-        insertRequiredImportsWithRunnableWA(
-          pasteContext,
-          VueComponentImportsTransferableData(ArrayList(), null, emptyList()),
-          exportScope,
-          elementsToImport.mapNotNull { info -> info.second?.let { OpenApiPair(info.first, it) } },
-          VueJSLanguage.INSTANCE
-        ).run()
+        insertRequiredImports(pasteContext, VueComponentImportsTransferableData(ArrayList(), null, emptyList()), exportScope,
+                              elementsToImport.mapNotNull { info -> info.second?.let { OpenApiPair(info.first, it) } },
+                              VueJSLanguage.INSTANCE)
       }
     )
   }
@@ -286,7 +283,7 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
     list: ArrayList<ImportedElement>,
     val originFilePath: String?,
     val components: List<String>,
-  ) : ES6ImportsTransferableDataBase(CompletableFuture.completedFuture(list)) {
+  ) : ES6ImportsTransferableDataBase(CompletableDeferred(list)) {
     override fun getFlavor(): DataFlavor {
       return VUE_COMPONENT_IMPORTS_FLAVOR
     }
