@@ -20,6 +20,7 @@ jvm_library(
     "@community//platform/lang-api:lang",
     "//CSS/frontback/css-api:css-frontback",
     "@community//platform/refactoring",
+    "@community//platform/structure-view-impl:structureView-impl",
     "@community//xml/xml-structure-view-api:structureView",
     "@community//platform/usageView",
     "//plugins/JavaScriptLanguage/javascript-parser",
