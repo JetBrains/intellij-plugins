@@ -247,11 +247,12 @@ class TypeModel(
     ).toMap())
     val Terraform: BlockType = BlockType(HCL_TERRAFORM_IDENTIFIER, properties = listOf<PropertyOrBlockType>(
       TerraformRequiredVersion,
-      PropertyType("experiments", Types.Array),
       BlockType(HCL_TERRAFORM_REQUIRED_PROVIDERS),
+      BlockType("provider_meta", args = 1),
       EncryptionBlockType(),
       Cloud,
-      AbstractBackend
+      AbstractBackend,
+      PropertyType("experiments", Types.Array),
     ).toMap())
     val Locals: BlockType = BlockType(HCL_LOCALS_IDENTIFIER)
     val Import: BlockType = BlockType(HCL_IMPORT_IDENTIFIER, properties = listOf(
@@ -335,10 +336,10 @@ class TypeModel(
   }
 
   fun getResourceType(name: String, psiElement: PsiElement? = null): ResourceType? =
-    lookupType<ResourceType>(name, psiElement, resourcesByProvider)
+    lookupType(name, psiElement, resourcesByProvider)
 
   fun getDataSourceType(name: String, psiElement: PsiElement? = null): DataSourceType? =
-    lookupType<DataSourceType>(name, psiElement, datasourcesByProvider)
+    lookupType(name, psiElement, datasourcesByProvider)
 
   private fun <T : ResourceOrDataSourceType> lookupType(name: String, psiElement: PsiElement?, typesMap: Map<String, List<T>>): T? {
     val providerName = getProviderNameForIdentifier(name, psiElement)

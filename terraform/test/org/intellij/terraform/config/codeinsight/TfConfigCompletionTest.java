@@ -852,7 +852,8 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
         <caret>
       }
       """);
-    myFixture.testCompletionVariants("main.tf", "backend", "cloud", "experiments", "required_providers", "required_version");
+    myFixture.testCompletionVariants("main.tf", "backend", "cloud", "experiments", "provider_meta", "required_providers",
+                                     "required_version");
   }
 
   public void testTerraformBlockCompletionBackend() {

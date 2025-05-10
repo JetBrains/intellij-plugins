@@ -3,7 +3,7 @@ package org.intellij.terraform.opentofu
 
 import org.intellij.terraform.config.codeinsight.TfBaseCompletionTestCase
 
-internal class OpenTofuConfigCompletionTest: TfBaseCompletionTestCase() {
+internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
 
   fun testTofuBlockCompletion() {
     val file = myFixture.configureByText("main.tofu", """ 
@@ -11,7 +11,8 @@ internal class OpenTofuConfigCompletionTest: TfBaseCompletionTestCase() {
         <caret>
       }
       """)
-    myFixture.testCompletionVariants(file.virtualFile.name, "backend", "cloud", "encryption", "experiments", "required_providers", "required_version")
+    myFixture.testCompletionVariants(file.virtualFile.name, "backend", "cloud", "encryption", "experiments", "provider_meta",
+                                     "required_providers", "required_version")
   }
 
   fun testTofuEncryptionBlockPropertiesCompletion() {
