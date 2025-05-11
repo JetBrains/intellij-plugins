@@ -23,8 +23,10 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 
 
 open class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
-  override fun createReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl,
-                                                 ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =
+  override fun createReferenceExpressionResolver(
+    referenceExpression: JSReferenceExpressionImpl,
+    ignorePerformanceLimits: Boolean,
+  ): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =
     VueExprReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits)
 
   override fun getControlFlow(scope: JSControlFlowScope): ControlFlow {
@@ -39,8 +41,10 @@ open class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
 }
 
 class VueTSSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
-  override fun createReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl,
-                                                 ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =
+  override fun createReferenceExpressionResolver(
+    referenceExpression: JSReferenceExpressionImpl,
+    ignorePerformanceLimits: Boolean,
+  ): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =
     VueExprReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits) // it implements TypeScriptReferenceExpressionResolver
 
   override fun getControlFlow(scope: JSControlFlowScope): ControlFlow {
