@@ -12,21 +12,29 @@ import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueProperty
 
-abstract class VuePropertySymbol<T : VueProperty>(item: T, owner: VueComponent, origin: WebSymbolOrigin)
-  : VueNamedWebSymbol<T>(item, owner, origin) {
+abstract class VuePropertySymbol<T : VueProperty>(
+  item: T,
+  owner: VueComponent,
+  origin: WebSymbolOrigin,
+) : VueNamedWebSymbol<T>(item, owner, origin) {
+
   abstract override fun createPointer(): Pointer<out VuePropertySymbol<T>>
 
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == JS_PROPERTIES
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolsScope> =
     getJSPropertySymbols(qualifiedKind)
 
 }
