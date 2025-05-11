@@ -36,8 +36,10 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     return listOf(templateRootScope.findBestMatchingTemplateScope(notNull(hostElement, element))!!)
   }
 
-  private class VueTemplateElementScope(root: PsiElement,
-                                        parent: VueTemplateElementScope?) : VueTemplateScope(parent) {
+  private class VueTemplateElementScope(
+    root: PsiElement,
+    parent: VueTemplateElementScope?,
+  ) : VueTemplateScope(parent) {
 
     private val elements = ArrayList<JSPsiNamedElementBase>()
 
