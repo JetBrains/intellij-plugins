@@ -12,11 +12,14 @@ import org.jetbrains.vuejs.codeInsight.fixPrimitiveTypes
 import org.jetbrains.vuejs.codeInsight.getDecoratorArgument
 import org.jetbrains.vuejs.codeInsight.getPropTypeFromPropOptions
 
-class VueDecoratedComponentPropType private constructor(typeSource: JSTypeSource,
-                                                        private val member: JSRecordType.PropertySignature,
-                                                        private val decorator: ES6Decorator?,
-                                                        private val decoratorArgumentIndex: Int)
-  : JSTypeBaseImpl(typeSource), JSCodeBasedType {
+class VueDecoratedComponentPropType
+private constructor(
+  typeSource: JSTypeSource,
+  private val member: JSRecordType.PropertySignature,
+  private val decorator: ES6Decorator?,
+  private val decoratorArgumentIndex: Int,
+) : JSTypeBaseImpl(typeSource),
+    JSCodeBasedType {
 
   constructor(member: JSRecordType.PropertySignature, decorator: ES6Decorator?, decoratorArgumentIndex: Int)
     : this(JSTypeSourceFactory.createTypeSource(member.memberSource.singleElement!!, false),
