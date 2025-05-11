@@ -19,15 +19,16 @@ import javax.swing.Icon
 
 @Deprecated(message = "This class is no longer used. Instead Vue support depends on web symbol API and WebSymbolAttributeDescriptor")
 @ApiStatus.ScheduledForRemoval
-open class VueAttributeDescriptor(protected val tag: XmlTag,
-                                  private val name: String,
-                                  internal val element: PsiElement? = null,
-                                  private val sources: List<VueDocumentedItem> = listOf(),
-                                  private val acceptsNoValue: Boolean = false,
-                                  private val acceptsValue: Boolean = true,
-                                  val priority: AttributePriority = AttributePriority.NORMAL,
-                                  isRequired: Boolean = false)
-  : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
+open class VueAttributeDescriptor(
+  protected val tag: XmlTag,
+  private val name: String,
+  internal val element: PsiElement? = null,
+  private val sources: List<VueDocumentedItem> = listOf(),
+  private val acceptsNoValue: Boolean = false,
+  private val acceptsValue: Boolean = true,
+  val priority: AttributePriority = AttributePriority.NORMAL,
+  isRequired: Boolean = false,
+) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
 
   private val _isRequired: Boolean = isRequired
 
