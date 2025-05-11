@@ -8,21 +8,27 @@ import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.webTypes.filters.WebSymbolsFilter
 
 class VueBindFilter : WebSymbolsFilter {
-  override fun filterCodeCompletions(codeCompletions: List<WebSymbolCodeCompletionItem>,
-                                     queryExecutor: WebSymbolsQueryExecutor,
-                                     scope: List<WebSymbolsScope>,
-                                     properties: Map<String, Any>): List<WebSymbolCodeCompletionItem> =
+  override fun filterCodeCompletions(
+    codeCompletions: List<WebSymbolCodeCompletionItem>,
+    queryExecutor: WebSymbolsQueryExecutor,
+    scope: List<WebSymbolsScope>,
+    properties: Map<String, Any>,
+  ): List<WebSymbolCodeCompletionItem> =
     codeCompletions.filterHtmlEventAttributes(queryExecutor, scope) { name }
 
-  override fun filterNameMatches(matches: List<WebSymbol>,
-                                 queryExecutor: WebSymbolsQueryExecutor,
-                                 scope: List<WebSymbolsScope>,
-                                 properties: Map<String, Any>): List<WebSymbol> =
+  override fun filterNameMatches(
+    matches: List<WebSymbol>,
+    queryExecutor: WebSymbolsQueryExecutor,
+    scope: List<WebSymbolsScope>,
+    properties: Map<String, Any>,
+  ): List<WebSymbol> =
     matches.filterHtmlEventAttributes(queryExecutor, scope) { name }
 
-  private fun <T> List<T>.filterHtmlEventAttributes(queryExecutor: WebSymbolsQueryExecutor,
-                                                    scope: List<WebSymbolsScope>,
-                                                    getName: T.() -> String): List<T> {
+  private fun <T> List<T>.filterHtmlEventAttributes(
+    queryExecutor: WebSymbolsQueryExecutor,
+    scope: List<WebSymbolsScope>,
+    getName: T.() -> String,
+  ): List<T> {
     val props = queryExecutor.runListSymbolsQuery(VUE_COMPONENT_PROPS, true, additionalScope = scope)
       .mapTo(HashSet()) { it.name }
     return filter {
