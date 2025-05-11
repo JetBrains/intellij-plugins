@@ -21,11 +21,13 @@ class VueBaseLiveTemplateContextType : TemplateContextType(VueBundle.message("vu
   }
 
   object Util {
-    fun evaluateContext(file: PsiFile, offset: Int,
-                        scriptContextEvaluator: ((PsiElement) -> Boolean)? = null,
-                        notVueFileType: ((PsiElement) -> Boolean)? = null,
-                        forTagInsert: Boolean = false,
-                        forAttributeInsert: Boolean = false): Boolean {
+    fun evaluateContext(
+      file: PsiFile, offset: Int,
+      scriptContextEvaluator: ((PsiElement) -> Boolean)? = null,
+      notVueFileType: ((PsiElement) -> Boolean)? = null,
+      forTagInsert: Boolean = false,
+      forAttributeInsert: Boolean = false,
+    ): Boolean {
       if (offset < 0) return false
       val element = file.findElementAt(offset) ?: return false
 
