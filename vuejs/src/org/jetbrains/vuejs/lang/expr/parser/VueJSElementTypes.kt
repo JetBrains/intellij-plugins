@@ -29,16 +29,20 @@ object VueJSElementTypes {
   val SLOT_PROPS_EXPRESSION: IElementType = VueJSExpressionElementType(
     "SLOT_PROPS_EXPRESSION", ::VueJSSlotPropsExpressionImpl)
 
-  private abstract class VueJSElementType(@NonNls debugName: String,
-                                          language: Language,
-                                          private val myClassConstructor: (VueJSElementType) -> ASTNode)
-    : IElementType(debugName, language), ICompositeElementType {
+  private abstract class VueJSElementType(
+    @NonNls debugName: String,
+    language: Language,
+    private val myClassConstructor: (VueJSElementType) -> ASTNode,
+  ) : IElementType(debugName, language),
+      ICompositeElementType {
     final override fun createCompositeNode(): ASTNode = myClassConstructor(this)
   }
 
-  private class VueJSExpressionElementType(@NonNls debugName: String,
-                                           classConstructor: (VueJSElementType) -> ASTNode)
-    : VueJSElementType(debugName, VueJSLanguage.INSTANCE, classConstructor), JSExpressionElementType
+  private class VueJSExpressionElementType(
+    @NonNls debugName: String,
+    classConstructor: (VueJSElementType) -> ASTNode,
+  ) : VueJSElementType(debugName, VueJSLanguage.INSTANCE, classConstructor),
+      JSExpressionElementType
 
 
 }
