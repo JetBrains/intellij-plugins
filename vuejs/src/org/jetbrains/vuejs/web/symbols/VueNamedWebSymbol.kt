@@ -6,10 +6,11 @@ import com.intellij.webSymbols.WebSymbolOrigin
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueNamedSymbol
 
-abstract class VueNamedWebSymbol<T : VueNamedSymbol>(item: T,
-                                                     protected val owner: VueComponent,
-                                                     override val origin: WebSymbolOrigin)
-  : VueDocumentedItemSymbol<T>(item.name, item) {
+abstract class VueNamedWebSymbol<T : VueNamedSymbol>(
+  item: T,
+  protected val owner: VueComponent,
+  override val origin: WebSymbolOrigin,
+) : VueDocumentedItemSymbol<T>(item.name, item) {
 
   abstract override fun createPointer(): Pointer<out VueNamedWebSymbol<T>>
 
