@@ -104,8 +104,10 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
   fun addClassicPropertyFunction(kind: String, name: String, contents: String): Boolean =
     getOrCreateObjectLiteralBasedComponentEdit()?.addClassicPropertyFunction(kind, name, contents) == true
 
-  fun insertComponentImport(name: String,
-                            elementToImport: PsiElement) {
+  fun insertComponentImport(
+    name: String,
+    elementToImport: PsiElement,
+  ) {
     val capitalizedName = toAsset(name, true)
     val scriptScope = getOrCreateScriptScope() ?: return
 
@@ -276,9 +278,11 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
       return addProperty(newProperty, obj, true)
     }
 
-    private fun addProperty(newProperty: JSProperty,
-                            obj: JSObjectLiteralExpression,
-                            onTheNewLine: Boolean): JSProperty {
+    private fun addProperty(
+      newProperty: JSProperty,
+      obj: JSObjectLiteralExpression,
+      onTheNewLine: Boolean,
+    ): JSProperty {
       val firstProperty = obj.firstProperty
       val anchor: PsiElement? =
         if (NAME_PROP == firstProperty?.name)
