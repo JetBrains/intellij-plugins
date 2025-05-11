@@ -12,7 +12,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.formatter.xml.XmlBlock
 import com.intellij.psi.formatter.xml.XmlTagBlock
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import java.util.*
 
 class VueTagBlock(node: ASTNode,
                   wrap: Wrap?,
