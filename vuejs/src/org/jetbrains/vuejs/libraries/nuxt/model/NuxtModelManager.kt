@@ -12,9 +12,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.libraries.nuxt.NUXT3_PKG
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_NAMES
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_PKG
 import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtApplicationImpl
-import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_NAMES
 
 object NuxtModelManager {
 
