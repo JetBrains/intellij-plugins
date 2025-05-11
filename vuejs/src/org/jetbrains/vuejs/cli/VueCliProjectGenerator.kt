@@ -159,7 +159,8 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
     if (isVite) {
       CreateRunConfigurationUtil.debugConfiguration(project, 5173)
       CreateRunConfigurationUtil.npmConfiguration(project, "dev")
-    } else {
+    }
+    else {
       CreateRunConfigurationUtil.debugConfiguration(project, 8080)
       CreateRunConfigurationUtil.npmConfiguration(project, "serve")
     }
