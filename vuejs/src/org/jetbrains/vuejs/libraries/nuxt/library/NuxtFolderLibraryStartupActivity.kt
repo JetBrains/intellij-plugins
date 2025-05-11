@@ -59,7 +59,7 @@ class NuxtFolderModelSynchronizer(private val project: Project) {
 }
 
 private class NuxtFolderEntityWrapper(
-  entity: Any
+  entity: Any,
 ) {
   private val nuxtFolderUrl: VirtualFileUrl = (entity as? NuxtFolderEntity)?.nuxtFolderUrl
                                               ?: (entity as NuxtFolderEntity.Builder).nuxtFolderUrl
