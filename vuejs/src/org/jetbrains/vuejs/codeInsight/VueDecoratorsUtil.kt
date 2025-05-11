@@ -15,5 +15,5 @@ fun findDecorator(member: JSRecordType.TypeMember, names: Set<String>): ES6Decor
 
 fun getDecoratorArgument(decorator: ES6Decorator?, index: Int): JSExpression? =
   (decorator?.expression as? JSCallExpression)
-  ?.arguments
-  ?.getOrNull(index)
+    ?.arguments
+    ?.getOrNull(index)
