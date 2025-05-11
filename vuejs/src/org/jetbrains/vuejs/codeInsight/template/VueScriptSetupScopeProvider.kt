@@ -27,7 +27,10 @@ class VueScriptSetupScopeProvider : VueTemplateScopesProvider() {
       VueExprStubBasedScopeHandler.processDeclarationsInScope(module, { element, _ ->
         val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
         // let's patch back in JavaScript plugin resolve conventions
-        val importSpecifier = if (element != resolved && element is ES6ImportSpecifier) { element } else null
+        val importSpecifier = if (element != resolved && element is ES6ImportSpecifier) {
+          element
+        }
+        else null
         val elementToConsume = VueCompositionInfoHelper.getUnwrappedRefElement(resolved, module)
                                ?: resolved ?: element
         consumer.accept(JSResolveResult(elementToConsume, importSpecifier, null))
