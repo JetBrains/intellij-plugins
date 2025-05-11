@@ -154,11 +154,13 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
         .optionalIf(!required)
     }
 
-    private class VueDecoratedComputedProperty(name: String,
-                                               member: PropertySignature,
-                                               decorator: ES6Decorator?,
-                                               decoratorArgumentIndex: Int)
-      : VueDecoratedProperty(name, member), VueComputedProperty {
+    private class VueDecoratedComputedProperty(
+      name: String,
+      member: PropertySignature,
+      decorator: ES6Decorator?,
+      decoratorArgumentIndex: Int,
+    ) : VueDecoratedProperty(name, member),
+        VueComputedProperty {
 
       override val jsType: JSType = VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
       override val source: PsiElement = VueImplicitElement(name, jsType,
