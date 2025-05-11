@@ -20,9 +20,11 @@ object VueTopLevelElementsScope : WebSymbolsScope {
     VUE_TOP_LEVEL_ELEMENTS
   )
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolsScope> =
     if (qualifiedKind == WebSymbol.HTML_ELEMENTS)
       listOf(referencingSymbol)
     else
