@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.types.VueSourceProvideType
 class VueSourceProvide(
   override val name: String,
   sourceElement: PsiElement,
-  private val symbolSource: PsiNamedElement? = null
+  private val symbolSource: PsiNamedElement? = null,
 ) : VueProvide {
 
   override val injectionKey: PsiNamedElement?
