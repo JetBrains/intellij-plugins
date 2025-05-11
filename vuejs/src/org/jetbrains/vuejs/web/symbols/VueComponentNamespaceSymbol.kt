@@ -27,7 +27,7 @@ import java.util.*
 
 class VueComponentNamespaceSymbol(
   override val name: String,
-  override val source: JSPsiNamedElementBase
+  override val source: JSPsiNamedElementBase,
 ) : PsiSourcedWebSymbol {
   override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
     val name = name
@@ -63,17 +63,21 @@ class VueComponentNamespaceSymbol(
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     isNamespacedKind(qualifiedKind)
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     if (isNamespacedKind(qualifiedName.qualifiedKind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false)
       getMatchingJSPropertySymbols(qualifiedName.name, params.queryExecutor.namesProvider).adaptToNamespaceComponents(qualifiedName.kind)
     else
       emptyList()
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolsScope> =
     if (isNamespacedKind(qualifiedKind))
       getJSPropertySymbols().adaptToNamespaceComponents(qualifiedKind.kind)
     else
@@ -118,21 +122,27 @@ class VueComponentNamespaceSymbol(
     override val queryScope: List<WebSymbolsScope>
       get() = listOf(this)
 
-    override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                    params: WebSymbolsNameMatchQueryParams,
-                                    scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+    override fun getMatchingSymbols(
+      qualifiedName: WebSymbolQualifiedName,
+      params: WebSymbolsNameMatchQueryParams,
+      scope: Stack<WebSymbolsScope>,
+    ): List<WebSymbol> =
       namespaceSymbol.getMatchingSymbols(qualifiedName, params, scope) +
       super.getMatchingSymbols(qualifiedName, params, scope)
 
-    override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                            params: WebSymbolsListSymbolsQueryParams,
-                            scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+    override fun getSymbols(
+      qualifiedKind: WebSymbolQualifiedKind,
+      params: WebSymbolsListSymbolsQueryParams,
+      scope: Stack<WebSymbolsScope>,
+    ): List<WebSymbolsScope> =
       namespaceSymbol.getSymbols(qualifiedKind, params, scope) +
       super.getSymbols(qualifiedKind, params, scope)
 
-    override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
-                                    params: WebSymbolsCodeCompletionQueryParams,
-                                    scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
+    override fun getCodeCompletions(
+      qualifiedName: WebSymbolQualifiedName,
+      params: WebSymbolsCodeCompletionQueryParams,
+      scope: Stack<WebSymbolsScope>,
+    ): List<WebSymbolCodeCompletionItem> =
       namespaceSymbol.getCodeCompletions(qualifiedName, params, scope) +
       super.getCodeCompletions(qualifiedName, params, scope)
 
