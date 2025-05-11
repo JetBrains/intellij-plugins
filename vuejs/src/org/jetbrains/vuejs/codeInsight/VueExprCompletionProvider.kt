@@ -26,9 +26,11 @@ class VueExprCompletionProvider : CompletionProvider<CompletionParameters>() {
     private val FILTERED_NON_CONTEXT_KEYWORDS = setOf("do", "class", "for", "function", "if", "import()", "switch", "throw",
                                                       "var", "let", "const", "try", "while", "with", "debugger")
 
-    fun filterOutGenericJSResults(allowGlobalSymbols: Boolean,
-                                  result: CompletionResultSet,
-                                  parameters: CompletionParameters) {
+    fun filterOutGenericJSResults(
+      allowGlobalSymbols: Boolean,
+      result: CompletionResultSet,
+      parameters: CompletionParameters,
+    ) {
       result.runRemainingContributors(parameters) { completionResult ->
         val lookupElement = completionResult.lookupElement
         // Filter out JavaScript symbols, and keywords such as 'class' and 'function'
