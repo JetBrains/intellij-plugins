@@ -21,10 +21,12 @@ import org.jetbrains.vuejs.web.VueFramework
 
 class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
 
-  override fun getScope(project: Project,
-                        location: PsiElement?,
-                        context: WebSymbolsContext,
-                        allowResolve: Boolean): List<WebSymbolsScope> =
+  override fun getScope(
+    project: Project,
+    location: PsiElement?,
+    context: WebSymbolsContext,
+    allowResolve: Boolean,
+  ): List<WebSymbolsScope> =
     if (context.framework == VueFramework.ID
         && location is HtmlTag
         && location.name == "i18n"
@@ -51,9 +53,11 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
 
     override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
-    override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                            params: WebSymbolsListSymbolsQueryParams,
-                            scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
+    override fun getSymbols(
+      qualifiedKind: WebSymbolQualifiedKind,
+      params: WebSymbolsListSymbolsQueryParams,
+      scope: Stack<WebSymbolsScope>,
+    ): List<WebSymbolsScope> {
       if (qualifiedKind == VUE_TOP_LEVEL_ELEMENTS) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }
