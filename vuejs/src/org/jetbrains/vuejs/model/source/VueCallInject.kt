@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.types.VueSourceProvideType
 class VueCallInject(
   override val name: String,
   override val source: PsiElement,
-  private val symbolSource: PsiNamedElement? = null
+  private val symbolSource: PsiNamedElement? = null,
 ) : VueInject {
 
   override val injectionKey: PsiNamedElement?
