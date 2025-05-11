@@ -9,8 +9,10 @@ abstract class VueTemplateScopesProvider {
   /**
    * If Angular expression is injected the @{code hostElement} is not null.
    */
-  abstract fun getScopes(element: PsiElement,
-                         hostElement: PsiElement?): List<VueTemplateScope>
+  abstract fun getScopes(
+    element: PsiElement,
+    hostElement: PsiElement?,
+  ): List<VueTemplateScope>
 
   companion object {
     internal val EP_NAME = ExtensionPointName.create<VueTemplateScopesProvider>("com.intellij.vuejs.templateScopesProvider")
