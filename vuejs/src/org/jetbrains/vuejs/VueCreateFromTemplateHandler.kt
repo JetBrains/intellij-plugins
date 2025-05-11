@@ -49,12 +49,14 @@ class VueCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
     }
   }
 
-  override fun createFromTemplate(project: Project,
-                                  directory: PsiDirectory,
-                                  fileName: String?,
-                                  template: FileTemplate,
-                                  templateText: String,
-                                  props: MutableMap<String, Any>): PsiElement {
+  override fun createFromTemplate(
+    project: Project,
+    directory: PsiDirectory,
+    fileName: String?,
+    template: FileTemplate,
+    templateText: String,
+    props: MutableMap<String, Any>,
+  ): PsiElement {
     val propertiesComponent = PropertiesComponent.getInstance(project)
     (propertiesComponent.getList(VUE_RECENT_TEMPLATES) ?: emptyList())
       .toMutableList()
