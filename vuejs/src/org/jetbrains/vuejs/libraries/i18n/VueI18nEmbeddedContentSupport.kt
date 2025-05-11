@@ -8,12 +8,13 @@ import com.intellij.html.embedding.HtmlTagEmbeddedContentProvider
 import com.intellij.lexer.BaseHtmlLexer
 import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 
-class VueI18nEmbeddedContentSupport: HtmlEmbeddedContentSupport {
+class VueI18nEmbeddedContentSupport :
+  HtmlEmbeddedContentSupport {
 
   override fun isEnabled(lexer: BaseHtmlLexer): Boolean = lexer is VueLexer
 
   override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> =
-    listOf( VueI18nTagEmbeddedContentProvider(lexer) )
+    listOf(VueI18nTagEmbeddedContentProvider(lexer))
 
   class VueI18nTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedContentProvider(lexer) {
 
