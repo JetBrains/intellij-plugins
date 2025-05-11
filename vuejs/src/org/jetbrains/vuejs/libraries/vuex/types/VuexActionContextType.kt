@@ -26,9 +26,13 @@ import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreActionContextName
 import org.jetbrains.vuejs.model.VueImplicitElement
 import java.util.*
 
-class VuexActionContextType private constructor(source: JSTypeSource,
-                                                private val element: PsiElement)
-  : JSTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
+class VuexActionContextType
+private constructor(
+  source: JSTypeSource,
+  private val element: PsiElement,
+) : JSTypeBaseImpl(source),
+    JSCodeBasedType,
+    JSTypeWithIncompleteSubstitution {
 
   constructor(element: PsiElement)
     : this(JSTypeSource(element, JSTypeSource.SourceLanguage.TS, true), element)
