@@ -56,12 +56,15 @@ const val PROP_VUE_MODEL_EVENT = "event"
 const val PROP_VUE_PROXIMITY = "x-vue-proximity"
 const val PROP_VUE_COMPOSITION_COMPONENT = "x-vue-composition-component"
 
-class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
+class VueWebSymbolsQueryConfigurator :
+  WebSymbolsQueryConfigurator {
 
-  override fun getScope(project: Project,
-                        location: PsiElement?,
-                        context: WebSymbolsContext,
-                        allowResolve: Boolean): List<WebSymbolsScope> {
+  override fun getScope(
+    project: Project,
+    location: PsiElement?,
+    context: WebSymbolsContext,
+    allowResolve: Boolean,
+  ): List<WebSymbolsScope> {
     if (context.framework != VueFramework.ID || location == null) return emptyList()
 
     if (location is JSElement && location !is XmlElement)
@@ -90,9 +93,11 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     return result
   }
 
-  override fun getNameConversionRulesProviders(project: Project,
-                                               element: PsiElement?,
-                                               context: WebSymbolsContext): List<WebSymbolNameConversionRulesProvider> =
+  override fun getNameConversionRulesProviders(
+    project: Project,
+    element: PsiElement?,
+    context: WebSymbolsContext,
+  ): List<WebSymbolNameConversionRulesProvider> =
     if (context.framework == VueFramework.ID)
       listOf(VueScriptSetupLocalDirectiveNameConversionRulesProvider)
     else
@@ -142,9 +147,11 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       ?.let { JSPsiImplUtils.isArgumentOfCallWithName(it, 0, INJECT_PROP) }
     ?: false
 
-  private fun addEntityContainers(element: PsiElement,
-                                  fileContext: PsiFile,
-                                  result: SmartList<WebSymbolsScope>) {
+  private fun addEntityContainers(
+    element: PsiElement,
+    fileContext: PsiFile,
+    result: SmartList<WebSymbolsScope>,
+  ) {
     VueModelManager.findEnclosingContainer(element).let { enclosingContainer ->
       val containerToProximity = mutableMapOf<VueEntitiesContainer, VueModelVisitor.Proximity>()
 
