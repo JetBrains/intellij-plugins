@@ -69,11 +69,13 @@ class NuxtConfigImpl(override val file: PsiFile, nuxt2_15: Boolean) : NuxtConfig
     const val DEFAULT_LEVEL = 0
   }
 
-  private class ComponentsDirectoryConfigImpl(override val path: String = DEFAULT_PATH,
-                                              override val prefix: String = DEFAULT_PREFIX,
-                                              override val pathPrefix: Boolean,
-                                              override val global: Boolean,
-                                              override val extensions: Set<String> = DEFAULT_EXTENSIONS,
-                                              override val level: Int = DEFAULT_LEVEL) : NuxtConfig.ComponentsDirectoryConfig
+  private class ComponentsDirectoryConfigImpl(
+    override val path: String = DEFAULT_PATH,
+    override val prefix: String = DEFAULT_PREFIX,
+    override val pathPrefix: Boolean,
+    override val global: Boolean,
+    override val extensions: Set<String> = DEFAULT_EXTENSIONS,
+    override val level: Int = DEFAULT_LEVEL,
+  ) : NuxtConfig.ComponentsDirectoryConfig
 
 }
