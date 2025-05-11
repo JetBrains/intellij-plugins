@@ -151,7 +151,8 @@ class NuxtFolderManager(private val project: Project) : PersistentStateComponent
   private inner class NuxtFileListener : AsyncFileListener {
     override fun prepareChange(events: List<VFileEvent>): ChangeApplier? {
       val relevantEvents = events.filter { isRelevantEvent(it) }
-      return if (relevantEvents.isEmpty()) null else object : ChangeApplier {
+      return if (relevantEvents.isEmpty()) null
+      else object : ChangeApplier {
         override fun afterVfsChange() {
           for (event in relevantEvents) {
             when (event) {
