@@ -43,9 +43,11 @@ class TemplateLoaderFrameworkHandler : FrameworkIndexingHandler() {
     }
   }
 
-  private fun addImplicitElementForWithRender(name: String,
-                                              context: PsiElement,
-                                              outData: JSElementIndexingDataImpl?): JSElementIndexingDataImpl? {
+  private fun addImplicitElementForWithRender(
+    name: String,
+    context: PsiElement,
+    outData: JSElementIndexingDataImpl?,
+  ): JSElementIndexingDataImpl? {
     val out = outData ?: JSElementIndexingDataImpl()
     JSStubBasedPsiTreeUtil.resolveLocallyWithMergedResults(name, context)
       .asSequence()
