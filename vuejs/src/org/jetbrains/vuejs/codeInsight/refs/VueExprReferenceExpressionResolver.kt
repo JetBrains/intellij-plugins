@@ -5,7 +5,10 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.lang.javascript.ecmascript6.TypeScriptReferenceExpressionResolver
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSFunctionItem
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
+import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
