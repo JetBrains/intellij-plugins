@@ -18,8 +18,10 @@ import org.jetbrains.vuejs.types.asCompleteType
 
 class VuelidateContainerInfoProvider : VueContainerInfoProvider {
 
-  override fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
-                                     standardProperties: MutableMap<String, JSRecordType.PropertySignature>): Collection<JSRecordType.PropertySignature> {
+  override fun getThisTypeProperties(
+    instanceOwner: VueInstanceOwner,
+    standardProperties: MutableMap<String, JSRecordType.PropertySignature>,
+  ): Collection<JSRecordType.PropertySignature> {
     val source = instanceOwner.source!!
     val validationProps = resolveSymbolFromNodeModule(
       source, VUE_INSTANCE_MODULE, "ValidationProperties", TypeScriptTypeAlias::class.java) ?: return emptyList()
