@@ -14,13 +14,14 @@ import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
-class VueSyntheticBlock(subBlocks: List<Block>,
-                        parent: Block,
-                        indent: Indent?,
-                        policy: XmlFormattingPolicy,
-                        childIndent: Indent?,
-                        private val myLanguage: Language?)
-  : SyntheticBlock(subBlocks, parent, indent, policy, childIndent), BlockEx {
+class VueSyntheticBlock(
+  subBlocks: List<Block>,
+  parent: Block,
+  indent: Indent?,
+  policy: XmlFormattingPolicy,
+  childIndent: Indent?,
+  private val myLanguage: Language?,
+) : SyntheticBlock(subBlocks, parent, indent, policy, childIndent), BlockEx {
 
   override fun getLanguage(): Language? = myLanguage
 
