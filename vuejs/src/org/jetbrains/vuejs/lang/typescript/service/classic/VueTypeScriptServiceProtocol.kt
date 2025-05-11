@@ -10,12 +10,13 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.T
 import com.intellij.openapi.project.Project
 import java.util.function.Consumer
 
-internal class VueTypeScriptServiceProtocol(project: Project,
-                                            settings: TypeScriptCompilerSettings,
-                                            readyConsumer: Consumer<*>,
-                                            eventConsumer: Consumer<in JSLanguageServiceAnswer>,
-                                            tsServicePath: String) :
-  TypeScriptServiceStandardOutputProtocol(project, settings, readyConsumer, eventConsumer, "VueService", tsServicePath) {
+internal class VueTypeScriptServiceProtocol(
+  project: Project,
+  settings: TypeScriptCompilerSettings,
+  readyConsumer: Consumer<*>,
+  eventConsumer: Consumer<in JSLanguageServiceAnswer>,
+  tsServicePath: String,
+) : TypeScriptServiceStandardOutputProtocol(project, settings, readyConsumer, eventConsumer, "VueService", tsServicePath) {
 
   override fun createState(): TypeScriptServiceInitialStateObject {
     val state = super.createState()
