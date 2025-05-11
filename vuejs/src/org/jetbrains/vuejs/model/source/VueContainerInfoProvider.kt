@@ -16,9 +16,11 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
 
   fun getAdditionalComponents(scope: GlobalSearchScope, sourceComponents: ComponentsInfo): ComponentsInfo? = null
 
-  fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
-                            standardProperties: MutableMap<String, PropertySignature>)
-    : Collection<PropertySignature> = emptyList()
+  fun getThisTypeProperties(
+    instanceOwner: VueInstanceOwner,
+    standardProperties: MutableMap<String, PropertySignature>,
+  ): Collection<PropertySignature> =
+    emptyList()
 
   data class ComponentsInfo(val local: MultiMap<String, VueComponent>, val global: MultiMap<String, VueComponent>) {
     fun get(local: Boolean): MultiMap<String, VueComponent> = if (local) this.local else global
