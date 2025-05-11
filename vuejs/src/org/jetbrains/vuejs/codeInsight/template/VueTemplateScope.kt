@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.codeInsight.template
 
 import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
-import java.util.*
 import java.util.function.Consumer
 
 abstract class VueTemplateScope
