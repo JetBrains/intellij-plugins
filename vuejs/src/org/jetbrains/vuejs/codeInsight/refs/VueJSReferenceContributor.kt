@@ -97,9 +97,10 @@ private class VueComponentLocalReferenceProvider : PsiReferenceProvider() {
   }
 }
 
-private class VueComponentLocalReference(reference: JSReferenceExpressionImpl,
-                                         textRange: TextRange?)
-  : CachingPolyReferenceBase<JSReferenceExpressionImpl>(reference, textRange) {
+private class VueComponentLocalReference(
+  reference: JSReferenceExpressionImpl,
+  textRange: TextRange?,
+) : CachingPolyReferenceBase<JSReferenceExpressionImpl>(reference, textRange) {
 
   override fun resolveInner(): Array<ResolveResult> {
     val ref = element
@@ -129,9 +130,10 @@ private class VueComponentNameReferenceProvider : PsiReferenceProvider() {
 
 }
 
-private class VueComponentNameReference(element: JSLiteralExpression,
-                                        rangeInElement: TextRange?) : CachingPolyReferenceBase<JSLiteralExpression>(element,
-                                                                                                                    rangeInElement) {
+private class VueComponentNameReference(
+  element: JSLiteralExpression,
+  rangeInElement: TextRange?,
+) : CachingPolyReferenceBase<JSLiteralExpression>(element, rangeInElement) {
   override fun resolveInner(): Array<ResolveResult> {
     getParentOfType(element, JSPropertyImpl::class.java, true) ?: return emptyArray()
     return arrayOf(PsiElementResolveResult(JSImplicitElementImpl(element.value.toString(), element)))
