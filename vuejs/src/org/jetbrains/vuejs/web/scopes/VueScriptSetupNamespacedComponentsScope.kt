@@ -44,9 +44,11 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
-  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsCodeCompletionQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> {
+  override fun getCodeCompletions(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsCodeCompletionQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolCodeCompletionItem> {
     return emptyList()
   }
 }
