@@ -13,13 +13,14 @@ import com.intellij.psi.formatter.xml.XmlTagBlock
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
-class VueHtmlTagBlock(node: ASTNode,
-                      wrap: Wrap?,
-                      alignment: Alignment?,
-                      policy: XmlFormattingPolicy,
-                      indent: Indent?,
-                      preserveSpace: Boolean)
-  : XmlTagBlock(node, wrap, alignment, policy, indent, preserveSpace), BlockEx {
+class VueHtmlTagBlock(
+  node: ASTNode,
+  wrap: Wrap?,
+  alignment: Alignment?,
+  policy: XmlFormattingPolicy,
+  indent: Indent?,
+  preserveSpace: Boolean,
+) : XmlTagBlock(node, wrap, alignment, policy, indent, preserveSpace), BlockEx {
 
   override fun getLanguage(): Language? {
     return HTMLLanguage.INSTANCE
