@@ -31,7 +31,7 @@ fun analyzeInject(call: JSCallExpression): VueInject? {
 
 private fun <T : VueNamedSymbol> analyzeCall(
   call: JSCallExpression,
-  factory: (name: String, source: PsiElement, symbol: PsiNamedElement?) -> T
+  factory: (name: String, source: PsiElement, symbol: PsiNamedElement?) -> T,
 ): T? {
   val referenceName = getFunctionImplicitElement(call)?.userStringData
   val literal = call.stubSafeCallArguments.getOrNull(0).asSafely<JSLiteralExpression>()
