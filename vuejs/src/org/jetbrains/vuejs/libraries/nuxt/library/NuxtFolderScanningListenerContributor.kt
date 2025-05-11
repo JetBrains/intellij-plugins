@@ -7,7 +7,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
 
-class NuxtFolderScanningListenerContributor: ScanningFileListenerContributor {
+class NuxtFolderScanningListenerContributor :
+  ScanningFileListenerContributor {
+
   override fun register(registrar: ScanningFileListenerContributor.Registrar) {
     registrar.registerFileListener(NUXT_OUTPUT_FOLDER, true, object : ScanningFileListener {
       override fun fileFound(project: Project, file: VirtualFile) {
