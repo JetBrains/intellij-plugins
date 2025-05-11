@@ -12,8 +12,8 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 
 private class VueArrangementSettingsMigration : ProjectActivity {
   companion object {
-      const val VUE_REARRANGER_SETTINGS_MIGRATION = "vue.rearranger.settings.migration"
-    }
+    const val VUE_REARRANGER_SETTINGS_MIGRATION = "vue.rearranger.settings.migration"
+  }
 
   override suspend fun execute(project: Project) {
     val propertiesComponent = PropertiesComponent.getInstance(project)
