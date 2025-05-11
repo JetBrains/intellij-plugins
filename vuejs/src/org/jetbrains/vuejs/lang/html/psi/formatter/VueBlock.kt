@@ -12,14 +12,15 @@ import com.intellij.psi.formatter.xml.XmlBlock
 import com.intellij.psi.formatter.xml.XmlTagBlock
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueBlock(node: ASTNode,
-               wrap: Wrap?,
-               alignment: Alignment?,
-               policy: VueRootFormattingPolicy,
-               indent: Indent?,
-               textRange: TextRange?,
-               preserveSpace: Boolean)
-  : XmlBlock(node, wrap, alignment, policy, indent, textRange, preserveSpace) {
+class VueBlock(
+  node: ASTNode,
+  wrap: Wrap?,
+  alignment: Alignment?,
+  policy: VueRootFormattingPolicy,
+  indent: Indent?,
+  textRange: TextRange?,
+  preserveSpace: Boolean,
+) : XmlBlock(node, wrap, alignment, policy, indent, textRange, preserveSpace) {
 
   override fun createTagBlock(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?): XmlTagBlock {
     return VueTagBlock(child, wrap, alignment, myXmlFormattingPolicy as VueRootFormattingPolicy, indent ?: Indent.getNoneIndent(),
