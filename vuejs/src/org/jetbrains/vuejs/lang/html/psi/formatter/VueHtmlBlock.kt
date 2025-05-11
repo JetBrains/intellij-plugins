@@ -15,14 +15,15 @@ import com.intellij.psi.formatter.xml.XmlFormattingPolicy
 import com.intellij.psi.formatter.xml.XmlTagBlock
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueHtmlBlock(node: ASTNode,
-                   wrap: Wrap?,
-                   alignment: Alignment?,
-                   policy: XmlFormattingPolicy,
-                   indent: Indent?,
-                   textRange: TextRange?,
-                   preserveSpace: Boolean)
-  : XmlBlock(node, wrap, alignment, policy, indent, textRange, preserveSpace), BlockEx {
+class VueHtmlBlock(
+  node: ASTNode,
+  wrap: Wrap?,
+  alignment: Alignment?,
+  policy: XmlFormattingPolicy,
+  indent: Indent?,
+  textRange: TextRange?,
+  preserveSpace: Boolean,
+) : XmlBlock(node, wrap, alignment, policy, indent, textRange, preserveSpace), BlockEx {
 
   override fun getLanguage(): Language? {
     return HTMLLanguage.INSTANCE
