@@ -35,12 +35,14 @@ import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
 
-class VueCodeModelSymbolsScope<K> private constructor(private val container: VueEntitiesContainer,
-                                                      project: Project,
-                                                      dataHolder: UserDataHolder,
-                                                      private val proximity: VueModelVisitor.Proximity,
-                                                      key: K)
-  : WebSymbolsScopeWithCache<UserDataHolder, K>(VueFramework.ID, project, dataHolder, key) {
+class VueCodeModelSymbolsScope<K>
+private constructor(
+  private val container: VueEntitiesContainer,
+  project: Project,
+  dataHolder: UserDataHolder,
+  private val proximity: VueModelVisitor.Proximity,
+  key: K,
+) : WebSymbolsScopeWithCache<UserDataHolder, K>(VueFramework.ID, project, dataHolder, key) {
 
   companion object {
 
@@ -91,10 +93,12 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
-  private fun visitContainer(container: VueEntitiesContainer,
-                             forcedProximity: VueModelVisitor.Proximity,
-                             webTypesContributions: MultiMap<WebTypesSymbolLocation, WebSymbol>,
-                             consumer: (WebSymbol) -> Unit) {
+  private fun visitContainer(
+    container: VueEntitiesContainer,
+    forcedProximity: VueModelVisitor.Proximity,
+    webTypesContributions: MultiMap<WebTypesSymbolLocation, WebSymbol>,
+    consumer: (WebSymbol) -> Unit,
+  ) {
     container.acceptEntities(object : VueModelVisitor() {
 
       override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
@@ -199,10 +203,12 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
     return emptyList()
   }
 
-  private fun symbolLocationsForModule(context: PsiElement,
-                                       moduleName: String?,
-                                       symbolName: String?,
-                                       symbolKind: String): List<WebTypesSymbolLocation> =
+  private fun symbolLocationsForModule(
+    context: PsiElement,
+    moduleName: String?,
+    symbolName: String?,
+    symbolKind: String,
+  ): List<WebTypesSymbolLocation> =
     if (symbolName != null && moduleName != null) {
       val result = mutableListOf<WebTypesSymbolLocation>()
       val unquotedModule = StringUtil.unquoteString(moduleName)
