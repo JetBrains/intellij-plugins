@@ -16,10 +16,15 @@ import org.jetbrains.vuejs.model.VueModelOwner
 
 private const val UPDATE_PREFIX = "update:"
 
-class VueEmitCallSymbol(emitCall: VueEmitCall,
-                        owner: VueComponent,
-                        origin: WebSymbolOrigin)
-  : VueNamedWebSymbol<VueEmitCall>(emitCall, origin = origin, owner = owner) {
+class VueEmitCallSymbol(
+  emitCall: VueEmitCall,
+  owner: VueComponent,
+  origin: WebSymbolOrigin,
+) : VueNamedWebSymbol<VueEmitCall>(
+  item = emitCall,
+  origin = origin,
+  owner = owner,
+) {
 
   override val qualifiedKind: WebSymbolQualifiedKind
     get() = WebSymbol.JS_EVENTS
