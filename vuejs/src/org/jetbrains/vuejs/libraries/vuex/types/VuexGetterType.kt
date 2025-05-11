@@ -3,7 +3,10 @@ package org.jetbrains.vuejs.libraries.vuex.types
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSType.TypeTextFormat
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSCodeBasedType
+import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.util.ProcessingContext
 
 class VuexGetterType(source: JSTypeSource,
