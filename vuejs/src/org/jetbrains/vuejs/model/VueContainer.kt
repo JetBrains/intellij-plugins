@@ -28,7 +28,7 @@ interface VueContainer : VueEntitiesContainer {
 
 data class VueModelDirectiveProperties(
   val prop: String? = null,
-  val event: String? = null
+  val event: String? = null,
 ) {
   companion object {
 
