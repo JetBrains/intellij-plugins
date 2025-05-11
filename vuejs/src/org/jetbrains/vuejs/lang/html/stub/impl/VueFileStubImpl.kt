@@ -12,6 +12,7 @@ class VueFileStubImpl : PsiFileStubImpl<VueFile> {
   constructor(file: VueFile) : super(file) {
     this.langMode = file.langMode
   }
+
   constructor(langMode: LangMode) : super(null) {
     this.langMode = langMode
   }
