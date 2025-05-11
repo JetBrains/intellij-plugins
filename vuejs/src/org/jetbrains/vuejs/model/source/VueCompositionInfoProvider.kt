@@ -33,19 +33,19 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
   class VueCompositionInfo(val initializer: JSObjectLiteralExpression) : VueContainerInfo {
 
     override val computed: List<VueComputedProperty>
-      get() = rawBindings.filterIsInstance(VueComputedProperty::class.java)
+      get() = rawBindings.filterIsInstance<VueComputedProperty>()
 
     override val data: List<VueDataProperty>
-      get() = rawBindings.filterIsInstance(VueDataProperty::class.java)
+      get() = rawBindings.filterIsInstance<VueDataProperty>()
 
     override val methods: List<VueMethod>
-      get() = rawBindings.filterIsInstance(VueMethod::class.java)
+      get() = rawBindings.filterIsInstance<VueMethod>()
 
     override val provides: List<VueProvide>
-      get() = methodCalls.filterIsInstance(VueProvide::class.java)
+      get() = methodCalls.filterIsInstance<VueProvide>()
 
     override val injects: List<VueInject>
-      get() = methodCalls.filterIsInstance(VueInject::class.java)
+      get() = methodCalls.filterIsInstance<VueInject>()
 
     private val rawBindings: List<VueNamedSymbol>
       get() = CachedValuesManager.getCachedValue(initializer) {
