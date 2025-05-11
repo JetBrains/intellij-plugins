@@ -73,9 +73,11 @@ private class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAt
         VueEmbeddedExpressionInfo(attributeInfo, (lexer as VueLexer).langMode, project)
       }
 
-  private class VueEmbeddedExpressionInfo(val attributeInfo: VueAttributeNameParser.VueAttributeInfo,
-                                          val langMode: LangMode,
-                                          val project: Project?) : HtmlEmbedmentInfo {
+  private class VueEmbeddedExpressionInfo(
+    val attributeInfo: VueAttributeNameParser.VueAttributeInfo,
+    val langMode: LangMode,
+    val project: Project?,
+  ) : HtmlEmbedmentInfo {
     override fun getElementType(): IElementType =
       VueJSEmbeddedExprTokenType.createEmbeddedExpression(attributeInfo, langMode, project)
 
