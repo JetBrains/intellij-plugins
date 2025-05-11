@@ -31,9 +31,11 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
 
   override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
       qualifiedName.matches(HTML_ATTRIBUTES) ->
@@ -43,9 +45,11 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
       else -> emptyList()
     }
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolsScope> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
       qualifiedKind == HTML_ATTRIBUTES ->
@@ -55,9 +59,11 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
       else -> emptyList()
     }
 
-  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsCodeCompletionQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
+  override fun getCodeCompletions(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsCodeCompletionQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolCodeCompletionItem> =
     if (qualifiedName.matches(VUE_AVAILABLE_SLOTS) && params.queryExecutor.allowResolve)
       getAvailableSlotsCompletions(tag, qualifiedName.name, params.position, true)
     else emptyList()
