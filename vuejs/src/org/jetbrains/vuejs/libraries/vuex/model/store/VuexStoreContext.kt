@@ -11,8 +11,10 @@ interface VuexStoreContext {
   val registeredModules: List<VuexModule>
   val element: PsiElement
 
-  fun <T : VuexNamedSymbol> visitSymbols(symbolAccessor: (VuexContainer) -> Map<String, T>,
-                                         consumer: (qualifiedName: String, symbol: T) -> Unit) {
+  fun <T : VuexNamedSymbol> visitSymbols(
+    symbolAccessor: (VuexContainer) -> Map<String, T>,
+    consumer: (qualifiedName: String, symbol: T) -> Unit,
+  ) {
     val visited = mutableSetOf<String>()
     visit { qualifiedName, container ->
       for (entry in symbolAccessor(container)) {
@@ -31,8 +33,10 @@ interface VuexStoreContext {
     }
   }
 
-  fun visit(symbolAccessor: VuexSymbolAccessor?,
-            consumer: (qualifiedName: String, symbol: Any) -> Unit) {
+  fun visit(
+    symbolAccessor: VuexSymbolAccessor?,
+    consumer: (qualifiedName: String, symbol: Any) -> Unit,
+  ) {
     if (symbolAccessor == null) {
       visit(consumer)
     }
