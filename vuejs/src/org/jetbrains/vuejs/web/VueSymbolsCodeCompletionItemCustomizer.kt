@@ -19,11 +19,15 @@ import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.isVueFileName
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 
-class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
-  override fun customize(item: WebSymbolCodeCompletionItem,
-                         framework: FrameworkId?,
-                         qualifiedKind: WebSymbolQualifiedKind,
-                         location: PsiElement): WebSymbolCodeCompletionItem? =
+class VueSymbolsCodeCompletionItemCustomizer :
+  WebSymbolCodeCompletionItemCustomizer {
+
+  override fun customize(
+    item: WebSymbolCodeCompletionItem,
+    framework: FrameworkId?,
+    qualifiedKind: WebSymbolQualifiedKind,
+    location: PsiElement,
+  ): WebSymbolCodeCompletionItem? =
     if (framework == VueFramework.ID)
       when (qualifiedKind) {
         WebSymbol.HTML_ATTRIBUTES ->
