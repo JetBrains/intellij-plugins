@@ -16,8 +16,10 @@ interface VueScopeElement : VueDocumentedItem {
       return source?.takeIf { it.isValid }?.let { VueModelManager.getGlobal(it) }
     }
 
-  fun acceptEntities(visitor: VueModelVisitor,
-                     minimumProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.GLOBAL): Boolean {
+  fun acceptEntities(
+    visitor: VueModelVisitor,
+    minimumProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.GLOBAL,
+  ): Boolean {
     val visited = mutableSetOf<Pair<String, VueScopeElement>>()
     val containersStack = mutableListOf<Pair<VueEntitiesContainer, VueModelVisitor.Proximity>>()
 
