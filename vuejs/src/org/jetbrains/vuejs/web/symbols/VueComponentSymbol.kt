@@ -19,8 +19,11 @@ import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
 import org.jetbrains.vuejs.web.*
 
-class VueComponentSymbol(name: String, component: VueComponent, private val vueProximity: VueModelVisitor.Proximity) :
-  VueScopeElementSymbol<VueComponent>(name, component) {
+class VueComponentSymbol(
+  name: String,
+  component: VueComponent,
+  private val vueProximity: VueModelVisitor.Proximity,
+) : VueScopeElementSymbol<VueComponent>(name, component) {
 
   private val isCompositionComponent: Boolean = VueCompositionApp.isCompositionAppComponent(component)
 
@@ -58,18 +61,22 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
     get() = mapOf(Pair(PROP_VUE_PROXIMITY, vueProximity), Pair(
       PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     if (qualifiedName.matches(WebSymbol.HTML_SLOTS) && item is VueUnresolvedComponent)
       listOf(WebSymbolMatch.create(qualifiedName.name, WebSymbol.HTML_SLOTS, this.origin,
                                    WebSymbolNameSegment.create(0, qualifiedName.name.length)))
     else
       super.getMatchingSymbols(qualifiedName, params, scope)
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolsScope> =
     when (qualifiedKind) {
       VUE_COMPONENT_PROPS -> {
         val props = mutableListOf<VueInputProperty>()
