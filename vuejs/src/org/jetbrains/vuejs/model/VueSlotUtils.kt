@@ -34,11 +34,12 @@ const val SLOT_NAME_ATTRIBUTE = "name"
 const val DEPRECATED_SLOT_ATTRIBUTE = "slot"
 
 fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<WebSymbol> =
-  processSlots(tag, newApi, {
-    anySlot.match(name, WebSymbolsNameMatchQueryParams.create(WebSymbolsQueryExecutorFactory.getInstance(tag.project).create(null)), Stack())
-  }, {
-    runNameMatchQuery(WebSymbol.HTML_SLOTS.withName(name))
-  })
+  processSlots(
+    tag = tag,
+    newApi = newApi,
+    anyMatch = { anySlot.match(name, WebSymbolsNameMatchQueryParams.create(WebSymbolsQueryExecutorFactory.getInstance(tag.project).create(null)), Stack()) },
+    process = { runNameMatchQuery(WebSymbol.HTML_SLOTS.withName(name)) },
+  )
 
 fun getAvailableSlots(tag: XmlTag, expandPatterns: Boolean, newApi: Boolean): List<WebSymbol> =
   processSlots(tag, newApi, { emptyList() }) {
