@@ -19,10 +19,13 @@ import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
 import java.util.*
 import java.util.function.Function
 
-abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
-                                             protected val element: PsiElement,
-                                             protected val baseNamespace: VuexStoreNamespace)
-  : JSTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
+abstract class VuexContainerPropertyTypeBase(
+  source: JSTypeSource,
+  protected val element: PsiElement,
+  protected val baseNamespace: VuexStoreNamespace,
+) : JSTypeBaseImpl(source),
+    JSCodeBasedType,
+    JSTypeWithIncompleteSubstitution {
 
 
   override fun hashCodeImpl(): Int {
