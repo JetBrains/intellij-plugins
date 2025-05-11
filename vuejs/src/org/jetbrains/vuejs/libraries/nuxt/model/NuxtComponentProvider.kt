@@ -23,8 +23,10 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 class NuxtComponentProvider : VueContainerInfoProvider {
   private val LAZY = "lazy" // https://nuxtjs.org/docs/directory-structure/components#dynamic-imports
 
-  override fun getAdditionalComponents(scope: GlobalSearchScope,
-                                       sourceComponents: VueContainerInfoProvider.ComponentsInfo): VueContainerInfoProvider.ComponentsInfo? =
+  override fun getAdditionalComponents(
+    scope: GlobalSearchScope,
+    sourceComponents: VueContainerInfoProvider.ComponentsInfo,
+  ): VueContainerInfoProvider.ComponentsInfo? =
     NuxtModelManager.getApplication(scope)
       ?.config
       ?.takeIf { config ->
