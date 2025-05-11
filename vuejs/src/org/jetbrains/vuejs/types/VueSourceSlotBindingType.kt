@@ -12,10 +12,13 @@ import com.intellij.util.AstLoadingFilter
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 
-class VueSourceSlotBindingType private constructor(typeSource: JSTypeSource,
-                                                   private val attribute: XmlAttribute,
-                                                   private val bindingName: String)
-  : JSTypeBaseImpl(typeSource), JSCodeBasedType {
+class VueSourceSlotBindingType
+private constructor(
+  typeSource: JSTypeSource,
+  private val attribute: XmlAttribute,
+  private val bindingName: String,
+) : JSTypeBaseImpl(typeSource),
+    JSCodeBasedType {
 
   constructor(attribute: XmlAttribute, bindingName: String) :
     this(JSTypeSourceFactory.createTypeSource(attribute, true), attribute, bindingName)
