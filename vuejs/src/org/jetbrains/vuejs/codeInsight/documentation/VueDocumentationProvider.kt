@@ -90,8 +90,11 @@ class VueDocumentationProvider : DocumentationProvider {
     return result.toString()
   }
 
-  private class PsiWrappedVueDocumentedItem(val item: VueItemDocumentation,
-                                            private val source: PsiElement) : FakePsiElement(), PsiNamedElement {
+  private class PsiWrappedVueDocumentedItem(
+    val item: VueItemDocumentation,
+    private val source: PsiElement,
+  ) : FakePsiElement(),
+      PsiNamedElement {
     override fun getParent(): PsiElement = source
     override fun getName(): String = item.defaultName ?: (VueBundle.message("vue.documentation.vue") + " " + item.type)
   }
