@@ -4,11 +4,11 @@ package org.jetbrains.vuejs.cli
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
-import com.intellij.webpack.WebpackConfigLocator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
+import com.intellij.webpack.WebpackConfigLocator
 
 class VueCliWebpackConfigLocator : WebpackConfigLocator {
   override fun detectConfig(project: Project, context: PsiElement): VirtualFile? {
