@@ -18,7 +18,9 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.*
+import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
+import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
+import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
 
 abstract class VueTypedContainer(override val source: PsiElement) : VueContainer {
 
