@@ -17,8 +17,11 @@ import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
-open class VueDirectiveSymbol(name: String, directive: VueDirective, private val vueProximity: VueModelVisitor.Proximity) :
-  VueScopeElementSymbol<VueDirective>(fromAsset(name), directive) {
+open class VueDirectiveSymbol(
+  name: String,
+  directive: VueDirective,
+  private val vueProximity: VueModelVisitor.Proximity,
+) : VueScopeElementSymbol<VueDirective>(fromAsset(name), directive) {
 
   override val qualifiedKind: WebSymbolQualifiedKind
     get() = VUE_DIRECTIVES
@@ -26,17 +29,21 @@ open class VueDirectiveSymbol(name: String, directive: VueDirective, private val
   override val priority: WebSymbol.Priority
     get() = vueProximity.asWebSymbolPriority()
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
       listOf(VueAnySymbol(this.origin, qualifiedName.qualifiedKind, qualifiedName.name))
     }
     else emptyList()
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     if (qualifiedKind == VUE_DIRECTIVE_ARGUMENT) {
       listOf(VueAnySymbol(this.origin, qualifiedKind, "Vue directive argument"))
     }
