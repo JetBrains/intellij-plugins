@@ -186,9 +186,11 @@ interface VueEntityDescriptor {
   val source: PsiElement
 }
 
-class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralExpression | PsiFile */ = null,
-                                val clazz: JSClass? = null,
-                                override val source: PsiElement = clazz ?: initializer!!) : VueEntityDescriptor {
+class VueSourceEntityDescriptor(
+  val initializer: JSElement? /* JSObjectLiteralExpression | PsiFile */ = null,
+  val clazz: JSClass? = null,
+  override val source: PsiElement = clazz ?: initializer!!,
+) : VueEntityDescriptor {
   init {
     assert(initializer == null || initializer is JSObjectLiteralExpression || initializer is JSFile)
     source.let { PsiUtilCore.ensureValid(it) }
@@ -242,9 +244,11 @@ class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralEx
   }
 
   companion object {
-    fun tryCreate(initializer: JSElement? /* JSObjectLiteralExpression | PsiFile */ = null,
-                  clazz: JSClass? = null,
-                  source: PsiElement = clazz ?: initializer!!): VueSourceEntityDescriptor? =
+    fun tryCreate(
+      initializer: JSElement? /* JSObjectLiteralExpression | PsiFile */ = null,
+      clazz: JSClass? = null,
+      source: PsiElement = clazz ?: initializer!!,
+    ): VueSourceEntityDescriptor? =
       try {
         VueSourceEntityDescriptor(initializer, clazz, source)
       }
