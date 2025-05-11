@@ -23,9 +23,11 @@ import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.intentions.extractComponent.VueComponentInplaceIntroducer.Companion.GROUP_ID
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 
-class VueExtractComponentRefactoring(private val project: Project,
-                                     private val list: List<XmlTag>,
-                                     private val editor: Editor) {
+class VueExtractComponentRefactoring(
+  private val project: Project,
+  private val list: List<XmlTag>,
+  private val editor: Editor,
+) {
   fun perform(defaultName: String? = null, fireRefactoringEvents: Boolean = false) {
     if (list.isEmpty() ||
         list[0].containingFile == null ||
@@ -47,7 +49,7 @@ class VueExtractComponentRefactoring(private val project: Project,
       var startMarkAction: StartMarkAction? = null
       WriteAction.run<RuntimeException> {
         startMarkAction = StartMarkAction.start(editor, project, refactoringName)
-        startMarkAction!!.setGlobal(true)
+        startMarkAction!!.isGlobal = true
         newlyAdded = data.replaceWithNewTag(defaultName ?: "NewComponent") as? XmlTag
       }
       VueComponentInplaceIntroducer(newlyAdded!!, editor, data, oldText,
