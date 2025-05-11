@@ -84,8 +84,10 @@ class VueComponentsCalculation {
     private class SingleGlobalRegistration(val realName: String, val alias: String, val element: PsiElement)
 
     // resolves name of 'singular' registration of Vue.component(ref (SomeComp.name or ref = 'literalName'), ref (SomeComp))
-    private fun resolveGlobalComponentName(element: JSImplicitElement,
-                                           descriptor: JSObjectLiteralExpression?): SingleGlobalRegistration? {
+    private fun resolveGlobalComponentName(
+      element: JSImplicitElement,
+      descriptor: JSObjectLiteralExpression?,
+    ): SingleGlobalRegistration? {
       val context = element.context as? JSCallExpression ?: return null
       val indexData = getVueIndexData(element)
       val nameReference = indexData?.nameQualifiedReference ?: return null
@@ -119,9 +121,11 @@ class VueComponentsCalculation {
     private fun getNameFromDescriptor(descriptor: JSObjectLiteralExpression): String? =
       (descriptor.findProperty(NAME_PROP)?.jsType as? JSStringLiteralTypeImpl)?.literal
 
-    private fun processComponentGroupRegistration(objLiteral: JSObjectLiteralExpression,
-                                                  libCompResolveMap: MutableMap<String, String>,
-                                                  componentData: MutableMap<String, MutableList<Pair<PsiElement, Boolean>>>) {
+    private fun processComponentGroupRegistration(
+      objLiteral: JSObjectLiteralExpression,
+      libCompResolveMap: MutableMap<String, String>,
+      componentData: MutableMap<String, MutableList<Pair<PsiElement, Boolean>>>,
+    ) {
       // object properties iteration
       val queue = ArrayDeque<PsiElement>()
       queue.addAll(objLiteral.propertiesIncludingSpreads)
@@ -167,6 +171,8 @@ class VueComponentsCalculation {
     }
   }
 
-  class ComponentsData(val map: Map<String, Pair<PsiElement, Boolean>>,
-                       val libCompResolveMap: Map<String, String>)
+  class ComponentsData(
+    val map: Map<String, Pair<PsiElement, Boolean>>,
+    val libCompResolveMap: Map<String, String>,
+  )
 }
