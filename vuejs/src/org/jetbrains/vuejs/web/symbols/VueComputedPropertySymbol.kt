@@ -10,10 +10,11 @@ import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 
-class VueComputedPropertySymbol(data: VueComputedProperty,
-                                owner: VueComponent,
-                                origin: WebSymbolOrigin)
-  : VuePropertySymbol<VueComputedProperty>(data, owner, origin) {
+class VueComputedPropertySymbol(
+  data: VueComputedProperty,
+  owner: VueComponent,
+  origin: WebSymbolOrigin,
+) : VuePropertySymbol<VueComputedProperty>(data, owner, origin) {
 
   override val qualifiedKind: WebSymbolQualifiedKind
     get() = VUE_COMPONENT_COMPUTED_PROPERTIES
