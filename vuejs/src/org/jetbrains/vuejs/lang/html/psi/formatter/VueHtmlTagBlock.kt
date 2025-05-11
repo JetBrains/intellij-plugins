@@ -12,7 +12,6 @@ import com.intellij.psi.formatter.xml.XmlFormattingPolicy
 import com.intellij.psi.formatter.xml.XmlTagBlock
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
-import java.util.*
 
 class VueHtmlTagBlock(node: ASTNode,
                       wrap: Wrap?,
