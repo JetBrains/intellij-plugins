@@ -6,8 +6,9 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitFunctionImpl
 import com.intellij.psi.PsiElement
 
-class VueImplicitFunction(name: String, returnType: JSType?,
-                          provider: PsiElement, parameters: List<JSParameterItem>) :
-  JSLocalImplicitFunctionImpl(name, returnType, provider, *parameters.toTypedArray()) {
-
-}
+class VueImplicitFunction(
+  name: String,
+  returnType: JSType?,
+  provider: PsiElement,
+  parameters: List<JSParameterItem>,
+) : JSLocalImplicitFunctionImpl(name, returnType, provider, *parameters.toTypedArray())
