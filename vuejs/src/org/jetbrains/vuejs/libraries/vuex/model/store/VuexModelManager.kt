@@ -90,8 +90,10 @@ object VuexModelManager {
                                                  implicitElement.context ?: return null)
   }
 
-  private class VuexStoreContextImpl(override val rootStores: List<VuexStore>,
-                                     override val registeredModules: List<VuexModule>,
-                                     override val element: PsiElement) : VuexStoreContext
+  private class VuexStoreContextImpl(
+    override val rootStores: List<VuexStore>,
+    override val registeredModules: List<VuexModule>,
+    override val element: PsiElement,
+  ) : VuexStoreContext
 
 }
