@@ -11,9 +11,12 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 import java.util.*
 
-abstract class VueSourceContainer(sourceElement: JSImplicitElement,
-                                  override val descriptor: VueSourceEntityDescriptor)
-  : UserDataHolderBase(), VueContainer, VueSourceEntity {
+abstract class VueSourceContainer(
+  sourceElement: JSImplicitElement,
+  override val descriptor: VueSourceEntityDescriptor,
+) : UserDataHolderBase(),
+    VueContainer,
+    VueSourceEntity {
 
   override val source: PsiElement = sourceElement
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
