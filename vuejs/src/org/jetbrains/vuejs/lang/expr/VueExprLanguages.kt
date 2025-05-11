@@ -8,19 +8,28 @@ import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 
-class VueJSLanguage private constructor() : JSLanguageDialect("VueJS", DialectOptionHolder.JS_WITH_JSX,
-                                        JavaScriptSupportLoader.ECMA_SCRIPT_6), DependentLanguage  {
+object VueJSLanguage :
+  JSLanguageDialect(
+    id = "VueJS",
+    optionHolder = DialectOptionHolder.JS_WITH_JSX,
+    baseLanguage = JavaScriptSupportLoader.ECMA_SCRIPT_6,
+  ),
+  DependentLanguage {
 
-  companion object {
-    val INSTANCE: VueJSLanguage = VueJSLanguage()
-  }
+  inline val INSTANCE: VueJSLanguage
+    get() = VueJSLanguage
 }
 
-class VueTSLanguage private constructor() : JSLanguageDialect("VueTS", DialectOptionHolder.TS, JavaScriptSupportLoader.TYPESCRIPT), DependentLanguage {
+object VueTSLanguage :
+  JSLanguageDialect(
+    id = "VueTS",
+    optionHolder = DialectOptionHolder.TS,
+    baseLanguage = JavaScriptSupportLoader.TYPESCRIPT,
+  ),
+  DependentLanguage {
 
-  companion object {
-    val INSTANCE: VueTSLanguage = VueTSLanguage()
-  }
+  inline val INSTANCE: VueTSLanguage
+    get() = VueTSLanguage
 }
 
 private val vueExprLanguages = setOf<JSLanguageDialect>(VueJSLanguage.INSTANCE, VueTSLanguage.INSTANCE)

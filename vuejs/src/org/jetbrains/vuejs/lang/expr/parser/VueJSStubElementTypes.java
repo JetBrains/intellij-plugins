@@ -20,9 +20,8 @@ public interface VueJSStubElementTypes {
     new VueJSScriptSetupTypeParameterListElementType();
 
   VueJSEmbeddedExpressionContentElementType EMBEDDED_EXPR_CONTENT_JS = new VueJSEmbeddedExpressionContentElementType(
-    "EMBEDDED_EXPR_CONTENT_JS", VueJSLanguage.Companion.getINSTANCE());
+    "EMBEDDED_EXPR_CONTENT_JS", VueJSLanguage.INSTANCE);
 
   VueJSEmbeddedExpressionContentElementType EMBEDDED_EXPR_CONTENT_TS = new VueJSEmbeddedExpressionContentElementType(
-    "EMBEDDED_EXPR_CONTENT_TS", VueTSLanguage.Companion.getINSTANCE());
+    "EMBEDDED_EXPR_CONTENT_TS", VueTSLanguage.INSTANCE);
 }
-
