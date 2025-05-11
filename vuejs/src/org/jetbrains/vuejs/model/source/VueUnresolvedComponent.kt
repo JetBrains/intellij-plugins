@@ -12,9 +12,11 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
 
-class VueUnresolvedComponent(private val context: PsiElement,
-                             override val rawSource: PsiElement?,
-                             override val defaultName: String?) : VueComponent {
+class VueUnresolvedComponent(
+  private val context: PsiElement,
+  override val rawSource: PsiElement?,
+  override val defaultName: String?,
+) : VueComponent {
 
   override val source: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     (rawSource as? ES6ImportSpecifier)?.resolveIfImportSpecifier() ?: rawSource
