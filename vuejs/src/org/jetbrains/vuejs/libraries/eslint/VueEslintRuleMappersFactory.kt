@@ -171,7 +171,7 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
 
   private class EslintHtmlSettingsConverter(
     private val inSync: (common: CommonCodeStyleSettings, custom: HtmlCodeStyleSettings) -> Boolean,
-    private val applier: (common: CommonCodeStyleSettings, custom: HtmlCodeStyleSettings) -> Unit
+    private val applier: (common: CommonCodeStyleSettings, custom: HtmlCodeStyleSettings) -> Unit,
   ) : EslintSettingsConverter {
 
     override fun inSync(settings: CodeStyleSettings): Boolean {
