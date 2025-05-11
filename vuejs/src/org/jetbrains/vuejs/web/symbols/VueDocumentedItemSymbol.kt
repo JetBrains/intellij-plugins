@@ -1,10 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.model.Symbol
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
+import com.intellij.webSymbols.PsiSourcedWebSymbol
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
