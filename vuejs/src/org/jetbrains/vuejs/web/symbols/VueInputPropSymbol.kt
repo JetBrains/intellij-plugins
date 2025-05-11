@@ -11,10 +11,11 @@ import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
 
-class VueInputPropSymbol(property: VueInputProperty,
-                         owner: VueComponent,
-                         origin: WebSymbolOrigin)
-  : VuePropertySymbol<VueInputProperty>(property, owner, origin) {
+class VueInputPropSymbol(
+  property: VueInputProperty,
+  owner: VueComponent,
+  origin: WebSymbolOrigin,
+) : VuePropertySymbol<VueInputProperty>(property, owner, origin) {
 
   override val qualifiedKind: WebSymbolQualifiedKind
     get() = VUE_COMPONENT_PROPS
