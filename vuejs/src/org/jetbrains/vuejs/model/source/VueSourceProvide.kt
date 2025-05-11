@@ -6,9 +6,9 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.vuejs.model.resolveInjectionSymbol
 import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueProvide
+import org.jetbrains.vuejs.model.resolveInjectionSymbol
 import org.jetbrains.vuejs.types.VueSourceProvideType
 
 class VueSourceProvide(
