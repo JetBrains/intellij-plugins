@@ -5,11 +5,14 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 
 interface VueExprParser {
-    fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeNameParser.VueAttributeInfo?)
+  fun parseEmbeddedExpression(
+    root: IElementType,
+    attributeInfo: VueAttributeNameParser.VueAttributeInfo?,
+  )
 
-    fun parseInterpolation(root: IElementType) {
-      parseEmbeddedExpression(root, null)
-    }
-
-    fun parseJS(root: IElementType)
+  fun parseInterpolation(root: IElementType) {
+    parseEmbeddedExpression(root, null)
   }
+
+  fun parseJS(root: IElementType)
+}
