@@ -19,24 +19,32 @@ import java.util.*
 /**
  * This container ensures that components from other container are not self referred without export declaration with component name or script setup
  */
-class VueIncorrectlySelfReferredComponentFilteringScope(private val delegate: WebSymbolsScope,
-                                                        private val file: PsiFile) : WebSymbolsScope {
+class VueIncorrectlySelfReferredComponentFilteringScope(
+  private val delegate: WebSymbolsScope,
+  private val file: PsiFile,
+) : WebSymbolsScope {
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     delegate.getMatchingSymbols(qualifiedName, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolsScope> =
     delegate.getSymbols(qualifiedKind, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
 
-  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsCodeCompletionQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
+  override fun getCodeCompletions(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsCodeCompletionQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolCodeCompletionItem> =
     delegate.getCodeCompletions(qualifiedName, params, scope)
       .filter { isNotIncorrectlySelfReferred(it.symbol) }
 
