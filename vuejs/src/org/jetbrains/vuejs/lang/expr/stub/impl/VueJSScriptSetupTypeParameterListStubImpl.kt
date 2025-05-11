@@ -11,14 +11,21 @@ import com.intellij.psi.stubs.StubInputStream
 import org.jetbrains.vuejs.lang.expr.stub.VueJSScriptSetupTypeParameterListStub
 
 
-class VueJSScriptSetupTypeParameterListStubImpl : JSStubBase<TypeScriptTypeParameterList>, VueJSScriptSetupTypeParameterListStub {
-  constructor(psi: TypeScriptTypeParameterList?,
-              parent: StubElement<*>?,
-              elementType: JSStubElementType<*, *>) : super(psi!!, parent, elementType)
+class VueJSScriptSetupTypeParameterListStubImpl :
+  JSStubBase<TypeScriptTypeParameterList>,
+  VueJSScriptSetupTypeParameterListStub {
 
-  constructor(dataStream: StubInputStream?,
-              parent: StubElement<*>?,
-              elementType: JSStubElementType<*, *>) : super(dataStream!!, parent, elementType)
+  constructor(
+    psi: TypeScriptTypeParameterList?,
+    parent: StubElement<*>?,
+    elementType: JSStubElementType<*, *>,
+  ) : super(psi!!, parent, elementType)
+
+  constructor(
+    dataStream: StubInputStream?,
+    parent: StubElement<*>?,
+    elementType: JSStubElementType<*, *>,
+  ) : super(dataStream!!, parent, elementType)
 
   override fun createPsi(): TypeScriptTypeParameterList {
     return TypeScriptTypeParameterListImpl(this, TypeScriptStubElementTypes.TYPE_PARAMETER_LIST)
