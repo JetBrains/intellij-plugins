@@ -40,6 +40,7 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.isVueFile
+import org.jetbrains.vuejs.model.VueModelManager.Companion.findEnclosingContainer
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getSourceComponentDescriptor
