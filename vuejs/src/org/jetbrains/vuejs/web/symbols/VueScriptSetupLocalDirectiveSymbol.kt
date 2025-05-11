@@ -18,8 +18,10 @@ import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
-class VueScriptSetupLocalDirectiveSymbol(directive: VueScriptSetupLocalDirective, private val vueProximity: VueModelVisitor.Proximity) :
-  VueScopeElementSymbol<VueScriptSetupLocalDirective>(directive.defaultName, directive) {
+class VueScriptSetupLocalDirectiveSymbol(
+  directive: VueScriptSetupLocalDirective,
+  private val vueProximity: VueModelVisitor.Proximity,
+) : VueScopeElementSymbol<VueScriptSetupLocalDirective>(directive.defaultName, directive) {
 
   override val qualifiedKind: WebSymbolQualifiedKind
     get() = VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
@@ -34,17 +36,21 @@ class VueScriptSetupLocalDirectiveSymbol(directive: VueScriptSetupLocalDirective
     return super.isEquivalentTo(symbol)
   }
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
       listOf(VueAnySymbol(this.origin, qualifiedName.qualifiedKind, qualifiedName.name))
     }
     else emptyList()
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     if (qualifiedKind == VUE_DIRECTIVE_ARGUMENT
         && !params.expandPatterns) {
       listOf(VueAnySymbol(this.origin, qualifiedKind, "Vue directive argument"))
