@@ -24,10 +24,12 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
 
-class VueWebTypesMergedSymbol(override val name: String,
-                              sourceSymbol: PsiSourcedWebSymbol,
-                              val webTypesSymbols: Collection<WebSymbol>)
-  : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(sourceSymbol), CompositeWebSymbol {
+class VueWebTypesMergedSymbol(
+  override val name: String,
+  sourceSymbol: PsiSourcedWebSymbol,
+  val webTypesSymbols: Collection<WebSymbol>,
+) : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(sourceSymbol),
+    CompositeWebSymbol {
 
   private val symbols: List<WebSymbol> = sequenceOf(sourceSymbol)
     .plus(webTypesSymbols).toList()
@@ -103,9 +105,11 @@ class VueWebTypesMergedSymbol(override val name: String,
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
     VueMergedSymbolDocumentationTarget(this, location, originalName ?: name)
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> =
     symbols
       .flatMap {
         it.getMatchingSymbols(qualifiedName, params, scope)
@@ -120,9 +124,11 @@ class VueWebTypesMergedSymbol(override val name: String,
         }
       }
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolsScope> =
     symbols
       .flatMap {
         it.getSymbols(qualifiedKind, params, scope)
@@ -154,9 +160,11 @@ class VueWebTypesMergedSymbol(override val name: String,
       }
     ?: emptyList()
 
-  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsCodeCompletionQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
+  override fun getCodeCompletions(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsCodeCompletionQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolCodeCompletionItem> =
     symbols.asSequence()
       .flatMap { it.getCodeCompletions(qualifiedName, params, scope) }
       .groupBy { it.name }
