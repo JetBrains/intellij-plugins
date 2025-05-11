@@ -34,11 +34,13 @@ class VuexDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecorated
           val decorator = findDecorator(member, VUEX_DEC_MAPPERS)
           when (decorator?.decoratorName) {
             STATE_DEC,
-            GETTER_DEC -> if (member is JSRecordType.PropertySignature) {
+            GETTER_DEC,
+              -> if (member is JSRecordType.PropertySignature) {
               computed.add(VuexMappedComputedProperty(member))
             }
             ACTION_DEC,
-            MUTATION_DEC -> if (member is JSRecordType.PropertySignature) {
+            MUTATION_DEC,
+              -> if (member is JSRecordType.PropertySignature) {
               methods.add(VuexMappedMethod(member))
             }
           }
