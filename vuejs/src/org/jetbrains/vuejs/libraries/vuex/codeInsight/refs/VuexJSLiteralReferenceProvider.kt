@@ -63,8 +63,10 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         }
       }
 
-      private fun computeNamespace(referenceName: String?,
-                                   reference: JSReferenceExpression): VuexStoreNamespace? {
+      private fun computeNamespace(
+        referenceName: String?,
+        reference: JSReferenceExpression,
+      ): VuexStoreNamespace? {
         referenceName ?: return null
         when (val firstQualifier = reference.qualifier) {
           null -> {
@@ -158,10 +160,12 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         }
       }
 
-      private fun computeNamespace(accessor: VuexSymbolAccessor?,
-                                   functionRef: JSReferenceExpression,
-                                   functionName: String,
-                                   element: PsiElement): VuexStoreNamespace? {
+      private fun computeNamespace(
+        accessor: VuexSymbolAccessor?,
+        functionRef: JSReferenceExpression,
+        functionName: String,
+        element: PsiElement,
+      ): VuexStoreNamespace? {
         if (accessor !== null) {
           val qualifier = functionRef.qualifier
           if (qualifier === null) {
@@ -225,8 +229,10 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
           VuexStoreActionContextNamespace()
         }
 
-    private fun isRootCall(functionName: @Nullable String,
-                           element: PsiElement): Boolean =
+    private fun isRootCall(
+      functionName: @Nullable String,
+      element: PsiElement,
+    ): Boolean =
       (functionName == DISPATCH || functionName == COMMIT)
       && element.contextOfType(JSCallExpression::class)
         ?.arguments
