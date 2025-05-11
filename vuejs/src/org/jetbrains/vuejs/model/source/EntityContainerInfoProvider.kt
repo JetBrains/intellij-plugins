@@ -74,9 +74,10 @@ interface EntityContainerInfoProvider<T> {
 
     abstract class MapAccessor<T> : MemberAccessor<Map<String, T>>()
 
-    class SimpleMemberAccessor<T>(private val memberReader: MemberReader,
-                                  private val provider: (String, JSElement) -> T)
-      : ListAccessor<T>() {
+    class SimpleMemberAccessor<T>(
+      private val memberReader: MemberReader,
+      private val provider: (String, JSElement) -> T,
+    ) : ListAccessor<T>() {
 
       override fun build(declaration: JSElement): List<T> {
         return memberReader.readMembers(declaration).map { (name, element) -> provider(name, element) }
@@ -84,8 +85,10 @@ interface EntityContainerInfoProvider<T> {
     }
 
 
-    class SimpleMemberMapAccessor<T>(private val memberReader: MemberReader,
-                                     private val provider: (String, JSElement) -> T) : MapAccessor<T>() {
+    class SimpleMemberMapAccessor<T>(
+      private val memberReader: MemberReader,
+      private val provider: (String, JSElement) -> T,
+    ) : MapAccessor<T>() {
 
       override fun build(declaration: JSElement): Map<String, T> {
         return memberReader.readMembers(declaration)
@@ -119,12 +122,14 @@ interface EntityContainerInfoProvider<T> {
           ?.literal == true
     }
 
-    open class MemberReader(private val propertyName: String,
-                            private val canBeArray: Boolean = false,
-                            private val canBeObject: Boolean = true,
-                            private val canBeFunctionResult: Boolean = false,
-                            private val includeComputed: Boolean = false,
-                            private val customTypeProvider: ((JSProperty) -> JSType?)? = null) {
+    open class MemberReader(
+      private val propertyName: String,
+      private val canBeArray: Boolean = false,
+      private val canBeObject: Boolean = true,
+      private val canBeFunctionResult: Boolean = false,
+      private val includeComputed: Boolean = false,
+      private val customTypeProvider: ((JSProperty) -> JSType?)? = null,
+    ) {
       fun readMembers(descriptor: JSElement): List<Pair<String, JSElement>> =
         when (descriptor) {
           is JSObjectLiteralExpression -> readObjectLiteral(descriptor)
