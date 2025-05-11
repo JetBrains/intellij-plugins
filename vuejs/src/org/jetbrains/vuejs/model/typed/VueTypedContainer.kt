@@ -74,7 +74,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
           ?.jsType
           ?.asRecordType()
           ?.properties
-          ?.mapNotNull{ signature ->
+          ?.mapNotNull { signature ->
             VueTypedSlot(signature.memberName, signature.memberSource.singleElement, signature.jsType)
           }
         ?: emptyList(),
@@ -128,12 +128,13 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
   private abstract class VueTypedProperty(val property: PropertySignature) : VueTypedDocumentedElement(), VueProperty {
     override val name: String get() = property.memberName
     override val jsType: JSType? get() = property.jsType
-    override val source: PsiElement? get() = property.memberSource.singleElement.let {
-      if (it is JSProperty)
-        VueImplicitElement(property.memberName, property.jsType, it, JSImplicitElement.Type.Property, true)
-      else
-        it
-    }
+    override val source: PsiElement?
+      get() = property.memberSource.singleElement.let {
+        if (it is JSProperty)
+          VueImplicitElement(property.memberName, property.jsType, it, JSImplicitElement.Type.Property, true)
+        else
+          it
+      }
   }
 
   private class VueTypedInputProperty(property: PropertySignature) : VueTypedProperty(property), VueInputProperty {
