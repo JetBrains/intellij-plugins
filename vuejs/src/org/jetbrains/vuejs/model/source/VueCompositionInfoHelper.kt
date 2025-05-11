@@ -49,9 +49,11 @@ object VueCompositionInfoHelper {
     return result ?: type
   }
 
-  private fun mapSignatureToRawBinding(signature: JSRecordType.PropertySignature,
-                                       context: JSTypeSubstitutionContextImpl,
-                                       psiContext: PsiElement): VueNamedSymbol {
+  private fun mapSignatureToRawBinding(
+    signature: JSRecordType.PropertySignature,
+    context: JSTypeSubstitutionContextImpl,
+    psiContext: PsiElement,
+  ): VueNamedSymbol {
     val name = signature.memberName
     var signatureType = signature.jsType?.let { substituteRefType(it, context) }
     var isReadOnly = false
@@ -86,16 +88,22 @@ object VueCompositionInfoHelper {
     }
   }
 
-  private class VueComposedDataProperty(override val name: String,
-                                        override val source: PsiElement?,
-                                        override val jsType: JSType?) : VueDataProperty
+  private class VueComposedDataProperty(
+    override val name: String,
+    override val source: PsiElement?,
+    override val jsType: JSType?,
+  ) : VueDataProperty
 
-  private class VueComposedComputedProperty(override val name: String,
-                                            override val source: PsiElement?,
-                                            override val jsType: JSType?) : VueComputedProperty
+  private class VueComposedComputedProperty(
+    override val name: String,
+    override val source: PsiElement?,
+    override val jsType: JSType?,
+  ) : VueComputedProperty
 
-  private class VueComposedMethod(override val name: String,
-                                  override val source: PsiElement?,
-                                  override val jsType: JSType?) : VueMethod
+  private class VueComposedMethod(
+    override val name: String,
+    override val source: PsiElement?,
+    override val jsType: JSType?,
+  ) : VueMethod
 
 }
