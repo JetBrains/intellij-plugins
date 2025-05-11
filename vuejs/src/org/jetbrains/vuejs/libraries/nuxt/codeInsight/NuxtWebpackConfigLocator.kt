@@ -4,11 +4,11 @@ package org.jetbrains.vuejs.libraries.nuxt.codeInsight
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
-import com.intellij.webpack.WebpackConfigLocator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
+import com.intellij.webpack.WebpackConfigLocator
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_PKG
 
 class NuxtWebpackConfigLocator : WebpackConfigLocator {
