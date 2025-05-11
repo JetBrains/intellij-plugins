@@ -16,8 +16,10 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
 class VueCssModulesInfoProvider : VueContainerInfoProvider {
 
-  override fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
-                                     standardProperties: MutableMap<String, JSRecordType.PropertySignature>): Collection<JSRecordType.PropertySignature> {
+  override fun getThisTypeProperties(
+    instanceOwner: VueInstanceOwner,
+    standardProperties: MutableMap<String, JSRecordType.PropertySignature>,
+  ): Collection<JSRecordType.PropertySignature> {
     val context = instanceOwner.source as? PsiFile ?: instanceOwner.source?.context
     return context?.containingFile
              ?.asSafely<XmlFile>()
