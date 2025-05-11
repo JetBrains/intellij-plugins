@@ -14,7 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.VueImplicitElement
-import java.util.Locale
+import java.util.*
 
 class CssModuleType private constructor(val container: PsiElement, source: JSTypeSource) : JSTypeBaseImpl(source), JSCodeBasedType {
 
