@@ -11,7 +11,10 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 import java.util.*
 
 abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
-  override val name: String, protected val item: T) : VueWebSymbolBase(), PsiSourcedWebSymbol {
+  override val name: String,
+  protected val item: T,
+) : VueWebSymbolBase(),
+    PsiSourcedWebSymbol {
 
   override val source: PsiElement?
     get() = item.source
@@ -24,8 +27,8 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
 
   override val presentation: TargetPresentation
     get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(item), name))
-        .icon(icon)
-        .presentation()
+      .icon(icon)
+      .presentation()
 
   override fun equals(other: Any?): Boolean =
     other === this ||
