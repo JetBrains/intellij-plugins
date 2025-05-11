@@ -173,11 +173,13 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
            }
   }
 
-  override fun insertRequiredImports(pasteContext: PsiElement,
-                                     data: VueTemplateExpressionsImportsTransferableData,
-                                     destinationModule: PsiElement,
-                                     imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
-                                     pasteContextLanguage: Language) {
+  override fun insertRequiredImports(
+    pasteContext: PsiElement,
+    data: VueTemplateExpressionsImportsTransferableData,
+    destinationModule: PsiElement,
+    imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
+    pasteContextLanguage: Language,
+  ) {
     ES6CreateImportUtil.addRequiredImports(destinationModule, VueJSLanguage.INSTANCE, imports)
   }
 
