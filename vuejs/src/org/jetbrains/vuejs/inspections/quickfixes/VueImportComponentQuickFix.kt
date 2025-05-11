@@ -17,9 +17,11 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.model.VueModelManager
 
-class VueImportComponentQuickFix(element: PsiElement,
-                                 private val importName: String,
-                                 elementToImport: PsiElement) : LocalQuickFixOnPsiElement(element) {
+class VueImportComponentQuickFix(
+  element: PsiElement,
+  private val importName: String,
+  elementToImport: PsiElement,
+) : LocalQuickFixOnPsiElement(element) {
 
   @SafeFieldForPreview
   private val elementToImportPtr = elementToImport.createSmartPointer()
