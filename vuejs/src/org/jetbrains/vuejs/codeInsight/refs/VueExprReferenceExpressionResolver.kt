@@ -30,9 +30,10 @@ import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 
-class VueExprReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl,
-                                         ignorePerformanceLimits: Boolean) :
-  TypeScriptReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits) {
+class VueExprReferenceExpressionResolver(
+  referenceExpression: JSReferenceExpressionImpl,
+  ignorePerformanceLimits: Boolean,
+) : TypeScriptReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits) {
 
   companion object {
     fun resolveFiltersFromReferenceExpression(expression: VueJSFilterReferenceExpression): List<VueFilter> {
@@ -66,9 +67,11 @@ class VueExprReferenceExpressionResolver(referenceExpression: JSReferenceExpress
     }
   }
 
-  override fun resolveFromIndices(localProcessor: SinkResolveProcessor<ResolveResultSink>,
-                                  excludeGlobalTypeScript: Boolean,
-                                  includeTypeOnlyContextSymbols: Boolean): Array<ResolveResult> =
+  override fun resolveFromIndices(
+    localProcessor: SinkResolveProcessor<ResolveResultSink>,
+    excludeGlobalTypeScript: Boolean,
+    includeTypeOnlyContextSymbols: Boolean,
+  ): Array<ResolveResult> =
     if (myQualifier == null) {
       val processor = WalkUpResolveProcessor(myReferencedName!!, myContainingFile, myRef)
       processor.addLocalResults(localProcessor)
@@ -113,9 +116,11 @@ class VueExprReferenceExpressionResolver(referenceExpression: JSReferenceExpress
     return results.toTypedArray()
   }
 
-  private fun remapSetterGetterIfNeeded(results: MutableList<ResolveResult>,
-                                        resolveResult: ResolveResult,
-                                        access: ReadWriteAccessDetector.Access) {
+  private fun remapSetterGetterIfNeeded(
+    results: MutableList<ResolveResult>,
+    resolveResult: ResolveResult,
+    access: ReadWriteAccessDetector.Access,
+  ) {
     val resolvedElement = resolveResult.element
     // the goal of importUsed is to apply minimal change and preserve the other previous effects of this code;
     // namely that problemKind is always ignored;
@@ -148,9 +153,11 @@ class VueExprReferenceExpressionResolver(referenceExpression: JSReferenceExpress
     }
   }
 
-  private fun findPropertyAccessor(function: JSFunctionItem,
-                                   isSetter: Boolean,
-                                   processor: (JSFunctionItem) -> Unit) {
+  private fun findPropertyAccessor(
+    function: JSFunctionItem,
+    isSetter: Boolean,
+    processor: (JSFunctionItem) -> Unit,
+  ) {
     val parent = function.parent as? JSClass
     val name = function.name
     if (name != null && parent != null) {
