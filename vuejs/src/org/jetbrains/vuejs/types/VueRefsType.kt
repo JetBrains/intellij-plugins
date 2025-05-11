@@ -17,8 +17,12 @@ import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
 import org.jetbrains.vuejs.model.source.INSTANCE_REFS_PROP
 
-class VueRefsType(source: JSTypeSource,
-                  private val instanceOwner: VueInstanceOwner) : JSTypeBaseImpl(source), JSCodeBasedType, VueCompleteType {
+class VueRefsType(
+  source: JSTypeSource,
+  private val instanceOwner: VueInstanceOwner,
+) : JSTypeBaseImpl(source),
+    JSCodeBasedType,
+    VueCompleteType {
 
   override fun copyWithNewSource(source: JSTypeSource): JSType = VueRefsType(source, instanceOwner)
 
