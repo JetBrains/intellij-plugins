@@ -23,15 +23,16 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
 import org.jetbrains.vuejs.libraries.vuex.model.store.*
 
-class VuexStoreSymbolStringReference(element: PsiElement,
-                                     rangeInElement: TextRange,
-                                     private val accessor: VuexSymbolAccessor?,
-                                     private val fullName: String,
-                                     private val terminal: Boolean,
-                                     private val namespace: VuexStoreNamespace,
-                                     soft: Boolean,
-                                     private val includeMembers: Boolean)
-  : CachingPolyReferenceBase<PsiElement>(element, rangeInElement),
+class VuexStoreSymbolStringReference(
+  element: PsiElement,
+  rangeInElement: TextRange,
+  private val accessor: VuexSymbolAccessor?,
+  private val fullName: String,
+  private val terminal: Boolean,
+  private val namespace: VuexStoreNamespace,
+  soft: Boolean,
+  private val includeMembers: Boolean,
+) : CachingPolyReferenceBase<PsiElement>(element, rangeInElement),
     EmptyResolveMessageProvider, HighlightSeverityHolder {
 
   init {
@@ -92,9 +93,14 @@ class VuexStoreSymbolStringReference(element: PsiElement,
 
   companion object {
 
-    fun getLookupItems(element: PsiElement, namespace: VuexStoreNamespace,
-                       accessor: VuexSymbolAccessor?, pathPrefix: String,
-                       wrapWithQuotes: Boolean, includeMembers: Boolean): List<LookupElement> {
+    fun getLookupItems(
+      element: PsiElement,
+      namespace: VuexStoreNamespace,
+      accessor: VuexSymbolAccessor?,
+      pathPrefix: String,
+      wrapWithQuotes: Boolean,
+      includeMembers: Boolean,
+    ): List<LookupElement> {
       val namePrefix = VuexStoreContext.appendSegment(namespace.get(element), pathPrefix)
       val result = mutableListOf<LookupElement>()
       val quote = if (wrapWithQuotes) JSCodeStyleSettings.getQuote(element) else ""
