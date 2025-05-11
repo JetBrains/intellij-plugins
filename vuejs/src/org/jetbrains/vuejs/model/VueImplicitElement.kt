@@ -12,9 +12,13 @@ import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 
-class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, kind: JSImplicitElement.Type,
-                         private val equivalentToProvider: Boolean = false)
-  : JSLocalImplicitElementImpl(name, jsType, provider, kind) {
+class VueImplicitElement(
+  name: String,
+  jsType: JSType?,
+  provider: PsiElement,
+  kind: JSImplicitElement.Type,
+  private val equivalentToProvider: Boolean = false,
+) : JSLocalImplicitElementImpl(name, jsType, provider, kind) {
 
   override fun getTextRange(): TextRange? {
     return myProvider.textRange
