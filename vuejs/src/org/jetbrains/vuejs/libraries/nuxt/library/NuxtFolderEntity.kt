@@ -5,7 +5,7 @@ import com.intellij.platform.workspace.storage.*
 import com.intellij.platform.workspace.storage.impl.containers.toMutableWorkspaceList
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 
-interface NuxtFolderEntity: WorkspaceEntity {
+interface NuxtFolderEntity : WorkspaceEntity {
 
   val nuxtFolderUrl: VirtualFileUrl
   val libraryFileUrls: List<VirtualFileUrl>
