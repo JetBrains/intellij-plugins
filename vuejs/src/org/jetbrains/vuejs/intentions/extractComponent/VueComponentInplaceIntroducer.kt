@@ -33,14 +33,15 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler.Companion.reformatElement
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentAction.Companion.REFACTORING_ID
 
-internal class VueComponentInplaceIntroducer(elementToRename: XmlTag,
-                                    editor: Editor,
-                                    private val data: VueExtractComponentDataBuilder,
-                                    private val oldText: String,
-                                    private val validator: (@NonNls String) -> @Nls String?,
-                                    private val startMarkAction: StartMarkAction,
-                                    private val fireRefactoringEvents: Boolean = false) :
-  InplaceRefactoring(editor, elementToRename, elementToRename.project) {
+internal class VueComponentInplaceIntroducer(
+  elementToRename: XmlTag,
+  editor: Editor,
+  private val data: VueExtractComponentDataBuilder,
+  private val oldText: String,
+  private val validator: (@NonNls String) -> @Nls String?,
+  private val startMarkAction: StartMarkAction,
+  private val fireRefactoringEvents: Boolean = false,
+) : InplaceRefactoring(editor, elementToRename, elementToRename.project) {
 
   private val containingFile = myElementToRename.containingFile
   private val oldCaret = editor.caretModel.currentCaret.offset
