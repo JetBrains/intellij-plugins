@@ -11,8 +11,10 @@ import org.jetbrains.vuejs.web.PROP_VUE_MODEL_EVENT
 import org.jetbrains.vuejs.web.PROP_VUE_MODEL_PROP
 import org.jetbrains.vuejs.web.VUE_MODEL
 
-class VueModelSymbol(override val origin: WebSymbolOrigin,
-                     private val vueModel: VueModelDirectiveProperties) : WebSymbol {
+class VueModelSymbol(
+  override val origin: WebSymbolOrigin,
+  private val vueModel: VueModelDirectiveProperties,
+) : WebSymbol {
 
   override val name: String
     get() = "Vue Model"
