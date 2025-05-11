@@ -7,13 +7,16 @@ import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueFilter
 import org.jetbrains.vuejs.model.VueGlobalImpl
 
-class VueSourceFilter(override val defaultName: String,
-                      private val originalSource: PsiElement) : VueFilter {
+class VueSourceFilter(
+  override val defaultName: String,
+  private val originalSource: PsiElement,
+) : VueFilter {
 
-  override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
+  override val parents: List<VueEntitiesContainer>
+    get() = VueGlobalImpl.getParents(this)
 
-  override val source: PsiElement get() {
-    return (originalSource as? PsiReference)?.resolve() ?: originalSource
-  }
+  override val source: PsiElement
+    get() = (originalSource as? PsiReference)?.resolve()
+            ?: originalSource
 
 }
