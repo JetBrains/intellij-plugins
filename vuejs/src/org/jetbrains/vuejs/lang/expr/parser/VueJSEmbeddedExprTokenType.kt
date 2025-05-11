@@ -14,11 +14,14 @@ import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueEmbeddedContentTokenType
 import org.jetbrains.vuejs.lang.VueScriptLangs
 
-class VueJSEmbeddedExprTokenType private constructor(debugName: String,
-                                                     private val attributeInfo: VueAttributeInfo?,
-                                                     val langMode: LangMode,
-                                                     private val project: Project?)
-  : VueEmbeddedContentTokenType(debugName, langMode.exprLang, false), ILeafElementType {
+class VueJSEmbeddedExprTokenType
+private constructor(
+  debugName: String,
+  private val attributeInfo: VueAttributeInfo?,
+  val langMode: LangMode,
+  private val project: Project?,
+) : VueEmbeddedContentTokenType(debugName, langMode.exprLang, false),
+    ILeafElementType {
 
   fun copyWithLanguage(langMode: LangMode): VueJSEmbeddedExprTokenType {
     val base = this
