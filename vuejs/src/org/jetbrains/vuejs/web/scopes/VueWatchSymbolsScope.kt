@@ -115,7 +115,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
           createSymbolReferencePlaceholder(),
           createComplexPattern(
             ComplexPatternOptions(repeats = true, isRequired = false, symbolsResolver = WebSymbolsPatternReferenceResolver(
-              Reference(qualifiedKind = WebSymbol.JS_PROPERTIES)
+              Reference(qualifiedKind = JS_PROPERTIES)
             )), false,
             createPatternSequence(
               createStringMatch("."),
