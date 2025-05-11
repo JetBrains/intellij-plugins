@@ -85,9 +85,11 @@ abstract class NuxtVuexContainer(override val source: PsiDirectory) : VuexContai
     private val RESERVED_NAMES: Set<String> = setOf(VuexUtils.STATE, VuexUtils.GETTERS, VuexUtils.ACTIONS, VuexUtils.MUTATIONS,
                                                     INDEX_FILE_NAME)
 
-    private fun <T> buildFromExportedMembers(file: JSFile,
-                                             exportName: String?,
-                                             constructor: (name: String, source: JSElement) -> T): Map<String, T> =
+    private fun <T> buildFromExportedMembers(
+      file: JSFile,
+      exportName: String?,
+      constructor: (name: String, source: JSElement) -> T,
+    ): Map<String, T> =
       ES6PsiUtil.resolveSymbolInModule(exportName ?: ES6PsiUtil.DEFAULT_NAME, file, file)
         .asSequence()
         .filter { it.isValidResult }
