@@ -29,7 +29,7 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
   override fun useMoreAccurateEvaluation(context: PsiElement): Boolean = hasPinia(context)
 
   override fun shouldPreserveAlias(type: JSType): Boolean {
-    return type is JSTypeImpl && type.getTypeText() == "DefineProps"
+    return type is JSTypeImpl && type.typeText == "DefineProps"
   }
 
   override fun findExpectedType(element: PsiElement, parent: PsiElement?, expectedTypeKind: JSExpectedTypeKind): JSType? {
