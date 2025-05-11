@@ -18,11 +18,13 @@ import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
-internal class VueFileHighlighter(private val languageLevel: JSLanguageLevel,
-                                  private val langMode: LangMode,
-                                  private val project: Project?,
-                                  private val interpolationConfig: Pair<String, String>?,
-                                  private val htmlCompatMode: Boolean) : HtmlFileHighlighter() {
+internal class VueFileHighlighter(
+  private val languageLevel: JSLanguageLevel,
+  private val langMode: LangMode,
+  private val project: Project?,
+  private val interpolationConfig: Pair<String, String>?,
+  private val htmlCompatMode: Boolean,
+) : HtmlFileHighlighter() {
 
   override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> {
     keys[tokenType]?.let { return it }
