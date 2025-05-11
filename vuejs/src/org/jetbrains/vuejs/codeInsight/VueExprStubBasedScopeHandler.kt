@@ -33,11 +33,12 @@ object VueExprStubBasedScopeHandler : JSStubBasedScopeHandler() {
       }
     }
 
-  private fun processScriptModule(setup: Boolean,
-                                  includeParentScopes: Boolean,
-                                  context: PsiElement,
-                                  processor: PsiScopeProcessor) =
-
+  private fun processScriptModule(
+    setup: Boolean,
+    includeParentScopes: Boolean,
+    context: PsiElement,
+    processor: PsiScopeProcessor,
+  ): Boolean =
     findModule(context, setup)
       ?.let { super.processDeclarationsInScope(it, processor, includeParentScopes) }
     ?: true
