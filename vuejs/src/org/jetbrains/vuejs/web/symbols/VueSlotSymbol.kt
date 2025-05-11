@@ -15,10 +15,15 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueSlot
 
-class VueSlotSymbol(slot: VueSlot,
-                    owner: VueComponent,
-                    origin: WebSymbolOrigin)
-  : VueNamedWebSymbol<VueSlot>(slot, origin = origin, owner = owner) {
+class VueSlotSymbol(
+  slot: VueSlot,
+  owner: VueComponent,
+  origin: WebSymbolOrigin,
+) : VueNamedWebSymbol<VueSlot>(
+  item = slot,
+  origin = origin,
+  owner = owner,
+) {
 
   override val pattern: WebSymbolsPattern?
     get() = item.pattern?.let { WebSymbolsPatternFactory.createRegExMatch(it, true) }
@@ -29,15 +34,19 @@ class VueSlotSymbol(slot: VueSlot,
   override val type: JSType?
     get() = item.scope
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
+  override fun getSymbols(
+    qualifiedKind: WebSymbolQualifiedKind,
+    params: WebSymbolsListSymbolsQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbolsScope> {
     return getJSPropertySymbols(qualifiedKind)
   }
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> {
+  override fun getMatchingSymbols(
+    qualifiedName: WebSymbolQualifiedName,
+    params: WebSymbolsNameMatchQueryParams,
+    scope: Stack<WebSymbolsScope>,
+  ): List<WebSymbol> {
     return getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
   }
 
