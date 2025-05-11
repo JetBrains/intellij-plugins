@@ -30,9 +30,11 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
     return VueFileImportsResolver(project, config.resolveContext, config.configFile)
   }
 
-  override fun contributeResolver(project: Project,
-                                  context: TypeScriptImportResolveContext,
-                                  contextFile: VirtualFile): TypeScriptFileImportsResolver? {
+  override fun contributeResolver(
+    project: Project,
+    context: TypeScriptImportResolveContext,
+    contextFile: VirtualFile,
+  ): TypeScriptFileImportsResolver? {
     if (!isVueContext(contextFile, project)) return null
 
     return VueFileImportsResolver(project, context, contextFile)
