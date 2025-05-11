@@ -136,9 +136,12 @@ class VueAttributeNameParser private constructor() {
     }
   }
 
-  open class VueAttributeInfo internal constructor(val name: String,
-                                                   val kind: VueAttributeKind,
-                                                   val modifiers: Set<String> = emptySet()) {
+  open class VueAttributeInfo
+  internal constructor(
+    val name: String,
+    val kind: VueAttributeKind,
+    val modifiers: Set<String> = emptySet(),
+  ) {
 
     open val requiresValue: Boolean get() = kind.requiresValue && modifiers.isEmpty()
 
@@ -167,13 +170,17 @@ class VueAttributeNameParser private constructor() {
     }
   }
 
-  class VueDirectiveInfo internal constructor(name: String,
-                                              val directiveKind: VueDirectiveKind,
-                                              val arguments: String? = null,
-                                              val isShorthand: Boolean = false,
-                                              modifiers: Set<String> = emptySet()) : VueAttributeInfo(name,
-                                                                                                      VueAttributeKind.DIRECTIVE,
-                                                                                                      modifiers) {
+  class VueDirectiveInfo internal constructor(
+    name: String,
+    val directiveKind: VueDirectiveKind,
+    val arguments: String? = null,
+    val isShorthand: Boolean = false,
+    modifiers: Set<String> = emptySet(),
+  ) : VueAttributeInfo(
+    name = name,
+    kind = VueAttributeKind.DIRECTIVE,
+    modifiers = modifiers,
+  ) {
     override val requiresValue: Boolean
       get() {
         return directiveKind.requiresValue && modifiers.isEmpty()
@@ -205,12 +212,14 @@ class VueAttributeNameParser private constructor() {
 
   }
 
-  enum class VueAttributeKind(val attributeName: String?,
-                              val injectJS: Boolean = false,
-                              val requiresValue: Boolean = true,
-                              val deprecated: Boolean = false,
-                              val requiresTag: String? = null,
-                              val onlyTopLevelTag: Boolean = true) {
+  enum class VueAttributeKind(
+    val attributeName: String?,
+    val injectJS: Boolean = false,
+    val requiresValue: Boolean = true,
+    val deprecated: Boolean = false,
+    val requiresTag: String? = null,
+    val onlyTopLevelTag: Boolean = true,
+  ) {
     PLAIN(null),
     DIRECTIVE(null),
     SLOT(DEPRECATED_SLOT_ATTRIBUTE, deprecated = true),
@@ -246,9 +255,11 @@ class VueAttributeNameParser private constructor() {
     }
   }
 
-  enum class VueDirectiveKind(private val hasName: Boolean = true,
-                              val injectJS: Boolean = true,
-                              val requiresValue: Boolean = true) {
+  enum class VueDirectiveKind(
+    private val hasName: Boolean = true,
+    val injectJS: Boolean = true,
+    val requiresValue: Boolean = true,
+  ) {
     CUSTOM(hasName = false, requiresValue = false),
     BIND,
     ON,
