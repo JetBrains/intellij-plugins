@@ -63,5 +63,5 @@ class VueInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
 
   private fun isSettingsPreview(element: JSCallExpression): Boolean =
     element.containingFile.name == "dummy"
-      && !element.containingFile.isPhysical
+    && !element.containingFile.isPhysical
 }
