@@ -4,5 +4,5 @@ package org.jetbrains.vuejs.lang.expr.stub
 import com.intellij.lang.javascript.psi.stubs.JSStubElement
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 
-interface VueJSEmbeddedExpressionContentStub : JSStubElement<VueJSEmbeddedExpressionContent> {
-}
+interface VueJSEmbeddedExpressionContentStub :
+  JSStubElement<VueJSEmbeddedExpressionContent>
