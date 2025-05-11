@@ -24,12 +24,14 @@ class VueJSAnalysisHandlersFactory : ES6AnalysisHandlersFactory() {
   override fun getFunctionSignatureChecker(holder: ProblemsHolder, typeChecker: JSTypeChecker): JSFunctionSignatureChecker {
     return object : JavaScriptFunctionSignatureChecker(typeChecker), VueExprFunctionSignatureChecker {
 
-      override fun checkParameterLength(node: JSCallExpression,
-                                        function: JSFunctionItem?,
-                                        expressions: Array<JSExpression>,
-                                        fixes: MutableList<LocalQuickFix>,
-                                        minMaxParameters: Trinity<Int, Int, Boolean>,
-                                        actualParameterLength: Int): Boolean {
+      override fun checkParameterLength(
+        node: JSCallExpression,
+        function: JSFunctionItem?,
+        expressions: Array<JSExpression>,
+        fixes: MutableList<LocalQuickFix>,
+        minMaxParameters: Trinity<Int, Int, Boolean>,
+        actualParameterLength: Int,
+      ): Boolean {
         if (node is VueJSFilterExpression) {
           return checkFilterParameterLength(minMaxParameters, node, expressions, function, fixes)
         }
@@ -51,18 +53,22 @@ class VueJSAnalysisHandlersFactory : ES6AnalysisHandlersFactory() {
 
   override fun getReferenceChecker(reporter: JSProblemReporter<*>): JSReferenceChecker {
     return object : JSReferenceChecker((reporter)) {
-      override fun addCreateFromUsageFixes(node: JSReferenceExpression?,
-                                           resolveResults: Array<out ResolveResult>?,
-                                           fixes: MutableList<in LocalQuickFix>,
-                                           inTypeContext: Boolean,
-                                           ecma: Boolean): Boolean {
+      override fun addCreateFromUsageFixes(
+        node: JSReferenceExpression?,
+        resolveResults: Array<out ResolveResult>?,
+        fixes: MutableList<in LocalQuickFix>,
+        inTypeContext: Boolean,
+        ecma: Boolean,
+      ): Boolean {
         return inTypeContext
       }
 
-      override fun addCreateFromUsageFixesForCall(referenceExpression: JSReferenceExpression,
-                                                  isNewExpression: Boolean,
-                                                  resolveResults: Array<out ResolveResult>,
-                                                  quickFixes: MutableList<in LocalQuickFix>) {
+      override fun addCreateFromUsageFixesForCall(
+        referenceExpression: JSReferenceExpression,
+        isNewExpression: Boolean,
+        resolveResults: Array<out ResolveResult>,
+        quickFixes: MutableList<in LocalQuickFix>,
+      ) {
         if (referenceExpression is VueJSFilterReferenceExpression) {
           // TODO Create filter from usage
           return
@@ -70,8 +76,10 @@ class VueJSAnalysisHandlersFactory : ES6AnalysisHandlersFactory() {
         quickFixes.add(JSFixFactory.getInstance().renameReferenceFix())
       }
 
-      override fun createUnresolvedCallReferenceMessage(methodExpression: JSReferenceExpression,
-                                                        isNewExpression: Boolean): @InspectionMessage String {
+      override fun createUnresolvedCallReferenceMessage(
+        methodExpression: JSReferenceExpression,
+        isNewExpression: Boolean,
+      ): @InspectionMessage String {
         return if (methodExpression is VueJSFilterReferenceExpression) {
           VueBundle.message("vue.inspection.message.unresolved.filter", methodExpression.referenceName!!)
         }
@@ -94,12 +102,14 @@ class VueTSAnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
   override fun getFunctionSignatureChecker(holder: ProblemsHolder, typeChecker: JSTypeChecker): JSFunctionSignatureChecker {
     return object : TypeScriptFunctionSignatureChecker(typeChecker), VueExprFunctionSignatureChecker {
 
-      override fun checkParameterLength(node: JSCallExpression,
-                                        function: JSFunctionItem?,
-                                        expressions: Array<JSExpression>,
-                                        fixes: MutableList<LocalQuickFix>,
-                                        minMaxParameters: Trinity<Int, Int, Boolean>,
-                                        actualParameterLength: Int): Boolean {
+      override fun checkParameterLength(
+        node: JSCallExpression,
+        function: JSFunctionItem?,
+        expressions: Array<JSExpression>,
+        fixes: MutableList<LocalQuickFix>,
+        minMaxParameters: Trinity<Int, Int, Boolean>,
+        actualParameterLength: Int,
+      ): Boolean {
         if (node is VueJSFilterExpression) {
           return checkFilterParameterLength(minMaxParameters, node, expressions, function, fixes)
         }
@@ -125,18 +135,22 @@ class VueTSAnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
 
   override fun getReferenceChecker(reporter: JSProblemReporter<*>): JSReferenceChecker {
     return object : TypeScriptReferenceChecker((reporter)) {
-      override fun addCreateFromUsageFixes(node: JSReferenceExpression?,
-                                           resolveResults: Array<out ResolveResult>?,
-                                           fixes: MutableList<in LocalQuickFix>,
-                                           inTypeContext: Boolean,
-                                           ecma: Boolean): Boolean {
+      override fun addCreateFromUsageFixes(
+        node: JSReferenceExpression?,
+        resolveResults: Array<out ResolveResult>?,
+        fixes: MutableList<in LocalQuickFix>,
+        inTypeContext: Boolean,
+        ecma: Boolean,
+      ): Boolean {
         return inTypeContext
       }
 
-      override fun addCreateFromUsageFixesForCall(referenceExpression: JSReferenceExpression,
-                                                  isNewExpression: Boolean,
-                                                  resolveResults: Array<out ResolveResult>,
-                                                  quickFixes: MutableList<in LocalQuickFix>) {
+      override fun addCreateFromUsageFixesForCall(
+        referenceExpression: JSReferenceExpression,
+        isNewExpression: Boolean,
+        resolveResults: Array<out ResolveResult>,
+        quickFixes: MutableList<in LocalQuickFix>,
+      ) {
         if (referenceExpression is VueJSFilterReferenceExpression) {
           // TODO Create filter from usage
           return
@@ -144,8 +158,10 @@ class VueTSAnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
         quickFixes.add(JSFixFactory.getInstance().renameReferenceFix())
       }
 
-      override fun createUnresolvedCallReferenceMessage(methodExpression: JSReferenceExpression,
-                                                        isNewExpression: Boolean): @InspectionMessage String {
+      override fun createUnresolvedCallReferenceMessage(
+        methodExpression: JSReferenceExpression,
+        isNewExpression: Boolean,
+      ): @InspectionMessage String {
         return if (methodExpression is VueJSFilterReferenceExpression) {
           VueBundle.message("vue.inspection.message.unresolved.filter", methodExpression.referenceName!!)
         }
@@ -159,11 +175,13 @@ private interface VueExprFunctionSignatureChecker {
   fun registerProblem(callExpression: JSCallExpression, message: @InspectionMessage String, fixes: List<LocalQuickFix>)
 }
 
-private fun VueExprFunctionSignatureChecker.checkFilterParameterLength(minMaxParameters: Trinity<Int, Int, Boolean>,
-                                                                       node: VueJSFilterExpression,
-                                                                       expressions: Array<JSExpression>,
-                                                                       function: JSFunctionItem?,
-                                                                       fixes: MutableList<LocalQuickFix>): Boolean {
+private fun VueExprFunctionSignatureChecker.checkFilterParameterLength(
+  minMaxParameters: Trinity<Int, Int, Boolean>,
+  node: VueJSFilterExpression,
+  expressions: Array<JSExpression>,
+  function: JSFunctionItem?,
+  fixes: MutableList<LocalQuickFix>,
+): Boolean {
   val min = minMaxParameters.first
   val max = minMaxParameters.second
   val argumentList = node.argumentList
