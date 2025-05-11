@@ -12,11 +12,15 @@ import org.jetbrains.vuejs.model.VueInstanceOwner
 import org.jetbrains.vuejs.model.VueNamedEntity
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 
-class VuePropsType(source: JSTypeSource,
-                   private val instanceOwner: VueInstanceOwner)
-  : JSTypeBaseImpl(source), JSCodeBasedType, VueCompleteType {
+class VuePropsType(
+  source: JSTypeSource,
+  private val instanceOwner: VueInstanceOwner,
+) : JSTypeBaseImpl(source),
+    JSCodeBasedType,
+    VueCompleteType {
 
-  constructor(instanceOwner: VueInstanceOwner) : this(createStrictTypeSource(instanceOwner.source), instanceOwner)
+  constructor(instanceOwner: VueInstanceOwner) :
+    this(createStrictTypeSource(instanceOwner.source), instanceOwner)
 
   override fun copyWithNewSource(source: JSTypeSource): JSType =
     VuePropsType(source, instanceOwner)
