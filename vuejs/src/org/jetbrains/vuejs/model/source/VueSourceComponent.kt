@@ -26,10 +26,12 @@ import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueSourceSlotScopeType
 
-class VueSourceComponent(sourceElement: JSImplicitElement,
-                         descriptor: VueSourceEntityDescriptor,
-                         private val indexData: VueIndexData?)
-  : VueSourceContainer(sourceElement, descriptor), VueRegularComponent {
+class VueSourceComponent(
+  sourceElement: JSImplicitElement,
+  descriptor: VueSourceEntityDescriptor,
+  private val indexData: VueIndexData?,
+) : VueSourceContainer(sourceElement, descriptor),
+    VueRegularComponent {
 
   override val nameElement: PsiElement?
     get() = descriptor.initializer
@@ -126,8 +128,10 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
     }
   }
 
-  private class VueSourceRegexSlot(override val pattern: String,
-                                   override val source: XmlTag) : VueSlot {
+  private class VueSourceRegexSlot(
+    override val pattern: String,
+    override val source: XmlTag,
+  ) : VueSlot {
     override val name: String
       get() = "Dynamic slot"
 
@@ -136,8 +140,10 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
 
   }
 
-  private class VueSourceSlot(override val name: String,
-                              override val source: XmlTag) : VueSlot {
+  private class VueSourceSlot(
+    override val name: String,
+    override val source: XmlTag,
+  ) : VueSlot {
     override val scope: JSType
       get() = VueSourceSlotScopeType(source, name)
   }
