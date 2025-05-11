@@ -135,10 +135,12 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
         ?.implicitElements
         ?.find { it.userString == VUE_COMPOSITION_APP_INDEX_JS_KEY }
 
-    private fun getParam(element: JSImplicitElement,
-                         call: JSCallExpression,
-                         nr: Int,
-                         args: List<PsiElement> = getFilteredArgs(call)): PsiElement? {
+    private fun getParam(
+      element: JSImplicitElement,
+      call: JSCallExpression,
+      nr: Int,
+      args: List<PsiElement> = getFilteredArgs(call),
+    ): PsiElement? {
       val refName = element.userStringData
       return if (refName != null)
         JSStubBasedPsiTreeUtil.resolveLocally(refName, call, true)
@@ -224,11 +226,13 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
       component is UserDataHolder && component.getUserData(IS_COMPOSITION_APP_COMPONENT_KEY) == true
   }
 
-  private data class EntitiesAnalysis(val components: Map<String, VueComponent>,
-                                      val directives: Map<String, VueDirective>,
-                                      val mixins: List<VueMixin>,
-                                      val filters: Map<String, VueFilter>,
-                                      val element: String?,
-                                      val provides: List<VueProvide>)
+  private data class EntitiesAnalysis(
+    val components: Map<String, VueComponent>,
+    val directives: Map<String, VueDirective>,
+    val mixins: List<VueMixin>,
+    val filters: Map<String, VueFilter>,
+    val element: String?,
+    val provides: List<VueProvide>,
+  )
 
 }
