@@ -9,9 +9,12 @@ import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.util.ProcessingContext
 
-class VuexGetterType(source: JSTypeSource,
-                     private val element: JSTypeOwner)
-  : JSTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
+class VuexGetterType(
+  source: JSTypeSource,
+  private val element: JSTypeOwner,
+) : JSTypeBaseImpl(source),
+    JSCodeBasedType,
+    JSTypeWithIncompleteSubstitution {
 
   override fun copyWithNewSource(source: JSTypeSource): JSType {
     return VuexGetterType(source, element)
