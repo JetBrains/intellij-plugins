@@ -2,7 +2,10 @@
 package org.jetbrains.vuejs.types
 
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSCodeBasedType
+import com.intellij.lang.javascript.psi.types.JSSimpleRecordTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.REF_ATTRIBUTE_NAME
