@@ -22,10 +22,12 @@ import org.jetbrains.vuejs.lang.html.psi.impl.VueFileImpl
 class VueParserDefinition : HTMLParserDefinition() {
 
   object Util {
-    fun createLexer(project: Project,
-                    interpolationConfig: Pair<String, String>?,
-                    htmlCompatMode: Boolean,
-                    parentLangMode: LangMode? = null): Lexer {
+    fun createLexer(
+      project: Project,
+      interpolationConfig: Pair<String, String>?,
+      htmlCompatMode: Boolean,
+      parentLangMode: LangMode? = null,
+    ): Lexer {
       val level = JSRootConfiguration.getInstance(project).languageLevel
       return VueParsingLexer(
         VueLexer(if (level.isES6Compatible) level else JSLanguageLevel.ES6, project, interpolationConfig, htmlCompatMode, false),
