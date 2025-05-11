@@ -12,10 +12,13 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import java.util.*
 
-class VueSourceProvideType private constructor(typeSource: JSTypeSource,
-                                               private val element: PsiElement,
-                                               private val symbolSource: PsiNamedElement?)
-  : JSTypeBaseImpl(typeSource), JSCodeBasedType {
+class VueSourceProvideType
+private constructor(
+  typeSource: JSTypeSource,
+  private val element: PsiElement,
+  private val symbolSource: PsiNamedElement?,
+) : JSTypeBaseImpl(typeSource),
+    JSCodeBasedType {
 
   constructor(element: PsiElement, symbolSource: PsiNamedElement?) :
     this(JSTypeSourceFactory.createTypeSource(element, true), element, symbolSource)
