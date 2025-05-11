@@ -11,8 +11,11 @@ import java.util.*
 /**
  * A wrapper around a regular global container, which provides only components.
  */
-class VueModule(override val delegate: VueGlobal,
-                override val source: PsiElement) : VueDelegatedEntitiesContainer<VueGlobal>(), VueGlobal {
+class VueModule(
+  override val delegate: VueGlobal,
+  override val source: PsiElement,
+) : VueDelegatedEntitiesContainer<VueGlobal>(),
+    VueGlobal {
 
   override val components: Map<String, VueComponent>
     get() = delegate.components
