@@ -1,10 +1,10 @@
 Feature: Foo
+
+  Some feature description.
+
   Scenario Outline: inline rename test
-    Given <step> li<caret>ke <desc>
+    Given <step> like <des<caret>c>
     Examples:
       | step | desc   |
       | 1    | first  |
       | 2    | second |
-
-
-

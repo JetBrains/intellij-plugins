@@ -79,11 +79,11 @@
 
     <gotoRelatedProvider implementation="org.jetbrains.plugins.cucumber.navigation.CucumberGoToRelatedProvider"/>
 
-    <renameHandler implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenameHandler"/>
+    <renameHandler implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinParameterRenameHandler"/>
     <renameHandler implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameHandler"/>
 
 
-    <renamePsiElementProcessor implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.CucumberStepRenameProcessor" order="first"/>
+    <renamePsiElementProcessor implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameProcessor" order="first"/>
 
     <additionalTextAttributes scheme="Default" file="colorSchemes/GherkinDefault.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/GherkinDarcula.xml"/>

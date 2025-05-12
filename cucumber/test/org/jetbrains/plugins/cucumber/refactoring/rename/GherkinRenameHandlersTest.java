@@ -5,18 +5,26 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
-import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenameHandler;
+import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinParameterRenameHandler;
 import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameHandler;
 
+/**
+ * Tests that appropriate rename handlers are available for different parts of the Gherkin file.
+ */
 public class GherkinRenameHandlersTest extends BasePlatformTestCase {
   private static final String TEST_DATA_PATH = "/refactoring/renameHandlers";
 
-  public void testUseStepParameterRenameHandlerInParameterAndCell() {
+  public void testStepRenameHandler_1() {
+    doTest(true, false);
+  }
+
+  public void testParameterRenameHandler_1() {
     doTest(false, true);
   }
 
-  public void testUseStepRenameHandlerInStep() {
-    doTest(true, false);
+  // Test for IDEA-372546
+  public void testParameterRenameHandler_2() {
+    doTest(false, true);
   }
 
   @Override
@@ -24,13 +32,13 @@ public class GherkinRenameHandlersTest extends BasePlatformTestCase {
     return CucumberTestUtil.getTestDataPath() + TEST_DATA_PATH;
   }
 
-  private void doTest(boolean stepRenameHandlerAvailable, boolean stepParameterRenameHandlerAvailable) {
+  private void doTest(boolean stepRenameHandlerAvailable, boolean parameterRenameHandlerAvailable) {
     myFixture.configureByFile(getTestName(true) + ".feature");
     DataContext context = ((EditorEx)myFixture.getEditor()).getDataContext();
 
     GherkinStepRenameHandler stepRenameHandler = new GherkinStepRenameHandler();
-    GherkinInplaceRenameHandler gherkinInplaceRenameHandler = new GherkinInplaceRenameHandler();
+    GherkinParameterRenameHandler parameterRenameHandler = new GherkinParameterRenameHandler();
     assertEquals(stepRenameHandlerAvailable, stepRenameHandler.isAvailableOnDataContext(context));
-    assertEquals(stepParameterRenameHandlerAvailable, gherkinInplaceRenameHandler.isAvailableOnDataContext(context));
+    assertEquals(parameterRenameHandlerAvailable, parameterRenameHandler.isAvailableOnDataContext(context));
   }
 }

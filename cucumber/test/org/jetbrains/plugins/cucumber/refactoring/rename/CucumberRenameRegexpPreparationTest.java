@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber.refactoring.rename;
 
-import org.jetbrains.plugins.cucumber.psi.refactoring.rename.CucumberStepRenameProcessor;
+import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ public class CucumberRenameRegexpPreparationTest {
   }
 
   private static void doTest(String source, String expected, String... sentences) {
-    List<String> result = CucumberStepRenameProcessor.prepareRegexAndGetStaticTexts(source);
+    List<String> result = GherkinStepRenameProcessor.prepareRegexAndGetStaticTexts(source);
     Assert.assertEquals(expected, result.get(0));
 
     if (sentences.length > result.size() - 1) {

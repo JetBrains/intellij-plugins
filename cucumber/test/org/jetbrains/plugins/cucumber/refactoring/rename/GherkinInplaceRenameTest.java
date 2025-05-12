@@ -5,13 +5,22 @@ import com.intellij.refactoring.RefactoringSettings;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
-import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenameHandler;
+import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinParameterRenameHandler;
 
 public class GherkinInplaceRenameTest extends BasePlatformTestCase {
   private static final String TEST_DATA_PATH = "/refactoring/rename";
 
-  public void testRenameStepParameter() {
+  // IDEA-107390
+  public void ignore_testRenameStep_1() {
+    doTest("I ask whether it's weekend");
+  }
+
+  public void testRenameParameter_1() {
     doTest("newDescription");
+  }
+
+  public void testRenameParameter_2() {
+    doTest("subtract_amount");
   }
 
   private void doTest(String newName) {
@@ -20,7 +29,7 @@ public class GherkinInplaceRenameTest extends BasePlatformTestCase {
       myFixture.configureByFile(getTestName(true) + ".feature");
       CommandProcessor.getInstance().executeCommand(
         getProject(),
-        () -> CodeInsightTestUtil.doInlineRename(new GherkinInplaceRenameHandler(), newName, myFixture), "Rename", null);
+        () -> CodeInsightTestUtil.doInlineRename(new GherkinParameterRenameHandler(), newName, myFixture), "Rename", null);
 
       myFixture.checkResultByFile(getTestName(true) + "_after.feature");
     }

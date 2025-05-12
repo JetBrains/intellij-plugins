@@ -26,12 +26,12 @@ import java.util.EnumSet;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
 
-public class CucumberStepRenameDialog extends RenameDialog {
+public final class GherkinStepRenameDialog extends RenameDialog {
   private AbstractStepDefinition myStepDefinition;
 
-  public CucumberStepRenameDialog(@NotNull Project project,
-                                  @NotNull PsiElement psiElement,
-                                  @Nullable PsiElement nameSuggestionContext, Editor editor) {
+  public GherkinStepRenameDialog(@NotNull Project project,
+                                 @NotNull PsiElement psiElement,
+                                 @Nullable PsiElement nameSuggestionContext, Editor editor) {
     super(project, psiElement, nameSuggestionContext, editor);
   }
 
@@ -44,6 +44,11 @@ public class CucumberStepRenameDialog extends RenameDialog {
   @Override
   protected String getFullName() {
     return CucumberBundle.message("cucumber.step");
+  }
+
+  @Override
+  protected boolean areButtonsValid() {
+    return true; // Cucumber steps are natural language, so in theory – any text should be fine
   }
 
   @Override

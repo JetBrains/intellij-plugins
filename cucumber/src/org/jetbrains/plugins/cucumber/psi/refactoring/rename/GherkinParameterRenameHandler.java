@@ -12,14 +12,21 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepParameter;
 import org.jetbrains.plugins.cucumber.psi.GherkinTableCell;
 
-public final class GherkinInplaceRenameHandler extends VariableInplaceRenameHandler {
+/**
+ * Handles renaming Gherkin parameters – both usages ({@link GherkinStepParameter}) and declarations ({@link GherkinTableCell}).
+ * <p>
+ * Parameters can only be used inside <i>Scenario Outlines</i>.
+ *
+ * @see <a href="https://cucumber.io/docs/gherkin/reference#scenario-outline">Gherkin Reference | Scenario Outline</a>
+ */
+public final class GherkinParameterRenameHandler extends VariableInplaceRenameHandler {
   @Override
   protected boolean isAvailable(@Nullable PsiElement element, @NotNull Editor editor, @NotNull PsiFile file) {
     return element instanceof GherkinStepParameter || element instanceof GherkinTableCell;
   }
 
   @Override
-  protected @Nullable VariableInplaceRenamer createRenamer(@NotNull PsiElement elementToRename, @NotNull Editor editor) {
+  protected @NotNull VariableInplaceRenamer createRenamer(@NotNull PsiElement elementToRename, @NotNull Editor editor) {
     return new GherkinInplaceRenamer((PsiNamedElement)elementToRename, editor);
   }
 }

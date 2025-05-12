@@ -189,8 +189,8 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   public @NotNull Collection<AbstractStepDefinition> findDefinitions() {
     final List<AbstractStepDefinition> result = new ArrayList<>();
     for (final PsiReference reference : getReferences()) {
-      if (reference instanceof CucumberStepReference) {
-        result.addAll(((CucumberStepReference)reference).resolveToDefinitions());
+      if (reference instanceof CucumberStepReference cucumberStepReference) {
+        result.addAll(cucumberStepReference.resolveToDefinitions());
       }
     }
     return result;

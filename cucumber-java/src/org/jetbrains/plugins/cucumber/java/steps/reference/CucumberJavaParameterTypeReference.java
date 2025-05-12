@@ -17,26 +17,29 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
-/**
- * Provides reference from Cucumber Expression to its definition. For example, from "iso-date" in step definition:
- * <pre><code>
- *
- * &#064;Given("today  is {iso-date}")
- * public void todayIs(Date date) throws Throwable {
- *   ....
- * }
- * </code></pre>
- *
- * to expression definition:
- * <pre><code>
- *   typeRegistry.defineParameterType(new ParameterType<>(
- *           "iso-date",
- *           "\\d{4}-\\d{2}-\\d{2}",
- *           Date.class,
- *           (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
- *   ));
- * </code></pre>
- */
+//@formatter:off Temporarily disable formatter because of bug IDEA-371809
+/// A reference from a parameter inside a [Cucumber Expression](https://github.com/cucumber/cucumber-expressions) to its definition.
+/// 
+/// ### Example
+/// 
+/// For example, we provide a reference from the "iso-date" parameter in step definition:
+///
+/// ```
+/// @Given("today is {iso-date}")
+/// public void todayIs(Date date) throws Throwable {
+///   // ...
+/// }
+/// ```
+/// to the expression definition:
+/// ```
+/// typeRegistry.defineParameterType(new ParameterType<>(
+///   "iso-date",
+///   "\\d{4}-\\d{2}-\\d{2}",
+///   Date.class,
+///   (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
+/// ));
+/// ```
+//@formatter:on
 public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElement> {
   public CucumberJavaParameterTypeReference(@NotNull PsiElement element, @NotNull TextRange range) {
     // Exclude { and }
