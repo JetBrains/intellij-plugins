@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.psi.impl;
 
 import com.intellij.openapi.util.Key;
@@ -12,6 +12,7 @@ import org.intellij.terraform.hcl.psi.HCLHeredocContent;
 import org.intellij.terraform.hcl.psi.HCLStringLiteral;
 import org.intellij.terraform.hcl.psi.UtilKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +38,8 @@ public final class JavaUtil {
     });
   }
 
-  static @NotNull List<Pair<TextRange, String>> doGetTextFragments(@NotNull String text, boolean interpolations, boolean quotes) {
+  @VisibleForTesting
+  public static @NotNull List<Pair<TextRange, String>> doGetTextFragments(@NotNull String text, boolean interpolations, boolean quotes) {
     List<Pair<TextRange, String>> result = new SmartList<>();
     final int length = text.length();
     int pos = quotes ? 1 : 0, unescapedSequenceStart = pos;
@@ -138,8 +140,6 @@ public final class JavaUtil {
     if (unescapedSequenceStart < contentEnd) {
       result.add(Pair.create(new TextRange(unescapedSequenceStart, contentEnd), text.substring(unescapedSequenceStart, contentEnd)));
     }
-    result = Collections.unmodifiableList(result);
-    return result;
+    return Collections.unmodifiableList(result);
   }
-
 }

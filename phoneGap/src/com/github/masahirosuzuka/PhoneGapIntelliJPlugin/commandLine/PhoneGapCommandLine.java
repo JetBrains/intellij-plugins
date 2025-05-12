@@ -16,6 +16,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.intellij.lang.regexp.AsciiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -237,7 +238,8 @@ public final class PhoneGapCommandLine {
     return ThreeState.UNSURE;
   }
 
-  static List<String> parsePluginList(String out) {
+  @VisibleForTesting
+  public static List<String> parsePluginList(String out) {
     if (StringUtil.isEmpty(out) || StringUtil.contains(out.toLowerCase(Locale.getDefault()), "no plugins")) {
       return new ArrayList<>();
     }

@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -9,12 +10,12 @@ import java.util.Arrays;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_REMOTE_BUILD;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_REMOTE_RUN;
 
-public class PhoneGapExecutor extends CordovaBasedExecutor {
+public final class PhoneGapExecutor extends CordovaBasedExecutor {
   public PhoneGapExecutor(@Nullable String path, @Nullable String version) {
     super(path, version);
   }
 
-  static boolean isPhoneGapAfter363(String version) {
+  public static boolean isPhoneGapAfter363(String version) {
     if (StringUtil.isEmpty(version)) return true;
 
     return StringUtil.compareVersionNumbers(version, "3.6.3") >= 0;

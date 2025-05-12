@@ -21,6 +21,7 @@ import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.thoughtworks.gauge.GaugeConstants;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 public final class GaugeError {
   private final String fileName;
@@ -34,7 +35,8 @@ public final class GaugeError {
     this.message = String.format("%s line number: %d, %s", type, lineNumber, message);
   }
 
-  boolean isFrom(String fileName) {
+  @VisibleForTesting
+  public boolean isFrom(String fileName) {
     return this.fileName.equals(fileName);
   }
 
