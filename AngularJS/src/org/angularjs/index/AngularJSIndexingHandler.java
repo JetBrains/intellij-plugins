@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angularjs.index;
 
 import com.intellij.lang.ASTNode;
@@ -21,7 +21,10 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.JSContext;
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.util.JSTreeUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -42,17 +45,17 @@ import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
 import org.angularjs.lang.AngularJSLanguage;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.File;
 import java.util.*;
 
 import static org.angularjs.index.AngularJSDirectivesSupport.getDirectiveIndexKeys;
 
-/**
- * @author Dennis.Ushakov
- */
+@ApiStatus.Internal
 public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXERS =
     new HashMap<>();
@@ -482,7 +485,8 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return restrictions == null || StringUtil.countChars(restrictions, ';') >= 3;
   }
 
-  static @Nullable String getParamValue(@Nullable String previousValue, @Nullable String description) {
+  @VisibleForTesting
+  public static @Nullable String getParamValue(@Nullable String previousValue, @Nullable String description) {
     if (description != null) {
       final int commentAtEndIndex = description.indexOf("//");
       String newValue = description.substring(0, commentAtEndIndex >= 0 ? commentAtEndIndex : description.length());

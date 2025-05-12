@@ -23,6 +23,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.jetbrains.idea.perforce.ChangeListData;
 import org.jetbrains.idea.perforce.ClientVersion;
 import org.jetbrains.idea.perforce.ServerVersion;
@@ -59,7 +60,7 @@ public class OutputMessageParser {
   private static final String FILE_PREFIX = "...";
   protected final String myOutput;
 
-  private static class ChangeReadingPolicy {
+  private static final class ChangeReadingPolicy {
 
     private static final @NonNls String CHANGE_REGEX = "(Change )(.*)( on )(.*)( by )(.*)(@)(.*)";
     public static final Pattern CHANGE_PATTERN = Pattern.compile(CHANGE_REGEX);
@@ -89,7 +90,6 @@ public class OutputMessageParser {
       return myDateGroupGroup;
     }
   }
-
 
   private static final @NonNls String LOG_REGEX = "(... #)(.*)( change )(.*)( )(.*)( on )(.*)( by )(.*)(@)(.*)( \\()(.*)(\\))";
   public static final Pattern LOG_PATTERN = Pattern.compile(LOG_REGEX);
@@ -439,8 +439,8 @@ Rev. P4/NTX86/2004.2/68597 (2004/09/03).
     return null;
   }
 
-  @Nullable
-  ChangeListData loadChangeListDescription() {
+  @VisibleForTesting
+  public @Nullable ChangeListData loadChangeListDescription() {
     return readNextChange(new ChangeReadingPolicy(ChangeReadingPolicy.CHANGE_DESCRIPTION_PATTERN, 4, 8));
   }
 }

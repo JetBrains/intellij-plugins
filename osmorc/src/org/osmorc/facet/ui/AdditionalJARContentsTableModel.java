@@ -27,6 +27,7 @@ package org.osmorc.facet.ui;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.table.AbstractTableModel;
@@ -40,7 +41,8 @@ import java.util.List;
 public final class AdditionalJARContentsTableModel extends AbstractTableModel {
   private final List<Pair<String, String>> myAdditionalContents;
 
-  AdditionalJARContentsTableModel() {
+  @VisibleForTesting
+  public AdditionalJARContentsTableModel() {
     myAdditionalContents = new ArrayList<>();
   }
 

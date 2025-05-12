@@ -34,7 +34,7 @@ public final class DartComponentMover extends LineMover {
     NONE
   }
 
-  private static class CodeMover {
+  private static final class CodeMover {
     final @NotNull Editor editor;
     final @NotNull PsiFile file;
     final @NotNull MoveInfo info;
@@ -382,7 +382,7 @@ public final class DartComponentMover extends LineMover {
   }
 
   @VisibleForTesting
-  static Pair<PsiElement, PsiElement> findCommentRange(@NotNull PsiElement element) {
+  public static Pair<PsiElement, PsiElement> findCommentRange(@NotNull PsiElement element) {
     return CodeMover.findCommentRange(element);
   }
 }

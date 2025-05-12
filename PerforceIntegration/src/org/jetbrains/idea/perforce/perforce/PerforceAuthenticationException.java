@@ -16,7 +16,7 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 
-public class PerforceAuthenticationException extends VcsConnectionProblem {
+public final class PerforceAuthenticationException extends VcsConnectionProblem {
   private final P4Connection myConnection;
   private final Project myProject;
 

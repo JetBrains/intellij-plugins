@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
@@ -36,6 +36,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
@@ -49,7 +50,8 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
   private volatile CucumberGlueProvider myCucumberGlueProvider = null;
   private static final Logger LOG = Logger.getInstance(CucumberJavaRunConfiguration.class);
 
-  CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
+  @VisibleForTesting
+  public CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
     setWorkingDirectory(PathMacroUtil.MODULE_WORKING_DIR);
   }

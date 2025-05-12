@@ -43,7 +43,7 @@ public final class MeteorStubPath {
     final List<Integer> myOrderedVersions = new ArrayList<>();
     public String myFileName;
 
-    VersionNumber(@NotNull String fileName) {
+    public VersionNumber(@NotNull String fileName) {
       myFileName = fileName;
       String versionString =
         fileName.substring(fileName.indexOf('-') + 2, fileName.lastIndexOf(TypeScriptUtil.TYPESCRIPT_DECLARATIONS_FILE_EXTENSION));
