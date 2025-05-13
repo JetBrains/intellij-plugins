@@ -43,7 +43,7 @@ public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
     }
 
     final GherkinStepRenameDialog dialog = new GherkinStepRenameDialog(project, step, null, editor);
-    Disposer.register(project, dialog.getDisposable());
+    Disposer.register(project, dialog.getDisposable()); // FIXME(bartekpacia): Dispose the dialog in the correct way
     RenameDialog.showRenameDialog(dataContext, dialog);
   }
 
