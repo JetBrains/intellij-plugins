@@ -15,6 +15,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.*;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -196,7 +197,7 @@ public final class CucumberUtil {
    * <pre>
    *   {@code       I print a word(?:s)? (red|blue) using slash}
    * </pre>
-   *
+   * <p>
    * All pipes should be escaped.
    *
    * @see <a href="https://docs.cucumber.io/cucumber/cucumber-expressions/">Cucumber Expressions</a>
@@ -217,9 +218,11 @@ public final class CucumberUtil {
           inGroup = true;
         }
         result.append('|');
-      } else if (c == '|') {
+      }
+      else if (c == '|') {
         result.append("\\|");
-      } else {
+      }
+      else {
         if (inGroup && Character.isWhitespace(c)) {
           result.append(')');
           inGroup = false;
@@ -239,11 +242,12 @@ public final class CucumberUtil {
   /**
    * Replaces ParameterType-s injected into step definition.
    * Step definition {@code provided {int} cucumbers } will be presented by regexp {@code ([+-]?\d+) customers }
+   *
    * @param parameterTypeManager provides mapping from ParameterTypes name to its value
    * @return regular expression defined by Cucumber Expression and ParameterTypes value
    */
   public static @NotNull String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
-                                                         @NotNull ParameterTypeManager parameterTypeManager) {
+                                                                  @NotNull ParameterTypeManager parameterTypeManager) {
     cucumberExpression = escapeCucumberExpression(cucumberExpression);
     cucumberExpression = replaceNotNecessaryTextTemplateByRegexp(cucumberExpression);
     cucumberExpression = processExpressionOrOperator(cucumberExpression);
@@ -283,11 +287,12 @@ public final class CucumberUtil {
     Matcher matcher = OPTIONAL_PATTERN.matcher(cucumberExpression);
     StringBuilder result = new StringBuilder();
 
-    while(matcher.find()) {
+    while (matcher.find()) {
       String parameterPart = matcher.group(2);
       if ("\\\\".equals(matcher.group(1))) {
         matcher.appendReplacement(result, "\\\\(" + parameterPart + "\\\\)");
-      } else {
+      }
+      else {
         matcher.appendReplacement(result, "(?:" + parameterPart + ")?");
       }
     }
@@ -300,7 +305,7 @@ public final class CucumberUtil {
    * Processes text ranges of every Parameter Type in Cucumber Expression
    */
   public static void processParameterTypesInCucumberExpression(@NotNull String cucumberExpression,
-                                                         @NotNull Processor<? super TextRange> processor) {
+                                                               @NotNull Processor<? super TextRange> processor) {
     int i = 0;
     while (i < cucumberExpression.length()) {
       char c = cucumberExpression.charAt(i);
@@ -405,20 +410,24 @@ public final class CucumberUtil {
     }
   }
 
-  /**
-   * Substitutes scenario outline parameters into step. For example step from
-   * Scenario Outline
-   *   Given project with <count> participants
-   * Example
-   *   | count |
-   *   | 10    |
-   *
-   * will be transformed to
-   *   Given project with 10 participants
-   *
-   * @param outlineTableMap mapping from header to the first data row
-   * @return OutlineStepSubstitution that contains result step name and can calculate offsets
-   */
+  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
+  /// Substitutes scenario outline parameters into step.
+  /// 
+  /// For example we can go from:
+  /// ```
+  /// Scenario Outline
+  ///   Given project with <count> participants
+  /// Example
+  ///   | count |
+  ///   | 10    |
+  /// ```
+  /// to:
+  /// ```
+  ///   Given project with 10 participants
+  /// ```
+  ///
+  /// @param outlineTableMap mapping from the header to the first data row
+  /// @return OutlineStepSubstitution that contains the result step name and can calculate offsets
   public static @NotNull OutlineStepSubstitution substituteTableReferences(String stepName, @Nullable Map<String, String> outlineTableMap) {
     if (outlineTableMap == null) {
       return new OutlineStepSubstitution(stepName, Collections.emptyList());
@@ -462,7 +471,7 @@ public final class CucumberUtil {
   }
 
   public static @Nullable PsiElement resolveSep(@NotNull GherkinStep step) {
-    PsiReference reference = Arrays.stream(step.getReferences()).filter(r -> r instanceof CucumberStepReference).findFirst().orElse(null);
+    PsiReference reference = ContainerUtil.find(step.getReferences(), r -> r instanceof CucumberStepReference);
     return reference != null ? reference.resolve() : null;
   }
 
@@ -483,14 +492,16 @@ public final class CucumberUtil {
       return null;
     }
     for (PsiReference ref : element.getReferences()) {
-      if (ref instanceof CucumberStepReference) {
-        return (CucumberStepReference) ref;
+      if (ref instanceof CucumberStepReference stepReference) {
+        return stepReference;
       }
     }
     return null;
   }
 
-  public static @NotNull List<AbstractStepDefinition> loadFrameworkSteps(@NotNull CucumberJvmExtensionPoint framework, @Nullable PsiFile featureFile, @NotNull Module module) {
+  public static @NotNull List<AbstractStepDefinition> loadFrameworkSteps(@NotNull CucumberJvmExtensionPoint framework,
+                                                                         @Nullable PsiFile featureFile,
+                                                                         @NotNull Module module) {
     List<AbstractStepDefinition> result = framework.loadStepsFor(featureFile, module);
     return result != null ? result : Collections.emptyList();
   }
