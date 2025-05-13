@@ -76,12 +76,11 @@ public final class CucumberJavaUtil {
     JAVA_PARAMETER_TYPES = Collections.unmodifiableMap(javaParameterTypes);
   }
 
-  public static final MapParameterTypeManager JAVA_DEFAULT_PARAMETER_TYPE_MANAGER = new MapParameterTypeManager(STANDARD_PARAMETER_TYPES);
-
   /**
    * Checks if the expression should be considered as a CucumberExpression or as a RegEx
-   * @see <a href="https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/heuristics.adoc">heuristic from cucumber library</a>
-   * @see <a href="https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/src/main/java/io/cucumber/cucumberexpressions/ExpressionFactory.java>implementation in cucumber library</a>
+   *
+   * @see <a href="https://github.com/cucumber/cucumber-expressions/blob/v18.0.0/java/heuristics.adoc">heuristic from cucumber library</a>
+   * @see <a href="https://github.com/cucumber/cucumber-expressions/blob/v18.0.0/java/src/main/java/io/cucumber/cucumberexpressions/ExpressionFactory.java">implementation in cucumber library</a>
    */
   public static boolean isCucumberExpression(@NotNull String expression) {
     return !expression.startsWith("^") && !expression.endsWith("$") && !SCRIPT_STYLE_REGEXP.matcher(expression).find();
@@ -109,8 +108,7 @@ public final class CucumberJavaUtil {
     ApplicationManager.getApplication().runReadAction(() -> {
       String qualifiedName = annotation.getQualifiedName();
       qualifiedAnnotationName.set(qualifiedName);
-    }
-    );
+    });
     return qualifiedAnnotationName.get();
   }
 
@@ -188,7 +186,7 @@ public final class CucumberJavaUtil {
 
   /**
    * Computes value of Step Definition Annotation. If {@code annotationClassName provided} value of the annotation with corresponding class
-   * will be returned. Operations with string constants handled.
+   * will be returned. Operations with string constants are also handled.
    */
   public static @NotNull List<String> getStepAnnotationValues(@NotNull PsiMethod method, @Nullable String annotationClassName) {
     List<String> result = new ArrayList<>();
@@ -332,9 +330,9 @@ public final class CucumberJavaUtil {
 
   /**
    * Looks for Parameter Type defined by Type Registry and stores Parameter Type's name, value in {@code values}
-   * and its SmartPointer in {@code declarations}
-   *
-   * For example, code below defines Parameter Type called "iso-date" that matches expression "\d{4}-\d{2}-\d{2}"
+   * and its SmartPointer in {@code declarations}.
+   * <p>
+   * For example, the code below defines Parameter Type called "iso-date" that matches expression "\d{4}-\d{2}-\d{2}"
    * <pre>{@code
    *     typeRegistry.defineParameterType(new ParameterType<>(
    *       "iso-date",
@@ -354,7 +352,7 @@ public final class CucumberJavaUtil {
     PsiClass parameterTypeClass = ClassUtil.findPsiClass(PsiManager.getInstance(module.getProject()), PARAMETER_TYPE_CLASS);
     if (parameterTypeClass != null) {
       ProgressManager.getInstance().runProcess(() -> {
-        for (PsiMethod method: parameterTypeClass.getMethods()) {
+        for (PsiMethod method : parameterTypeClass.getMethods()) {
           ProgressManager.checkCanceled();
           if (method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC) &&
               method.getModifierList().hasModifierProperty(PsiModifier.STATIC) || method.isConstructor()) {
@@ -364,7 +362,7 @@ public final class CucumberJavaUtil {
       }, null);
     }
 
-    for (UsageInfo ui: processor.getResults()) {
+    for (UsageInfo ui : processor.getResults()) {
       PsiElement element = ui.getElement();
       if (element == null) {
         continue;
@@ -380,10 +378,10 @@ public final class CucumberJavaUtil {
   }
 
   /**
-   * Looks for Parameter Type defined by annotation @{code @ParameterType}
+   * Looks for Parameter Type defined by annotation {@code @ParameterType}
    * and stores Parameter Type's name, value in {@code values} and its SmartPointer in {@code declarations}
-   *
-   * For example, code below defines Parameter Type called "color" that matches expression "red|blue|yellow"
+   * <p>
+   * For example, the code below defines Parameter Type called "color" that matches expression {@code "red|blue|yellow"}
    * <pre>{@code
    *     @ParameterType("red|blue|yellow")
    *     public String color(String color) {
@@ -418,22 +416,14 @@ public final class CucumberJavaUtil {
   private static void processParameterTypeMethodDeclaration(@NotNull Map<String, String> values,
                                                             @NotNull Map<String, SmartPsiElementPointer<PsiElement>> declarations,
                                                             @NotNull PsiMethodCallExpression call) {
-    if (!FROM_ENUM_METHOD.matches(call)) {
-      return;
-    }
+    if (!FROM_ENUM_METHOD.matches(call)) return;
     PsiExpression[] arguments = call.getArgumentList().getExpressions();
-    if (arguments.length <= 0) {
-      return;
-    }
+    if (arguments.length == 0) return;
     PsiExpression enumClass = arguments[0];
-    if (!(enumClass instanceof PsiClassObjectAccessExpression objectAccessExpression)) {
-      return;
-    }
+    if (!(enumClass instanceof PsiClassObjectAccessExpression objectAccessExpression)) return;
     PsiClass psiClass = PsiUtil.resolveClassInClassTypeOnly(objectAccessExpression.getOperand().getType());
 
-    if (psiClass == null || !psiClass.isEnum() || psiClass.getName() == null) {
-      return;
-    }
+    if (psiClass == null || !psiClass.isEnum() || psiClass.getName() == null) return;
     String regex = Arrays.stream(psiClass.getFields()).map(f -> f.getName()).collect(Collectors.joining("|"));
 
     values.put(psiClass.getName(), regex);
@@ -445,35 +435,29 @@ public final class CucumberJavaUtil {
                                                           @NotNull Map<String, SmartPsiElementPointer<PsiElement>> declarations,
                                                           @NotNull PsiNewExpression newExpression) {
     PsiExpressionList arguments = newExpression.getArgumentList();
-    if (arguments == null) {
-      return;
-    }
-      PsiExpression[] expressions = arguments.getExpressions();
-      if (expressions.length == 0) {
-        return;
-      }
-      PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(newExpression.getProject()).getConstantEvaluationHelper();
+    if (arguments == null) return;
+    PsiExpression[] expressions = arguments.getExpressions();
+    if (expressions.length == 0) return;
+    PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(newExpression.getProject()).getConstantEvaluationHelper();
 
-      Object constantValue = evaluationHelper.computeConstantExpression(expressions[0], false);
-      if (constantValue == null) {
-        return;
-      }
-      String name = constantValue.toString();
+    Object constantValue = evaluationHelper.computeConstantExpression(expressions[0], false);
+    if (constantValue == null) return;
+    String name = constantValue.toString();
 
-      constantValue = evaluationHelper.computeConstantExpression(expressions[1], false);
-      if (constantValue == null) {
-        return;
-      }
-      String value = constantValue.toString();
-      values.put(name, value);
+    constantValue = evaluationHelper.computeConstantExpression(expressions[1], false);
+    if (constantValue == null) return;
+    String value = constantValue.toString();
+    values.put(name, value);
 
-      declarations.put(name, SmartPointerManager.createPointer(expressions[0]));
+    declarations.put(name, SmartPointerManager.createPointer(expressions[0]));
   }
 
   /**
-   * Checks if library with CucumberExpressions library attached to the project.
-   * @return true if step definitions should be written in Cucumber Expressions (since Cucumber v 3.0),
-   * false in case of old-style Regexp step definitions.
+   * Checks if the Cucumber Expressions library is attached to the project.
+   *
+   * @return true if step definitions could be written in Cucumber Expressions (from Cucumber v3.0),
+   * false in the case of old-style Regexp step definitions.
+   * @see <a href="https://github.com/cucumber/cucumber-expressions">Cucumber Expressions on GitHub</a>
    */
   public static boolean isCucumberExpressionsAvailable(@NotNull PsiElement context) {
     PsiLocation<PsiElement> location = new PsiLocation<>(context);
@@ -481,7 +465,7 @@ public final class CucumberJavaUtil {
   }
 
   /**
-   * Check every step and send glue (package name) of its definition to consumer
+   * Check every step and send glue (package name) of its definition to consumer.
    */
   public static void calculateGlueFromGherkinFile(@NotNull GherkinFile gherkinFile, @NotNull Consumer<String> consumer) {
     gherkinFile.accept(new GherkinRecursiveElementVisitor() {
@@ -525,7 +509,7 @@ public final class CucumberJavaUtil {
       }
     }
 
-    for (String fqn: CONFIGURATION_ANNOTATION_NAMES) {
+    for (String fqn : CONFIGURATION_ANNOTATION_NAMES) {
       ProgressManager.checkCanceled();
       PsiClass psiClass = javaPsiFacade.findClass(fqn, dependenciesScope);
       if (psiClass == null) {
@@ -544,7 +528,7 @@ public final class CucumberJavaUtil {
   }
 
   /**
-   * Calculates class to run cucumber tests
+   * @return The class used to run Cucumber tests for {@code cucumberCoreVersion}.
    */
   public static @NotNull String getCucumberMainClass(@NotNull String cucumberCoreVersion) {
     if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_4_5) >= 0) {
