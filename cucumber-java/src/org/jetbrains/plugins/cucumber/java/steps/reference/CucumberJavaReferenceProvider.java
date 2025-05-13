@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class CucumberJavaReferenceProvider extends PsiReferenceProvider {
-
   @Override
   public boolean acceptsTarget(@NotNull PsiElement target) {
-    return target instanceof PomTargetPsiElement &&
-           ((PomTargetPsiElement)target).getTarget() instanceof CucumberJavaParameterPomTarget;
+    return target instanceof PomTargetPsiElement pomTarget && pomTarget.getTarget() instanceof CucumberJavaParameterPomTarget;
   }
 
   @Override
@@ -26,12 +24,12 @@ public final class CucumberJavaReferenceProvider extends PsiReferenceProvider {
     if (!(element instanceof PsiLiteralExpression literalExpression)) {
       return PsiReference.EMPTY_ARRAY;
     }
-    Object value = literalExpression.getValue();
+    final Object value = literalExpression.getValue();
     if (!(value instanceof String)) {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    PsiAnnotation annotation = PsiTreeUtil.getParentOfType(element, PsiAnnotation.class);
+    final PsiAnnotation annotation = PsiTreeUtil.getParentOfType(element, PsiAnnotation.class);
     if (annotation == null) {
       return PsiReference.EMPTY_ARRAY;
     }
@@ -39,14 +37,14 @@ public final class CucumberJavaReferenceProvider extends PsiReferenceProvider {
     if (!CucumberJavaUtil.isCucumberStepAnnotation(annotation)) {
       return PsiReference.EMPTY_ARRAY;
     }
-    String cucumberExpression = CucumberJavaUtil.getAnnotationValue(annotation);
+    final String cucumberExpression = CucumberJavaUtil.getAnnotationValue(annotation);
     if (cucumberExpression == null) {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    List<CucumberJavaParameterTypeReference> result = new ArrayList<>();
+    final List<CucumberJavaParameterTypeReference> result = new ArrayList<>();
     CucumberUtil.processParameterTypesInCucumberExpression(literalExpression.getValue().toString(), range -> {
-      // Skip " in the begin of the String Literal
+      // Skip " at the beginning of the string literal
       range = range.shiftRight(StringLiteralManipulator.getValueRange(literalExpression).getStartOffset());
       result.add(new CucumberJavaParameterTypeReference(element, range));
       return true;

@@ -17,27 +17,21 @@ import java.util.List;
 
 public final class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiReference, ReferencesSearch.SearchParameters> {
   @Override
-  public boolean execute(final @NotNull ReferencesSearch.SearchParameters queryParameters,
-                         final @NotNull Processor<? super PsiReference> consumer) {
-    final PsiElement myElement = queryParameters.getElementToSearch();
-    if (!(myElement instanceof PsiMethod method)) {
-      return true;
-    }
-    Boolean isStepDefinition = ReadAction.compute(() -> CucumberJavaUtil.isStepDefinition(method));
+  public boolean execute(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<? super PsiReference> consumer) {
+    final PsiElement elementToSearch = queryParameters.getElementToSearch();
+    if (!(elementToSearch instanceof PsiMethod method)) return true;
+    final boolean isStepDefinition = ReadAction.compute(() -> CucumberJavaUtil.isStepDefinition(method));
     if (!isStepDefinition) {
       return true;
     }
-
-    List<PsiAnnotation> stepAnnotations =
-      ReadAction.compute(() -> CucumberJavaUtil.getCucumberStepAnnotations(method));
-
-    for (PsiAnnotation stepAnnotation : stepAnnotations) {
+    final List<PsiAnnotation> stepAnnotations = ReadAction.compute(() -> CucumberJavaUtil.getCucumberStepAnnotations(method));
+    for (final PsiAnnotation stepAnnotation : stepAnnotations) {
       final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
       if (regexp == null) {
         continue;
       }
-      boolean result = CucumberUtil.findGherkinReferencesToElement(myElement, regexp, consumer, queryParameters.getEffectiveSearchScope());
-      if (!result) {
+      var found = CucumberUtil.findGherkinReferencesToElement(elementToSearch, regexp, consumer, queryParameters.getEffectiveSearchScope());
+      if (!found) {
         return false;
       }
     }

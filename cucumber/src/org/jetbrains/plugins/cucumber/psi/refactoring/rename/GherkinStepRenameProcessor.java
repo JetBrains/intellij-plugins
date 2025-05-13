@@ -17,6 +17,7 @@ import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpTT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
@@ -31,17 +32,9 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     return element instanceof GherkinStep || PsiTreeUtil.getParentOfType(element, GherkinStep.class) != null;
   }
 
-  public static CucumberStepReference getCucumberStepReference(PsiElement element) {
-    for (PsiReference ref : element.getReferences()) {
-      if (ref instanceof CucumberStepReference) {
-        return (CucumberStepReference)ref;
-      }
-    }
-    return null;
-  }
-
   /**
    * Wraps all special symbols of regexp with group and cut static text.
+   *
    * @param source regex to work with
    * @return List of strings. The first one is prepared regex, then static elements of the regex
    */
@@ -126,16 +119,18 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
 
       result.append(newStaticTexts.get(newStaticTexts.size() - 1));
       return result.toString();
-    } else  {
+    }
+    else {
       return oldStepName;
     }
   }
 
   @Override
-  public void renameElement(@NotNull PsiElement element, @NotNull String newName, UsageInfo @NotNull [] usages, @Nullable RefactoringElementListener listener)
-    throws IncorrectOperationException {
-
-    final CucumberStepReference reference = getCucumberStepReference(element);
+  public void renameElement(@NotNull PsiElement element,
+                            @NotNull String newName,
+                            UsageInfo @NotNull [] usages,
+                            @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
+    final CucumberStepReference reference = CucumberUtil.getCucumberStepReference(element);
     if (reference != null) {
       final AbstractStepDefinition stepDefinition = reference.resolveToDefinition();
       if (stepDefinition != null) {

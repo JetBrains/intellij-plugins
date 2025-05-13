@@ -13,23 +13,18 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameter
 public final class CucumberJavaPomDeclarationSearcher extends PomDeclarationSearcher {
   @Override
   public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, @NotNull Consumer<? super PomTarget> consumer) {
-    if (!(element instanceof PsiLiteralExpression)) {
-      return;
-    }
+    if (!(element instanceof PsiLiteralExpression literalExpression)) return;
+    final Object value = literalExpression.getValue();
+    if (!(value instanceof String stringValue)) return;
 
-    Object value = ((PsiLiteralExpression)element).getValue();
-    if (!(value instanceof String stringValue)) {
-      return;
-    }
-
-    PsiNewExpression newExp = PsiTreeUtil.getParentOfType(element, PsiNewExpression.class);
+    final PsiNewExpression newExp = PsiTreeUtil.getParentOfType(element, PsiNewExpression.class);
     if (newExp != null) {
       if (!isFirstConstructorArgument(element, newExp)) {
         return;
       }
-      PsiJavaCodeReferenceElement classReference = newExp.getClassReference();
+      final PsiJavaCodeReferenceElement classReference = newExp.getClassReference();
       if (classReference != null) {
-        String fqn = classReference.getQualifiedName();
+        final String fqn = classReference.getQualifiedName();
         if (CucumberJavaUtil.PARAMETER_TYPE_CLASS.equals(fqn)) {
           consumer.consume(new CucumberJavaParameterPomTarget(element, stringValue));
         }
@@ -38,18 +33,10 @@ public final class CucumberJavaPomDeclarationSearcher extends PomDeclarationSear
   }
 
   private static boolean isFirstConstructorArgument(@NotNull PsiElement element, @NotNull PsiNewExpression newExp) {
-    PsiExpressionList argumentList = newExp.getArgumentList();
-    if (argumentList == null) {
-      return false;
-    }
-
-    if (argumentList.getExpressionCount() == 0) {
-      return false;
-    }
-
-    if (argumentList.getExpressions()[0] != element) {
-      return false;
-    }
+    final PsiExpressionList argumentList = newExp.getArgumentList();
+    if (argumentList == null) return false;
+    if (argumentList.getExpressionCount() == 0) return false;
+    if (argumentList.getExpressions()[0] != element) return false;
     return true;
   }
 }
