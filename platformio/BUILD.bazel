@@ -28,7 +28,6 @@ jvm_library(
     "//CIDR/clion-execution",
     "@community//platform/ide-core-impl",
     "//CIDR/cidr-external-system:cidr-externalSystem",
-    "@community//plugins/terminal",
     "@community//platform/core-ui",
     "@community//platform/statistics",
     "@community//platform/platform-util-io:ide-util-io",
@@ -41,6 +40,7 @@ jvm_library(
     "@lib//:jediterm-core",
     "@lib//:jediterm-ui",
     "@community//platform/ui.jcef",
+    "//CIDR/cidr-projectModel",
   ],
   runtime_deps = [":platformio_resources"]
 )
@@ -69,8 +69,6 @@ jvm_library(
     "@community//platform/ide-core-impl",
     "//CIDR/cidr-external-system:cidr-externalSystem",
     "//CIDR/cidr-external-system:cidr-externalSystem_test_lib",
-    "@community//plugins/terminal",
-    "@community//plugins/terminal:terminal_test_lib",
     "@community//platform/core-ui",
     "@community//platform/statistics",
     "@community//platform/statistics:statistics_test_lib",
@@ -85,6 +83,7 @@ jvm_library(
     "@lib//:jediterm-ui",
     "@community//platform/ui.jcef",
     "//CIDR/clion-testFramework",
+    "//CIDR/cidr-projectModel",
   ],
   runtime_deps = [
     ":platformio_resources",
