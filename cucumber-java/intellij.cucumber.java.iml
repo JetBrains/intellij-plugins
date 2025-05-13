@@ -197,6 +197,60 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-core-7" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-core:7.22.1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/7.22.1/cucumber-core-7.22.1.jar">
+              <sha256sum>b3a32e1f8022364e38c3b37fcb2b55fda8620176cc0862f747083222b222b09f</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/7.22.1/cucumber-core-7.22.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/7.22.1/cucumber-core-7.22.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java-7" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java:7.22.1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/7.22.1/cucumber-java-7.22.1.jar">
+              <sha256sum>e9a74b62eac3e77e96ed8db6bd777d6d9f0b2e3a7ee472ba0ffaf5991d1b0ead</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/7.22.1/cucumber-java-7.22.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/7.22.1/cucumber-java-7.22.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java8-7" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java8:7.22.1">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/7.22.1/cucumber-java8-7.22.1.jar">
+              <sha256sum>b46aca9b1f1c2927db29550ef50718063d257fa75d7f588284a6fe74972b678c</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/7.22.1/cucumber-java8-7.22.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/7.22.1/cucumber-java8-7.22.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
       <library name="cucumber-java-5.5" type="repository">
         <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java:5.5.0">
           <verification>

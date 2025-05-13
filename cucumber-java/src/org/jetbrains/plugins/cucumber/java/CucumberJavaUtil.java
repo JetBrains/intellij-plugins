@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
-import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotationProvider;
 import org.jetbrains.plugins.cucumber.psi.*;
 
 import java.util.*;
@@ -63,6 +62,9 @@ public final class CucumberJavaUtil {
   private static final CallMatcher FROM_ENUM_METHOD = CallMatcher.anyOf(
     CallMatcher.staticCall("io.cucumber.cucumberexpressions.ParameterType", "fromEnum")
   );
+
+  public static final Set<String> STEP_MARKERS = Set.of("Given", "Then", "And", "But", "When");
+  public static final Set<String> HOOK_MARKERS = Set.of("Before", "After");
 
   static {
     Map<String, String> javaParameterTypes = new HashMap<>();
@@ -120,7 +122,7 @@ public final class CucumberJavaUtil {
     if (annotationSuffix.contains(".")) {
       return true;
     }
-    return CucumberJavaAnnotationProvider.STEP_MARKERS.contains(annotationName);
+    return STEP_MARKERS.contains(annotationName);
   }
 
   public static boolean isCucumberHookAnnotation(final @NotNull PsiAnnotation annotation) {
@@ -128,7 +130,7 @@ public final class CucumberJavaUtil {
     if (annotationName == null) return false;
 
     final String annotationSuffix = getCucumberAnnotationSuffix(annotationName);
-    return CucumberJavaAnnotationProvider.HOOK_MARKERS.contains(annotationSuffix);
+    return HOOK_MARKERS.contains(annotationSuffix);
   }
 
   public static boolean isStepDefinition(final @NotNull PsiMethod method) {

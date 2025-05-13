@@ -13,7 +13,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
+public final class CucumberJavaReferenceProvider extends PsiReferenceProvider {
 
   @Override
   public boolean acceptsTarget(@NotNull PsiElement target) {

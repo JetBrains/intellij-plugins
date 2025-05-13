@@ -41,6 +41,7 @@ public final class CucumberJavaVersionUtil {
   static {
     // We detect the cucumber-core version in the project by checking what classes were added between the versions.
     // Example: https://github.com/cucumber/cucumber-jvm/compare/v5.0.0...v6.0.0
+    // See also: https://github.com/cucumber/cucumber-jvm/tree/main/release-notes for granular release notes for each release.
 
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.core.backend.SourceReference", CUCUMBER_CORE_VERSION_7));
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.core.exception.ExceptionUtils", CUCUMBER_CORE_VERSION_6));
