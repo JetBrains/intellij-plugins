@@ -63,7 +63,6 @@ public class HCLElementVisitor extends PsiElementVisitor {
 
   public void visitDefinedMethodExpression(@NotNull HCLDefinedMethodExpression o) {
     visitExpression(o);
-    // visitProviderDefinedFunction(o);
   }
 
   public void visitExpression(@NotNull HCLExpression o) {

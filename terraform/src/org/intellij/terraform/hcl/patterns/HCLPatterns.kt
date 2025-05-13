@@ -48,7 +48,7 @@ object HCLPatterns {
         }
       })
 
-  val ProviderFunctionNameCapture: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement(PsiElement::class.java)
+  val ProviderDefinedFunction: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement(PsiElement::class.java)
     .inFile(File).with(
       object : PatternCondition<PsiElement>("function name in providerDefinedFunction") {
         override fun accepts(identifier: PsiElement, context: ProcessingContext?): Boolean {

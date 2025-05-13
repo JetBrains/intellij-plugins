@@ -21,7 +21,9 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.hcl.psi.getNameOrText
 import org.jetbrains.annotations.Nls
 import java.util.*
 
@@ -44,6 +46,8 @@ internal fun getBlockForDocumentationLink(element: TfDocumentPsi?, blockTypeLite
 
 @RequiresReadLock
 internal fun getHelpWindowHeader(element: PsiElement?): @Nls String {
+  getTextIfProviderFunction(element)?.let { return it }
+
   return when (element) {
     is HCLProperty -> {
       val block = element.parentOfType<HCLBlock>(true)
@@ -98,4 +102,12 @@ internal fun calculateBlockDescription(element: HCLBlock): @Nls String {
   else {
     NO_DOC
   }
+}
+
+private fun getTextIfProviderFunction(element: PsiElement?): @Nls String? {
+  val function = element as? ProviderDefinedFunction<*> ?: element?.parent as? ProviderDefinedFunction<*>  ?: return null
+
+  val providerName = function.provider.getNameOrText()
+  val functionName = function.function.getNameOrText()
+  return HCLBundle.message("terraform.doc.provider.function", functionName, providerName)
 }

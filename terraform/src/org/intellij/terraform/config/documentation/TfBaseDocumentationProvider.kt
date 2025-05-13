@@ -33,7 +33,7 @@ internal abstract class TfBaseDocumentationProvider {
 
     override fun computePresentation(): TargetPresentation {
       return TargetPresentation.builder(getHelpWindowHeader(pointer.element))
-        .icon(pointer.element?.let {TfCompletionUtil.getLookupIcon(it)})
+        .icon(pointer.element?.let { TfCompletionUtil.getLookupIcon(it)})
         .presentation()
     }
 

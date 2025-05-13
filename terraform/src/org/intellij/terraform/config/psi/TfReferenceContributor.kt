@@ -98,7 +98,7 @@ class TfReferenceContributor : PsiReferenceContributor() {
       , WebDocumentationReferenceProvider)
 
     // Documentation reference for provider-defined functions
-    registrar.registerReferenceProvider(HCLPatterns.ProviderFunctionNameCapture, WebDocumentationReferenceProvider)
+    registrar.registerReferenceProvider(HCLPatterns.ProviderDefinedFunction, WebDocumentationReferenceProvider)
   }
 }
 
