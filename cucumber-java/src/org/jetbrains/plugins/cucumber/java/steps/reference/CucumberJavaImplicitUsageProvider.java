@@ -11,10 +11,11 @@ import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.*;
 public final class CucumberJavaImplicitUsageProvider implements ImplicitUsageProvider {
   @Override
   public boolean isImplicitUsage(@NotNull PsiElement element) {
-    if(element instanceof PsiClass) {
-      return isStepDefinitionClass((PsiClass)element);
-    } else if (element instanceof PsiMethod) {
-      return isStepDefinition((PsiMethod)element) || isHook((PsiMethod)element) || isParameterType((PsiMethod)element);
+    if (element instanceof PsiClass psiClass) {
+      return isStepDefinitionClass(psiClass);
+    }
+    else if (element instanceof PsiMethod method) {
+      return isStepDefinition(method) || isHook(method) || isParameterType(method);
     }
 
     return false;
