@@ -300,7 +300,7 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
   //<editor-fold desc="Data Sources completion tests">
   public void testDataSourceTypeCompletion() throws Exception {
     final TreeSet<String> set = StreamSupport.stream(
-        Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
+        Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDataSources().iterator(), Spliterator.ORDERED),
         false)
       .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(DataSourceType::getType)
@@ -352,7 +352,7 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
 
   public void testDataSourceQuotedTypeCompletion() throws Exception {
     final TreeSet<String> set = StreamSupport.stream(
-        Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
+        Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDataSources().iterator(), Spliterator.ORDERED),
         false)
       .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(DataSourceType::getType)
@@ -369,7 +369,7 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
 
   public void testDataSourceQuotedKeywordCompletion() throws Exception {
     final TreeSet<String> set = StreamSupport.stream(
-        Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
+        Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDataSources().iterator(), Spliterator.ORDERED),
         false)
       .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(DataSourceType::getType)
@@ -444,7 +444,7 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
 
   public void testDataSourceTypeCompletionGivenDefinedProviders() throws Exception {
     final TreeSet<String> set = StreamSupport.stream(
-        Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDatasources().iterator(), Spliterator.ORDERED),
+        Spliterators.spliteratorUnknownSize(TypeModelProvider.Companion.getGlobalModel().allDataSources().iterator(), Spliterator.ORDERED),
         false)
       .filter(type -> tiers.contains(type.getProvider().getTier()))
       .map(DataSourceType::getType)

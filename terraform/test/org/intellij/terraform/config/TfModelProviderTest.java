@@ -169,7 +169,7 @@ public class TfModelProviderTest extends LightPlatformTestCase {
     model.allProviders().iterator().forEachRemaining(provider -> {
       String providerFullName = provider.getFullName().toLowerCase(Locale.getDefault());
       final Set<String> names = new HashSet<>();
-      List<DataSourceType> datasourceTypes = model.getDatasourcesByProvider().get(providerFullName);
+      List<DataSourceType> datasourceTypes = model.getDataSourcesByProvider().get(providerFullName);
       if (datasourceTypes != null) {
         datasourceTypes.iterator().forEachRemaining(resource -> {
           String typePrefix = StringUtil.substringBefore(resource.getType(), "_");
@@ -197,7 +197,7 @@ public class TfModelProviderTest extends LightPlatformTestCase {
     });
 
     List<String> datasources = new ArrayList<>();
-    model.allDatasources().iterator().forEachRemaining(it -> {
+    model.allDataSources().iterator().forEachRemaining(it -> {
       if (it.getType().equals("google_compute_instance")) {
         datasources.add(it.getType()+": "+it.getProvider().getFullName());
       }

@@ -253,7 +253,7 @@ internal object TfModelHelper {
     val model = TypeModelProvider.getModel(block)
     val types = when (typeString) {
       HCL_RESOURCE_IDENTIFIER -> model.allResources().filter { it.type == identifier }.toList()
-      HCL_DATASOURCE_IDENTIFIER -> model.allDatasources().filter { it.type == identifier }.toList()
+      HCL_DATASOURCE_IDENTIFIER -> model.allDataSources().filter { it.type == identifier }.toList()
       HCL_PROVIDER_IDENTIFIER -> model.allProviders().filter { it.type == identifier }.toList()
       else -> emptyList()
     }

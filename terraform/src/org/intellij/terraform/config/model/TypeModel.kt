@@ -72,7 +72,7 @@ class TypeModel(
 
   val providersByFullName: Map<String, ProviderType>
   val resourcesByProvider: Map<String, List<ResourceType>>
-  val datasourcesByProvider: Map<String, List<DataSourceType>>
+  val dataSourcesByProvider: Map<String, List<DataSourceType>>
 
   private val providerDefaultPrefixes: Map<String, String>
 
@@ -88,10 +88,10 @@ class TypeModel(
     val loadedProviders = providersByFullName.values.toSet()
 
     resourcesByProvider = resources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
-    datasourcesByProvider = dataSources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
+    dataSourcesByProvider = dataSources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
 
     providerDefaultPrefixes = providersByFullName.mapNotNull { (name, provider) ->
-      val prefix = getDefaultPrefix(resourcesByProvider[name]) ?: getDefaultPrefix(datasourcesByProvider[name])
+      val prefix = getDefaultPrefix(resourcesByProvider[name]) ?: getDefaultPrefix(dataSourcesByProvider[name])
       prefix?.let { name to it }
     }.toMap()
   }
@@ -364,7 +364,7 @@ class TypeModel(
     lookupType(name, psiElement, resourcesByProvider)
 
   fun getDataSourceType(name: String, psiElement: PsiElement? = null): DataSourceType? =
-    lookupType(name, psiElement, datasourcesByProvider)
+    lookupType(name, psiElement, dataSourcesByProvider)
 
   private fun <T : ResourceOrDataSourceType> lookupType(name: String, psiElement: PsiElement?, typesMap: Map<String, List<T>>): T? {
     val providerName = getProviderNameForIdentifier(name, psiElement)
@@ -426,7 +426,7 @@ class TypeModel(
   }
 
   fun allResources(): Sequence<ResourceType> = resourcesByProvider.values.asSequence().flatten()
-  fun allDatasources(): Sequence<DataSourceType> = datasourcesByProvider.values.asSequence().flatten()
+  fun allDataSources(): Sequence<DataSourceType> = dataSourcesByProvider.values.asSequence().flatten()
   fun allProviders(): Sequence<ProviderType> = providersByFullName.values.asSequence()
 }
 
