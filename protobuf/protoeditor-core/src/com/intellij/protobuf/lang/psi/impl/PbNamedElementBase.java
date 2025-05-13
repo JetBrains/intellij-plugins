@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-abstract class PbNamedElementBase extends PbStatementBase implements PbNamedElement {
+public abstract class PbNamedElementBase extends PbStatementBase implements PbNamedElement {
 
   PbNamedElementBase(ASTNode node) {
     super(node);

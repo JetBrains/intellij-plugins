@@ -21,6 +21,8 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.PbParserDefinition;
+import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -29,16 +31,13 @@ import com.intellij.psi.impl.source.DummyHolderFactory;
 import com.intellij.psi.impl.source.tree.TreeElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.PbParserDefinition;
-import com.intellij.protobuf.lang.psi.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /** Builders that help generate synthetic proto PSI elements. */
-public class PbElementFactory {
-
+public final class PbElementFactory {
   public static PbElementFactory getInstance(PsiFile file) {
     return new PbElementFactory(file);
   }
@@ -73,7 +72,7 @@ public class PbElementFactory {
     return new FieldBuilder();
   }
 
-  abstract static class AbstractBuilder<T extends AbstractBuilder<T>> {
+  public abstract static class AbstractBuilder<T extends AbstractBuilder<T>> {
     private PsiElement parent = null;
     private PsiElement navigationElement = null;
     private TextRange textRange = null;
@@ -119,7 +118,7 @@ public class PbElementFactory {
   }
 
   /** A builder that constructs a typename. E.g., ".com.foo.bar.Message". */
-  public class TypeNameBuilder extends AbstractBuilder<TypeNameBuilder> {
+  public final class TypeNameBuilder extends AbstractBuilder<TypeNameBuilder> {
     private String name = null;
 
     @Override
@@ -170,7 +169,7 @@ public class PbElementFactory {
     }
   }
 
-  class OptionBuilder extends AbstractBuilder<OptionBuilder> {
+  final class OptionBuilder extends AbstractBuilder<OptionBuilder> {
     String name;
     String value;
 

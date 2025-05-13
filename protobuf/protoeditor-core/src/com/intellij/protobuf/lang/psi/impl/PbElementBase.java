@@ -25,7 +25,7 @@ import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-abstract class PbElementBase extends ASTWrapperPsiElement
+public abstract class PbElementBase extends ASTWrapperPsiElement
     implements PbElement, PbOverridableElement {
 
   public PbElementBase(ASTNode node) {

@@ -19,7 +19,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.protobuf.lang.psi.PbStatement;
 import org.jetbrains.annotations.NotNull;
 
-abstract class PbStatementBase extends PbElementBase implements PbStatement {
+public abstract class PbStatementBase extends PbElementBase implements PbStatement {
 
   PbStatementBase(ASTNode node) {
     super(node);

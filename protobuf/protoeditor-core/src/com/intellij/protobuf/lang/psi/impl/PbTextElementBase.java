@@ -22,7 +22,7 @@ import com.intellij.protobuf.lang.PbTextLanguage;
 import com.intellij.protobuf.lang.psi.PbTextElement;
 import org.jetbrains.annotations.NotNull;
 
-abstract class PbTextElementBase extends ASTWrapperPsiElement implements PbTextElement {
+public abstract class PbTextElementBase extends ASTWrapperPsiElement implements PbTextElement {
 
   public PbTextElementBase(ASTNode node) {
     super(node);

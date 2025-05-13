@@ -22,10 +22,12 @@ import com.thoughtworks.gauge.execution.runner.MessageProcessor;
 import com.thoughtworks.gauge.execution.runner.TestsCache;
 import com.thoughtworks.gauge.execution.runner.event.ExecutionError;
 import com.thoughtworks.gauge.execution.runner.event.ExecutionEvent;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.text.ParseException;
 
-abstract class GaugeEventProcessor implements EventProcessor {
+@ApiStatus.Internal
+public abstract class GaugeEventProcessor implements EventProcessor {
   private static final String FILE_PREFIX = "gauge://";
   private final MessageProcessor processor;
   private final TestsCache cache;

@@ -26,7 +26,7 @@ import com.thoughtworks.gauge.language.psi.SpecStaticArg;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public final class ConvertToDynamicArgIntention extends ConvertArgTypeIntentionBase {
+final class ConvertToDynamicArgIntention extends ConvertArgTypeIntentionBase {
   @Override
   public @Nls @NotNull String getText() {
     return GaugeBundle.message("gauge.convert.to.dynamic.parameter");

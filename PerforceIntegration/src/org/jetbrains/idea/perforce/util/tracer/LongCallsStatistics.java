@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-class LongCallsStatistics<Kind extends Enum>
+final class LongCallsStatistics<Kind extends Enum>
   extends IntervalStatistics<LongCallsStatistics.Data<Kind>, LongCallsStatistics.IntervalData<Kind>, LongCallsStatistics.AverageData<Kind>> implements Tracer<Kind, Long> {
 
   private static final int ourDefaultMaxKept = 20;
@@ -56,8 +56,8 @@ class LongCallsStatistics<Kind extends Enum>
     }
   }
 
-  public static class IntervalData<Kind> extends MyMapHolder<Kind> implements Consumer<Data<Kind>> {
-    public IntervalData(final int maxKept) {
+  static final class IntervalData<Kind> extends MyMapHolder<Kind> implements Consumer<Data<Kind>> {
+    IntervalData(final int maxKept) {
       super(maxKept);
     }
 
@@ -67,8 +67,8 @@ class LongCallsStatistics<Kind extends Enum>
     }
   }
 
-  public static class AverageData<Kind> extends MyMapHolder<Kind> implements Consumer<IntervalData<Kind>> {
-    public AverageData(int maxKept) {
+  static final class AverageData<Kind> extends MyMapHolder<Kind> implements Consumer<IntervalData<Kind>> {
+    AverageData(int maxKept) {
       super(maxKept);
     }
 
@@ -81,13 +81,13 @@ class LongCallsStatistics<Kind extends Enum>
     }
   }
 
-  public static class Data<Kind> {
+  static final class Data<Kind> {
     // todo +-
     private final Throwable myStackTraceHolder;
     private final String myPresentation;
     private final long myInterval;
 
-    public Data(final String presentation, long interval) {
+    Data(final String presentation, long interval) {
       myPresentation = presentation;
       myInterval = interval;
       myStackTraceHolder = new Throwable();

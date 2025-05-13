@@ -29,7 +29,7 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
-abstract class PbFieldBase extends PbNamedElementBase implements PbField {
+public abstract class PbFieldBase extends PbNamedElementBase implements PbField {
 
   PbFieldBase(ASTNode node) {
     super(node);

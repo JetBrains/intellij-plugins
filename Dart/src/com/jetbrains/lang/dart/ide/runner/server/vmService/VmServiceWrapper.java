@@ -29,8 +29,8 @@ import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSt
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
 import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.consumer.*;
-import org.dartlang.vm.service.element.Stack;
 import org.dartlang.vm.service.element.*;
+import org.dartlang.vm.service.element.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class VmServiceWrapper implements Disposable {
+public final class VmServiceWrapper implements Disposable {
 
   public static final Logger LOG = Logger.getInstance(VmServiceWrapper.class.getName());
   private static final long RESPONSE_WAIT_TIMEOUT = 3000; // millis

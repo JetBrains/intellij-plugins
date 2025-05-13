@@ -24,13 +24,13 @@ public final class VmServiceConsumers {
     }
   }
 
-  public abstract static class SuccessConsumerWrapper extends ConsumerWrapper implements SuccessConsumer {
+  abstract static class SuccessConsumerWrapper extends ConsumerWrapper implements SuccessConsumer {
   }
 
-  public abstract static class VmConsumerWrapper extends ConsumerWrapper implements VMConsumer {
+  abstract static class VmConsumerWrapper extends ConsumerWrapper implements VMConsumer {
   }
 
-  public abstract static class GetIsolateConsumerWrapper extends ConsumerWrapper implements GetIsolateConsumer {
+  abstract static class GetIsolateConsumerWrapper extends ConsumerWrapper implements GetIsolateConsumer {
     @Override
     public void received(Sentinel response) {
     }
@@ -61,7 +61,7 @@ public final class VmServiceConsumers {
     public abstract void noGoodResult();
   }
 
-  public abstract static class EmptyResumeConsumer extends ConsumerWrapper implements ResumeConsumer {
+  abstract static class EmptyResumeConsumer extends ConsumerWrapper implements ResumeConsumer {
     @Override
     public void received(Sentinel response) {
     }
