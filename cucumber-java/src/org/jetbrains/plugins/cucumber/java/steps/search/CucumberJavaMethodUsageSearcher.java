@@ -16,30 +16,28 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.util.List;
 
+/// Provides 'Find Usages' for Java methods that implement Cucumber step definitions.
 public final class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters> {
   public CucumberJavaMethodUsageSearcher() {
     super(true);
   }
 
   @Override
-  public void processQuery(final @NotNull MethodReferencesSearch.SearchParameters p,
-                           final @NotNull Processor<? super PsiReference> consumer) {
-    SearchScope scope = p.getEffectiveSearchScope();
-    if (!(scope instanceof GlobalSearchScope)) {
-      return;
-    }
+  public void processQuery(@NotNull MethodReferencesSearch.SearchParameters searchParameters,
+                           @NotNull Processor<? super PsiReference> consumer) {
+    final SearchScope scope = searchParameters.getEffectiveSearchScope();
+    if (!(scope instanceof GlobalSearchScope globalSearchScope)) return;
 
-    final PsiMethod method = p.getMethod();
+    final PsiMethod method = searchParameters.getMethod();
 
-    final GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)scope,
-                                                                                              GherkinFileType.INSTANCE);
-    List<PsiAnnotation> stepAnnotations = CucumberJavaUtil.getCucumberStepAnnotations(method);
-    for (PsiAnnotation stepAnnotation : stepAnnotations) {
+    final GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, GherkinFileType.INSTANCE);
+    final List<PsiAnnotation> stepAnnotations = CucumberJavaUtil.getCucumberStepAnnotations(method);
+    for (final PsiAnnotation stepAnnotation : stepAnnotations) {
       final String regexp = stepAnnotation != null ? CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation) : null;
-      if (regexp == null) {
-        continue;
-      }
-      ReferencesSearch.search(new ReferencesSearch.SearchParameters(method, restrictedScope, false, p.getOptimizer())).forEach(consumer);
+      if (regexp == null) continue;
+      ReferencesSearch
+        .search(new ReferencesSearch.SearchParameters(method, restrictedScope, false, searchParameters.getOptimizer()))
+        .forEach(consumer);
     }
   }
 }
