@@ -127,6 +127,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     if (StringUtil.isEmpty(configuration.getGlue())) {
       if (isCucumber60orMore(module)) {
         // Cucumber can automatically find glue packages since v6. See IDEA-243074
+        // Do not reset glue in case it's set manually.
+      }
+      else {
         configuration.setGlueProvider(getGlueProvider(element));
       }
     }
