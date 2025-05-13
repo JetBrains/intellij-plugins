@@ -3,7 +3,7 @@ load("@rules_java//java:defs.bzl", "java_library")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_test")
 
 jvm_library(
-  name = "metadata-crawler_test_lib",
+  name = "cloudFormation-metadataCrawler_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True),
   deps = [
@@ -21,7 +21,7 @@ jvm_library(
 )
 
 jvm_test(
-  name = "metadata-crawler_test",
-  runtime_deps = [":metadata-crawler_test_lib"]
+  name = "cloudFormation-metadataCrawler_test",
+  runtime_deps = [":cloudFormation-metadataCrawler_test_lib"]
 )
 ### auto-generated section `build intellij.cloudFormation.metadataCrawler` end

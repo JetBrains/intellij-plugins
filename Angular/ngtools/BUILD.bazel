@@ -17,7 +17,7 @@ jvm_library(
     "//ultimate/ultimate-verifier:commercial-verifier",
     "@lib//:commons-compress",
     "@lib//:gson",
-    "@community//platform/service-container",
+    "@community//platform/service-container:serviceContainer",
     "@community//platform/platform-util-io:ide-util-io",
   ]
 )

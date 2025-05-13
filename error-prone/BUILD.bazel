@@ -2,13 +2,13 @@
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
-  name = "error-prone_resources",
+  name = "errorProne_resources",
   files = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
 jvm_library(
-  name = "error-prone",
+  name = "errorProne",
   module_name = "intellij.errorProne",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
@@ -22,6 +22,6 @@ jvm_library(
     "@lib//:stream_ex",
     "@community//java/java-psi-impl:psi-impl",
   ],
-  runtime_deps = [":error-prone_resources"]
+  runtime_deps = [":errorProne_resources"]
 )
 ### auto-generated section `build intellij.errorProne` end
