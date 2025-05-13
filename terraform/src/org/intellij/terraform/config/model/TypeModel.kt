@@ -63,6 +63,7 @@ class TypeModel(
   backends: List<BackendType> = emptyList(),
   functions: List<TfFunction> = emptyList(),
   providerDefinedFunctions: List<TfFunction> = emptyList(),
+  ephemeralResources: List<EphemeralType> = emptyList()
 ) {
 
   val provisioners: List<ProvisionerType> = provisioners.sortedBy { it.type }
@@ -73,6 +74,7 @@ class TypeModel(
   val providersByFullName: Map<String, ProviderType>
   val resourcesByProvider: Map<String, List<ResourceType>>
   val dataSourcesByProvider: Map<String, List<DataSourceType>>
+  val ephemeralByProvider: Map<String, List<EphemeralType>>
 
   private val providerDefaultPrefixes: Map<String, String>
 
@@ -89,6 +91,7 @@ class TypeModel(
 
     resourcesByProvider = resources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
     dataSourcesByProvider = dataSources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
+    ephemeralByProvider = ephemeralResources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
 
     providerDefaultPrefixes = providersByFullName.mapNotNull { (name, provider) ->
       val prefix = getDefaultPrefix(resourcesByProvider[name]) ?: getDefaultPrefix(dataSourcesByProvider[name])
@@ -366,6 +369,9 @@ class TypeModel(
   fun getDataSourceType(name: String, psiElement: PsiElement? = null): DataSourceType? =
     lookupType(name, psiElement, dataSourcesByProvider)
 
+  fun getEphemeralType(name: String, psiElement: PsiElement? = null): EphemeralType? =
+    lookupType(name, psiElement, ephemeralByProvider)
+
   private fun <T : ResourceOrDataSourceType> lookupType(name: String, psiElement: PsiElement?, typesMap: Map<String, List<T>>): T? {
     val providerName = getProviderNameForIdentifier(name, psiElement)
     val resourceId = getResourceName(name)
@@ -428,6 +434,7 @@ class TypeModel(
   fun allResources(): Sequence<ResourceType> = resourcesByProvider.values.asSequence().flatten()
   fun allDataSources(): Sequence<DataSourceType> = dataSourcesByProvider.values.asSequence().flatten()
   fun allProviders(): Sequence<ProviderType> = providersByFullName.values.asSequence()
+  fun allEphemeralResources(): Sequence<EphemeralType> = ephemeralByProvider.values.asSequence().flatten()
 }
 
 fun Collection<PropertyOrBlockType>.toMap(): Map<String, PropertyOrBlockType> {

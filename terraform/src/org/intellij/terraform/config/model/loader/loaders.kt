@@ -13,7 +13,7 @@ class LoadingModel {
   val backends: MutableList<BackendType> = arrayListOf()
   val functions: MutableList<TfFunction> = arrayListOf()
   val providerDefinedFunctions: MutableList<TfFunction> = arrayListOf()
-  val ephemeralResources: MutableList<EphemeralResource> = arrayListOf()
+  val ephemeralResources: MutableList<EphemeralType> = arrayListOf()
   val external: MutableMap<String, Additional> = linkedMapOf()
   val loaded: MutableMap<String, String> = linkedMapOf()
   data class Additional(val name: String, val description: String? = null, val hint: Hint? = null, val optional: Boolean? = null, val required: Boolean? = null)

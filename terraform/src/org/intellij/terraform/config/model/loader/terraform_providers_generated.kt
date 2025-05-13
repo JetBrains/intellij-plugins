@@ -67,7 +67,6 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       type = parseAttrNestedType(context, nested_type!!, fqn)
     }
 
-
     val description = value.string("description")
     val description_kind = value.string("description_kind") ?: "plain"
 
@@ -326,9 +325,11 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
       }
 
       val ephemeralResources = provider.obj("ephemeral_resource_schemas")
-      //ephemeralResources?.let {
-      //  ephemeralResource -> ephemeralResource.fields().asSequence().mapTo(model.ephemeralResources) { parseResourceInfo(context, it, providerInfo) }
-      //}
+      ephemeralResources?.let {
+        ephemeralResource -> ephemeralResource.fields().asSequence().mapNotNullTo(model.ephemeralResources) {
+          parseEphemeralResourceInfo(context, it, providerInfo)
+        }
+      }
     }
   }
 
@@ -374,5 +375,12 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
       description = description,
       providerType = info.type
     )
+  }
+
+  private fun parseEphemeralResourceInfo(context: LoadContext, entry: Map.Entry<String, Any?>, info: ProviderType): EphemeralType? {
+    val name = entry.key.pool(context)
+    val objectNode = entry.value as? ObjectNode ?: return null
+    val (block, _) = TfBaseLoader.parseSchema(context, objectNode, name) ?: return null
+    return EphemeralType(name, info, block)
   }
 }

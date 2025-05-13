@@ -918,4 +918,26 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
         """, 0
     );
   }
+
+  public void testAllEphemeralResourcesCompletion() {
+    final TreeSet<String> set = StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+        TypeModelProvider.Companion.getGlobalModel().allEphemeralResources().iterator(), Spliterator.ORDERED), false)
+      .filter(type -> tiers.contains(type.getProvider().getTier()))
+      .map(EphemeralType::getType)
+      .collect(Collectors.toCollection(TreeSet::new));
+    final Predicate<Collection<String>> matcher =
+      getPartialMatcher(new ArrayList<>(set).subList(0, Math.min(ENTRIES_LIST_SIZE, set.size())));
+
+    doBasicCompletionTest("ephemeral \"<caret>\"", matcher);
+    doBasicCompletionTest("ephemeral \"<caret>\" \"test_name\"", matcher);
+    doBasicCompletionTest("ephemeral \"<caret>\" \"test_name\" {}", matcher);
+    doBasicCompletionTest("ephemeral \"<caret>\" \"test_name\"\n{}", matcher);
+  }
+
+  public void testEphemeralDefaultMetaArguments() {
+    doBasicCompletionTest(
+      """
+        ephemeral "test_ephemeral" "test_name" { <caret> }
+        """, 5, "depends_on", "count", "for_each", "provider", "lifecycle");
+  }
 }

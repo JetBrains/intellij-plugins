@@ -24,6 +24,7 @@ import com.intellij.util.Processor
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
@@ -307,6 +308,10 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
             .processWith(consumer)
         HCL_BACKEND_IDENTIFIER ->
           typeModel.backends.toPlow()
+            .map { buildLookupElement(it, it.type, it.description, position) }
+            .processWith(consumer)
+        HCL_EPHEMERAL_IDENTIFIER ->
+          typeModel.allEphemeralResources().toPlow()
             .map { buildLookupElement(it, it.type, it.description, position) }
             .processWith(consumer)
         TOFU_KEY_PROVIDER ->

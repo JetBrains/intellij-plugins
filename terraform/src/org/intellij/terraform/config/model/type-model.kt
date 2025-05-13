@@ -550,10 +550,9 @@ class ResourceType(
     get() = "$literal ($type)"
 }
 
-class EphemeralResource(
-  val type: String,
-  val provider: ProviderType,
-  properties: List<PropertyOrBlockType>,
+class EphemeralType(
+  override val type: String,
+  override val provider: ProviderType,
   blockType: BlockType? = null,
 ) : BlockType(literal = HCL_EPHEMERAL_IDENTIFIER,
               args = 2,
@@ -565,7 +564,8 @@ class EphemeralResource(
               deprecated = blockType?.deprecated,
               conflictsWith = blockType?.conflictsWith,
               nesting = blockType?.nesting,
-              properties = withDefaults(properties, TypeModel.AbstractResource.properties))
+              properties = withDefaults(blockType?.properties, TypeModel.AbstractEphemeralResource.properties)
+), ResourceOrDataSourceType
 
 class DataSourceType(
   override val type: String,
@@ -668,6 +668,14 @@ internal fun withDefaults(properties: List<PropertyOrBlockType>, default: Map<St
   result.putAll(default)
   result.putAll(properties.toMap())
   return result
+}
+
+internal fun withDefaults(
+  properties: Map<String, PropertyOrBlockType>?,
+  default: Map<String, PropertyOrBlockType>,
+): Map<String, PropertyOrBlockType> {
+  return if (properties.isNullOrEmpty()) default
+  else default + properties
 }
 
 internal fun getContainingFile(psiElement: PsiElement): PsiFile? {

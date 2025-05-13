@@ -53,6 +53,7 @@ class TfMetadataLoader {
     model.resources.addAll(another.allResources().filter { tmp.getResourceType(it.type) == null })
     model.dataSources.addAll(another.allDataSources().filter { tmp.getDataSourceType(it.type) == null })
     model.providers.addAll(another.allProviders().filter { tmp.getProviderType(it.type) == null })
+    model.ephemeralResources.addAll(another.allEphemeralResources().filter { tmp.getEphemeralType(it.type) == null })
     model.provisioners.addAll(another.provisioners.filter { tmp.getProvisionerType(it.type) == null })
     model.backends.addAll(another.backends.filter { tmp.getBackendType(it.type) == null })
     model.functions.addAll(another.functions.filter { tmp.getFunction(it.name) == null })
@@ -67,7 +68,8 @@ class TfMetadataLoader {
       model.provisioners,
       model.backends,
       model.functions,
-      model.providerDefinedFunctions
+      model.providerDefinedFunctions,
+      model.ephemeralResources
     )
   }
 
