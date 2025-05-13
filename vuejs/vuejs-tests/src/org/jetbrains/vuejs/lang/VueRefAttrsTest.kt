@@ -64,9 +64,11 @@ class VueRefAttrsTest : BasePlatformTestCase() {
     for ((signature, result) in listOf(
       Pair("\$refs.input<caret>Ref", "ref='inputRef'"),
       Pair("\$refs.inputRef[0].validation<caret>Message",
-           "/** Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. " +
-           "It also triggers the standard error message, such as \"this is a required field\". " +
-           "The result is that the user sees validation messages without actually submitting. */\n" +
+           "/**\n" +
+           "     * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as \"this is a required field\". The result is that the user sees validation messages without actually submitting.\n" +
+           "     *\n" +
+           "     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLInputElement/validationMessage)\n" +
+           "     */\n" +
            "    readonly validationMessage: string"),
       Pair("this.\$refs.about.\$re<caret>fs", "\$refs: Data"),
       Pair("this.\$refs.div<caret>Ref3", "ref='divRef3'"),
