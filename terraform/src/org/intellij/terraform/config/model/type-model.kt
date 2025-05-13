@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
@@ -548,6 +549,23 @@ class ResourceType(
   override val presentableText: String
     get() = "$literal ($type)"
 }
+
+class EphemeralResource(
+  val type: String,
+  val provider: ProviderType,
+  properties: List<PropertyOrBlockType>,
+  blockType: BlockType? = null,
+) : BlockType(literal = HCL_EPHEMERAL_IDENTIFIER,
+              args = 2,
+              description = blockType?.description,
+              description_kind = blockType?.description_kind,
+              optional = blockType?.optional == true,
+              required = blockType?.required == true,
+              computed = blockType?.computed == true,
+              deprecated = blockType?.deprecated,
+              conflictsWith = blockType?.conflictsWith,
+              nesting = blockType?.nesting,
+              properties = withDefaults(properties, TypeModel.AbstractResource.properties))
 
 class DataSourceType(
   override val type: String,

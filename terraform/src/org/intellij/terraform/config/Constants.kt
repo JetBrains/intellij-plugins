@@ -33,7 +33,7 @@ object Constants {
   internal const val HCL_WORKSPACES_BLOCK_IDENTIFIER: String = "workspaces"
   internal const val HCL_PRECONDITION_BLOCK_IDENTIFIER: String = "precondition"
   internal const val HCL_POSTCONDITION_BLOCK_IDENTIFIER: String = "postcondition"
-
+  internal const val HCL_EPHEMERAL_IDENTIFIER: String = "ephemeral"
 
   internal const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   internal const val LATEST_VERSION: String = "latest"

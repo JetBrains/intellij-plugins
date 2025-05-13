@@ -276,6 +276,8 @@ class TfMetadataLoader {
       type = schemasNode.string("type") ?: "unknown"
       version = schemasNode.string(".schema_version") ?: "1"
     }
+    // Investigate why we have 9 Loaders, but we take the first one,
+    // for example, if we comment ProviderLoaderV2() and ProviderLoaderV1() no tests will fail
     val loader = loaders.find {
       it.isSupportedType(type) && it.isSupportedVersion(version)
     }

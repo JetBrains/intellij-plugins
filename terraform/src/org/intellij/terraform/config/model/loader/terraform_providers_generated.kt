@@ -178,7 +178,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
   private fun parseType(context: LoadContext, node: JsonNode): Type {
     if (node.isTextual) {
       val string = node.asText()
-      return when ( string?.lowercase(Locale.getDefault())) {
+      return when (string?.lowercase(Locale.getDefault())) {
         "bool" -> Types.Boolean
         "number" -> Types.Number
         "string" -> Types.String
@@ -288,7 +288,7 @@ internal data class ProviderMetadata(
   val fullName: String = "",
   val source: String = "",
   val version: String = "",
-  val tier: ProviderTier = ProviderTier.TIER_NONE
+  val tier: ProviderTier = ProviderTier.TIER_NONE,
 )
 
 internal class TfProvidersSchema : VersionedMetadataLoader {
@@ -308,7 +308,8 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
       }
       provider as ObjectNode
       model.loaded[providerKey] = fileName
-      val providerInfo = provider.obj("provider")?.let { parseProviderInfo(context, coordinates.name, coordinates.namespace, it, json) } ?: ProviderType(coordinates.name, emptyList(), coordinates.namespace)
+      val providerInfo = provider.obj("provider")?.let { parseProviderInfo(context, coordinates.name, coordinates.namespace, it, json) }
+                         ?: ProviderType(coordinates.name, emptyList(), coordinates.namespace)
       model.providers.add(providerInfo)
 
       val resources = provider.obj("resource_schemas")
@@ -316,13 +317,18 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
       if (resources == null && dataSources == null) {
         TfMetadataLoader.LOG.warn("No resources nor data-sources defined for provider '$providerFullName' in file '$fileName'")
       }
-      resources?.let { it.fields().asSequence().mapTo(model.resources) { parseResourceInfo(context, it, providerInfo) } }
-      dataSources?.let { it.fields().asSequence().mapTo(model.dataSources) { parseDataSourceInfo(context, it, providerInfo) } }
+      resources?.let { resource -> resource.fields().asSequence().mapTo(model.resources) { parseResourceInfo(context, it, providerInfo) } }
+      dataSources?.let { dataSource -> dataSource.fields().asSequence().mapTo(model.dataSources) { parseDataSourceInfo(context, it, providerInfo) } }
 
       val providerDefinedFunctions = provider.obj("functions")
-      providerDefinedFunctions?.let {
-        it.fields()?.asSequence()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(context, it, providerInfo) }
+      providerDefinedFunctions?.let { function ->
+        function.fields()?.asSequence()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(context, it, providerInfo) }
       }
+
+      val ephemeralResources = provider.obj("ephemeral_resource_schemas")
+      //ephemeralResources?.let {
+      //  ephemeralResource -> ephemeralResource.fields().asSequence().mapTo(model.ephemeralResources) { parseResourceInfo(context, it, providerInfo) }
+      //}
     }
   }
 
@@ -370,4 +376,3 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
     )
   }
 }
-

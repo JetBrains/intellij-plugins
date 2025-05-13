@@ -16,6 +16,7 @@ import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_IMPORT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LIFECYCLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LOCALS_IDENTIFIER
@@ -61,7 +62,7 @@ class TypeModel(
   provisioners: List<ProvisionerType> = emptyList(),
   backends: List<BackendType> = emptyList(),
   functions: List<TfFunction> = emptyList(),
-  providerDefinedFunctions: List<TfFunction> = emptyList()
+  providerDefinedFunctions: List<TfFunction> = emptyList(),
 ) {
 
   val provisioners: List<ProvisionerType> = provisioners.sortedBy { it.type }
@@ -95,16 +96,18 @@ class TypeModel(
     }.toMap()
   }
 
-  @Suppress("MemberVisibilityCanBePrivate")
   companion object {
 
     private val VersionProperty = PropertyType("version", Types.String, hint = SimpleHint("VersionRange"), injectionAllowed = false)
     val TerraformRequiredVersion: PropertyType = PropertyType("required_version", Types.String, hint = SimpleHint("VersionRange"),
                                                               injectionAllowed = false)
 
-    val DependsOnProperty: PropertyType = PropertyType("depends_on", Types.Array,
+    private val DependsOnProperty: PropertyType = PropertyType("depends_on", Types.Array,
                                                        hint = ReferenceHint("resource.#name", "data_source.#name", "module.#name",
-                                                                            "variable.#name"))
+                                                                            "variable.#name", "ephemeral.#name"))
+    private val CountProperty = PropertyType("count", Types.Number, conflictsWith = listOf("for_each"))
+    private val ForEachProperty = PropertyType("for_each", Types.Any, conflictsWith = listOf("count"))
+    private val ProviderProperty = PropertyType("provider", Types.String, hint = ReferenceHint("provider.#type", "provider.#alias"))
 
     val DescriptionProperty: PropertyType = PropertyType("description", Types.String)
     val SensitiveProperty: PropertyType = PropertyType("sensitive", Types.Boolean)
@@ -116,8 +119,8 @@ class TypeModel(
       PropertyType("source", Types.String, hint = SimpleHint("Url"), required = true),
       VersionProperty,
       DependsOnProperty,
-      PropertyType("count", Types.Number, conflictsWith = listOf("for_each")),
-      PropertyType("for_each", Types.Any, conflictsWith = listOf("count")),
+      CountProperty,
+      ForEachProperty,
       PropertyType("providers", MapType(Types.String))
     ).toMap())
 
@@ -207,10 +210,10 @@ class TypeModel(
     val AbstractResource: BlockType = BlockType(HCL_RESOURCE_IDENTIFIER, 2, properties = listOf<PropertyOrBlockType>(
       PropertyType("id", Types.String, injectionAllowed = false, description = "A unique ID for this resource", optional = false,
                    required = false, computed = true),
-      PropertyType("count", Types.Number, conflictsWith = listOf("for_each")),
-      PropertyType("for_each", Types.Any, conflictsWith = listOf("count")),
+      CountProperty,
+      ForEachProperty,
       DependsOnProperty,
-      PropertyType("provider", Types.String, hint = ReferenceHint("provider.#type", "provider.#alias")),
+      ProviderProperty,
       ResourceLifecycle,
       ResourceDynamic,
       // Also may have connection? and provisioner+ blocks
@@ -218,15 +221,23 @@ class TypeModel(
       AbstractResourceProvisioner
     ).toMap())
 
+    val AbstractEphemeralResource: BlockType = BlockType(HCL_EPHEMERAL_IDENTIFIER, 2, properties = listOf<PropertyOrBlockType>(
+      DependsOnProperty,
+      CountProperty,
+      ForEachProperty,
+      ProviderProperty,
+      ResourceLifecycle
+    ).toMap())
+
     @JvmField
     val AbstractDataSource: BlockType = BlockType(HCL_DATASOURCE_IDENTIFIER, 2, properties = listOf(
       PropertyType("id", Types.String, injectionAllowed = false, description = "A unique ID for this data source", optional = false,
                    required = false, computed = true),
-      PropertyType("count", Types.Number, conflictsWith = listOf("for_each")),
-      PropertyType("for_each", Types.Any, conflictsWith = listOf("count")),
+      CountProperty,
+      ForEachProperty,
       DependsOnProperty,
       ResourceLifecycle,
-      PropertyType("provider", Types.String, hint = ReferenceHint("provider.#type", "provider.#alias"))
+      ProviderProperty,
     ).toMap())
 
     @JvmField
@@ -268,9 +279,23 @@ class TypeModel(
 
     val RemovedBlock: BlockType = BlockType(HCL_REMOVED_BLOCK_IDENTIFIER, 0, properties = listOf(FromProperty, ResourceLifecycle).toMap())
 
-    val RootBlocks: List<BlockType> = listOf(Atlas, Module, Output, Variable, AbstractProvider,
-                                             AbstractResource, AbstractDataSource, Terraform,
-                                             Locals, Moved, Import, CheckBlock, RemovedBlock)
+    val RootBlocks: List<BlockType> = listOf(
+      AbstractDataSource,
+      AbstractEphemeralResource,
+      AbstractProvider,
+      AbstractResource,
+      Atlas,
+      CheckBlock,
+      Import,
+      Locals,
+      Module,
+      Moved,
+      Output,
+      RemovedBlock,
+      Terraform,
+      Variable
+    )
+
     val RootBlocksMap: Map<String, BlockType> = RootBlocks.associateBy(BlockType::literal)
 
     fun getResourcePrefix(identifier: String): String {
@@ -289,8 +314,8 @@ class TypeModel(
     fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
       val providerNamesService = LocalProviderNamesService.getInstance()
       val gists = getContainingDir(psiElement)?.childrenOfType<PsiFile>()
-        ?.filter { file -> isTerraformCompatiblePsiFile(file) }
-        ?.map { providerNamesService.providersNamesGist.getFileData(it) } ?: return emptyMap<String, String>()
+                    ?.filter { file -> isTerraformCompatiblePsiFile(file) }
+                    ?.map { providerNamesService.providersNamesGist.getFileData(it) } ?: return emptyMap<String, String>()
       return gists.flatMap { it.entries }.associate { it.key to it.value }
     }
 
@@ -330,8 +355,8 @@ class TypeModel(
     val localNames = psiElement?.let { collectProviderLocalNames(it) } ?: emptyMap()
     val providerShortName = getResourcePrefix(identifier)
     val providerFullName = localNames[providerShortName]
-           ?: Constants.OFFICIAL_PROVIDERS_NAMESPACE.map { "$it/$providerShortName" }.firstOrNull { providersByFullName.containsKey(it) }
-           ?: "hashicorp/$providerShortName" //The last resort
+                           ?: Constants.OFFICIAL_PROVIDERS_NAMESPACE.map { "$it/$providerShortName" }.firstOrNull { providersByFullName.containsKey(it) }
+                           ?: "hashicorp/$providerShortName" //The last resort
     return providerFullName.lowercase()
   }
 
