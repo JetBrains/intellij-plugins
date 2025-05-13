@@ -14,14 +14,14 @@ public abstract class BaseCucumberJavaResolveTest extends CucumberResolveTest {
   @Nullable
   @Override
   protected String getStepDefinitionName(@NotNull final PsiElement element) {
-    if (element instanceof PsiMethod) {
-      return ((PsiMethod)element).getName();
+    if (element instanceof PsiMethod method) {
+      return method.getName();
     }
-    else if (element instanceof PsiMethodCallExpression) {
-      return ((PsiMethodCallExpression)element).getMethodExpression().getQualifiedName();
+    else if (element instanceof PsiMethodCallExpression methodCallExpression) {
+      return methodCallExpression.getMethodExpression().getQualifiedName();
     }
-    else if (element instanceof PomTargetPsiElementImpl) {
-      return ((PomTargetPsiElementImpl)element).getName();
+    else if (element instanceof PomTargetPsiElementImpl pomTargetPsiElement) {
+      return pomTargetPsiElement.getName();
     }
     return null;
   }
