@@ -17,7 +17,7 @@ class HclCodeStyleSettings(container: CodeStyleSettings, language: Language) : C
   var LINE_COMMENTER_CHARACTER: LineCommenterPrefix = LineCommenterPrefix.POUND_SIGN
 
   @JvmField
-  var RUN_TF_FMT_ON_REFORMAT: Boolean = false
+  var RUN_TF_FMT_ON_REFORMAT: Boolean = true
 
   @JvmField
   var IMPORT_PROVIDERS_AUTOMATICALLY: Boolean = true

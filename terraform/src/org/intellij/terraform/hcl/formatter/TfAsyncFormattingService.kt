@@ -5,6 +5,7 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.runBlockingCancellable
@@ -36,6 +37,8 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getFeatures(): Set<FormattingService.Feature> = emptySet()
 
   override fun canFormat(file: PsiFile): Boolean {
+    if (ApplicationManager.getApplication().isUnitTestMode) return false
+
     val settings = CodeStyle.getCustomSettings(file, HclCodeStyleSettings::class.java)
     return (file.fileType is TerraformFileType || file.name.endsWith(TestsExtension)) && settings.RUN_TF_FMT_ON_REFORMAT
   }
