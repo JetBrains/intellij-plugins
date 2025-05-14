@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -42,15 +43,13 @@ public final class CucumberStepInspection extends GherkinInspection {
           }
           final AbstractStepDefinition definition = reference.resolveToDefinition();
           if (definition == null) {
-            CucumberCreateStepFix createStepFix = null;
-            CucumberCreateAllStepsFix createAllStepsFix = null;
+            LocalQuickFix[] fixes = null;
             if (CucumberStepHelper.getExtensionCount() > 0) {
-              createStepFix = new CucumberCreateStepFix();
-              createAllStepsFix = new CucumberCreateAllStepsFix();
+              fixes = new LocalQuickFix[]{new CucumberCreateStepFix(), new CucumberCreateAllStepsFix()};
             }
             holder.registerProblem(reference.getElement(), reference.getRangeInElement(),
                                    CucumberBundle.message("cucumber.inspection.undefined.step.msg.name"),
-                                   createStepFix, createAllStepsFix);
+                                   fixes);
           }
         }
       }
