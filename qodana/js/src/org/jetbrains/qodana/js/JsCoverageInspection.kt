@@ -39,6 +39,10 @@ private class JsCoverageInspection : CoverageInspectionBase() {
     })
   }
 
+  override fun loadReportForIncrementalAnalysis(globalContext: QodanaGlobalInspectionContext) {
+    globalContext.getUserData(jest)?.value?.let { loadReportData(globalContext, it) }
+  }
+
   override fun checker(file: PsiFile, problemsHolder: ProblemsHolder, globalContext: QodanaGlobalInspectionContext) {
     val report = globalContext.getUserData(jest)?.value ?: return
     val pathsMap = globalContext.getUserData(normalizedPaths)?.value ?: return

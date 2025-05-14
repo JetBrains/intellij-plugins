@@ -29,6 +29,10 @@ class PyCoverageInspection : CoverageInspectionBase() {
     })
   }
 
+  override fun loadReportForIncrementalAnalysis(globalContext: QodanaGlobalInspectionContext) {
+    globalContext.getUserData(py)?.value?.let { loadReportData(globalContext, it) }
+  }
+
   override fun checker(file: PsiFile, problemsHolder: ProblemsHolder, globalContext: QodanaGlobalInspectionContext) {
     val report = globalContext.getUserData(py)?.value ?: return
     val pathsMap = globalContext.getUserData(normalizedPaths)?.value ?: return

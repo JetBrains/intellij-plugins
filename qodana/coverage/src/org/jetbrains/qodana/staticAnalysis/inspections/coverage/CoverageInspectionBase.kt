@@ -41,6 +41,15 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
   var warnMissingCoverage = false
 
   abstract fun loadCoverage(globalContext: QodanaGlobalInspectionContext)
+
+  open fun loadReportForIncrementalAnalysis(globalContext: QodanaGlobalInspectionContext) {}
+
+  protected fun loadReportData(globalContext: QodanaGlobalInspectionContext, data: ProjectData) {
+    // TODO: check supported languages?
+    if (isLocalChanges(globalContext)) {
+      processReportData(data, globalContext)
+    }
+  }
   abstract fun checker(file: PsiFile, problemsHolder: ProblemsHolder, globalContext: QodanaGlobalInspectionContext)
   abstract fun validateFileType(file: PsiFile): Boolean
   abstract fun cleanup(globalContext: QodanaGlobalInspectionContext)
@@ -51,6 +60,7 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
     if (globalContext !is QodanaGlobalInspectionContext
         || isUnderLocalChangesOnOldCode(globalContext)) return
     loadCoverage(globalContext)
+    loadReportForIncrementalAnalysis(globalContext)
   }
 
   override fun checkFile(psiFile: PsiFile,
@@ -123,9 +133,6 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
       val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)
       val data = retrieveCoverageData(engine, coverageFiles, globalContext)
       if (data != null) {
-        if (isLocalChanges(globalContext)) {
-          processReportData(data, globalContext)
-        }
         INSPECTION_LOADED_COVERAGE.log(globalContext.project, CoverageLanguage.mapEngine(engineType.java.simpleName))
         return data
       }

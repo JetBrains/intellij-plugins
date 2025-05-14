@@ -35,6 +35,10 @@ private class PhpCoverageInspection : CoverageInspectionBase() {
     })
   }
 
+  override fun loadReportForIncrementalAnalysis(globalContext: QodanaGlobalInspectionContext) {
+    globalContext.getUserData(phpunit)?.value?.let { loadReportData(globalContext, it) }
+  }
+
   override fun checker(file: PsiFile, problemsHolder: ProblemsHolder, globalContext: QodanaGlobalInspectionContext) {
     val report = globalContext.getUserData(phpunit)?.value ?: return
     val pathsMap = globalContext.getUserData(normalizedPaths)?.value ?: return
