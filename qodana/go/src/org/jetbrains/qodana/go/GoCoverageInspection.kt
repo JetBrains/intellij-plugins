@@ -30,6 +30,10 @@ class GoCoverageInspection : CoverageInspectionBase() {
     })
   }
 
+  override fun loadReportForIncrementalAnalysis(globalContext: QodanaGlobalInspectionContext) {
+    globalContext.getUserData(go)?.value?.let { loadReportData(globalContext, it) }
+  }
+
   override fun checker(file: PsiFile, problemsHolder: ProblemsHolder, globalContext: QodanaGlobalInspectionContext) {
     val report = globalContext.getUserData(go)?.value ?: return
     val pathsMap = globalContext.getUserData(normalizedPaths)?.value ?: return

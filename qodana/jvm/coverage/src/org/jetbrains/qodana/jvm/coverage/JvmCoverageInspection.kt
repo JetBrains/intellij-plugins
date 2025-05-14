@@ -5,6 +5,7 @@ import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.JavaCoverageEngine
 import com.intellij.coverage.xml.XMLReportEngine
 import com.intellij.coverage.xml.XMLReportSuite
+import com.intellij.lang.Language
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
@@ -54,6 +55,30 @@ class JvmCoverageInspection : CoverageInspectionBase() {
       }
       data
     })
+  }
+
+  override fun loadReportForIncrementalAnalysis(globalContext: QodanaGlobalInspectionContext) {
+    if (Language.getRegisteredLanguages().any { languages.contains(it.displayName) }) {
+      val stat = globalContext.coverageStatisticsData
+      val xmlReport = globalContext.getUserData(xmlcov)?.value
+      xmlReport?.files?.filter { fileInfo ->
+        runReadAction {
+          val possibleFiles = ModuleManager.getInstance(globalContext.project).modules.flatMap {
+            ModuleRootManager.getInstance(it).sourceRoots.mapNotNull { root ->
+              val filePath = root.toNioPathOrNull()?.resolve(fileInfo.path)
+              filePath?.let { VirtualFileManager.getInstance().findFileByNioPath(filePath) }
+            }
+          }
+          possibleFiles.any { file ->
+            GlobalSearchScope.allScope(globalContext.project).contains(file)
+          }
+        }
+      }?.forEach { x ->
+        stat.processReportXmlData(x)
+      }
+
+      globalContext.getUserData(javacov)?.value?.let { loadReportData(globalContext, it) }
+    }
   }
 
   override fun processReportData(data: ProjectData, globalContext: QodanaGlobalInspectionContext) {
@@ -283,22 +308,6 @@ class JvmCoverageInspection : CoverageInspectionBase() {
       for (suite in suites.drop(1)) {
         val add = (suite as? XMLReportSuite)?.getReportData() ?: throw QodanaException("JaCoCo suite ${suite.presentableName} is missing report data")
         report.merge(add)
-      }
-      if (globalContext.coverageComputationState().isIncrementalAnalysis()) {
-        val stat = globalContext.coverageStatisticsData
-        report.files.filter { fileInfo ->
-          val possibleFiles = ModuleManager.getInstance(globalContext.project).modules.flatMap {
-            ModuleRootManager.getInstance(it).sourceRoots.mapNotNull { root ->
-              val filePath = root.toNioPathOrNull()?.resolve(fileInfo.path)
-              filePath?.let { VirtualFileManager.getInstance().findFileByNioPath(filePath) }
-            }
-          }
-          possibleFiles.any { file ->
-            GlobalSearchScope.allScope(globalContext.project).contains(file)
-          }
-        }.forEach {
-          x -> stat.processReportXmlData(x)
-        }
       }
       return report
     }
