@@ -101,6 +101,8 @@ jvm_library(
     "@community//plugins/gradle:gradle-common",
     "@community//plugins/gradle/java:java-tests_test_lib",
     "@lib//:cucumber-core-1",
+    "@community//platform/testFramework/junit5",
+    "@community//platform/testFramework/junit5:junit5_test_lib",
   ],
   runtime_deps = [":cucumber-java_resources"]
 )
