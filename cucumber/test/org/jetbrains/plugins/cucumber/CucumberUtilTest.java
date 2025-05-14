@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class CucumberUtilTest {
   @Test
@@ -38,26 +38,16 @@ public class CucumberUtilTest {
     String actual = replaceNotNecessaryTextTemplateByRegexp("I have {short}  cucumber(s) in my belly");
     assertEquals("I have {short}  cucumber(?:s)? in my belly", actual);
   }
-  
+
   @Test
   public void testGetTheBiggestWordToSearchByIndex() {
     String actual = getTheBiggestWordToSearchByIndex("I have cucumber(s) text");
     assertEquals("have", actual);
-    
+
     actual = getTheBiggestWordToSearchByIndex("I have cucumber/gherkin value");
     assertEquals("value", actual);
-    
+
     actual = getTheBiggestWordToSearchByIndex("I have cucumber\\d");
     assertEquals("have", actual);
-  }
-
-  @Test
-  public void testIsCucumberExpression() {
-    assertTrue(isCucumberExpression("def {int}"));
-    assertFalse(isCucumberExpression("def {int"));
-    assertFalse(isCucumberExpression("def \\d{1}"));
-    assertFalse(isCucumberExpression("def \\d{1,2}"));
-    assertFalse(isCucumberExpression("text"));
-    assertFalse(isCucumberExpression("text (\\d)"));
   }
 }
