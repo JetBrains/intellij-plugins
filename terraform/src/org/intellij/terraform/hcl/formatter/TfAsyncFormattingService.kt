@@ -65,16 +65,16 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
                   val eelApi = project.getEelDescriptor().upgrade()
                   process = eelApi.exec.spawnProcess(exePath).args("fmt", "-").eelIt()
 
-                  process.stdin.sendWholeText(request.documentText).getOrThrow()
+                  process.stdin.sendWholeText(request.documentText)
                   process.stdin.close()
 
-                  val formattedText = process.stdout.readWholeText().getOrThrow()
+                  val formattedText = process.stdout.readWholeText()
                   val exitCode = process.exitCode.await()
                   if (exitCode == 0) {
                     request.onTextReady(formattedText)
                   }
                   else {
-                    @NlsSafe val errorMessage = process.stderr.readWholeText().getOrThrow()
+                    @NlsSafe val errorMessage = process.stderr.readWholeText()
                     request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), errorMessage)
                   }
                 }
