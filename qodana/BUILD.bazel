@@ -31,6 +31,7 @@ jvm_library(
   deps = [
     "@community//platform/analysis-impl",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//jps/model-api:model",
     "//contrib/qodana/sarif",
     "@community//platform/lang-impl",
     "@lib//:gson",
@@ -112,6 +113,7 @@ jvm_library(
   deps = [
     "@community//platform/analysis-impl",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//jps/model-api:model",
     "//contrib/qodana/sarif",
     "@community//platform/lang-impl",
     "@lib//:gson",

@@ -14,6 +14,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java", "thirdPartySrc/vmServiceDrivers/**/*.kt", "thirdPartySrc/vmServiceDrivers/**/*.java", "thirdPartySrc/analysisServer/**/*.kt", "thirdPartySrc/analysisServer/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//jps/model-api:model",
     "@community//platform/lang-impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/xdebugger-impl:debugger-impl",
@@ -67,6 +68,7 @@ jvm_library(
   associates = [":dart"],
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//jps/model-api:model",
     "@community//platform/lang-impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/xdebugger-impl:debugger-impl",

@@ -60,6 +60,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-impl",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//jps/model-api:model",
     "//contrib/PerforceIntegration:vcs-perforce",
     "@community//platform/vcs-api:vcs",
     "//contrib/PerforceIntegration/perforce_util:vcs-perforce-util",

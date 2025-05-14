@@ -48,6 +48,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/editor-ui-ex:editor-ex",
+    "@community//jps/model-api:model",
     "@community//platform/lang-api:lang",
     "@community//platform/refactoring",
     "@community//platform/testFramework",

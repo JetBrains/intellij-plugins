@@ -30,6 +30,7 @@ jvm_library(
     "@community//platform/platform-api:ide",
     "@lib//:kotlin-stdlib",
     "//plugins/JavaScriptLanguage/javascript-parser",
+    "@community//jps/model-api:model",
     "@community//platform/refactoring",
     "@community//xml/xml-psi-api:psi",
     "//CSS/frontback/css-api:css-frontback",

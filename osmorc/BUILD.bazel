@@ -20,6 +20,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//jps/model-api:model",
     "@community//platform/lang-api:lang",
     "@community//java/openapi:java",
     "@community//platform/refactoring",
@@ -54,6 +55,7 @@ jvm_library(
   associates = [":osgi"],
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//jps/model-api:model",
     "@community//platform/lang-api:lang",
     "@community//java/openapi:java",
     "@community//platform/refactoring",
