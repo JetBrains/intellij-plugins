@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.util.NullableFunction
+import com.intellij.util.text.UniqueNameGenerator
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
@@ -80,7 +81,9 @@ class TfDuplicatedVariableInspection : TfDuplicatedInspectionBase() {
 
     override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
       val block = element as? HCLBlock ?: return
-      updater.rename(block, listOf(block.name))
+      val currentName = block.name
+      val uniqueName = UniqueNameGenerator.generateUniqueNameOneBased(currentName) { it != currentName }
+      updater.rename(block, listOf(currentName, uniqueName))
     }
   }
 }

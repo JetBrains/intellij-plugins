@@ -2,9 +2,13 @@
 package org.intellij.terraform.config;
 
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.ui.RenameDialogInterceptor;
+import com.intellij.ui.UiInterceptors;
 import org.intellij.terraform.TfTestUtils;
 import org.intellij.terraform.config.inspection.*;
 import org.intellij.terraform.hil.inspection.*;
+
+import java.util.List;
 
 public class TfInspectionsTest extends TfInspectionFixtureTestCase {
 
@@ -89,10 +93,14 @@ public class TfInspectionsTest extends TfInspectionFixtureTestCase {
   }
 
   public void testDuplicatedOutput() {
+    UiInterceptors.register(new RenameDialogInterceptor("newOutput", List.of("a", "a1")));
+    UiInterceptors.register(new RenameDialogInterceptor("newOutput", List.of("a", "a1")));
     doTest("duplicated_output", new TfDuplicatedOutputInspection());
   }
 
   public void testDuplicatedVariable() {
+    UiInterceptors.register(new RenameDialogInterceptor("newVar", List.of("x", "x1")));
+    UiInterceptors.register(new RenameDialogInterceptor("newVar", List.of("x", "x1")));
     doTest("duplicated_variable", new TfDuplicatedVariableInspection());
   }
 

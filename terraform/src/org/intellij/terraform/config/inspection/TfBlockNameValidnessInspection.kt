@@ -128,7 +128,7 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
     override fun getFamilyName(): String = HCLBundle.message("block.name.validness.inspection.rename.block.quick.fix.name")
 
     override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
-      val block = element as? HCLBlock ?: return
+      val block = (element as? HCLStringLiteral)?.parent as? HCLBlock ?: return
       updater.rename(block, listOf(block.name))
     }
   }
