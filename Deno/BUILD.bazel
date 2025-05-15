@@ -39,6 +39,7 @@ jvm_library(
     "//platform/lsp-impl",
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
+    "@community//platform/workspace/storage",
   ],
   runtime_deps = [
     ":deno_resources",
@@ -79,6 +80,7 @@ jvm_library(
     "//platform/lsp-impl:lsp-impl_test_lib",
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
+    "@community//platform/workspace/storage",
     "@community//platform/core-impl",
   ],
   runtime_deps = [

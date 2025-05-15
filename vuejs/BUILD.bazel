@@ -32,6 +32,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//jps/model-api:model",
     "@community//platform/refactoring",
+    "@community//platform/workspace/storage",
     "@community//xml/xml-psi-api:psi",
     "//CSS/frontback/css-api:css-frontback",
     "@community//platform/lang-api:lang",
