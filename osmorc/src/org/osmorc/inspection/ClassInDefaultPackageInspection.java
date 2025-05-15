@@ -41,9 +41,9 @@ public final class ClassInDefaultPackageInspection extends AbstractOsgiVisitor {
   protected @NotNull PsiElementVisitor buildVisitor(OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
       @Override
-      public void visitFile(@NotNull PsiFile file) {
-        if (file instanceof PsiClassOwner && ((PsiClassOwner)file).getPackageName().isEmpty()) {
-          PsiClass[] classes = ((PsiClassOwner)file).getClasses();
+      public void visitFile(@NotNull PsiFile psiFile) {
+        if (psiFile instanceof PsiClassOwner && ((PsiClassOwner)psiFile).getPackageName().isEmpty()) {
+          PsiClass[] classes = ((PsiClassOwner)psiFile).getClasses();
           if (classes.length > 0) {
             PsiElement identifier = unwrap(classes[0].getNameIdentifier());
             if (isValidElement(identifier)) {

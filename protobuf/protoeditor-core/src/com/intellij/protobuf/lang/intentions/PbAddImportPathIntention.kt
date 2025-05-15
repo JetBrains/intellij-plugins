@@ -19,7 +19,7 @@ import com.intellij.util.IncorrectOperationException
 
 class PbAddImportPathIntention : IntentionAction {
 
-  override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
+  override fun generatePreview(project: Project, editor: Editor, psiFile: PsiFile): IntentionPreviewInfo {
     return IntentionPreviewInfo.EMPTY
   }
 
@@ -33,25 +33,25 @@ class PbAddImportPathIntention : IntentionAction {
 
   override fun isAvailable(project: Project,
                            editor: Editor,
-                           file: PsiFile): Boolean {
+                           psiFile: PsiFile): Boolean {
     return runReadAction {
-      if (DumbService.isDumb(project) || file !is PbFile)
+      if (DumbService.isDumb(project) || psiFile !is PbFile)
         false
       else
-        findEditedImportStatement(editor, file)?.endsWith(".proto") ?: false // work only with files, skip incomplete/empty paths
+        findEditedImportStatement(editor, psiFile)?.endsWith(".proto") ?: false // work only with files, skip incomplete/empty paths
     }
   }
 
   @Throws(IncorrectOperationException::class)
-  override fun invoke(project: Project, editor: Editor, file: PsiFile) {
+  override fun invoke(project: Project, editor: Editor, psiFile: PsiFile) {
     if (ApplicationManager.getApplication().isUnitTestMode) {
-      selectItemAndApply(prepareQuickFixes(project, editor, file), editor, project)
+      selectItemAndApply(prepareQuickFixes(project, editor, psiFile), editor, project)
       return
     }
 
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       {
-        val fixes = runReadAction { prepareQuickFixes(project, editor, file) }
+        val fixes = runReadAction { prepareQuickFixes(project, editor, psiFile) }
         selectItemAndApply(fixes, editor, project)
       },
       PbLangBundle.message("background.task.title.add.import.prepare.variants"),

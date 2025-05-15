@@ -154,11 +154,11 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     // to load AST for changed files before it's prohibited by "fileTreeAccessFilter"
     CodeInsightTestFixtureImpl.ensureIndexesUpToDate(project)
     material!!.acceptChildren(object : PsiElementVisitor() {
-      override fun visitFile(file: PsiFile) {
-        if (file.getName().endsWith(".metadata.json")) {
-          val relativeFile = FileUtil.getRelativePath(pathPrefix, file.getVirtualFile().getPath(), '/')
-          assert(file is MetadataFileImpl) { relativeFile!! }
-          val result = DebugUtil.psiToString(file, true, false)
+      override fun visitFile(psiFile: PsiFile) {
+        if (psiFile.getName().endsWith(".metadata.json")) {
+          val relativeFile = FileUtil.getRelativePath(pathPrefix, psiFile.getVirtualFile().getPath(), '/')
+          assert(psiFile is MetadataFileImpl) { relativeFile!! }
+          val result = DebugUtil.psiToString(psiFile, true, false)
           UsefulTestCase.assertSameLinesWithFile(File(testDataPath, "material-stubs/$relativeFile.txt").toString(), result)
         }
       }

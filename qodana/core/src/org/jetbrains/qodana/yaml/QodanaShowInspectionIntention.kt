@@ -23,20 +23,20 @@ class QodanaShowInspectionIntention : IntentionAction, Iconable {
 
   override fun getIcon(flags: Int): Icon = QodanaIcons.Icons.Qodana
 
-  override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
-    if (file == null || !isQodanaYaml(file)) return false
+  override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?): Boolean {
+    if (psiFile == null || !isQodanaYaml(psiFile)) return false
     if (editor == null) return false
     val offset = editor.caretModel.offset
 
-    return findInspectionName(offset, file) != null
+    return findInspectionName(offset, psiFile) != null
   }
 
-  override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-    if (file == null || editor == null) return
+  override fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
+    if (psiFile == null || editor == null) return
 
-    val inspectionName = findInspectionName(editor.caretModel.offset, file)
+    val inspectionName = findInspectionName(editor.caretModel.offset, psiFile)
     if (inspectionName != null) {
-      showInspection(file.project, inspectionName)
+      showInspection(psiFile.project, inspectionName)
     }
   }
 

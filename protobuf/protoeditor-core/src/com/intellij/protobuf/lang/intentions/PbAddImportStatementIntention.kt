@@ -51,23 +51,23 @@ internal class PbAddImportStatementIntention : IntentionAction {
     return PbLangBundle.message("intention.fix.import.problems.familyName")
   }
 
-  override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
-    return file is PbFile
-           && findSymbolPathReference(editor, file)?.resolve() == null
-           && constructUnresolvedSymbolPath(file, editor)?.let { allProtoFilesWithGivenFqn(it, project) }?.isNotEmpty() ?: false
+  override fun isAvailable(project: Project, editor: Editor, psiFile: PsiFile): Boolean {
+    return psiFile is PbFile
+           && findSymbolPathReference(editor, psiFile)?.resolve() == null
+           && constructUnresolvedSymbolPath(psiFile, editor)?.let { allProtoFilesWithGivenFqn(it, project) }?.isNotEmpty() ?: false
   }
 
-  override fun invoke(project: Project, editor: Editor, editedFile: PsiFile) {
-    if (editedFile !is PbFile) return
+  override fun invoke(project: Project, editor: Editor, psiFile: PsiFile) {
+    if (psiFile !is PbFile) return
 
-    if (ApplicationManager.getApplication().isUnitTestMode || IntentionPreviewUtils.isPreviewElement(editedFile)) {
-      selectItemAndApply(prepareQuickFixes(project, editor, editedFile), editor, project)
+    if (ApplicationManager.getApplication().isUnitTestMode || IntentionPreviewUtils.isPreviewElement(psiFile)) {
+      selectItemAndApply(prepareQuickFixes(project, editor, psiFile), editor, project)
       return
     }
 
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       {
-        val fixes = runReadAction { prepareQuickFixes(project, editor, editedFile) }
+        val fixes = runReadAction { prepareQuickFixes(project, editor, psiFile) }
         selectItemAndApply(fixes, editor, project)
       },
       PbLangBundle.message("background.task.title.add.import.prepare.variants"),

@@ -27,14 +27,14 @@ internal class TfRemoveFileTypeAssociationIntention : IntentionAction {
     return TftplBundle.message("inspection.possible.template.remove.association.fix.name")
   }
 
-  override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
-    return file != null && isFileWithAlreadyOverriddenTemplateType(file.virtualFile)
+  override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?): Boolean {
+    return psiFile != null && isFileWithAlreadyOverriddenTemplateType(psiFile.virtualFile)
   }
 
-  override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-    if (file == null) return
-    OverrideFileTypeManager.getInstance().removeFile(file.virtualFile)
-    TemplateDataLanguageMappings.getInstance(project).setMapping(file.virtualFile, null)
+  override fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
+    if (psiFile == null) return
+    OverrideFileTypeManager.getInstance().removeFile(psiFile.virtualFile)
+    TemplateDataLanguageMappings.getInstance(project).setMapping(psiFile.virtualFile, null)
   }
 }
 

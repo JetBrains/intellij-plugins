@@ -487,12 +487,12 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
 
         @Override
-        public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
+        public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile psiFile) {
           return packageStatement.isValid();
         }
 
         @Override
-        public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+        public void invoke(final @NotNull Project project, final Editor editor, final PsiFile psiFile) throws IncorrectOperationException {
           JSPackageStatementImpl.doChangeName(project, packageStatement, expected);
         }
 

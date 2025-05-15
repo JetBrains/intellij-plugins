@@ -47,9 +47,9 @@ internal const val FADEOUT_TIME_MILLIS: Long = 10_000L
 
 internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(element) {
 
-  override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
+  override fun generatePreview(project: Project, editor: Editor, psiFile: PsiFile): IntentionPreviewInfo {
     val possibleTypes = (startElement as? HCLBlock)?.createSmartPointer()?.let { getAllTypesForBlockByIdentifier(it) } ?: emptyList()
-    if (possibleTypes.size == 1) return super.generatePreview(project, editor, file)
+    if (possibleTypes.size == 1) return super.generatePreview(project, editor, psiFile)
     return IntentionPreviewInfo.EMPTY
   }
 
@@ -61,14 +61,14 @@ internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentio
     return HCLBundle.message("action.AddProviderAction.text")
   }
 
-  override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
+  override fun invoke(project: Project, psiFile: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
     if (editor != null && startElement is HCLBlock) {
       project.service<ImportProviderService>().scheduleAddProvider(editor, startElement.createSmartPointer())
     }
   }
 
-  override fun isAvailable(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement): Boolean {
-    return editor != null && isTerraformCompatiblePsiFile(file)
+  override fun isAvailable(project: Project, psiFile: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement): Boolean {
+    return editor != null && isTerraformCompatiblePsiFile(psiFile)
            && startElement is HCLBlock
            && startElement.nameElements.size >= 2
   }

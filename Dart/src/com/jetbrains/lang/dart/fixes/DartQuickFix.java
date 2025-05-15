@@ -73,19 +73,19 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   }
 
   @Override
-  public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-    if (editor == null || file == null) {
+  public void invoke(final @NotNull Project project, final Editor editor, final PsiFile psiFile) throws IncorrectOperationException {
+    if (editor == null || psiFile == null) {
       // not sure this can ever happen
       return;
     }
 
     if (mySourceChange != null) {
-      if (!file.isPhysical() && !ApplicationManager.getApplication().isWriteAccessAllowed()) {
-        doInvokeForPreview(file, mySourceChange);
+      if (!psiFile.isPhysical() && !ApplicationManager.getApplication().isWriteAccessAllowed()) {
+        doInvokeForPreview(psiFile, mySourceChange);
         return;
       }
 
-      doInvoke(project, editor, file, mySourceChange, this);
+      doInvoke(project, editor, psiFile, mySourceChange, this);
     }
   }
 
@@ -143,8 +143,8 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   }
 
   @Override
-  public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
-    if (editor == null || file == null) {
+  public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile psiFile) {
+    if (editor == null || psiFile == null) {
       // not sure this can ever happen
       return false;
     }

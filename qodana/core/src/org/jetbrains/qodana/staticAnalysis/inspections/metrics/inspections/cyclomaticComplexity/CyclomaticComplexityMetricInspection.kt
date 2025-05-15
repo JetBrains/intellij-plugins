@@ -27,8 +27,8 @@ class CyclomaticComplexityMetricInspection : LocalInspectionTool() {
       MetricTable.EP.findExtension(CyclomaticComplexityMetricTable::class.java) ?: return PsiElementVisitor.EMPTY_VISITOR
 
     return object : PsiElementVisitor() {
-      override fun visitFile(file: PsiFile) {
-        val cyclomaticComplexityMethodData: List<CyclomaticComplexityMethodData> = visitor.visit(file)
+      override fun visitFile(psiFile: PsiFile) {
+        val cyclomaticComplexityMethodData: List<CyclomaticComplexityMethodData> = visitor.visit(psiFile)
         val tableDataRows: List<CyclomaticComplexityMetricTableRowData> = cyclomaticComplexityMethodData.map { methodData ->
           CyclomaticComplexityMetricTableRowData(
             filePath = filePath,
@@ -42,7 +42,7 @@ class CyclomaticComplexityMetricInspection : LocalInspectionTool() {
         )
         holder.registerProblem(
           MetricCodeDescriptor(
-            element = file,
+            element = psiFile,
             fileData = metricFileData
           )
         )

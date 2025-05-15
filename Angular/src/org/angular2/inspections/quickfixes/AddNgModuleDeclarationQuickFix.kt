@@ -60,7 +60,7 @@ class AddNgModuleDeclarationQuickFix private constructor(context: PsiElement, de
     PriorityAction.Priority.HIGH
 
   override fun invoke(project: Project,
-                      file: PsiFile,
+                      psiFile: PsiFile,
                       editor: Editor?,
                       startElement: PsiElement,
                       endElement: PsiElement) {
@@ -105,7 +105,7 @@ class AddNgModuleDeclarationQuickFix private constructor(context: PsiElement, de
     }
   }
 
-  override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
+  override fun generatePreview(project: Project, editor: Editor, psiFile: PsiFile): IntentionPreviewInfo {
     return IntentionPreviewInfo.EMPTY
   }
 }

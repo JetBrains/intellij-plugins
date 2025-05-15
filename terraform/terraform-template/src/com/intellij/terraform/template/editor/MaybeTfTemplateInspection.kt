@@ -31,11 +31,11 @@ internal class MaybeTfTemplateInspection : LocalInspectionTool() {
     }
 
     return object : PsiElementVisitor() {
-      override fun visitFile(file: PsiFile) {
-        holder.registerProblem(file,
+      override fun visitFile(psiFile: PsiFile) {
+        holder.registerProblem(psiFile,
                                TftplBundle.message("inspection.possible.template.name"),
-                               TfConsiderFileATemplateFix(file.virtualFile),
-                               TfIgnoreTemplateCandidateFix(file.createSmartPointer())
+                               TfConsiderFileATemplateFix(psiFile.virtualFile),
+                               TfIgnoreTemplateCandidateFix(psiFile.createSmartPointer())
         )
       }
     }

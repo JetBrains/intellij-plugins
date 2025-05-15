@@ -86,24 +86,24 @@ public final class CreateStepImplFix extends BaseIntentionAction {
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
     Module module = GaugeUtil.moduleForPsiElement(step);
-    return module != null && GaugeUtil.isGaugeFile(file.getVirtualFile()) && GaugeUtil.isGaugeModule(module);
+    return module != null && GaugeUtil.isGaugeFile(psiFile.getVirtualFile()) && GaugeUtil.isGaugeModule(module);
   }
 
   @Override
-  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {
     return IntentionPreviewInfo.EMPTY;
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
         GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(project);
 
-        List<PsiFile> javaFiles = bootstrapService.getSubModules(GaugeUtil.moduleForPsiElement(file)).stream()
+        List<PsiFile> javaFiles = bootstrapService.getSubModules(GaugeUtil.moduleForPsiElement(psiFile)).stream()
           .map(FileManager::getAllJavaFiles)
           .flatMap(List::stream)
           .collect(Collectors.toList());

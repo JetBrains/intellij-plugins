@@ -30,8 +30,8 @@ import java.util.List;
 
 public final class DartServerGotoSuperHandler implements LanguageCodeInsightActionHandler {
   @Override
-  public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-    final PsiElement at = file.findElementAt(editor.getCaretModel().getOffset());
+  public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile psiFile) {
+    final PsiElement at = psiFile.findElementAt(editor.getCaretModel().getOffset());
     final DartComponent inComponent = PsiTreeUtil.getParentOfType(at, DartComponent.class);
     final DartComponent inClass = PsiTreeUtil.getParentOfType(at, DartClass.class);
     if (inClass == null || inComponent == null || inComponent.getComponentName() == null) {
@@ -39,7 +39,7 @@ public final class DartServerGotoSuperHandler implements LanguageCodeInsightActi
     }
     final boolean isInClass = inComponent instanceof DartClass;
     // ask for the super type hierarchy
-    final VirtualFile virtualFile = file.getVirtualFile();
+    final VirtualFile virtualFile = psiFile.getVirtualFile();
     final int offset = inComponent.getComponentName().getTextRange().getStartOffset();
     final List<TypeHierarchyItem> items = DartAnalysisServerService.getInstance(project).search_getTypeHierarchy(virtualFile, offset, true);
     // build list of DartComponent(s)

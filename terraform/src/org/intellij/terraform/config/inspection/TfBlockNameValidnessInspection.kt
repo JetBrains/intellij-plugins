@@ -89,7 +89,7 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
     override fun getFamilyName(): String = text
     override fun startInWriteAction(): Boolean = false
 
-    override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
+    override fun invoke(project: Project, psiFile: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
       val block = startElement as? HCLBlock ?: return
       if (editor == null) return
       if (!TfPsiPatterns.TerraformConfigFile.accepts(block.containingFile)) return

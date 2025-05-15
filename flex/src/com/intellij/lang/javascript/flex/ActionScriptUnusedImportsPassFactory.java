@@ -79,14 +79,14 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
       }
 
       @Override
-      public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+      public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         return true;
       }
 
       @Override
-      public void invoke(final @NotNull Project project, Editor editor, PsiFile file) {
+      public void invoke(final @NotNull Project project, Editor editor, PsiFile psiFile) {
         ImportOptimizer optimizer = new ECMAScriptImportOptimizer();
-        final Runnable runnable = optimizer.processFile(file);
+        final Runnable runnable = optimizer.processFile(psiFile);
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           @Override
           public void run() {

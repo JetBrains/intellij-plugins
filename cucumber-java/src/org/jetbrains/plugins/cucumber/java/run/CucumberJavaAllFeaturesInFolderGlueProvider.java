@@ -22,9 +22,9 @@ public class CucumberJavaAllFeaturesInFolderGlueProvider implements CucumberGlue
   public void calculateGlue(@NotNull Consumer<String> consumer) {
     myDirectory.accept(new PsiElementVisitor() {
       @Override
-      public void visitFile(final @NotNull PsiFile file) {
-        if (file instanceof GherkinFile) {
-          CucumberJavaUtil.calculateGlueFromGherkinFile((GherkinFile)file, consumer);
+      public void visitFile(final @NotNull PsiFile psiFile) {
+        if (psiFile instanceof GherkinFile) {
+          CucumberJavaUtil.calculateGlueFromGherkinFile((GherkinFile)psiFile, consumer);
         }
       }
 

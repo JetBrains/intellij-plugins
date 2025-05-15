@@ -16,8 +16,8 @@ import java.util.function.BooleanSupplier;
  */
 public final class FlexReferenceImporter implements ReferenceImporter {
   @Override
-  public BooleanSupplier computeAutoImportAtOffset(@NotNull Editor editor, @NotNull PsiFile file, int offset, boolean allowCaretNearReference) {
-    PsiElement expression = JSImportHandlingUtil.findUnresolvedImportableReference(editor, file, offset);
+  public BooleanSupplier computeAutoImportAtOffset(@NotNull Editor editor, @NotNull PsiFile psiFile, int offset, boolean allowCaretNearReference) {
+    PsiElement expression = JSImportHandlingUtil.findUnresolvedImportableReference(editor, psiFile, offset);
     if (expression instanceof JSReferenceExpression) {
       return () -> new AddImportECMAScriptClassOrFunctionAction(editor, ((JSReferenceExpression)expression), true).execute();
     }
@@ -25,9 +25,9 @@ public final class FlexReferenceImporter implements ReferenceImporter {
   }
 
   @Override
-  public boolean isAddUnambiguousImportsOnTheFlyEnabled(@NotNull PsiFile file) {
-    return file instanceof JSFile &&
-           file.getLanguage() == FlexSupportLoader.ECMA_SCRIPT_L4 &&
+  public boolean isAddUnambiguousImportsOnTheFlyEnabled(@NotNull PsiFile psiFile) {
+    return psiFile instanceof JSFile &&
+           psiFile.getLanguage() == FlexSupportLoader.ECMA_SCRIPT_L4 &&
            ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly();
   }
 }

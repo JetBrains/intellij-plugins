@@ -86,7 +86,7 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
   }
 
   @Override
-  public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
+  public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile psiFile) {
     if (!myReference.getElement().isValid()) return false;
     final long modL = myReference.getElement().getManager().getModificationTracker().getModificationCount();
 
@@ -102,7 +102,7 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
       }
 
       if (!hasValidResult) {
-        final Collection<JSQualifiedNamedElement> candidates = getCandidates(file);
+        final Collection<JSQualifiedNamedElement> candidates = getCandidates(psiFile);
 
         isAvailableCalculated = true;
         isAvailable = !candidates.isEmpty();
@@ -188,8 +188,8 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
   }
 
   @Override
-  public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) {
-    final Collection<JSQualifiedNamedElement> candidates = getCandidates(file);
+  public void invoke(final @NotNull Project project, final Editor editor, final PsiFile psiFile) {
+    final Collection<JSQualifiedNamedElement> candidates = getCandidates(psiFile);
 
     if (candidates.isEmpty() || myUnambiguousTheFlyMode && candidates.size() != 1) {
       return;

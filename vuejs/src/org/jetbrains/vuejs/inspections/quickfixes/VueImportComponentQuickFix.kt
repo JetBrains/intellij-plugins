@@ -36,7 +36,7 @@ class VueImportComponentQuickFix(
     return VueBundle.message("vue.quickfix.import.component.family")
   }
 
-  override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
+  override fun invoke(project: Project, psiFile: PsiFile, startElement: PsiElement, endElement: PsiElement) {
     val componentSourceEdit = VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(startElement))
                               ?: return
     val elementToImport = elementToImportPtr.dereference() ?: return

@@ -196,12 +196,12 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
 
   @Override
-  public void apply(@NotNull PsiFile file,
+  public void apply(@NotNull PsiFile psiFile,
                     @Nullable JSLinterAnnotationResult annotationResult,
                     @NotNull AnnotationHolder holder) {
     if (annotationResult == null) return;
-    TsLintConfigurable configurable = new TsLintConfigurable(file.getProject(), true);
-    final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+    TsLintConfigurable configurable = new TsLintConfigurable(psiFile.getProject(), true);
+    final Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
     long documentModificationStamp = document != null ? document.getModificationStamp() : -1;
     IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
 
@@ -216,7 +216,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       ArrayList<IntentionAction> result = new ArrayList<>();
       if (tslintError.hasFix()) {
         if (document != null && isOnTheFly()) {
-          result.add(new TsLintErrorFixAction(file, tslintError, documentModificationStamp));
+          result.add(new TsLintErrorFixAction(psiFile, tslintError, documentModificationStamp));
         }
         result.add(fixAllFileIntention);
       }
@@ -232,7 +232,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     });
 
 
-    new JSLinterAnnotationsBuilder(file, annotationResult, holder,
+    new JSLinterAnnotationsBuilder(psiFile, annotationResult, holder,
                                    configurable, TsLintBundle.message("tslint.framework.title") + ": ",
                                    getInspectionClass(), fixes)
       .setHighlightingGranularity(HighlightingGranularity.element).apply();

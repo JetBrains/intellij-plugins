@@ -26,27 +26,27 @@ public final class CreateEventHandlerIntention extends BaseIntentionAction {
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
     // keep consistency with JavaScriptGenerateEventHandler.GenerateEventHandlerFix.beforeInvoke()
 
-    final XmlAttribute xmlAttribute = ActionScriptGenerateEventHandler.getXmlAttribute(file, editor);
+    final XmlAttribute xmlAttribute = ActionScriptGenerateEventHandler.getXmlAttribute(psiFile, editor);
     final String eventType = xmlAttribute == null ? null : ActionScriptGenerateEventHandler.getEventType(xmlAttribute);
     if (eventType != null) {
       return true;
     }
 
-    final JSCallExpression callExpression = ActionScriptGenerateEventHandler.getEventListenerCallExpression(file, editor);
+    final JSCallExpression callExpression = ActionScriptGenerateEventHandler.getEventListenerCallExpression(psiFile, editor);
     if (callExpression != null) {
       return true;
     }
 
-    final @Nullable EventConstantInfo eventConstantInfo = ActionScriptGenerateEventHandler.getEventConstantInfo(file, editor);
+    final @Nullable EventConstantInfo eventConstantInfo = ActionScriptGenerateEventHandler.getEventConstantInfo(psiFile, editor);
     return eventConstantInfo != null;
   }
 
   @Override
-  public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-    new ActionScriptGenerateEventHandler().invoke(project, editor, file);
+  public void invoke(final @NotNull Project project, final Editor editor, final PsiFile psiFile) throws IncorrectOperationException {
+    new ActionScriptGenerateEventHandler().invoke(project, editor, psiFile);
   }
 
   @Override

@@ -42,15 +42,15 @@ public class TsLintErrorFixAction extends JSLinterFixSingleErrorBaseAction imple
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    return super.isAvailable(project, editor, file)
+  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
+    return super.isAvailable(project, editor, psiFile)
            && myError.getFixInfo() != null
            && !StringUtil.equals(myError.getCode(), "linebreak-style");
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    if (!isAvailable(project, editor, file)) {
+  public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
+    if (!isAvailable(project, editor, psiFile)) {
       return;
     }
 
@@ -66,13 +66,13 @@ public class TsLintErrorFixAction extends JSLinterFixSingleErrorBaseAction imple
 
     WriteCommandAction.runWriteCommandAction(project, getText(), null, () -> {
       Document document = editor.getDocument();
-      String separator = FileDocumentManager.getInstance().getLineSeparator(file.getViewProvider().getVirtualFile(), project);
+      String separator = FileDocumentManager.getInstance().getLineSeparator(psiFile.getViewProvider().getVirtualFile(), project);
       if (!applyReplacements(document, separator, replacements)) return;
 
       PsiDocumentManager.getInstance(project).commitDocument(document);
     });
 
-    DaemonCodeAnalyzer.getInstance(project).restart(file);
+    DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
   }
 
   private static boolean applyReplacements(@NotNull Document document,

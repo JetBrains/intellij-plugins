@@ -58,9 +58,9 @@ internal fun InspectionKts.asTool(exceptionReporter: (Exception) -> Unit): Inspe
 
           val inspection = LocalInspectionImpl(holder)
           return object : PsiElementVisitor() {
-            override fun visitFile(file: PsiFile) {
+            override fun visitFile(psiFile: PsiFile) {
               loggingExceptions {
-                tool.checker.invoke(file, inspection)
+                tool.checker.invoke(psiFile, inspection)
               }
             }
           }

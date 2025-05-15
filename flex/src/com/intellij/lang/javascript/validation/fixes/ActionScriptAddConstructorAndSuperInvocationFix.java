@@ -90,14 +90,14 @@ public class ActionScriptAddConstructorAndSuperInvocationFix implements Intentio
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
     JSClass jsClass = myClass.getElement();
     JSFunction superConstructorElement = mySuperConstructor.getElement();
     return jsClass != null && superConstructorElement != null;
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
     final JSClass jsClass = myClass.getElement();
     JSFunction superConstructor = mySuperConstructor.getElement();
     assert superConstructor != null;

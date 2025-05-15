@@ -29,8 +29,8 @@ class AstroImportComponentQuickFix(element: PsiElement,
     return AstroBundle.message("astro.quickfix.import.component.family")
   }
 
-  override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
-    val componentSourceEdit = AstroComponentSourceEdit(file as? AstroFileImpl ?: return)
+  override fun invoke(project: Project, psiFile: PsiFile, startElement: PsiElement, endElement: PsiElement) {
+    val componentSourceEdit = AstroComponentSourceEdit(psiFile as? AstroFileImpl ?: return)
     val elementToImport = elementToImportPtr.dereference() as? AstroFileImpl ?: return
 
     componentSourceEdit.insertAstroComponentImport(importName, elementToImport)

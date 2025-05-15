@@ -86,15 +86,15 @@ private class TestGlobalSimpleInspectionTool : GlobalSimpleInspectionTool() {
     return "testGroup"
   }
 
-  override fun checkFile(file: PsiFile,
+  override fun checkFile(psiFile: PsiFile,
                          manager: InspectionManager,
                          problemsHolder: ProblemsHolder,
                          context: GlobalInspectionContext,
                          processor: ProblemDescriptionsProcessor) {
-    val fileText = file.text
+    val fileText = psiFile.text
     if (!fileText.startsWith("// test")) {
       problemsHolder.registerProblem(
-        file,
+        psiFile,
         "The file does not start with '// test' comment",
         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
         TextRange(0, 0),

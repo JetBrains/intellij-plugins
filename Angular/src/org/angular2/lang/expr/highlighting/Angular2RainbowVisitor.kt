@@ -22,8 +22,8 @@ import org.angular2.lang.html.Angular2HtmlFile
 
 class Angular2RainbowVisitor : RainbowVisitor() {
 
-  override fun suitableForFile(file: PsiFile): Boolean =
-    file is Angular2HtmlFile
+  override fun suitableForFile(psiFile: PsiFile): Boolean =
+    psiFile is Angular2HtmlFile
 
   override fun visit(element: PsiElement) {
     if ((element !is JSReferenceExpression && element !is JSVariable)

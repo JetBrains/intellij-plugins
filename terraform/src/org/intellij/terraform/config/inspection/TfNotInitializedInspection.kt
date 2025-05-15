@@ -19,11 +19,11 @@ class TfNotInitializedInspection : LocalInspectionTool() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return object : HCLElementVisitor() {
-      override fun visitFile(file: PsiFile) {
-        super.visitFile(file)
-        val initializedFix = TfInitAction.createQuickFixNotInitialized(file)
+      override fun visitFile(psiFile: PsiFile) {
+        super.visitFile(psiFile)
+        val initializedFix = TfInitAction.createQuickFixNotInitialized(psiFile)
         if (initializedFix != null) {
-          holder.registerProblem(file, HCLBundle.message("not.initialized.inspection.error.message"),
+          holder.registerProblem(psiFile, HCLBundle.message("not.initialized.inspection.error.message"),
                                  ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                                  *arrayOf(initializedFix))
         }

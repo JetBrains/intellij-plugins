@@ -309,12 +309,12 @@ public final class MxmlLanguageTagsUtil {
     }
 
     @Override
-    public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
+    public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile psiFile) {
       return myAttribute.isValid();
     }
 
     @Override
-    public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+    public void invoke(final @NotNull Project project, final Editor editor, final PsiFile psiFile) throws IncorrectOperationException {
       final int offset = removeXmlAttribute(myAttribute);
       if (offset != -1) {
         editor.getCaretModel().moveToOffset(offset);
@@ -391,7 +391,7 @@ public final class MxmlLanguageTagsUtil {
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
       return myRootTag.isValid();
     }
 
@@ -401,7 +401,7 @@ public final class MxmlLanguageTagsUtil {
     }
 
     @Override
-    public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+    public void invoke(final @NotNull Project project, final Editor editor, final PsiFile psiFile) throws IncorrectOperationException {
       if (!myRootTag.isValid()) return;
 
       final Set<String> usedPrefixes = myRootTag.getLocalNamespaceDeclarations().keySet();
@@ -412,7 +412,7 @@ public final class MxmlLanguageTagsUtil {
         nsPrefix = myDefaultPrefix + postfix++;
       }
 
-      XmlNamespaceHelper.getHelper(file).insertNamespaceDeclaration((XmlFile)file, editor, Collections.singleton(myNamespace), nsPrefix, null);
+      XmlNamespaceHelper.getHelper(psiFile).insertNamespaceDeclaration((XmlFile)psiFile, editor, Collections.singleton(myNamespace), nsPrefix, null);
     }
   }
 }

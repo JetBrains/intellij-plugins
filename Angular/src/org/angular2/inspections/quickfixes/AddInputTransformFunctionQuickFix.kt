@@ -44,10 +44,10 @@ class AddInputTransformFunctionQuickFix(private val kind: TransformKind,
     else
       Angular2Bundle.message("angular.quickfix.template.create-input-transformer.std.name", StringUtil.decapitalize(kind.name))
 
-  override fun isAvailable(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement): Boolean =
+  override fun isAvailable(project: Project, psiFile: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement): Boolean =
     !JSProjectUtil.isInLibrary(startElement)
 
-  override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
+  override fun invoke(project: Project, psiFile: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
     JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(startElement) { invokeInner(project, editor, startElement) }
   }
 

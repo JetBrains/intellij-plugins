@@ -39,12 +39,12 @@ public final class ScenarioToOutlineIntention implements IntentionAction {
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    if (!(file.getLanguage() instanceof GherkinLanguage)) {
+  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
+    if (!(psiFile.getLanguage() instanceof GherkinLanguage)) {
       return false;
     }
     int offset = editor.getCaretModel().getOffset();
-    final PsiElement element = file.findElementAt(offset);
+    final PsiElement element = psiFile.findElementAt(offset);
     if (element == null) {
       return false;
     }
@@ -65,13 +65,13 @@ public final class ScenarioToOutlineIntention implements IntentionAction {
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    final PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
+  public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
+    final PsiElement element = psiFile.findElementAt(editor.getCaretModel().getOffset());
     final GherkinScenario scenario = PsiTreeUtil.getParentOfType(element, GherkinScenario.class);
     assert scenario != null;
-    assert file instanceof GherkinFile;
+    assert psiFile instanceof GherkinFile;
 
-    final String language = GherkinUtil.getFeatureLanguage((GherkinFile)file);
+    final String language = GherkinUtil.getFeatureLanguage((GherkinFile)psiFile);
     final GherkinKeywordTable keywordsTable = JsonGherkinKeywordProvider.getKeywordProvider().getKeywordsTable(language);
 
     final StringBuilder newScenarioText = new StringBuilder();

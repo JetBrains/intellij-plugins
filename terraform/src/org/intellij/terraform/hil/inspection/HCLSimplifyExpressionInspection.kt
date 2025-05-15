@@ -50,13 +50,13 @@ class HCLSimplifyExpressionInspection : LocalInspectionTool(), CleanupLocalInspe
 
     override fun startInWriteAction(): Boolean = false
 
-    override fun isAvailable(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
-      if (file.language !in listOf(HCLLanguage, TerraformLanguage)) return false
-      return super.isAvailable(project, file, startElement, endElement)
+    override fun isAvailable(project: Project, psiFile: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
+      if (psiFile.language !in listOf(HCLLanguage, TerraformLanguage)) return false
+      return super.isAvailable(project, psiFile, startElement, endElement)
     }
 
-    override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-      if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
+    override fun invoke(project: Project, psiFile: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
+      if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return
       val call = startElement as? HCLMethodCallExpression ?: return
       val method = call.method
       if (method.id != "element" || call.parameterList.elements.size != 2) return
@@ -64,7 +64,7 @@ class HCLSimplifyExpressionInspection : LocalInspectionTool(), CleanupLocalInspe
       val replacement = getReplacementValue(project, call)
 
       WriteCommandAction.writeCommandAction(project).withName(text).withGroupId(familyName).run<Throwable> {
-        replace(project, file, call, replacement)
+        replace(project, psiFile, call, replacement)
       }
     }
 

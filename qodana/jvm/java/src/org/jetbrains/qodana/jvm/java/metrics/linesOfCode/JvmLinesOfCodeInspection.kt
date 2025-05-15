@@ -18,8 +18,8 @@ import org.jetbrains.qodana.staticAnalysis.inspections.metrics.problemDescriptor
 class JvmLinesOfCodeInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
     return object : PsiElementVisitor() {
-      override fun visitFile(file: PsiFile) {
-        val document: Document? = PsiDocumentManager.getInstance(file.project).getDocument(file)
+      override fun visitFile(psiFile: PsiFile) {
+        val document: Document? = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)
         if (document == null) {
           return
         }
@@ -28,7 +28,7 @@ class JvmLinesOfCodeInspection : LocalInspectionTool() {
         val locWhitespaceVisitor = LocWhitespaceVisitor(document)
         var commentLines = 0
 
-        file.iterateFileContents(
+        psiFile.iterateFileContents(
           visitor = locWhitespaceVisitor,
           returnCondition = { element ->
             // No need to visit children of an element that has type PsiComment
@@ -49,7 +49,7 @@ class JvmLinesOfCodeInspection : LocalInspectionTool() {
 
         val whitespaceLines: Int = locWhitespaceVisitor.whitespaceLines
         val totalLines = numberOfLinesInDocument - commentLines - whitespaceLines
-        val filePath: String = file.virtualFile.path
+        val filePath: String = psiFile.virtualFile.path
 
         val tableRowData: MetricTableRowData = LinesOfCodeMetricTableRowData(
           filePath = filePath, numberOfLines = totalLines
@@ -61,7 +61,7 @@ class JvmLinesOfCodeInspection : LocalInspectionTool() {
         )
         holder.registerProblem(
           MetricCodeDescriptor(
-            element = file,
+            element = psiFile,
             fileData = metricFileData
           )
         )

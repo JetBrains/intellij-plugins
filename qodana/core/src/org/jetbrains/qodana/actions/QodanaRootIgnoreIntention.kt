@@ -13,7 +13,7 @@ class QodanaRootIgnoreIntention : IntentionAction {
 
   override fun getFamilyName(): String = QodanaBundle.message("qodana.intentions.family.name")
 
-  override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean = true
+  override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?): Boolean = true
 
-  override fun invoke(project: Project, editor: Editor?, file: PsiFile?) { }
+  override fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) { }
 }

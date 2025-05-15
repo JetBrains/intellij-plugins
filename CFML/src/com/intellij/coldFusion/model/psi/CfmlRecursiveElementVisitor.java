@@ -37,9 +37,9 @@ public class CfmlRecursiveElementVisitor extends PsiElementVisitor implements Ps
   }
 
   @Override
-  public void visitFile(@NotNull PsiFile file) {
-    if (file instanceof CfmlFile) {
-      file.acceptChildren(this);
+  public void visitFile(@NotNull PsiFile psiFile) {
+    if (psiFile instanceof CfmlFile) {
+      psiFile.acceptChildren(this);
     }
   }
 }

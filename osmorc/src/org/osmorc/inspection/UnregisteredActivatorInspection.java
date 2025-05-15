@@ -54,9 +54,9 @@ public final class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
     if (!(holder.getFile() instanceof PsiClassOwner)) return PsiElementVisitor.EMPTY_VISITOR;
     return new JavaElementVisitor() {
       @Override
-      public void visitFile(@NotNull PsiFile file) {
-        if (file instanceof PsiClassOwner) {
-          for (PsiClass psiClass : ((PsiClassOwner)file).getClasses()) {
+      public void visitFile(@NotNull PsiFile psiFile) {
+        if (psiFile instanceof PsiClassOwner) {
+          for (PsiClass psiClass : ((PsiClassOwner)psiFile).getClasses()) {
             String className = psiClass.getQualifiedName();
             if (OsgiPsiUtil.isActivator(psiClass) && className != null) {
               BundleManifest manifest = BundleManifestCache.getInstance().getManifest(facet.getModule());

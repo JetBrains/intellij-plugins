@@ -24,9 +24,9 @@ class AngularCliAddDependencyInspection : LocalInspectionTool() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return object : JsonElementVisitor() {
-      override fun visitFile(file: PsiFile) {
-        val packageJson = PackageJsonUtil.asPackageJsonFile(file)
-        if (packageJson != null && AngularCliUtil.findCliJson(file.virtualFile.parent) != null) {
+      override fun visitFile(psiFile: PsiFile) {
+        val packageJson = PackageJsonUtil.asPackageJsonFile(psiFile)
+        if (packageJson != null && AngularCliUtil.findCliJson(psiFile.virtualFile.parent) != null) {
           annotate(packageJson, holder)
         }
       }

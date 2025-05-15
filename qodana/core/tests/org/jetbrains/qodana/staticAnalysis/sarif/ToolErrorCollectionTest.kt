@@ -172,7 +172,7 @@ private class SimpleGlobalTool : GlobalSimpleInspectionTool() {
 
   override fun getShortName(): String = "SimpleGlobal"
 
-  override fun checkFile(file: PsiFile,
+  override fun checkFile(psiFile: PsiFile,
                          manager: InspectionManager,
                          problemsHolder: ProblemsHolder,
                          globalContext: GlobalInspectionContext,

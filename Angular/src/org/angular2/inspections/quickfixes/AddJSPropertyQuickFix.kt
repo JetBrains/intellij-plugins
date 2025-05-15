@@ -30,7 +30,7 @@ class AddJSPropertyQuickFix(objectLiteral: JSObjectLiteralExpression,
     return Angular2Bundle.message("angular.quickfix.decorator.add-property.family")
   }
 
-  override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
+  override fun invoke(project: Project, psiFile: PsiFile, startElement: PsiElement, endElement: PsiElement) {
     val objectLiteral = startElement as? JSObjectLiteralExpression ?: return
     val quote: String = if (myUseTemplateString) "`"
     else

@@ -51,19 +51,19 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    if (editor == null || file == null) {
+  public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
+    if (editor == null || psiFile == null) {
       // not sure this can ever happen
       return;
     }
 
     if (sourceChange != null) {
-      if (!file.isPhysical() && !ApplicationManager.getApplication().isWriteAccessAllowed()) {
-        DartQuickFix.doInvokeForPreview(file, sourceChange);
+      if (!psiFile.isPhysical() && !ApplicationManager.getApplication().isWriteAccessAllowed()) {
+        DartQuickFix.doInvokeForPreview(psiFile, sourceChange);
         return;
       }
 
-      DartAnalysisServerService.getInstance(project).fireBeforeQuickAssistIntentionInvoked(this, editor, file);
+      DartAnalysisServerService.getInstance(project).fireBeforeQuickAssistIntentionInvoked(this, editor, psiFile);
       try {
         AssistUtils.applySourceChange(project, sourceChange, true);
       }
@@ -74,17 +74,17 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    if (editor == null || file == null) {
+  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
+    if (editor == null || psiFile == null) {
       // not sure this can ever happen
       return false;
     }
 
-    if (!(file instanceof DartFile) || !DartAnalysisServerService.isLocalAnalyzableFile(file.getVirtualFile())) {
+    if (!(psiFile instanceof DartFile) || !DartAnalysisServerService.isLocalAnalyzableFile(psiFile.getVirtualFile())) {
       return false;
     }
 
-    final List<SourceChange> sourceChanges = DartQuickAssistSet.getInstance().getQuickAssists(editor, file);
+    final List<SourceChange> sourceChanges = DartQuickAssistSet.getInstance().getQuickAssists(editor, psiFile);
     if (sourceChanges.size() <= myIndex) {
       sourceChange = null;
       return false;

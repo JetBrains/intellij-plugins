@@ -56,7 +56,7 @@ class AddNgModuleImportQuickFix(context: PsiElement,
   }
 
   override fun invoke(project: Project,
-                      file: PsiFile,
+                      psiFile: PsiFile,
                       editor: Editor?,
                       startElement: PsiElement,
                       endElement: PsiElement) {
@@ -71,7 +71,7 @@ class AddNgModuleImportQuickFix(context: PsiElement,
     return IntentionPreviewInfo.EMPTY
   }
 
-  override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
+  override fun generatePreview(project: Project, editor: Editor, psiFile: PsiFile): IntentionPreviewInfo {
     return IntentionPreviewInfo.EMPTY
   }
 

@@ -52,7 +52,7 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
   }
 
   @Override
-  public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
+  public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile psiFile) {
     return myIdentifierIsValid && myElement.isValid();
   }
 
@@ -77,8 +77,8 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
   }
 
   @Override
-  public void invoke(final @NotNull Project project, final @Nullable Editor editor, final PsiFile file) throws IncorrectOperationException {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(file);
+  public void invoke(final @NotNull Project project, final @Nullable Editor editor, final PsiFile psiFile) throws IncorrectOperationException {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     if (module == null) {
       return;
     }

@@ -46,15 +46,15 @@ class HbBlockMismatchFix implements IntentionAction {
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
     return true;
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file)
+  public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile)
     throws IncorrectOperationException {
     final int offset = editor.getCaretModel().getOffset();
-    PsiElement psiElement = file.findElementAt(offset);
+    PsiElement psiElement = psiFile.findElementAt(offset);
 
     if (psiElement == null) return;
 
@@ -75,7 +75,7 @@ class HbBlockMismatchFix implements IntentionAction {
     }
 
     HbPath path = PsiTreeUtil.findChildOfType(targetBlockMustache, HbPath.class);
-    final Document document = PsiDocumentManager.getInstance(project).getDocument(file);
+    final Document document = PsiDocumentManager.getInstance(project).getDocument(psiFile);
     if (path != null && document != null) {
       final TextRange textRange = path.getTextRange();
       document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(), myCorrectedName);

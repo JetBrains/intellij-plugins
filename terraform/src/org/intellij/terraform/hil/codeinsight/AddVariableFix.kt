@@ -19,7 +19,7 @@ class AddVariableFix(element: PsiNamedElement, private val vName: String = eleme
 
   override fun getText(): String = HCLBundle.message("AddVariableFix.text", vName)
 
-  override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
+  override fun invoke(project: Project, psiFile: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
     val declaration = TfElementGenerator(project).createVariable(vName, null, "\"\"")
     val anchor = ILIntroduceVariableHandler.findAnchor(listOf(startElement, endElement))
     if (anchor == null) {

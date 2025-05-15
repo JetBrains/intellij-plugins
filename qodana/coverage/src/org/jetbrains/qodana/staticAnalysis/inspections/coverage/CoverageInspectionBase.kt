@@ -53,16 +53,16 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
     loadCoverage(globalContext)
   }
 
-  override fun checkFile(file: PsiFile,
+  override fun checkFile(psiFile: PsiFile,
                          manager: InspectionManager,
                          problemsHolder: ProblemsHolder,
                          globalContext: GlobalInspectionContext,
                          problemDescriptionsProcessor: ProblemDescriptionsProcessor) {
     if (globalContext !is QodanaGlobalInspectionContext
         || isUnderLocalChangesOnOldCode(globalContext)
-        || !validateFileType(file)
-        || TestSourcesFilter.isTestSources(file.virtualFile, globalContext.project)) return
-    checker(file, problemsHolder, globalContext)
+        || !validateFileType(psiFile)
+        || TestSourcesFilter.isTestSources(psiFile.virtualFile, globalContext.project)) return
+    checker(psiFile, problemsHolder, globalContext)
   }
 
   override fun inspectionFinished(manager: InspectionManager,

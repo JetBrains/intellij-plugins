@@ -46,7 +46,7 @@ class DataFunctionInspection : LocalInspectionTool() {
 class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(psiElement) {
   override fun getText(): String = VueBundle.message("vue.quickfix.wrap.with.function.text")
 
-  override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
+  override fun invoke(project: Project, psiFile: PsiFile, startElement: PsiElement, endElement: PsiElement) {
     val expression = startElement as JSObjectLiteralExpression
     val property = expression.parent as JSProperty
 
