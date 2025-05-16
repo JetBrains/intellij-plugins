@@ -9,7 +9,7 @@ import com.intellij.lang.PsiParser
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.parsing.JavaScriptParser
-import com.intellij.lang.xml.XMLParserDefinition
+import com.intellij.lang.xml.canStickTokensTogether
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.FileViewProvider
@@ -58,7 +58,7 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun spaceExistenceTypeBetweenTokens(left: ASTNode, right: ASTNode): ParserDefinition.SpaceRequirements {
-    return XMLParserDefinition.canStickTokensTogether(left, right)
+    return canStickTokensTogether(left, right)
              .takeIf { it != ParserDefinition.SpaceRequirements.MAY }
            ?: super.spaceExistenceTypeBetweenTokens(left, right)
   }
