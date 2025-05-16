@@ -12,7 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.jetbrains.annotations.NotNull;
 
-public final class DartNodeDecorator implements ProjectViewNodeDecorator {
+final class DartNodeDecorator implements ProjectViewNodeDecorator {
   @Override
   public void decorate(final @NotNull ProjectViewNode node, final @NotNull PresentationData presentation) {
     if (node instanceof PsiFileNode || node instanceof PsiDirectoryNode) {
