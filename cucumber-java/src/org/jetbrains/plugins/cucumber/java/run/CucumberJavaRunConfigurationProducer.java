@@ -43,6 +43,14 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   public static final String FORMATTER_OPTIONS_4 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter";
   public static final String FORMATTER_OPTIONS_5 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter";
 
+  /**
+   * Cucumber v6 and newer come with a built-in `teamcity` formatter (which works for both TeamCity and JetBrains IDEs).
+   *
+   * @see <a href="https://youtrack.jetbrains.com/issue/IDEA-276468/Use-plugin-teamcity-with-Cucumber-JVM-v6">IDEA-276468</a>
+   * @see <a href="https://github.com/cucumber/cucumber-jvm/blob/v7.22.2/cucumber-core/src/main/java/io/cucumber/core/plugin/TeamCityPlugin.java">TeamCityPlugin.java</a>
+   */
+  public static final String FORMATTER_OPTIONS_6 = " --plugin teamcity";
+
   public static final Set<String> HOOK_AND_TYPE_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
                                                                                             "cucumber.annotation.After",
                                                                                             "cucumber.api.java.Before",
@@ -186,6 +194,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   }
 
   private static @NotNull String getSMFormatterOptions(@NotNull String cucumberCoreVersion) {
+    if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_6) >= 0) {
+      return FORMATTER_OPTIONS_6;
+    }
     if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_5) >= 0) {
       return FORMATTER_OPTIONS_5;
     }
