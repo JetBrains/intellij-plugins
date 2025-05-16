@@ -1,6 +1,14 @@
 import {Component, input} from "@angular/core"
 
 @Component({
+  selector: 'app-child-input-test',
+  template: ``,
+})
+export class ChildComponent {
+    test = input(0);
+}
+
+@Component({
   selector: 'app-input-test',
   imports: [ChildComponent],
   template: `
@@ -9,13 +17,4 @@ import {Component, input} from "@angular/core"
 })
 export class ParentComponent {
   protected test = 1;
-}
-
-
-@Component({
-  selector: 'app-child-input-test',
-  template: ``,
-})
-export class ChildComponent {
-    test = input(0);
 }

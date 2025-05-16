@@ -1,6 +1,14 @@
 import {Component, model} from "@angular/core"
 
 @Component({
+  selector: 'app-child-input-test',
+  template: ``,
+})
+export class ChildComponent {
+    test = model<{ key: string }>(undefined);
+}
+
+@Component({
   selector: 'app-input-test',
   imports: [ChildComponent],
   template: `
@@ -8,14 +16,5 @@ import {Component, model} from "@angular/core"
   `,
 })
 export class ParentComponent {
-  protected test = "string";
-}
-
-
-@Component({
-  selector: 'app-child-input-test',
-  template: ``,
-})
-export class ChildComponent {
-    test = model.required<string>();
+  protected test = {key: "value"};
 }

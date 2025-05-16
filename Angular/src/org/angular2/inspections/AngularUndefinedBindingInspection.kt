@@ -20,8 +20,8 @@ import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.inspections.quickfixes.CreateDirectiveInputIntentionAction
-import org.angular2.inspections.quickfixes.InputKind
 import org.angular2.inspections.quickfixes.CreateDirectiveOutputIntentionAction
+import org.angular2.inspections.quickfixes.InputKind
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2Bundle.Companion.BUNDLE
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -34,9 +34,11 @@ import org.jetbrains.annotations.PropertyKey
 
 class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 
-  override fun visitAngularAttribute(holder: ProblemsHolder,
-                                     attribute: XmlAttribute,
-                                     descriptor: Angular2AttributeDescriptor) {
+  override fun visitAngularAttribute(
+    holder: ProblemsHolder,
+    attribute: XmlAttribute,
+    descriptor: Angular2AttributeDescriptor,
+  ) {
     val info = descriptor.info
     val templateTag = isTemplateTag(attribute.parent)
     if (info.type == TEMPLATE_BINDINGS) {
@@ -81,7 +83,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
     val messageKey: String = when (info.type) {
       EVENT -> {
         quickFixes.add(CreateDirectiveOutputIntentionAction(attribute, info.name))
-        if(Angular2SignalUtils.supportsModels(attribute)) {
+        if (Angular2SignalUtils.supportsModels(attribute)) {
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL))
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL_REQUIRED))
         }
@@ -92,11 +94,11 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
       }
       PROPERTY_BINDING -> {
         quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.DECORATOR))
-        if(Angular2SignalUtils.supportsInputSignals(attribute)) {
+        if (Angular2SignalUtils.supportsInputSignals(attribute)) {
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.SIGNAL))
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.SIGNAL_REQUIRED))
         }
-        if(Angular2SignalUtils.supportsModels(attribute)) {
+        if (Angular2SignalUtils.supportsModels(attribute)) {
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL))
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL_REQUIRED))
         }
@@ -107,7 +109,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
           "angular.inspection.undefined-binding.message.property-not-provided"
       }
       BANANA_BOX_BINDING -> {
-        if(Angular2SignalUtils.supportsModels(attribute)) {
+        if (Angular2SignalUtils.supportsModels(attribute)) {
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL))
           quickFixes.add(CreateDirectiveInputIntentionAction(attribute, info.name, InputKind.MODEL_REQUIRED))
         }
@@ -141,7 +143,7 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
                            severity,
                            *quickFixes.toTypedArray<LocalQuickFix>())
   }
-
+  
   private fun isFromNotSelector(attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor): Boolean {
     val elementName = attribute.parent.name
     val attributeName = descriptor.name
@@ -158,9 +160,11 @@ class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspection
              .none { it.equals(attributeName, true) }
   }
 
-  private fun visitTemplateBindings(holder: ProblemsHolder,
-                                    attribute: XmlAttribute,
-                                    bindings: Angular2TemplateBindings) {
+  private fun visitTemplateBindings(
+    holder: ProblemsHolder,
+    attribute: XmlAttribute,
+    bindings: Angular2TemplateBindings,
+  ) {
     val matched = Angular2ApplicableDirectivesProvider(bindings).matched
     val scope = Angular2DeclarationsScope(attribute)
     var proximity = scope.getDeclarationsProximity(matched)

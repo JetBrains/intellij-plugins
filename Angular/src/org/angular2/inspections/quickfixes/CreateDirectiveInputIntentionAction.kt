@@ -37,10 +37,12 @@ class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceN
     }
   }
 
-  private fun addSignalOrModelTemplate(template: Template, 
-                                 anchorParent: PsiElement, 
-                                 functionName: String,
-                                 required: Boolean = false) {
+  private fun addSignalOrModelTemplate(
+    template: Template,
+    anchorParent: PsiElement,
+    functionName: String,
+    required: Boolean = false,
+  ) {
     val type = inferType(myElementPointer.element)
     val defaultValue = type?.defaultValue
     template.addTextSegment(myReferencedName)
@@ -64,7 +66,7 @@ class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceN
     }
 
     if (!required) {
-      val expression: Expression = if(defaultValue != null) ConstantNode(defaultValue) else ConstantNode("undefined")
+      val expression: Expression = if (defaultValue != null) ConstantNode(defaultValue) else ConstantNode("undefined")
       template.addVariable("\$INITIAL_VALUE$", expression, expression, true)
     }
     template.addTextSegment(")")
@@ -72,10 +74,12 @@ class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceN
     addSemicolonSegment(template, anchorParent)
   }
 
-  override fun buildTemplate(template: Template,
-                             referenceExpression: JSReferenceExpression?,
-                             isStaticContext: Boolean,
-                             anchorParent: PsiElement) {
+  override fun buildTemplate(
+    template: Template,
+    referenceExpression: JSReferenceExpression?,
+    isStaticContext: Boolean,
+    anchorParent: PsiElement,
+  ) {
     when (kind) {
       InputKind.MODEL -> {
         addSignalOrModelTemplate(template, anchorParent, "model")
@@ -84,7 +88,6 @@ class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceN
       InputKind.MODEL_REQUIRED -> {
         addSignalOrModelTemplate(template, anchorParent, "model", true)
         Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.MODEL_FUN)
-        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.REQUIRED_FUN)
       }
       InputKind.SIGNAL -> {
         addSignalOrModelTemplate(template, anchorParent, "input")
@@ -93,7 +96,6 @@ class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceN
       InputKind.SIGNAL_REQUIRED -> {
         addSignalOrModelTemplate(template, anchorParent, "input", true)
         Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.INPUT_FUN)
-        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.REQUIRED_FUN)
       }
       else -> {
         addDecoratedField(template, INPUT_DEC)
