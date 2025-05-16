@@ -8,7 +8,7 @@ import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
-import org.angular2.Angular2DecoratorUtil.MODEL_FUN
+import org.angular2.signals.Angular2SignalUtils.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferenceKindAndDirective
 

@@ -33,11 +33,11 @@ import org.angular2.Angular2DecoratorUtil.HOST_ATTRIBUTE_TOKEN_CLASS
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.INJECT_FUN
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
-import org.angular2.Angular2DecoratorUtil.INPUT_FUN
-import org.angular2.Angular2DecoratorUtil.MODEL_FUN
+import org.angular2.signals.Angular2SignalUtils.INPUT_FUN
+import org.angular2.signals.Angular2SignalUtils.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
-import org.angular2.Angular2DecoratorUtil.OUTPUT_FROM_OBSERVABLE_FUN
-import org.angular2.Angular2DecoratorUtil.OUTPUT_FUN
+import org.angular2.signals.Angular2SignalUtils.OUTPUT_FROM_OBSERVABLE_FUN
+import org.angular2.signals.Angular2SignalUtils.OUTPUT_FUN
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*

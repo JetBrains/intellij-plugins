@@ -15,10 +15,10 @@ import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_PROP
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
-import org.angular2.Angular2DecoratorUtil.INPUT_FUN
-import org.angular2.Angular2DecoratorUtil.MODEL_FUN
-import org.angular2.Angular2DecoratorUtil.OUTPUT_FROM_OBSERVABLE_FUN
-import org.angular2.Angular2DecoratorUtil.OUTPUT_FUN
+import org.angular2.signals.Angular2SignalUtils.INPUT_FUN
+import org.angular2.signals.Angular2SignalUtils.MODEL_FUN
+import org.angular2.signals.Angular2SignalUtils.OUTPUT_FROM_OBSERVABLE_FUN
+import org.angular2.signals.Angular2SignalUtils.OUTPUT_FUN
 import org.angular2.entities.ivy.Angular2IvyEntity
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity
 import org.angular2.entities.source.Angular2PropertyInfo

@@ -29,10 +29,13 @@ import org.angular2.lang.Angular2LangUtil
 object Angular2SignalUtils {
 
   const val SIGNAL_TYPE: String = "Signal"
-  const val INPUT_FUNCTION: String = "input"
-  const val MODEL_FUNCTION: String = "model"
+  const val INPUT_FUN: String = "input"
+  const val MODEL_FUN: String = "model"
+  const val OUTPUT_FUN: String = "output"
   const val WRITABLE_SIGNAL_TYPE: String = "WritableSignal"
   const val SIGNAL_FUNCTION: String = "signal"
+  const val OUTPUT_FROM_OBSERVABLE_FUN: String = "outputFromObservable"
+
 
   const val VIEW_CHILD_FUN: String = "viewChild"
   const val VIEW_CHILDREN_FUN: String = "viewChildren"
@@ -46,13 +49,13 @@ object Angular2SignalUtils {
 
   fun inputFunction(context: PsiElement?): TypeScriptVariable? =
     WebJSResolveUtil.resolveSymbolFromNodeModule(
-      context, Angular2LangUtil.ANGULAR_CORE_PACKAGE, INPUT_FUNCTION,
+      context, Angular2LangUtil.ANGULAR_CORE_PACKAGE, INPUT_FUN,
       TypeScriptVariable::class.java
     )
 
   fun modelFunction(context: PsiElement?): TypeScriptVariable? =
     WebJSResolveUtil.resolveSymbolFromNodeModule(
-      context, Angular2LangUtil.ANGULAR_CORE_PACKAGE, MODEL_FUNCTION,
+      context, Angular2LangUtil.ANGULAR_CORE_PACKAGE, MODEL_FUN,
       TypeScriptVariable::class.java
     )
 

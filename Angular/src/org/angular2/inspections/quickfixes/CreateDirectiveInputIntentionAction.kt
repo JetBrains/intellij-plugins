@@ -79,20 +79,20 @@ class CreateDirectiveInputIntentionAction(xmlAttribute: XmlAttribute, referenceN
     when (kind) {
       InputKind.MODEL -> {
         addSignalOrModelTemplate(template, anchorParent, "model")
-        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.MODEL_FUNCTION)
+        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.MODEL_FUN)
       }
       InputKind.MODEL_REQUIRED -> {
         addSignalOrModelTemplate(template, anchorParent, "model", true)
-        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.MODEL_FUNCTION)
+        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.MODEL_FUN)
         Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.REQUIRED_FUN)
       }
       InputKind.SIGNAL -> {
         addSignalOrModelTemplate(template, anchorParent, "input")
-        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.INPUT_FUNCTION)
+        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.INPUT_FUN)
       }
       InputKind.SIGNAL_REQUIRED -> {
         addSignalOrModelTemplate(template, anchorParent, "input", true)
-        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.INPUT_FUNCTION)
+        Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.INPUT_FUN)
         Angular2FixesPsiUtil.insertJSImport(anchorParent, ANGULAR_CORE_PACKAGE, Angular2SignalUtils.REQUIRED_FUN)
       }
       else -> {
