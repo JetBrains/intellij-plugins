@@ -5,12 +5,12 @@ import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.xmlb.XmlSerializerUtil
-import com.intellij.util.xmlb.annotations.Attribute
+import com.intellij.util.xmlb.annotations.Property
 
 @Service(Service.Level.PROJECT)
 @State(name = "TerraformProjectSettings", storages = [Storage("terraform.xml")])
 class TfProjectSettings : PersistentStateComponent<TfProjectSettings>, TfToolSettings {
-  @Attribute
+  @Property
   private var ignoredTemplateCandidatePaths: MutableSet<String> = SmartHashSet()
 
   @Volatile
