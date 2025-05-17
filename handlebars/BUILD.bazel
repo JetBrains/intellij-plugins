@@ -17,7 +17,7 @@ jvm_library(
   name = "handlebars",
   module_name = "intellij.handlebars",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
@@ -40,7 +40,7 @@ jvm_library(
 jvm_library(
   name = "handlebars_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java"], allow_empty = True),
+  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
   associates = [":handlebars"],
   deps = [
     "@community//platform/editor-ui-api:editor-ui",

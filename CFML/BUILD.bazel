@@ -17,7 +17,7 @@ jvm_library(
   name = "cfml",
   module_name = "intellij.cfml",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
@@ -47,7 +47,7 @@ jvm_library(
 jvm_library(
   name = "cfml_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["tests/**/*.kt", "tests/**/*.java"], allow_empty = True),
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
   associates = [":cfml"],
   deps = [
     "@community//platform/editor-ui-api:editor-ui",

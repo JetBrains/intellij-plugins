@@ -11,7 +11,7 @@ jvm_library(
   name = "gauge",
   module_name = "intellij.gauge",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/core-api:core",
     "@community//java/java-psi-impl:psi-impl",
@@ -52,7 +52,7 @@ jvm_library(
 jvm_library(
   name = "gauge_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [":gauge"],
   deps = [
     "@community//platform/core-api:core",

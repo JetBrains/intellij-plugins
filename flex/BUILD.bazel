@@ -11,7 +11,7 @@ jvm_library(
   name = "flex",
   module_name = "intellij.flex",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "//contrib/flex/flex-shared:shared",
     "@community//platform/editor-ui-api:editor-ui",

@@ -17,7 +17,7 @@ jvm_library(
   name = "gherkin",
   module_name = "intellij.gherkin",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
@@ -48,7 +48,7 @@ jvm_library(
 jvm_library(
   name = "gherkin_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [":gherkin"],
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
