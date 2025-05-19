@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
 import com.intellij.analysis.AnalysisScope
@@ -19,7 +19,6 @@ import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.assertEqualsToFile
 import com.intellij.testFramework.createGlobalContextForTool
 import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests
-import junit.framework.TestCase
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfToolType
 import java.io.File
@@ -29,7 +28,7 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
     val toolWrapper = LocalInspectionToolWrapper(tool)
     val sourceDir = myFixture.copyDirectoryToProject(File(testDir, "src").path, "")
     val psiDirectory = myFixture.psiManager.findDirectory(sourceDir)!!
-    TestCase.assertNotNull(psiDirectory)
+    assertNotNull(psiDirectory)
     val scope = AnalysisScope(psiDirectory)
     scope.invalidate()
     val globalContext = createGlobalContextForTool(scope, project, listOf<InspectionToolWrapper<*, *>>(toolWrapper))
@@ -95,6 +94,7 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
   private val skipPreview = setOf(
     "Add variable 'x'",
     "Rename output",
+    "Rename",
     "Convert to HCL2 expression",
     "Rename variable",
     "Run Terraform init",

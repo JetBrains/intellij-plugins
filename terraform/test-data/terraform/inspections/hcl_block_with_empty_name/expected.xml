@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>main.tf</file>
+    <line>14</line>
+    <module>29</module>
+    <problem_class id="TfBlockNameValidness" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Invalid block names</problem_class>
+    <description>A name must start with a letter or underscore and may contain only letters, digits, underscores, and dashes.</description>
+  </problem>
+  <problem>
+    <file>main.tf</file>
+    <line>14</line>
+    <module>29</module>
+    <problem_class id="TfBlockNameValidness" severity="ERROR" attribute_key="ERRORS_ATTRIBUTES">Invalid block names</problem_class>
+    <description>Block name should not be empty</description>
+  </problem>
+</problems>
+

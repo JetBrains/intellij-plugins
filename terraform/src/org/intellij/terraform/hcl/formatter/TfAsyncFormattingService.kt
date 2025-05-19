@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
 import com.intellij.application.options.CodeStyle
@@ -12,7 +12,6 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.eel.EelProcess
-import com.intellij.platform.eel.getOrThrow
 import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.utils.readWholeText
 import com.intellij.platform.eel.provider.utils.sendWholeText

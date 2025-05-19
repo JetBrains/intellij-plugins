@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase
@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ThrowableRunnable
+import com.intellij.util.text.UniqueNameGenerator
 import org.intellij.terraform.config.codeinsight.TfInsertHandlerService
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.patterns.TfPsiPatterns
@@ -75,7 +76,8 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
         val range = TextRange(nameElements.first().startOffsetInParent, nameElements.last().let { it.startOffsetInParent + it.textLength })
         holder.registerProblem(o, HCLBundle.message("block.name.validness.inspection.missing.block.name.error.message", required),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, range, AddNameElementsQuickFix(o))
-      } else {
+      }
+      else {
         val extra = nameElements.toList().takeLast(-1 * required)
         val range = TextRange(extra.first().startOffsetInParent, extra.last().let { it.startOffsetInParent + it.textLength })
         holder.problem(o, HCLBundle.message("block.name.validness.inspection.extra.block.name.error.message"))
@@ -129,7 +131,8 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
 
     override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
       val block = (element as? HCLStringLiteral)?.parent as? HCLBlock ?: return
-      updater.rename(block, listOf(block.name))
+      val newName = UniqueNameGenerator.generateUniqueName("new_name") { name -> TfElementRenameValidator.isInputValid(name) }
+      updater.rename(block, listOf(newName))
     }
   }
 }
