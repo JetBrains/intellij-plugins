@@ -3,6 +3,7 @@ package org.jetbrains.qodana.inspectionKts
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl
 import com.intellij.ide.plugins.PluginManagerCore.plugins
+import com.intellij.ide.plugins.content
 import com.intellij.openapi.util.text.StringHash
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.JBIterable
