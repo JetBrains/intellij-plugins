@@ -61,7 +61,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
               var process: EelProcess? = null
               try {
                 withContext(Dispatchers.IO) {
-                  val eelApi = project.getEelDescriptor().upgrade()
+                  val eelApi = project.getEelDescriptor().toEelApi()
                   process = eelApi.exec.spawnProcess(exePath).args("fmt", "-").eelIt()
 
                   process.stdin.sendWholeText(request.documentText)

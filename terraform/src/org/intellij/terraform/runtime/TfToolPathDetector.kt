@@ -68,7 +68,7 @@ internal class TfToolPathDetectorImpl(val project: Project, val coroutineScope: 
         return@withContext path
       }
       val fileName = filePath.fileName.nameWithoutExtension
-      val eelApi = project.getEelDescriptor().upgrade()
+      val eelApi = project.getEelDescriptor().toEelApi()
       val exePath = eelApi.exec.where(fileName)?.asNioPath()?.takeIf { isExecutable(it) }?.absolutePathString()
       return@withContext exePath
     }
