@@ -9,7 +9,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.readAndWriteAction
+import com.intellij.openapi.application.readAndEdtWriteAction
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -134,8 +134,8 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
 }
 
 internal suspend fun addRequiredProvider(commandName: @Nls String, blockType: BlockType, filePointer: SmartPsiElementPointer<PsiFile>) {
-  readAndWriteAction {
-    val file = filePointer.element ?: return@readAndWriteAction value(Unit)
+  readAndEdtWriteAction {
+    val file = filePointer.element ?: return@readAndEdtWriteAction value(Unit)
     val project = file.project
     writeCommandAction(project, commandName) {
       getProviderForBlockType(blockType)?.let { TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(it, file) }

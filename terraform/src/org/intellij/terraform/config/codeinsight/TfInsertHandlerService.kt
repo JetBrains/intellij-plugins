@@ -7,7 +7,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.application.readAndWriteAction
+import com.intellij.openapi.application.readAndEdtWriteAction
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -97,7 +97,7 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
     var hasChanges: Boolean = false
     withBackgroundProgress(project, HCLBundle.message("progress.title.adding.required.properties"), true) {
       do {
-        readAndWriteAction {
+        readAndEdtWriteAction {
           val fixes = processBlockInspections(pointer)
           writeCommandAction(project, HCLBundle.message("terraform.add.required.properties.command.name")) {
             hasChanges = applyFixes(fixes, project)

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.readAndWriteAction
+import com.intellij.openapi.application.readAndEdtWriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments
@@ -104,11 +104,11 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
     val lock = findLockFile(virtualFile) ?: return
     modelComputationCache.remove(lock)?.cancel()
 
-    readAndWriteAction {
+    readAndEdtWriteAction {
       val relatedEntities = WorkspaceModel.getInstance(project).currentSnapshot.entities<TfLocalMetaEntity>().filter {
         it.lockFile.virtualFile == lock
       }.toList()
-      if (relatedEntities.isEmpty()) return@readAndWriteAction value(Unit)
+      if (relatedEntities.isEmpty()) return@readAndEdtWriteAction value(Unit)
 
       writeAction {
         WorkspaceModel.getInstance(project).updateProjectModel("remove related entities") { mutableEntityStorage ->
