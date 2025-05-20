@@ -1,0 +1,10 @@
+<TfProjectSettings>
+  <option name="formattedBeforeCommit" value="false" />
+  <option name="toolPath" value="/opt/homebrew/bin/terraform" />
+  <option name="ignoredTemplateCandidatePaths">
+    <set>
+      <option value="/path/to/ignored_file1" />
+      <option value="/path/to/ignored_file2" />
+    </set>
+  </option>
+</TfProjectSettings>

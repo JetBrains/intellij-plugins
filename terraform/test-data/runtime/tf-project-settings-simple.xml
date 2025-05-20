@@ -1,0 +1,10 @@
+<component name="TerraformProjectSettings">
+  <option name="formattedBeforeCommit" value="true" />
+  <option name="toolPath" value="/path/to/terraform" />
+  <option name="ignoredTemplateCandidatePaths">
+    <set>
+      <option value="/path/to/ignored_file1" />
+      <option value="/path/to/ignored_file2" />
+    </set>
+  </option>
+</component>
