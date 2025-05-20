@@ -3,7 +3,7 @@ package org.jetbrains.qodana.inspectionKts
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl
 import com.intellij.ide.plugins.PluginManagerCore.plugins
-import com.intellij.ide.plugins.content
+import com.intellij.ide.plugins.contentModules
 import com.intellij.openapi.util.text.StringHash
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.JBIterable
@@ -149,15 +149,9 @@ private class InspectionKtsPluginWithSubModulesClassLoader(
     fun forPlugin(plugin: IdeaPluginDescriptor): InspectionKtsPluginWithSubModulesClassLoader? {
       val pluginClassLoader = plugin.pluginClassLoader ?: return null
       val pluginImpl = (plugin as? IdeaPluginDescriptorImpl) ?: return null
-      val subModulesClassLoaders = pluginImpl.content.modules.mapNotNull {
-        val subModulePluginDescriptor = try {
-          it.requireDescriptor()
-        }
-        catch (_ : IllegalStateException) {
-          null
-        } ?: return@mapNotNull null
-        val modulePackage = subModulePluginDescriptor.packagePrefix ?: return@mapNotNull null
-        SubModuleClassLoader(modulePackage, subModulePluginDescriptor.classLoader)
+      val subModulesClassLoaders = pluginImpl.contentModules.mapNotNull {
+        val modulePackage = it.packagePrefix ?: return@mapNotNull null
+        SubModuleClassLoader(modulePackage, it.classLoader)
       }
       return InspectionKtsPluginWithSubModulesClassLoader(pluginClassLoader, subModulesClassLoaders)
     }
