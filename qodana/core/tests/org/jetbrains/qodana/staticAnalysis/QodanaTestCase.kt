@@ -60,8 +60,9 @@ abstract class QodanaTestCase : LightPlatformTestCase() {
       loaded,
       this
     )
-
-    factory.openRunContext().qodanaProfile
+    val context = factory.openRunContext()
+    this.coroutineContext.cancelChildren() // to cancel child coroutines which blocks execution
+    context.qodanaProfile
   }
 
   fun writeProfile(profile: InspectionProfileImpl): String {
