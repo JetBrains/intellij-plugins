@@ -241,6 +241,20 @@ internal object QodanaPluginStatsCounterCollector : CounterUsagesCollector() {
                                                           EventFields.Boolean("is_received"),
                                                           EventFields.StringList("language", CoverageLanguage.values().map { it.name }),
                                                           EventFields.Boolean("should_show"))
+
+  // --------------------
+  // Github Workflow Promo
+  // --------------------
+
+  private val GITHUB_PROMO_CREATE_WORKFLOW_RESULT = EventFields.Enum<GithubPromoCreateWorkflowResult>("result")
+  @JvmField
+  val ADD_QODANA_WORKFLOW_GITHUB_PROMO = GROUP.registerEvent("add_qodana_workflow_github_promo", GITHUB_PROMO_CREATE_WORKFLOW_RESULT)
+
+  @JvmField
+  val EXPLORE_QODANA_GITHUB_PROMO = GROUP.registerEvent("explore_qodana_github_promo")
+
+  @JvmField
+  val QODANA_GITHUB_PROMO_DISMISSED = GROUP.registerEvent("qodana_github_promo_dismissed")
 }
 
 internal enum class OpenInIdeProtocol {
@@ -404,6 +418,12 @@ internal enum class ProblemStatus {
   NOT_FIXED,
 }
 
+enum class GithubPromoCreateWorkflowResult {
+  ALREADY_EXISTS,
+  CREATED,
+  FAILED,
+}
+
 internal fun ReportDescriptor.toStatsReportType(): StatsReportType {
   return when (this) {
     is FileReportDescriptor -> StatsReportType.FILE
@@ -444,4 +464,16 @@ fun logCoverageReceivedStats(project: Project, isReceived: Boolean, languages: L
     languages,
     QodanaRegistry.openCoverageReportEnabled
   )
+}
+
+fun logGithubPromoExploreQodanaPress(project: Project) {
+  QodanaPluginStatsCounterCollector.EXPLORE_QODANA_GITHUB_PROMO.log(project)
+}
+
+fun logGithubPromoDismissed(project: Project) {
+  QodanaPluginStatsCounterCollector.QODANA_GITHUB_PROMO_DISMISSED.log(project)
+}
+
+fun logGithubPromoAddQodanaWorkflow(project: Project, result: GithubPromoCreateWorkflowResult) {
+  QodanaPluginStatsCounterCollector.ADD_QODANA_WORKFLOW_GITHUB_PROMO.log(project, result)
 }

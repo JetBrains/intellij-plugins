@@ -285,7 +285,7 @@
     <extensionPoint name="setupCIProviderFactory"
                     interface="org.jetbrains.qodana.ui.ci.SetupCIProviderFactory"
                     dynamic="true"/>
-    <extensionPoint name="defaultQodanaYamlItemProvider"
+    <extensionPoint name="qodanaYamlItemProvider"
                     interface="org.jetbrains.qodana.settings.QodanaYamlItemProvider"
                     dynamic="true"/>
     <extensionPoint name="qodanaHighlightInfoTypeProvider"
@@ -373,14 +373,15 @@
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.space.SetupSpaceAutomationProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.bitbucket.SetupBitbucketCIProviderFactory"/>
 
-    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlHeaderItemProvider"/>
-    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlVersionItemProvider"/>
-    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlProfileItemProvider"/>
-    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlIncludeItemProvider"/>
-    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlExcludeItemProvider"/>
-    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlBootstrapItemProvider"/>
-    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlPluginItemProvider"/>
-    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlLinterItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlHeaderItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlVersionItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlProfileItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlIncludeItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlExcludeItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlBootstrapItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlPluginItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlFailureConditionsItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlLinterItemProvider"/>
     <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.ResultSummaryContributor"/>
     <sarifReportContributor implementation="org.jetbrains.qodana.staticAnalysis.sarif.FailureConditionsContributor"/>
     <sarifReportContributor

@@ -6,15 +6,19 @@ import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.eventLog.events.EventPair
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.openapi.util.text.Strings
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.readText
 import org.jetbrains.qodana.license.QodanaLicense
 import org.jetbrains.qodana.license.QodanaLicenseType
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.script.DEFAULT_SCRIPT_NAME
+import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 
+const val QODANA_PROMO_LANGUAGES: String = "For all supported languages see https://www.jetbrains.com/help/qodana/linters.html"
 object UsageCollector : CounterUsagesCollector() {
 
   override fun getGroup() = GROUP
@@ -87,6 +91,8 @@ object UsageCollector : CounterUsagesCollector() {
   private val includeAbsentField = EventFields.Boolean("includeAbsent")
   private val fixesStrategyField = EventFields.Enum<FixesStrategy>("fixesStrategy") { it.name.lowercase() }
   private val baselineField = EventFields.String("baselineType", listOf("none", "local", "cloud"))
+
+  private val githubPromoConfigPresent = EventFields.Boolean("githubPromoConfigPresent")
 
   private val configEvent = GROUP.registerVarargEvent(
     "config",
@@ -210,6 +216,7 @@ object UsageCollector : CounterUsagesCollector() {
       // TODO: use reserved 'cloud' value
       else -> "local"
     }
+    args += logPromoGithubConfigPresent(config)
     configEvent.log(args)
   }
 
@@ -238,6 +245,19 @@ object UsageCollector : CounterUsagesCollector() {
     failureConditionInfoField logIfPresent failureConditions.severityThresholds.info
     failureConditionMinimumTotalCoverageField logIfPresent failureConditions.testCoverageThresholds.total
     failureConditionMinimumFreshCoverageField logIfPresent failureConditions.testCoverageThresholds.fresh
+  }
+
+  private fun logPromoGithubConfigPresent(config: QodanaConfig): EventPair<Boolean> {
+    try {
+      val qodanaYaml = config.yamlFiles.localQodanaYaml ?: return githubPromoConfigPresent with false
+      val present = VirtualFileManager.getInstance()
+        .findFileByNioPath(qodanaYaml)
+        ?.readText()
+        ?.contains(QODANA_PROMO_LANGUAGES) ?: false
+      return githubPromoConfigPresent with present
+    } catch (_: IOException) {
+      return githubPromoConfigPresent with false
+    }
   }
 
 }

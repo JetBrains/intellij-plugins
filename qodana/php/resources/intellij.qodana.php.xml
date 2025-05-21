@@ -11,7 +11,7 @@
     <qodanaScriptFactory implementation="org.jetbrains.qodana.php.PhpMigrationScriptFactory"/>
     <workflowExtension implementation="org.jetbrains.qodana.php.QodanaPhpConfigApplier"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.php.PhpGlobalOutputConsumer"/>
-    <defaultQodanaYamlItemProvider implementation="org.jetbrains.qodana.php.QodanaYamlPhpLanguageLevelItemProvider"/>
+    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.php.QodanaYamlPhpLanguageLevelItemProvider"/>
     <reportMetadataArtifact implementation="org.jetbrains.qodana.php.PhpUnitCoverageReportMetadataArtifact"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">

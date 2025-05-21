@@ -1,19 +1,20 @@
 package org.jetbrains.qodana.settings
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.VisibleForTesting
 
-class DefaultQodanaYamlBuilder(private val project: Project) {
+abstract class QodanaYamlBuilder {
+
   suspend fun build(): String {
-    val yamlItems = QodanaYamlItemProvider.provideAll(project)
-    return build(yamlItems)
-  }
+     return build(getYamlItems())
+   }
+
+   protected abstract suspend fun getYamlItems(): List<QodanaYamlItem>
 
   @VisibleForTesting
   fun build(items: List<QodanaYamlItem>): String {
     return items
-      .sortedBy { it.weight }
-      .distinctBy { it.id }
-      .joinToString("\n") { it.content } + "\n"
+             .sortedBy { it.weight }
+             .distinctBy { it.id }
+             .joinToString("\n") { it.content } + "\n"
   }
 }
