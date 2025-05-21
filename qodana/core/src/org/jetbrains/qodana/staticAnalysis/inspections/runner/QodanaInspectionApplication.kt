@@ -71,10 +71,10 @@ class QodanaInspectionApplication(
     }
     catch (e: QodanaException) {
       LOG.error(e)
-      reporter.reportError(e)
+      reporter.reportError("Qodana exited abnormally because: ${e.message}")
       exitProcess(1)
     }
-    catch (e: ProcessCanceledException) {
+    catch (@Suppress("IncorrectCancellationExceptionHandling") e: ProcessCanceledException) {
       reporter.reportError((e.cause as? QodanaCancellationException) ?: e)
       exitProcess(1)
     }
