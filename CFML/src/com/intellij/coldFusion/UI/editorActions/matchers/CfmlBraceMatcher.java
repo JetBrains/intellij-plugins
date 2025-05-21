@@ -306,8 +306,8 @@ public final class CfmlBraceMatcher implements BraceMatcher {
   }
 
   @Override
-  public int getCodeConstructStart(final @NotNull PsiFile file, int openingBraceOffset) {
-    PsiElement element = file.findElementAt(openingBraceOffset);
+  public int getCodeConstructStart(final @NotNull PsiFile psiFile, int openingBraceOffset) {
+    PsiElement element = psiFile.findElementAt(openingBraceOffset);
     if (element == null || element instanceof PsiFile) return openingBraceOffset;
     PsiElement parent = element.getParent();
     return parent.getTextRange().getStartOffset();
