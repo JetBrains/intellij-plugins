@@ -55,13 +55,14 @@ public final class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public CoverageSuite createCoverageSuite(@NotNull CoverageRunner covRunner,
-                                           @NotNull String name,
-                                           @NotNull CoverageFileProvider coverageDataFileProvider,
+  public CoverageSuite createCoverageSuite(@NotNull String name,
+                                           @NotNull Project project,
+                                           @NotNull CoverageRunner runner,
+                                           @NotNull CoverageFileProvider fileProvider,
+                                           long timestamp,
                                            @NotNull CoverageEnabledConfiguration config) {
     if (config instanceof KarmaCoverageEnabledConfiguration) {
-      Project project = config.getConfiguration().getProject();
-      return new KarmaCoverageSuite(name, project, covRunner, coverageDataFileProvider, config.createTimestamp(), this);
+      return new KarmaCoverageSuite(name, project, runner, fileProvider, timestamp, this);
     }
     return null;
   }
