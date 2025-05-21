@@ -5,7 +5,9 @@ import com.jetbrains.php.config.PhpLanguageLevel
 import com.jetbrains.php.config.PhpProjectConfigurationFacade
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.settings.APPLIED_IN_CI_COMMENT
+import org.jetbrains.qodana.settings.DefaultQodanaItemContext
 import org.jetbrains.qodana.settings.QodanaYamlItem
+import org.jetbrains.qodana.settings.QodanaYamlItemContext
 import org.jetbrains.qodana.settings.QodanaYamlItemProvider
 
 class QodanaYamlPhpLanguageLevelItemProvider : QodanaYamlItemProvider {
@@ -13,7 +15,8 @@ class QodanaYamlPhpLanguageLevelItemProvider : QodanaYamlItemProvider {
     private const val ID = "php language level"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem? {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     val languageLevel = PhpProjectConfigurationFacade.getInstance(project).languageLevel
     if (languageLevel == PhpLanguageLevel.DEFAULT) return null
     @Language("PHP")

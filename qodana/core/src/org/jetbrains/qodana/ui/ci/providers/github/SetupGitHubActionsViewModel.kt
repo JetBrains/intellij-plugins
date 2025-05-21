@@ -3,7 +3,6 @@ package org.jetbrains.qodana.ui.ci.providers.github
 import com.intellij.codeInsight.daemon.impl.IntentionsUI
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -17,7 +16,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findDirectory
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.cloud.openBrowserWithCurrentQodanaCloudFrontend
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
@@ -54,6 +52,8 @@ class SetupGitHubActionsViewModel(
   override val finishProviderFlow: Flow<SetupCIFinishProvider?> = createFinishProviderFlow()
 
   private val configFileType: FileType = getFileTypeByFilename(DEFAULT_GITHUB_WORKFLOW_FILENAME)
+
+  private val defaultQodanaGithubWorkflowBuilder = DefaultQodanaGithubWorkflowBuilder(projectVcsDataProvider, project)
 
   init {
     scope.launch(QodanaDispatchers.Default) {
@@ -209,7 +209,8 @@ class SetupGitHubActionsViewModel(
         CIConfigEditorState(currentEditorState.editor, newInMemoryState)
       }
       else -> {
-        val newInMemoryDocument = createInMemoryDocument(project, defaultConfigurationText(), DEFAULT_GITHUB_WORKFLOW_FILENAME)
+        val newInMemoryDocument = createInMemoryDocument(project, defaultQodanaGithubWorkflowBuilder.workflowFile(),
+                                                         DEFAULT_GITHUB_WORKFLOW_FILENAME)
         val newEditor = createEditor(project, newInMemoryDocument, configFileType)
         val newInMemoryState = CIConfigFileState.InMemory(project, newInMemoryDocument, newStringPath)
         CIConfigEditorState(newEditor, newInMemoryState)
@@ -239,7 +240,7 @@ class SetupGitHubActionsViewModel(
       return inMemoryWorkflowPatch
     }
 
-    val inMemoryDocument = createInMemoryDocument(project, defaultConfigurationText(), DEFAULT_GITHUB_WORKFLOW_FILENAME)
+    val inMemoryDocument = createInMemoryDocument(project, defaultQodanaGithubWorkflowBuilder.workflowFile(), DEFAULT_GITHUB_WORKFLOW_FILENAME)
     val absoluteStringPath = projectNioPath.resolve(GITHUB_WORKFLOWS_DIR).resolve(DEFAULT_GITHUB_WORKFLOW_FILENAME).toString()
     return CIConfigFileState.InMemory(project, inMemoryDocument, absoluteStringPath)
   }
@@ -260,67 +261,10 @@ class SetupGitHubActionsViewModel(
   private suspend fun getInMemoryPatchOfPhysicalConfig(qodanaConfigFile: VirtualFile): CIConfigFileState.InMemoryPatchOfPhysicalFile? {
     val physicalDocument = readAction { FileDocumentManager.getInstance().getDocument(qodanaConfigFile) } ?: return null
     val physicalText = physicalDocument.immutableCharSequence
-    val contentOfInMemoryPatchDocument = listOf(physicalText, defaultQodanaJobText()).joinToString("\n\n")
+    val contentOfInMemoryPatchDocument = listOf(physicalText, defaultQodanaGithubWorkflowBuilder.qodanaJobText()).joinToString("\n\n")
     val inMemoryPatchDocument = createInMemoryDocument(project, contentOfInMemoryPatchDocument, qodanaConfigFile.name)
 
     return CIConfigFileState.InMemoryPatchOfPhysicalFile(project, inMemoryPatchDocument, physicalDocument, qodanaConfigFile.toNioPath())
-  }
-
-  private suspend fun defaultQodanaJobText(): String {
-    val cloudTokenText = "\${{ secrets.QODANA_TOKEN }}"
-    val refsText = "\${{ github.event.pull_request.head.sha }}"
-
-    val baselineText = getSarifBaseline(project)?.let { "args: --baseline,$it" }
-
-    val qodanaGitHubActionVersion = ApplicationInfo.getInstance().shortVersion
-
-    @Language("YAML")
-    val jobText = """
-      qodana:
-        runs-on: ubuntu-latest
-        permissions:
-          contents: write
-          pull-requests: write
-          checks: write
-        steps:
-          - uses: actions/checkout@v3
-            with:
-              ref: ${refsText}
-              fetch-depth: 0
-          - name: 'Qodana Scan'
-            uses: JetBrains/qodana-action@v$qodanaGitHubActionVersion
-            env:
-              QODANA_TOKEN: $cloudTokenText
-            ${if (baselineText != null) "with:" else ""}
-            ${baselineText?.let { "  $it" } ?: ""}
-    """.replaceIndent("  ").trimEnd()
-    return jobText
-  }
-
-  private suspend fun defaultConfigurationText(): String {
-    val branchesToAdd = projectVcsDataProvider.ciRelevantBranches()
-
-    @Language("YAML")
-    val branchesText = """
-      name: Qodana
-      on:
-        workflow_dispatch:
-        pull_request:
-        push:
-          branches:
-      
-    """.trimIndent() + branchesToAdd.joinToString(separator = "\n", postfix = "\n") { "      - $it" }
-
-    val jobText = defaultQodanaJobText()
-
-    @Suppress("UnnecessaryVariable")
-    @Language("YAML")
-    val yamlConfiguration = branchesText + """
-      
-      jobs:
-
-    """.trimIndent() + jobText
-    return yamlConfiguration
   }
 
   override suspend fun isCIPresentInProject(): Boolean {

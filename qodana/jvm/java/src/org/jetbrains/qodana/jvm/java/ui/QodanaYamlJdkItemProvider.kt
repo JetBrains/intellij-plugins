@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.jvm.java
+package org.jetbrains.qodana.jvm.java.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
@@ -6,7 +6,9 @@ import com.intellij.openapi.projectRoots.JavaSdkVersionUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.settings.APPLIED_IN_CI_COMMENT
+import org.jetbrains.qodana.settings.DefaultQodanaItemContext
 import org.jetbrains.qodana.settings.QodanaYamlItem
+import org.jetbrains.qodana.settings.QodanaYamlItemContext
 import org.jetbrains.qodana.settings.QodanaYamlItemProvider
 
 class QodanaYamlJdkItemProvider : QodanaYamlItemProvider {
@@ -14,7 +16,8 @@ class QodanaYamlJdkItemProvider : QodanaYamlItemProvider {
     private const val ID = "jdk"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem? {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     val projectJdk = ProjectRootManager.getInstance(project).projectSdk
     if (projectJdk?.sdkType !is JavaSdkType) return null
 
@@ -23,7 +26,7 @@ class QodanaYamlJdkItemProvider : QodanaYamlItemProvider {
     @Language("YAML")
     val content = """
       
-      projectJDK: "${jdkVersion.maxLanguageLevel.feature()}" #$APPLIED_IN_CI_COMMENT
+      projectJDK: "${jdkVersion.maxLanguageLevel.feature()}" #${APPLIED_IN_CI_COMMENT}
     """.trimIndent()
     return QodanaYamlItem(ID, 120, content)
   }

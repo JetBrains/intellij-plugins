@@ -26,12 +26,15 @@ import kotlin.io.path.Path
 
 const val APPLIED_IN_CI_COMMENT = "(Applied in CI/CD pipeline)"
 
+open class DefaultQodanaItemContext: QodanaYamlItemContext()
+
 class QodanaYamlHeaderItemProvider : QodanaYamlItemProvider {
   companion object {
     const val ID = "header"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     @Language("YAML")
     val content = """
       #-------------------------------------------------------------------------------#
@@ -48,7 +51,8 @@ class QodanaYamlVersionItemProvider : QodanaYamlItemProvider {
     const val ID = "version"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     @Language("YAML")
     val content = "version: \"1.0\""
     return QodanaYamlItem(ID, 0, content)
@@ -60,7 +64,8 @@ class QodanaYamlProfileItemProvider : QodanaYamlItemProvider {
     const val ID: String = "profile"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     val profileName = getProjectCustomProfileName(project) ?: QodanaEmbeddedProfile.QODANA_STARTER.profileName
     @Language("YAML")
     val content = """
@@ -127,7 +132,8 @@ class QodanaYamlIncludeItemProvider : QodanaYamlItemProvider {
     const val ID = "include"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     @Language("YAML")
     val content = """
       
@@ -144,7 +150,8 @@ class QodanaYamlExcludeItemProvider : QodanaYamlItemProvider {
     const val ID = "exclude"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     @Language("YAML")
     val content = """
       
@@ -163,7 +170,8 @@ class QodanaYamlBootstrapItemProvider : QodanaYamlItemProvider {
     const val ID = "bootstrap"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     @Language("YAML")
     val content = """
       
@@ -179,7 +187,8 @@ class QodanaYamlPluginItemProvider : QodanaYamlItemProvider {
     const val ID = "plugins"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     @Language("YAML")
     val content = """
       
@@ -191,13 +200,40 @@ class QodanaYamlPluginItemProvider : QodanaYamlItemProvider {
   }
 }
 
+class QodanaYamlFailureConditionsItemProvider : QodanaYamlItemProvider {
+  companion object {
+    const val ID = "failureConditions"
+  }
+
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
+    @Language("YAML")
+    val content = """
+      
+      # Quality gate. Will fail the CI/CD pipeline if any condition is not met
+      # severityThresholds - configures maximum thresholds for different problem severities
+      # testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
+      # Code Coverage is available in Ultimate and Ultimate Plus plans
+      #failureConditions:
+      #  severityThresholds:
+      #    any: 15
+      #    critical: 5
+      #  testCoverageThresholds:
+      #    fresh: 70
+      #    total: 50
+    """.trimIndent()
+    return QodanaYamlItem(ID, 150, content)
+  }
+}
+
 // TODO – move this provider to the top when QD-5820 fixed
 class QodanaYamlLinterItemProvider : QodanaYamlItemProvider {
   companion object {
     const val ID = "linter"
   }
 
-  override suspend fun provide(project: Project): QodanaYamlItem {
+  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
+    if (context !is DefaultQodanaItemContext) return null
     if (ApplicationInfo.getInstance().build.productCode == "RD") {
       @Language("YAML")
       val content = """

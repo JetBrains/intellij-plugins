@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.findFile
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YML_CONFIG_FILENAME
 
-internal suspend fun Project.findQodanaConfigVirtualFile(): VirtualFile? {
+suspend fun Project.findQodanaConfigVirtualFile(): VirtualFile? {
   val projectVirtualFile = guessProjectDir() ?: return null
   val filenames = listOf(QODANA_YML_CONFIG_FILENAME, QODANA_YAML_CONFIG_FILENAME)
   for (filename in filenames) {
