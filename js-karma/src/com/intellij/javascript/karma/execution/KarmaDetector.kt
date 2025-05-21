@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution
 
+import com.intellij.javascript.karma.util.KarmaUtil
 import com.intellij.javascript.testFramework.AbstractTestFileStructure
 import com.intellij.javascript.testFramework.JsTestSelector
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructure
@@ -21,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 class KarmaDetector(): JsTestFrameworkDetector {
   override val frameworkName: String = "Karma"
   override val frameworkApiDesign: JsTestFrameworkApiDesign = JsTestFrameworkApiDesign.GLOBAL_VARIABLES
+  override val packageDescriptor: JsTestFrameworkPackageDescriptor = JsTestFrameworkPackageDescriptor(this, KarmaUtil.KARMA_PACKAGE_NAME)
 
   private val indexDataCollector: CachingJsTestFileIndexDataCollector = CachingJsTestFileIndexDataCollector(this) { jsFile ->
     val names = mutableSetOf<String>()

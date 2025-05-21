@@ -9,7 +9,7 @@ import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.testFramework.AbstractTestFileStructure;
 import com.intellij.javascript.testFramework.JsTestElementPath;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
-import com.intellij.javascript.testing.JsPackageDependentTestRunConfigurationProducer;
+import com.intellij.javascript.testing.runConfiguration.JsTestRunConfigurationProducer;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -25,12 +25,7 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-
-public final class KarmaRunConfigurationProducer extends JsPackageDependentTestRunConfigurationProducer<KarmaRunConfiguration> {
-  public KarmaRunConfigurationProducer() {
-    super(Collections.singletonList(KarmaUtil.KARMA_PACKAGE_NAME));
-  }
+public final class KarmaRunConfigurationProducer extends JsTestRunConfigurationProducer<KarmaRunConfiguration> {
 
   @Override
   public @NotNull ConfigurationFactory getConfigurationFactory() {
