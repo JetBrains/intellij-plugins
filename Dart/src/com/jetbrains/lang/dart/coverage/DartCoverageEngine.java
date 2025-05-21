@@ -36,16 +36,11 @@ public final class DartCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public @Nullable CoverageSuite createCoverageSuite(@NotNull CoverageRunner covRunner,
-                                                     @NotNull String name,
-                                                     @NotNull CoverageFileProvider coverageDataFileProvider,
-                                                     String @Nullable [] filters,
-                                                     long lastCoverageTimeStamp,
-                                                     @Nullable String suiteToMerge,
-                                                     boolean coverageByTestEnabled,
-                                                     boolean branchCoverage,
-                                                     boolean trackTestFolders,
-                                                     Project project) {
+  public @Nullable CoverageSuite createCoverageSuite(@NotNull String name,
+                                                     @NotNull Project project,
+                                                     @NotNull CoverageRunner runner,
+                                                     @NotNull CoverageFileProvider fileProvider,
+                                                     long timestamp) {
     return null;
   }
 

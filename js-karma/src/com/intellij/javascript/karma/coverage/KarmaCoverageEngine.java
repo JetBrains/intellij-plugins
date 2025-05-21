@@ -46,17 +46,12 @@ public final class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public CoverageSuite createCoverageSuite(@NotNull CoverageRunner covRunner,
-                                           @NotNull String name,
-                                           @NotNull CoverageFileProvider coverageDataFileProvider,
-                                           String @Nullable [] filters,
-                                           long lastCoverageTimeStamp,
-                                           @Nullable String suiteToMerge,
-                                           boolean coverageByTestEnabled,
-                                           boolean branchCoverage,
-                                           boolean trackTestFolders,
-                                           Project project) {
-    return new KarmaCoverageSuite(name, project, covRunner, coverageDataFileProvider, lastCoverageTimeStamp, this);
+  public @NotNull CoverageSuite createCoverageSuite(@NotNull String name,
+                                                    @NotNull Project project,
+                                                    @NotNull CoverageRunner runner,
+                                                    @NotNull CoverageFileProvider fileProvider,
+                                                    long timestamp) {
+    return new KarmaCoverageSuite(name, project, runner, fileProvider, timestamp, this);
   }
 
   @Override
