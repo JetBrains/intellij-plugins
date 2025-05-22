@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.*
@@ -296,6 +296,11 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
             .map { buildResourceOrDataLookupElement(it, position) }
             .processWith(consumer)
         }
+        HCL_EPHEMERAL_IDENTIFIER ->
+          typeModel.allEphemeralResources().toPlow()
+            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
+            .map { buildLookupElement(it, it.type, it.description, position) }
+            .processWith(consumer)
         HCL_PROVIDER_IDENTIFIER -> {
           typeModel.allProviders().toPlow()
             .filter { parameters.invocationCount > 1 || it.tier in tiers || localProviders.containsValue(it.fullName)}
@@ -308,10 +313,6 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
             .processWith(consumer)
         HCL_BACKEND_IDENTIFIER ->
           typeModel.backends.toPlow()
-            .map { buildLookupElement(it, it.type, it.description, position) }
-            .processWith(consumer)
-        HCL_EPHEMERAL_IDENTIFIER ->
-          typeModel.allEphemeralResources().toPlow()
             .map { buildLookupElement(it, it.type, it.description, position) }
             .processWith(consumer)
         TOFU_KEY_PROVIDER ->

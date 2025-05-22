@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.openapi.diagnostic.Logger
@@ -7,6 +7,7 @@ import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
@@ -19,9 +20,9 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns
 import org.intellij.terraform.opentofu.model.getEncryptionKeyProviderProperties
 import org.intellij.terraform.opentofu.model.getEncryptionMethodProperties
+import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns
 import java.util.*
 
 internal object TfModelHelper {
@@ -255,6 +256,7 @@ internal object TfModelHelper {
       HCL_RESOURCE_IDENTIFIER -> model.allResources().filter { it.type == identifier }.toList()
       HCL_DATASOURCE_IDENTIFIER -> model.allDataSources().filter { it.type == identifier }.toList()
       HCL_PROVIDER_IDENTIFIER -> model.allProviders().filter { it.type == identifier }.toList()
+      HCL_EPHEMERAL_IDENTIFIER -> model.allEphemeralResources().filter { it.type == identifier }.toList()
       else -> emptyList()
     }
     return types

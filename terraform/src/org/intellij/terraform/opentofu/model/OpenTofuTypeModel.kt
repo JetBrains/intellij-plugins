@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.opentofu.model
 
 import com.intellij.openapi.fileTypes.FileType
@@ -10,7 +10,6 @@ import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER
 import org.intellij.terraform.opentofu.OpenTofuFileType
-
 
 //<editor-fold desc="Encryption providers">
 internal class AbstractEncryptionProvider(
@@ -103,7 +102,7 @@ internal val encryptionMethods = listOf(AesGcmMethod, UnencryptedMethod).associa
 //</editor-fold>
 
 //<editor-fold desc="Plan and state encryption">
-val fallbackMethod = BlockType("fallback", properties = listOf(
+val fallbackMethod: BlockType = BlockType("fallback", properties = listOf(
   PropertyType("method", Types.String, hint = ReferenceHint("method.#name"))).toMap())
 
 internal val State: BlockType = BlockType("state", properties = listOf(
