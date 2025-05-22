@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
@@ -23,6 +23,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
 import com.intellij.util.indexing.IndexingIteratorsProvider
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
@@ -227,9 +228,6 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return visitor.collected.firstOrNull()
   }
 
-  // val helper = PsiSearchHelper.SERVICE.getInstance(position.project)
-  // helper.processAllFilesWithWord()
-
   private fun process(processor: PsiElementProcessor<HCLFile>): Boolean {
     // TODO: Support json files (?)
     if (moduleRoot is HCLFile) {
@@ -245,44 +243,49 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     })
   }
 
-  fun findResources(type: String?, name: String?): List<HCLBlock> {
-    val found = ArrayList<HCLBlock>()
+  fun getDefinedResources(type: String? = null, name: String? = null): List<HCLBlock> {
+    return getDefinedHclBlocks(HCL_RESOURCE_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
+  }
+
+  private fun getDefinedHclBlocks(
+    identifier: String,
+    numberOfArguments: Int,
+    firstArgument: String?,
+    secondArgument: String?,
+  ): List<HCLBlock> {
+    val found = mutableListOf<HCLBlock>()
+
     process(PsiElementProcessor { file ->
       file.acceptChildren(object : HCLElementVisitor() {
-        override fun visitBlock(o: HCLBlock) {
-          if (HCL_RESOURCE_IDENTIFIER != o.getNameElementUnquoted(0)) return
-          val t = o.getNameElementUnquoted(1) ?: return
-          if (type != null && type != t) return
-          val n = o.getNameElementUnquoted(2) ?: return
-          if (name == null || name == n) found.add(o)
+        override fun visitBlock(block: HCLBlock) {
+          if (block.getNameElementUnquoted(0) != identifier) return
+
+          val first = block.getNameElementUnquoted(1) ?: return
+          if (firstArgument != null && first != firstArgument) return
+
+          if (numberOfArguments == 1) {
+            found.add(block)
+          }
+          else {
+            val second = block.getNameElementUnquoted(2) ?: return
+            if (secondArgument == null || secondArgument == second) {
+              found.add(block)
+            }
+          }
         }
-      }); true
+      })
+      true
     })
+
     return found
   }
 
-  fun getDeclaredResources(): List<HCLBlock> {
-    return findResources(null, null)
+  fun getDefinedDataSources(type: String? = null, name: String? = null): List<HCLBlock> {
+    return getDefinedHclBlocks(HCL_DATASOURCE_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
   }
 
-  fun findDataSource(type: String?, name: String?): List<HCLBlock> {
-    val found = ArrayList<HCLBlock>()
-    process(PsiElementProcessor { file ->
-      file.acceptChildren(object : HCLElementVisitor() {
-        override fun visitBlock(o: HCLBlock) {
-          if (HCL_DATASOURCE_IDENTIFIER != o.getNameElementUnquoted(0)) return
-          val t = o.getNameElementUnquoted(1) ?: return
-          if (type != null && type != t) return
-          val n = o.getNameElementUnquoted(2) ?: return
-          if (name == null || name == n) found.add(o)
-        }
-      }); true
-    })
-    return found
-  }
-
-  fun getDeclaredDataSources(): List<HCLBlock> {
-    return findDataSource(null, null)
+  fun getDefinedEphemeralResource(type: String? = null, name: String? = null): List<HCLBlock> {
+    return getDefinedHclBlocks(HCL_EPHEMERAL_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
   }
 
   // search is either 'type' or 'type.alias'
@@ -327,46 +330,12 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return found
   }
 
-  fun findModules(name: String): List<HCLBlock> {
-    val found = ArrayList<HCLBlock>()
-    process(PsiElementProcessor { file ->
-      file.acceptChildren(object : HCLElementVisitor() {
-        override fun visitBlock(o: HCLBlock) {
-          if (HCL_MODULE_IDENTIFIER != o.getNameElementUnquoted(0)) return
-          val n = o.getNameElementUnquoted(1) ?: return
-          if (name == n) found.add(o)
-        }
-      }); true
-    })
-    return found
-  }
-
-  fun getDefinedModules(): List<HCLBlock> {
-    val found = ArrayList<HCLBlock>()
-    process(PsiElementProcessor { file ->
-      file.acceptChildren(object : HCLElementVisitor() {
-        override fun visitBlock(o: HCLBlock) {
-          if (HCL_MODULE_IDENTIFIER != o.getNameElementUnquoted(0)) return
-          o.getNameElementUnquoted(1) ?: return
-          found.add(o)
-        }
-      }); true
-    })
-    return found
+  fun getDefinedModules(name: String? = null): List<HCLBlock> {
+    return getDefinedHclBlocks(HCL_MODULE_IDENTIFIER, numberOfArguments = 1, firstArgument = name, secondArgument = null)
   }
 
   fun getDefinedOutputs(): List<HCLBlock> {
-    val found = ArrayList<HCLBlock>()
-    process(PsiElementProcessor { file ->
-      file.acceptChildren(object : HCLElementVisitor() {
-        override fun visitBlock(o: HCLBlock) {
-          if (HCL_OUTPUT_IDENTIFIER != o.getNameElementUnquoted(0)) return
-          o.getNameElementUnquoted(1) ?: return
-          found.add(o)
-        }
-      }); true
-    })
-    return found
+    return getDefinedHclBlocks(HCL_OUTPUT_IDENTIFIER, numberOfArguments = 1, firstArgument = null, secondArgument = null)
   }
 
   // Returns all 'terraform.required_version' defined in module.

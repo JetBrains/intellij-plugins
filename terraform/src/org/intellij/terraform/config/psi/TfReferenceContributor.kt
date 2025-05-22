@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.psi
 
 import com.intellij.openapi.util.TextRange
@@ -168,9 +168,9 @@ class DependsOnLazyReference(element: HCLStringLiteral) : HCLElementLazyReferenc
 
     val module = element.getTerraformModule()
     if (incompleteCode) {
-      val resources = module.getDeclaredResources()
+      val resources = module.getDefinedResources()
         .associateBy { "${it.getNameElementUnquoted(1)}.${it.name}" }.toMutableMap()
-      val datas = module.getDeclaredDataSources()
+      val data = module.getDefinedDataSources()
         .associateBy { "data.${it.getNameElementUnquoted(1)}.${it.name}" }.toMutableMap()
       val modules = module.getDefinedModules()
         .associateBy { "module.${it.name}" }.toMutableMap()
@@ -178,25 +178,25 @@ class DependsOnLazyReference(element: HCLStringLiteral) : HCLElementLazyReferenc
         .associateBy { "var.${it.name}" }.toMutableMap()
 
       when (block.getNameElementUnquoted(0)) {
-        "data" -> datas.remove("data.${block.getNameElementUnquoted(1)}.${block.name}")
+        "data" -> data.remove("data.${block.getNameElementUnquoted(1)}.${block.name}")
         "resource" -> resources.remove("${block.getNameElementUnquoted(1)}.${block.name}")
         "module" -> modules.remove("module.${block.name}")
         "variable" -> variables.remove("var.${block.name}")
       }
 
-      return resources.values.asSequence().plus(datas.values).plus(modules.values).plus(variables.values).toList()
+      return resources.values.asSequence().plus(data.values).plus(modules.values).plus(variables.values).toList()
     } else {
       val split = element.value.split('.')
       if (split.size == 2) {
         return when (split[0]) {
           "var" -> module.findVariables(split[1]).map { it.declaration }
-          "module" -> module.findModules(split[1])
-          else -> module.findResources(split[0], split[1])
+          "module" -> module.getDefinedModules(split[1])
+          else -> module.getDefinedResources(split[0], split[1])
         }
       } else if (split.size == 3) {
         when (split[0]) {
-          "data" -> return module.findDataSource(split[1], split[2])
-          "module" -> return module.findModules(split[1]).mapNotNull { Module.getAsModuleBlock(it) }.flatMap { it.getDefinedOutputs() }.filter { it.name == split[2] }
+          "data" -> return module.getDefinedDataSources(split[1], split[2])
+          "module" -> return module.getDefinedModules(split[1]).mapNotNull { Module.getAsModuleBlock(it) }.flatMap { it.getDefinedOutputs() }.filter { it.name == split[2] }
         }
       }
     }

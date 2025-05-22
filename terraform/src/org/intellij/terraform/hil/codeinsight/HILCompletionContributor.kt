@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.codeinsight
 
 import com.intellij.codeInsight.completion.*
@@ -15,6 +15,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.GlobalScopes
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createFunction
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createScope
@@ -55,6 +56,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
   private val scopeProviders = listOf(
     CountCompletionProvider,
     DataSourceCompletionProvider,
+    EphemeralResourceProvider,
     LocalsCompletionProvider,
     ModuleCompletionProvider,
     PathCompletionProvider,
@@ -200,8 +202,23 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
                                   result: CompletionResultSet) {
       val module = getTerraformModule(variable) ?: return
 
-      val dataSources = module.getDeclaredDataSources()
+      val dataSources = module.getDefinedDataSources()
       val types = dataSources.mapNotNull { it.getNameElementUnquoted(1) }.toSortedSet()
+      result.addAllElements(types.map { create(it) })
+    }
+  }
+
+  private object EphemeralResourceProvider : SelectFromScopeCompletionProvider(HCL_EPHEMERAL_IDENTIFIER) {
+    override fun doAddCompletions(
+      variable: Identifier,
+      parameters: CompletionParameters,
+      context: ProcessingContext,
+      result: CompletionResultSet,
+    ) {
+      val module = getTerraformModule(variable) ?: return
+
+      val ephemeraResources = module.getDefinedEphemeralResource()
+      val types = ephemeraResources.mapNotNull { it.getNameElementUnquoted(1) }.toSortedSet()
       result.addAllElements(types.map { create(it) })
     }
   }
@@ -295,7 +312,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
       if (expression is Identifier) {
         val module = host.getTerraformModule()
         if (IlseDataSource.accepts(parent)) {
-          val dataSources = module.findDataSource(expression.name, null)
+          val dataSources = module.getDefinedDataSources(expression.name, null)
           result.addAllElements(dataSources.mapNotNull { it.getNameElementUnquoted(2) }.map { create(it) })
         }
         else if (IlseOpenTofuKeyProvider.accepts(parent)) {
@@ -307,7 +324,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
           result.addAllElements(encryptionMethods)
         }
         else {
-          val resources = module.findResources(expression.name, null)
+          val resources = module.getDefinedResources(expression.name, null)
           result.addAllElements(resources.mapNotNull { it.getNameElementUnquoted(2) }.map { create(it) })
         }
       }
@@ -394,7 +411,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
           // TODO: Add special LookupElementRenderer
           val suitableBlocks = when (contextType) {
             HilContainingBlockType.IMPORT_OR_MOVED_BLOCK -> {
-              module.getDeclaredResources().map { resourceDeclaration -> getResourceTypeAndName(resourceDeclaration) }
+              module.getDefinedResources().map { resourceDeclaration -> getResourceTypeAndName(resourceDeclaration) }
             }
             HilContainingBlockType.UNSPECIFIED -> {
               module.getDefinedOutputs().map { it.name }
@@ -477,7 +494,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
       }
 
       val module = host.getTerraformModule()
-      val resources = module.getDeclaredResources()
+      val resources = module.getDefinedResources()
       val types = resources.mapNotNull { it.getNameElementUnquoted(1) }.toSortedSet()
       result.addAllElements(types.map { create(it) })
     }

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionParameters
@@ -14,6 +14,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.DebugUtil
 import org.intellij.terraform.TerraformIcons
+import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.HCLElementTypes
@@ -30,8 +31,8 @@ import java.util.*
 import javax.swing.Icon
 
 object TfCompletionUtil {
-  val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module") + OpenTofuScopes
-  val GlobalScopes: SortedSet<String> = (setOf("var", "path", "data", "module", "local") + OpenTofuScopes).toSortedSet()
+  val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module", HCL_EPHEMERAL_IDENTIFIER) + OpenTofuScopes
+  val GlobalScopes: SortedSet<String> = (setOf("var", "path", "data", "module", "local", HCL_EPHEMERAL_IDENTIFIER) + OpenTofuScopes).toSortedSet()
   val RootBlockKeywords: Set<String> = TypeModel.RootBlocksMap.keys
   val RootBlockSorted: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
 

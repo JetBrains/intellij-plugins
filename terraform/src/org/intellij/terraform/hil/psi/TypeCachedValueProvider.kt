@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.psi
 
 import com.intellij.openapi.diagnostic.Logger
@@ -209,7 +209,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
               return module.findLocal(name)?.second?.value?.getType() ?: Types.Any
             }
             "module" -> {
-              val modules = module.findModules(name).mapNotNull { Module.getAsModuleBlock(it) }
+              val modules = module.getDefinedModules(name).mapNotNull { Module.getAsModuleBlock(it) }
               if (modules.isNotEmpty()) {
                 val mod = modules.first()
                 return mod.getType()
@@ -232,7 +232,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
             else {
               // TODO: Support not only resources
               // TODO: Add properties defined in block as well
-              val block = module.findResources(from.name, name).firstOrNull() ?: return Types.Invalid
+              val block = module.getDefinedResources(from.name, name).firstOrNull() ?: return Types.Invalid
               val blockType = TfModelHelper.getBlockType(block)
               return blockType ?: Types.Invalid
             }
@@ -242,7 +242,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
             val from = (e.from as SelectExpression<*>).field as? Identifier ?: return Types.Invalid
             val module = e.getHCLHost()?.getTerraformModule() ?: return Types.Invalid
 
-            val block = module.findDataSource(from.name, name).firstOrNull() ?: return Types.Invalid
+            val block = module.getDefinedDataSources(from.name, name).firstOrNull() ?: return Types.Invalid
             val blockType = TfModelHelper.getBlockType(block)
             return blockType ?: Types.Invalid
           }

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.codeinsight
 
 import org.intellij.terraform.config.model.Module
@@ -20,10 +20,10 @@ object ReferenceCompletionHelper {
     }
     val second: List<HCLBlock> = when (root) {
       "resource" -> {
-        return module.findResources(parts[1], null).map { "${parts[1]}.${it.name}.${parts.subList(2, parts.size).joinToString(".")}" }
+        return module.getDefinedResources(parts[1], null).map { "${parts[1]}.${it.name}.${parts.subList(2, parts.size).joinToString(".")}" }
       }
       "data" -> {
-        return module.findDataSource(parts[1], null).map { "data.${parts[1]}.${it.name}.${parts.subList(2, parts.size).joinToString(".")}" }
+        return module.getDefinedDataSources(parts[1], null).map { "data.${parts[1]}.${it.name}.${parts.subList(2, parts.size).joinToString(".")}" }
       }
       "provider" -> {
         // TODO: Check it would found any providers given type with other aliases

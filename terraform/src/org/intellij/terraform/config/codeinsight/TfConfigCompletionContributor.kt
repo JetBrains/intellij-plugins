@@ -501,9 +501,9 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
         return
       }
       if (DependsOnPattern.accepts(property) && inArray) {
-        val resources = property.getTerraformModule().getDeclaredResources()
+        val resources = property.getTerraformModule().getDefinedResources()
           .map { "${it.getNameElementUnquoted(1)}.${it.name}" }
-        val datas = property.getTerraformModule().getDeclaredDataSources()
+        val datas = property.getTerraformModule().getDefinedDataSources()
           .map { "data.${it.getNameElementUnquoted(1)}.${it.name}" }
         val modules = property.getTerraformModule().getDefinedModules()
           .map { "module.${it.name}" }
