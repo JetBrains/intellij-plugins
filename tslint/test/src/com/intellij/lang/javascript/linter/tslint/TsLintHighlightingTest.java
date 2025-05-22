@@ -111,7 +111,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testTimeout() {
     JSLanguageServiceUtil.setTimeout(1, getTestRootDisposable());
-    String expectedMessage = "TSLint: " + JSLanguageServiceUtil.getTimeoutMessage("ts.ts");
+    String expectedMessage = "TSLint: " + JSLanguageServiceUtil.getTimeoutMessage("ts.ts", 1);
     myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation(expectedMessage, true, false);
     doEditorHighlightingTest("ts.ts");
   }
