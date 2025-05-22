@@ -30,6 +30,7 @@ import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import com.intellij.platform.lsp.api.customization.LspCommandsSupport
+import com.intellij.platform.lsp.api.customization.LspCustomization
 import com.intellij.platform.lsp.api.customization.LspFormattingSupport
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import com.intellij.psi.search.FilenameIndex
@@ -147,57 +148,59 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     return if (Files.exists(Paths.get(anotherPath))) anotherPath else null
   }
 
-  override val lspSemanticTokensSupport = null
-  override val lspGoToDefinitionSupport = false
-  override val lspGoToTypeDefinitionSupport = false
-  override val lspHoverSupport = false
-  override val lspCompletionSupport = BaseLspTypeScriptServiceCompletionSupport()
-  override val lspDiagnosticsSupport = null
-  override val lspFindReferencesSupport = null
+  override val lspCustomization: LspCustomization = object : LspCustomization() {
+    override val lspSemanticTokensSupport = null
+    override val lspGoToDefinitionSupport = null
+    override val lspGoToTypeDefinitionSupport = null
+    override val lspHoverSupport = null
+    override val lspCompletionSupport = BaseLspTypeScriptServiceCompletionSupport()
+    override val lspDiagnosticsSupport = null
+    override val lspFindReferencesSupport = null
 
-  override val lspFormattingSupport = object : LspFormattingSupport() {
-    override fun shouldFormatThisFileExclusivelyByServer(file: VirtualFile, ideCanFormatThisFileItself: Boolean, serverExplicitlyWantsToFormatThisFile: Boolean): Boolean {
-      return DenoSettings.getService(project).isDenoFormattingEnabled()
-             && isDenoEnableForContextDirectory(project, file)
+    override val lspFormattingSupport = object : LspFormattingSupport() {
+      override fun shouldFormatThisFileExclusivelyByServer(file: VirtualFile, ideCanFormatThisFileItself: Boolean, serverExplicitlyWantsToFormatThisFile: Boolean): Boolean {
+        return DenoSettings.getService(project).isDenoFormattingEnabled()
+               && isDenoEnableForContextDirectory(project, file)
+      }
     }
-  }
 
-  override val lspCommandsSupport: LspCommandsSupport = object : LspCommandsSupport() {
-    override fun executeCommand(server: LspServer, contextFile: VirtualFile, command: Command) {
-      if (command.command != "deno.cache") {
-        super.executeCommand(server, contextFile, command)
-        return
-      }
-
-      val manager = FileDocumentManager.getInstance()
-      val document = manager.getDocument(contextFile) ?: return
-      if (manager.isDocumentUnsaved(document)) {
-        FileDocumentManager.getInstance().saveDocument(document)
-      }
-
-      ApplicationManager.getApplication().executeOnPooledThread {
-        val workingDirectory = findDenoConfig(project, contextFile)?.parent ?: project.guessProjectDir()
-
-        val commandLine = GeneralCommandLine(DenoSettings.getService(server.project).getDenoPath(), "cache", contextFile.path)
-          .withWorkingDirectory(workingDirectory?.toNioPath())
-        val processHandler = withBackgroundProgress(project, DenoBundle.message("deno.cache.name")) {
-          KillableColoredProcessHandler(commandLine)
+    override val lspCommandsSupport = object : LspCommandsSupport() {
+      override fun executeCommand(server: LspServer, contextFile: VirtualFile, command: Command) {
+        if (command.command != "deno.cache") {
+          super.executeCommand(server, contextFile, command)
+          return
         }
 
-        processHandler.addProcessListener(object : ProcessListener {
-          override fun processTerminated(event: ProcessEvent) {
-            processHandler.notifyTextAvailable(DenoBundle.message("deno.cache.done"), ProcessOutputTypes.SYSTEM)
+        val manager = FileDocumentManager.getInstance()
+        val document = manager.getDocument(contextFile) ?: return
+        if (manager.isDocumentUnsaved(document)) {
+          FileDocumentManager.getInstance().saveDocument(document)
+        }
 
-            ApplicationManager.getApplication().invokeLater(Runnable {
-              DenoSettings.getService(project).updateLibraries()
-              TypeScriptServiceRestarter.restartServices(project)
-              DaemonCodeAnalyzer.getInstance(project).restart()
-            }, project.disposed)
+        ApplicationManager.getApplication().executeOnPooledThread {
+          val workingDirectory = findDenoConfig(project, contextFile)?.parent ?: project.guessProjectDir()
+
+          val commandLine = GeneralCommandLine(DenoSettings.getService(server.project).getDenoPath(), "cache", contextFile.path)
+            .withWorkingDirectory(workingDirectory?.toNioPath())
+          val processHandler = withBackgroundProgress(project, DenoBundle.message("deno.cache.name")) {
+            KillableColoredProcessHandler(commandLine)
           }
-        })
 
-        ApplicationManager.getApplication().invokeLater {
-          NodeCommandLineUtil.showConsole(processHandler, "DenoConsole", project, emptyList<Filter>(), DenoBundle.message("deno.cache.title"))
+          processHandler.addProcessListener(object : ProcessListener {
+            override fun processTerminated(event: ProcessEvent) {
+              processHandler.notifyTextAvailable(DenoBundle.message("deno.cache.done"), ProcessOutputTypes.SYSTEM)
+
+              ApplicationManager.getApplication().invokeLater(Runnable {
+                DenoSettings.getService(project).updateLibraries()
+                TypeScriptServiceRestarter.restartServices(project)
+                DaemonCodeAnalyzer.getInstance(project).restart()
+              }, project.disposed)
+            }
+          })
+
+          ApplicationManager.getApplication().invokeLater {
+            NodeCommandLineUtil.showConsole(processHandler, "DenoConsole", project, emptyList<Filter>(), DenoBundle.message("deno.cache.title"))
+          }
         }
       }
     }
