@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight;
 
 import com.intellij.codeInsight.completion.CompletionType;
@@ -934,10 +934,24 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
     doBasicCompletionTest("ephemeral \"<caret>\" \"test_name\"\n{}", matcher);
   }
 
-  public void testEphemeralDefaultMetaArguments() {
+  public void testEphemeralPropertiesCompletion() {
     doBasicCompletionTest(
       """
         ephemeral "test_ephemeral" "test_name" { <caret> }
-        """, 5, "depends_on", "count", "for_each", "provider", "lifecycle");
+        """, 5, "depends_on", "count", "for_each", "provider", "lifecycle"
+    );
+
+    doBasicCompletionTest(
+      "ephemeral \"azurerm_key_vault_certificate\" \"example\" { <caret> }",
+      "name", "key_vault_id", "version"
+    );
+    doBasicCompletionTest(
+      "ephemeral \"google_service_account_id_token\" \"test1\" { <caret> }",
+      "target_audience", "target_service_account", "delegates", "include_email"
+    );
+    doBasicCompletionTest(
+      "ephemeral \"aws_ssm_parameter\" \"test2\" { <caret> }",
+      "arn", "with_decryption"
+    );
   }
 }

@@ -60,6 +60,7 @@ internal object TfModelHelper {
       HCL_PROVIDER_IDENTIFIER -> getProviderProperties(block)
       HCL_RESOURCE_IDENTIFIER -> getResourceProperties(block)
       HCL_DATASOURCE_IDENTIFIER -> getDataSourceProperties(block)
+      HCL_EPHEMERAL_IDENTIFIER -> getEphemeralProperties(block)
       HCL_MODULE_IDENTIFIER -> getModuleProperties(block)
       HCL_TERRAFORM_IDENTIFIER -> getTerraformProperties(block)
       else -> TypeModel.RootBlocksMap[type]?.properties ?: emptyMap()
@@ -244,6 +245,12 @@ internal object TfModelHelper {
     val type = block.getNameElementUnquoted(1)
     val dataSourceType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getDataSourceType(type, block) else null
     return getPropertiesWithDefaults(TypeModel.AbstractDataSource, dataSourceType)
+  }
+
+  private fun getEphemeralProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
+    val type = block.getNameElementUnquoted(1)
+    val ephemeralType = if (!type.isNullOrBlank()) TypeModelProvider.getModel(block).getEphemeralType(type) else null
+    return getPropertiesWithDefaults(TypeModel.AbstractEphemeralResource, ephemeralType)
   }
 
   @RequiresReadLock
