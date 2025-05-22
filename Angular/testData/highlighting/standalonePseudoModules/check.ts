@@ -9,7 +9,7 @@ const IGX_ACCORDION_DIRECTIVES = [IgxAccordionComponent, IgxExpansionPanelCompon
 @Component({
    selector: 'app-root',
    standalone: true,
-   imports: [IGX_DIALOG_DIRECTIVES, IGX_ACCORDION_DIRECTIVES, IGX_DROP_DOWN_DIRECTIVES],
+   imports: [IGX_DIALOG_DIRECTIVES, <error descr="Component IgxExpansionPanelComponent is never used in a component template">IGX_ACCORDION_DIRECTIVES</error>, IGX_DROP_DOWN_DIRECTIVES],
    template: `
     <igx-dialog></igx-dialog>
     <igx-accordion></igx-accordion>
