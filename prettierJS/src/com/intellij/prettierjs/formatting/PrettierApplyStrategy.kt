@@ -49,12 +49,13 @@ internal fun applyTextDifferencesToDocument(
 
     when {
       originalStartLine == originalEndLine -> {
-        val insertionText = DiffRangeUtil.getLinesRange(
+        val insertionText = DiffRangeUtil.getLinesContent(
+          formattedText,
           formattedLineOffsets,
           formattedStartLine,
           formattedEndLine,
           false,
-        ).subSequence(formattedText)
+        )
 
         val offset = if (originalStartLine == document.lineCount) {
           document.textLength
@@ -86,12 +87,13 @@ internal fun applyTextDifferencesToDocument(
         document.deleteString(startOffset, endOffset)
       }
       else -> {
-        val replacementText = DiffRangeUtil.getLinesRange(
+        val replacementText = DiffRangeUtil.getLinesContent(
+          formattedText,
           formattedLineOffsets,
           formattedStartLine,
           formattedEndLine,
           false,
-        ).subSequence(formattedText)
+        )
 
         val range = DiffRangeUtil.getLinesRange(originalLineOffsets, originalStartLine, originalEndLine, false)
         document.replaceString(range.startOffset, range.endOffset, replacementText)
