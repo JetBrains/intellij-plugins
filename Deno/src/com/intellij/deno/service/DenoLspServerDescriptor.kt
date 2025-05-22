@@ -29,9 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
-import com.intellij.platform.lsp.api.customization.LspCommandsSupport
-import com.intellij.platform.lsp.api.customization.LspCustomization
-import com.intellij.platform.lsp.api.customization.LspFormattingSupport
+import com.intellij.platform.lsp.api.customization.*
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -149,22 +147,22 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
   }
 
   override val lspCustomization: LspCustomization = object : LspCustomization() {
-    override val lspSemanticTokensSupport = null
-    override val lspGoToDefinitionSupport = null
-    override val lspGoToTypeDefinitionSupport = null
-    override val lspHoverSupport = null
-    override val lspCompletionSupport = BaseLspTypeScriptServiceCompletionSupport()
-    override val lspDiagnosticsSupport = null
-    override val lspFindReferencesSupport = null
+    override val semanticTokensCustomizer = LspSemanticTokensDisabled
+    override val goToDefinitionCustomizer = LspGoToDefinitionDisabled
+    override val goToTypeDefinitionCustomizer = LspGoToTypeDefinitionDisabled
+    override val hoverCustomizer = LspHoverDisabled
+    override val completionCustomizer = BaseLspTypeScriptServiceCompletionSupport()
+    override val diagnosticsCustomizer = LspDiagnosticsDisabled
+    override val findReferencesCustomizer = LspFindReferencesDisabled
 
-    override val lspFormattingSupport = object : LspFormattingSupport() {
+    override val formattingCustomizer = object : LspFormattingSupport() {
       override fun shouldFormatThisFileExclusivelyByServer(file: VirtualFile, ideCanFormatThisFileItself: Boolean, serverExplicitlyWantsToFormatThisFile: Boolean): Boolean {
         return DenoSettings.getService(project).isDenoFormattingEnabled()
                && isDenoEnableForContextDirectory(project, file)
       }
     }
 
-    override val lspCommandsSupport = object : LspCommandsSupport() {
+    override val commandsCustomizer = object : LspCommandsSupport() {
       override fun executeCommand(server: LspServer, contextFile: VirtualFile, command: Command) {
         if (command.command != "deno.cache") {
           super.executeCommand(server, contextFile, command)
