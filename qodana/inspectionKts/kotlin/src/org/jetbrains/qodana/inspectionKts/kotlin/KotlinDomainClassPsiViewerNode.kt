@@ -24,7 +24,7 @@ internal class KotlinDomainClassPsiViewerNode(
   }
 
   override val children = PsiViewerPropertyNode.Children.Async {
-    val apiMethods = value::class.java.psiViewerApiMethods(value)
+    val apiMethods = value::class.java.psiViewerApiMethods(nodeContext, value)
     computePsiViewerPropertyNodesByCallingApiMethods(nodeContext, apiMethods)
   }
 
