@@ -226,7 +226,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
     }.distinctUntilChanged()
   }
 
-  private suspend fun doCompileInspectionKtsFile(file: Path): InspectionKtsFileStatus {
+  suspend fun doCompileInspectionKtsFile(file: Path): InspectionKtsFileStatus {
     return compileInspectionKtsFile(project, file, inspectionKtsErrorLogManager.Logger(file), inspectionKtsClassLoader)
   }
 
