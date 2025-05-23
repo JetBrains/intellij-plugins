@@ -954,4 +954,27 @@ public class TfConfigCompletionTest extends TfBaseCompletionTestCase {
       "arn", "with_decryption"
     );
   }
+
+  public void testEphemeralExpressionCompletion() {
+    doBasicCompletionTest(buildEphemeralTestText("ephemeral.<caret>"), 2, "aws_kms_secrets", "kubernetes_token_request_v1");
+    doBasicCompletionTest(buildEphemeralTestText("ephemeral.aws_kms_secrets.<caret>"), 2, "test1", "test2");
+    doBasicCompletionTest(buildEphemeralTestText("ephemeral.kubernetes_token_request_v1.<caret>"), 1, "test3");
+
+    doBasicCompletionTest(buildEphemeralTestText("ephemeral.aws_kms_secrets.test2.<caret>"), "plaintext");
+    doBasicCompletionTest(buildEphemeralTestText("ephemeral.kubernetes_token_request_v1.test3.<caret>"), "token");
+  }
+
+  private static String buildEphemeralTestText(String expression) {
+    return String.format(
+      """
+        ephemeral "aws_kms_secrets" "test1" {}
+        ephemeral "aws_kms_secrets" "test2" {}
+        ephemeral "kubernetes_token_request_v1" "test3" {}
+        
+        resource "aws_secretsmanager_secret_version" "db_password" {
+          secret_id = %s
+        }
+        """, expression
+    );
+  }
 }

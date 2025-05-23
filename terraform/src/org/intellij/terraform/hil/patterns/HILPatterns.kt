@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.patterns
 
 import com.intellij.patterns.PatternCondition
@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.Scopes
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
@@ -63,6 +64,17 @@ object HILPatterns {
         return IlseFromDataScope.accepts(from)
       }
     })
+
+  val IlseFromEphemeralResource: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
+    .with(getScopeSelectPatternCondition(setOf(HCL_EPHEMERAL_IDENTIFIER)))
+  val IlseEphemeralResource: Capture<SelectExpression<*>> = PlatformPatterns.psiElement(SelectExpression::class.java)
+    .with(object : PatternCondition<SelectExpression<*>?>("SE_Ephemeral_Resource()") {
+      override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
+        val from = t.from as? SelectExpression<*> ?: return false
+        return IlseFromEphemeralResource.accepts(from)
+      }
+    })
+
   val InsideForExpressionBody: Capture<PsiElement> = PlatformPatterns.psiElement()
     .withParent(PlatformPatterns.psiElement(BaseExpression::class.java)
                   .withHCLHost(PlatformPatterns.psiElement()

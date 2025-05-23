@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
 import com.intellij.openapi.progress.EmptyProgressIndicator
@@ -9,12 +9,10 @@ import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.psi.util.parentOfType
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.findAllReferencesByText
 import com.intellij.testFramework.findReferenceByText
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
-import junit.framework.TestCase
 import org.intellij.terraform.config.inspection.TfIncorrectVariableTypeInspection
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
@@ -129,14 +127,14 @@ class TfReferencesTest : BasePlatformTestCase() {
         when (ref) {
           is PsiMultiReference ->
             ref.references.map { ref ->
-              ref.resolve().also { if (ref.isSoft.not()) TestCase.assertNotNull("reference $ref should be resolved", it) }
+              ref.resolve().also { if (ref.isSoft.not()) assertNotNull("reference $ref should be resolved", it) }
             }.map(::asAssertString).toList()
           is PsiPolyVariantReference ->
             ref.multiResolve(false).map { (it.element as HCLProperty).name }.toList()
           else ->
             listOf(asAssertString(ref.resolve()))
         }.let { strings ->
-          UsefulTestCase.assertOrderedEquals(strings, *names)
+          assertOrderedEquals(strings, *names)
         }
       }, EmptyProgressIndicator())
   }
@@ -247,7 +245,7 @@ class TfReferencesTest : BasePlatformTestCase() {
             }
           ]""")
 
-    UsefulTestCase.assertContainsElements(myFixture.getCompletionVariants("main.tf")!!, "user")
+    assertContainsElements(myFixture.getCompletionVariants("main.tf")!!, "user")
   }
 
   @Test
@@ -259,17 +257,17 @@ class TfReferencesTest : BasePlatformTestCase() {
           ]""")
 
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
-    UsefulTestCase.assertContainsElements(completionVariants, "username")
-    UsefulTestCase.assertDoesntContain(completionVariants, "user")
-    UsefulTestCase.assertDoesntContain(completionVariants, "name1", "name2", "aa", "key1")
+    assertContainsElements(completionVariants, "username")
+    assertDoesntContain(completionVariants, "user")
+    assertDoesntContain(completionVariants, "name1", "name2", "aa", "key1")
   }
 
   @Test
   fun nonLoopVariableSelectCompletion() {
     terraformFIle("""local.users.<caret>""")
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
-    UsefulTestCase.assertContainsElements(completionVariants, "aa")
-    UsefulTestCase.assertDoesntContain(completionVariants, "name1", "name2", "key1", "username", "innerarr")
+    assertContainsElements(completionVariants, "aa")
+    assertDoesntContain(completionVariants, "name1", "name2", "key1", "username", "innerarr")
   }
 
   @Test
@@ -282,7 +280,7 @@ class TfReferencesTest : BasePlatformTestCase() {
           ]""")
 
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
-    UsefulTestCase.assertContainsElements(completionVariants, "innerarr")
+    assertContainsElements(completionVariants, "innerarr")
   }
 
   @Test
@@ -295,8 +293,8 @@ class TfReferencesTest : BasePlatformTestCase() {
           ]""")
 
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
-    UsefulTestCase.assertContainsElements(completionVariants, "name1")
-    UsefulTestCase.assertDoesntContain(completionVariants, "username")
+    assertContainsElements(completionVariants, "name1")
+    assertDoesntContain(completionVariants, "username")
   }
 
   private fun terraformFIle(loop: String): PsiFile = myFixture.configureByText("main.tf", """
@@ -353,7 +351,7 @@ class TfReferencesTest : BasePlatformTestCase() {
         }
     """.trimIndent())
     myFixture.checkHighlighting()
-    for (psiReference in file.findAllReferencesByText("item.aa", -1).toList().also { UsefulTestCase.assertSize(3, it) }) {
+    for (psiReference in file.findAllReferencesByText("item.aa", -1).toList().also { assertSize(3, it) }) {
       assertResolvedNames(psiReference, "aa", "aa")
     }
   }
@@ -361,29 +359,29 @@ class TfReferencesTest : BasePlatformTestCase() {
   @Test
   fun forItemStringCompletion() {
     myFixture.enableInspections(HILUnknownResourceTypeInspection::class.java)
-    val file = myFixture.configureByText("main.tf", """
-        locals {
-          object_items = [
-            {
-              aa = "1"
-              b = "2"
-            },
-            {
-              aa = "3"
-              b = "4"
-            }
-          ]
-          as_list_non_string = [
-          for item in local.object_items : item.aa
-          ]
-          as_map = {
-          for item in local.object_items : "key-$DLR{item.<caret>}" => "value-$DLR{item.b}" 
+    myFixture.configureByText("main.tf", """
+      locals {
+        object_items = [
+          {
+            aa = "1"
+            b = "2"
+          },
+          {
+            aa = "3"
+            b = "4"
           }
+        ]
+        as_list_non_string = [
+        for item in local.object_items : item.aa
+        ]
+        as_map = {
+        for item in local.object_items : "key-$DLR{item.<caret>}" => "value-$DLR{item.b}" 
         }
+      }
     """.trimIndent())
 
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
-    UsefulTestCase.assertContainsElements(completionVariants, "aa")
+    assertContainsElements(completionVariants, "aa")
   }
 
   @Test
@@ -414,7 +412,7 @@ class TfReferencesTest : BasePlatformTestCase() {
     assertResolvedNames(psiReference, "f2")
 
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
-    UsefulTestCase.assertContainsElements(completionVariants, "f1", "f2", "f3", "f4")
+    assertContainsElements(completionVariants, "f1", "f2", "f3", "f4")
   }
 
   @Test
@@ -442,7 +440,7 @@ class TfReferencesTest : BasePlatformTestCase() {
     assertResolvedNames(file.findReferenceByText("local_variable.attribute_one", -1), "attribute_one")
 
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
-    UsefulTestCase.assertContainsElements(completionVariants, "attribute_one", "attribute_three", "attribute_two")
+    assertContainsElements(completionVariants, "attribute_one", "attribute_three", "attribute_two")
   }
 
   @Test
@@ -468,13 +466,13 @@ class TfReferencesTest : BasePlatformTestCase() {
     assertResolvedNames(file.findReferenceByText("service.name", -1), "name")
 
     val completionVariants = myFixture.getCompletionVariants("main.tf")!!
-    UsefulTestCase.assertContainsElements(completionVariants, "name", "role_name")
+    assertContainsElements(completionVariants, "name", "role_name")
   }
 
   @Test
   fun variableTypesSOE() {
     myFixture.enableInspections(TfIncorrectVariableTypeInspection::class.java)
-    val file = myFixture.configureByText("main.tf", """
+    myFixture.configureByText("main.tf", """
       variable "input_variable" {
         type = list(object({
           attribute_one   = string
@@ -551,7 +549,7 @@ class TfReferencesTest : BasePlatformTestCase() {
 
     myFixture.checkHighlighting()
     assertResolvedNames(file.findReferenceByText("output_structure.arn", -1), "arn")
-    UsefulTestCase.assertContainsElements(myFixture.getCompletionVariants("main.tf")!!, "arn", "name", "nested_field")
+    assertContainsElements(myFixture.getCompletionVariants("main.tf")!!, "arn", "name", "nested_field")
   }
 
   @Test

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.inspection
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -72,4 +72,35 @@ internal class UnresolvedReferenceInspectionTest: BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
+  fun testEphemeralRecourseResolve() {
+    myFixture.configureByText("main.tf", """
+      ephemeral "azurerm_key_vault_secret" "db_password1" {
+        key_vault_id = ""
+        name         = ""
+      }
+
+      resource "aws_secretsmanager_secret" "db_password" {
+        name = "db_password"
+      }
+
+      resource "aws_secretsmanager_secret_version" "db_password" {
+        secret_id = ephemeral.azurerm_key_vault_secret.db_password1.name
+      }
+
+      ephemeral "aws_secretsmanager_secret_version" "db_password2" {
+        secret_id = aws_secretsmanager_secret_version.db_password.secret_id
+      }
+
+      resource "aws_db_instance" "example" {
+        instance_class      = ephemeral.aws_secretsmanager_secret_version.db_password2.secret_string
+        allocated_storage   = "5"
+        engine              = "postgres"
+        username            = "example"
+        skip_final_snapshot = true
+      }
+    """.trimIndent())
+
+    myFixture.enableInspections(HILUnresolvedReferenceInspection())
+    myFixture.checkHighlighting()
+  }
 }
