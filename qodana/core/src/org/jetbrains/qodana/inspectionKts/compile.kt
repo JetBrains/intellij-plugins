@@ -96,7 +96,7 @@ internal suspend fun compileInspectionKtsFile(
         ?: error("Got $item on position $idx from inspection script, expected ${InspectionKts::class.java.canonicalName}")
       }
       val dynamicInspectionsDescriptor = inspectionsKts.map {
-        val inspectionTool = it.asTool(exceptionReporter = { exception ->
+        val inspectionTool = it.__asTool__(exceptionReporter = { exception ->
           project.qodanaProjectScope.launch(StaticAnalysisDispatchers.Default) {
             errorLogger.logException(exception)
             exceptionDuringAnalysisFlow.value = exception
@@ -177,6 +177,6 @@ private class KeepAliveKotlinCompileService(scope: CoroutineScope) {
   }
 }
 
-private fun getKotlinScriptingEngine(classLoader: ClassLoader?): IdeScriptEngine? {
+fun getKotlinScriptingEngine(classLoader: ClassLoader?): IdeScriptEngine? {
   return IdeScriptEngineManager.getInstance().getEngineByName("Kotlin - Beta", classLoader)
 }
