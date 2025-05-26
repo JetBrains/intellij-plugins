@@ -224,10 +224,10 @@ function normalizeAssertionError(stack, assertionError) {
   var assertionMessage = assertionError.message;
   var assertionName = assertionError.name;
   var stackLeftTrimmed = stack.trimStart();
-  if (util.isString(assertionMessage) && stackLeftTrimmed.indexOf(assertionMessage) === 0) {
+  if (intellijUtil.isString(assertionMessage) && stackLeftTrimmed.indexOf(assertionMessage) === 0) {
     stack = stackLeftTrimmed.substring(assertionMessage.length);
   }
-  if (util.isString(assertionName) && util.isString(assertionMessage)) {
+  if (intellijUtil.isString(assertionName) && intellijUtil.isString(assertionMessage)) {
     var compoundMessage = assertionName + ': ' + assertionMessage;
     if (stackLeftTrimmed.indexOf(compoundMessage) === 0) {
       assertionMessage = compoundMessage;
@@ -262,7 +262,7 @@ function normalizeErrorStack(stack) {
 }
 
 function createStack(logs, formatError) {
-  const lines = logs.map(log => formatError(log, util.isString(log) ? '' : '\t'));
+  const lines = logs.map(log => formatError(log, intellijUtil.isString(log) ? '' : '\t'));
   return lines.join('');
 }
 
