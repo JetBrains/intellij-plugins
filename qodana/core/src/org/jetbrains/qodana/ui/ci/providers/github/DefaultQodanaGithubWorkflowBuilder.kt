@@ -14,7 +14,23 @@ class DefaultQodanaGithubWorkflowBuilder(
   private val project: Project
 ) {
 
-  suspend fun workflowFile(): String {
+  private val headerText = """
+    #-------------------------------------------------------------------------------#
+    #        Discover additional configuration options in our documentation         #
+    #               https://www.jetbrains.com/help/qodana/github.html               #
+    #-------------------------------------------------------------------------------#
+    
+  """.trimIndent()
+
+  private val promoHeaderText = """
+    #-------------------------------------------------------------------------------#
+    #            Discover all capabilities of Qodana in our documentation           #
+    #             https://www.jetbrains.com/help/qodana/about-qodana.html           #
+    #-------------------------------------------------------------------------------#
+    
+  """.trimIndent()
+
+  suspend fun workflowFile(promo: Boolean = false): String {
     val branchesToAdd = projectVcsDataProvider.ciRelevantBranches()
 
     @Language("YAML")
@@ -30,14 +46,18 @@ class DefaultQodanaGithubWorkflowBuilder(
 
     val jobText = qodanaJobText()
 
-    @Suppress("UnnecessaryVariable")
-    @Language("YAML")
-    val yamlConfiguration = branchesText + """
+    return buildString {
+      appendLine(if (promo) promoHeaderText else headerText)
+      append(branchesText)
+      @Suppress("UnnecessaryVariable")
+      @Language("YAML")
+      append("""
       
       jobs:
 
-    """.trimIndent() + jobText
-    return yamlConfiguration
+    """.trimIndent())
+      append(jobText)
+    }
   }
 
   suspend fun qodanaJobText(): String {
@@ -57,7 +77,7 @@ class DefaultQodanaGithubWorkflowBuilder(
           pull-requests: write
           checks: write
         steps:
-          - uses: actions/checkout@v3
+          - uses: actions/checkout@v4
             with:
               ref: ${refsText}
               fetch-depth: 0

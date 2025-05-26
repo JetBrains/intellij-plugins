@@ -115,7 +115,8 @@ object UsageCollector : CounterUsagesCollector() {
     sourceDirField,
     includeAbsentField,
     fixesStrategyField,
-    baselineField
+    baselineField,
+    githubPromoConfigPresent
   )
 
   private val licenseTypeField = EventFields.Enum("licenseType", QodanaLicenseType::class.java)
