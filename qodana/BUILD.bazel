@@ -30,6 +30,7 @@ jvm_library(
   kotlinc_opts = ":custom",
   deps = [
     "@community//platform/analysis-impl",
+    "@community//platform/credential-store",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//jps/model-api:model",
     "//contrib/qodana/sarif",
@@ -112,6 +113,7 @@ jvm_library(
   associates = [":qodana"],
   deps = [
     "@community//platform/analysis-impl",
+    "@community//platform/credential-store",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//jps/model-api:model",
     "//contrib/qodana/sarif",
