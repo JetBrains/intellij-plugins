@@ -18,8 +18,12 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
 import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.stats.GithubPromoCreateWorkflowEvent
+import org.jetbrains.qodana.stats.GithubPromoNotificationCreation
+import org.jetbrains.qodana.stats.logGithubPromoAddQodanaWorkflowEvent
 import org.jetbrains.qodana.stats.logGithubPromoDismissed
-import org.jetbrains.qodana.stats.logGithubPromoExploreQodanaPress
+import org.jetbrains.qodana.stats.logGithubPromoExploreQodanaPressed
+import org.jetbrains.qodana.stats.logGithubPromoNotificationCreationEvent
 import java.util.function.Function
 import javax.swing.JComponent
 
@@ -84,20 +88,22 @@ class QodanaGithubCIPromoNotificationProvider: EditorNotificationProvider, DumbA
   }
 
   // the default value is true to not show notification until computation completes
-  private fun isQodanaJobPresent(project: Project): Boolean = project.service<GithubPromoFileCreatorService>().qodanaJobPresent ?: true
+  private fun isQodanaJobPresent(project: Project): Boolean = project.service<GithubPromoNotificationService>().qodanaJobPresent ?: true
 
   private fun createNotificationPanel(file: VirtualFile, project: Project): EditorNotificationPanel {
+    logGithubPromoNotificationCreationEvent(project, GithubPromoNotificationCreation.CREATED)
     val panel = EditorNotificationPanel(EditorNotificationPanel.Status.Info)
     panel.text = QodanaBundle.message("qodana.github.promo.notification.text")
 
     panel.createActionLabel(QodanaBundle.message("qodana.github.promo.notification.explore.button.text")) {
-      logGithubPromoExploreQodanaPress(project)
+      logGithubPromoExploreQodanaPressed(project)
       BrowserUtil.browse(QODANA_DOCUMENTATION_URL)
     }
 
     panel.createActionLabel(QodanaBundle.message("qodana.github.promo.notification.add.workflow.button.text")) {
       try {
-        val service = project.service<GithubPromoFileCreatorService>()
+        logGithubPromoAddQodanaWorkflowEvent(project, GithubPromoCreateWorkflowEvent.CLICKED)
+        val service = project.service<GithubPromoNotificationService>()
         service.addQodanaYaml(project)
         service.addQodanaWorkflow(project)
       } finally {

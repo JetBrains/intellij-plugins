@@ -19,9 +19,12 @@ import kotlinx.coroutines.launch
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.findQodanaConfigVirtualFile
+import org.jetbrains.qodana.notifications.QodanaNotifications
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
-import org.jetbrains.qodana.stats.GithubPromoCreateWorkflowResult
-import org.jetbrains.qodana.stats.logGithubPromoAddQodanaWorkflow
+import org.jetbrains.qodana.stats.GithubPromoCreateWorkflowEvent
+import org.jetbrains.qodana.stats.GithubPromoNotificationCreation
+import org.jetbrains.qodana.stats.logGithubPromoAddQodanaWorkflowEvent
+import org.jetbrains.qodana.stats.logGithubPromoNotificationCreationEvent
 import org.jetbrains.qodana.ui.ProjectVcsDataProviderImpl
 import org.jetbrains.qodana.ui.ci.providers.github.DefaultQodanaGithubWorkflowBuilder
 import org.jetbrains.qodana.ui.ci.providers.github.GitHubCIFileChecker
@@ -30,10 +33,10 @@ import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.createFile
 
-private val LOG = Logger.getInstance(GithubPromoFileCreatorService::class.java)
+private val LOG = Logger.getInstance(GithubPromoNotificationService::class.java)
 
 @Service(Service.Level.PROJECT)
-class GithubPromoFileCreatorService(private val project: Project, private val scope: CoroutineScope) {
+class GithubPromoNotificationService(private val project: Project, private val scope: CoroutineScope) {
 
   private enum class ComputationState {
     NOT_STARTED,
@@ -82,9 +85,9 @@ class GithubPromoFileCreatorService(private val project: Project, private val sc
           }
         }
         .awaitAll().any { it }
-        .also {
-          logGithubPromoAddQodanaWorkflow(project, GithubPromoCreateWorkflowResult.ALREADY_EXISTS)
-        }
+      if (_qodanaJobPresent == true) {
+        logGithubPromoNotificationCreationEvent(project, GithubPromoNotificationCreation.QODANA_CI_ALREADY_EXISTS)
+      }
     }
     return _qodanaJobPresent
   }
@@ -102,7 +105,7 @@ class GithubPromoFileCreatorService(private val project: Project, private val sc
           LOG.warn("Failed to create Qodana GitHub workflow file because location is null")
           return@launch
         }
-        val content = defaultQodanaGithubWorkflowBuilder.workflowFile()
+        val content = defaultQodanaGithubWorkflowBuilder.workflowFile(promo = true)
         if (!createFile(location, content)) {
           notifyQodanaActionWorkflowNotAdded()
         }
@@ -123,6 +126,7 @@ class GithubPromoFileCreatorService(private val project: Project, private val sc
     scope.launch(QodanaDispatchers.IO) {
       val isQodanaYamlPresent = project.findQodanaConfigVirtualFile() != null
       if (isQodanaYamlPresent) {
+        logGithubPromoAddQodanaWorkflowEvent(project, GithubPromoCreateWorkflowEvent.QODANA_YAML_EXISTS)
         return@launch
       }
       val yamlFileContents = GithubPromoQodanaYamlBuilder(project).build()
@@ -166,19 +170,23 @@ class GithubPromoFileCreatorService(private val project: Project, private val sc
   }
 
   private fun notifyQodanaActionWorkflowNotAdded() {
-    logGithubPromoAddQodanaWorkflow(project, GithubPromoCreateWorkflowResult.FAILED)
-    NotificationGroupManager.getInstance()
-      .getNotificationGroup("Qodana")
-      .createNotification(QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.text"), NotificationType.ERROR)
-      .notify(project)
+    logGithubPromoAddQodanaWorkflowEvent(project, GithubPromoCreateWorkflowEvent.FAILED)
+    QodanaNotifications.General.notification(
+      null,
+      QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.text"),
+      NotificationType.ERROR,
+      withQodanaIcon = true
+    ).notify(project)
   }
 
   private fun notifyQodanaActionWorkflowAdded() {
-    logGithubPromoAddQodanaWorkflow(project, GithubPromoCreateWorkflowResult.CREATED)
-    NotificationGroupManager.getInstance()
-      .getNotificationGroup("Qodana")
-      .createNotification(QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.added.text"), NotificationType.INFORMATION)
-      .notify(project)
+    logGithubPromoAddQodanaWorkflowEvent(project, GithubPromoCreateWorkflowEvent.CREATED)
+    QodanaNotifications.General.notification(
+      null,
+      QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.added.text"),
+      NotificationType.INFORMATION,
+      withQodanaIcon = true
+    ).notify(project)
   }
 
 }

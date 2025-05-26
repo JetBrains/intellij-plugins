@@ -246,15 +246,23 @@ internal object QodanaPluginStatsCounterCollector : CounterUsagesCollector() {
   // Github Workflow Promo
   // --------------------
 
-  private val GITHUB_PROMO_CREATE_WORKFLOW_RESULT = EventFields.Enum<GithubPromoCreateWorkflowResult>("result")
+  private val GITHUB_PROMO_CREATE_WORKFLOW_EVENT = EventFields.Enum<GithubPromoCreateWorkflowEvent>("event")
   @JvmField
-  val ADD_QODANA_WORKFLOW_GITHUB_PROMO = GROUP.registerEvent("add_qodana_workflow_github_promo", GITHUB_PROMO_CREATE_WORKFLOW_RESULT)
+  val GITHUB_PROMO_CREATE_WORKFLOW = GROUP.registerEvent(
+    "qodana_github_promo_create_workflow",
+    GITHUB_PROMO_CREATE_WORKFLOW_EVENT
+  )
 
   @JvmField
-  val EXPLORE_QODANA_GITHUB_PROMO = GROUP.registerEvent("explore_qodana_github_promo")
+  val GITHUB_PROMO_EXPLORE = GROUP.registerEvent("qodana_github_promo_explore")
 
   @JvmField
-  val QODANA_GITHUB_PROMO_DISMISSED = GROUP.registerEvent("qodana_github_promo_dismissed")
+  val GITHUB_PROMO_DISMISSED = GROUP.registerEvent("qodana_github_promo_dismissed")
+
+
+  private val GITHUB_PROMO_NOTIFICATION_CREATION_EVENT = EventFields.Enum<GithubPromoNotificationCreation>("event")
+  @JvmField
+  val GITHUB_PROMO_NOTIFICATION_CREATION = GROUP.registerEvent("qodana_github_promo_notification_creation", GITHUB_PROMO_NOTIFICATION_CREATION_EVENT)
 }
 
 internal enum class OpenInIdeProtocol {
@@ -418,8 +426,14 @@ internal enum class ProblemStatus {
   NOT_FIXED,
 }
 
-enum class GithubPromoCreateWorkflowResult {
-  ALREADY_EXISTS,
+enum class GithubPromoNotificationCreation {
+  CREATED,
+  QODANA_CI_ALREADY_EXISTS
+}
+
+enum class GithubPromoCreateWorkflowEvent {
+  CLICKED,
+  QODANA_YAML_EXISTS,
   CREATED,
   FAILED,
 }
@@ -466,14 +480,18 @@ fun logCoverageReceivedStats(project: Project, isReceived: Boolean, languages: L
   )
 }
 
-fun logGithubPromoExploreQodanaPress(project: Project) {
-  QodanaPluginStatsCounterCollector.EXPLORE_QODANA_GITHUB_PROMO.log(project)
+fun logGithubPromoExploreQodanaPressed(project: Project) {
+  QodanaPluginStatsCounterCollector.GITHUB_PROMO_EXPLORE.log(project)
 }
 
 fun logGithubPromoDismissed(project: Project) {
-  QodanaPluginStatsCounterCollector.QODANA_GITHUB_PROMO_DISMISSED.log(project)
+  QodanaPluginStatsCounterCollector.GITHUB_PROMO_DISMISSED.log(project)
 }
 
-fun logGithubPromoAddQodanaWorkflow(project: Project, result: GithubPromoCreateWorkflowResult) {
-  QodanaPluginStatsCounterCollector.ADD_QODANA_WORKFLOW_GITHUB_PROMO.log(project, result)
+fun logGithubPromoAddQodanaWorkflowEvent(project: Project, event: GithubPromoCreateWorkflowEvent) {
+  QodanaPluginStatsCounterCollector.GITHUB_PROMO_CREATE_WORKFLOW.log(project, event)
+}
+
+fun logGithubPromoNotificationCreationEvent(project: Project, event: GithubPromoNotificationCreation) {
+  QodanaPluginStatsCounterCollector.GITHUB_PROMO_NOTIFICATION_CREATION.log(project, event)
 }
