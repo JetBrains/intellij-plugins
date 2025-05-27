@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.plugins.jade">
+<idea-plugin package="com.jetbrains.plugins.jade" allow-bundled-update="true">
   <!--suppress PluginXmlCapitalization -->
   <name>Pug (ex-Jade)</name>
   <id>com.jetbrains.plugins.jade</id>

@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin allow-bundled-update="true">
     <id>org.intellij.prisma</id>
     <name>Prisma ORM</name>
     <vendor>JetBrains</vendor>
