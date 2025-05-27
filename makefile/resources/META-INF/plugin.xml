@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin allow-bundled-update="true">
   <id>name.kropp.intellij.makefile</id>
   <name>Makefile Language</name>
   <vendor>JetBrains</vendor>
