@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin allow-bundled-update="true">
   <name>Perforce Helix Core</name>
   <id>PerforceDirectPlugin</id>
   <vendor>JetBrains</vendor>
