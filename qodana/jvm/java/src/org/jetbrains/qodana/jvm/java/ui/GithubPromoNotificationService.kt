@@ -8,10 +8,12 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findDirectory
 import com.intellij.openapi.vfs.refreshAndFindVirtualFile
 import com.intellij.openapi.vfs.writeText
 import com.intellij.util.io.createParentDirectories
+import com.intellij.vcsUtil.VcsFileUtil.addFilesToVcsWithConfirmation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -92,74 +94,83 @@ class GithubPromoNotificationService(private val project: Project, private val s
     return _qodanaJobPresent
   }
 
+  fun addQodanaFiles() {
+    scope.launch(QodanaDispatchers.IO) {
+      val files = listOf(addQodanaWorkflow(project), addQodanaYaml(project))
+      addFilesToVcsWithConfirmation(project, files.filterNotNull())
+    }
+  }
+
   /**
    * Adds Qodana GitHub workflow file if it's not present yet in the background
    */
-  fun addQodanaWorkflow(project: Project) {
-    scope.launch(QodanaDispatchers.IO) {
-      try {
-        val projectVcsDataProvider = ProjectVcsDataProviderImpl(project, this)
-        val defaultQodanaGithubWorkflowBuilder = DefaultQodanaGithubWorkflowBuilder(projectVcsDataProvider, project)
-        val location = defaultQodanaGithubWorkflowBuilder.getWorkflowFileLocation()
-        if (location == null) {
-          LOG.warn("Failed to create Qodana GitHub workflow file because location is null")
-          return@launch
-        }
-        val content = defaultQodanaGithubWorkflowBuilder.workflowFile(promo = true)
-        if (!createFile(location, content)) {
-          notifyQodanaActionWorkflowNotAdded()
-        }
-        else {
-          notifyQodanaActionWorkflowAdded()
-        }
-      } catch (e: IOException) {
-        LOG.warn("Failed to create Qodana GitHub workflow file", e)
+  private suspend fun addQodanaWorkflow(project: Project): VirtualFile? {
+    try {
+      val projectVcsDataProvider = ProjectVcsDataProviderImpl(project, scope)
+      val defaultQodanaGithubWorkflowBuilder = DefaultQodanaGithubWorkflowBuilder(projectVcsDataProvider, project)
+      val location = defaultQodanaGithubWorkflowBuilder.getWorkflowFileLocation()
+      if (location == null) {
+        LOG.warn("Failed to create Qodana GitHub workflow file because location is null")
+        return null
+      }
+      val content = defaultQodanaGithubWorkflowBuilder.workflowFile(promo = true)
+      val file = createFile(location, content)
+      if (file == null) {
         notifyQodanaActionWorkflowNotAdded()
       }
+      else {
+        notifyQodanaActionWorkflowAdded()
+      }
+      return file
+    } catch (e: IOException) {
+      LOG.warn("Failed to create Qodana GitHub workflow file", e)
+      notifyQodanaActionWorkflowNotAdded()
+      return null
     }
   }
 
   /**
    * Adds a qodana.yaml file if it's not present yet in the background
    */
-  fun addQodanaYaml(project: Project) {
-    scope.launch(QodanaDispatchers.IO) {
-      val isQodanaYamlPresent = project.findQodanaConfigVirtualFile() != null
-      if (isQodanaYamlPresent) {
-        logGithubPromoAddQodanaWorkflowEvent(project, GithubPromoCreateWorkflowEvent.QODANA_YAML_EXISTS)
-        return@launch
+  private suspend fun addQodanaYaml(project: Project): VirtualFile? {
+    val isQodanaYamlPresent = project.findQodanaConfigVirtualFile() != null
+    if (isQodanaYamlPresent) {
+      logGithubPromoAddQodanaWorkflowEvent(project, GithubPromoCreateWorkflowEvent.QODANA_YAML_EXISTS)
+      return null
+    }
+    val yamlFileContents = GithubPromoQodanaYamlBuilder(project).build()
+    return try {
+      val projectPath = project.guessProjectDir()?.toNioPath()
+      if (projectPath == null) {
+        LOG.warn("Failed to create Qodana YAML file because project path is null")
+        notifyQodanaYamlNotAdded()
+        return null
       }
-      val yamlFileContents = GithubPromoQodanaYamlBuilder(project).build()
-      try {
-        val projectPath = project.guessProjectDir()?.toNioPath()
-        if (projectPath == null) {
-          LOG.warn("Failed to create Qodana YAML file because project path is null")
-          notifyQodanaYamlNotAdded()
-          return@launch
-        }
-        if (!createFile(projectPath.resolve(QODANA_YAML_CONFIG_FILENAME), yamlFileContents)) {
-          notifyQodanaYamlNotAdded()
-        }
-      } catch (e: IOException) {
-        LOG.warn("Failed to create Qodana YAML file", e)
+      val file = createFile(projectPath.resolve(QODANA_YAML_CONFIG_FILENAME), yamlFileContents)
+      if (file == null) {
         notifyQodanaYamlNotAdded()
       }
+      file
+    } catch (e: IOException) {
+      LOG.warn("Failed to create Qodana YAML file", e)
+      notifyQodanaYamlNotAdded()
+      null
     }
   }
 
-  private suspend fun createFile(location: Path, content: String): Boolean {
+  private suspend fun createFile(location: Path, content: String): VirtualFile? {
     val file = location
       .createParentDirectories()
       .createFile()
       .refreshAndFindVirtualFile()
     if (file == null) {
       LOG.warn("Failed to create file at $location")
-      return false
+      return null
     }
     edtWriteAction {
       file.writeText(content)
     }
-    return true
+    return file
   }
 
   private fun notifyQodanaYamlNotAdded() {

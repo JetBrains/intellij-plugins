@@ -104,8 +104,7 @@ class QodanaGithubCIPromoNotificationProvider: EditorNotificationProvider, DumbA
       try {
         logGithubPromoAddQodanaWorkflowEvent(project, GithubPromoCreateWorkflowEvent.CLICKED)
         val service = project.service<GithubPromoNotificationService>()
-        service.addQodanaYaml(project)
-        service.addQodanaWorkflow(project)
+        service.addQodanaFiles()
       } finally {
         disableNotificationForProject(project)
         EditorNotifications.getInstance(project).updateNotifications(file)
