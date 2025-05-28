@@ -39,6 +39,8 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/core-api:core",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/protobuf/protoeditor-core",
     "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
     "//goland/intellij-go/impl",
