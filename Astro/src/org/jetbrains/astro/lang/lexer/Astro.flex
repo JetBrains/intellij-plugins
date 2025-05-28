@@ -185,6 +185,12 @@ import static com.intellij.util.ArrayUtil.*;
       return false;
     }
 
+    private boolean isWithinScriptTag() {
+      return !elementNameStack.isEmpty()
+             && elementNameStack.peek().equals("script")
+             && !expressionStack.isEmpty();
+    }
+
     private boolean backqouteForcesTemplateLiteralEnd() {
       boolean foundTemplateLiteralExpression = false;
       var elements = expressionStack.elements();
@@ -607,8 +613,8 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_START;
       }
   \<[>a-zA-Z] {
-        if (!elementNameStack.isEmpty() && elementNameStack.peek().equals("script")
-             || yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
+        if (isWithinScriptTag()
+                     || (yystate() != HTML_INITIAL && isWithinAttributeExpression())) {
           yypushback(yylength() - 1);
           return JSTokenTypes.LT;
         }
@@ -619,7 +625,8 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
       }
 
   \<\/ {
-        if (yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
+        if ((yystate() != HTML_INITIAL && isWithinAttributeExpression())
+                  || yystate() != HTML_INITIAL && isWithinScriptTag()) {
           return JSTokenTypes.LT;
         }
         expressionStack.push(KIND_END_TAG);

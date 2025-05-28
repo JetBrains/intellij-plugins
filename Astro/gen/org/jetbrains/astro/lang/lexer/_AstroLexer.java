@@ -1715,6 +1715,12 @@ public class _AstroLexer implements FlexLexer {
       return false;
     }
 
+    private boolean isWithinScriptTag() {
+      return !elementNameStack.isEmpty()
+             && elementNameStack.peek().equals("script")
+             && !expressionStack.isEmpty();
+    }
+
     private boolean backqouteForcesTemplateLiteralEnd() {
       boolean foundTemplateLiteralExpression = false;
       var elements = expressionStack.elements();
@@ -2743,7 +2749,8 @@ public class _AstroLexer implements FlexLexer {
           // fall through
           case 311: break;
           case 84:
-            { if (yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
+            { if ((yystate() != HTML_INITIAL && isWithinAttributeExpression())
+                  || yystate() != HTML_INITIAL && isWithinScriptTag()) {
           return JSTokenTypes.LT;
         }
         expressionStack.push(KIND_END_TAG);
@@ -2753,8 +2760,8 @@ public class _AstroLexer implements FlexLexer {
           // fall through
           case 312: break;
           case 85:
-            { if (!elementNameStack.isEmpty() && elementNameStack.peek().equals("script")
-             || yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
+            { if (isWithinScriptTag()
+                     || (yystate() != HTML_INITIAL && isWithinAttributeExpression())) {
           yypushback(yylength() - 1);
           return JSTokenTypes.LT;
         }

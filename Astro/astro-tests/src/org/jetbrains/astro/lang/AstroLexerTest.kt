@@ -152,6 +152,25 @@ open class AstroLexerTest : LexerTestCase() {
     |</script>
   """)
 
+  fun testHtmlInScript() = doTest("""
+    |<script>
+    |  const n = '<p></p>'
+    |  const form = '<form><input><input></form>'
+    |</script>
+  """)
+
+  fun testScriptEmbedding() = doTest("""
+    |<script type="foo/bar">
+    |  <div></div>
+    |</script>
+  """)
+
+  fun testScriptInScript() = doTest("""
+    |<script>
+    |  <script><script>
+    |</script>
+  """)
+
   fun testEmptyFrontmatter1() = doTest("""
     |Some comment
     |------
