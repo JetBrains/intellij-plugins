@@ -1,0 +1,19 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "@tailwindcss";
+
+.foo {
+    font-weight: bolder;
+}
+
+.bar {
+    color: darkcyan;
+}
+
+.ngClassCssContainer {
+    display: inline-block;
+    background-color: oklch(0.966 0.027 213.764);
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 10px 50px;
+}

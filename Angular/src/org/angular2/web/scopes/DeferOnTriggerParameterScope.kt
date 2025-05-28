@@ -37,7 +37,7 @@ class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
   }
 
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean {
-    return qualifiedKind == WebSymbol.JS_SYMBOLS
+    return qualifiedKind == WebSymbol.JS_SYMBOLS || qualifiedKind == WebSymbol.JS_KEYWORDS
   }
 
   override fun createPointer(): Pointer<DeferOnTriggerParameterScope> {

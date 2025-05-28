@@ -3,7 +3,9 @@ package org.angular2.codeInsight
 
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
+import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
 import com.intellij.webSymbols.testFramework.LookupElementInfo
+import com.intellij.webSymbols.testFramework.checkLookupItems
 import com.intellij.webSymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
@@ -306,11 +308,18 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
 
   fun testTemplateBindingsNgForContextDocumentation() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1, extension = "ts",
-                 lookupItemFilter = { it.lookupString == "index" || it.lookupString == "last" || it.lookupString == "ngForOf"},
+                 lookupItemFilter = { it.lookupString == "index" || it.lookupString == "last" || it.lookupString == "ngForOf" },
                  checkDocumentation = true)
 
   fun testCssCustomProperty() =
     doLookupTest(ANGULAR_CORE_19_2_0, extension = "ts", checkDocumentation = true, dir = true)
+
+  fun testTailwindInNgClass() =
+    doConfiguredTest(ANGULAR_CORE_19_2_0, Angular2TestModule.TAILWINDCSS_4_1_7, extension = "ts", dir = true,
+                     configureFileName = "src/tailwindInNgClass.ts") {
+      waitUntilFileOpenedByLspServer(getProject(), getFile().getVirtualFile())
+      checkLookupItems(renderTypeText = true)
+    }
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 

@@ -72,7 +72,8 @@
               "doc-url": "https://angular.dev/guide/defer#triggers",
               "description": "`on` specifies a trigger condition using one of available triggers. An example would be `on interaction` or `on viewport`. Multiple event triggers can be defined at once.",
               "exclusive-contributions": [
-                "/js/symbols"
+                "/js/symbols",
+                "/js/keywords"
               ],
               "js": {
                 "symbols": [
@@ -198,7 +199,8 @@
             }
           ],
           "exclusive-contributions": [
-            "/js/symbols"
+            "/js/symbols",
+            "/js/keywords"
           ],
           "js": {
             "symbols": [

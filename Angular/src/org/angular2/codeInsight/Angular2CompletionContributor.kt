@@ -34,6 +34,8 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.completion.WebSymbolsCompletionProviderBase
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
@@ -209,7 +211,8 @@ class Angular2CompletionContributor : CompletionContributor() {
         val localNames = HashSet<String>()
 
         // Block support
-        if (Angular2HtmlBlockReferenceExpressionCompletionProvider.addCompletions(result, ref)) {
+        if (Angular2HtmlBlockReferenceExpressionCompletionProvider.addCompletions(result, ref)
+            || WebSymbolsCompletionProviderBase.noMoreCodeCompletionsFor(parameters, WebSymbol.JS_PROPERTIES, WebSymbol.JS_KEYWORDS, WebSymbol.JS_SYMBOLS)) {
           return
         }
 
@@ -246,7 +249,7 @@ class Angular2CompletionContributor : CompletionContributor() {
         }
 
         if (ref.qualifier != null) {
-          result.stopHere()
+          WebSymbolsCompletionProviderBase.preventFurtherCodeCompletionsFor(parameters, WebSymbol.JS_PROPERTIES)
           return
         }
 

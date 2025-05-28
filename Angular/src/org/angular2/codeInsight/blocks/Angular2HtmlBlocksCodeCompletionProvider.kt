@@ -21,12 +21,14 @@ import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 
 class Angular2HtmlBlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<PsiElement>() {
-  override fun addCompletions(parameters: CompletionParameters,
-                              result: CompletionResultSet,
-                              position: Int,
-                              name: String,
-                              queryExecutor: WebSymbolsQueryExecutor,
-                              context: PsiElement) {
+  override fun addCompletions(
+    parameters: CompletionParameters,
+    result: CompletionResultSet,
+    position: Int,
+    name: String,
+    queryExecutor: WebSymbolsQueryExecutor,
+    context: PsiElement
+  ) {
     val blocksConfig = getAngular2HtmlBlocksConfig(context)
     val adjustedResult = result.withPrefixMatcher(name).applyIf(context !is Angular2HtmlBlock) {
       HtmlCompletionContributor.patchResultSetForHtmlElementInTextCompletion(this, parameters)

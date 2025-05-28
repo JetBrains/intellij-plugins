@@ -62,6 +62,7 @@ enum class Angular2TestModule(myPackageName: String, myVersion: String) : WebFra
   RXJS_6_4_0("rxjs", "6.4.0"),
   RXJS_7_8_1("rxjs", "7.8.1"),
   TS_LIB("tslib", "2.6.2"),
+  TAILWINDCSS_4_1_7("tailwindcss", "4.1.7"),
   ;
 
   override val packageNames: List<String> = listOf(myPackageName)

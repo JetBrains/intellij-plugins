@@ -161,6 +161,9 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@community//xml/testFramework",
     "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "//plugins/tailwindcss",
+    "//plugins/tailwindcss:tailwindcss_test_lib",
+    "//platform/lsp/testFramework",
   ],
   runtime_deps = [
     ":angular_resources",
