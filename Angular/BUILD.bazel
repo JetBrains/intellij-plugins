@@ -74,6 +74,7 @@ jvm_library(
     "//webcore/impl",
     "@community//platform/xdebugger-api:debugger",
     "@lib//:opentelemetry",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//CSS/frontback/css-psi-impl:css-frontback-psi",
   ],
   runtime_deps = [
@@ -157,6 +158,7 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@lib//:opentelemetry",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@community//xml/testFramework",
     "//CSS/frontback/css-psi-impl:css-frontback-psi",
   ],
