@@ -12,10 +12,8 @@ import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.patterns.PlatformPatterns.not
 import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.Plow.Companion.toPlow
@@ -39,10 +37,13 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getLookupIcon
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getOriginalObject
 import org.intellij.terraform.config.documentation.psi.HCLFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.model.TypeModel.Companion.getTerraformBlock
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
+import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersBlock
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformVariablesFile
+import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
@@ -113,7 +114,11 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       .withSuperParent(2, Block)
       .withSuperParent(3, Object)
       .withSuperParent(4, Block), BlockPropertiesCompletionProvider)
-    // Leftmost identifier of block could be start of new property in case of eol between it and the next identifier
+
+    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
+      .inFile(TerraformConfigFile)
+      .withParent(Object)
+      .withSuperParent(2, RequiredProvidersBlock), RequiredProviderCompletion)
     //```
     //resource "X" "Y" {
     //  count<caret>
@@ -219,8 +224,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
 
   abstract class TfCompletionProvider : CompletionProvider<CompletionParameters>() {
 
-    protected fun addResultsWithCustomSorter(result: CompletionResultSet,
-                                             toAdd: Collection<LookupElementBuilder>) {
+    protected fun addResultsWithCustomSorter(result: CompletionResultSet, toAdd: Collection<LookupElementBuilder>) {
       if (toAdd.isEmpty()) return
       result.withRelevanceSorter(
         CompletionSorter.emptySorter().weigh(PreferRequiredProperty)
@@ -250,6 +254,41 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       assert(getClearTextValue(leftNWS) == null, dumpPsiFileModel(position))
       result.addAllElements(RootBlockSorted.map { createPropertyOrBlockType(it) })
     }
+  }
+
+  object RequiredProviderCompletion : TfCompletionProvider() {
+    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+      val element = parameters.position
+      val prefix = result.prefixMatcher.prefix
+
+      val providers = TypeModelProvider.getModel(element).allProviders()
+      result.addAllElements(
+        providers
+          .filter { it.type.startsWith(prefix) }
+          .map { provider -> getProviderLookup(provider) }
+          .toList()
+      )
+    }
+
+    private fun getProviderLookup(provider: ProviderType): LookupElement = create(provider.type).withTypeText(provider.fullName)
+      .withInsertHandler { context, item ->
+        val project = context.project
+        val elementGenerator = TfElementGenerator(project)
+        val providerObject = elementGenerator.createObject(
+          mapOf(
+            "source" to "\"${provider.fullName}\"",
+            "version" to "\"${provider.version}\""
+          )
+        )
+        val providerProperty = elementGenerator.createObjectProperty(provider.type, providerObject.text)
+        val document = context.document
+        document.replaceString(context.startOffset, context.tailOffset, providerProperty.text)
+        PsiDocumentManager.getInstance(project).commitDocument(document)
+
+        val psiFile = context.file
+        val terraformBlock = getTerraformBlock(psiFile) ?: return@withInsertHandler
+        CodeStyleManager.getInstance(project).reformatText(psiFile, listOf(terraformBlock.textRange))
+      }
   }
 
   object BlockTypeOrNameCompletionProvider : TfCompletionProvider() {
@@ -303,7 +342,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
             .processWith(consumer)
         HCL_PROVIDER_IDENTIFIER -> {
           typeModel.allProviders().toPlow()
-            .filter { parameters.invocationCount > 1 || it.tier in tiers || localProviders.containsValue(it.fullName)}
+            .filter { parameters.invocationCount > 1 || it.tier in tiers || localProviders.containsValue(it.fullName) }
             .map { buildProviderLookupElement(it, position) }
             .processWith(consumer)
         }
