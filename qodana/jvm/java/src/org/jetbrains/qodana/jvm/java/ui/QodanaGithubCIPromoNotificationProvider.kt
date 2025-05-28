@@ -1,7 +1,11 @@
 package org.jetbrains.qodana.jvm.java.ui
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.components.BaseState
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.DumbAware
@@ -18,18 +22,12 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
 import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.stats.GithubPromoCreateWorkflowEvent
-import org.jetbrains.qodana.stats.GithubPromoNotificationCreation
-import org.jetbrains.qodana.stats.logGithubPromoAddQodanaWorkflowEvent
 import org.jetbrains.qodana.stats.logGithubPromoDismissed
 import org.jetbrains.qodana.stats.logGithubPromoExploreQodanaPressed
-import org.jetbrains.qodana.stats.logGithubPromoNotificationCreationEvent
+import org.jetbrains.qodana.stats.logGithubPromoNotificationShown
 import java.util.function.Function
 import javax.swing.JComponent
-
-private const val QODANA_GITHUB_PROMO_PROJECT_DISABLED_KEY = "qodana.github.promo.project.disabled"
-private const val QODANA_GITHUB_PROMO_APPLICATION_DISABLED_KEY = "qodana.github.promo.application.disabled"
-private const val QODANA_DOCUMENTATION_URL = "https://www.jetbrains.com/help/qodana/about-qodana.html"
+private const val QODANA_LANDING_PAGE = "https://www.jetbrains.com/qodana/"
 
 class QodanaGithubCIPromoNotificationProvider: EditorNotificationProvider, DumbAware {
 
@@ -91,18 +89,17 @@ class QodanaGithubCIPromoNotificationProvider: EditorNotificationProvider, DumbA
   private fun isQodanaJobPresent(project: Project): Boolean = project.service<GithubPromoNotificationService>().qodanaJobPresent ?: true
 
   private fun createNotificationPanel(file: VirtualFile, project: Project): EditorNotificationPanel {
-    logGithubPromoNotificationCreationEvent(project, GithubPromoNotificationCreation.CREATED)
+    logGithubPromoNotificationShown(project)
     val panel = EditorNotificationPanel(EditorNotificationPanel.Status.Info)
     panel.text = QodanaBundle.message("qodana.github.promo.notification.text")
 
     panel.createActionLabel(QodanaBundle.message("qodana.github.promo.notification.explore.button.text")) {
       logGithubPromoExploreQodanaPressed(project)
-      BrowserUtil.browse(QODANA_DOCUMENTATION_URL)
+      BrowserUtil.browse(QODANA_LANDING_PAGE)
     }
 
     panel.createActionLabel(QodanaBundle.message("qodana.github.promo.notification.add.workflow.button.text")) {
       try {
-        logGithubPromoAddQodanaWorkflowEvent(project, GithubPromoCreateWorkflowEvent.CLICKED)
         val service = project.service<GithubPromoNotificationService>()
         service.addQodanaFiles()
       } finally {
@@ -120,15 +117,45 @@ class QodanaGithubCIPromoNotificationProvider: EditorNotificationProvider, DumbA
   }
 
   private fun isNotificationDisabled(project: Project): Boolean {
-    return PropertiesComponent.getInstance(project).getBoolean(QODANA_GITHUB_PROMO_PROJECT_DISABLED_KEY, false)
-           || PropertiesComponent.getInstance().getBoolean(QODANA_GITHUB_PROMO_APPLICATION_DISABLED_KEY, false)
+    return service<QodanaGithubPromoNotificationApplicationDismissalState>().dismissedState ||
+           project.service<QodanaGithubPromoNotificationProjectDismissalState>().dismissedState
   }
 
   private fun disableNotificationForProject(project: Project) {
-    PropertiesComponent.getInstance(project).setValue(QODANA_GITHUB_PROMO_PROJECT_DISABLED_KEY, true)
+    project.service<QodanaGithubPromoNotificationProjectDismissalState>().disableNotification()
   }
 
   private fun disableNotificationInApplication() {
-    PropertiesComponent.getInstance().setValue(QODANA_GITHUB_PROMO_APPLICATION_DISABLED_KEY, true)
+    service<QodanaGithubPromoNotificationApplicationDismissalState>().disableNotification()
+  }
+}
+
+@Service
+@State(name = "qodana.github.promo.notification.application.dismissed", storages = [Storage(value = "qodana.xml")])
+internal class QodanaGithubPromoNotificationApplicationDismissalState: BaseQodanaGithubPromoNotificationDismissalState()
+
+@Service(Service.Level.PROJECT)
+@State(name = "qodana.github.promo.notification.project.dismissed", storages = [Storage(value = "qodana.xml")])
+internal class QodanaGithubPromoNotificationProjectDismissalState: BaseQodanaGithubPromoNotificationDismissalState()
+
+
+internal open class BaseQodanaGithubPromoNotificationDismissalState: PersistentStateComponent<BaseQodanaGithubPromoNotificationDismissalState.State> {
+  class State : BaseState() {
+    var dismissed: Boolean by property(false)
+  }
+
+  var dismissedState: Boolean = state.dismissed
+    private set
+
+  override fun getState(): BaseQodanaGithubPromoNotificationDismissalState.State {
+    return State().apply { dismissed = dismissedState }
+  }
+
+  override fun loadState(state: BaseQodanaGithubPromoNotificationDismissalState.State) {
+    dismissedState = state.dismissed
+  }
+
+  fun disableNotification() {
+    dismissedState = true
   }
 }
