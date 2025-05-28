@@ -51,7 +51,7 @@ class Angular2DirectiveExportAs(
     }
   }
 
-  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     Angular2ElementDocumentationTarget.create(name, location, this.directive)
     ?: super<Angular2Symbol>.getDocumentationTarget(location)
 

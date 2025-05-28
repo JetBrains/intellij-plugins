@@ -83,7 +83,7 @@ class VueBindingShorthandSymbol(
   override val priority: WebSymbol.Priority
     get() = WebSymbol.Priority.HIGHEST
 
-  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     attrSymbol.getDocumentationTarget(location)
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =

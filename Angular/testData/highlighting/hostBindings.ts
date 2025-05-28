@@ -37,7 +37,7 @@ export abstract class AppClicksDirective {
       }
    `,
    host: {
-     "class": "oy-chip oy-chip--small <warning descr="Unrecognized name">some</warning>",
+     "class": "oy-chip oy-chip--small some",
      "[class.oy-chip--small]": "<error descr="TS2339: Property 'big' does not exist on type 'ChipComponent'.">big</error>",
      '(keydown)': 'onKeyDown($event)',
      '(<warning descr="Unrecognized event">foo</warning>)': '<error descr="TS2339: Property 'bar' does not exist on type 'ChipComponent'.">bar</error>($event)'

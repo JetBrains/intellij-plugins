@@ -174,7 +174,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
       return symbol == this || delegate.isEquivalentTo(symbol)
     }
 
-    final override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+    final override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
       Angular2ElementDocumentationTarget.create(
         name, location, delegate,
         Angular2EntitiesProvider.getEntity(delegate.sourceElement.contextOfType<TypeScriptClass>(true)))
@@ -217,7 +217,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
       return "<$delegate,$myOutput>"
     }
 
-    override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+    override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
       Angular2ElementDocumentationTarget.create(
         name, location, delegate, myOutput,
         Angular2EntitiesProvider.getEntity(delegate.sourceElement.contextOfType<TypeScriptClass>(true)))

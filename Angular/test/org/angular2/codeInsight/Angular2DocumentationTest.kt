@@ -100,6 +100,8 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
 
   fun testDefaultValueJSDoc() = doTest()
 
+  fun testUnknownNgClass() = doTest()
+
   private fun doTestWithDeps(useConfig: Boolean = false) {
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_16_2_8,
                      additionalFiles = listOf("deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts",

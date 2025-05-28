@@ -77,7 +77,7 @@ class Angular2DirectiveSelectorSymbol(
         .presentation()
     }
 
-  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     Angular2ElementDocumentationTarget.create(
       name, location,
       Angular2EntitiesProvider.getEntity(sourceElement.contextOfType<TypeScriptClass>(true)))

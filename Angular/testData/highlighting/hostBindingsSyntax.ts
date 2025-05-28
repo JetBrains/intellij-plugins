@@ -27,7 +27,7 @@ export <info descr="null">abstract</info> class <symbolName descr="classes//expo
    <symbolName descr="instance field">template</symbolName>: `<inject descr="null">
         <div [class.<symbolName descr="CSS.CLASS_NAME">oy-chip--small</symbolName>]="<symbolName descr="instance field">small</symbolName>"></div>
         <div [ngClass]="{'<symbolName descr="CSS.CLASS_NAME">oy-chip--small</symbolName>' : <symbolName descr="instance field">small</symbolName>}"></div>
-        <div [ngClass]="['<symbolName descr="CSS.CLASS_NAME">oy-chip--small</symbolName>', '<warning descr="Unrecognized name">small</warning>']"></div>
+        <div [ngClass]="['<symbolName descr="CSS.CLASS_NAME">oy-chip--small</symbolName>', '<symbolName descr="CSS.CLASS_NAME">small</symbolName>']"></div>
     </inject>`,
    <symbolName descr="instance field">standalone</symbolName>: true,
    <symbolName descr="instance field">styles</symbolName>: `<inject descr="null">

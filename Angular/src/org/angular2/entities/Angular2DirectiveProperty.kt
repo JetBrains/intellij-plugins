@@ -89,7 +89,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSWebSymb
 
   override fun createPointer(): Pointer<out Angular2DirectiveProperty>
 
-  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     Angular2ElementDocumentationTarget.create(
       name, location, this,
       Angular2EntitiesProvider.getEntity(sourceElement.contextOfType<TypeScriptClass>(true)))

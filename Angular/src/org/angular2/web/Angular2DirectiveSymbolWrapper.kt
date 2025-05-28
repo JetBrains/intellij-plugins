@@ -70,7 +70,7 @@ open class Angular2DirectiveSymbolWrapper private constructor(
     return this == symbol || delegate.isEquivalentTo(symbol)
   }
 
-  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     super.getDocumentationTarget(location).let {
       if (it is Angular2ElementDocumentationTarget)
         it.withDirective((delegate as? Angular2AliasedDirectiveProperty)?.directive ?: directive)
