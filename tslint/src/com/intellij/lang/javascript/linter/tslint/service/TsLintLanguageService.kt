@@ -22,11 +22,11 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.text.SemVer
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.future.asCompletableFuture
 import java.util.concurrent.CompletableFuture
 import java.util.function.BiFunction
-import java.util.function.Consumer
 
 class TsLintLanguageService(
   project: Project,
@@ -121,7 +121,7 @@ class TsLintLanguageService(
     private val myNodePackage: NodePackage,
     private val myWorkingDirectory: VirtualFile,
     project: Project
-  ) : JSLanguageServiceNodeStdProtocolBase("tslint", project, Consumer { o: Any? -> }) {
+  ) : JSLanguageServiceNodeStdProtocolBase("tslint", project, CompletableDeferred()) {
     override val workingDirectory: String?
       get() = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(myWorkingDirectory)
 

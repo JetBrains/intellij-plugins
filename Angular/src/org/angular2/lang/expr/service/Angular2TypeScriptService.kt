@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.service
 
+import com.google.gson.JsonObject
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -49,6 +50,7 @@ import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
 import com.intellij.webSymbols.context.WebSymbolsContext
 import icons.AngularIcons
+import kotlinx.coroutines.CompletableDeferred
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
 import org.angular2.entities.Angular2EntitiesProvider
@@ -68,7 +70,6 @@ import org.angular2.options.AngularSettings
 import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.concurrent.Future
-import java.util.function.Consumer
 
 class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Angular Console") {
 
@@ -155,8 +156,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   private fun isAngularServiceAvailableByContext(context: VirtualFile): Boolean =
     isAngularTypeScriptServiceEnabled(myProject, context)
 
-  override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol =
-    Angular2TypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
+  override fun createProtocol(deferredInitialState: CompletableDeferred<JsonObject>, tsServicePath: String): JSLanguageServiceProtocol =
+    Angular2TypeScriptServiceProtocol(myProject, mySettings, deferredInitialState, createEventConsumer(), tsServicePath)
 
   override fun createWidgetItem(currentFile: VirtualFile?): LanguageServiceWidgetItem =
     TypeScriptServiceWidgetItem(this, currentFile, AngularIcons.Angular2, AngularIcons.Angular2, AngularConfigurable::class.java)

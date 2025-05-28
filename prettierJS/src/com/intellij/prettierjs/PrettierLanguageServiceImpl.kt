@@ -16,10 +16,10 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.webcore.util.JsonUtil
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.future.future
 import java.io.File
 import java.util.concurrent.CompletableFuture
-import java.util.function.Consumer
 
 class PrettierLanguageServiceImpl(
   project: Project,
@@ -107,15 +107,14 @@ class PrettierLanguageServiceImpl(
 
   override suspend fun createLanguageServiceQueue(): JSLanguageServiceQueue =
     JSLanguageServiceQueueImpl(myProject,
-                               Protocol(myProject, Consumer { o: Any? -> }),
+                               Protocol(myProject),
                                null,
                                myDefaultReporter,
                                JSLanguageServiceDefaultCacheData())
 
   private inner class Protocol(
     project: Project,
-    readyConsumer: Consumer<*>,
-  ) : JSLanguageServiceNodeStdProtocolBase("prettier", project, readyConsumer) {
+  ) : JSLanguageServiceNodeStdProtocolBase("prettier", project, CompletableDeferred()) {
     override fun addNodeProcessAdditionalArguments(targetRun: NodeTargetRun) {
       super.addNodeProcessAdditionalArguments(targetRun)
       targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "prettierLanguageService")!!.absolutePath)

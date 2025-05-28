@@ -1,6 +1,7 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.classic
 
+import com.google.gson.JsonObject
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
@@ -26,6 +27,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import kotlinx.coroutines.CompletableDeferred
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
@@ -34,7 +36,6 @@ import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.isVueClassicTypeScriptServiceEnabled
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 import org.jetbrains.vuejs.options.VueConfigurable
-import java.util.function.Consumer
 
 /**
  * Original [TypeScriptService] implementation for Vue.
@@ -64,8 +65,8 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
     return service.getDirectIncludePreferableConfig(virtualFile) != null
   }
 
-  override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
-    return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
+  override fun createProtocol(deferredInitialState: CompletableDeferred<JsonObject>, tsServicePath: String): JSLanguageServiceProtocol {
+    return VueTypeScriptServiceProtocol(myProject, mySettings, deferredInitialState, createEventConsumer(), tsServicePath)
   }
 
   override fun getInitialOpenCommands(): List<JSLanguageServiceSimpleCommand> {

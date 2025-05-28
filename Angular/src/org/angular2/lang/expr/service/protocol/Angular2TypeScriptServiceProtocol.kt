@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.service.protocol
 
+import com.google.gson.JsonObject
 import com.intellij.idea.AppMode
 import com.intellij.lang.javascript.psi.util.JSPluginPathManager.getPluginResource
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer
@@ -9,16 +10,17 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptServiceStandardOutputProtocol
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptServiceInitialStateObject
 import com.intellij.openapi.project.Project
+import kotlinx.coroutines.CompletableDeferred
 import java.io.IOException
 import java.nio.file.Path
 import java.util.function.Consumer
 
 class Angular2TypeScriptServiceProtocol(project: Project,
                                         settings: TypeScriptCompilerSettings,
-                                        readyConsumer: Consumer<*>,
+                                        deferredInitialState: CompletableDeferred<JsonObject>,
                                         eventConsumer: Consumer<in JSLanguageServiceAnswer>,
                                         tsServicePath: String) :
-  TypeScriptServiceStandardOutputProtocol(project, settings, readyConsumer, eventConsumer, "AngularService", tsServicePath) {
+  TypeScriptServiceStandardOutputProtocol(project, settings, deferredInitialState, eventConsumer, "AngularService", tsServicePath) {
 
   override fun createState(): TypeScriptServiceInitialStateObject {
     val state = super.createState()
