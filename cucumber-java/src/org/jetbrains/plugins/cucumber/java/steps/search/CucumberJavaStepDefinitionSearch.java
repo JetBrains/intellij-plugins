@@ -15,6 +15,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.util.List;
 
+/// Handles [ReferencesSearch] requests made by [CucumberJavaMethodUsageSearcher].
 public final class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiReference, ReferencesSearch.SearchParameters> {
   @Override
   public boolean execute(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<? super PsiReference> consumer) {

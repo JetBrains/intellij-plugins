@@ -5,6 +5,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
+/// Step definition in Cucumber v2 and later.
 public class JavaStep2xDefinition extends JavaAnnotatedStepDefinition {
   public JavaStep2xDefinition(@NotNull PsiElement element, @NotNull Module module, @NotNull String annotationValue) {
     super(element, module, annotationValue);

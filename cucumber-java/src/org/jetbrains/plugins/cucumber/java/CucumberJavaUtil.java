@@ -164,6 +164,9 @@ public final class CucumberJavaUtil {
     return null;
   }
 
+  /// Returns all Cucumber step annotation (like `@Given`, `@When`, and `@Then`) for `method`.
+  ///
+  /// Usually, there's only 1 Cucumber step annotation per step definition method, but it's not a hard requirement.
   public static List<PsiAnnotation> getCucumberStepAnnotations(@NotNull PsiMethod method) {
     return getCucumberStepAnnotations(method, null);
   }

@@ -16,7 +16,11 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.util.List;
 
-/// Provides 'Find Usages' for Java methods that implement Cucumber step definitions.
+/// Provides 'Find Usages' for Java methods that implement Cucumber step definitions (aka "glue").
+///
+/// For each Java step definition method, it performs a [ReferencesSearch] for that method across all Gherkin feature files.
+///
+/// @see CucumberJavaStepDefinitionSearch
 public final class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters> {
   public CucumberJavaMethodUsageSearcher() {
     super(true);
@@ -35,8 +39,9 @@ public final class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<Psi
     for (final PsiAnnotation stepAnnotation : stepAnnotations) {
       final String regexp = stepAnnotation != null ? CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation) : null;
       if (regexp == null) continue;
+      final var searchParameters = new ReferencesSearch.SearchParameters(method, restrictedScope, false, queryParameters.getOptimizer());
       ReferencesSearch
-        .search(new ReferencesSearch.SearchParameters(method, restrictedScope, false, queryParameters.getOptimizer()))
+        .search(searchParameters)
         .forEach(consumer);
     }
   }

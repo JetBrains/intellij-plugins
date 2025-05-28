@@ -7,13 +7,15 @@ public class CucumberJava2ResolveTest extends BaseCucumberJavaResolveTest {
   public void testNavigationFromStepToStepDef01() {
     doTest("stepResolve_01", "I p<caret>ay 25", "i_pay");
   }
+
   public void testNavigationFromStepToStepDef02() {
     doTest("stepResolve_01", "the followi<caret>ng groceries", "the_following_groceries");
   }
+
   public void testNavigationFromStepToStepDef03() {
     doTest("stepResolve_01", "my change sh<caret>ould be 4", "my_change_should_be_");
   }
-  
+
   public void testStepDefinitionWithMatchCount() {
     doTest("stepResolve_01", "I set numb<caret>er to 50", "I_set_number_to");
   }
@@ -35,13 +37,14 @@ public class CucumberJava2ResolveTest extends BaseCucumberJavaResolveTest {
   }
 
   public void testWordSymbolWithUnicode() {
+    //noinspection NonAsciiCharacters
     doTest("stepResolve_w", "пласт<caret>ик", null);
   }
 
   public void testWordSymbolWithAZ() {
     doTest("stepResolve_w", "plast<caret>ic", "payment_mode");
   }
-  
+
   public void testCaseSensitivity() {
     doTest("stepResolve_w", "sensit<caret>ivity", null);
   }

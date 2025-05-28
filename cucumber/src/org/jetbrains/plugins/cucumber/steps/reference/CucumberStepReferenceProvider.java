@@ -15,7 +15,12 @@ import static com.intellij.psi.tree.TokenSet.WHITE_SPACE;
 import static org.jetbrains.plugins.cucumber.psi.GherkinElementTypes.STEP_PARAMETER;
 import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.*;
 
-public class CucumberStepReferenceProvider extends PsiReferenceProvider {
+/// Injects references to step definitions (aka "glue code") into step usages in Gherkin files.
+///
+/// Actual resolve logic ("what happens when the user clicks on the step in feature file") is implemented in [CucumberStepReference].
+///
+/// @see GherkinStepImpl#getReferences()
+public final class CucumberStepReferenceProvider extends PsiReferenceProvider {
   private static final TokenSet TEXT_AND_PARAM_SET = TokenSet.create(TEXT, STEP_PARAMETER_TEXT, STEP_PARAMETER_BRACE, STEP_PARAMETER);
   private static final TokenSet TEXT_PARAM_AND_WHITE_SPACE_SET = TokenSet.orSet(TEXT_AND_PARAM_SET, WHITE_SPACE);
 

@@ -35,7 +35,8 @@ public abstract class CucumberJavaWithJUnitRunnerIntegrationTest extends JavaTes
   @Override
   protected RunConfiguration getRunConfiguration() {
     TestInClassConfigurationProducer runConfigurationProducer = new TestInClassConfigurationProducer();
-    PsiElement element = PlatformTestUtil.findElementBySignature("MyCucumberTest", "src/test/java/com/sample/MyCucumberTest.java", getProject());
+    PsiElement element = PlatformTestUtil.findElementBySignature(
+      "MyCucumberTest", "src/test/java/com/sample/MyCucumberTest.java", getProject());
     return PlatformTestUtil.getRunConfiguration(element, runConfigurationProducer);
   }
 }

@@ -23,7 +23,10 @@ public class CucumberJavaGlueProviderTest extends CucumberCodeInsightTestCase {
     CollectConsumer<String> consumer = new CollectConsumer<>();
     new CucumberJavaFeatureGlueProvider(featureFile).calculateGlue(consumer);
 
-    assertContainsElements(consumer.getResult(), Arrays.asList("cucumber.examples.java.calculator", "test.cucumber.hooks", "test.cucumber.types"));
+    assertContainsElements(
+      consumer.getResult(),
+      Arrays.asList("cucumber.examples.java.calculator", "test.cucumber.hooks", "test.cucumber.types")
+    );
   }
 
   public void testAllFeaturesInFolderGlueCalculation() {
@@ -33,7 +36,10 @@ public class CucumberJavaGlueProviderTest extends CucumberCodeInsightTestCase {
     CollectConsumer<String> consumer = new CollectConsumer<>();
     new CucumberJavaAllFeaturesInFolderGlueProvider(featuresFolder).calculateGlue(consumer);
 
-    assertContainsElements(consumer.getResult(), Arrays.asList("cucumber.examples.java.calculator", "info.cucumber", "test.cucumber.hooks", "test.cucumber.types"));
+    assertContainsElements(
+      consumer.getResult(),
+      Arrays.asList("cucumber.examples.java.calculator", "info.cucumber", "test.cucumber.hooks", "test.cucumber.types")
+    );
   }
 
   @Override

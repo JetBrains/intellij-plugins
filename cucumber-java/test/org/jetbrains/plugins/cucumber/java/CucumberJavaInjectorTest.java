@@ -18,6 +18,6 @@ public class CucumberJavaInjectorTest extends CucumberJavaCodeInsightTestCase {
                                     }}"""
     );
 
-    assertEquals(myFixture.getFile().getLanguage(), CucumberJavaInjector.regexpLanguage);
+    assertEquals(CucumberJavaInjector.regexpLanguage, myFixture.getFile().getLanguage());
   }
 }

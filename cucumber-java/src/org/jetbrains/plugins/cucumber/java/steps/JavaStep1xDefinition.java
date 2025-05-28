@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/// Step definition in Cucumber v1.
 public class JavaStep1xDefinition extends JavaAnnotatedStepDefinition {
   public JavaStep1xDefinition(@NotNull PsiElement element, @NotNull Module module, @NotNull String annotationValue) {
     super(element, module, annotationValue);

@@ -23,9 +23,9 @@ import org.junit.Test;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jetbrains.plugins.cucumber.java.steps.ConstantCucumberVersion.cucumber_1_0;
 import static org.jetbrains.plugins.cucumber.java.steps.ConstantCucumberVersion.cucumber_1_1;
-import static org.junit.Assert.assertThat;
 
 public class AnnotationPackageProviderTest {
 
@@ -69,5 +69,4 @@ public class AnnotationPackageProviderTest {
     replay(featureFile, step);
     return step;
   }
-
 }

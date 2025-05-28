@@ -29,4 +29,9 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
     }
     return null;
   }
+
+  @Override
+  public String toString() {
+    return "JavaAnnotatedStepDefinition{stepDef: " + getElement() + "}";
+  }
 }

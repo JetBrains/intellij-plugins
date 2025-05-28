@@ -77,14 +77,14 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile("StepDefs.java");
 
-    CucumberJavaRunConfiguration runConfiguration = createTemplateConfiguration();
+    CucumberJavaRunConfiguration rc = createTemplateConfiguration();
 
     PsiDirectory psiDirectory = myFixture.getFile().getParent();
-    Location location = new PsiLocation<>(psiDirectory);
+    Location<PsiDirectory> location = new PsiLocation<>(psiDirectory);
     ConfigurationContext configurationContext = ConfigurationContext.createEmptyContextForLocation(location);
 
     CucumberJavaAllFeaturesInFolderRunConfigurationProducer producer = new CucumberJavaAllFeaturesInFolderRunConfigurationProducer();
-    assertEquals(isRunConfigurationExpected, producer.setupConfigurationFromContext(runConfiguration, configurationContext, new Ref<>(psiDirectory)));
+    assertEquals(isRunConfigurationExpected, producer.setupConfigurationFromContext(rc, configurationContext, new Ref<>(psiDirectory)));
   }
 
   @NotNull

@@ -22,7 +22,7 @@ public class CucumberParameterTypeRenameTest extends CucumberCodeInsightTestCase
 
   @Override
   protected String getBasePath() {
-    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "parameterTypeRename";
+    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "renameParameterType";
   }
 
   @Override

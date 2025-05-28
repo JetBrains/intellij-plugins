@@ -17,7 +17,7 @@ import java.util.Date;
 public class CucumberScenarioRunLineContributorTest extends CucumberJavaCodeInsightTestCase {
   private static final String myTestFeature = """
     Feature: My feature
-
+    
       Scenario: test
         Given a cat""";
 
@@ -46,7 +46,7 @@ public class CucumberScenarioRunLineContributorTest extends CucumberJavaCodeInsi
     PsiElement element = ((GherkinFile)file).getFeatures()[0].getScenarios()[0].findElementAt(0);
     checkInfo(element, AllIcons.RunConfigurations.TestState.Green2);
   }
-  
+
   private static void checkInfo(PsiElement element, Icon run) {
     RunLineMarkerContributor.Info info = new CucumberRunLineMarkerContributor().getInfo(element);
     assertNotNull(info);

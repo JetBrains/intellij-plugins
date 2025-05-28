@@ -36,7 +36,6 @@ public abstract class CucumberCodeInsightTestCase extends BasePlatformTestCase {
     int caretOffset = signature.indexOf(caretSignature);
     assert caretOffset >= 0;
     signature = signature.substring(0, caretOffset) + signature.substring(caretOffset + caretSignature.length());
-    @SuppressWarnings("ConstantConditions")
     int pos = PsiDocumentManager.getInstance(getProject()).getDocument(psiFile).getText().indexOf(signature);
     assertTrue(pos >= 0);
     return pos + caretOffset;

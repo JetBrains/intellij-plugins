@@ -35,7 +35,9 @@ public class CucumberJavaResolveToExternalLibraryTest extends BaseCucumberJavaRe
 
         attachCucumberExpressionsLibrary(model);
 
-        PsiTestUtil.addLibrary(model, "cucumber-java8", PathManager.getHomePath() + "/contrib/cucumber-java/testData/resolve/resolveToExternalLibrary", "step-def-jar-1.0.jar");
+        PsiTestUtil.addLibrary(model, "cucumber-java8",
+                               PathManager.getHomePath() + "/contrib/cucumber-java/testData/resolve/resolveToExternalLibrary",
+                               "step-def-jar-1.0.jar");
       }
     };
   }

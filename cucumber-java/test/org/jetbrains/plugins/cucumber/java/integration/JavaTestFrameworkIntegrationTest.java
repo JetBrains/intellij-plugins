@@ -55,7 +55,7 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
     LOG.info(
       String.format("Command '%s'\nstdout: %s\nstderr: %s", commandLine.getCommandLineString(), output.getStdout(), output.getStderr()));
   }
-  
+
   @NotNull
   @Override
   protected Module createMainModule() throws IOException {
@@ -72,7 +72,9 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
     try {
       BuildersKt.runBlocking(
         EmptyCoroutineContext.INSTANCE,
-        (scope, continuation) -> mavenProjectsManager.updateAllMavenProjects(MavenSyncSpec.incremental("JavaTestFrameworkIntegrationTest"), continuation)
+        (scope, continuation) -> {
+          return mavenProjectsManager.updateAllMavenProjects(MavenSyncSpec.incremental("JavaTestFrameworkIntegrationTest"), continuation);
+        }
       );
     }
     catch (InterruptedException e) {
@@ -84,10 +86,11 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
       String sourceUrl = VfsUtilCore.pathToUrl(getProject().getBasePath() + "/test");
       ContentEntry contentEntry = model.addContentEntry(sourceUrl);
       contentEntry.addSourceFolder(sourceUrl + "/java", true);
-      
+
       CompilerModuleExtension moduleExtension = model.getModuleExtension(CompilerModuleExtension.class);
       moduleExtension.inheritCompilerOutputPath(false);
-      moduleExtension.setCompilerOutputPathForTests(VfsUtilCore.pathToUrl(getProject().getBasePath()  + File.separator + "target" + File.separator + "test-classes"));
+      moduleExtension.setCompilerOutputPathForTests(
+        VfsUtilCore.pathToUrl(getProject().getBasePath() + File.separator + "target" + File.separator + "test-classes"));
     });
 
     return module;
@@ -109,8 +112,9 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
   protected void doTest(@NotNull String expectedTreeOfTests) throws ExecutionException, InterruptedException {
     String mavenHomePath = System.getenv("maven.path");
     if (mavenHomePath == null) {
-      mavenHomePath  = "mvn";
-    } else {
+      mavenHomePath = "mvn";
+    }
+    else {
       mavenHomePath += "/bin/mvn";
     }
 
@@ -127,6 +131,6 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
     SMTRunnerTestTreeView smtRunnerTestTreeView = UITestUtil.getTreeOfTests(runContentDescriptor);
     assertTreeEqual(smtRunnerTestTreeView, expectedTreeOfTests);
   }
-  
+
   protected abstract RunConfiguration getRunConfiguration();
 }

@@ -12,6 +12,9 @@ public class GherkinInplaceRenameTest extends BasePlatformTestCase {
 
   // IDEA-107390
   public void ignore_testRenameStep_1() {
+    // Renaming steps must be implemented by a language plugin (like cucumber-java),
+    // because renaming step usage doesn't make sense if the corresponding step definition
+    // isn't also updated.
     doTest("I ask whether it's weekend");
   }
 

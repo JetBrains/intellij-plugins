@@ -29,8 +29,8 @@ public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
 
   private ResolveResult[] getResolveResult(@NotNull String step) {
     final PsiReference reference = findReferenceBySignature(step);
-    if (reference instanceof PsiPolyVariantReference) {
-      return ((PsiPolyVariantReference) reference).multiResolve(true);
+    if (reference instanceof PsiPolyVariantReference polyVariantReference) {
+      return polyVariantReference.multiResolve(true);
     }
     return new ResolveResult[] {new PsiElementResolveResult(reference.resolve())};
   }

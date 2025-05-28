@@ -84,7 +84,7 @@ public abstract class CucumberJavaIntegrationTest extends JavaTestFrameworkInteg
 
   @Override
   protected RunConfiguration getRunConfiguration() {
-    CucumberJavaFeatureRunConfigurationProducer runConfigurationProducer =  new CucumberJavaFeatureRunConfigurationProducer();
+    CucumberJavaFeatureRunConfigurationProducer runConfigurationProducer = new CucumberJavaFeatureRunConfigurationProducer();
     PsiElement element = PlatformTestUtil.findElementBySignature("my feature", "src/test/resources/test.feature", getProject());
     return PlatformTestUtil.getRunConfiguration(element, runConfigurationProducer);
   }

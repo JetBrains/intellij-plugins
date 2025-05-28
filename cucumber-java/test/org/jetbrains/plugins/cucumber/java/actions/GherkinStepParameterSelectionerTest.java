@@ -22,7 +22,7 @@ public class GherkinStepParameterSelectionerTest extends CucumberCodeInsightTest
   public void testScenarioStepWithTag() {
     doTest();
   }
-  
+
   private void doTest() {
     CodeInsightTestUtil.doWordSelectionTestOnDirectory(myFixture, getTestName(true), "feature");
   }
@@ -31,8 +31,8 @@ public class GherkinStepParameterSelectionerTest extends CucumberCodeInsightTest
   protected String getBasePath() {
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "selectWord";
   }
-  
-    @Override
+
+  @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
