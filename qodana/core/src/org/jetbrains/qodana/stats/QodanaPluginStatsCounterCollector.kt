@@ -246,23 +246,20 @@ internal object QodanaPluginStatsCounterCollector : CounterUsagesCollector() {
   // Github Workflow Promo
   // --------------------
 
-  private val GITHUB_PROMO_CREATE_WORKFLOW_EVENT = EventFields.Enum<GithubPromoCreateWorkflowEvent>("event")
+  private val GITHUB_PROMO_CREATE_WORKFLOW_QODANA_EXISTS_FIELD = EventFields.Boolean("qodana_exists")
   @JvmField
   val GITHUB_PROMO_CREATE_WORKFLOW = GROUP.registerEvent(
-    "qodana_github_promo_create_workflow",
-    GITHUB_PROMO_CREATE_WORKFLOW_EVENT
+    "qodana.github.promo.create.workflow",
+    GITHUB_PROMO_CREATE_WORKFLOW_QODANA_EXISTS_FIELD
   )
 
   @JvmField
-  val GITHUB_PROMO_EXPLORE = GROUP.registerEvent("qodana_github_promo_explore")
+  val GITHUB_PROMO_EXPLORE = GROUP.registerEvent("qodana.github.promo.explore")
 
   @JvmField
-  val GITHUB_PROMO_DISMISSED = GROUP.registerEvent("qodana_github_promo_dismissed")
-
-
-  private val GITHUB_PROMO_NOTIFICATION_CREATION_EVENT = EventFields.Enum<GithubPromoNotificationCreation>("event")
+  val GITHUB_PROMO_DISMISSED = GROUP.registerEvent("qodana.github.promo.dismissed")
   @JvmField
-  val GITHUB_PROMO_NOTIFICATION_CREATION = GROUP.registerEvent("qodana_github_promo_notification_creation", GITHUB_PROMO_NOTIFICATION_CREATION_EVENT)
+  val GITHUB_PROMO_NOTIFICATION_SHOWN = GROUP.registerEvent("qodana.github.promo.notification.creation")
 }
 
 internal enum class OpenInIdeProtocol {
@@ -488,10 +485,10 @@ fun logGithubPromoDismissed(project: Project) {
   QodanaPluginStatsCounterCollector.GITHUB_PROMO_DISMISSED.log(project)
 }
 
-fun logGithubPromoAddQodanaWorkflowEvent(project: Project, event: GithubPromoCreateWorkflowEvent) {
-  QodanaPluginStatsCounterCollector.GITHUB_PROMO_CREATE_WORKFLOW.log(project, event)
+fun logGithubPromoAddQodanaWorkflowEvent(project: Project, qodanaPresent: Boolean) {
+  QodanaPluginStatsCounterCollector.GITHUB_PROMO_CREATE_WORKFLOW.log(project, qodanaPresent)
 }
 
-fun logGithubPromoNotificationCreationEvent(project: Project, event: GithubPromoNotificationCreation) {
-  QodanaPluginStatsCounterCollector.GITHUB_PROMO_NOTIFICATION_CREATION.log(project, event)
+fun logGithubPromoNotificationShown(project: Project) {
+  QodanaPluginStatsCounterCollector.GITHUB_PROMO_NOTIFICATION_SHOWN.log(project)
 }
