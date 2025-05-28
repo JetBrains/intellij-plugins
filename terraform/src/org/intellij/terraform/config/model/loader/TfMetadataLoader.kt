@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -278,7 +278,7 @@ class TfMetadataLoader {
       type = schemasNode.string("type") ?: "unknown"
       version = schemasNode.string(".schema_version") ?: "1"
     }
-    // Investigate why we have 9 Loaders, but we take the first one,
+    // IJPL-189614 Investigate why we have 9 Loaders, but we take the first one,
     // for example, if we comment ProviderLoaderV2() and ProviderLoaderV1() no tests will fail
     val loader = loaders.find {
       it.isSupportedType(type) && it.isSupportedVersion(version)

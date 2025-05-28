@@ -218,7 +218,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
     ) {
       val module = getTerraformModule(variable) ?: return
 
-      val ephemeraResources = module.getDefinedEphemeralResource()
+      val ephemeraResources = module.getDefinedEphemeralResources()
       val types = ephemeraResources.mapNotNull { it.getNameElementUnquoted(1) }.toSortedSet()
       result.addAllElements(types.map { create(it) })
     }
@@ -317,7 +317,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
           result.addAllElements(dataSources.mapNotNull { it.getNameElementUnquoted(2) }.map { create(it) })
         }
         if (IlseEphemeralResource.accepts(parent)) {
-          val ephemeraResources = module.getDefinedEphemeralResource(expression.name, null)
+          val ephemeraResources = module.getDefinedEphemeralResources(expression.name, null)
           result.addAllElements(ephemeraResources.mapNotNull { it.getNameElementUnquoted(2) }.map { create(it) })
         }
         else if (IlseOpenTofuKeyProvider.accepts(parent)) {

@@ -284,7 +284,7 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return getDefinedHclBlocks(HCL_DATASOURCE_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
   }
 
-  fun getDefinedEphemeralResource(type: String? = null, name: String? = null): List<HCLBlock> {
+  fun getDefinedEphemeralResources(type: String? = null, name: String? = null): List<HCLBlock> {
     return getDefinedHclBlocks(HCL_EPHEMERAL_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
   }
 

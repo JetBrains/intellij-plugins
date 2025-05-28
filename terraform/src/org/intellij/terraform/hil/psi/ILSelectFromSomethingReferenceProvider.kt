@@ -116,7 +116,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
     if (HILPatterns.IlseEphemeralResource.accepts(parent)) {
       return arrayOf(HCLElementLazyReference(element, false) { _, _ ->
         val module = this.element.getHCLHost()?.getTerraformModule()
-        val ephemeralResource = module?.getDefinedEphemeralResource(ev, getSelectFieldText(element)) ?: emptyList()
+        val ephemeralResource = module?.getDefinedEphemeralResources(ev, getSelectFieldText(element)) ?: emptyList()
         ephemeralResource
       })
     }
