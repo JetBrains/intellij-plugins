@@ -484,6 +484,19 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
     """)
   }
 
+  fun testContentAfterScriptBlock() {
+    doTestAstro("""
+      <div></div>
+      <script>const a = 12</script>
+      <style>
+        div { margin: 0; }
+      </style>
+      <style>
+        p { margin: 0; }
+      </style>
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
     addExplicitExtension(LanguageParserDefinitions.INSTANCE, AstroFrontmatterLanguage.INSTANCE, TypeScriptParserDefinition())

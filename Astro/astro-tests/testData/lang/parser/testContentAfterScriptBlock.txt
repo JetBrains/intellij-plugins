@@ -1,0 +1,52 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    HtmlTag:script
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
+      JSEmbeddedContent:JS:TS_EMBEDDED_CONTENT
+        JSVarStatement
+          JSAttributeList
+            <empty list>
+          PsiElement(JS:CONST_KEYWORD)('const')
+          PsiWhiteSpace(' ')
+          TypeScriptVariable
+            PsiElement(JS:IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:EQ)('=')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    AstroTag:style
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('style')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('\n  div { margin: 0; }\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('style')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    AstroTag:style
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('style')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('\n  p { margin: 0; }\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('style')
+      XmlToken:XML_TAG_END('>')
