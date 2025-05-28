@@ -273,14 +273,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
     private fun getProviderLookup(provider: ProviderType): LookupElement = create(provider.type).withTypeText(provider.fullName)
       .withInsertHandler { context, item ->
         val project = context.project
-        val elementGenerator = TfElementGenerator(project)
-        val providerObject = elementGenerator.createObject(
-          mapOf(
-            "source" to "\"${provider.fullName}\"",
-            "version" to "\"${provider.version}\""
-          )
-        )
-        val providerProperty = elementGenerator.createObjectProperty(provider.type, providerObject.text)
+        val providerProperty = TfElementGenerator(project).createRequiredProviderProperty(provider)
         val document = context.document
         document.replaceString(context.startOffset, context.tailOffset, providerProperty.text)
         PsiDocumentManager.getInstance(project).commitDocument(document)

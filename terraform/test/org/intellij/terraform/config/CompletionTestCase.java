@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config;
 
 import com.intellij.codeInsight.completion.CompletionType;
@@ -7,7 +7,6 @@ import com.intellij.lang.Language;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.BooleanFunction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -16,7 +15,6 @@ import java.util.function.Predicate;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class CompletionTestCase extends BasePlatformTestCase {
   protected int myCompleteInvocationCount = 1;
 
@@ -31,7 +29,7 @@ public abstract class CompletionTestCase extends BasePlatformTestCase {
   }
 
   protected void doTheOnlyVariantCompletionTest(String textBefore, String textAfter, Boolean itemAutoCompleted) {
-    final PsiFile psiFile = myFixture.configureByText(getFileName(), textBefore);
+    myFixture.configureByText(getFileName(), textBefore);
     final LookupElement[] variants = myFixture.completeBasic();
     if (itemAutoCompleted) {
       assertNull(variants);
@@ -61,8 +59,34 @@ public abstract class CompletionTestCase extends BasePlatformTestCase {
     assertTrue("Matcher expected to return true", matcher.test(strings));
   }
 
+  @NotNull
+  protected Predicate<Collection<String>> getPartialMatcher(final int expectedAllSize, final String... expectedPart) {
+    return strings -> {
+      then(strings)
+        .contains(expectedPart)
+        .hasSize(expectedAllSize);
+      return true;
+    };
+  }
+
+  @NotNull
+  protected Predicate<Collection<String>> getPartialMatcher(final String... expectedPart) {
+    return strings -> {
+      then(strings).contains(expectedPart);
+      return true;
+    };
+  }
+
+  @NotNull
+  protected Predicate<Collection<String>> getPartialMatcher(final Collection<String> expectedPart) {
+    return strings -> {
+      then(strings).containsAll(expectedPart);
+      return true;
+    };
+  }
+
   public static abstract class Matcher implements Predicate<Collection<String>> {
-    public static Matcher and(final Matcher first, final Matcher second, final Matcher... rest){
+    public static Matcher and(final Matcher first, final Matcher second, final Matcher... rest) {
       return new Matcher() {
         @Override
         public boolean test(Collection<String> strings) {
@@ -95,39 +119,5 @@ public abstract class CompletionTestCase extends BasePlatformTestCase {
         }
       };
     }
-  }
-
-  @NotNull
-  protected BooleanFunction<Collection<String>> getExactMatcher(final String... expectedPart) {
-    return strings -> {
-      then(strings).containsOnly(expectedPart);
-      return true;
-    };
-  }
-
-  @NotNull
-  protected Predicate<Collection<String>> getPartialMatcher(final String... expectedPart) {
-    return strings -> {
-      then(strings).contains(expectedPart);
-      return true;
-    };
-  }
-
-  @NotNull
-  protected Predicate<Collection<String>> getPartialMatcher(final Collection<String> expectedPart) {
-    return strings -> {
-      then(strings).containsAll(expectedPart);
-      return true;
-    };
-  }
-
-  @NotNull
-  protected Predicate<Collection<String>> getPartialMatcher(final int expectedAllSize, final String... expectedPart) {
-    return strings -> {
-      then(strings)
-          .contains(expectedPart)
-          .hasSize(expectedAllSize);
-      return true;
-    };
   }
 }

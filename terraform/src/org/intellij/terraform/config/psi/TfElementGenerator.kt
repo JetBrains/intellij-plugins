@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.psi
 
 import com.intellij.openapi.project.Project
@@ -10,15 +10,12 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.Type
-import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLElement
-import org.intellij.terraform.hcl.psi.HCLElementGenerator
-import org.intellij.terraform.hcl.psi.HCLLiteral
-import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.ILLiteralExpression
-import java.util.Locale
+import java.util.*
 
 class TfElementGenerator(val project: Project) : HCLElementGenerator(project) {
 
@@ -60,7 +57,7 @@ class TfElementGenerator(val project: Project) : HCLElementGenerator(project) {
     return file.firstChild as HCLBlock
   }
 
-  fun createObjectProperty(name: String, value: String): HCLProperty {
+  private fun createObjectProperty(name: String, value: String): HCLProperty {
     val s = """
       $name = $value
     """.trimIndent()
@@ -68,6 +65,15 @@ class TfElementGenerator(val project: Project) : HCLElementGenerator(project) {
     return file.childrenOfType<HCLProperty>().first()
   }
 
+  fun createRequiredProviderProperty(provider: ProviderType): HCLProperty {
+    val providerObject = createObject(
+      mapOf(
+        "source" to "\"${provider.fullName}\"",
+        "version" to "\"${provider.version}\""
+      )
+    )
+    return createObjectProperty(provider.type, providerObject.text)
+  }
 
   fun createVariable(name: String, type: Type?, initializer: ILExpression): HCLBlock {
     // TODO: Improve

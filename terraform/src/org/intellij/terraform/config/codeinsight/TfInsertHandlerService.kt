@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase
@@ -94,7 +94,7 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
   }
 
   private suspend fun addHCLBlockRequiredProperties(project: Project, pointer: SmartPsiElementPointer<HCLBlock>) {
-    var hasChanges: Boolean = false
+    var hasChanges = false
     withBackgroundProgress(project, HCLBundle.message("progress.title.adding.required.properties"), true) {
       do {
         readAndEdtWriteAction {
@@ -138,12 +138,8 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
     }?: terraformBlock.`object`
       ?.addBefore(elementGenerator.createBlock(HCL_TERRAFORM_REQUIRED_PROVIDERS), terraformBlock.`object`?.lastChild)) as HCLBlock
 
-    val providerObject = elementGenerator.createObject(mapOf("source" to "\"${provider.fullName}\"", "version" to "\"${provider.version}\""))
-    val providerProperty = elementGenerator.createObjectProperty(provider.type, providerObject.text)
-
+    val providerProperty = elementGenerator.createRequiredProviderProperty(provider)
     requiredProvidersBlock.`object`?.addBefore(providerProperty, requiredProvidersBlock.`object`?.lastChild)
     CodeStyleManager.getInstance(project).reformatText(file, listOf(terraformBlock.textRange), true)
   }
-
-
 }
