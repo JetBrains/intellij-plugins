@@ -9,14 +9,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.declarations.WebSymbolDeclaration
+import com.intellij.webSymbols.declarations.PolySymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.entities.Angular2EntitiesProvider
 
 class Angular2DirectiveAttributeDeclarationProvider : WebSymbolDeclarationProvider {
 
-  override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<WebSymbolDeclaration> {
+  override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<PolySymbolDeclaration> {
     if (element !is JSLiteralExpression || !element.isStringLiteral || element.parent !is JSArgumentList)
       return emptyList()
 
@@ -34,7 +34,7 @@ class Angular2DirectiveAttributeDeclarationProvider : WebSymbolDeclarationProvid
     }
   }
 
-  override fun getEquivalentDeclarations(element: PsiElement, offsetInElement: Int, target: PolySymbol): Collection<WebSymbolDeclaration> {
+  override fun getEquivalentDeclarations(element: PsiElement, offsetInElement: Int, target: PolySymbol): Collection<PolySymbolDeclaration> {
     return JSBuiltInTypeEngineEvaluation.forceBuiltInTypeEngineIfNeeded(element, target.psiContext) {
       super.getEquivalentDeclarations(element, offsetInElement, target)
     }

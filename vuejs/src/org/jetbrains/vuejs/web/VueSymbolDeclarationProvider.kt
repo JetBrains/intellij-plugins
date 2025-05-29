@@ -11,7 +11,7 @@ import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_EVENTS
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.PolySymbolQualifiedName
-import com.intellij.webSymbols.declarations.WebSymbolDeclaration
+import com.intellij.webSymbols.declarations.PolySymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
@@ -25,7 +25,7 @@ import org.jetbrains.vuejs.model.source.VueCompositionApp
 
 class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
 
-  override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<WebSymbolDeclaration> {
+  override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<PolySymbolDeclaration> {
     val literal = element as? JSLiteralExpression ?: return emptyList()
     val name = getTextIfLiteral(literal) ?: return emptyList()
 
@@ -68,7 +68,7 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
   private class VueSymbolDeclaration(
     private val symbol: PolySymbol,
     private val literal: JSLiteralExpression,
-  ) : WebSymbolDeclaration {
+  ) : PolySymbolDeclaration {
 
     override fun getDeclaringElement(): PsiElement =
       literal

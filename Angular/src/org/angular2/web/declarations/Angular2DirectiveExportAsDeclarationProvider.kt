@@ -5,13 +5,13 @@ import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.webSymbols.declarations.WebSymbolDeclaration
+import com.intellij.webSymbols.declarations.PolySymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2EntitiesProvider
 
 class Angular2DirectiveExportAsDeclarationProvider : WebSymbolDeclarationProvider {
-  override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<WebSymbolDeclaration> =
+  override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<PolySymbolDeclaration> =
     if (Angular2DecoratorUtil.isLiteralInNgDecorator(element, Angular2DecoratorUtil.EXPORT_AS_PROP,
                                                      Angular2DecoratorUtil.COMPONENT_DEC, Angular2DecoratorUtil.DIRECTIVE_DEC))
       JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) {

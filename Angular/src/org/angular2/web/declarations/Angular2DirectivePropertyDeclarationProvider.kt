@@ -4,7 +4,7 @@ package org.angular2.web.declarations
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.psi.PsiElement
-import com.intellij.webSymbols.declarations.WebSymbolDeclaration
+import com.intellij.webSymbols.declarations.PolySymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
@@ -14,7 +14,7 @@ import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferen
 
 class Angular2DirectivePropertyDeclarationProvider : WebSymbolDeclarationProvider {
 
-  override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<WebSymbolDeclaration> {
+  override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<PolySymbolDeclaration> {
     if (element !is JSLiteralExpression || !element.isStringLiteral)
       return emptyList()
 
