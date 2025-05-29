@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.webSymbols
 
-import com.intellij.javascript.webSymbols.decorateWithSymbolType
+import com.intellij.javascript.polySymbols.decorateWithSymbolType
 import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbolQualifiedKind

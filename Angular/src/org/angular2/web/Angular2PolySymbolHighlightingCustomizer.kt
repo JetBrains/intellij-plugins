@@ -1,6 +1,6 @@
 package org.angular2.web
 
-import com.intellij.javascript.webSymbols.jsKind
+import com.intellij.javascript.polySymbols.jsKind
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.model.psi.PsiExternalReferenceHost

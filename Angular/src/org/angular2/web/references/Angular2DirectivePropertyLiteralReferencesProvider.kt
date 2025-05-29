@@ -2,8 +2,8 @@
 package org.angular2.web.references
 
 import com.intellij.javascript.JSBuiltInTypeEngineEvaluation
-import com.intellij.javascript.webSymbols.symbols.asPolySymbol
-import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
+import com.intellij.javascript.polySymbols.symbols.asPolySymbol
+import com.intellij.javascript.polySymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue

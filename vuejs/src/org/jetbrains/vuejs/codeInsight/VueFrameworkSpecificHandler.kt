@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
-import com.intellij.javascript.webSymbols.jsType
+import com.intellij.javascript.polySymbols.jsType
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.*

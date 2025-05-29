@@ -1,8 +1,8 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.webSymbols.symbols
 
-import com.intellij.javascript.webSymbols.jsType
-import com.intellij.javascript.webSymbols.symbols.JSPropertySymbol
+import com.intellij.javascript.polySymbols.jsType
+import com.intellij.javascript.polySymbols.symbols.JSPropertySymbol
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer

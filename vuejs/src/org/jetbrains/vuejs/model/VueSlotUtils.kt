@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
-import com.intellij.javascript.webSymbols.jsType
+import com.intellij.javascript.polySymbols.jsType
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.StubSafe

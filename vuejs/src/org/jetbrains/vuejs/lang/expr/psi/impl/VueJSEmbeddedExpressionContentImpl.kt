@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.lang.expr.psi.impl
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
-import com.intellij.javascript.webSymbols.jsType
+import com.intellij.javascript.polySymbols.jsType
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.lang.injection.InjectedLanguageManager

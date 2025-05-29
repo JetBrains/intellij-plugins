@@ -2,7 +2,7 @@
 package org.angular2.entities.metadata.psi
 
 import com.intellij.javascript.web.js.WebJSTypesUtil.wrapWithUndefinedIfOptional
-import com.intellij.javascript.webSymbols.apiStatus
+import com.intellij.javascript.polySymbols.apiStatus
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSRecordType

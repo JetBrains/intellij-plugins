@@ -1,7 +1,7 @@
 package org.angular2.web.scopes
 
-import com.intellij.javascript.webSymbols.decorateWithJsKindIcon
-import com.intellij.javascript.webSymbols.decorateWithSymbolType
+import com.intellij.javascript.polySymbols.decorateWithJsKindIcon
+import com.intellij.javascript.polySymbols.decorateWithSymbolType
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiFile

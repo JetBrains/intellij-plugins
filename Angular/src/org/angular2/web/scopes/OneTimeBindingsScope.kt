@@ -3,8 +3,8 @@ package org.angular2.web.scopes
 
 import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
-import com.intellij.javascript.webSymbols.jsType
-import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
+import com.intellij.javascript.polySymbols.jsType
+import com.intellij.javascript.polySymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
