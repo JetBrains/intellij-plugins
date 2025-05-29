@@ -10,11 +10,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.declarations.PolySymbolDeclaration
-import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
+import com.intellij.webSymbols.declarations.PolySymbolDeclarationProvider
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.entities.Angular2EntitiesProvider
 
-class Angular2DirectiveAttributeDeclarationProvider : WebSymbolDeclarationProvider {
+class Angular2DirectiveAttributeDeclarationProvider : PolySymbolDeclarationProvider {
 
   override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<PolySymbolDeclaration> {
     if (element !is JSLiteralExpression || !element.isStringLiteral || element.parent !is JSArgumentList)

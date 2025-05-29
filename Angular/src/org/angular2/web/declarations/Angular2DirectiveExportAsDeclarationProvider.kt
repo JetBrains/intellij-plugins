@@ -6,11 +6,11 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.webSymbols.declarations.PolySymbolDeclaration
-import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
+import com.intellij.webSymbols.declarations.PolySymbolDeclarationProvider
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2EntitiesProvider
 
-class Angular2DirectiveExportAsDeclarationProvider : WebSymbolDeclarationProvider {
+class Angular2DirectiveExportAsDeclarationProvider : PolySymbolDeclarationProvider {
   override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<PolySymbolDeclaration> =
     if (Angular2DecoratorUtil.isLiteralInNgDecorator(element, Angular2DecoratorUtil.EXPORT_AS_PROP,
                                                      Angular2DecoratorUtil.COMPONENT_DEC, Angular2DecoratorUtil.DIRECTIVE_DEC))

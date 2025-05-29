@@ -12,7 +12,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_EVENTS
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.declarations.PolySymbolDeclaration
-import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
+import com.intellij.webSymbols.declarations.PolySymbolDeclarationProvider
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -23,7 +23,7 @@ import org.jetbrains.vuejs.model.source.DEFINE_EMITS_FUN
 import org.jetbrains.vuejs.model.source.EMITS_PROP
 import org.jetbrains.vuejs.model.source.VueCompositionApp
 
-class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
+class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
 
   override fun getDeclarations(element: PsiElement, offsetInElement: Int): Collection<PolySymbolDeclaration> {
     val literal = element as? JSLiteralExpression ?: return emptyList()

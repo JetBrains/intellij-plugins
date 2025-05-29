@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
-import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
+import com.intellij.webSymbols.declarations.PolySymbolDeclarationProvider
 import org.jetbrains.vuejs.context.isVueContext
 
 class VueRenameHandlerVeto : Condition<PsiElement> {
@@ -15,6 +15,6 @@ class VueRenameHandlerVeto : Condition<PsiElement> {
     return t is JSImplicitElement &&
            t.parent is JSLiteralExpression &&
            isVueContext(t) &&
-           WebSymbolDeclarationProvider.getAllDeclarations(t.parent, -1).isNotEmpty()
+           PolySymbolDeclarationProvider.getAllDeclarations(t.parent, -1).isNotEmpty()
   }
 }
