@@ -1,8 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.scopes
 
-import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
-import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.PolySymbolsHtmlQueryConfigurator
+import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
 import com.intellij.javascript.polySymbols.jsType
 import com.intellij.javascript.polySymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation

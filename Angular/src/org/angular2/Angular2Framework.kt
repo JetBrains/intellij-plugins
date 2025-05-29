@@ -1,10 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
-import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
-import com.intellij.html.webSymbols.attributes.PolySymbolHtmlAttributeInfo
-import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
-import com.intellij.html.webSymbols.elements.PolySymbolHtmlElementInfo
+import com.intellij.html.polySymbols.attributes.PolySymbolAttributeDescriptor
+import com.intellij.html.polySymbols.attributes.PolySymbolHtmlAttributeInfo
+import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.elements.PolySymbolHtmlElementInfo
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.lang.Language

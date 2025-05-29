@@ -1,9 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight
 
-import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
-import com.intellij.html.webSymbols.PolySymbolsXmlExtension
-import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.PolySymbolsHtmlQueryConfigurator
+import com.intellij.html.polySymbols.PolySymbolsXmlExtension
+import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
 import com.intellij.javascript.web.WebFramework
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.vfs.VfsUtilCore

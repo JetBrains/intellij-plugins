@@ -1,9 +1,9 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.tags
 
-import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
-import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
-import com.intellij.html.webSymbols.elements.PolySymbolHtmlElementInfo
+import com.intellij.html.polySymbols.PolySymbolsHtmlQueryConfigurator
+import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.elements.PolySymbolHtmlElementInfo
 import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider

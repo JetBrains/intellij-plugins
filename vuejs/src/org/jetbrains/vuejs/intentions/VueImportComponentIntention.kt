@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.intentions
 
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
-import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
 import com.intellij.lang.javascript.intentions.JavaScriptIntention
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.openapi.editor.Editor

@@ -1,8 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
-import com.intellij.html.webSymbols.PolySymbolsXmlExtension
-import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.PolySymbolsXmlExtension
+import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
