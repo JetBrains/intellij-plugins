@@ -37,7 +37,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_SPECIAL_PROPERTIES
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.asWebSymbol
+import org.jetbrains.vuejs.web.asPolySymbol
 
 private const val SLOT_LOCAL_COMPONENT = "\$local"
 
@@ -50,7 +50,7 @@ class VueSlotElementScope(tag: XmlTag)
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     VueModelManager.findEnclosingContainer(dataHolder)
-      .asWebSymbol(SLOT_LOCAL_COMPONENT, VueModelVisitor.Proximity.LOCAL)
+      .asPolySymbol(SLOT_LOCAL_COMPONENT, VueModelVisitor.Proximity.LOCAL)
       ?.let(consumer)
 
     consumer(VueSlotPropertiesSymbol(getSlotName()))

@@ -41,7 +41,7 @@ class VueComponentSymbol(
     get() = (item as? VueRegularComponent)?.nameElement ?: item.rawSource
 
   override val priority: PolySymbol.Priority
-    get() = vueProximity.asWebSymbolPriority()
+    get() = vueProximity.asPolySymbolPriority()
 
   override fun equals(other: Any?): Boolean =
     super.equals(other)

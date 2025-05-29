@@ -204,7 +204,7 @@
 
     <!--suppress PluginXmlValidity -->
     <multiHostInjector implementation="org.jetbrains.vuejs.editor.VueInjector"
-                       order="before JSConfigurationInjector, before WebSymbolsHtmlText, after TemporaryPlacesInjector"
+                       order="before JSConfigurationInjector, before PolySymbolsHtmlText, after TemporaryPlacesInjector"
                        id="VueInjector"/>
 
     <internalFileTemplate name="Vue Composition API Component"/>

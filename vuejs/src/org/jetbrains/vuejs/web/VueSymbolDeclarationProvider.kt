@@ -34,7 +34,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
         // "createApp()" syntax support
         val callExpr = parent.parent as? JSCallExpression ?: return emptyList()
         VueCompositionApp.getVueElement(callExpr)
-          ?.asWebSymbol(name, VueModelVisitor.Proximity.APP)
+          ?.asPolySymbol(name, VueModelVisitor.Proximity.APP)
       }
       is JSArrayLiteralExpression -> {
         when (val grandparent = parent.parent) {
@@ -50,7 +50,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
           else -> null
         }
           ?.let { VueModelManager.findEnclosingComponent(it) }
-          ?.asWebSymbol("", VueModelVisitor.Proximity.LOCAL)
+          ?.asPolySymbol("", VueModelVisitor.Proximity.LOCAL)
           ?.getMatchingSymbols(PolySymbolQualifiedName(NAMESPACE_JS, KIND_JS_EVENTS, name),
                                PolySymbolsNameMatchQueryParams.create(PolySymbolsQueryExecutorFactory.create(parent, false)),
                                Stack())

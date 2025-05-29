@@ -47,7 +47,7 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
       if (attributeInfo is VueAttributeNameParser.VueDirectiveInfo &&
           attributeInfo.directiveKind == VueAttributeNameParser.VueDirectiveKind.ON) {
-        return if (isMethodHandler(element)) getWebSymbolType(attribute) else null
+        return if (isMethodHandler(element)) getPolySymbolType(attribute) else null
       }
       if (tagName == SLOT_TAG_NAME &&
           attributeInfo is VueAttributeNameParser.VueDirectiveInfo &&
@@ -87,6 +87,6 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
            element is JSFunctionExpression
   }
 
-  private fun getWebSymbolType(attribute: XmlAttribute) =
+  private fun getPolySymbolType(attribute: XmlAttribute) =
     attribute.descriptor.asSafely<PolySymbolAttributeDescriptor>()?.symbol?.jsType
 }

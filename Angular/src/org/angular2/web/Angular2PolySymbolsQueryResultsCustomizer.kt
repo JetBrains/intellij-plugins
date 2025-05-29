@@ -163,7 +163,7 @@ class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val 
           ?: list
         }
 
-      // We need to remap matches within WebSymbolMatch, as the selector symbols are nested at this point
+      // We need to remap matches within PolySymbolMatch, as the selector symbols are nested at this point
       mapNotNull {
         if (it is PolySymbolMatch) {
           val newSegments = it.nameSegments.mapNotNull { segment ->

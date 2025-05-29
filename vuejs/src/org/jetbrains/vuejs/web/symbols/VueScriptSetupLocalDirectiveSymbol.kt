@@ -16,7 +16,7 @@ import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
-import org.jetbrains.vuejs.web.asWebSymbolPriority
+import org.jetbrains.vuejs.web.asPolySymbolPriority
 
 class VueScriptSetupLocalDirectiveSymbol(
   directive: VueScriptSetupLocalDirective,
@@ -27,7 +27,7 @@ class VueScriptSetupLocalDirectiveSymbol(
     get() = VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
 
   override val priority: PolySymbol.Priority
-    get() = vueProximity.asWebSymbolPriority()
+    get() = vueProximity.asPolySymbolPriority()
 
   override fun isEquivalentTo(symbol: Symbol): Boolean {
     val target = PsiSymbolService.getInstance().extractElementFromSymbol(symbol)

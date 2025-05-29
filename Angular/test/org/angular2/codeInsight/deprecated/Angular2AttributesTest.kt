@@ -54,7 +54,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
-    // Let's ensure we don't get WebSymbols registry stack overflows randomly
+    // Let's ensure we don't get PolySymbols registry stack overflows randomly
     this.enableIdempotenceChecksOnEveryCache()
   }
 
@@ -66,11 +66,11 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     return myFixture.resolveReference(signature)
   }
 
-  private fun resolveWebSymbolReference(signature: String): PolySymbol {
+  private fun resolvePolySymbolReference(signature: String): PolySymbol {
     return myFixture.resolvePolySymbolReference(signature)
   }
 
-  private fun resolveToWebSymbolSource(signature: String): PsiElement {
+  private fun resolveToPolySymbolSource(signature: String): PsiElement {
     return myFixture.resolveToPolySymbolSource(signature)
   }
 
@@ -191,7 +191,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testBindingResolve2TypeScript() {
     myFixture.configureByFiles("object_binding.after.html", "package.json", "object.ts")
-    val resolve = resolveToWebSymbolSource("[mod<caret>el]")
+    val resolve = resolveToPolySymbolSource("[mod<caret>el]")
     assertEquals("object.ts", resolve.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
   }
@@ -225,7 +225,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testBindingResolveViaBase2TypeScript() {
     myFixture.configureByFiles("object_binding_via_base.after.html", "package.json", "inheritor.ts", "object.ts")
-    val resolve = resolveToWebSymbolSource("[mod<caret>el]")
+    val resolve = resolveToPolySymbolSource("[mod<caret>el]")
     assertEquals("object.ts", resolve.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
   }
@@ -244,7 +244,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testBindingAttributeResolve2TypeScript() {
     myFixture.configureByFiles("attribute_binding.after.html", "package.json", "object.ts")
-    val resolve = resolveToWebSymbolSource("[mod<caret>el]")
+    val resolve = resolveToPolySymbolSource("[mod<caret>el]")
     assertEquals("object.ts", resolve.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
   }
@@ -264,7 +264,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testOneTimeBindingAttributeResolve2TypeScript() {
     myFixture.configureByFiles("attribute_one_time_binding.after.html", "package.json", "object.ts")
-    val resolve = resolveToWebSymbolSource("one<caret>TimeList")
+    val resolve = resolveToPolySymbolSource("one<caret>TimeList")
     assertEquals("object.ts", resolve.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
   }
@@ -292,7 +292,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testBindingAttributeFunctionResolve2TypeScript() {
     myFixture.configureByFiles("attribute_binding.after.html", "package.json", "object_with_function.ts")
-    val resolve = resolveToWebSymbolSource("[mod<caret>el]")
+    val resolve = resolveToPolySymbolSource("[mod<caret>el]")
     assertEquals("object_with_function.ts", resolve.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(resolve, JSFunction::class.java)
   }
@@ -305,7 +305,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testEventHandlerResolve2TypeScript() {
     myFixture.configureByFiles("object_event.after.html", "package.json", "object.ts")
-    val resolve = resolveToWebSymbolSource("(co<caret>mplete)")
+    val resolve = resolveToPolySymbolSource("(co<caret>mplete)")
     assertEquals("object.ts", resolve.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(resolve, JSField::class.java)
   }
@@ -326,7 +326,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testForOfResolve2Typescript() {
     myFixture.configureByFiles("for2.html", "ng_for_of.ts", "package.json")
-    val resolve = resolveWebSymbolReference("ngF<caret>")
+    val resolve = resolvePolySymbolReference("ngF<caret>")
     assertEquals("ng_for_of.ts", resolve.psiContext!!.getContainingFile().getName())
     assertEquals("ngFor", resolve.name)
     assertEquals("@Directive({selector: '[ngFor][ngForOf]'})", Angular2TestUtil.getDirectiveDefinitionText(resolve.psiContext))
@@ -451,7 +451,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testNgNoValidateReference() {
     myFixture.configureByFiles("ngNoValidate.html", "ng_no_validate_directive.ts", "package.json")
-    val resolve = resolveWebSymbolReference("ng<caret>NativeValidate")
+    val resolve = resolvePolySymbolReference("ng<caret>NativeValidate")
     UsefulTestCase.assertInstanceOf(resolve.unwrapAllDelegates(), Angular2DirectiveSelectorSymbol::class.java)
     assertEquals("ng_no_validate_directive.ts", resolve.psiContext!!.getContainingFile().getName())
   }
@@ -697,7 +697,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.completeBasic()
     myFixture.type("att\n")
     myFixture.type("acc\n")
-    val element = resolveToWebSymbolSource("[attr.ac<caret>cesskey]=\"\"")
+    val element = resolveToPolySymbolSource("[attr.ac<caret>cesskey]=\"\"")
     assertEquals("common.rnc", element.getContainingFile().getName())
   }
 
@@ -712,7 +712,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     UsefulTestCase.assertDoesntContain(myFixture.getLookupElementStrings()!!,
                                        "innerHTML]")
     myFixture.type("acc\n")
-    val element = resolveToWebSymbolSource("[attr.ac<caret>cesskey]=\"\"")
+    val element = resolveToPolySymbolSource("[attr.ac<caret>cesskey]=\"\"")
     assertEquals("common.rnc", element.getContainingFile().getName())
   }
 
@@ -725,7 +725,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     // TODO - make web-types insert ']' - should be "<div [attr.]" here
     assertEquals("<div [attr.", myFixture.getFile().getText())
     myFixture.type("aat\n")
-    val element = resolveToWebSymbolSource("[attr.aria-atomic<caret>]=\"\"")
+    val element = resolveToPolySymbolSource("[attr.aria-atomic<caret>]=\"\"")
     assertEquals("aria.rnc", element.getContainingFile().getName())
   }
 
@@ -738,7 +738,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!,
                                           "tabIndex", "innerHTML")
     myFixture.type("iH\n")
-    val element = resolveToWebSymbolSource("bind-inner<caret>HTML")
+    val element = resolveToPolySymbolSource("bind-inner<caret>HTML")
     assertEquals("lib.dom.d.ts", element.getContainingFile().getName())
   }
 
@@ -749,7 +749,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     UsefulTestCase.assertContainsElements(myFixture.getLookupElementStrings()!!,
                                           "attr.")
     myFixture.type("at\naat\n")
-    val element = resolveToWebSymbolSource("bind-attr.aria-atomic<caret>=\"\"")
+    val element = resolveToPolySymbolSource("bind-attr.aria-atomic<caret>=\"\"")
     assertEquals("aria.rnc", element.getContainingFile().getName())
   }
 
@@ -793,7 +793,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     UsefulTestCase.assertDoesntContain(myFixture.getLookupElementStrings()!!,
                                        "alt.", "meta.")
     myFixture.type("esc\n")
-    val source = resolveWebSymbolReference("on-keyup.alt.meta.<caret>escape=\"\"")
+    val source = resolvePolySymbolReference("on-keyup.alt.meta.<caret>escape=\"\"")
     assertEquals("Extended event special key", source.name)
   }
 
@@ -817,9 +817,9 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     assertEquals(mutableListOf("*appIf", "*appUnless"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()!!))
     assertEquals("multi-selector-template-bindings.ts",
-                 resolveToWebSymbolSource("*app<caret>If=").getContainingFile().getName())
+                 resolveToPolySymbolSource("*app<caret>If=").getContainingFile().getName())
     assertEquals("multi-selector-template-bindings.ts",
-                 resolveToWebSymbolSource("*app<caret>Unless=").getContainingFile().getName())
+                 resolveToPolySymbolSource("*app<caret>Unless=").getContainingFile().getName())
     assertUnresolvedReference("*app<caret>Foo=")
   }
 
@@ -943,7 +943,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   fun testI18nResolve() {
     myFixture.configureByFile("package.json")
     myFixture.configureByText("i18n.html", "<div foo='12' i18n-f<caret>oo>")
-    val source = resolveToWebSymbolSource("i18n-f<caret>oo>")
+    val source = resolveToPolySymbolSource("i18n-f<caret>oo>")
     assertEquals("foo='12'", source.getText())
   }
 

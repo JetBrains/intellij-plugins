@@ -115,9 +115,9 @@ class VuePolyTypesMergedSymbol(
         it.getMatchingSymbols(qualifiedName, params, scope)
       }
       .let { list ->
-        val psiSourcedWebSymbol = list.firstNotNullOfOrNull { it as? PsiSourcedPolySymbol }
-        if (psiSourcedWebSymbol != null) {
-          listOf(VuePolyTypesMergedSymbol(psiSourcedWebSymbol.name, psiSourcedWebSymbol, list))
+        val psiSourcedPolySymbol = list.firstNotNullOfOrNull { it as? PsiSourcedPolySymbol }
+        if (psiSourcedPolySymbol != null) {
+          listOf(VuePolyTypesMergedSymbol(psiSourcedPolySymbol.name, psiSourcedPolySymbol, list))
         }
         else {
           list
@@ -136,13 +136,13 @@ class VuePolyTypesMergedSymbol(
       .takeIf { it.isNotEmpty() }
       ?.let { list ->
         val containers = mutableListOf<PolySymbolsScope>()
-        var psiSourcedWebSymbol: PsiSourcedPolySymbol? = null
+        var psiSourcedPolySymbol: PsiSourcedPolySymbol? = null
         val polySymbols = mutableListOf<PolySymbol>()
         for (item in list) {
           when (item) {
             is PsiSourcedPolySymbol -> {
-              if (psiSourcedWebSymbol == null) {
-                psiSourcedWebSymbol = item
+              if (psiSourcedPolySymbol == null) {
+                psiSourcedPolySymbol = item
               }
               else polySymbols.add(item)
             }
@@ -150,8 +150,8 @@ class VuePolyTypesMergedSymbol(
             else -> containers.add(item)
           }
         }
-        if (psiSourcedWebSymbol != null) {
-          containers.add(VuePolyTypesMergedSymbol(psiSourcedWebSymbol.name, psiSourcedWebSymbol, polySymbols))
+        if (psiSourcedPolySymbol != null) {
+          containers.add(VuePolyTypesMergedSymbol(psiSourcedPolySymbol.name, psiSourcedPolySymbol, polySymbols))
         }
         else {
           containers.addAll(polySymbols)
@@ -173,14 +173,14 @@ class VuePolyTypesMergedSymbol(
         if (items.size == 1)
           items[0]
         else {
-          var psiSourcedWebSymbol: PsiSourcedPolySymbol? = null
+          var psiSourcedPolySymbol: PsiSourcedPolySymbol? = null
           val symbols = mutableListOf<PolySymbol>()
           items.asSequence().mapNotNull { it.symbol }.forEach {
-            if (it is PsiSourcedPolySymbol && psiSourcedWebSymbol == null)
-              psiSourcedWebSymbol = it
+            if (it is PsiSourcedPolySymbol && psiSourcedPolySymbol == null)
+              psiSourcedPolySymbol = it
             else symbols.add(it)
           }
-          psiSourcedWebSymbol?.let {
+          psiSourcedPolySymbol?.let {
             items[0].withSymbol(VuePolyTypesMergedSymbol(it.name, it, symbols))
           } ?: items[0]
         }

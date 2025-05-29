@@ -28,7 +28,7 @@ import java.io.File
 
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
-  private fun resolveToWebSymbolSourceContext(signature: String): PsiElement {
+  private fun resolveToPolySymbolSourceContext(signature: String): PsiElement {
     return myFixture.resolvePolySymbolReference(signature).psiContext!!
   }
 
@@ -231,7 +231,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
   fun testTemplate20Metadata() {
     configureWithMetadataFiles("template")
     myFixture.configureByFiles("template.html")
-    val resolve = resolveToWebSymbolSourceContext("*myHover<caret>List")
+    val resolve = resolveToPolySymbolSourceContext("*myHover<caret>List")
     assertEquals("template.metadata.json", resolve.getContainingFile().getName())
     Angular2TestUtil.assertUnresolvedReference("myHover<caret>List", myFixture)
   }
@@ -239,20 +239,20 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
   fun testNoTemplate20Metadata() {
     configureWithMetadataFiles("noTemplate")
     myFixture.configureByFiles("noTemplate.html")
-    val resolve = resolveToWebSymbolSourceContext("myHover<caret>List")
+    val resolve = resolveToPolySymbolSourceContext("myHover<caret>List")
     assertEquals("noTemplate.metadata.json", resolve.getContainingFile().getName())
   }
 
   fun testTemplate20NoMetadata() {
     myFixture.configureByFiles("template.html", "package.json", "template.ts")
-    val resolve = resolveToWebSymbolSourceContext("*myHover<caret>List")
+    val resolve = resolveToPolySymbolSourceContext("*myHover<caret>List")
     assertEquals("template.ts", resolve.getContainingFile().getName())
     Angular2TestUtil.assertUnresolvedReference("myHover<caret>List", myFixture)
   }
 
   fun testNoTemplate20NoMetadata() {
     myFixture.configureByFiles("noTemplate.html", "package.json", "noTemplate.ts")
-    val resolve = resolveToWebSymbolSourceContext("myHover<caret>List")
+    val resolve = resolveToPolySymbolSourceContext("myHover<caret>List")
     assertEquals("noTemplate.ts", resolve.getContainingFile().getName())
   }
 

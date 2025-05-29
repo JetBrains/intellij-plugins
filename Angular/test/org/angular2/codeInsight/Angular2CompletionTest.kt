@@ -17,7 +17,7 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
 
   override fun setUp() {
     super.setUp()
-    // Let's ensure we don't get WebSymbols registry stack overflows randomly
+    // Let's ensure we don't get PolySymbols registry stack overflows randomly
     this.enableIdempotenceChecksOnEveryCache()
   }
 

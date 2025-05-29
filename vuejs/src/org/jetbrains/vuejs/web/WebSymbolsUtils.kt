@@ -19,7 +19,7 @@ fun PolySymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
     }
   ?: VueModelDirectiveProperties()
 
-fun VueScopeElement.asWebSymbol(name: String, forcedProximity: VueModelVisitor.Proximity): PolySymbol? =
+fun VueScopeElement.asPolySymbol(name: String, forcedProximity: VueModelVisitor.Proximity): PolySymbol? =
   when (this) {
     is VueComponent -> VueComponentSymbol(toAsset(name, true), this, forcedProximity)
     is VueScriptSetupLocalDirective -> VueScriptSetupLocalDirectiveSymbol(this, forcedProximity)
@@ -27,7 +27,7 @@ fun VueScopeElement.asWebSymbol(name: String, forcedProximity: VueModelVisitor.P
     else -> null
   }
 
-fun VueModelVisitor.Proximity.asWebSymbolPriority(): PolySymbol.Priority =
+fun VueModelVisitor.Proximity.asPolySymbolPriority(): PolySymbol.Priority =
   when (this) {
     VueModelVisitor.Proximity.LOCAL -> PolySymbol.Priority.HIGHEST
     VueModelVisitor.Proximity.APP -> PolySymbol.Priority.HIGH

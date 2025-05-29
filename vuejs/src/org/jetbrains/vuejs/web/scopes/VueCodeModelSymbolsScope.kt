@@ -102,14 +102,14 @@ private constructor(
     container.acceptEntities(object : VueModelVisitor() {
 
       override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-        component.asWebSymbol(name, forcedProximity)
+        component.asPolySymbol(name, forcedProximity)
           ?.tryMergeWithWebTypes(webTypesContributions)
           ?.forEach(consumer)
         return true
       }
 
       override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-        directive.asWebSymbol(name, forcedProximity)
+        directive.asPolySymbol(name, forcedProximity)
           ?.tryMergeWithWebTypes(webTypesContributions)
           ?.forEach(consumer)
         return true

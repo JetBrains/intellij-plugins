@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
-import org.jetbrains.vuejs.web.asWebSymbolPriority
+import org.jetbrains.vuejs.web.asPolySymbolPriority
 
 open class VueDirectiveSymbol(
   name: String,
@@ -27,7 +27,7 @@ open class VueDirectiveSymbol(
     get() = VUE_DIRECTIVES
 
   override val priority: PolySymbol.Priority
-    get() = vueProximity.asWebSymbolPriority()
+    get() = vueProximity.asPolySymbolPriority()
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
