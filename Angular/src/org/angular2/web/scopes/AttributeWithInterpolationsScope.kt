@@ -9,7 +9,7 @@ import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
-import com.intellij.webSymbols.patterns.WebSymbolsPatternSymbolsResolver
+import com.intellij.webSymbols.patterns.PolySymbolsPatternSymbolsResolver
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.utils.match
@@ -66,7 +66,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
 
   }
 
-  private object PropertiesResolver : WebSymbolsPatternSymbolsResolver {
+  private object PropertiesResolver : PolySymbolsPatternSymbolsResolver {
     override fun getSymbolKinds(context: PolySymbol?): Set<PolySymbolQualifiedKind> = setOf(
       JS_PROPERTIES, NG_DIRECTIVE_INPUTS
     )
