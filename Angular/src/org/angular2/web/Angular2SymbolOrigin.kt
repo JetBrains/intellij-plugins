@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.util.Pair
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.WebSymbolTypeSupport
+import com.intellij.webSymbols.PolySymbolTypeSupport
 import icons.AngularIcons
 import org.angular2.Angular2Framework
 import javax.swing.Icon
@@ -41,7 +41,7 @@ class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : PolySymbolOri
   override val defaultIcon: Icon
     get() = AngularIcons.Angular2
 
-  override val typeSupport: WebSymbolTypeSupport?
+  override val typeSupport: PolySymbolTypeSupport?
     get() = TypeScriptSymbolTypeSupport()
 
   override fun equals(other: Any?): Boolean =
