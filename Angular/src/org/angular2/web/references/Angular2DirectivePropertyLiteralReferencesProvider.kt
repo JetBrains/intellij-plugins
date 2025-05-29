@@ -11,7 +11,7 @@ import com.intellij.model.psi.PsiSymbolReferenceHints
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
+import com.intellij.webSymbols.references.PsiPolySymbolReferenceProvider
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.entities.Angular2ClassBasedDirective
@@ -19,7 +19,7 @@ import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferen
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
-class Angular2DirectivePropertyLiteralReferencesProvider : PsiWebSymbolReferenceProvider<JSLiteralExpression> {
+class Angular2DirectivePropertyLiteralReferencesProvider : PsiPolySymbolReferenceProvider<JSLiteralExpression> {
 
   override fun getOffsetsToReferencedSymbols(psiElement: JSLiteralExpression, hints: PsiSymbolReferenceHints): Map<Int, PolySymbol> {
     val stringValue = psiElement.stubSafeStringValue ?: return emptyMap()
@@ -45,7 +45,7 @@ class Angular2DirectivePropertyLiteralReferencesProvider : PsiWebSymbolReference
     return if (hostDirective) {
       val properties = (if (kind == INPUTS_PROP) directive.inputs else directive.outputs)
       val symbol = properties.find { it.name == name }
-                   ?: PsiWebSymbolReferenceProvider.unresolvedSymbol(if (kind == INPUTS_PROP) NG_DIRECTIVE_INPUTS else NG_DIRECTIVE_OUTPUTS, name)
+                   ?: PsiPolySymbolReferenceProvider.unresolvedSymbol(if (kind == INPUTS_PROP) NG_DIRECTIVE_INPUTS else NG_DIRECTIVE_OUTPUTS, name)
       mapOf(startOffset + 1 to symbol)
     }
     else {

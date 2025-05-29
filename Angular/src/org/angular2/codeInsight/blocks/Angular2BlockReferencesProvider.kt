@@ -2,10 +2,10 @@
 package org.angular2.codeInsight.blocks
 
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
+import com.intellij.webSymbols.references.PsiPolySymbolReferenceProvider
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 
-class Angular2BlockReferencesProvider : PsiWebSymbolReferenceProvider<Angular2HtmlBlock> {
+class Angular2BlockReferencesProvider : PsiPolySymbolReferenceProvider<Angular2HtmlBlock> {
 
   override fun getReferencedSymbol(psiElement: Angular2HtmlBlock): PolySymbol? =
     psiElement.definition

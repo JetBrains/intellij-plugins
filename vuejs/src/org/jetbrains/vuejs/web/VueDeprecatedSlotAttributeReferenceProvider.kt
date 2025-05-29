@@ -5,11 +5,11 @@ import com.intellij.psi.util.startOffset
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
+import com.intellij.webSymbols.references.PsiPolySymbolReferenceProvider
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.getMatchingAvailableSlots
 
-class VueDeprecatedSlotAttributeReferenceProvider : PsiWebSymbolReferenceProvider<XmlAttributeValue> {
+class VueDeprecatedSlotAttributeReferenceProvider : PsiPolySymbolReferenceProvider<XmlAttributeValue> {
 
   override fun getReferencedSymbolNameOffset(psiElement: XmlAttributeValue): Int =
     psiElement.valueTextRange.startOffset - psiElement.startOffset

@@ -3,13 +3,13 @@ package org.angular2.codeInsight.attributes
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
+import com.intellij.webSymbols.references.PsiPolySymbolReferenceProvider
 import com.intellij.webSymbols.utils.asSingleSymbol
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindingKey
 import org.angular2.web.NG_TEMPLATE_BINDINGS
 
-class Angular2TemplateBindingKeyReferenceProvider : PsiWebSymbolReferenceProvider<Angular2TemplateBindingKey> {
+class Angular2TemplateBindingKeyReferenceProvider : PsiPolySymbolReferenceProvider<Angular2TemplateBindingKey> {
 
   override fun getReferencedSymbol(psiElement: Angular2TemplateBindingKey): PolySymbol? =
     when ((psiElement.parent as? Angular2TemplateBinding)?.keyKind) {

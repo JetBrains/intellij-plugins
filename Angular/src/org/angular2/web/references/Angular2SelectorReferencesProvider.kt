@@ -8,7 +8,7 @@ import com.intellij.model.psi.PsiSymbolReferenceHints
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
+import com.intellij.webSymbols.references.PsiPolySymbolReferenceProvider
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP
@@ -18,7 +18,7 @@ import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 
-abstract class Angular2SelectorReferencesProvider : PsiWebSymbolReferenceProvider<PsiExternalReferenceHost> {
+abstract class Angular2SelectorReferencesProvider : PsiPolySymbolReferenceProvider<PsiExternalReferenceHost> {
 
   class NgContentSelectorProvider : Angular2SelectorReferencesProvider() {
 
