@@ -6,12 +6,12 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
 import com.intellij.webSymbols.PsiSourcedPolySymbol
-import com.intellij.webSymbols.PsiSourcedWebSymbolProvider
+import com.intellij.webSymbols.PsiSourcedPolySymbolProvider
 import org.angular2.entities.Angular2EntitiesProvider
 
-class Angular2PsiSourcedWebSymbolProvider : PsiSourcedWebSymbolProvider {
+class Angular2PsiSourcedPolySymbolProvider : PsiSourcedPolySymbolProvider {
 
-  override fun getWebSymbols(element: PsiElement): List<PsiSourcedPolySymbol> =
+  override fun getSymbols(element: PsiElement): List<PsiSourcedPolySymbol> =
     if (element is TypeScriptField) {
       JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) {
         Angular2EntitiesProvider.getDirective(element.contextOfType<TypeScriptClass>())
