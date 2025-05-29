@@ -15,7 +15,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
-import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
+import com.intellij.webSymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 
@@ -63,8 +63,8 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
 
     override val pattern: PolySymbolsPattern =
       PolySymbolsPatternFactory.createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
-          WebSymbolsPatternReferenceResolver.Reference(
+        ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
+          PolySymbolsPatternReferenceResolver.Reference(
             qualifiedKind = PolySymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
         )
         ),
@@ -100,8 +100,8 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
 
     override val pattern: PolySymbolsPattern =
       PolySymbolsPatternFactory.createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
-          WebSymbolsPatternReferenceResolver.Reference(
+        ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
+          PolySymbolsPatternReferenceResolver.Reference(
             qualifiedKind = PolySymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
         )
         ),

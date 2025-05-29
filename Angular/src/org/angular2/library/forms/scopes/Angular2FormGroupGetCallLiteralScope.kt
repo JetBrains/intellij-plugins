@@ -16,7 +16,7 @@ import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createComplexP
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createPatternSequence
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createStringMatch
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
+import com.intellij.webSymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -87,9 +87,9 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
 
       override val pattern: PolySymbolsPattern?
         get() = createComplexPattern(
-          ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
+          ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
             *NG_FORM_ANY_CONTROL_PROPS.map2Array {
-              WebSymbolsPatternReferenceResolver.Reference(qualifiedKind = it)
+              PolySymbolsPatternReferenceResolver.Reference(qualifiedKind = it)
             }
           )),
           false,
@@ -97,9 +97,9 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
             createSymbolReferencePlaceholder(),
             createComplexPattern(
               ComplexPatternOptions(
-                symbolsResolver = WebSymbolsPatternReferenceResolver(
+                symbolsResolver = PolySymbolsPatternReferenceResolver(
                   *NG_FORM_ANY_CONTROL_PROPS.map2Array {
-                    WebSymbolsPatternReferenceResolver.Reference(qualifiedKind = it)
+                    PolySymbolsPatternReferenceResolver.Reference(qualifiedKind = it)
                   }
                 ),
                 repeats = true,

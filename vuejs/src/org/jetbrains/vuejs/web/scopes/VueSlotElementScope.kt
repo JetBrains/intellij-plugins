@@ -22,8 +22,8 @@ import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createComplexPattern
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
-import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver.Reference
+import com.intellij.webSymbols.patterns.PolySymbolsPatternReferenceResolver
+import com.intellij.webSymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
@@ -101,7 +101,7 @@ class VueSlotElementScope(tag: XmlTag)
 
     override val pattern: PolySymbolsPattern =
       createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
+        ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
           if (slotName != null)
             Reference(
               location = listOf(

@@ -19,8 +19,8 @@ import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createComplexP
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createPatternSequence
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createStringMatch
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
-import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver.Reference
+import com.intellij.webSymbols.patterns.PolySymbolsPatternReferenceResolver
+import com.intellij.webSymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueDataProperty
@@ -107,14 +107,14 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
     override val pattern: PolySymbolsPattern =
       createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
+        ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
           Reference(qualifiedKind = VUE_COMPONENT_DATA_PROPERTIES),
           Reference(qualifiedKind = VUE_COMPONENT_COMPUTED_PROPERTIES))
         ), false,
         createPatternSequence(
           createSymbolReferencePlaceholder(),
           createComplexPattern(
-            ComplexPatternOptions(repeats = true, isRequired = false, symbolsResolver = WebSymbolsPatternReferenceResolver(
+            ComplexPatternOptions(repeats = true, isRequired = false, symbolsResolver = PolySymbolsPatternReferenceResolver(
               Reference(qualifiedKind = JS_PROPERTIES)
             )), false,
             createPatternSequence(
