@@ -8,7 +8,7 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
@@ -46,8 +46,8 @@ class Angular2SourceDirectiveVirtualProperty(
   override val isSignalProperty: Boolean
     get() = false
 
-  override val apiStatus: WebSymbolApiStatus
-    get() = owner?.apiStatus ?: WebSymbolApiStatus.Stable
+  override val apiStatus: PolySymbolApiStatus
+    get() = owner?.apiStatus ?: PolySymbolApiStatus.Stable
 
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)

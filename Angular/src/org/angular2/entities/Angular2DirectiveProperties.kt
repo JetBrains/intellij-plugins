@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
@@ -134,7 +134,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
     override val searchTarget: WebSymbolSearchTarget?
       get() = delegate.searchTarget
 
-    override val apiStatus: WebSymbolApiStatus
+    override val apiStatus: PolySymbolApiStatus
       get() = delegate.apiStatus
 
     override val fieldName: String?
@@ -189,7 +189,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
       get() = NG_DIRECTIVE_IN_OUTS
 
 
-    override val apiStatus: WebSymbolApiStatus
+    override val apiStatus: PolySymbolApiStatus
       get() = delegate.apiStatus.coalesceWith(myOutput.apiStatus)
 
     override fun createPointer(): Pointer<out InOutDirectiveProperty> {

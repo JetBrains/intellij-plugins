@@ -6,7 +6,7 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import java.util.*
@@ -49,7 +49,7 @@ class Angular2AliasedDirectiveProperty(
   override val isSignalProperty: Boolean
     get() = delegate.isSignalProperty
 
-  override val apiStatus: WebSymbolApiStatus
+  override val apiStatus: PolySymbolApiStatus
     get() = delegate.apiStatus
 
   override val qualifiedKind: WebSymbolQualifiedKind

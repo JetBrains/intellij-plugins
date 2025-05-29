@@ -65,7 +65,7 @@ class VuePolyTypesMergedSymbol(
   override val icon: Icon?
     get() = symbols.firstNotNullOfOrNull { it.icon }
 
-  override val apiStatus: WebSymbolApiStatus
+  override val apiStatus: PolySymbolApiStatus
     get() = coalesceApiStatus(symbols) { it.apiStatus }
 
   override val required: Boolean?

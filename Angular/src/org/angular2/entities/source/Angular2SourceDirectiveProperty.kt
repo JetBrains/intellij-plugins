@@ -18,7 +18,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedPolySymbol
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.webSymbols.utils.coalesceApiStatus
@@ -96,7 +96,7 @@ abstract class Angular2SourceDirectiveProperty(
   override val virtualProperty: Boolean
     get() = false
 
-  override val apiStatus: WebSymbolApiStatus
+  override val apiStatus: PolySymbolApiStatus
     get() = coalesceApiStatus(sources) { (it as? JSElementBase)?.apiStatus }.coalesceWith(owner.apiStatus)
 
   val sources: List<PsiElement>

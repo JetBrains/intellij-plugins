@@ -2,7 +2,7 @@
 package org.angular2.entities
 
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import org.angular2.web.Angular2Symbol
 
 interface Angular2Directive : Angular2Declaration {
@@ -31,7 +31,7 @@ interface Angular2Directive : Angular2Declaration {
   val isComponent: Boolean
     get() = false
 
-  val apiStatus: WebSymbolApiStatus
+  val apiStatus: PolySymbolApiStatus
 
   val templateGuards: List<Angular2TemplateGuard>
     get() = emptyList()

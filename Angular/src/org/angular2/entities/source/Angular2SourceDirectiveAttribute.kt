@@ -18,7 +18,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.OPTIONAL_PROP
 import org.angular2.entities.Angular2DirectiveAttribute
@@ -65,9 +65,9 @@ class Angular2SourceDirectiveAttribute private constructor(
   override val navigableElement: PsiElement
     get() = literal.navigationElement
 
-  override val apiStatus: WebSymbolApiStatus
+  override val apiStatus: PolySymbolApiStatus
     get() = (typeSource as? JSDocOwner)?.apiStatus
-            ?: WebSymbolApiStatus.Stable
+            ?: PolySymbolApiStatus.Stable
 
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)

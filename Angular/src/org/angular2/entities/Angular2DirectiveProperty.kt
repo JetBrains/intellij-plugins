@@ -16,7 +16,7 @@ import com.intellij.psi.css.impl.CssNamedItemPresentation
 import com.intellij.psi.util.contextOfType
 import com.intellij.util.ThreeState
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import icons.AngularIcons
@@ -83,7 +83,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSWebSymb
       null
     }
 
-  override val apiStatus: WebSymbolApiStatus
+  override val apiStatus: PolySymbolApiStatus
 
   override fun createPointer(): Pointer<out Angular2DirectiveProperty>
 

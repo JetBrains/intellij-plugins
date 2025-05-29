@@ -11,7 +11,7 @@ import com.intellij.openapi.util.NullableLazyValue.lazyNullable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
@@ -29,7 +29,7 @@ class Angular2MetadataDirectiveAttribute internal constructor(private val myOwne
   override val sourceElement: PsiElement
     get() = myParameter.value ?: myOwner.sourceElement
 
-  override val apiStatus: WebSymbolApiStatus
+  override val apiStatus: PolySymbolApiStatus
     get() = myParameter.value?.apiStatus.coalesceWith(myOwner.sourceElement.asSafely<JSElementBase>()?.apiStatus)
 
   override fun toString(): String {

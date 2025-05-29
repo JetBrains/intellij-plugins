@@ -12,7 +12,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
@@ -63,7 +63,7 @@ open class Angular2DirectiveSymbolWrapper private constructor(
   override val properties: Map<String, Any>
     get() = super.properties + Pair(PROP_SYMBOL_DIRECTIVE, directive)
 
-  override val apiStatus: WebSymbolApiStatus
+  override val apiStatus: PolySymbolApiStatus
     get() = directive.apiStatus.coalesceWith(delegate.apiStatus)
 
   override fun isEquivalentTo(symbol: Symbol): Boolean {

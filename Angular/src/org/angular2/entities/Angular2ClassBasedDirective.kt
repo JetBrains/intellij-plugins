@@ -5,14 +5,14 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbolApiStatus
+import com.intellij.webSymbols.PolySymbolApiStatus
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.BINDING_GUARD
 
 interface Angular2ClassBasedDirective : Angular2Directive, Angular2ClassBasedEntity {
 
-  override val apiStatus: WebSymbolApiStatus
-    get() = typeScriptClass?.apiStatus ?: WebSymbolApiStatus.Stable
+  override val apiStatus: PolySymbolApiStatus
+    get() = typeScriptClass?.apiStatus ?: PolySymbolApiStatus.Stable
 
   override val templateGuards: List<Angular2TemplateGuard>
     get() = typeScriptClass?.members
