@@ -9,7 +9,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.refactoring.PolySymbolRenameTarget
-import com.intellij.webSymbols.search.WebSymbolSearchTarget
+import com.intellij.webSymbols.search.PolySymbolSearchTarget
 import org.angular2.library.forms.Angular2FormControl
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_FIELDS
@@ -30,8 +30,8 @@ abstract class Angular2FormAbstractControlImpl(
             ?: source.asSafely<JSProperty>()?.name
             ?: "<error>"
 
-  override val searchTarget: WebSymbolSearchTarget?
-    get() = WebSymbolSearchTarget.create(this)
+  override val searchTarget: PolySymbolSearchTarget?
+    get() = PolySymbolSearchTarget.create(this)
 
   override val renameTarget: PolySymbolRenameTarget?
     get() = PolySymbolRenameTarget.create(this)

@@ -8,7 +8,7 @@ import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
-import com.intellij.webSymbols.search.WebSymbolSearchTarget
+import com.intellij.webSymbols.search.PolySymbolSearchTarget
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueEmitCall
@@ -45,8 +45,8 @@ class VueEmitCallSymbol(
     return super.adjustNameForRefactoring(queryExecutor, newName, occurence)
   }
 
-  override val searchTarget: WebSymbolSearchTarget
-    get() = WebSymbolSearchTarget.create(this)
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
 
   override fun createPointer(): Pointer<VueEmitCallSymbol> =
     object : NamedSymbolPointer<VueEmitCall, VueEmitCallSymbol>(this) {

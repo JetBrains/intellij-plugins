@@ -15,7 +15,7 @@ import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.webSymbols.search.WebSymbolSearchTarget
+import com.intellij.webSymbols.search.PolySymbolSearchTarget
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
@@ -131,7 +131,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
     override val type: JSType?
       get() = delegate.type
 
-    override val searchTarget: WebSymbolSearchTarget?
+    override val searchTarget: PolySymbolSearchTarget?
       get() = delegate.searchTarget
 
     override val apiStatus: PolySymbolApiStatus

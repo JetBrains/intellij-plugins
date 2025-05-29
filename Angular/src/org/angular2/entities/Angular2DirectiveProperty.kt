@@ -18,7 +18,7 @@ import com.intellij.util.ThreeState
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.webSymbols.search.WebSymbolSearchTarget
+import com.intellij.webSymbols.search.PolySymbolSearchTarget
 import icons.AngularIcons
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.lang.Angular2Bundle
@@ -59,8 +59,8 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSWebSymb
                     ?: CssNamedItemPresentation.getLocationString(sourceElement))
       .presentation()
 
-  override val searchTarget: WebSymbolSearchTarget?
-    get() = WebSymbolSearchTarget.create(this)
+  override val searchTarget: PolySymbolSearchTarget?
+    get() = PolySymbolSearchTarget.create(this)
 
   override val project: Project
     get() = sourceElement.project
