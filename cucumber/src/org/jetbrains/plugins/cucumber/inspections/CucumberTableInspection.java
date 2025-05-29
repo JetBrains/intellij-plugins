@@ -77,7 +77,9 @@ public final class CucumberTableInspection extends GherkinInspection {
   }
 
   private static Collection<String> collectUsedColumnNames(GherkinScenarioOutline outline) {
-    Set<String> result = new HashSet<>();
+    // Extract parameters from the scenario outline title
+    Set<String> result = new HashSet<>(outline.getParamsSubstitutions());
+    // Extract parameters from steps
     for (GherkinStep step : outline.getSteps()) {
       result.addAll(step.getParamsSubstitutions());
     }

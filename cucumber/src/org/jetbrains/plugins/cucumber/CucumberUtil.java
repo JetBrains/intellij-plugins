@@ -63,6 +63,7 @@ public final class CucumberUtil {
 
   private static final Pattern ESCAPE_PATTERN = Pattern.compile("([\\\\^\\[$.|?*+\\]])");
   private static final Pattern OPTIONAL_PATTERN = Pattern.compile("(\\\\\\\\)?\\(([^)]+)\\)");
+  private static final Pattern PARAMETER_SUBSTITUTION_PATTERN = Pattern.compile("<([^>\n\r]+)>");
 
   public static final Map<String, String> STANDARD_PARAMETER_TYPES;
 
@@ -404,6 +405,7 @@ public final class CucumberUtil {
   ///
   /// @param outlineTableMap mapping from the header to the first data row
   /// @return OutlineStepSubstitution that contains the result step name and can calculate offsets
+  //@formatter:on
   public static @NotNull OutlineStepSubstitution substituteTableReferences(String stepName, @Nullable Map<String, String> outlineTableMap) {
     if (outlineTableMap == null) {
       return new OutlineStepSubstitution(stepName, Collections.emptyList());
@@ -440,6 +442,23 @@ public final class CucumberUtil {
     }
     result.append(stepName.subSequence(currentOffset, stepName.length()));
     return new OutlineStepSubstitution(result.toString(), offsets);
+  }
+
+  public static void addSubstitutionFromText(String text, List<String> substitutions) {
+    final Matcher matcher = PARAMETER_SUBSTITUTION_PATTERN.matcher(text);
+    boolean result = matcher.find();
+    if (!result) {
+      return;
+    }
+
+    do {
+      final String substitution = matcher.group(1);
+      if (!StringUtil.isEmpty(substitution) && !substitutions.contains(substitution)) {
+        substitutions.add(substitution);
+      }
+      result = matcher.find();
+    }
+    while (result);
   }
 
   public static String escapeCucumberExpression(@NotNull String stepPattern) {

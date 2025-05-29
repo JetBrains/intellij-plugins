@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinStep, PsiCheckedRenameElement {
@@ -37,7 +35,6 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     .create(GherkinTokenTypes.TEXT, GherkinElementTypes.STEP_PARAMETER, TokenType.WHITE_SPACE, GherkinTokenTypes.STEP_PARAMETER_TEXT,
             GherkinTokenTypes.STEP_PARAMETER_BRACE);
 
-  private static final Pattern PARAMETER_SUBSTITUTION_PATTERN = Pattern.compile("<([^>\n\r]+)>");
   private final Object LOCK = new Object();
 
   private List<String> mySubstitutions;
@@ -101,49 +98,31 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
       if (mySubstitutions == null) {
         final ArrayList<String> substitutions = new ArrayList<>();
 
-
         // step name
         final String text = getName();
         if (StringUtil.isEmpty(text)) {
           return Collections.emptyList();
         }
-        addSubstitutionFromText(text, substitutions);
+        CucumberUtil.addSubstitutionFromText(text, substitutions);
 
         // pystring
         final GherkinPystring pystring = getPystring();
         String pystringText = pystring != null ? pystring.getText() : null;
         if (!StringUtil.isEmpty(pystringText)) {
-          addSubstitutionFromText(pystringText, substitutions);
+          CucumberUtil.addSubstitutionFromText(pystringText, substitutions);
         }
 
         // table
         final GherkinTable table = getTable();
         final String tableText = table == null ? null : table.getText();
         if (tableText != null) {
-          addSubstitutionFromText(tableText, substitutions);
+          CucumberUtil.addSubstitutionFromText(tableText, substitutions);
         }
 
         mySubstitutions = substitutions.isEmpty() ? Collections.emptyList() : substitutions;
       }
       return mySubstitutions;
     }
-  }
-
-  private static void addSubstitutionFromText(String text, ArrayList<String> substitutions) {
-    final Matcher matcher = PARAMETER_SUBSTITUTION_PATTERN.matcher(text);
-    boolean result = matcher.find();
-    if (!result) {
-      return;
-    }
-
-    do {
-      final String substitution = matcher.group(1);
-      if (!StringUtil.isEmpty(substitution) && !substitutions.contains(substitution)) {
-        substitutions.add(substitution);
-      }
-      result = matcher.find();
-    }
-    while (result);
   }
 
   @Override

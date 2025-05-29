@@ -11,7 +11,9 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import java.util.Collection;
 import java.util.List;
 
-
+/// A single Gherkin step. Starts with `Given`, `When`, `Then`, `And`, or `But`.
+///
+/// @see <a href="https://cucumber.io/docs/gherkin/reference#steps">Gherkin Reference | Steps</a>
 public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder, PomTarget, PsiNamedElement {
   GherkinStep[] EMPTY_ARRAY = new GherkinStep[0];
 
