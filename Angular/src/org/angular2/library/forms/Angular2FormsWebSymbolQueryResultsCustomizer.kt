@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolQualifiedName
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
@@ -29,7 +29,7 @@ object Angular2FormsWebSymbolQueryResultsCustomizer : WebSymbolsQueryResultsCust
     else
       matches
 
-  override fun apply(item: WebSymbolCodeCompletionItem, qualifiedKind: PolySymbolQualifiedKind): WebSymbolCodeCompletionItem? =
+  override fun apply(item: PolySymbolCodeCompletionItem, qualifiedKind: PolySymbolQualifiedKind): PolySymbolCodeCompletionItem? =
     item
 
   override fun getModificationCount(): Long = 0

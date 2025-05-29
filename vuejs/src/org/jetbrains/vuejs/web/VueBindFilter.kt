@@ -3,17 +3,17 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolsScope
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.webTypes.filters.WebSymbolsFilter
 
 class VueBindFilter : WebSymbolsFilter {
   override fun filterCodeCompletions(
-    codeCompletions: List<WebSymbolCodeCompletionItem>,
+    codeCompletions: List<PolySymbolCodeCompletionItem>,
     queryExecutor: WebSymbolsQueryExecutor,
     scope: List<PolySymbolsScope>,
     properties: Map<String, Any>,
-  ): List<WebSymbolCodeCompletionItem> =
+  ): List<PolySymbolCodeCompletionItem> =
     codeCompletions.filterHtmlEventAttributes(queryExecutor, scope) { name }
 
   override fun filterNameMatches(

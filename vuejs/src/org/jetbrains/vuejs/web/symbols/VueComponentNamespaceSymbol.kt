@@ -12,7 +12,7 @@ import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -142,7 +142,7 @@ class VueComponentNamespaceSymbol(
       qualifiedName: PolySymbolQualifiedName,
       params: WebSymbolsCodeCompletionQueryParams,
       scope: Stack<PolySymbolsScope>,
-    ): List<WebSymbolCodeCompletionItem> =
+    ): List<PolySymbolCodeCompletionItem> =
       namespaceSymbol.getCodeCompletions(qualifiedName, params, scope) +
       super.getCodeCompletions(qualifiedName, params, scope)
 

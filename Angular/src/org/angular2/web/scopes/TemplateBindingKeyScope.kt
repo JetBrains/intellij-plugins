@@ -18,7 +18,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_SYMBOLS
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.PolySymbol.Priority
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import org.angular2.Angular2Framework
@@ -65,7 +65,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
     qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<WebSymbolCodeCompletionItem> =
+  ): List<PolySymbolCodeCompletionItem> =
     super.getCodeCompletions(qualifiedName, params, scope).map {
       it.withPriority(Priority.HIGHEST)
     }

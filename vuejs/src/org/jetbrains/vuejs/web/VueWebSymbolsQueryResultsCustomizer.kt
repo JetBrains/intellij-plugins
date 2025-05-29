@@ -12,7 +12,7 @@ import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolQualifiedName
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
@@ -75,9 +75,9 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
   }
 
   override fun apply(
-    item: WebSymbolCodeCompletionItem,
+    item: PolySymbolCodeCompletionItem,
     qualifiedKind: PolySymbolQualifiedKind,
-  ): WebSymbolCodeCompletionItem {
+  ): PolySymbolCodeCompletionItem {
     if (qualifiedKind == VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
       val element = (item.symbol as? PsiSourcedPolySymbol)?.source

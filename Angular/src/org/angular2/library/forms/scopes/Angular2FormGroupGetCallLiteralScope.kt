@@ -8,7 +8,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_STRING_LITERALS
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
@@ -38,7 +38,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
     else
       formGroup.getSymbols(qualifiedKind, params, scope)
 
-  override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<WebSymbolCodeCompletionItem> =
+  override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolCodeCompletionItem> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getCodeCompletions(qualifiedName, params, scope)
         .filter { it.name != "." && (!it.name.endsWith(".") || it.symbol?.unwrapMatchedSymbols()?.lastOrNull()?.qualifiedKind == NG_FORM_GROUP_PROPS) }

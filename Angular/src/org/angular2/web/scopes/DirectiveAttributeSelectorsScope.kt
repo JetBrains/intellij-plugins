@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.MappedPolySymbol
@@ -82,7 +82,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
       }
     }
 
-    override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<WebSymbolCodeCompletionItem> =
+    override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolCodeCompletionItem> =
       withTypeEvaluationLocation(dataHolder) {
         super<PolySymbolsScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
           .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }

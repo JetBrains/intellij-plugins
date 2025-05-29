@@ -7,7 +7,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
@@ -63,7 +63,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
     qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<WebSymbolCodeCompletionItem> =
+  ): List<PolySymbolCodeCompletionItem> =
     if (qualifiedName.matches(VUE_AVAILABLE_SLOTS) && params.queryExecutor.allowResolve)
       getAvailableSlotsCompletions(tag, qualifiedName.name, params.position, true)
     else emptyList()

@@ -18,7 +18,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.match
@@ -46,7 +46,7 @@ fun getAvailableSlots(tag: XmlTag, expandPatterns: Boolean, newApi: Boolean): Li
     runListSymbolsQuery(PolySymbol.HTML_SLOTS, expandPatterns)
   }
 
-fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newApi: Boolean): List<WebSymbolCodeCompletionItem> =
+fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newApi: Boolean): List<PolySymbolCodeCompletionItem> =
   processSlots(tag, newApi, { emptyList() }) {
     runCodeCompletionQuery(PolySymbol.HTML_SLOTS, name, position)
   }

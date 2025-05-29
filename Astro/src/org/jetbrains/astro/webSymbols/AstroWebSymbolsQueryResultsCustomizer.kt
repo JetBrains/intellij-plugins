@@ -9,7 +9,7 @@ import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolQualifiedName
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
@@ -36,7 +36,7 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
         })
       }
 
-  override fun apply(item: WebSymbolCodeCompletionItem, qualifiedKind: PolySymbolQualifiedKind): WebSymbolCodeCompletionItem? {
+  override fun apply(item: PolySymbolCodeCompletionItem, qualifiedKind: PolySymbolQualifiedKind): PolySymbolCodeCompletionItem? {
     if (qualifiedKind == ASTRO_COMPONENTS) {
       if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.properties?.get(PROP_ASTRO_PROXIMITY)

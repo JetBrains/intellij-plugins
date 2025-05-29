@@ -13,7 +13,7 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolsCompletionProviderBase
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
@@ -66,7 +66,7 @@ class Angular2HtmlBlocksCodeCompletionProvider : WebSymbolsCompletionProviderBas
     availableBlocks
       .filter { def -> !def.isUnique || (prevBlocksCount[def.name] ?: 0) == 0 }
       .map { def ->
-        WebSymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def)
+        PolySymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def)
           .withPriority(if (!def.isPrimary) PolySymbol.Priority.HIGH else PolySymbol.Priority.NORMAL)
           .withInsertHandlerAdded(Angular2HtmlBlockInsertHandler)
       }

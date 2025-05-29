@@ -8,7 +8,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import org.jetbrains.vuejs.model.provides
@@ -44,7 +44,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
     qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<WebSymbolCodeCompletionItem> {
+  ): List<PolySymbolCodeCompletionItem> {
     return super.getCodeCompletions(qualifiedName, params, scope).filter {
       it.symbol.asSafely<VueProvideSymbol>()?.injectionKey == null
     }

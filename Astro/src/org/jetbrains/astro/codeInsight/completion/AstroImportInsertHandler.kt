@@ -8,7 +8,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import org.jetbrains.astro.inspections.quickfixes.AstroImportComponentQuickFix
 
 object AstroImportInsertHandler : XmlTagInsertHandler() {
@@ -16,7 +16,7 @@ object AstroImportInsertHandler : XmlTagInsertHandler() {
 
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
     super.handleInsert(context, item)
-    val element = WebSymbolCodeCompletionItem.getPsiElement(item)
+    val element = PolySymbolCodeCompletionItem.getPsiElement(item)
                   ?: return
     val importedFile = element.containingFile
     if (importedFile == context.file) return

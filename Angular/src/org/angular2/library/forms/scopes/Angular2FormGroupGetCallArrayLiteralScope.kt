@@ -9,7 +9,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -32,7 +32,7 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
       findFormSymbol()?.getSymbols(qualifiedKind, params, scope)
       ?: emptyList()
 
-  override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<WebSymbolCodeCompletionItem> =
+  override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolCodeCompletionItem> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getCodeCompletions(qualifiedName, params, scope)
     else

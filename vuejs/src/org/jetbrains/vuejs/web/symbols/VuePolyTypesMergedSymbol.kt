@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationTarget
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
@@ -164,7 +164,7 @@ class VuePolyTypesMergedSymbol(
     qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<WebSymbolCodeCompletionItem> =
+  ): List<PolySymbolCodeCompletionItem> =
     symbols.asSequence()
       .flatMap { it.getCodeCompletions(qualifiedName, params, scope) }
       .groupBy { it.name }

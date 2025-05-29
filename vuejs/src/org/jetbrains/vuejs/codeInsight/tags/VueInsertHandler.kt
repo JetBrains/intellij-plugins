@@ -15,7 +15,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
 
 class VueInsertHandler : XmlTagInsertHandler() {
@@ -24,7 +24,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (shouldHandleXmlInsert(context)) {
       super.handleInsert(context, item)
     }
-    val element = WebSymbolCodeCompletionItem.getPsiElement(item)
+    val element = PolySymbolCodeCompletionItem.getPsiElement(item)
                   ?: return
     val importedFile = element.containingFile
     if (importedFile == context.file) return

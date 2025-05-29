@@ -5,7 +5,7 @@ import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
@@ -78,7 +78,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
       position: Int,
       scopeStack: Stack<PolySymbolsScope>,
       queryExecutor: WebSymbolsQueryExecutor,
-    ): List<WebSymbolCodeCompletionItem> =
+    ): List<PolySymbolCodeCompletionItem> =
       emptyList()
 
     override fun listSymbols(

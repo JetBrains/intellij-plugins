@@ -13,7 +13,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.FrameworkId
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
 import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.isVueFileName
@@ -23,11 +23,11 @@ class VueSymbolsCodeCompletionItemCustomizer :
   WebSymbolCodeCompletionItemCustomizer {
 
   override fun customize(
-    item: WebSymbolCodeCompletionItem,
+    item: PolySymbolCodeCompletionItem,
     framework: FrameworkId?,
     qualifiedKind: PolySymbolQualifiedKind,
     location: PsiElement,
-  ): WebSymbolCodeCompletionItem? =
+  ): PolySymbolCodeCompletionItem? =
     if (framework == VueFramework.ID)
       when (qualifiedKind) {
         PolySymbol.HTML_ATTRIBUTES ->
@@ -41,7 +41,7 @@ class VueSymbolsCodeCompletionItemCustomizer :
       }
     else item
 
-  private fun shouldFilterOutLowerCaseScriptSetupIdentifier(item: WebSymbolCodeCompletionItem): Boolean {
+  private fun shouldFilterOutLowerCaseScriptSetupIdentifier(item: PolySymbolCodeCompletionItem): Boolean {
     val source = item.symbol.asSafely<VueComponentSymbol>()?.source?.asSafely<JSPsiNamedElementBase>()
     if (source?.contextOfType<XmlTag>(false)?.isScriptSetupTag() != true)
       return false

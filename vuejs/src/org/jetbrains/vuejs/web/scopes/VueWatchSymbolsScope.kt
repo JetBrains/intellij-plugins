@@ -11,7 +11,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_PROPERTIES
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createCompletionAutoPopup
@@ -73,7 +73,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
     qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<WebSymbolCodeCompletionItem> =
+  ): List<PolySymbolCodeCompletionItem> =
     super.getCodeCompletions(qualifiedName, params, scope)
       .let { codeCompletions ->
         if (qualifiedName.matches(VUE_COMPONENT_COMPUTED_PROPERTIES, VUE_COMPONENT_DATA_PROPERTIES))

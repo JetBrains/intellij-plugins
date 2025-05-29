@@ -9,7 +9,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.FrameworkId
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
@@ -29,10 +29,10 @@ private val selectorKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS,
 
 class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
 
-  override fun customize(item: WebSymbolCodeCompletionItem,
+  override fun customize(item: PolySymbolCodeCompletionItem,
                          framework: FrameworkId?,
                          qualifiedKind: PolySymbolQualifiedKind,
-                         location: PsiElement): WebSymbolCodeCompletionItem =
+                         location: PsiElement): PolySymbolCodeCompletionItem =
     if (framework != Angular2Framework.ID)
       item
     else

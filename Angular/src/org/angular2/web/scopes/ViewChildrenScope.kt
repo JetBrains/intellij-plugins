@@ -11,7 +11,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.utils.PolySymbolsIsolatedMappingScope
@@ -63,7 +63,7 @@ class ViewChildrenScope(
       qualifiedName: PolySymbolQualifiedName,
       params: WebSymbolsCodeCompletionQueryParams,
       scope: Stack<PolySymbolsScope>,
-    ): List<WebSymbolCodeCompletionItem> =
+    ): List<PolySymbolCodeCompletionItem> =
       super.getCodeCompletions(qualifiedName, params, scope)
         .map { it.decorateWithSymbolType(dataHolder, it.symbol).decorateWithJsKindIcon() }
 

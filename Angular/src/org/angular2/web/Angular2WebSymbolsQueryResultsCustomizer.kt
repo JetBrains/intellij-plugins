@@ -17,7 +17,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.PolySymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
@@ -64,9 +64,9 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     }
 
   override fun apply(
-    item: WebSymbolCodeCompletionItem,
+    item: PolySymbolCodeCompletionItem,
     qualifiedKind: PolySymbolQualifiedKind,
-  ): WebSymbolCodeCompletionItem? {
+  ): PolySymbolCodeCompletionItem? {
     // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
     // remove everything else from completion
     if (svgContext

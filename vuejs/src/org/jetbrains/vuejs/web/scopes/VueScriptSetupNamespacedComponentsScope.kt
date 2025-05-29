@@ -10,7 +10,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 import org.jetbrains.vuejs.web.VueFramework
@@ -48,7 +48,7 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
     qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<WebSymbolCodeCompletionItem> {
+  ): List<PolySymbolCodeCompletionItem> {
     return emptyList()
   }
 }
