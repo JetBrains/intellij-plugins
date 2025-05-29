@@ -22,8 +22,8 @@ import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.PolySymbolNameConversionRules
-import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
-import com.intellij.webSymbols.query.WebSymbolNameConverter
+import com.intellij.webSymbols.query.PolySymbolNameConversionRulesProvider
+import com.intellij.webSymbols.query.PolySymbolNameConverter
 import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.fromAsset
@@ -97,7 +97,7 @@ class VuePolySymbolsQueryConfigurator :
     project: Project,
     element: PsiElement?,
     context: PolyContext,
-  ): List<WebSymbolNameConversionRulesProvider> =
+  ): List<PolySymbolNameConversionRulesProvider> =
     if (context.framework == VueFramework.ID)
       listOf(VueScriptSetupLocalDirectiveNameConversionRulesProvider)
     else
@@ -200,17 +200,17 @@ class VuePolySymbolsQueryConfigurator :
     }
   }
 
-  object VueScriptSetupLocalDirectiveNameConversionRulesProvider : WebSymbolNameConversionRulesProvider, PolySymbolNameConversionRules {
+  object VueScriptSetupLocalDirectiveNameConversionRulesProvider : PolySymbolNameConversionRulesProvider, PolySymbolNameConversionRules {
     override fun getNameConversionRules(): PolySymbolNameConversionRules = this
 
-    override fun createPointer(): Pointer<out WebSymbolNameConversionRulesProvider> =
+    override fun createPointer(): Pointer<out PolySymbolNameConversionRulesProvider> =
       Pointer.hardPointer(this)
 
     override fun getModificationCount(): Long = 0
 
-    override val canonicalNames: Map<PolySymbolQualifiedKind, WebSymbolNameConverter> =
+    override val canonicalNames: Map<PolySymbolQualifiedKind, PolySymbolNameConverter> =
       mapOf(VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES to
-              WebSymbolNameConverter {
+              PolySymbolNameConverter {
                 listOf(
                   if (isScriptSetupLocalDirectiveName(it))
                     fromAsset(it.substring(1))
@@ -219,13 +219,13 @@ class VuePolySymbolsQueryConfigurator :
                 )
               })
 
-    override val renames: Map<PolySymbolQualifiedKind, WebSymbolNameConverter>
+    override val renames: Map<PolySymbolQualifiedKind, PolySymbolNameConverter>
       get() = canonicalNames
 
-    override val matchNames: Map<PolySymbolQualifiedKind, WebSymbolNameConverter>
+    override val matchNames: Map<PolySymbolQualifiedKind, PolySymbolNameConverter>
       get() = canonicalNames
 
-    override val completionVariants: Map<PolySymbolQualifiedKind, WebSymbolNameConverter>
+    override val completionVariants: Map<PolySymbolQualifiedKind, PolySymbolNameConverter>
       get() = canonicalNames
 
   }

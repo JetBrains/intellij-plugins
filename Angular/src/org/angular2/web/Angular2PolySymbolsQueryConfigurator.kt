@@ -28,7 +28,7 @@ import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.css.CSS_CLASS_LIST
 import com.intellij.webSymbols.query.PolySymbolNameConversionRules
-import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
+import com.intellij.webSymbols.query.PolySymbolNameConversionRulesProvider
 import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
 import org.angular2.*
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
@@ -74,7 +74,7 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
     }
     else emptyList()
 
-  override fun getNameConversionRulesProviders(project: Project, element: PsiElement?, context: PolyContext): List<WebSymbolNameConversionRulesProvider> {
+  override fun getNameConversionRulesProviders(project: Project, element: PsiElement?, context: PolyContext): List<PolySymbolNameConversionRulesProvider> {
     if (context.framework == Angular2Framework.ID && element != null) {
       // possibly the input definition
       if (element is JSLiteralExpression || element is TypeScriptField) {
@@ -94,7 +94,7 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
             ?.flatMapTo(mutableSetOf()) { it.attrNames }
           ?: emptyList()
         }
-        return listOf(object : WebSymbolNameConversionRulesProvider {
+        return listOf(object : PolySymbolNameConversionRulesProvider {
           override fun getNameConversionRules(): PolySymbolNameConversionRules =
             PolySymbolNameConversionRules.builder()
               .addMatchNamesRule(NG_DIRECTIVE_INPUTS) { name ->
@@ -106,7 +106,7 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
               }
               .build()
 
-          override fun createPointer(): Pointer<out WebSymbolNameConversionRulesProvider> =
+          override fun createPointer(): Pointer<out PolySymbolNameConversionRulesProvider> =
             Pointer.hardPointer(this)
 
           override fun getModificationCount(): Long = 0
@@ -115,7 +115,7 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
       else if (element is Angular2TemplateBindingKey) {
         val templateName = element.parentOfType<Angular2TemplateBindings>()?.templateName
         if (templateName != null)
-          return listOf(object : WebSymbolNameConversionRulesProvider {
+          return listOf(object : PolySymbolNameConversionRulesProvider {
             override fun getNameConversionRules(): PolySymbolNameConversionRules =
               PolySymbolNameConversionRules.builder()
                 .addMatchNamesRule(NG_DIRECTIVE_INPUTS) {
@@ -132,7 +132,7 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
                 }
                 .build()
 
-            override fun createPointer(): Pointer<out WebSymbolNameConversionRulesProvider> =
+            override fun createPointer(): Pointer<out PolySymbolNameConversionRulesProvider> =
               Pointer.hardPointer(this)
 
             override fun getModificationCount(): Long = 0
