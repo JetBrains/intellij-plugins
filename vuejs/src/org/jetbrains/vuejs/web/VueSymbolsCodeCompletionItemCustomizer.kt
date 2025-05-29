@@ -14,13 +14,13 @@ import com.intellij.webSymbols.FrameworkId
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItemCustomizer
 import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.isVueFileName
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 
 class VueSymbolsCodeCompletionItemCustomizer :
-  WebSymbolCodeCompletionItemCustomizer {
+  PolySymbolCodeCompletionItemCustomizer {
 
   override fun customize(
     item: PolySymbolCodeCompletionItem,

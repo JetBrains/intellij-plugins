@@ -5,10 +5,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.FrameworkId
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItemCustomizer
 import com.intellij.webSymbols.utils.qualifiedKind
 
-class Angular2FormsWebSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
+class Angular2FormsPolySymbolsCodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {
 
   override fun customize(
     item: PolySymbolCodeCompletionItem,

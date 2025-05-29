@@ -10,7 +10,7 @@ import com.intellij.webSymbols.FrameworkId
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItemCustomizer
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
 import org.angular2.lang.types.BindingsTypeResolver
@@ -27,7 +27,7 @@ private val typedKinds = setOf(PolySymbol.JS_EVENTS,
 private val selectorKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS,
                                   NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
 
-class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
+class Angular2CompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {
 
   override fun customize(item: PolySymbolCodeCompletionItem,
                          framework: FrameworkId?,

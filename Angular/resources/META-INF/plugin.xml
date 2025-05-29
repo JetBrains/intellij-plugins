@@ -431,7 +431,7 @@
       implementation="org.angular2.library.forms.Angular2FormsWebSymbolQueryResultsCustomizer$Factory"/>
     <webSymbols.queryConfigurator implementation="org.angular2.library.forms.Angular2FormsWebSymbolQueryConfigurator"/>
     <webSymbols.codeCompletionItemCustomizer
-      implementation="org.angular2.library.forms.Angular2FormsWebSymbolsCodeCompletionItemCustomizer"/>
+      implementation="org.angular2.library.forms.Angular2FormsPolySymbolsCodeCompletionItemCustomizer"/>
     <webSymbols.problemQuickFixProvider
       implementation="org.angular2.library.forms.quickFixes.Angular2FormsWebSymbolProblemQuickFixProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>

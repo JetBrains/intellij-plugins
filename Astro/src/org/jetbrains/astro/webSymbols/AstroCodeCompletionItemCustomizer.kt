@@ -6,11 +6,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.FrameworkId
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItemCustomizer
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileImpl
 
-class AstroCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
+class AstroCodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {
   override fun customize(item: PolySymbolCodeCompletionItem,
                          framework: FrameworkId?,
                          qualifiedKind: PolySymbolQualifiedKind,
