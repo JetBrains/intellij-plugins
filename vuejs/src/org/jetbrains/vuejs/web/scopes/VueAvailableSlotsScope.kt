@@ -8,7 +8,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
@@ -90,7 +90,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
         get() = VueFramework.ID
     }
 
-    override val pattern: WebSymbolsPattern =
+    override val pattern: PolySymbolsPattern =
       WebSymbolsPatternFactory.createSingleSymbolReferencePattern(
         listOf(VUE_AVAILABLE_SLOTS.withName(DEFAULT_SLOT_NAME))
       )

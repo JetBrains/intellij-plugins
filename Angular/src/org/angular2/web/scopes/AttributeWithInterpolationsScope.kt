@@ -7,7 +7,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.patterns.WebSymbolsPatternSymbolsResolver
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -56,7 +56,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
 
-    override val pattern: WebSymbolsPattern = WebSymbolsPatternFactory.createComplexPattern(
+    override val pattern: PolySymbolsPattern = WebSymbolsPatternFactory.createComplexPattern(
       ComplexPatternOptions(
         null, null, true,
         PolySymbol.Priority.HIGHEST, null, false, false,

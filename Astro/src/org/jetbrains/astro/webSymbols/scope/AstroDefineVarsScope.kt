@@ -13,7 +13,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
 import com.intellij.webSymbols.utils.qualifiedKind
@@ -61,7 +61,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
     override val name: String
       get() = "Astro Defined Script Variable"
 
-    override val pattern: WebSymbolsPattern =
+    override val pattern: PolySymbolsPattern =
       WebSymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(
@@ -98,7 +98,7 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
     override val name: String
       get() = "Astro Defined CSS Variable"
 
-    override val pattern: WebSymbolsPattern =
+    override val pattern: PolySymbolsPattern =
       WebSymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(

@@ -13,7 +13,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_PROPERTIES
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createCompletionAutoPopup
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createComplexPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createPatternSequence
@@ -105,7 +105,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
     override val name: String get() = "Vue Watchable Property"
 
-    override val pattern: WebSymbolsPattern =
+    override val pattern: PolySymbolsPattern =
       createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           Reference(qualifiedKind = VUE_COMPONENT_DATA_PROPERTIES),

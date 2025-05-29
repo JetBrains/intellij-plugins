@@ -19,7 +19,7 @@ import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue.Kind.EXPRESSION
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue.Type.OF_MATCH
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createComplexPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createSymbolReferencePlaceholder
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
@@ -99,7 +99,7 @@ class VueSlotElementScope(tag: XmlTag)
     override val attributeValue: PolySymbolHtmlAttributeValue
       get() = PolySymbolHtmlAttributeValue.create(kind = EXPRESSION, type = OF_MATCH)
 
-    override val pattern: WebSymbolsPattern =
+    override val pattern: PolySymbolsPattern =
       createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           if (slotName != null)

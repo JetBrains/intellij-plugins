@@ -10,7 +10,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_STRING_LITERALS
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createComplexPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createPatternSequence
@@ -85,7 +85,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
       override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
         qualifiedKind == JS_STRING_LITERALS
 
-      override val pattern: WebSymbolsPattern?
+      override val pattern: PolySymbolsPattern?
         get() = createComplexPattern(
           ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
             *NG_FORM_ANY_CONTROL_PROPS.map2Array {

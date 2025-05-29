@@ -6,7 +6,7 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.web.Angular2SymbolOrigin
@@ -16,7 +16,7 @@ object Angular2FormArrayControl : PolySymbol {
   override val name: @NlsSafe String
     get() = "Form array control"
 
-  override val pattern: WebSymbolsPattern? = WebSymbolsPatternFactory.createRegExMatch("[0-9]+")
+  override val pattern: PolySymbolsPattern? = WebSymbolsPatternFactory.createRegExMatch("[0-9]+")
 
   override val namespace: @NlsSafe SymbolNamespace
     get() = PolySymbol.Companion.NAMESPACE_JS

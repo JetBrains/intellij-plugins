@@ -9,7 +9,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.PolySymbol.Companion.PROP_DOC_HIDE_PATTERN
 import com.intellij.webSymbols.PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION
 import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
@@ -29,7 +29,7 @@ object AstroComponentWildcardAttribute: PolySymbol {
   override val priority: PolySymbol.Priority
     get() = PolySymbol.Priority.LOWEST
 
-  override val pattern: WebSymbolsPattern
+  override val pattern: PolySymbolsPattern
     get() = WebSymbolsPatternFactory.createRegExMatch(".*")
 
   override val properties: Map<String, Any>
