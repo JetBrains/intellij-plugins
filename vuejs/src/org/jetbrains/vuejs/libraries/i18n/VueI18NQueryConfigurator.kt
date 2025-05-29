@@ -77,8 +77,8 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
     override val name: String
       get() = "i18n"
 
-    override val origin: WebSymbolOrigin =
-      WebSymbolOrigin.create(VueFramework.ID, "vue-i18n")
+    override val origin: PolySymbolOrigin =
+      PolySymbolOrigin.create(VueFramework.ID, "vue-i18n")
 
     override val namespace: SymbolNamespace
       get() = PolySymbol.NAMESPACE_HTML

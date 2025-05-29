@@ -2,14 +2,14 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueNamedSymbol
 
 abstract class VueNamedPolySymbol<T : VueNamedSymbol>(
   item: T,
   protected val owner: VueComponent,
-  override val origin: WebSymbolOrigin,
+  override val origin: PolySymbolOrigin,
 ) : VueDocumentedItemSymbol<T>(item.name, item) {
 
   abstract override fun createPointer(): Pointer<out VueNamedPolySymbol<T>>

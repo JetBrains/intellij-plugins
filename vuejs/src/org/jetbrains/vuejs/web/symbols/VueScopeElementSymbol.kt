@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import org.jetbrains.vuejs.model.VueScopeElement
@@ -13,7 +13,7 @@ abstract class VueScopeElementSymbol<T : VueScopeElement>(name: String, item: T)
 
   abstract override fun createPointer(): Pointer<out VueScopeElementSymbol<T>>
 
-  override val origin: WebSymbolOrigin =
+  override val origin: PolySymbolOrigin =
     VueScopeElementOrigin(item)
 
   override val searchTarget: WebSymbolSearchTarget?

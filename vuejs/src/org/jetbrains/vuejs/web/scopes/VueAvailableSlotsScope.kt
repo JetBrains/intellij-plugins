@@ -85,7 +85,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
     override val name: String
       get() = "v-slot"
 
-    override val origin: WebSymbolOrigin = object : WebSymbolOrigin {
+    override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
       override val framework: FrameworkId
         get() = VueFramework.ID
     }

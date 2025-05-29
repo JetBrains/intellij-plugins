@@ -3,7 +3,7 @@ package org.angular2.web.scopes
 import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
@@ -14,7 +14,7 @@ class PolySymbolReferencingScope(
   qualifiedKind: PolySymbolQualifiedKind,
   name: String,
   private val isExclusive: Boolean,
-  origin: WebSymbolOrigin,
+  origin: PolySymbolOrigin,
   vararg qualifiedKinds: PolySymbolQualifiedKind,
 ) : PolySymbolsScope {
 

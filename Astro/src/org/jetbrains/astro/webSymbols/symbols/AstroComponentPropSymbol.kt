@@ -17,7 +17,7 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
   override val type: JSType?
     get() = propertySymbol.jsType
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
   override val namespace: SymbolNamespace

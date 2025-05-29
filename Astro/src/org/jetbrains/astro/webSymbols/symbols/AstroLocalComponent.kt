@@ -58,7 +58,7 @@ class AstroLocalComponent(override val name: String,
       ?.forEach(consumer)
   }
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
   override val namespace: SymbolNamespace

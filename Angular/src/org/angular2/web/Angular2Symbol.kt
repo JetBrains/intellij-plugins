@@ -17,7 +17,7 @@ interface Angular2Symbol : PolySymbol {
   override val namespace: SymbolNamespace
     get() = qualifiedKind.namespace
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = Angular2SymbolOrigin(this)
 
   override fun createPointer(): Pointer<out Angular2Symbol>

@@ -2,12 +2,12 @@
 package org.jetbrains.astro.webSymbols.symbols
 
 import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.AstroIcons
 import javax.swing.Icon
 
-object AstroProjectSymbolOrigin : WebSymbolOrigin {
+object AstroProjectSymbolOrigin : PolySymbolOrigin {
 
   override val defaultIcon: Icon
     get() = AstroIcons.Astro

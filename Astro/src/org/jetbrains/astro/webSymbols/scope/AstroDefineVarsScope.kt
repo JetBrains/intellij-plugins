@@ -72,7 +72,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
         WebSymbolsPatternFactory.createPatternSequence(WebSymbolsPatternFactory.createSymbolReferencePlaceholder())
       )
 
-    override val origin: WebSymbolOrigin = object : WebSymbolOrigin {
+    override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
       override val framework: FrameworkId?
         get() = null
     }
@@ -112,7 +112,7 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
         )
       )
 
-    override val origin: WebSymbolOrigin = object : WebSymbolOrigin {
+    override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
       override val framework: FrameworkId?
         get() = null
     }

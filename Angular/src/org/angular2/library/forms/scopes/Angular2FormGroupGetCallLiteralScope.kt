@@ -73,7 +73,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
       override val name: @NlsSafe String
         get() = "FormGroup.get() path"
 
-      override val origin: WebSymbolOrigin
+      override val origin: PolySymbolOrigin
         get() = Angular2SymbolOrigin.empty
 
       override val namespace: @NlsSafe SymbolNamespace

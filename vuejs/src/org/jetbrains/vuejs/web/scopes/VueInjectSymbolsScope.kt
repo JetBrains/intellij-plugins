@@ -60,7 +60,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(enclosingComponent.source.project).modificationCount
 
-  private object VueInjectSymbolOrigin : WebSymbolOrigin {
+  private object VueInjectSymbolOrigin : PolySymbolOrigin {
     override val framework: FrameworkId
       get() = VueFramework.ID
   }

@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
@@ -19,7 +19,7 @@ abstract class Angular2FormAbstractControlImpl(
   override val source: PsiElement,
 ) : Angular2FormControl {
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = Angular2SymbolOrigin.empty
 
   override val project: Project

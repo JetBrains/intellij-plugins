@@ -44,7 +44,7 @@ object Angular2UnknownFormGroup : PolySymbol {
   override val kind: @NlsSafe SymbolKind
     get() = NG_FORM_GROUP_PROPS.kind
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = Angular2SymbolOrigin.empty
 
   override fun createPointer(): Pointer<out PolySymbol> =

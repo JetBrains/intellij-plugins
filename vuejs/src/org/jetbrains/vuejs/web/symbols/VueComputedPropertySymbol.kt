@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueComputedProperty
@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 class VueComputedPropertySymbol(
   data: VueComputedProperty,
   owner: VueComponent,
-  origin: WebSymbolOrigin,
+  origin: PolySymbolOrigin,
 ) : VuePropertySymbol<VueComputedProperty>(data, owner, origin) {
 
   override val qualifiedKind: PolySymbolQualifiedKind

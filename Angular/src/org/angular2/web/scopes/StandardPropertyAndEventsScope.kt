@@ -76,7 +76,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override val extension: Boolean
       get() = true
 
-    override val origin: WebSymbolOrigin
+    override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
     override val namespace: SymbolNamespace

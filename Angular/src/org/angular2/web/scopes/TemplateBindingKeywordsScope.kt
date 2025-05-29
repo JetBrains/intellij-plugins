@@ -15,13 +15,13 @@ import org.angular2.web.NG_TEMPLATE_BINDING_KEYWORDS
 object TemplateBindingKeywordsScope : PolySymbolsScope {
 
   private val KEYWORDS_REF_FOR_JS_SYMBOLS = ReferencingPolySymbol.create(
-    JS_SYMBOLS, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
+    JS_SYMBOLS, "Angular template binding keyword", PolySymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
   private val KEYWORDS_REF_FOR_JS_PROPERTIES = ReferencingPolySymbol.create(
-    JS_PROPERTIES, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
+    JS_PROPERTIES, "Angular template binding keyword", PolySymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
   private val KEYWORDS_REF_FOR_NG_TEMPLATE_BINDINGS = ReferencingPolySymbol.create(
-    NG_TEMPLATE_BINDINGS, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
+    NG_TEMPLATE_BINDINGS, "Angular template binding keyword", PolySymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
   override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     when (qualifiedKind) {

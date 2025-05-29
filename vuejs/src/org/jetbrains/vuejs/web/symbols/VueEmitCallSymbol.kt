@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
@@ -19,7 +19,7 @@ private const val UPDATE_PREFIX = "update:"
 class VueEmitCallSymbol(
   emitCall: VueEmitCall,
   owner: VueComponent,
-  origin: WebSymbolOrigin,
+  origin: PolySymbolOrigin,
 ) : VueNamedPolySymbol<VueEmitCall>(
   item = emitCall,
   origin = origin,

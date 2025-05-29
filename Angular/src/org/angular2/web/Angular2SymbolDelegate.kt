@@ -7,7 +7,7 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.PolySymbolDelegate
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 
 abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : PolySymbolDelegate<T>(delegate), Angular2Symbol {
@@ -26,7 +26,7 @@ abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : PolySym
   override val project: Project
     get() = delegate.project
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = delegate.origin
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =

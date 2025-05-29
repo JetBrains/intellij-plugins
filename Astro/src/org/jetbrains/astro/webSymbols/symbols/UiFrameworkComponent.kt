@@ -40,7 +40,7 @@ class UiFrameworkComponent(override val name: String,
     consumer(AstroComponentWildcardAttribute)
   }
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
   override val namespace: SymbolNamespace

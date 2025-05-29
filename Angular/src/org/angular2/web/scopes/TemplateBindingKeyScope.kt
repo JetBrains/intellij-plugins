@@ -85,7 +85,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
   override fun getModificationCount(): Long = 0
 
   private class TemplateBindingsSymbol(private val bindings: Angular2TemplateBindings) : PolySymbol {
-    override val origin: WebSymbolOrigin
+    override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
     override val namespace: @NlsSafe SymbolNamespace

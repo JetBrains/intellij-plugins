@@ -49,8 +49,8 @@ class VueComponentNamespaceSymbol(
         ?.firstOrNull()
       ?: source, false)
 
-  override val origin: WebSymbolOrigin
-    get() = object : WebSymbolOrigin {
+  override val origin: PolySymbolOrigin
+    get() = object : PolySymbolOrigin {
       override val framework: FrameworkId
         get() = VueFramework.ID
     }

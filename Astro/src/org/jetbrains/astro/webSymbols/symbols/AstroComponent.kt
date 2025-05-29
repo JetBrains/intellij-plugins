@@ -22,7 +22,7 @@ class AstroComponent(file: PsiFile)
   override val source: PsiElement
     get() = dataHolder
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
   override val namespace: SymbolNamespace

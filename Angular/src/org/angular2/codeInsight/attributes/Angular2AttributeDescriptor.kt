@@ -10,7 +10,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
@@ -54,7 +54,7 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
       element: PsiElement,
     ): Angular2AttributeDescriptor {
       val symbol = object : PolySymbol {
-        override val origin: WebSymbolOrigin
+        override val origin: PolySymbolOrigin
           get() = Angular2SymbolOrigin.empty
         override val namespace: SymbolNamespace
           get() = PolySymbol.NAMESPACE_HTML

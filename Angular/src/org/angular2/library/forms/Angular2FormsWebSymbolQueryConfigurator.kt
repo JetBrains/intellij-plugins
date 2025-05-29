@@ -12,7 +12,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
@@ -70,17 +70,17 @@ class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 
   private val ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL = ReferencingPolySymbol.create(
-    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form control name", WebSymbolOrigin.empty(),
+    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form control name", PolySymbolOrigin.empty(),
     NG_FORM_CONTROL_PROPS,
   )
 
   private val ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL = ReferencingPolySymbol.create(
-    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form array name", WebSymbolOrigin.empty(),
+    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form array name", PolySymbolOrigin.empty(),
     NG_FORM_ARRAY_PROPS,
   )
 
   private val ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL = ReferencingPolySymbol.create(
-    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form group name", WebSymbolOrigin.empty(),
+    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form group name", PolySymbolOrigin.empty(),
     NG_FORM_GROUP_PROPS,
   )
 

@@ -89,7 +89,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
   companion object {
 
     private val anyJsDataSymbol = VueAnySymbol(
-      WebSymbolOrigin.create(VueFramework.ID),
+      PolySymbolOrigin.create(VueFramework.ID),
       VUE_COMPONENT_DATA_PROPERTIES,
       "Unknown data property",
       JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.JS)
@@ -126,7 +126,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
         )
       )
 
-    override val origin: WebSymbolOrigin = object : WebSymbolOrigin {
+    override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
       override val framework: FrameworkId
         get() = VueFramework.ID
     }

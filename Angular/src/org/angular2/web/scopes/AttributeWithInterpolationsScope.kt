@@ -36,7 +36,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
 
   private object AttributeWithInterpolationsSymbol : PolySymbol {
 
-    override val origin: WebSymbolOrigin
+    override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
     override val namespace: SymbolNamespace

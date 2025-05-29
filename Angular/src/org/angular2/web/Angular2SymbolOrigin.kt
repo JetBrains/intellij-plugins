@@ -6,13 +6,13 @@ import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.util.Pair
 import com.intellij.webSymbols.PsiSourcedPolySymbol
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.WebSymbolTypeSupport
 import icons.AngularIcons
 import org.angular2.Angular2Framework
 import javax.swing.Icon
 
-class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : WebSymbolOrigin {
+class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : PolySymbolOrigin {
 
   private val versionAndName: Pair<String, String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     val source = if (mySymbol is PsiSourcedPolySymbol)
@@ -53,9 +53,9 @@ class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : WebSymbolOrig
     versionAndName.hashCode()
 
   companion object {
-    val empty: WebSymbolOrigin = WebSymbolOrigin.create(Angular2Framework.ID,
-                                                        library = "@angular/core",
-                                                        defaultIcon = AngularIcons.Angular2,
-                                                        typeSupport = TypeScriptSymbolTypeSupport())
+    val empty: PolySymbolOrigin = PolySymbolOrigin.create(Angular2Framework.ID,
+                                                          library = "@angular/core",
+                                                          defaultIcon = AngularIcons.Angular2,
+                                                          typeSupport = TypeScriptSymbolTypeSupport())
   }
 }

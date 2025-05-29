@@ -5,7 +5,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
@@ -24,7 +24,7 @@ object Angular2FormArrayControl : PolySymbol {
   override val kind: @NlsSafe SymbolKind
     get() = NG_FORM_CONTROL_PROPS.kind
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = Angular2SymbolOrigin.empty
 
   override val priority: PolySymbol.Priority?

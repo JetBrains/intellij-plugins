@@ -17,7 +17,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
@@ -52,7 +52,7 @@ fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newAp
   }
 
 private val anySlot = VueAnySymbol(
-  WebSymbolOrigin.empty(),
+  PolySymbolOrigin.empty(),
   PolySymbol.HTML_SLOTS,
   "Unknown slot"
 )

@@ -121,7 +121,7 @@ class VueSlotElementScope(tag: XmlTag)
         createSymbolReferencePlaceholder()
       )
 
-    override val origin: WebSymbolOrigin = object : WebSymbolOrigin {
+    override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
       override val framework: FrameworkId
         get() = VueFramework.ID
     }

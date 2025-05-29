@@ -141,7 +141,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     || qualifiedKind == NG_DIRECTIVE_INPUTS
     || qualifiedKind == NG_DIRECTIVE_OUTPUTS
 
-  private object AngularEmptyOrigin : WebSymbolOrigin {
+  private object AngularEmptyOrigin : PolySymbolOrigin {
     override val framework: FrameworkId =
       Angular2Framework.ID
   }
@@ -168,7 +168,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     override val kind: SymbolKind
       get() = super<Angular2Symbol>.kind
 
-    override val origin: WebSymbolOrigin
+    override val origin: PolySymbolOrigin
       get() = super<Angular2Symbol>.origin
 
     override val type: Any?

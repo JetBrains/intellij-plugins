@@ -60,7 +60,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
     override val extension: Boolean
       get() = true
 
-    override val origin: WebSymbolOrigin
+    override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
     override val namespace: SymbolNamespace

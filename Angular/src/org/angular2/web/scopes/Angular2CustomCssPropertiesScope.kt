@@ -23,7 +23,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.CSS_PROPERTIES
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import com.intellij.webSymbols.css.properties.AbstractCssCustomPropertySymbolDeclaredInPsi
@@ -134,8 +134,8 @@ class Angular2CustomCssPropertiesScope(file: PsiFile) :
     final override val textRangeInSourceElement: TextRange? =
       getInitialOffset().let { TextRange(info.nameOffset + it, info.nameOffset + it + info.name.length) }
 
-    final override val origin: WebSymbolOrigin
-      get() = WebSymbolOrigin.empty()
+    final override val origin: PolySymbolOrigin
+      get() = PolySymbolOrigin.empty()
 
     final override val name: @NlsSafe String = info.name
 

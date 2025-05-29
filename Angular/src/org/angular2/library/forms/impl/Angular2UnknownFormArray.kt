@@ -30,7 +30,7 @@ object Angular2UnknownFormArray : PolySymbol {
   override val kind: @NlsSafe SymbolKind
     get() = NG_FORM_ARRAY_PROPS.kind
 
-  override val origin: WebSymbolOrigin
+  override val origin: PolySymbolOrigin
     get() = Angular2SymbolOrigin.empty
 
   override val priority: PolySymbol.Priority?

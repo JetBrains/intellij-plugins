@@ -71,7 +71,7 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
 
   companion object {
     private val formGroupGetPathRefSymbol = ReferencingPolySymbol.create(
-      JS_STRING_LITERALS, "Angular Form control, array or group name", WebSymbolOrigin.empty(),
+      JS_STRING_LITERALS, "Angular Form control, array or group name", PolySymbolOrigin.empty(),
       *NG_FORM_ANY_CONTROL_PROPS.toTypedArray()
     )
   }

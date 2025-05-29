@@ -18,7 +18,7 @@ import org.jetbrains.vuejs.model.VueSlot
 class VueSlotSymbol(
   slot: VueSlot,
   owner: VueComponent,
-  origin: WebSymbolOrigin,
+  origin: PolySymbolOrigin,
 ) : VueNamedPolySymbol<VueSlot>(
   item = slot,
   origin = origin,

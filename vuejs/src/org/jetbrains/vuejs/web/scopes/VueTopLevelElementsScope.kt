@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web.scopes
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
@@ -16,7 +16,7 @@ object VueTopLevelElementsScope : PolySymbolsScope {
   private val referencingSymbol = ReferencingPolySymbol.create(
     PolySymbol.HTML_ELEMENTS,
     "Vue Top Level Element",
-    WebSymbolOrigin.empty(),
+    PolySymbolOrigin.empty(),
     VUE_TOP_LEVEL_ELEMENTS
   )
 
