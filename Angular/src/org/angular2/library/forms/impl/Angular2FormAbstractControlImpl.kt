@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
+import com.intellij.webSymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import org.angular2.library.forms.Angular2FormControl
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
@@ -33,8 +33,8 @@ abstract class Angular2FormAbstractControlImpl(
   override val searchTarget: WebSymbolSearchTarget?
     get() = WebSymbolSearchTarget.create(this)
 
-  override val renameTarget: WebSymbolRenameTarget?
-    get() = WebSymbolRenameTarget.create(this)
+  override val renameTarget: PolySymbolRenameTarget?
+    get() = PolySymbolRenameTarget.create(this)
 
   override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind in NG_FORM_ANY_CONTROL_PROPS

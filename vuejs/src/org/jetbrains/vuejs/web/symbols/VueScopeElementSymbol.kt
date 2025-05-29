@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
 import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
+import com.intellij.webSymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import org.jetbrains.vuejs.model.VueScopeElement
 
@@ -19,8 +19,8 @@ abstract class VueScopeElementSymbol<T : VueScopeElement>(name: String, item: T)
   override val searchTarget: WebSymbolSearchTarget?
     get() = WebSymbolSearchTarget.create(this)
 
-  override val renameTarget: WebSymbolRenameTarget?
+  override val renameTarget: PolySymbolRenameTarget?
     get() = if (source is JSLiteralExpression)
-      WebSymbolRenameTarget.create(this)
+      PolySymbolRenameTarget.create(this)
     else null
 }
