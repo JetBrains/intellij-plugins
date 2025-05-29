@@ -13,7 +13,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.documentation.PolySymbolDocumentation
-import com.intellij.webSymbols.documentation.WebSymbolDocumentationTarget
+import com.intellij.webSymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
@@ -201,7 +201,7 @@ class VuePolyTypesMergedSymbol(
     override val symbol: PolySymbol,
     override val location: PsiElement?,
     @Nls val displayName: String,
-  ) : WebSymbolDocumentationTarget {
+  ) : PolySymbolDocumentationTarget {
 
     override fun computePresentation(): TargetPresentation {
       return TargetPresentation.builder(displayName)
