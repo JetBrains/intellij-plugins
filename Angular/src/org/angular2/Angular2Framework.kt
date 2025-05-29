@@ -12,9 +12,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbolQualifiedName
-import com.intellij.webSymbols.query.WebSymbolNamesProvider
-import com.intellij.webSymbols.query.WebSymbolNamesProvider.Target.NAMES_QUERY
-import com.intellij.webSymbols.query.WebSymbolNamesProvider.Target.RENAME_QUERY
+import com.intellij.webSymbols.query.PolySymbolNamesProvider
+import com.intellij.webSymbols.query.PolySymbolNamesProvider.Target.NAMES_QUERY
+import com.intellij.webSymbols.query.PolySymbolNamesProvider.Target.RENAME_QUERY
 import icons.AngularIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
@@ -70,7 +70,7 @@ class Angular2Framework : WebFramework() {
 
   override fun getNames(
     qualifiedName: PolySymbolQualifiedName,
-    target: WebSymbolNamesProvider.Target,
+    target: PolySymbolNamesProvider.Target,
   ): List<String> {
     if ((target == NAMES_QUERY || target == RENAME_QUERY)
         && qualifiedName.qualifiedKind == NG_DIRECTIVE_IN_OUTS) {
