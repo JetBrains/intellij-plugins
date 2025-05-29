@@ -5,9 +5,9 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
-import com.intellij.polySymbols.webTypes.filters.WebSymbolsFilter
+import com.intellij.polySymbols.webTypes.filters.PolySymbolsFilter
 
-class VueBindFilter : WebSymbolsFilter {
+class VueBindFilter : PolySymbolsFilter {
   override fun filterCodeCompletions(
     codeCompletions: List<PolySymbolCodeCompletionItem>,
     queryExecutor: PolySymbolsQueryExecutor,
