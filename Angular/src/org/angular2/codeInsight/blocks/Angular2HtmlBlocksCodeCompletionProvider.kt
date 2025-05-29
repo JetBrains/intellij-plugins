@@ -14,13 +14,13 @@ import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.completion.WebSymbolsCompletionProviderBase
+import com.intellij.webSymbols.completion.PolySymbolsCompletionProviderBase
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 
-class Angular2HtmlBlocksCodeCompletionProvider : WebSymbolsCompletionProviderBase<PsiElement>() {
+class Angular2HtmlBlocksCodeCompletionProvider : PolySymbolsCompletionProviderBase<PsiElement>() {
   override fun addCompletions(
     parameters: CompletionParameters,
     result: CompletionResultSet,

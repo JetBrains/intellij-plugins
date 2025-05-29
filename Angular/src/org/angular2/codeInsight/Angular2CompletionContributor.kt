@@ -35,7 +35,7 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.completion.WebSymbolsCompletionProviderBase
+import com.intellij.webSymbols.completion.PolySymbolsCompletionProviderBase
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
@@ -212,7 +212,7 @@ class Angular2CompletionContributor : CompletionContributor() {
 
         // Block support
         if (Angular2HtmlBlockReferenceExpressionCompletionProvider.addCompletions(result, ref)
-            || WebSymbolsCompletionProviderBase.noMoreCodeCompletionsFor(parameters, PolySymbol.JS_PROPERTIES, PolySymbol.JS_KEYWORDS, PolySymbol.JS_SYMBOLS)) {
+            || PolySymbolsCompletionProviderBase.noMoreCodeCompletionsFor(parameters, PolySymbol.JS_PROPERTIES, PolySymbol.JS_KEYWORDS, PolySymbol.JS_SYMBOLS)) {
           return
         }
 
@@ -249,7 +249,7 @@ class Angular2CompletionContributor : CompletionContributor() {
         }
 
         if (ref.qualifier != null) {
-          WebSymbolsCompletionProviderBase.preventFurtherCodeCompletionsFor(parameters, PolySymbol.JS_PROPERTIES)
+          PolySymbolsCompletionProviderBase.preventFurtherCodeCompletionsFor(parameters, PolySymbol.JS_PROPERTIES)
           return
         }
 
