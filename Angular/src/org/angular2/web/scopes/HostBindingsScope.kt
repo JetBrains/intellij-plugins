@@ -10,7 +10,7 @@ import com.intellij.psi.css.StylesheetFile
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScope
-import com.intellij.polySymbols.css.getWebSymbolsCssScopeForTagClasses
+import com.intellij.polySymbols.css.getPolySymbolsCssScopeForTagClasses
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
 import org.angular2.Angular2Framework
@@ -49,7 +49,7 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
         DirectiveElementSelectorsScope(file),
         DirectiveAttributeSelectorsScope(file),
         getStandardHtmlElementSymbolsScope(file.project),
-        getWebSymbolsCssScopeForTagClasses(location, relatedStylesheets),
+        getPolySymbolsCssScopeForTagClasses(location, relatedStylesheets),
       )
       val elementNames = directive?.selector?.simpleSelectors
         ?.mapNotNull { it.elementName?.trim()?.takeIf { it.isNotEmpty() && it != "*" } }
