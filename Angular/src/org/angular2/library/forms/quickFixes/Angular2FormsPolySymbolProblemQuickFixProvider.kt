@@ -8,7 +8,7 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolNameSegment
-import com.intellij.webSymbols.inspections.WebSymbolsProblemQuickFixProvider
+import com.intellij.webSymbols.inspections.PolySymbolsProblemQuickFixProvider
 import com.intellij.webSymbols.references.WebSymbolReferenceProblem
 import com.intellij.webSymbols.utils.nameSegments
 import org.angular2.library.forms.Angular2FormGroup
@@ -18,7 +18,7 @@ import org.angular2.library.forms.findFormGroupForGetCallParameterArray
 import org.angular2.library.forms.scopes.Angular2FormSymbolsScopeInAttributeValue
 import org.angular2.library.forms.scopes.resolveFormSymbolForGetCallArrayLiteral
 
-class Angular2FormsWebSymbolProblemQuickFixProvider : WebSymbolsProblemQuickFixProvider {
+class Angular2FormsPolySymbolProblemQuickFixProvider : PolySymbolsProblemQuickFixProvider {
   override fun getQuickFixes(
     element: PsiElement,
     symbol: PolySymbol,

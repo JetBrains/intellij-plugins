@@ -433,7 +433,7 @@
     <webSymbols.codeCompletionItemCustomizer
       implementation="org.angular2.library.forms.Angular2FormsPolySymbolsCodeCompletionItemCustomizer"/>
     <webSymbols.problemQuickFixProvider
-      implementation="org.angular2.library.forms.quickFixes.Angular2FormsWebSymbolProblemQuickFixProvider"/>
+      implementation="org.angular2.library.forms.quickFixes.Angular2FormsPolySymbolProblemQuickFixProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>
     <annotator language="TypeScript" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>
   </extensions>
