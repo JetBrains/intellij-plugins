@@ -17,7 +17,7 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.context.PolyContext.Companion.KIND_FRAMEWORK
 import com.intellij.webSymbols.context.PolyContextProvider
-import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPoint
+import com.intellij.webSymbols.context.impl.PolyContextProviderExtensionPoint
 import com.intellij.webcore.libraries.ScriptingLibraryModel
 import junit.framework.TestCase
 import org.jetbrains.vuejs.context.isVueContext
@@ -292,7 +292,7 @@ Vue.options.delimiters = ['<%', '%>']
     PolyContext.WEB_SYMBOLS_CONTEXT_EP
       .point
       ?.registerExtension(
-        WebSymbolsContextProviderExtensionPoint(
+        PolyContextProviderExtensionPoint(
           KIND_FRAMEWORK,
           "vue",
           object : PolyContextProvider {

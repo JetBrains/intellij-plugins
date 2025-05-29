@@ -27,7 +27,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.context.PolyContextProvider
-import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPoint
+import com.intellij.webSymbols.context.impl.PolyContextProviderExtensionPoint
 import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import com.intellij.webSymbols.testFramework.resolveReference
 import junit.framework.TestCase
@@ -237,7 +237,7 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
     PolyContext.WEB_SYMBOLS_CONTEXT_EP
       .point!!
       .registerExtension(
-        WebSymbolsContextProviderExtensionPoint(PolyContext.KIND_FRAMEWORK, "angular", object : PolyContextProvider {
+        PolyContextProviderExtensionPoint(PolyContext.KIND_FRAMEWORK, "angular", object : PolyContextProvider {
           override fun isEnabled(project: Project, directory: VirtualFile): CachedValueProvider.Result<Int?> {
             return CachedValueProvider.Result.create(1, ModificationTracker.EVER_CHANGED)
           }
