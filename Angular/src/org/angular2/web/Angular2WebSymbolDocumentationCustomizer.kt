@@ -6,7 +6,7 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.documentation.WebSymbolDocumentation
+import com.intellij.webSymbols.documentation.PolySymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationCustomizer
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol
@@ -17,7 +17,7 @@ import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors.Companion.NG_BLOCK_NAME
 
 class Angular2WebSymbolDocumentationCustomizer : WebSymbolDocumentationCustomizer {
-  override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
+  override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: PolySymbolDocumentation): PolySymbolDocumentation {
     if (symbol is Angular2HtmlBlockSymbol && location != null) {
       val primaryBlock = symbol.primaryBlock?.let { SyntaxPrinter(location).append(NG_BLOCK_NAME, "@$it").toString() }
       return documentation.with(

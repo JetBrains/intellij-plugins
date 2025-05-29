@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.documentation.WebSymbolDocumentation
+import com.intellij.webSymbols.documentation.PolySymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationCustomizer
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.jetbrains.vuejs.VueBundle
@@ -16,7 +16,7 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl
 
 class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
-  override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
+  override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: PolySymbolDocumentation): PolySymbolDocumentation {
     if (symbol.namespace == PolySymbol.NAMESPACE_HTML
         && symbol.kind == PolySymbol.KIND_HTML_SLOTS
         && (symbol.origin.framework == VueFramework.ID

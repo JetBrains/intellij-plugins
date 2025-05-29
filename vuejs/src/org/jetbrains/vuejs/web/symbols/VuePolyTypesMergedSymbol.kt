@@ -12,7 +12,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.documentation.WebSymbolDocumentation
+import com.intellij.webSymbols.documentation.PolySymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationTarget
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
@@ -95,8 +95,8 @@ class VuePolyTypesMergedSymbol(
   override val queryScope: List<PolySymbolsScope>
     get() = listOf(this)
 
-  override fun createDocumentation(location: PsiElement?): WebSymbolDocumentation =
-    WebSymbolDocumentation.create(this, location).let { doc ->
+  override fun createDocumentation(location: PsiElement?): PolySymbolDocumentation =
+    PolySymbolDocumentation.create(this, location).let { doc ->
       originalName
         ?.let { doc.withDefinition(StringUtil.escapeXmlEntities(it) + " as " + doc.definition) }
       ?: doc
