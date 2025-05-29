@@ -6,7 +6,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.psi.html.HtmlTag
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.polySymbols.testFramework.resolveReference
-import com.intellij.polySymbols.testFramework.resolveWebSymbolReference
+import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.Angular2TestUtil
@@ -55,7 +55,7 @@ class Angular2NgContentSelectorsTest : Angular2CodeInsightFixtureTestCase() {
       Pair("<span g<caret>oo", ":not([goo])")
     )) {
       try {
-        assertEquals(test.second, myFixture.resolveWebSymbolReference(test.first).psiContext!!.getText())
+        assertEquals(test.second, myFixture.resolvePolySymbolReference(test.first).psiContext!!.getText())
       }
       catch (error: AssertionError) {
         throw AssertionError("Failed with signature: " + test.first, error)

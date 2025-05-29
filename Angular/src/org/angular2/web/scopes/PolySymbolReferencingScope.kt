@@ -6,7 +6,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScope
-import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.polySymbols.utils.qualifiedKind
 
@@ -25,7 +25,7 @@ class PolySymbolReferencingScope(
   override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     isExclusive && qualifiedKind == symbol.qualifiedKind
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     if (qualifiedKind == symbol.qualifiedKind)
       listOf(symbol)
     else

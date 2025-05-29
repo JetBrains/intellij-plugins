@@ -11,7 +11,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueComponentNamespaceSymbol
@@ -46,7 +46,7 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
-    params: WebSymbolsCodeCompletionQueryParams,
+    params: PolySymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolCodeCompletionItem> {
     return emptyList()

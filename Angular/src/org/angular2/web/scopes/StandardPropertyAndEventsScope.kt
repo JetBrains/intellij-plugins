@@ -22,7 +22,7 @@ import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_EVENTS
 import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -39,7 +39,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: WebSymbolsNameMatchQueryParams,
+    params: PolySymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(PolySymbol.HTML_ELEMENTS)) {

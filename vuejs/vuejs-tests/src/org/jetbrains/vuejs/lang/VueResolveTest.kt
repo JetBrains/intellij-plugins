@@ -18,10 +18,10 @@ import com.intellij.polySymbols.*
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.multiResolveWebSymbolReference
+import com.intellij.polySymbols.testFramework.multiResolvePolySymbolReference
 import com.intellij.polySymbols.testFramework.renderLookupItems
 import com.intellij.polySymbols.testFramework.resolveReference
-import com.intellij.polySymbols.testFramework.resolveToWebSymbolSource
+import com.intellij.polySymbols.testFramework.resolveToPolySymbolSource
 import com.intellij.polySymbols.testFramework.webSymbolSourceAtCaret
 import com.intellij.polySymbols.utils.asSingleSymbol
 import junit.framework.TestCase
@@ -1712,7 +1712,7 @@ export default class UsageComponent extends Vue {
 }
 </script>
 """)
-    val target = myFixture.resolveToWebSymbolSource("<<caret>LongComponent/>")
+    val target = myFixture.resolveToPolySymbolSource("<<caret>LongComponent/>")
     TestCase.assertEquals("ResolveWithClassComponentTs.vue", target.containingFile.name)
     assertInstanceOf(target, JSProperty::class.java)
     myFixture.checkGotoDeclaration("<<caret>LongComponent/>", "export default class <caret>LongComponent", "LongComponent.vue")
@@ -1804,7 +1804,7 @@ export default class UsageComponent extends Vue {
       </script>
       <template><Foo></Foo></template>
     """.trimIndent())
-    myFixture.resolveToWebSymbolSource("<F<caret>oo>")
+    myFixture.resolveToPolySymbolSource("<F<caret>oo>")
       .parent.text
       .let { TestCase.assertEquals("{ Foo }", it) }
   }
@@ -1857,7 +1857,7 @@ export default class UsageComponent extends Vue {
       .forEach { testCase ->
         TestCase.assertEquals(
           testCase.value,
-          myFixture.resolveToWebSymbolSource(testCase.key)
+          myFixture.resolveToPolySymbolSource(testCase.key)
             .let {
               (it as? JSImplicitElement)?.context ?: it
             }.text)
@@ -1897,7 +1897,7 @@ export default class UsageComponent extends Vue {
       val slotWithCaret = slotName.replaceRange(1, 1, "<caret>")
       for (signature in listOf("<$tag><template v-slot:$slotWithCaret",
                                "<$tag><div slot=\"$slotWithCaret\"")) {
-        val element = myFixture.resolveToWebSymbolSource(signature)
+        val element = myFixture.resolveToPolySymbolSource(signature)
         assertEquals(signature, slotDeclText, element.text)
       }
     }
@@ -2037,7 +2037,7 @@ export default class UsageComponent extends Vue {
     ).forEach { (signature, offset, expectedFileName) ->
       myFixture.configureFromTempProjectFile("index.html")
       if (offset == null) {
-        assertEmpty("Expected empty for $signature", myFixture.multiResolveWebSymbolReference(signature))
+        assertEmpty("Expected empty for $signature", myFixture.multiResolvePolySymbolReference(signature))
       }
       else {
         myFixture.checkGotoDeclaration(signature, offset, expectedFileName)
@@ -2282,7 +2282,7 @@ export default class UsageComponent extends Vue {
 
     assertEquals(
       "default?: (props: { field: FieldSlotPropText }) => any",
-      myFixture.multiResolveWebSymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
+      myFixture.multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
         ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
     )
   }
@@ -2306,7 +2306,7 @@ export default class UsageComponent extends Vue {
 
     assertEquals(
       "default?: (props: { field: FieldSlotPropText }) => any",
-      myFixture.multiResolveWebSymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
+      myFixture.multiResolvePolySymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
         ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
     )
   }
@@ -2330,7 +2330,7 @@ export default class UsageComponent extends Vue {
 
     assertEquals(
       "default?: (props: { field: FieldSlotPropText }) => any",
-      myFixture.multiResolveWebSymbolReference("v-slot:def<caret>ault='{ field }'").asSingleSymbol()
+      myFixture.multiResolvePolySymbolReference("v-slot:def<caret>ault='{ field }'").asSingleSymbol()
         ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
     )
   }
@@ -2373,7 +2373,7 @@ export default class UsageComponent extends Vue {
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
     val declarations = myFixture
-      .multiResolveWebSymbolReference("v-bind:input<caret>Prop")
+      .multiResolvePolySymbolReference("v-bind:input<caret>Prop")
       .asSequence()
       .filterIsInstance<VueBindingShorthandSymbol>()
       .flatMap { it.nameSegments }

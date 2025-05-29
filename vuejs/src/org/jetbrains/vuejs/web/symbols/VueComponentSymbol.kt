@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.query.PolySymbolMatch
-import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp
 import org.jetbrains.vuejs.model.source.VueSourceContainer
@@ -63,7 +63,7 @@ class VueComponentSymbol(
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: WebSymbolsNameMatchQueryParams,
+    params: PolySymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(PolySymbol.HTML_SLOTS) && item is VueUnresolvedComponent)
@@ -74,7 +74,7 @@ class VueComponentSymbol(
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
-    params: WebSymbolsListSymbolsQueryParams,
+    params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =
     when (qualifiedKind) {

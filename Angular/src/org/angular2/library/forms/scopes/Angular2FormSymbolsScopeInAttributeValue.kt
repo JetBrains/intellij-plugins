@@ -42,7 +42,7 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : P
   override val providedSymbolKinds: Set<PolySymbolQualifiedKind>
     get() = NG_FORM_ANY_CONTROL_PROPS
 
-  override val scopesBuilderProvider: (PsiFile, WebSymbolsPsiScopesHolder) -> PsiElementVisitor?
+  override val scopesBuilderProvider: (PsiFile, PolySymbolsPsiScopesHolder) -> PsiElementVisitor?
     get() = provider@{ file, holder ->
       val formsComponent = Angular2FormsComponent.getFor(file)
                            ?: return@provider null
@@ -72,7 +72,7 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : P
   private class Angular2FormSymbolsScopesBuilder(
     private val queryExecutor: PolySymbolsQueryExecutor,
     private val formsComponent: Angular2FormsComponent,
-    private val holder: WebSymbolsPsiScopesHolder,
+    private val holder: PolySymbolsPsiScopesHolder,
   ) : Angular2HtmlRecursiveElementVisitor() {
 
     override fun visitXmlTag(tag: XmlTag) {

@@ -12,8 +12,8 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.testFramework.Parameterized
-import com.intellij.polySymbols.testFramework.canRenameWebSymbolAtCaret
-import com.intellij.polySymbols.testFramework.renameWebSymbol
+import com.intellij.polySymbols.testFramework.canRenamePolySymbolAtCaret
+import com.intellij.polySymbols.testFramework.renamePolySymbol
 import org.angular2.Angular2TestUtil
 import org.junit.runner.RunWith
 import java.io.File
@@ -48,8 +48,8 @@ class Angular2EntitiesRenameTest : ReSharperParameterizedTestCase() {
     PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments()
 
     //perform rename
-    if (myFixture.canRenameWebSymbolAtCaret()) {
-      myFixture.renameWebSymbol("zzz")
+    if (myFixture.canRenamePolySymbolAtCaret()) {
+      myFixture.renamePolySymbol("zzz")
     }
     else {
       var targetElement = TargetElementUtil.findTargetElement(

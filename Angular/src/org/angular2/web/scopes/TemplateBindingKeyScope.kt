@@ -19,7 +19,7 @@ import com.intellij.polySymbols.PolySymbol.Companion.KIND_JS_SYMBOLS
 import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.polySymbols.PolySymbol.Priority
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
@@ -63,7 +63,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
-    params: WebSymbolsCodeCompletionQueryParams,
+    params: PolySymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolCodeCompletionItem> =
     super.getCodeCompletions(qualifiedName, params, scope).map {

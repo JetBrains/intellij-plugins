@@ -6,7 +6,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.webSymbolAtCaret
+import com.intellij.polySymbols.testFramework.polySymbolAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
@@ -41,10 +41,10 @@ class Angular2IvyModelTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
     myFixture.moveToOffsetBySignature("mat-form<caret>-field")
     assertEquals("form-field.d.ts",
-                 myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
+                 myFixture.polySymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
     myFixture.moveToOffsetBySignature("mat-tab<caret>-group")
     assertEquals("tab-group.d.ts",
-                 myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
+                 myFixture.polySymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
 
   fun testIonicMetadataResolution() {
@@ -59,7 +59,7 @@ class Angular2IvyModelTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
     myFixture.moveToOffsetBySignature("ion-card-<caret>subtitle")
     assertEquals("proxies.d.ts",
-                 myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
+                 myFixture.polySymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
 
   fun testFunctionPropertyMetadata() {
@@ -68,7 +68,7 @@ class Angular2IvyModelTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureFromTempProjectFile("template.html")
     myFixture.checkHighlighting()
     assertEquals("my-lib.component.d.ts",
-                 myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
+                 myFixture.polySymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
 
   fun testPriority() {

@@ -4,7 +4,7 @@ package org.angular2.codeInsight.blocks
 import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.Companion.JS_SYMBOLS
-import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.webTypes.WebTypesSymbolBase
 import com.intellij.polySymbols.webTypes.WebTypesSymbolFactory
 import org.angular2.web.NG_BLOCK_PARAMETERS
@@ -31,15 +31,15 @@ class Angular2HtmlBlockSymbol : WebTypesSymbolBase() {
     get() = properties["nested-secondary-blocks"] == true
 
   val parameters: List<Angular2BlockParameterSymbol>
-    get() = getSymbols(NG_BLOCK_PARAMETERS, WebSymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
+    get() = getSymbols(NG_BLOCK_PARAMETERS, PolySymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
       .filterIsInstance<Angular2BlockParameterSymbol>()
 
   val parameterPrefixes: List<Angular2BlockParameterPrefixSymbol>
-    get() = getSymbols(NG_BLOCK_PARAMETER_PREFIXES, WebSymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
+    get() = getSymbols(NG_BLOCK_PARAMETER_PREFIXES, PolySymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
       .filterIsInstance<Angular2BlockParameterPrefixSymbol>()
 
   val implicitVariables: List<PolySymbol>
-    get() = getSymbols(JS_SYMBOLS, WebSymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
+    get() = getSymbols(JS_SYMBOLS, PolySymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
       .filterIsInstance<PolySymbol>()
 
   class Factory : WebTypesSymbolFactory {

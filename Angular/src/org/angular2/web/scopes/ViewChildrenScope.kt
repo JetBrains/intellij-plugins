@@ -12,7 +12,7 @@ import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.polySymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
 import org.angular2.Angular2Framework
@@ -61,7 +61,7 @@ class ViewChildrenScope(
 
     override fun getCodeCompletions(
       qualifiedName: PolySymbolQualifiedName,
-      params: WebSymbolsCodeCompletionQueryParams,
+      params: PolySymbolsCodeCompletionQueryParams,
       scope: Stack<PolySymbolsScope>,
     ): List<PolySymbolCodeCompletionItem> =
       super.getCodeCompletions(qualifiedName, params, scope)

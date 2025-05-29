@@ -19,7 +19,7 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : PolySymbols
   override val rootPsiElement: PsiFile?
     get() = location.containingFile.takeIf { InjectedLanguageManager.getInstance(location.project).isInjectedFragment(it) }
 
-  override val scopesBuilderProvider: (PsiFile, WebSymbolsPsiScopesHolder) -> PsiElementVisitor?
+  override val scopesBuilderProvider: (PsiFile, PolySymbolsPsiScopesHolder) -> PsiElementVisitor?
     get() = provider@{ file, holder ->
       CustomCssPropertyTemplateScopeBuilder(holder)
     }
@@ -36,7 +36,7 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : PolySymbols
   }
 
   private class CustomCssPropertyTemplateScopeBuilder(
-    private val holder: WebSymbolsPsiScopesHolder,
+    private val holder: PolySymbolsPsiScopesHolder,
   ) : Angular2HtmlRecursiveElementVisitor() {
 
     override fun visitXmlTag(tag: XmlTag) {

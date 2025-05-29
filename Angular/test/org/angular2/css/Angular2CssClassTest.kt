@@ -6,7 +6,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.resolveReference
-import com.intellij.polySymbols.testFramework.resolveWebSymbolReference
+import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies
@@ -122,12 +122,12 @@ class Angular2CssClassTest : Angular2CodeInsightFixtureTestCase() {
   fun testNgClassReferences() {
     myFixture.configureByFiles("ngClass.html", "ngClass.css", "package.json")
     for (prefix in mutableListOf("{", "[", "")) {
-      myFixture.resolveWebSymbolReference("=\"$prefix'fo<caret>o b")
-      myFixture.resolveWebSymbolReference("=\"$prefix'foo b<caret>ar")
+      myFixture.resolvePolySymbolReference("=\"$prefix'fo<caret>o b")
+      myFixture.resolvePolySymbolReference("=\"$prefix'foo b<caret>ar")
       //Angular2TestUtil.assertUnresolvedReference("=\"$prefix'f<caret>oo1 ", myFixture, true, true)
       //Angular2TestUtil.assertUnresolvedReference("=\"$prefix'foo1 b<caret>", myFixture, true, true)
     }
-    myFixture.resolveWebSymbolReference(", b<caret>ar: true}\"")
+    myFixture.resolvePolySymbolReference(", b<caret>ar: true}\"")
     //Angular2TestUtil.assertUnresolvedReference(", f<caret>oo1: true}\"", myFixture, true, true)
   }
 

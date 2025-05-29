@@ -10,9 +10,9 @@ import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
-import com.intellij.polySymbols.query.WebSymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.utils.match
 import org.jetbrains.vuejs.model.DEFAULT_SLOT_NAME
 import org.jetbrains.vuejs.model.getAvailableSlots
@@ -33,7 +33,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: WebSymbolsNameMatchQueryParams,
+    params: PolySymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     when {
@@ -47,7 +47,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
-    params: WebSymbolsListSymbolsQueryParams,
+    params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =
     when {
@@ -61,7 +61,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
-    params: WebSymbolsCodeCompletionQueryParams,
+    params: PolySymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolCodeCompletionItem> =
     if (qualifiedName.matches(VUE_AVAILABLE_SLOTS) && params.queryExecutor.allowResolve)

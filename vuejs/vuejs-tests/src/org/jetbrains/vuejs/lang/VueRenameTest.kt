@@ -33,7 +33,7 @@ import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.renameWebSymbol
+import com.intellij.polySymbols.testFramework.renamePolySymbol
 
 class VueRenameTest : BasePlatformTestCase() {
 
@@ -106,7 +106,7 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("main.ts")
     myFixture.moveToOffsetBySignature("\"C<caret>ar")
-    myFixture.renameWebSymbol("NewCar")
+    myFixture.renamePolySymbol("NewCar")
     checkResultByDir()
   }
 
@@ -115,7 +115,7 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("App.vue")
     myFixture.moveToOffsetBySignature("<C<caret>ar")
-    myFixture.renameWebSymbol("NewCar")
+    myFixture.renamePolySymbol("NewCar")
     checkResultByDir("createAppComponent_after")
   }
 
@@ -124,7 +124,7 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("main.ts")
     myFixture.moveToOffsetBySignature("\"f<caret>oo")
-    myFixture.renameWebSymbol("bar")
+    myFixture.renamePolySymbol("bar")
     checkResultByDir()
   }
 
@@ -133,7 +133,7 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("TheComponent.vue")
     myFixture.moveToOffsetBySignature("v-f<caret>oo")
-    myFixture.renameWebSymbol("bar")
+    myFixture.renamePolySymbol("bar")
     checkResultByDir("createAppDirective_after")
   }
 
@@ -143,7 +143,7 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("scriptSetup.vue")
     myFixture.type("Forms.FooBars.Input")
     myFixture.moveToOffsetBySignature(".In<caret>put")
-    myFixture.renameWebSymbol("NewName")
+    myFixture.renamePolySymbol("NewName")
     checkResultByDir("namespacedComponents_after")
   }
 
@@ -151,7 +151,7 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("scriptSetup.vue")
-    myFixture.renameWebSymbol("vNewName")
+    myFixture.renamePolySymbol("vNewName")
     checkResultByDir("${getTestName(true)}_after")
   }
 
@@ -225,7 +225,7 @@ class VueRenameTest : BasePlatformTestCase() {
     val testName = getTestName(false)
     myFixture.copyDirectoryToProject(dirName, "")
     myFixture.configureFromTempProjectFile("$testName.vue")
-    myFixture.renameWebSymbol(newName)
+    myFixture.renamePolySymbol(newName)
     if (checkByDir) {
       checkResultByDir("${dirName}_after")
     }

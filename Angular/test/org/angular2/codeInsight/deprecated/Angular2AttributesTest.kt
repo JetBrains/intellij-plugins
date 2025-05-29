@@ -26,11 +26,11 @@ import com.intellij.polySymbols.testFramework.checkListByFile
 import com.intellij.polySymbols.testFramework.doCompletionItemsTest
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.multiResolveWebSymbolReference
+import com.intellij.polySymbols.testFramework.multiResolvePolySymbolReference
 import com.intellij.polySymbols.testFramework.renderLookupItems
 import com.intellij.polySymbols.testFramework.resolveReference
-import com.intellij.polySymbols.testFramework.resolveToWebSymbolSource
-import com.intellij.polySymbols.testFramework.resolveWebSymbolReference
+import com.intellij.polySymbols.testFramework.resolveToPolySymbolSource
+import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import com.intellij.xml.util.XmlInvalidIdInspection
 import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
@@ -67,11 +67,11 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   }
 
   private fun resolveWebSymbolReference(signature: String): PolySymbol {
-    return myFixture.resolveWebSymbolReference(signature)
+    return myFixture.resolvePolySymbolReference(signature)
   }
 
   private fun resolveToWebSymbolSource(signature: String): PsiElement {
-    return myFixture.resolveToWebSymbolSource(signature)
+    return myFixture.resolveToPolySymbolSource(signature)
   }
 
   private fun assertUnresolvedReference(signature: String) {
@@ -199,7 +199,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   fun testBindingResolve2TypeScriptInputInDecorator() {
     myFixture.copyFileToProject("object_in_dec.ts")
     myFixture.configureByFiles("object_binding.after.html", "package.json")
-    val resolve = myFixture.resolveWebSymbolReference("[mod<caret>el]").psiContext
+    val resolve = myFixture.resolvePolySymbolReference("[mod<caret>el]").psiContext
     TestCase.assertNotNull(resolve)
     assertEquals("object_in_dec.ts", resolve!!.getContainingFile().getName())
     UsefulTestCase.assertInstanceOf(resolve, JSLiteralExpression::class.java)
@@ -361,7 +361,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
   fun testForOfResolve2Javascript() {
     myFixture.configureDependencies(Angular2TestModule.ANGULAR_COMMON_4_0_0)
     myFixture.configureByFiles("for2.html")
-    val resolve = myFixture.resolveWebSymbolReference("ngF<caret>")
+    val resolve = myFixture.resolvePolySymbolReference("ngF<caret>")
     assertEquals("ng_for_of.d.ts", resolve.psiContext!!.getContainingFile().getName())
   }
 
@@ -493,7 +493,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       "fakeChange", "sxvx")) {
       for (i in attrWrap.indices) {
         val wrap = attrWrap[i]
-        val ref = myFixture.multiResolveWebSymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
+        val ref = myFixture.multiResolvePolySymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
           .filter { s: PolySymbol ->
             s.properties[PROP_ERROR_SYMBOL] != true
             && s.properties[PROP_BINDING_PATTERN] != true
@@ -856,7 +856,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     )
     for ((location, value) in data) {
       UsefulTestCase.assertSameElements(
-        myFixture.multiResolveWebSymbolReference(location)
+        myFixture.multiResolvePolySymbolReference(location)
           .map {
             if (it is PsiSourcedPolySymbol) {
               val source = it.source

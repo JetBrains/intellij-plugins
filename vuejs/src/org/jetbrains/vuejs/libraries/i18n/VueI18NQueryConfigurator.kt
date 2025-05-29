@@ -12,7 +12,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -55,7 +55,7 @@ class VueI18NQueryConfigurator : PolySymbolsQueryConfigurator {
 
     override fun getSymbols(
       qualifiedKind: PolySymbolQualifiedKind,
-      params: WebSymbolsListSymbolsQueryParams,
+      params: PolySymbolsListSymbolsQueryParams,
       scope: Stack<PolySymbolsScope>,
     ): List<PolySymbolsScope> {
       if (qualifiedKind == VUE_TOP_LEVEL_ELEMENTS) {

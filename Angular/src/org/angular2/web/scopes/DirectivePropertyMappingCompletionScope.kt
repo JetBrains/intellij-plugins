@@ -23,8 +23,8 @@ import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolMatch
-import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
@@ -103,7 +103,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
   }
 
   override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
+                                  params: PolySymbolsNameMatchQueryParams,
                                   scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     /* Do not support reference resolution */
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
@@ -113,7 +113,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
       emptyList()
 
   override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
+                          params: PolySymbolsListSymbolsQueryParams,
                           scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     /* Do not support reference resolution */
     emptyList()

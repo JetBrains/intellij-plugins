@@ -6,7 +6,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.polySymbols.testFramework.resolveWebSymbolReference
+import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.inspections.AngularUndefinedBindingInspection
 import org.angular2.Angular2TestUtil
@@ -29,7 +29,7 @@ class Angular2TagsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testCustomTagsResolve20TypeScriptComponent() {
     myFixture.configureByFiles("custom.after.html", "package.json", "custom.ts")
-    val resolve = myFixture.resolveWebSymbolReference("my-cus<caret>tomer").psiContext
+    val resolve = myFixture.resolvePolySymbolReference("my-cus<caret>tomer").psiContext
     assertNotNull(resolve)
     assertEquals("custom.ts", resolve!!.getContainingFile().getName())
     assertEquals("""
@@ -44,7 +44,7 @@ class Angular2TagsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testCustomTagsResolve20TypeScriptDirective() {
     myFixture.configureByFiles("custom.after.html", "package.json", "custom_directive.ts")
-    val resolve = myFixture.resolveWebSymbolReference("my-cus<caret>tomer").psiContext
+    val resolve = myFixture.resolvePolySymbolReference("my-cus<caret>tomer").psiContext
     assertNotNull(resolve)
     assertEquals("custom_directive.ts", resolve!!.getContainingFile().getName())
     assertEquals("""
@@ -120,7 +120,7 @@ class Angular2TagsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testNoNormalizedResolve20() {
     myFixture.configureByFiles("noNormalized.ts", "package.json")
-    val symbol = myFixture.resolveWebSymbolReference("<app_<caret>hello")
+    val symbol = myFixture.resolvePolySymbolReference("<app_<caret>hello")
     assertNotNull(symbol)
   }
 
@@ -142,7 +142,7 @@ class Angular2TagsTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.copyDirectoryToProject("component-navigation", ".")
     for (i in 1..4) {
       myFixture.configureFromTempProjectFile("app$i/app/app.component.html")
-      val filePath = myFixture.resolveWebSymbolReference("<app-<caret>test>").psiContext!!.getContainingFile()
+      val filePath = myFixture.resolvePolySymbolReference("<app-<caret>test>").psiContext!!.getContainingFile()
         .getVirtualFile()
         .getPath()
       assertTrue("$filePath should have $i", filePath.endsWith("/app$i/app/test.component.ts"))

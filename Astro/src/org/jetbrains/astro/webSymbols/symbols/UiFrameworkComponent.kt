@@ -9,7 +9,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.webSymbols.AstroProximity
 import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
@@ -25,7 +25,7 @@ class UiFrameworkComponent(override val name: String,
                            override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH)
   : PsiSourcedPolySymbol, PolySymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit){
   override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
+                                  params: PolySymbolsNameMatchQueryParams,
                                   scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
       emptyList()

@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.JSTestUtils.checkResolveToDestination
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.polySymbols.testFramework.multiResolveReference
 import com.intellij.polySymbols.testFramework.resolveReference
-import com.intellij.polySymbols.testFramework.resolveToWebSymbolSource
+import com.intellij.polySymbols.testFramework.resolveToPolySymbolSource
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
@@ -19,11 +19,11 @@ class NuxtResolveTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_15_6, VueTestModule.VUE_2_6_10)
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("test.vue")
-    myFixture.resolveToWebSymbolSource("<H<caret>eaders>")
+    myFixture.resolveToPolySymbolSource("<H<caret>eaders>")
       .let {
         TestCase.assertEquals("level0", it.containingFile.virtualFile.parent.name)
       }
-    myFixture.resolveToWebSymbolSource("<F<caret>ooters>")
+    myFixture.resolveToPolySymbolSource("<F<caret>ooters>")
       .let {
         TestCase.assertEquals("deep", it.containingFile.virtualFile.parent.name)
       }

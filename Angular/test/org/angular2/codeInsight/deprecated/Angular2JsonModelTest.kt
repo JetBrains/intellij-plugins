@@ -10,8 +10,8 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.resolveWebSymbolReference
-import com.intellij.polySymbols.testFramework.webSymbolAtCaret
+import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
+import com.intellij.polySymbols.testFramework.polySymbolAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule
@@ -29,7 +29,7 @@ import java.io.File
 @Deprecated("Use test appropriate for IDE feature being tested - e.g. completion/resolve/highlighting ")
 class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
   private fun resolveToWebSymbolSourceContext(signature: String): PsiElement {
-    return myFixture.resolveWebSymbolReference(signature).psiContext!!
+    return myFixture.resolvePolySymbolReference(signature).psiContext!!
   }
 
   override fun getTestDataPath(): String {
@@ -143,7 +143,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
     myFixture.moveToOffsetBySignature("mat-form<caret>-field")
     assertEquals("form-field.d.ts",
-                 myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
+                 myFixture.polySymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
 
   fun testMaterialMetadataStubGeneration() {
@@ -185,7 +185,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.checkHighlighting()
     myFixture.moveToOffsetBySignature("ion-card-<caret>subtitle")
     assertEquals("proxies.d.ts",
-                 myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
+                 myFixture.polySymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
 
   fun testFunctionPropertyMetadata() {
@@ -194,7 +194,7 @@ class Angular2JsonModelTest : Angular2CodeInsightFixtureTestCase() {
     myFixture.configureFromTempProjectFile("template.html")
     myFixture.checkHighlighting()
     assertEquals("my-lib.component.d.ts",
-                 myFixture.webSymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
+                 myFixture.polySymbolAtCaret()!!.psiContext!!.getContainingFile().getName())
   }
 
   fun testMultipleNodeModulesResolution() {

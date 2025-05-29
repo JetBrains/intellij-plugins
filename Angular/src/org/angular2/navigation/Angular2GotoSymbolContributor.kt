@@ -10,7 +10,7 @@ import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.indexing.FindSymbolParameters
 import com.intellij.util.indexing.IdFilter
-import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi.PsiNavigatableWebSymbolNavigationTarget
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi.PsiNavigatablePolySymbolNavigationTarget
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.getDirective
@@ -92,7 +92,7 @@ class Angular2GotoSymbolContributor : DumbAwareChooseByNameContributor() {
   ): Boolean {
     if (element == null || name != element.name) return true
     for (target in element.getNavigationTargets(element.project)) {
-      val navigationItem = (target as? PsiNavigatableWebSymbolNavigationTarget)?.getNavigationItem()
+      val navigationItem = (target as? PsiNavigatablePolySymbolNavigationTarget)?.getNavigationItem()
       if (navigationItem != null && processor.process(navigationItem)) {
         return true
       }

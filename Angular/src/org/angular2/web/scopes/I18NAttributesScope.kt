@@ -10,8 +10,8 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.utils.nameSegments
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NonNls
 class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName,
-                                  params: WebSymbolsNameMatchQueryParams,
+                                  params: PolySymbolsNameMatchQueryParams,
                                   scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedName.matches(NG_I18N_ATTRIBUTES)) {
       tag.attributes
@@ -36,7 +36,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
     else emptyList()
 
   override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind,
-                          params: WebSymbolsListSymbolsQueryParams,
+                          params: PolySymbolsListSymbolsQueryParams,
                           scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     if (qualifiedKind == NG_I18N_ATTRIBUTES) {
       tag.attributes
