@@ -9,7 +9,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolNameSegment
 import com.intellij.webSymbols.inspections.PolySymbolsProblemQuickFixProvider
-import com.intellij.webSymbols.references.WebSymbolReferenceProblem
+import com.intellij.webSymbols.references.PolySymbolReferenceProblem
 import com.intellij.webSymbols.utils.nameSegments
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.FORM_ANY_CONTROL_NAME_ATTRIBUTES
@@ -23,9 +23,9 @@ class Angular2FormsPolySymbolProblemQuickFixProvider : PolySymbolsProblemQuickFi
     element: PsiElement,
     symbol: PolySymbol,
     segment: PolySymbolNameSegment,
-    problemKind: WebSymbolReferenceProblem.ProblemKind,
+    problemKind: PolySymbolReferenceProblem.ProblemKind,
   ): List<LocalQuickFix> {
-    if (problemKind != WebSymbolReferenceProblem.ProblemKind.UnknownSymbol
+    if (problemKind != PolySymbolReferenceProblem.ProblemKind.UnknownSymbol
         || (element !is XmlAttributeValue && element !is JSLiteralExpression))
       return emptyList()
 
