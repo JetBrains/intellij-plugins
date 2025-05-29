@@ -6,41 +6,43 @@ import com.intellij.lang.javascript.types.JSWhiteSpaceTokenType
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
+import org.jetbrains.annotations.ApiStatus
 
-internal interface Angular2HtmlTokenTypes {
+@ApiStatus.Internal
+interface Angular2HtmlTokenTypes {
   companion object {
     @JvmField
-    val INTERPOLATION_START = Angular2HtmlTokenType("NG:INTERPOLATION_START")
+    val INTERPOLATION_START: IElementType = Angular2HtmlTokenType("NG:INTERPOLATION_START")
 
     @JvmField
-    val INTERPOLATION_END = Angular2HtmlTokenType("NG:INTERPOLATION_END")
+    val INTERPOLATION_END: IElementType = Angular2HtmlTokenType("NG:INTERPOLATION_END")
 
     @JvmField
-    val EXPANSION_FORM_START = Angular2HtmlTokenType("NG:EXPANSION_FORM_START")
+    val EXPANSION_FORM_START: IElementType = Angular2HtmlTokenType("NG:EXPANSION_FORM_START")
 
     @JvmField
-    val EXPANSION_FORM_END = Angular2HtmlTokenType("NG:EXPANSION_FORM_END")
+    val EXPANSION_FORM_END: IElementType = Angular2HtmlTokenType("NG:EXPANSION_FORM_END")
 
     @JvmField
-    val EXPANSION_FORM_CASE_START = Angular2HtmlTokenType("NG:EXPANSION_FORM_CASE_START")
+    val EXPANSION_FORM_CASE_START: IElementType = Angular2HtmlTokenType("NG:EXPANSION_FORM_CASE_START")
 
     @JvmField
-    val EXPANSION_FORM_CASE_END = Angular2HtmlTokenType("NG:EXPANSION_FORM_CASE_END")
+    val EXPANSION_FORM_CASE_END: IElementType = Angular2HtmlTokenType("NG:EXPANSION_FORM_CASE_END")
 
     @JvmField
-    val BLOCK_NAME = Angular2HtmlTokenType("NG:BLOCK_NAME")
+    val BLOCK_NAME: IElementType = Angular2HtmlTokenType("NG:BLOCK_NAME")
 
     @JvmField
-    val BLOCK_START = Angular2HtmlTokenType("NG:BLOCK_START")
+    val BLOCK_START: IElementType = Angular2HtmlTokenType("NG:BLOCK_START")
 
     @JvmField
-    val BLOCK_END = Angular2HtmlTokenType("NG:BLOCK_END")
+    val BLOCK_END: IElementType = Angular2HtmlTokenType("NG:BLOCK_END")
 
     @JvmField
     val BLOCK_PARAMETERS_START: IElementType = JSTokenTypes.LPAR
 
     @JvmField
-    val BLOCK_SEMICOLON = Angular2HtmlTokenType("NG:BLOCK_SEMICOLON")
+    val BLOCK_SEMICOLON: IElementType = Angular2HtmlTokenType("NG:BLOCK_SEMICOLON")
 
     @JvmField
     val BLOCK_PARAMETERS_END: IElementType = JSTokenTypes.RPAR

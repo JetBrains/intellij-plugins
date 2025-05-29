@@ -45,10 +45,12 @@ import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
+import org.jetbrains.annotations.ApiStatus
 import java.util.*
 import java.util.function.BiPredicate
 
-internal object Angular2SourceUtil {
+@ApiStatus.Internal
+object Angular2SourceUtil {
   @JvmStatic
   fun getNgContentSelectors(template: PsiFile?): List<Angular2DirectiveSelector> =
     if (template is PsiFileImpl) {

@@ -4,12 +4,8 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/testData" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/test-ex" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/testResources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/gen-resources" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -37,56 +33,9 @@
     <orderEntry type="module" module-name="intellij.javascript.impl" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.css.impl" />
-    <orderEntry type="module" module-name="intellij.platform.webSymbols.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="module" module-name="intellij.javascript" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
-    <orderEntry type="module-library" scope="TEST">
-      <library name="oleaster-matcher" type="repository">
-        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-matcher:0.2.0">
-          <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0.jar">
-              <sha256sum>cd48639040cf962886a0ed84849be7ce9071b16dacb1d20c3f4ff03c3999f8ed</sha256sum>
-            </artifact>
-          </verification>
-        </properties>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-matcher/0.2.0/oleaster-matcher-0.2.0-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="TEST">
-      <library name="oleaster-runner" type="repository">
-        <properties include-transitive-deps="false" maven-id="com.mscharhag.oleaster:oleaster-runner:0.2.0">
-          <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0.jar">
-              <sha256sum>039a992d5b3e336a1003f3a7b4ce75c2791f6d211a3202e3b296375a10c368f1</sha256sum>
-            </artifact>
-          </verification>
-        </properties>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/mscharhag/oleaster/oleaster-runner/0.2.0/oleaster-runner-0.2.0-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module" module-name="intellij.javascript.langInjection" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.xml.langInjection" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.sass" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.less" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.postcss" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.xml.tests" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.resharper.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.html.tools" />
     <orderEntry type="library" name="jackson" level="project" />
     <orderEntry type="library" name="jackson-databind" level="project" />
@@ -101,15 +50,10 @@
     <orderEntry type="module" module-name="intellij.platform.webSymbols" />
     <orderEntry type="library" name="fastutil-min" level="project" />
     <orderEntry type="module" module-name="intellij.platform.images" />
-    <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.webide.impl" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="library" name="opentelemetry" level="project" />
-    <orderEntry type="module" module-name="intellij.javascript.web.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
-    <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.frontback.psi" />
-    <orderEntry type="module" module-name="intellij.tailwindcss" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.lsp.testFramework" scope="TEST" />
   </component>
 </module>

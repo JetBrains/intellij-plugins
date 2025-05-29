@@ -16,6 +16,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
 import org.angular2.lang.expr.Angular2Language
+import org.jetbrains.annotations.ApiStatus
 import java.io.File
 
 private var myLogErrors: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
@@ -131,7 +132,8 @@ private fun shortenOutput(output: String): String {
     750, 0)
 }
 
-internal const val DEFAULT_OUTPUT: String = """
+@ApiStatus.Internal
+const val DEFAULT_OUTPUT: String = """
 
   Available blueprints:
     class <name> <options...>

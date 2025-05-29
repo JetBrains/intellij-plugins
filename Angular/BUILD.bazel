@@ -1,5 +1,5 @@
 ### auto-generated section `build intellij.angular` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "angular_resources",
@@ -11,18 +11,6 @@ jvm_resources(
   name = "angular_resources_1",
   files = glob(["gen-resources/**/*"]),
   strip_prefix = "gen-resources"
-)
-
-jvm_resources(
-  name = "angular_test_resources",
-  files = glob(["testData/**/*"]),
-  strip_prefix = "testData"
-)
-
-jvm_resources(
-  name = "angular_test_resources_1",
-  files = glob(["testResources/**/*"]),
-  strip_prefix = "testResources"
 )
 
 jvm_library(
@@ -82,12 +70,33 @@ jvm_library(
     ":angular_resources_1",
   ]
 )
+### auto-generated section `build intellij.angular` end
+
+### auto-generated section `build intellij.angular.tests` start
+load("@rules_java//java:defs.bzl", "java_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+
+jvm_resources(
+  name = "angular-tests_test_resources",
+  files = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
+jvm_resources(
+  name = "angular-tests_test_resources_1",
+  files = glob(["testResources/**/*"]),
+  strip_prefix = "testResources"
+)
+
+java_library(
+  name = "angular-tests",
+  visibility = ["//visibility:public"]
+)
 
 jvm_library(
-  name = "angular_test_lib",
+  name = "angular-tests_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test-ex/**/*.kt", "test-ex/**/*.java"], allow_empty = True),
-  associates = [":angular"],
   deps = [
     "@community//platform/editor-ui-api:editor-ui",
     "@community//jps/model-api:model",
@@ -123,8 +132,8 @@ jvm_library(
     "@lib//:gson",
     "//plugins/JSIntentionPowerPack:javascript-intentions",
     "//plugins/JSIntentionPowerPack:javascript-intentions_test_lib",
-    "@ultimate_lib//:angular-oleaster-matcher",
-    "@ultimate_lib//:angular-oleaster-runner",
+    "@ultimate_lib//:angular-tests-oleaster-matcher",
+    "@ultimate_lib//:angular-tests-oleaster-runner",
     "//plugins/IntelliLang-js:javascript-langInjection",
     "//plugins/IntelliLang-js:javascript-langInjection_test_lib",
     "@community//plugins/IntelliLang/xml-support:xml-langInjection",
@@ -158,23 +167,21 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@lib//:opentelemetry",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@community//xml/testFramework",
     "//CSS/frontback/css-psi-impl:css-frontback-psi",
     "//plugins/tailwindcss",
     "//plugins/tailwindcss:tailwindcss_test_lib",
     "//platform/lsp/testFramework",
+    "//contrib/Angular:angular",
   ],
   runtime_deps = [
-    ":angular_resources",
-    ":angular_resources_1",
-    ":angular_test_resources",
-    ":angular_test_resources_1",
+    ":angular-tests_test_resources",
+    ":angular-tests_test_resources_1",
   ]
 )
 
 jvm_test(
-  name = "angular_test",
-  runtime_deps = [":angular_test_lib"]
+  name = "angular-tests_test",
+  runtime_deps = [":angular-tests_test_lib"]
 )
-### auto-generated section `build intellij.angular` end
+### auto-generated section `build intellij.angular.tests` end
