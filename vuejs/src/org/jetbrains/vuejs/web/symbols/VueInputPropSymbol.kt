@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -26,8 +26,8 @@ class VueInputPropSymbol(
   override val required: Boolean
     get() = item.required
 
-  override val attributeValue: WebSymbolHtmlAttributeValue =
-    object : WebSymbolHtmlAttributeValue {
+  override val attributeValue: PolySymbolHtmlAttributeValue =
+    object : PolySymbolHtmlAttributeValue {
       override val default: String?
         get() = item.defaultValue
     }

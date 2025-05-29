@@ -6,7 +6,7 @@ import com.intellij.model.Pointer
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import org.jetbrains.vuejs.model.VueComponent
@@ -35,8 +35,8 @@ class VueEmitCallSymbol(
   override val priority: PolySymbol.Priority
     get() = PolySymbol.Priority.HIGHEST
 
-  override val attributeValue: WebSymbolHtmlAttributeValue =
-    WebSymbolHtmlAttributeValue.create(WebSymbolHtmlAttributeValue.Kind.EXPRESSION, WebSymbolHtmlAttributeValue.Type.OF_MATCH)
+  override val attributeValue: PolySymbolHtmlAttributeValue =
+    PolySymbolHtmlAttributeValue.create(PolySymbolHtmlAttributeValue.Kind.EXPRESSION, PolySymbolHtmlAttributeValue.Type.OF_MATCH)
 
   override fun adjustNameForRefactoring(queryExecutor: WebSymbolsQueryExecutor, newName: String, occurence: String): String {
     if (item is VueModelOwner && occurence.startsWith(UPDATE_PREFIX) && !newName.startsWith(UPDATE_PREFIX)) {

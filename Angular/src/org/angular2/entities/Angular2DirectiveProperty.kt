@@ -17,7 +17,7 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.util.ThreeState
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import icons.AngularIcons
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
@@ -75,9 +75,9 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSWebSymb
       rawJsType
 
 
-  override val attributeValue: WebSymbolHtmlAttributeValue?
+  override val attributeValue: PolySymbolHtmlAttributeValue?
     get() = if (TypeScriptSymbolTypeSupport.isBoolean(type, sourceElement) != ThreeState.NO) {
-      WebSymbolHtmlAttributeValue.create(null, null, false, null, null)
+      PolySymbolHtmlAttributeValue.create(null, null, false, null, null)
     }
     else {
       null

@@ -14,7 +14,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.documentation.PolySymbolDocumentation
 import com.intellij.webSymbols.documentation.PolySymbolDocumentationTarget
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -83,7 +83,7 @@ class VuePolyTypesMergedSymbol(
   override val type: JSType?
     get() = symbols.firstNotNullOfOrNull { it.jsType }
 
-  override val attributeValue: WebSymbolHtmlAttributeValue?
+  override val attributeValue: PolySymbolHtmlAttributeValue?
     get() = symbols.asSequence().map { it.attributeValue }.merge()
 
   override val properties: Map<String, Any>

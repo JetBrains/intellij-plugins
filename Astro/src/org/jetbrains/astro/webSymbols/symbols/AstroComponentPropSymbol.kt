@@ -9,7 +9,7 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import org.jetbrains.astro.webSymbols.ASTRO_COMPONENT_PROPS
 
 class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
@@ -32,8 +32,8 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
   override val source: PsiElement?
     get() = propertySymbol.source
 
-  override val attributeValue: WebSymbolHtmlAttributeValue
-    get() = WebSymbolHtmlAttributeValue.create(kind = WebSymbolHtmlAttributeValue.Kind.PLAIN)
+  override val attributeValue: PolySymbolHtmlAttributeValue
+    get() = PolySymbolHtmlAttributeValue.create(kind = PolySymbolHtmlAttributeValue.Kind.PLAIN)
 
   override val required: Boolean
     get() = !(propertySymbol.psiContext.asSafely<PropertySignature>()?.isOptional ?: false)

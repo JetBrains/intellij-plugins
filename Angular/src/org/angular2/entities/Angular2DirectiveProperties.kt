@@ -14,7 +14,7 @@ import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
@@ -146,7 +146,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
     override val priority: PolySymbol.Priority?
       get() = delegate.priority
 
-    override val attributeValue: WebSymbolHtmlAttributeValue?
+    override val attributeValue: PolySymbolHtmlAttributeValue?
       get() = delegate.attributeValue
 
     override val isSignalProperty: Boolean

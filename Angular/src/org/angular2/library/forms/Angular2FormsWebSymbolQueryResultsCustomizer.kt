@@ -8,7 +8,7 @@ import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.PolyContext
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
 import org.angular2.Angular2Framework
@@ -51,10 +51,10 @@ object Angular2FormsWebSymbolQueryResultsCustomizer : WebSymbolsQueryResultsCust
   private class Angular2FormControlAttributeWrapper(
     delegate: Angular2DirectiveSymbolWrapper,
   ) : Angular2SymbolDelegate<Angular2DirectiveSymbolWrapper>(delegate) {
-    override val attributeValue: WebSymbolHtmlAttributeValue?
-      get() = WebSymbolHtmlAttributeValue.create(
-        WebSymbolHtmlAttributeValue.Kind.PLAIN,
-        WebSymbolHtmlAttributeValue.Type.SYMBOL,
+    override val attributeValue: PolySymbolHtmlAttributeValue?
+      get() = PolySymbolHtmlAttributeValue.create(
+        PolySymbolHtmlAttributeValue.Kind.PLAIN,
+        PolySymbolHtmlAttributeValue.Type.SYMBOL,
         required = true,
       )
 

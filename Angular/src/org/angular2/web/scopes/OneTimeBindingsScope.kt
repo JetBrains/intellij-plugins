@@ -29,7 +29,7 @@ import com.intellij.util.ThreeState
 import com.intellij.util.asSafely
 import com.intellij.util.containers.mapSmartSet
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
@@ -140,12 +140,12 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
     override val required: Boolean
       get() = false
 
-    override val attributeValue: WebSymbolHtmlAttributeValue? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val attributeValue: PolySymbolHtmlAttributeValue? by lazy(LazyThreadSafetyMode.PUBLICATION) {
       withTypeEvaluationLocation(typeEvaluationLocation) {
         if (isStrictTemplates(this.psiContext)) {
-          WebSymbolHtmlAttributeValue.create(
-            WebSymbolHtmlAttributeValue.Kind.PLAIN,
-            WebSymbolHtmlAttributeValue.Type.COMPLEX,
+          PolySymbolHtmlAttributeValue.create(
+            PolySymbolHtmlAttributeValue.Kind.PLAIN,
+            PolySymbolHtmlAttributeValue.Type.COMPLEX,
             !resolveOnly && !JSResolveUtil.isAssignableJSType(
               jsType, JSStringLiteralTypeImpl("", false, JSTypeSource.EXPLICITLY_DECLARED), null),
             null,
@@ -156,9 +156,9 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
           val isBoolean = TypeScriptSymbolTypeSupport.isBoolean(jsType, psiContext)
           when {
             isBoolean != ThreeState.NO -> {
-              WebSymbolHtmlAttributeValue.create(
-                WebSymbolHtmlAttributeValue.Kind.PLAIN,
-                WebSymbolHtmlAttributeValue.Type.COMPLEX, false,
+              PolySymbolHtmlAttributeValue.create(
+                PolySymbolHtmlAttributeValue.Kind.PLAIN,
+                PolySymbolHtmlAttributeValue.Type.COMPLEX, false,
                 null,
                 JSCompositeTypeFactory.createUnionType(
                   JSTypeSource.EXPLICITLY_DECLARED,
@@ -171,7 +171,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
                   JSStringLiteralTypeImpl("false", false, JSTypeSource.EXPLICITLY_DECLARED)
                 ))
             }
-            !requiresValue -> WebSymbolHtmlAttributeValue.create(required = false)
+            !requiresValue -> PolySymbolHtmlAttributeValue.create(required = false)
             else -> null
           }
         }

@@ -12,7 +12,7 @@ import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolApiStatus
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2Directive
 
@@ -39,9 +39,9 @@ open class Angular2StructuralDirectiveSymbol private constructor(
       }
   }
 
-  override val attributeValue: WebSymbolHtmlAttributeValue?
+  override val attributeValue: PolySymbolHtmlAttributeValue?
     get() = if (!hasInputsToBind)
-      WebSymbolHtmlAttributeValue.create(required = false)
+      PolySymbolHtmlAttributeValue.create(required = false)
     else JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
       super.attributeValue
     }

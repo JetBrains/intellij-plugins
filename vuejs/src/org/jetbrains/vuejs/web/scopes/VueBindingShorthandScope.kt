@@ -15,7 +15,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.Processor
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.fromAsset
@@ -77,8 +77,8 @@ class VueBindingShorthandSymbol(
   override val kind: SymbolKind
     get() = VUE_BINDING_SHORTHANDS.kind
 
-  override val attributeValue: WebSymbolHtmlAttributeValue
-    get() = WebSymbolHtmlAttributeValue.create(kind = WebSymbolHtmlAttributeValue.Kind.NO_VALUE)
+  override val attributeValue: PolySymbolHtmlAttributeValue
+    get() = PolySymbolHtmlAttributeValue.create(kind = PolySymbolHtmlAttributeValue.Kind.NO_VALUE)
 
   override val priority: PolySymbol.Priority
     get() = PolySymbol.Priority.HIGHEST

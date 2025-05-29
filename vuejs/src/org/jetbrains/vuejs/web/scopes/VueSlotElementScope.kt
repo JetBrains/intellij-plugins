@@ -15,9 +15,9 @@ import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.PolySymbol.Companion.HTML_SLOTS
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue.Kind.EXPRESSION
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue.Type.OF_MATCH
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue.Kind.EXPRESSION
+import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue.Type.OF_MATCH
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createComplexPattern
@@ -96,8 +96,8 @@ class VueSlotElementScope(tag: XmlTag)
     override val name: String
       get() = "Vue Slot Properties"
 
-    override val attributeValue: WebSymbolHtmlAttributeValue
-      get() = WebSymbolHtmlAttributeValue.create(kind = EXPRESSION, type = OF_MATCH)
+    override val attributeValue: PolySymbolHtmlAttributeValue
+      get() = PolySymbolHtmlAttributeValue.create(kind = EXPRESSION, type = OF_MATCH)
 
     override val pattern: WebSymbolsPattern =
       createComplexPattern(
