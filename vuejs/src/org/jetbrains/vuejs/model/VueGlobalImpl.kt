@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.javascript.webSymbols.nodejs.PackageJsonWebSymbolsRegistryManager
+import com.intellij.javascript.webSymbols.nodejs.PackageJsonPolySymbolsRegistryManager
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES
@@ -60,8 +60,8 @@ internal class VueGlobalImpl(override val project: Project, override val package
     val result = mutableListOf<VuePlugin>()
     val dependencies = mutableListOf<Any>(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     packageJson?.let { file ->
-      dependencies.add(PackageJsonWebSymbolsRegistryManager.getModificationTracker(project, file))
-      PackageJsonWebSymbolsRegistryManager.getNodeModulesWithoutWebTypes(project, file)
+      dependencies.add(PackageJsonPolySymbolsRegistryManager.getModificationTracker(project, file))
+      PackageJsonPolySymbolsRegistryManager.getNodeModulesWithoutWebTypes(project, file)
         .asSequence()
         .filter { isVueLibrary(it) }
         .map { VueSourcePlugin(project, it.name, it.version?.toString(), it.packageJsonFile) }

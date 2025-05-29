@@ -2,7 +2,7 @@
 package org.jetbrains.astro
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
-import com.intellij.html.webSymbols.attributes.WebSymbolHtmlAttributeInfo
+import com.intellij.html.webSymbols.attributes.PolySymbolHtmlAttributeInfo
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.lang.Language
@@ -26,7 +26,7 @@ class AstroFramework : WebFramework() {
   override val icon: Icon
     get() = AstroIcons.Astro
 
-  override fun createHtmlAttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?): WebSymbolAttributeDescriptor =
+  override fun createHtmlAttributeDescriptor(info: PolySymbolHtmlAttributeInfo, tag: XmlTag?): WebSymbolAttributeDescriptor =
     AstroAttributeDescriptor(info, tag)
 }
 

@@ -2,11 +2,11 @@
 package org.jetbrains.astro.codeInsight.attributes
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
-import com.intellij.html.webSymbols.attributes.WebSymbolHtmlAttributeInfo
+import com.intellij.html.webSymbols.attributes.PolySymbolHtmlAttributeInfo
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 
-class AstroAttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?)
+class AstroAttributeDescriptor(info: PolySymbolHtmlAttributeInfo, tag: XmlTag?)
   : WebSymbolAttributeDescriptor(info, tag) {
   override fun validateValue(context: XmlElement?, value: String?): String? {
     return null

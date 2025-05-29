@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.webSymbols.symbols
 
-import com.intellij.javascript.webSymbols.symbols.asWebSymbol
+import com.intellij.javascript.webSymbols.symbols.asPolySymbol
 import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.model.Pointer
@@ -52,7 +52,7 @@ class AstroLocalComponent(override val name: String,
       ?.astroContentRoot()
       ?.frontmatterScript()
       ?.propsInterface()
-      ?.asWebSymbol()
+      ?.asPolySymbol()
       ?.getJSPropertySymbols()
       ?.map(::AstroComponentPropSymbol)
       ?.forEach(consumer)

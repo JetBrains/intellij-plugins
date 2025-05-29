@@ -3,7 +3,7 @@ package org.angular2.web.scopes
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.javascript.webSymbols.symbols.JSPropertySymbol
-import com.intellij.javascript.webSymbols.symbols.asWebSymbol
+import com.intellij.javascript.webSymbols.symbols.asPolySymbol
 import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElement
@@ -86,7 +86,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
               NG_DIRECTIVE_OUTPUTS
             val typeScriptClass = directive.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass
             typeScriptClass
-              ?.asWebSymbol()
+              ?.asPolySymbol()
               ?.getJSPropertySymbols()
               ?.filter { property ->
                 val sources = Angular2SourceDirective.getPropertySources(property.source)

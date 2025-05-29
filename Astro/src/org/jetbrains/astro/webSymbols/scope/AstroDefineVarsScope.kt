@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.webSymbols.scope
 
-import com.intellij.javascript.webSymbols.symbols.asWebSymbol
+import com.intellij.javascript.webSymbols.symbols.asPolySymbol
 import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
@@ -39,7 +39,7 @@ abstract class AstroDefineVarsScope(tag: XmlTag)
       ?.childrenOfType<JSObjectLiteralExpression>()
       ?.firstOrNull()
       ?.let {
-        it.asWebSymbol().getJSPropertySymbols().forEach(consumer)
+        it.asPolySymbol().getJSPropertySymbols().forEach(consumer)
         providedSymbol.let(consumer)
       }
   }
