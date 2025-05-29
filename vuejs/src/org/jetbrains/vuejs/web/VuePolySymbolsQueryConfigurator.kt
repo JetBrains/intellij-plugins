@@ -21,7 +21,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.PolyContext
-import com.intellij.webSymbols.query.WebSymbolNameConversionRules
+import com.intellij.webSymbols.query.PolySymbolNameConversionRules
 import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
 import com.intellij.webSymbols.query.WebSymbolNameConverter
 import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
@@ -200,8 +200,8 @@ class VuePolySymbolsQueryConfigurator :
     }
   }
 
-  object VueScriptSetupLocalDirectiveNameConversionRulesProvider : WebSymbolNameConversionRulesProvider, WebSymbolNameConversionRules {
-    override fun getNameConversionRules(): WebSymbolNameConversionRules = this
+  object VueScriptSetupLocalDirectiveNameConversionRulesProvider : WebSymbolNameConversionRulesProvider, PolySymbolNameConversionRules {
+    override fun getNameConversionRules(): PolySymbolNameConversionRules = this
 
     override fun createPointer(): Pointer<out WebSymbolNameConversionRulesProvider> =
       Pointer.hardPointer(this)

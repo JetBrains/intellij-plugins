@@ -24,7 +24,7 @@ import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createComplexP
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
 import com.intellij.webSymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.webSymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
-import com.intellij.webSymbols.query.WebSymbolNameConversionRules
+import com.intellij.webSymbols.query.PolySymbolNameConversionRules
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.findJSExpression
@@ -110,7 +110,7 @@ class VueSlotElementScope(tag: XmlTag)
               ),
               qualifiedKind = JS_PROPERTIES,
               nameConversionRules = listOf(
-                WebSymbolNameConversionRules.create(JS_PROPERTIES) {
+                PolySymbolNameConversionRules.create(JS_PROPERTIES) {
                   listOf(fromAsset(it), toAsset(it))
                 }
               )

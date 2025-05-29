@@ -27,7 +27,7 @@ import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.css.CSS_CLASS_LIST
-import com.intellij.webSymbols.query.WebSymbolNameConversionRules
+import com.intellij.webSymbols.query.PolySymbolNameConversionRules
 import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
 import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
 import org.angular2.*
@@ -95,8 +95,8 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
           ?: emptyList()
         }
         return listOf(object : WebSymbolNameConversionRulesProvider {
-          override fun getNameConversionRules(): WebSymbolNameConversionRules =
-            WebSymbolNameConversionRules.builder()
+          override fun getNameConversionRules(): PolySymbolNameConversionRules =
+            PolySymbolNameConversionRules.builder()
               .addMatchNamesRule(NG_DIRECTIVE_INPUTS) { name ->
                 attrSelectors.mapNotNull {
                   if (isTemplateBindingDirectiveInput(name, it))
@@ -116,8 +116,8 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
         val templateName = element.parentOfType<Angular2TemplateBindings>()?.templateName
         if (templateName != null)
           return listOf(object : WebSymbolNameConversionRulesProvider {
-            override fun getNameConversionRules(): WebSymbolNameConversionRules =
-              WebSymbolNameConversionRules.builder()
+            override fun getNameConversionRules(): PolySymbolNameConversionRules =
+              PolySymbolNameConversionRules.builder()
                 .addMatchNamesRule(NG_DIRECTIVE_INPUTS) {
                   listOf(templateBindingVarToDirectiveInput(it, templateName))
                 }
