@@ -21,8 +21,8 @@
     <directoryProjectGenerator implementation="com.intellij.lang.javascript.frameworks.nextjs.generator.NextJsProjectGenerator"/>
     <implicitUsageProvider implementation="com.intellij.lang.javascript.frameworks.nextjs.inspections.NextJsImplicitUsageProvider" />
     <dependencySupport kind="javascript" coordinate="npm:next" displayName="Next.js"/>
-    <webSymbols.webTypes source="web-types/nextjs-context.web-types.json" enableByDefault="true"/>
-    <webSymbols.webTypes source="web-types/next@0.0.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/nextjs-context.web-types.json" enableByDefault="true"/>
+    <polySymbols.webTypes source="web-types/next@0.0.0.web-types.json"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <scanningFileListenerContributor implementation="com.intellij.lang.javascript.frameworks.nextjs.NextJsExcludeContributor"/>

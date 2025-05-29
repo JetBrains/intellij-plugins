@@ -65,7 +65,7 @@
     <dependencySupport kind="javascript" coordinate="npm:@angular/core" displayName="Angular"/>
 
     <!-- Angular 2 contributions -->
-    <webSymbols.framework id="angular" implementation="org.angular2.Angular2Framework"/>
+    <polySymbols.framework id="angular" implementation="org.angular2.Angular2Framework"/>
 
     <projectService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
                     serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
@@ -164,32 +164,32 @@
     <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory" order="before JavaScript"/>
     <psi.referenceContributor language="TypeScript" implementation="org.angular2.codeInsight.refs.Angular2TSReferencesContributor"/>
     <psi.referenceContributor language="HtmlCompatible" implementation="org.angular2.codeInsight.refs.Angular2HtmlReferencesContributor"/>
-    <webSymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
+    <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
                                      hostLanguage="Angular2Html"
                                      implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgContentSelectorProvider"/>
-    <webSymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
+    <polySymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
                                      hostLanguage="TypeScript"
                                      implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"/>
-    <webSymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
+    <polySymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
                                      hostLanguage="TypeScript"
                                      implementationClass="org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesProvider"/>
-    <webSymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlBlock"
+    <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlBlock"
                                      hostLanguage="Angular2Html"
                                      implementationClass="org.angular2.codeInsight.blocks.Angular2BlockReferencesProvider"/>
-    <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2SelectorDeclarationProvider"/>
-    <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveExportAsDeclarationProvider"/>
-    <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectivePropertyDeclarationProvider"/>
-    <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveAttributeDeclarationProvider"/>
-    <webSymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2CustomCssPropertyDeclarationProvider"/>
-    <webSymbols.webTypes.symbolFactory namespace="html" kind="ng-blocks"
+    <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2SelectorDeclarationProvider"/>
+    <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveExportAsDeclarationProvider"/>
+    <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectivePropertyDeclarationProvider"/>
+    <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveAttributeDeclarationProvider"/>
+    <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2CustomCssPropertyDeclarationProvider"/>
+    <polySymbols.webTypes.symbolFactory namespace="html" kind="ng-blocks"
                                        implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol$Factory"/>
-    <webSymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameters"
+    <polySymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameters"
                                        implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol$Factory"/>
-    <webSymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameter-prefixes"
+    <polySymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameter-prefixes"
                                        implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol$Factory"/>
-    <webSymbols.psiSourcedSymbolProvider implementation="org.angular2.web.findUsages.Angular2PsiSourcedPolySymbolProvider"/>
-    <webSymbols.documentationCustomizer implementation="org.angular2.web.Angular2PolySymbolDocumentationCustomizer"/>
-    <webSymbols.highlightingCustomizer id="angular2"
+    <polySymbols.psiSourcedSymbolProvider implementation="org.angular2.web.findUsages.Angular2PsiSourcedPolySymbolProvider"/>
+    <polySymbols.documentationCustomizer implementation="org.angular2.web.Angular2PolySymbolDocumentationCustomizer"/>
+    <polySymbols.highlightingCustomizer id="angular2"
                                        implementation="org.angular2.web.Angular2PolySymbolHighlightingCustomizer"
                                        order="before js, before html"/>
     <elementDescriptionProvider
@@ -339,23 +339,23 @@
     <copyPastePostProcessor implementation="org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor"/>
     <platform.backend.documentation.linkHandler implementation="org.angular2.codeInsight.documentation.Angular2DocumentationLinkHandler"/>
 
-    <webSymbols.webTypes enableByDefault="true" source="web-types/angular-base@0.0.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@2.0.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@10.0.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@16.0.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="true" source="web-types/angular@17.0.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@18.0.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@18.1.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@19.0.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@19.2.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="false" source="web-types/angular@20.0.0.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
-    <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="true" source="web-types/angular-base@0.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@2.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@10.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@16.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="true" source="web-types/angular@17.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@18.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@18.1.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@19.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@19.2.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@20.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
 
-    <webSymbols.queryConfigurator implementation="org.angular2.web.Angular2PolySymbolsQueryConfigurator"/>
-    <webSymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2PolySymbolsQueryResultsCustomizer$Factory"/>
-    <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
-    <webSymbols.context kind="framework" name="angular" implementation="org.angular2.cli.AngularCliPolyContextProvider"/>
+    <polySymbols.queryConfigurator implementation="org.angular2.web.Angular2PolySymbolsQueryConfigurator"/>
+    <polySymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2PolySymbolsQueryResultsCustomizer$Factory"/>
+    <polySymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
+    <polySymbols.context kind="framework" name="angular" implementation="org.angular2.cli.AngularCliPolyContextProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.editor.Angular2Annotator"/>
     <completion.confidence language="Angular2Html" implementationClass="org.angular2.editor.Angular2PreventCompletionAutoPopupOnImport"/>
 
@@ -392,10 +392,10 @@
     <codeInsight.parameterNameHints language="Angular2Html"
                                     implementationClass="org.angular2.editor.Angular2InlayParameterHintsProvider"/>
     <highlightVisitor implementation="org.angular2.lang.expr.highlighting.Angular2RainbowVisitor"/>
-    <webSymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2BlockParameter"
+    <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2BlockParameter"
                                      hostLanguage="Angular2"
                                      implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterReferencesProvider"/>
-    <webSymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2TemplateBindingKey"
+    <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2TemplateBindingKey"
                                      hostLanguage="Angular2"
                                      implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"/>
 
@@ -427,12 +427,12 @@
     />
 
     <!-- ReactiveForms support contributions -->
-    <webSymbols.queryResultsCustomizerFactory
+    <polySymbols.queryResultsCustomizerFactory
       implementation="org.angular2.library.forms.Angular2FormsPolySymbolQueryResultsCustomizer$Factory"/>
-    <webSymbols.queryConfigurator implementation="org.angular2.library.forms.Angular2FormsPolySymbolQueryConfigurator"/>
-    <webSymbols.codeCompletionItemCustomizer
+    <polySymbols.queryConfigurator implementation="org.angular2.library.forms.Angular2FormsPolySymbolQueryConfigurator"/>
+    <polySymbols.codeCompletionItemCustomizer
       implementation="org.angular2.library.forms.Angular2FormsPolySymbolsCodeCompletionItemCustomizer"/>
-    <webSymbols.problemQuickFixProvider
+    <polySymbols.problemQuickFixProvider
       implementation="org.angular2.library.forms.quickFixes.Angular2FormsPolySymbolProblemQuickFixProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>
     <annotator language="TypeScript" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>

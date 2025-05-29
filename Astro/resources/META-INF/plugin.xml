@@ -77,11 +77,11 @@
     <referencesSearch implementation="org.jetbrains.astro.lang.psi.AstroReferencesSearch" order="first" />
     <psi.referenceContributor language="Astro" implementation="org.jetbrains.astro.codeInsight.refs.AstroPathReferenceContributor"/>
 
-    <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
-    <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
-    <webSymbols.queryConfigurator implementation="org.jetbrains.astro.webSymbols.AstroQueryConfigurator"/>
-    <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.webSymbols.AstroPolySymbolsQueryResultsCustomizer$Provider"/>
-    <webSymbols.codeCompletionItemCustomizer implementation="org.jetbrains.astro.webSymbols.AstroCodeCompletionItemCustomizer" />
+    <polySymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
+    <polySymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
+    <polySymbols.queryConfigurator implementation="org.jetbrains.astro.webSymbols.AstroQueryConfigurator"/>
+    <polySymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.webSymbols.AstroPolySymbolsQueryResultsCustomizer$Provider"/>
+    <polySymbols.codeCompletionItemCustomizer implementation="org.jetbrains.astro.webSymbols.AstroCodeCompletionItemCustomizer" />
 
     <html.embeddedContentSupport implementation="org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport" />
 

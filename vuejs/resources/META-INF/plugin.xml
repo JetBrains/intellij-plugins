@@ -154,34 +154,34 @@
                      enabledByDefault="true" level="WEAK WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.VueUnrecognizedSlotInspection"
                      key="vue.inspection.display.name.unrecognized.slot" bundle="messages.VueBundle"/>
-    <webSymbols.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
+    <polySymbols.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
                                       toolShortName="VueUnrecognizedSlot"/>
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueUnrecognizedDirective"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.VueUnrecognizedDirectiveInspection"
                      key="vue.inspection.display.name.unrecognized.directive" bundle="messages.VueBundle"/>
-    <webSymbols.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-directives"
+    <polySymbols.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-directives"
                                       toolShortName="VueUnrecognizedDirective"/>
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueDeprecatedSymbol"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.VueDeprecatedSymbolInspection"
                      key="vue.inspection.display.name.deprecated.symbol" bundle="messages.VueBundle"/>
-    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
+    <polySymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
                                       toolShortName="VueDeprecatedSymbol"/>
-    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-components"
+    <polySymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-components"
                                       toolShortName="VueDeprecatedSymbol"/>
-    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-directives"
+    <polySymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-directives"
                                       toolShortName="VueDeprecatedSymbol"/>
-    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-special-properties"
+    <polySymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-special-properties"
                                       toolShortName="VueDeprecatedSymbol"/>
-    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-file-top-elements"
+    <polySymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-file-top-elements"
                                       toolShortName="VueDeprecatedSymbol"/>
-    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-model-modifiers"
+    <polySymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-model-modifiers"
                                       toolShortName="VueDeprecatedSymbol"/>
 
-    <webSymbols.documentationCustomizer implementation="org.jetbrains.vuejs.web.VueDocumentationCustomizer"/>
+    <polySymbols.documentationCustomizer implementation="org.jetbrains.vuejs.web.VueDocumentationCustomizer"/>
 
     <intentionAction>
       <language>Vue</language>
@@ -257,45 +257,45 @@
 
     <eslint.ruleMappersFactory implementation="org.jetbrains.vuejs.libraries.eslint.VueEslintRuleMappersFactory"/>
 
-    <webSymbols.psiReferenceProvider hostElementClass="com.intellij.psi.xml.XmlAttributeValue"
+    <polySymbols.psiReferenceProvider hostElementClass="com.intellij.psi.xml.XmlAttributeValue"
                                      hostLanguage="HtmlCompatible"
                                      implementationClass="org.jetbrains.vuejs.web.VueDeprecatedSlotAttributeReferenceProvider"/>
-    <webSymbols.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
+    <polySymbols.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
     <vetoRenameCondition implementation="org.jetbrains.vuejs.web.VueRenameHandlerVeto"/>
 
     <lang.elementManipulator forClass="org.jetbrains.vuejs.model.VueFakeSrcAttributeValue"
                              implementationClass="org.jetbrains.vuejs.model.VueFakeScrAttributeValueManipulator"/>
 
-    <webSymbols.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
-    <webSymbols.context kind="framework" name="vue" implementation="org.jetbrains.vuejs.context.VueFileContext"
+    <polySymbols.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
+    <polySymbols.context kind="framework" name="vue" implementation="org.jetbrains.vuejs.context.VueFileContext"
                         id="vue.file"/>
 
-    <webSymbols.webTypes source="web-types/vue@1.0.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@2.0.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@2.1.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@2.1.8.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@2.2.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@2.3.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@2.4.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@2.5.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@2.6.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@2.7.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@3.0.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@3.1.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@3.2.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@3.3.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue@3.4.0.web-types.json" enableByDefault="true"/>
-    <webSymbols.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
-    <webSymbols.webTypes source="web-types/vue-contexts@0.0.0.web-types.json" enableByDefault="true"/>
-    <webSymbols.webTypes source="web-types/nuxt@0.0.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@1.0.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@2.0.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@2.1.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@2.1.8.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@2.2.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@2.3.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@2.4.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@2.5.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@2.6.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@2.7.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@3.0.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@3.1.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@3.2.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@3.3.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue@3.4.0.web-types.json" enableByDefault="true"/>
+    <polySymbols.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
+    <polySymbols.webTypes source="web-types/vue-contexts@0.0.0.web-types.json" enableByDefault="true"/>
+    <polySymbols.webTypes source="web-types/nuxt@0.0.0.web-types.json"/>
 
-    <webSymbols.queryConfigurator implementation="org.jetbrains.vuejs.web.VuePolySymbolsQueryConfigurator" id="vue"/>
-    <webSymbols.queryConfigurator implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NQueryConfigurator"
+    <polySymbols.queryConfigurator implementation="org.jetbrains.vuejs.web.VuePolySymbolsQueryConfigurator" id="vue"/>
+    <polySymbols.queryConfigurator implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NQueryConfigurator"
                                   id="vue-i18n"/>
 
-    <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.vuejs.web.VuePolySymbolsQueryResultsCustomizer$Provider"/>
-    <webSymbols.webTypes.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
-    <webSymbols.codeCompletionItemCustomizer
+    <polySymbols.queryResultsCustomizerFactory implementation="org.jetbrains.vuejs.web.VuePolySymbolsQueryResultsCustomizer$Provider"/>
+    <polySymbols.webTypes.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
+    <polySymbols.codeCompletionItemCustomizer
       implementation="org.jetbrains.vuejs.web.VueSymbolsCodeCompletionItemCustomizer"/>
 
     <vuejs.templateScopesProvider

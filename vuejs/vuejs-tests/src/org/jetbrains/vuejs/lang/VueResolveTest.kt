@@ -22,7 +22,7 @@ import com.intellij.polySymbols.testFramework.multiResolvePolySymbolReference
 import com.intellij.polySymbols.testFramework.renderLookupItems
 import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.polySymbols.testFramework.resolveToPolySymbolSource
-import com.intellij.polySymbols.testFramework.webSymbolSourceAtCaret
+import com.intellij.polySymbols.testFramework.polySymbolSourceAtCaret
 import com.intellij.polySymbols.utils.asSingleSymbol
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
@@ -112,7 +112,7 @@ class VueResolveTest : BasePlatformTestCase() {
 </script>""")
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
     assertInstanceOf(literal, JSLiteralExpression::class.java)
     assertInstanceOf(literal!!.parent, JSArrayLiteralExpression::class.java)
     TestCase.assertEquals("'pascalCase'", literal.text)
@@ -814,7 +814,7 @@ export default {
 </script>
 """)
 
-    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
     assertInstanceOf(literal, JSLiteralExpression::class.java)
     TestCase.assertEquals("'libComponentProp'", literal!!.text)
     assertInstanceOf(literal.parent, JSArrayLiteralExpression::class.java)
@@ -837,7 +837,7 @@ export default {
       </template>
     """.trimIndent())
 
-    val property = myFixture.webSymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()!!.parent
     assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals("kuku", (property as JSProperty).name)
     assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -852,7 +852,7 @@ export default {
       </template>
     """.trimIndent())
 
-    val property = myFixture.webSymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()!!.parent
     assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals("to", (property as JSProperty).name)
     assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -883,7 +883,7 @@ export default {
       </template>
 """)
 
-    val property = myFixture.webSymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("from", (property as JSProperty).name)
@@ -910,7 +910,7 @@ Vue.component(alias, WiseComp)
   }
 
   private fun doResolveAliasIntoLibraryComponent(compName: String, fileName: String) {
-    val target = myFixture.webSymbolSourceAtCaret()
+    val target = myFixture.polySymbolSourceAtCaret()
     TestCase.assertNotNull(target)
     TestCase.assertEquals(fileName, target!!.containingFile.name)
     assertInstanceOf(target.parent, JSProperty::class.java)
@@ -930,7 +930,7 @@ Vue.component('global-comp-literal', {
   <global-comp-literal <caret>inside-global-comp-literal=222></global-comp-literal>
 </template>
 """)
-    val element = myFixture.webSymbolSourceAtCaret()
+    val element = myFixture.polySymbolSourceAtCaret()
     val property = element!!.parent
     assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
@@ -955,7 +955,7 @@ Vue.component('global-comp-literal', {
 """)
     myFixture.checkHighlighting()
     myFixture.doHighlighting()
-    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
     assertInstanceOf(literal, JSLiteralExpression::class.java)
     TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
     TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
@@ -978,7 +978,7 @@ const props = ['oneTwo']
 </script>
 """)
     myFixture.doHighlighting()
-    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
     TestCase.assertNotNull(literal)
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
@@ -1010,7 +1010,7 @@ const props = ['oneTwo']
 """)
     myFixture.checkHighlighting()
     myFixture.doHighlighting()
-    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
     assertInstanceOf(literal, JSLiteralExpression::class.java)
     TestCase.assertEquals("seeMe", (literal as JSLiteralExpression).stringValue)
     TestCase.assertEquals("compUI.vue", literal.containingFile.name)
@@ -1041,7 +1041,7 @@ const props = {seeMe: {}}
 </script>
 """)
     myFixture.checkHighlighting()
-    val property = myFixture.webSymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("seeMe", (property as JSProperty).name)
@@ -1073,7 +1073,7 @@ const props = {seeMe: {}}
 </script>
 """)
     myFixture.checkHighlighting()
-    val property = myFixture.webSymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertTrue(property!!.parent.parent is JSProperty)
@@ -1125,7 +1125,7 @@ const props = {seeMe: {}}
 </script>
 """)
 
-    val property = myFixture.webSymbolSourceAtCaret()?.parent
+    val property = myFixture.polySymbolSourceAtCaret()?.parent
     assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals("mixinProp", (property as JSProperty).name)
     assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -1166,7 +1166,7 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting(true, false, true)
 
     val checkResolve = { propName: String, file: String ->
-      val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+      val literal = myFixture.polySymbolSourceAtCaret()!!.parent
       assertInstanceOf(literal, JSLiteralExpression::class.java)
       TestCase.assertEquals(propName, (literal as JSLiteralExpression).stringValue)
       assertInstanceOf(literal.parent.parent, JSProperty::class.java)
@@ -1234,7 +1234,7 @@ const props = {seeMe: {}}
   }
 
   private fun doTestResolveIntoProperty(name: String) {
-    val property = myFixture.webSymbolSourceAtCaret()?.parent
+    val property = myFixture.polySymbolSourceAtCaret()?.parent
     assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals(name, (property as JSProperty).name)
     assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -1321,7 +1321,7 @@ const props = {seeMe: {}}
     TestCase.assertNotNull(attribute)
     myFixture.editor.caretModel.moveToOffset(attribute.textOffset + 2)
 
-    val callExpression = myFixture.webSymbolSourceAtCaret()
+    val callExpression = myFixture.polySymbolSourceAtCaret()
     TestCase.assertNotNull(callExpression)
     // unstub for test
     TestCase.assertNotNull(callExpression!!.text)
@@ -1363,7 +1363,7 @@ const props = {seeMe: {}}
   }
 
   private fun doTestResolveIntoDirective(directive: String, fileName: String) {
-    val property = myFixture.webSymbolSourceAtCaret()
+    val property = myFixture.polySymbolSourceAtCaret()
     TestCase.assertNotNull(directive, property)
     when (property) {
       is JSProperty -> {
@@ -1521,7 +1521,7 @@ Object.keys(obj).forEach(key => {
     myFixture.configureByText("ResolveAliasedObjectMemberComponent.vue",
                               """<template><<caret>alias/></template>""")
 
-    val target = myFixture.webSymbolSourceAtCaret()
+    val target = myFixture.polySymbolSourceAtCaret()
     TestCase.assertNotNull(target)
     TestCase.assertEquals("lib-comp-for-alias.es6", target!!.containingFile.name)
     TestCase.assertTrue(target.parent is JSProperty)
@@ -1574,7 +1574,7 @@ Object.keys(other).forEach(key => {
 """)
     myFixture.configureByText("ResolveObjectWithSpreadComponentAliased.vue",
                               """<template><<caret>lib-spread-alias/></template>""")
-    val target = myFixture.webSymbolSourceAtCaret()
+    val target = myFixture.polySymbolSourceAtCaret()
     TestCase.assertNotNull(target)
     TestCase.assertEquals("lib-spread.es6", target!!.containingFile.name)
     TestCase.assertTrue(target.parent is JSProperty)
@@ -1726,7 +1726,7 @@ export default class UsageComponent extends Vue {
   }
 
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
-    val target = myFixture.webSymbolSourceAtCaret()
+    val target = myFixture.polySymbolSourceAtCaret()
     TestCase.assertEquals(fileName, target!!.containingFile.name)
     TestCase.assertTrue(target.parent is JSProperty)
     TestCase.assertEquals(compName, StringUtil.unquoteString((target.parent as JSProperty).value!!.text))
