@@ -85,9 +85,9 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
     override val name: String
       get() = attribute.name
 
-    override val nameSegments: List<WebSymbolNameSegment> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val nameSegments: List<PolySymbolNameSegment> by lazy(LazyThreadSafetyMode.PUBLICATION) {
       (attribute.descriptor as? WebSymbolAttributeDescriptor)?.symbol?.nameSegments
-      ?: listOf(WebSymbolNameSegment.create(this))
+      ?: listOf(PolySymbolNameSegment.create(this))
     }
 
     override val priority: PolySymbol.Priority

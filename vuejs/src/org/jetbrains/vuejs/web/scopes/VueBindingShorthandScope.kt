@@ -68,8 +68,8 @@ class VueBindingShorthandSymbol(
 ) : PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol>(jsSymbol),
     CompositePolySymbol {
 
-  override val nameSegments: List<WebSymbolNameSegment>
-    get() = listOf(WebSymbolNameSegment.create(0, delegate.name.length, delegate, attrSymbol))
+  override val nameSegments: List<PolySymbolNameSegment>
+    get() = listOf(PolySymbolNameSegment.create(0, delegate.name.length, delegate, attrSymbol))
 
   override val namespace: SymbolNamespace
     get() = VUE_BINDING_SHORTHANDS.namespace

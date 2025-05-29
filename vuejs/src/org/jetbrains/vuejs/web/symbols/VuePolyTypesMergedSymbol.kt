@@ -45,8 +45,8 @@ class VuePolyTypesMergedSymbol(
   override fun getModificationCount(): Long =
     symbols.sumOf { it.modificationCount }
 
-  override val nameSegments: List<WebSymbolNameSegment>
-    get() = listOf(WebSymbolNameSegment.create(
+  override val nameSegments: List<PolySymbolNameSegment>
+    get() = listOf(PolySymbolNameSegment.create(
       0, name.length, symbols
     ))
 

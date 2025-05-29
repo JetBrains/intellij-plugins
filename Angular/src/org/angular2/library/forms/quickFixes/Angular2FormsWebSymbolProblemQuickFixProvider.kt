@@ -7,7 +7,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolNameSegment
+import com.intellij.webSymbols.PolySymbolNameSegment
 import com.intellij.webSymbols.inspections.WebSymbolsProblemQuickFixProvider
 import com.intellij.webSymbols.references.WebSymbolReferenceProblem
 import com.intellij.webSymbols.utils.nameSegments
@@ -22,7 +22,7 @@ class Angular2FormsWebSymbolProblemQuickFixProvider : WebSymbolsProblemQuickFixP
   override fun getQuickFixes(
     element: PsiElement,
     symbol: PolySymbol,
-    segment: WebSymbolNameSegment,
+    segment: PolySymbolNameSegment,
     problemKind: WebSymbolReferenceProblem.ProblemKind,
   ): List<LocalQuickFix> {
     if (problemKind != WebSymbolReferenceProblem.ProblemKind.UnknownSymbol

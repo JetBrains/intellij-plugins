@@ -108,7 +108,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     /* Do not support reference resolution */
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       // Provide an empty symbol match to avoid unresolved reference on the string literal
-      listOf(PolySymbolMatch.create("", JS_STRING_LITERALS, AngularEmptyOrigin, WebSymbolNameSegment.create(0, 0)))
+      listOf(PolySymbolMatch.create("", JS_STRING_LITERALS, AngularEmptyOrigin, PolySymbolNameSegment.create(0, 0)))
     else
       emptyList()
 
