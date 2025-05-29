@@ -13,7 +13,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.startOffset
 import com.intellij.util.Query
-import com.intellij.polySymbols.search.WebSymbolUsageQueries
+import com.intellij.polySymbols.search.PolySymbolUsageQueries
 import org.angular2.entities.Angular2EntitiesProvider
 
 class Angular2ComponentClassInTemplateUsageSearcher : Searcher<ReferencesSearch.SearchParameters, PsiReference> {
@@ -25,7 +25,7 @@ class Angular2ComponentClassInTemplateUsageSearcher : Searcher<ReferencesSearch.
 
     return directive.selector.simpleSelectorsWithPsi.flatMap { it.allSymbols }
       .filter { JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) { it.referencedSymbol == null } }
-      .flatMap { WebSymbolUsageQueries.buildWebSymbolUsagesQueries(it, project, parameters.effectiveSearchScope) }
+      .flatMap { PolySymbolUsageQueries.buildPolySymbolUsagesQueries(it, project, parameters.effectiveSearchScope) }
       .map { it.filtering { !it.declaration }.mapping { it.toPsiReference(element) } }
   }
 
