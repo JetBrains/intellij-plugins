@@ -2,7 +2,7 @@
 package org.angular2.codeInsight
 
 import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
-import com.intellij.html.webSymbols.WebSymbolsXmlExtension
+import com.intellij.html.webSymbols.PolySymbolsXmlExtension
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.web.WebFramework
 import com.intellij.openapi.util.NotNullLazyValue
@@ -22,7 +22,7 @@ import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.lang.svg.Angular2SvgLanguage
 
-class Angular2HtmlExtension : WebSymbolsXmlExtension() {
+class Angular2HtmlExtension : PolySymbolsXmlExtension() {
 
   override fun isAvailable(file: PsiFile?): Boolean {
     return (file != null

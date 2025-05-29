@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
-import com.intellij.html.webSymbols.WebSymbolsXmlExtension
+import com.intellij.html.webSymbols.PolySymbolsXmlExtension
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSExpression
@@ -17,7 +17,7 @@ import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.web.getModel
 
-class VueXmlExtension : WebSymbolsXmlExtension() {
+class VueXmlExtension : PolySymbolsXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean =
     file?.let {
       it.language is VueLanguage

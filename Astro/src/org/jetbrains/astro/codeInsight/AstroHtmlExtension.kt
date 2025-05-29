@@ -2,14 +2,14 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
-import com.intellij.html.webSymbols.WebSymbolsXmlExtension
+import com.intellij.html.webSymbols.PolySymbolsXmlExtension
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.jetbrains.astro.lang.AstroFileType
 
-class AstroHtmlExtension : WebSymbolsXmlExtension() {
+class AstroHtmlExtension : PolySymbolsXmlExtension() {
 
   override fun isAvailable(file: PsiFile?): Boolean {
     return file != null

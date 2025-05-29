@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.javascript.webSymbols.documentation.JSWebSymbolWithSubstitutor
+import com.intellij.javascript.webSymbols.documentation.JSPolySymbolWithSubstitutor
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -29,7 +29,7 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
-interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSWebSymbolWithSubstitutor {
+interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSPolySymbolWithSubstitutor {
 
   override val name: String
 
