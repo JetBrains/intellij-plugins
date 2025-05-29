@@ -10,7 +10,7 @@ import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
 import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
@@ -71,7 +71,7 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
     && Html5TagAndAttributeNamesProvider.getTags(Html5TagAndAttributeNamesProvider.Namespace.HTML, false).contains(name)
 
   class Provider : WebSymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: WebSymbolsContext): WebSymbolsQueryResultsCustomizer? =
+    override fun create(location: PsiElement, context: PolyContext): WebSymbolsQueryResultsCustomizer? =
       if (context.framework == AstroFramework.ID)
         AstroWebSymbolsQueryResultsCustomizer(location)
       else null

@@ -18,7 +18,7 @@ import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.PolySymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
@@ -224,7 +224,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     PsiModificationTracker.getInstance(context.project).modificationCount
 
   class Factory : WebSymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: WebSymbolsContext): WebSymbolsQueryResultsCustomizer? =
+    override fun create(location: PsiElement, context: PolyContext): WebSymbolsQueryResultsCustomizer? =
       if (context.framework == Angular2Framework.ID && location.containingFile != null)
         Angular2WebSymbolsQueryResultsCustomizer(location)
       else null

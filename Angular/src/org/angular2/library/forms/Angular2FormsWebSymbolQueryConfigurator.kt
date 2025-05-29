@@ -15,7 +15,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import com.intellij.webSymbols.utils.ReferencingPolySymbol
@@ -32,7 +32,7 @@ class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
   override fun getScope(
     project: Project,
     location: PsiElement?,
-    context: WebSymbolsContext,
+    context: PolyContext,
     allowResolve: Boolean,
   ): List<PolySymbolsScope> {
     if (context.framework == Angular2Framework.ID && location != null) {

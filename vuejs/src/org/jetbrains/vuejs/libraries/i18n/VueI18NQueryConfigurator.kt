@@ -11,7 +11,7 @@ import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
@@ -24,7 +24,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
   override fun getScope(
     project: Project,
     location: PsiElement?,
-    context: WebSymbolsContext,
+    context: PolyContext,
     allowResolve: Boolean,
   ): List<PolySymbolsScope> =
     if (context.framework == VueFramework.ID

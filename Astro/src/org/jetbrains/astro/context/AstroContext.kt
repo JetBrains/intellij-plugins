@@ -5,23 +5,23 @@ import com.intellij.javascript.web.hasFilesOfType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
 
 private const val KIND_ASTRO_PROJECT = "astro-project"
 
 fun isAstroProject(context: PsiElement): Boolean =
-  WebSymbolsContext.get(KIND_ASTRO_PROJECT, context).let { it == "astro" || it == "true"}
+  PolyContext.get(KIND_ASTRO_PROJECT, context).let { it == "astro" || it == "true"}
 
 fun isAstroProject(contextFile: VirtualFile, project: Project): Boolean =
-  WebSymbolsContext.get(KIND_ASTRO_PROJECT, contextFile, project).let { it == "astro" || it == "true"}
+  PolyContext.get(KIND_ASTRO_PROJECT, contextFile, project).let { it == "astro" || it == "true"}
 
 fun isAstroFrameworkContext(context: PsiElement): Boolean =
-  WebSymbolsContext.get(WebSymbolsContext.KIND_FRAMEWORK, context) == AstroFramework.ID
+  PolyContext.get(PolyContext.KIND_FRAMEWORK, context) == AstroFramework.ID
 
 fun isAstroFrameworkContext(contextFile: VirtualFile, project: Project): Boolean =
-  WebSymbolsContext.get(WebSymbolsContext.KIND_FRAMEWORK, contextFile, project) == AstroFramework.ID
+  PolyContext.get(PolyContext.KIND_FRAMEWORK, contextFile, project) == AstroFramework.ID
 
 fun hasAstroFiles(project: Project): Boolean =
   hasFilesOfType(project, AstroFileType)

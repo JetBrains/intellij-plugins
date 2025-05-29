@@ -20,7 +20,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
 import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
 import com.intellij.webSymbols.query.WebSymbolNameConverter
@@ -62,7 +62,7 @@ class VueWebSymbolsQueryConfigurator :
   override fun getScope(
     project: Project,
     location: PsiElement?,
-    context: WebSymbolsContext,
+    context: PolyContext,
     allowResolve: Boolean,
   ): List<PolySymbolsScope> {
     if (context.framework != VueFramework.ID || location == null) return emptyList()
@@ -96,7 +96,7 @@ class VueWebSymbolsQueryConfigurator :
   override fun getNameConversionRulesProviders(
     project: Project,
     element: PsiElement?,
-    context: WebSymbolsContext,
+    context: PolyContext,
   ): List<WebSymbolNameConversionRulesProvider> =
     if (context.framework == VueFramework.ID)
       listOf(VueScriptSetupLocalDirectiveNameConversionRulesProvider)

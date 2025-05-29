@@ -7,8 +7,8 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.webSymbols.context.WebSymbolsContext
-import com.intellij.webSymbols.context.WebSymbolsContext.Companion.KIND_FRAMEWORK
+import com.intellij.webSymbols.context.PolyContext
+import com.intellij.webSymbols.context.PolyContext.Companion.KIND_FRAMEWORK
 import org.angular2.Angular2Framework
 import org.angular2.angular2Framework
 import org.angular2.lang.html.Angular2HtmlDialect
@@ -30,7 +30,7 @@ object Angular2LangUtil {
 
   @JvmStatic
   fun isAtLeastAngularVersion(context: PsiElement, version: AngularVersion): Boolean {
-    WebSymbolsContext.get("angular-version", context)
+    PolyContext.get("angular-version", context)
       ?.let { AngularVersion.valueOf(it) }
       ?.let { return it.ordinal >= version.ordinal }
     return version == AngularVersion.V_2
@@ -41,17 +41,17 @@ object Angular2LangUtil {
     if (JSStubElementImpl.isBuildingStubs())
       true
     else
-      WebSymbolsContext.get(KIND_FRAMEWORK, context) == Angular2Framework.ID
+      PolyContext.get(KIND_FRAMEWORK, context) == Angular2Framework.ID
 
   @JvmStatic
   fun getTemplateSyntax(context: PsiElement?): Angular2TemplateSyntax =
-    getTemplateSyntax { context?.let { WebSymbolsContext.get("angular-template-syntax", it) } }
+    getTemplateSyntax { context?.let { PolyContext.get("angular-template-syntax", it) } }
 
   @JvmStatic
   fun getTemplateSyntax(project: Project?, context: VirtualFile?): Angular2TemplateSyntax =
     getTemplateSyntax {
       if (project != null && context != null)
-        WebSymbolsContext.get("angular-template-syntax", context, project)
+        PolyContext.get("angular-template-syntax", context, project)
       else
         null
     }

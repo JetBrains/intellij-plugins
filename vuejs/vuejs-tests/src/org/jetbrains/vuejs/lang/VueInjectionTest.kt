@@ -14,8 +14,8 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.ParsingTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
-import com.intellij.webSymbols.context.WebSymbolsContext
-import com.intellij.webSymbols.context.WebSymbolsContext.Companion.KIND_FRAMEWORK
+import com.intellij.webSymbols.context.PolyContext
+import com.intellij.webSymbols.context.PolyContext.Companion.KIND_FRAMEWORK
 import com.intellij.webSymbols.context.WebSymbolsContextProvider
 import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPoint
 import com.intellij.webcore.libraries.ScriptingLibraryModel
@@ -289,7 +289,7 @@ Vue.options.delimiters = ['<%', '%>']
 
     val disposable = Disposer.newDisposable()
     var forbid = true
-    WebSymbolsContext.WEB_SYMBOLS_CONTEXT_EP
+    PolyContext.WEB_SYMBOLS_CONTEXT_EP
       .point
       ?.registerExtension(
         WebSymbolsContextProviderExtensionPoint(

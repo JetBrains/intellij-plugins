@@ -25,7 +25,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.css.CSS_CLASS_LIST
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
 import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
@@ -61,7 +61,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
   override fun getScope(
     project: Project,
     location: PsiElement?,
-    context: WebSymbolsContext,
+    context: PolyContext,
     allowResolve: Boolean,
   ): List<PolySymbolsScope> =
     if (context.framework == Angular2Framework.ID && location != null) {
@@ -74,7 +74,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     }
     else emptyList()
 
-  override fun getNameConversionRulesProviders(project: Project, element: PsiElement?, context: WebSymbolsContext): List<WebSymbolNameConversionRulesProvider> {
+  override fun getNameConversionRulesProviders(project: Project, element: PsiElement?, context: PolyContext): List<WebSymbolNameConversionRulesProvider> {
     if (context.framework == Angular2Framework.ID && element != null) {
       // possibly the input definition
       if (element is JSLiteralExpression || element is TypeScriptField) {

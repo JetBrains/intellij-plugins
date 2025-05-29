@@ -48,7 +48,7 @@ import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import icons.AngularIcons
 import kotlinx.coroutines.CompletableDeferred
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
@@ -356,4 +356,4 @@ fun isAngularTypeScriptServiceEnabled(project: Project, context: VirtualFile): B
 }
 
 private fun isAngularServiceSupport(project: Project, context: VirtualFile): Boolean =
-  WebSymbolsContext.get("angular-service-support", context, project) != "false"
+  PolyContext.get("angular-service-support", context, project) != "false"

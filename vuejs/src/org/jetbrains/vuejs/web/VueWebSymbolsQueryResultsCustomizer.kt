@@ -13,7 +13,7 @@ import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
 import com.intellij.webSymbols.utils.nameSegments
@@ -110,7 +110,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
     context.hashCode()
 
   class Provider : WebSymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: WebSymbolsContext): WebSymbolsQueryResultsCustomizer? =
+    override fun create(location: PsiElement, context: PolyContext): WebSymbolsQueryResultsCustomizer? =
       if (context.framework == VueFramework.ID)
         VueWebSymbolsQueryResultsCustomizer(location)
       else null

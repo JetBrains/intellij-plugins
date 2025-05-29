@@ -5,7 +5,7 @@ import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest
 import com.intellij.openapi.application.ReadAction
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.junit.Assert
@@ -32,7 +32,7 @@ class VueYarnPnpIntegrationTest : AbstractYarnPnpIntegrationTest() {
     configureYarnBerryAndRunYarnInstall(root)
     val file = myFixture.tempDirFixture.getFile("index.html")!!
     ReadAction.run<Throwable> {
-      Assert.assertEquals("vue", WebSymbolsContext.get("framework", file, project))
+      Assert.assertEquals("vue", PolyContext.get("framework", file, project))
     }
   }
 

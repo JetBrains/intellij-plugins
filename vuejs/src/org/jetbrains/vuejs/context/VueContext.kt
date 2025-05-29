@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
@@ -36,13 +36,13 @@ fun hasVueFiles(project: Project): Boolean =
   hasFilesOfType(project, VueFileType)
 
 fun hasPinia(context: PsiElement) =
-  WebSymbolsContext.get(KIND_VUE_STORE, context) == VUE_STORE_PINIA
+  PolyContext.get(KIND_VUE_STORE, context) == VUE_STORE_PINIA
 
 fun hasVuex(context: PsiElement) =
-  WebSymbolsContext.get(KIND_VUE_STORE, context) == VUE_STORE_VUEX
+  PolyContext.get(KIND_VUE_STORE, context) == VUE_STORE_VUEX
 
 fun hasNuxt(context: PsiElement) =
-  WebSymbolsContext.get(KIND_VUE_SSR_FRAMEWORK, context) == VUE_FRAMEWORK_NUXT
+  PolyContext.get(KIND_VUE_SSR_FRAMEWORK, context) == VUE_FRAMEWORK_NUXT
 
 fun supportsDefineComponent(context: PsiElement): Boolean =
   detectPkgVersion(context, VUE_MODULE).let {
@@ -50,7 +50,7 @@ fun supportsDefineComponent(context: PsiElement): Boolean =
   }
 
 fun getVueClassComponentLibrary(location: PsiElement): String? =
-  WebSymbolsContext.get(KIND_VUE_CLASS_COMPONENT_LIBRARY, location)
+  PolyContext.get(KIND_VUE_CLASS_COMPONENT_LIBRARY, location)
 
 fun getVueClassComponentDecoratorName(location: PsiElement): String =
   if (detectPkgVersion(location, VUE_CLASS_COMPONENT).let {
