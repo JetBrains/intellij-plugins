@@ -10,7 +10,7 @@ import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.highlighting.PolySymbolHighlightingCustomizer
-import com.intellij.webSymbols.js.WebSymbolJsKind
+import com.intellij.webSymbols.js.PolySymbolJsKind
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2DecoratorUtil.isHostBinding
 import org.angular2.lang.expr.Angular2Language
@@ -44,7 +44,7 @@ class Angular2PolySymbolHighlightingCustomizer : PolySymbolHighlightingCustomize
   override fun getSymbolTextAttributes(host: PsiExternalReferenceHost, symbol: PolySymbol, level: Int): TextAttributesKey? {
     when (symbol.qualifiedKind) {
       PolySymbol.JS_SYMBOLS ->
-        if (symbol.jsKind == WebSymbolJsKind.Variable
+        if (symbol.jsKind == PolySymbolJsKind.Variable
             && symbol is PsiSourcedPolySymbol && symbol.source?.language == Angular2Language)
           return Angular2HighlighterColors.NG_VARIABLE
       PolySymbol.HTML_ATTRIBUTES ->
