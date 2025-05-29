@@ -270,8 +270,8 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("provider aws {}\nresource <caret> \"aaa\" {}", matcher)
   }
 
-  private fun containsResourceTypes(vararg elements: String): Boolean = globalModel.allProviders()
-    .filter { it.tier in tiers }
+  private fun containsResourceTypes(vararg elements: String): Boolean = globalModel.allResources()
+    .filter { it.provider.tier in tiers }
     .map { it.type }
     .toList()
     .containsAll(elements.toList())
@@ -985,14 +985,34 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
   private fun buildEphemeralTestText(expression: String): String = String.format(
     """
       ephemeral "aws_kms_secrets" "test1" {}
-        ephemeral "aws_kms_secrets" "test2" {}
-        ephemeral "kubernetes_token_request_v1" "test3" {}
+      ephemeral "aws_kms_secrets" "test2" {}
+      ephemeral "kubernetes_token_request_v1" "test3" {}
         
-        resource "aws_secretsmanager_secret_version" "db_password" {
-          secret_id = %s
-        }
+      resource "aws_secretsmanager_secret_version" "db_password" {
+        secret_id = %s
+      }
     """.trimIndent(), expression
   )
+
+  fun testRequiredProvidersCompletion() {
+    val providers = globalModel.allProviders().filter { it.tier in tiers }
+      .map { it.type }
+      .sorted()
+      .take(ENTRIES_LIST_SIZE)
+      .toList()
+    val matcher = getPartialMatcher(providers)
+
+    doBasicCompletionTest("terraform { required_providers { <caret> } }", matcher)
+    doBasicCompletionTest(
+      """
+        terraform {
+          required_providers {
+            <caret>
+          }
+        }
+      """.trimIndent(), "aws", "azurerm", "google", "kubernetes", "alicloud", "oci"
+    )
+  }
 
   private val tiers = setOf(ProviderTier.TIER_BUILTIN, ProviderTier.TIER_OFFICIAL, ProviderTier.TIER_LOCAL)
 }
