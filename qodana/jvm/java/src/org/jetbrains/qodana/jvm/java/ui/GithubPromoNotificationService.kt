@@ -1,6 +1,12 @@
 package org.jetbrains.qodana.jvm.java.ui
 
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.Service
@@ -16,6 +22,7 @@ import com.intellij.util.io.createParentDirectories
 import com.intellij.vcsUtil.VcsFileUtil.addFilesToVcsWithConfirmation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,6 +36,7 @@ import org.jetbrains.qodana.ui.ProjectVcsDataProviderImpl
 import org.jetbrains.qodana.ui.ci.CIFile
 import org.jetbrains.qodana.ui.ci.providers.github.DefaultQodanaGithubWorkflowBuilder
 import org.jetbrains.qodana.ui.ci.providers.github.GitHubCIFileChecker
+import org.jetbrains.qodana.ui.problemsView.isSetupCiEnabled
 import java.io.IOException
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicReference
@@ -79,34 +87,38 @@ class GithubPromoNotificationService(private val project: Project, private val s
 
   private fun CIFile?.qodanaPresent() = this is CIFile.ExistingWithQodana
 
-  fun addQodanaFiles() {
-    scope.launch(QodanaDispatchers.IO) {
-      val qodanaYamlExists = project.findQodanaConfigVirtualFile() != null
-      val workflowFile = addQodanaWorkflow()
-      val yamlFile = if (!qodanaYamlExists) addQodanaYaml() else null
-      if (workflowFile != null) {
-        logGithubPromoAddQodanaWorkflowEvent(project, qodanaYamlExists)
-        withContext(Dispatchers.EDT) {
-          FileEditorManager.getInstance(project).openFile(workflowFile, true)
-        }
-        addFilesToVcsWithConfirmation(project, listOfNotNull(workflowFile, yamlFile))
-      } else {
+  fun addQodanaFiles(): Job {
+    return scope.launch(QodanaDispatchers.IO) {
+      val success = doAddQodanaFiles()
+      if (!success) {
         notifyQodanaActionWorkflowNotAdded()
       }
     }
   }
 
-  /**
-   * Adds Qodana GitHub workflow file if it's not present yet in the background
-   * Returns null if the file was not added due to an error. In case of an error, the notification is shown
-   */
+  private suspend fun doAddQodanaFiles(): Boolean {
+    val qodanaYamlExists = project.findQodanaConfigVirtualFile() != null
+    val workflowFile = addQodanaWorkflow()
+    if (workflowFile != null) {
+      val yamlFile = if (!qodanaYamlExists) addQodanaYaml() else null
+      logGithubPromoAddQodanaWorkflowEvent(project, qodanaYamlExists)
+      withContext(Dispatchers.EDT) {
+        FileEditorManager.getInstance(project).openFile(workflowFile, true)
+      }
+      addFilesToVcsWithConfirmation(project, listOfNotNull(workflowFile, yamlFile))
+      return true
+    } else {
+      return  false
+    }
+  }
+
   private suspend fun addQodanaWorkflow(): VirtualFile? {
     try {
       val projectVcsDataProvider = ProjectVcsDataProviderImpl(project, scope)
       val defaultQodanaGithubWorkflowBuilder = DefaultQodanaGithubWorkflowBuilder(projectVcsDataProvider, project)
       val location = defaultQodanaGithubWorkflowBuilder.getWorkflowFileLocation()
       if (location == null) {
-        LOG.warn("Failed to create Qodana GitHub workflow file because location is null")
+        LOG.warn("Failed to create Qodana GitHub workflow file because location is not defined")
         return null
       }
       val content = defaultQodanaGithubWorkflowBuilder.workflowFile(promo = true)
@@ -117,14 +129,9 @@ class GithubPromoNotificationService(private val project: Project, private val s
       return null
     }
   }
-
-  /**
-   * Adds a qodana.yaml file if it's not present yet in the background
-   * Returns null if the file was not added due to an error
-   */
   private suspend fun addQodanaYaml(): VirtualFile? {
-    val yamlFileContents = GithubPromoQodanaYamlBuilder(project).build()
     return try {
+      val yamlFileContents = GithubPromoQodanaYamlBuilder(project).build()
       val projectPath = project.guessProjectDir()?.toNioPath()
       if (projectPath == null) {
         LOG.warn("Failed to create Qodana YAML file because project path is null")
@@ -153,12 +160,44 @@ class GithubPromoNotificationService(private val project: Project, private val s
     return file
   }
 
-  private fun notifyQodanaActionWorkflowNotAdded() {
-    QodanaNotifications.General.notification(
+  private fun notifyQodanaActionWorkflowNotAdded(tryAgain: Boolean = true) {
+    val notification = QodanaNotifications.General.notification(
       QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.title"),
       QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.text"),
       NotificationType.ERROR,
       withQodanaIcon = false
-    ).notify(project)
+    )
+    if (tryAgain) {
+      notification.addAction(createTryAgainAction())
+    }
+    notification.notify(project)
+  }
+
+  private fun createTryAgainAction() = object : NotificationAction(QodanaBundle.message("qodana.github.promo.notification.bubble.try.add.workflow.again")) {
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+    override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+      scope.launch(QodanaDispatchers.IO) {
+        try {
+          val success = doAddQodanaFiles()
+          if (success) {
+            notification.expire()
+            return@launch
+          }
+          // fallback to just regular "Add to CI action"
+          if (isSetupCiEnabled()) {
+            val addToCIAction = ActionManager.getInstance().getAction("Qodana.AddQodanaToCiAction")
+            withContext(Dispatchers.EDT) {
+              ActionUtil.performAction(addToCIAction, e)
+              notification.expire()
+            }
+            return@launch
+          }
+        } finally {
+          // notify without action to try again in case of failure
+          notifyQodanaActionWorkflowNotAdded(tryAgain = false)
+        }
+      }
+    }
   }
 }

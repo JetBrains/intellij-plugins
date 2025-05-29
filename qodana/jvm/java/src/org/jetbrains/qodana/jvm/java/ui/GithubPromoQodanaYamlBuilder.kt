@@ -8,8 +8,8 @@ import org.jetbrains.qodana.settings.QodanaYamlLinterItemProvider
 
 class GithubPromoQodanaYamlBuilder(val project: Project): QodanaYamlBuilder() {
 
-  override suspend fun getYamlItems(): List<QodanaYamlItem> {
-    return QodanaYamlItemProvider.Companion.provideAll(project,
-                                                       GithubPromoQodanaYamlItemContext()).filter { it.id != QodanaYamlLinterItemProvider.Companion.ID }
-  }
+  override suspend fun getYamlItems(): List<QodanaYamlItem> = QodanaYamlItemProvider.Companion
+    .provideAll(project, GithubPromoQodanaYamlItemContext())
+    // replaced by promo linter item
+    .filter { it.id != QodanaYamlLinterItemProvider.Companion.ID }
 }

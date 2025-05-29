@@ -190,7 +190,7 @@ internal fun isLocalRunEnabled(): Boolean {
   return localRunDisabledMessage() == null
 }
 
-internal fun isSetupCiEnabled(): Boolean {
+fun isSetupCiEnabled(): Boolean {
   return setupCiDisabledMessage() == null
 }
 
