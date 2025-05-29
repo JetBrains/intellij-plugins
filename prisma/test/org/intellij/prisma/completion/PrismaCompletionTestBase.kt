@@ -5,8 +5,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
-import com.intellij.webSymbols.testFramework.checkLookupItems
-import com.intellij.webSymbols.testFramework.noAutoComplete
+import com.intellij.polySymbols.testFramework.checkLookupItems
+import com.intellij.polySymbols.testFramework.noAutoComplete
 import org.intellij.prisma.PrismaTestCase
 import org.intellij.prisma.ide.documentation.PrismaDocumentationProvider
 import org.intellij.prisma.lang.PrismaConstants

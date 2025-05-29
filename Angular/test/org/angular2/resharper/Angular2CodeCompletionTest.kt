@@ -6,7 +6,7 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 

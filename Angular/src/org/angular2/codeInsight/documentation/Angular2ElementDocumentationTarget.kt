@@ -34,7 +34,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.toMultiMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.intellij.webSymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol
 import org.angular2.codeInsight.Angular2HighlightingUtils
 import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirectiveProperty

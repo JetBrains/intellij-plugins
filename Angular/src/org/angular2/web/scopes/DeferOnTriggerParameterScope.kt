@@ -6,9 +6,9 @@ import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolsScopeWithCache
 import org.angular2.codeInsight.blocks.getDeferOnTriggerDefinition
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.lang.expr.psi.Angular2BlockParameter

@@ -10,11 +10,11 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.PsiSourcedPolySymbol
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.webSymbols.utils.coalesceWith
+import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.utils.coalesceWith
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2AliasedDirectiveProperty
 import org.angular2.entities.Angular2Directive

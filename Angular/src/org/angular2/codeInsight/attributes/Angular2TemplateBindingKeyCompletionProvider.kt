@@ -4,9 +4,9 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.siblings
-import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.completion.PolySymbolsCompletionProviderBase
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import org.angular2.directiveInputToTemplateBindingVar
 import org.angular2.lang.Angular2LangUtil.`$IMPLICIT`
 import org.angular2.lang.expr.psi.Angular2TemplateBinding

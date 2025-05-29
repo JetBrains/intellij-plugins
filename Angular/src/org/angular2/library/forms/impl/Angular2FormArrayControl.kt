@@ -2,12 +2,12 @@ package org.angular2.library.forms.impl
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.SymbolKind
+import com.intellij.polySymbols.SymbolNamespace
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.patterns.PolySymbolsPattern
+import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.web.Angular2SymbolOrigin
 

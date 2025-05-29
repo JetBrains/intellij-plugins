@@ -8,8 +8,8 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import org.jetbrains.astro.webSymbols.ASTRO_COMPONENT_PROPS
 
 class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)

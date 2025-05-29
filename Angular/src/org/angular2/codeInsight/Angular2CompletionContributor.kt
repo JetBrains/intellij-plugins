@@ -34,8 +34,8 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.completion.PolySymbolsCompletionProviderBase
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity

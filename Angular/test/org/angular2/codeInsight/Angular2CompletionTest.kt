@@ -4,9 +4,9 @@ package org.angular2.codeInsight
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
-import com.intellij.webSymbols.testFramework.LookupElementInfo
-import com.intellij.webSymbols.testFramework.checkLookupItems
-import com.intellij.webSymbols.testFramework.enableIdempotenceChecksOnEveryCache
+import com.intellij.polySymbols.testFramework.LookupElementInfo
+import com.intellij.polySymbols.testFramework.checkLookupItems
+import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5

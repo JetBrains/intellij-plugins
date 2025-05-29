@@ -5,8 +5,8 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiNamedElement
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueProvide
 import org.jetbrains.vuejs.web.VUE_PROVIDES

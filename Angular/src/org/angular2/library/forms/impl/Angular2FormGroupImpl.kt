@@ -7,9 +7,9 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.PolySymbolsScope
-import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
 import org.angular2.library.forms.Angular2FormAbstractControl
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_GROUP_FIELDS

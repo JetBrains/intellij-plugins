@@ -6,10 +6,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
-import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
+import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
+import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.webSymbols.AstroProximity
 import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY

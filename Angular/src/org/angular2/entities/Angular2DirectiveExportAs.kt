@@ -9,9 +9,9 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_EXPORTS_AS

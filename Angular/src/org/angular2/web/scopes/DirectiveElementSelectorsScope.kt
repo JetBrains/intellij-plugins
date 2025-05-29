@@ -4,9 +4,9 @@ package org.angular2.web.scopes
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.Angular2DirectiveSymbolWrapper

@@ -4,8 +4,8 @@ package org.angular2.entities
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTES
 

@@ -7,10 +7,10 @@ import com.intellij.openapi.util.text.Strings
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.documentation.PolySymbolDocumentation
-import com.intellij.webSymbols.documentation.PolySymbolDocumentationCustomizer
-import com.intellij.webSymbols.utils.qualifiedKind
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.documentation.PolySymbolDocumentation
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationCustomizer
+import com.intellij.polySymbols.utils.qualifiedKind
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl

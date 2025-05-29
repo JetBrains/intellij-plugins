@@ -15,7 +15,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
 
 class VueInsertHandler : XmlTagInsertHandler() {

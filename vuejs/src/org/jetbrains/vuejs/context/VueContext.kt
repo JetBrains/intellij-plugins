@@ -12,9 +12,9 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.context.PolyContext
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.withoutPreRelease

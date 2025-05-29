@@ -18,11 +18,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.PolySymbol.Companion.JS_EVENTS
-import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.JS_EVENTS
+import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
+import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser

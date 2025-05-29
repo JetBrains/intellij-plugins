@@ -8,11 +8,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.css.CssElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.PolySymbolsScope
-import com.intellij.webSymbols.context.PolyContext
-import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
+import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileImpl

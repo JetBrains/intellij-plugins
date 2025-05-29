@@ -16,10 +16,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
 import com.intellij.refactoring.rename.api.RenameValidationResult
 import com.intellij.refactoring.rename.api.RenameValidator
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.declarations.PolySymbolDeclaration
-import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.declarations.PolySymbolDeclaration
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.xml.XmlElementDescriptor
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget

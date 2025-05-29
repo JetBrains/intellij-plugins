@@ -6,7 +6,7 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.navigation.NavigationItem
 import com.intellij.testFramework.TestIndexingModeSupporter
 import com.intellij.testFramework.TestIndexingModeSupporter.IndexingMode
-import com.intellij.webSymbols.testFramework.checkListByFile
+import com.intellij.polySymbols.testFramework.checkListByFile
 import junit.framework.Test
 import junit.framework.TestSuite
 import org.angular2.Angular2TestCase

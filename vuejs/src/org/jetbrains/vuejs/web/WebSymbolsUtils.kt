@@ -2,8 +2,8 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolQualifiedName
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective

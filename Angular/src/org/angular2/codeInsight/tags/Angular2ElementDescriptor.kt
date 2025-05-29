@@ -5,7 +5,7 @@ import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.entities.Angular2Directive
 import org.angular2.web.Angular2DescriptorSymbolsProvider

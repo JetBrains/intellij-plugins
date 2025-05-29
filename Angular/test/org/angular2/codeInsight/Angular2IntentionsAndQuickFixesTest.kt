@@ -5,8 +5,8 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.ide.IdeBundle
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.JavaScriptBundle
-import com.intellij.webSymbols.testFramework.checkListByFile
-import com.intellij.webSymbols.testFramework.renderLookupItems
+import com.intellij.polySymbols.testFramework.checkListByFile
+import com.intellij.polySymbols.testFramework.renderLookupItems
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule.*

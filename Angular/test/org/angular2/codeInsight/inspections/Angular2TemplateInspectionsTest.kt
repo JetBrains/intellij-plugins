@@ -9,7 +9,7 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
-import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.*

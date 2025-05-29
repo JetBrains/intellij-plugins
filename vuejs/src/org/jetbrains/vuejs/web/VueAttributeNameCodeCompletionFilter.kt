@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.web
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.webSymbols.utils.hideFromCompletion
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.utils.hideFromCompletion
 import org.jetbrains.vuejs.codeInsight.ATTR_ARGUMENT_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_SLOT_SHORTHAND

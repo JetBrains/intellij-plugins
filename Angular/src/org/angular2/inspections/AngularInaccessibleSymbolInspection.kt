@@ -24,9 +24,9 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PsiSourcedPolySymbol
-import com.intellij.webSymbols.utils.qualifiedKind
-import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.qualifiedKind
+import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor

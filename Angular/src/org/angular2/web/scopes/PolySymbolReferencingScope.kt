@@ -3,12 +3,12 @@ package org.angular2.web.scopes
 import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.PolySymbolsScope
-import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.utils.ReferencingPolySymbol
-import com.intellij.webSymbols.utils.qualifiedKind
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.utils.ReferencingPolySymbol
+import com.intellij.polySymbols.utils.qualifiedKind
 
 class PolySymbolReferencingScope(
   qualifiedKind: PolySymbolQualifiedKind,

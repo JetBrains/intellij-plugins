@@ -3,10 +3,10 @@ package org.jetbrains.astro.webSymbols
 
 import com.intellij.javascript.webSymbols.decorateWithSymbolType
 import com.intellij.psi.PsiElement
-import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItemCustomizer
+import com.intellij.polySymbols.FrameworkId
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileImpl
 

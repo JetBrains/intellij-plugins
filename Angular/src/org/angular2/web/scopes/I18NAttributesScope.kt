@@ -9,10 +9,10 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.utils.nameSegments
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.utils.nameSegments
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.web.Angular2PsiSourcedSymbol

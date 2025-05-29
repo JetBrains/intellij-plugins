@@ -10,10 +10,10 @@ import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.context.PolyContext
-import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS

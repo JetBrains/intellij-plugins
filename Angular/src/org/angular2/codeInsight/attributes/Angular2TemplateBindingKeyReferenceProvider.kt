@@ -1,10 +1,10 @@
 package org.angular2.codeInsight.attributes
 
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.webSymbols.references.PsiPolySymbolReferenceProvider
-import com.intellij.webSymbols.utils.asSingleSymbol
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.references.PsiPolySymbolReferenceProvider
+import com.intellij.polySymbols.utils.asSingleSymbol
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindingKey
 import org.angular2.web.NG_TEMPLATE_BINDINGS

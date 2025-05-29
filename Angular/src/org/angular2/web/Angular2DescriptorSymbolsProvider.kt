@@ -2,9 +2,9 @@
 package org.angular2.web
 
 import com.intellij.util.SmartList
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.utils.qualifiedKind
-import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.utils.qualifiedKind
+import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.angular2.entities.Angular2Directive
 
 // TODO - This is a bridge between old and new API - when time comes, this should be removed.

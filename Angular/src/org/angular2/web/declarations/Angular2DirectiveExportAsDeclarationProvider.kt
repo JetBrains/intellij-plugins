@@ -5,8 +5,8 @@ import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.webSymbols.declarations.PolySymbolDeclaration
-import com.intellij.webSymbols.declarations.PolySymbolDeclarationProvider
+import com.intellij.polySymbols.declarations.PolySymbolDeclaration
+import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2EntitiesProvider
 

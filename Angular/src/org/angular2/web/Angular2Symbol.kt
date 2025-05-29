@@ -3,7 +3,7 @@ package org.angular2.web
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.webSymbols.*
+import com.intellij.polySymbols.*
 
 interface Angular2Symbol : PolySymbol {
 

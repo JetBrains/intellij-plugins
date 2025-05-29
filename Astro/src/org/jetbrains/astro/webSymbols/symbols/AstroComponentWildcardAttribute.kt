@@ -2,15 +2,15 @@
 package org.jetbrains.astro.webSymbols.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.PolySymbol.Companion.PROP_DOC_HIDE_PATTERN
-import com.intellij.webSymbols.PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION
-import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.SymbolKind
+import com.intellij.polySymbols.SymbolNamespace
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
+import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_PATTERN
+import com.intellij.polySymbols.PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.patterns.PolySymbolsPattern
+import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 object AstroComponentWildcardAttribute: PolySymbol {

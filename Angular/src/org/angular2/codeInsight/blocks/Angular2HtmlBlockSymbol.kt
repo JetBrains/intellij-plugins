@@ -2,11 +2,11 @@
 package org.angular2.codeInsight.blocks
 
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
-import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.webTypes.WebTypesSymbolBase
-import com.intellij.webSymbols.webTypes.WebTypesSymbolFactory
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol.Companion.JS_SYMBOLS
+import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.webTypes.WebTypesSymbolBase
+import com.intellij.polySymbols.webTypes.WebTypesSymbolFactory
 import org.angular2.web.NG_BLOCK_PARAMETERS
 import org.angular2.web.NG_BLOCK_PARAMETER_PREFIXES
 

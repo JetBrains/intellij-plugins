@@ -8,7 +8,7 @@ import com.intellij.javascript.nodejs.npm.NpmUtil
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.PsiSourcedPolySymbol
 import org.jetbrains.vuejs.inspections.VueMissingComponentImportInspection
 
 class VueIntegrationHighlightingTest: JSExternalToolIntegrationTest() {

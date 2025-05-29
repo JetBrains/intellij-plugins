@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolApiStatus
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*

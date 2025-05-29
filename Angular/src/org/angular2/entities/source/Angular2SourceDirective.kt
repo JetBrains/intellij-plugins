@@ -23,7 +23,7 @@ import com.intellij.util.AstLoadingFilter
 import com.intellij.util.SmartList
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC

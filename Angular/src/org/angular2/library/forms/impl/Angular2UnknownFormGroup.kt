@@ -3,10 +3,10 @@ package org.angular2.library.forms.impl
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
-import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.patterns.PolySymbolsPattern
+import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_FIELDS

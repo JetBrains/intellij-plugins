@@ -5,10 +5,10 @@ import com.intellij.javascript.webSymbols.symbols.getJSPropertySymbols
 import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.query.WebSymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueProperty
 

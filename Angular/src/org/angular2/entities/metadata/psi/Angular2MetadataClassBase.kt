@@ -13,7 +13,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.codeInsight.Angular2LibrariesHacks

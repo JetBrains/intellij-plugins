@@ -5,8 +5,8 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
-import com.intellij.webSymbols.PsiSourcedPolySymbol
-import com.intellij.webSymbols.PsiSourcedPolySymbolProvider
+import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.PsiSourcedPolySymbolProvider
 import org.angular2.entities.Angular2EntitiesProvider
 
 class Angular2PsiSourcedPolySymbolProvider : PsiSourcedPolySymbolProvider {

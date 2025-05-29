@@ -11,10 +11,10 @@ import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.PolySymbolQualifiedName
-import com.intellij.webSymbols.query.PolySymbolNamesProvider
-import com.intellij.webSymbols.query.PolySymbolNamesProvider.Target.NAMES_QUERY
-import com.intellij.webSymbols.query.PolySymbolNamesProvider.Target.RENAME_QUERY
+import com.intellij.polySymbols.PolySymbolQualifiedName
+import com.intellij.polySymbols.query.PolySymbolNamesProvider
+import com.intellij.polySymbols.query.PolySymbolNamesProvider.Target.NAMES_QUERY
+import com.intellij.polySymbols.query.PolySymbolNamesProvider.Target.RENAME_QUERY
 import icons.AngularIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor

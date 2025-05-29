@@ -8,13 +8,13 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
-import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
-import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
-import com.intellij.webSymbols.utils.PolySymbolsIsolatedMappingScope
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
+import com.intellij.polySymbols.PolySymbol.Companion.JS_SYMBOLS
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 

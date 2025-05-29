@@ -22,7 +22,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.search.PsiSourcedPolySymbolRequestResultProcessor
+import com.intellij.polySymbols.search.PsiSourcedPolySymbolRequestResultProcessor
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.fromAsset

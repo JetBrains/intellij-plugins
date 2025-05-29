@@ -14,11 +14,11 @@ import com.intellij.openapi.util.NullableLazyValue.lazyNullable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PsiSourcedPolySymbol
-import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.utils.coalesceApiStatus
-import com.intellij.webSymbols.utils.coalesceWith
+import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.utils.coalesceApiStatus
+import com.intellij.polySymbols.utils.coalesceWith
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils

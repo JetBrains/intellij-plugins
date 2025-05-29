@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
 import com.intellij.util.ObjectUtils;
-import com.intellij.webSymbols.testFramework.WebTestUtil;
+import com.intellij.polySymbols.testFramework.WebTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

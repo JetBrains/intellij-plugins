@@ -2,7 +2,7 @@
 package org.angular2.entities
 
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolApiStatus
 import org.angular2.web.Angular2Symbol
 
 interface Angular2Directive : Angular2Declaration {

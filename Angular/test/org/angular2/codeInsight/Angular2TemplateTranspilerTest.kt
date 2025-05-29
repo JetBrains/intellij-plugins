@@ -3,7 +3,7 @@ package org.angular2.codeInsight
 import com.google.gson.GsonBuilder
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.webSymbols.testFramework.checkTextByFile
+import com.intellij.polySymbols.testFramework.checkTextByFile
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TsConfigFile

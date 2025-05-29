@@ -17,8 +17,8 @@ import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.containers.addIfNotNull
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolDelegate
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolDelegate
 import com.intellij.xml.util.XmlTagUtil
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils

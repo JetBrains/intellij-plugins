@@ -10,10 +10,10 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.webSymbols.utils.PolySymbolsStructuredScope
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.utils.PolySymbolsStructuredScope
 import org.angular2.Angular2Framework
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.html.parser.Angular2AttributeNameParser

@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.web
 import com.intellij.psi.util.startOffset
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.references.PsiPolySymbolReferenceProvider
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.references.PsiPolySymbolReferenceProvider
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.getMatchingAvailableSlots
 

@@ -5,8 +5,8 @@ import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.PolySymbolOrigin
+import com.intellij.polySymbols.FrameworkId
+import com.intellij.polySymbols.PolySymbolOrigin
 import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.web.VueFramework

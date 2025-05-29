@@ -27,7 +27,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.CachedValuesManagerImpl
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.isScriptSetupTag

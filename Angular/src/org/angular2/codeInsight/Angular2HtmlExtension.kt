@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.io.URLUtil
-import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.XmlUtil
 import org.angular2.angular2Framework
 import org.angular2.lang.Angular2LangUtil

@@ -5,7 +5,7 @@ import com.intellij.javascript.web.hasFilesOfType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.webSymbols.context.PolyContext
+import com.intellij.polySymbols.context.PolyContext
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
 

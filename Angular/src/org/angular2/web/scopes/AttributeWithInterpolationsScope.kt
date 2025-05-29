@@ -3,16 +3,16 @@ package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.patterns.ComplexPatternOptions
-import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
-import com.intellij.webSymbols.patterns.PolySymbolsPatternSymbolsResolver
-import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
-import com.intellij.webSymbols.utils.match
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.patterns.ComplexPatternOptions
+import com.intellij.polySymbols.patterns.PolySymbolsPattern
+import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.patterns.PolySymbolsPatternSymbolsResolver
+import com.intellij.polySymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.utils.match
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.PROP_BINDING_PATTERN

@@ -12,10 +12,10 @@ import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.completion.PolySymbolsCompletionProviderBase
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents

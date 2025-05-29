@@ -15,8 +15,8 @@ import com.intellij.psi.util.PsiUtilBase
 import com.intellij.testFramework.IndexingTestUtil.Companion.waitUntilIndexesAreReady
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.webSymbols.testFramework.checkListByFile
-import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.checkListByFile
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection

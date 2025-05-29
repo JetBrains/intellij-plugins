@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.webSymbols.highlighting.newSilentAnnotationWithDebugInfo
+import com.intellij.polySymbols.highlighting.newSilentAnnotationWithDebugInfo
 import org.angular2.lang.html.Angular2HtmlFile
 
 class Angular2FormsAnnotator : Annotator {

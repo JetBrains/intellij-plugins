@@ -6,11 +6,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolNameSegment
-import com.intellij.webSymbols.inspections.PolySymbolsProblemQuickFixProvider
-import com.intellij.webSymbols.references.PolySymbolReferenceProblem
-import com.intellij.webSymbols.utils.nameSegments
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolNameSegment
+import com.intellij.polySymbols.inspections.PolySymbolsProblemQuickFixProvider
+import com.intellij.polySymbols.references.PolySymbolReferenceProblem
+import com.intellij.polySymbols.utils.nameSegments
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.FORM_ANY_CONTROL_NAME_ATTRIBUTES
 import org.angular2.library.forms.findFormGroupForGetCallParameter

@@ -1,8 +1,8 @@
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.webSymbols.testFramework.LookupElementInfo
-import com.intellij.webSymbols.testFramework.checkDocumentationAtCaret
-import com.intellij.webSymbols.testFramework.checkLookupItems
+import com.intellij.polySymbols.testFramework.LookupElementInfo
+import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
+import com.intellij.polySymbols.testFramework.checkLookupItems
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentation") {

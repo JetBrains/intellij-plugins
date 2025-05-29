@@ -8,8 +8,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.*
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import org.angular2.codeInsight.template.getTemplateElementsScopeFor
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2Action

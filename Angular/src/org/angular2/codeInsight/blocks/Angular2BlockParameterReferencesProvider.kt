@@ -2,8 +2,8 @@
 package org.angular2.codeInsight.blocks
 
 import com.intellij.model.psi.PsiSymbolReferenceHints
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.references.PsiPolySymbolReferenceProvider
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.references.PsiPolySymbolReferenceProvider
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 
 class Angular2BlockParameterReferencesProvider : PsiPolySymbolReferenceProvider<Angular2BlockParameter> {

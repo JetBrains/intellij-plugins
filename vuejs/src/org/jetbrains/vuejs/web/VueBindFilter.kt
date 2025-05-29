@@ -1,11 +1,11 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolsScope
-import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
-import com.intellij.webSymbols.webTypes.filters.WebSymbolsFilter
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.webTypes.filters.WebSymbolsFilter
 
 class VueBindFilter : WebSymbolsFilter {
   override fun filterCodeCompletions(

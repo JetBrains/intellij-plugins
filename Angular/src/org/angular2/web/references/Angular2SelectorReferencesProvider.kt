@@ -7,8 +7,8 @@ import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.model.psi.PsiSymbolReferenceHints
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.references.PsiPolySymbolReferenceProvider
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.references.PsiPolySymbolReferenceProvider
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
 import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP

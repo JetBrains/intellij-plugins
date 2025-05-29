@@ -8,9 +8,9 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*

@@ -8,8 +8,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.webSymbols.AstroProximity

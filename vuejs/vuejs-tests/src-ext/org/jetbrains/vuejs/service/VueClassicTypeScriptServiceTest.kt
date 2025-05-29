@@ -16,7 +16,7 @@ import com.intellij.refactoring.rename.PsiElementRenameHandler.DEFAULT_NAME
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ui.UIUtil
-import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule

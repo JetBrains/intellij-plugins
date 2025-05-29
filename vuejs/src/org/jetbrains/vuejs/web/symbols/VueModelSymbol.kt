@@ -2,10 +2,10 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolOrigin
+import com.intellij.polySymbols.SymbolKind
+import com.intellij.polySymbols.SymbolNamespace
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.web.PROP_VUE_MODEL_EVENT
 import org.jetbrains.vuejs.web.PROP_VUE_MODEL_PROP

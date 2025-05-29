@@ -14,9 +14,9 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.Processor
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver

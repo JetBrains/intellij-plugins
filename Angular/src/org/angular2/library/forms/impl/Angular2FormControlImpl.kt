@@ -3,7 +3,7 @@ package org.angular2.library.forms.impl
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.angular2.library.forms.Angular2FormControl
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 

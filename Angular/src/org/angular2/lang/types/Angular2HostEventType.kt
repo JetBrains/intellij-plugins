@@ -8,8 +8,8 @@ import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.psi.PsiSymbolReferenceService
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.utils.qualifiedKind
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.utils.qualifiedKind
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 class Angular2HostEventType : Angular2BaseType<JSProperty> {

@@ -5,7 +5,7 @@ import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest
 import com.intellij.openapi.application.ReadAction
-import com.intellij.webSymbols.context.PolyContext
+import com.intellij.polySymbols.context.PolyContext
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.junit.Assert

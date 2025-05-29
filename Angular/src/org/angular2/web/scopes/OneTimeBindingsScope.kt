@@ -28,10 +28,10 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ThreeState
 import com.intellij.util.asSafely
 import com.intellij.util.containers.mapSmartSet
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.webSymbols.utils.qualifiedKind
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates

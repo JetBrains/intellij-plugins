@@ -4,8 +4,8 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.webSymbols.declarations.PolySymbolDeclaration
-import com.intellij.webSymbols.declarations.PolySymbolDeclarationProvider
+import com.intellij.polySymbols.declarations.PolySymbolDeclaration
+import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider
 import org.angular2.web.scopes.Angular2CustomCssPropertiesScope
 
 class Angular2CustomCssPropertyDeclarationProvider : PolySymbolDeclarationProvider {

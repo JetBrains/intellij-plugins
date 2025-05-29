@@ -42,10 +42,10 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.utils.qualifiedKind
-import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
+import com.intellij.polySymbols.utils.qualifiedKind
+import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findScriptTag

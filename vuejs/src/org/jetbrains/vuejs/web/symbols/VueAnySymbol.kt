@@ -3,9 +3,9 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.*
-import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.patterns.PolySymbolsPattern
+import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 
 class VueAnySymbol(
   override val origin: PolySymbolOrigin,

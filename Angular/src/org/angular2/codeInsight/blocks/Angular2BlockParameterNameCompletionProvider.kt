@@ -9,8 +9,8 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.siblings
 import com.intellij.util.ProcessingContext
 import com.intellij.util.applyIf
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.psi.Angular2HtmlBlock

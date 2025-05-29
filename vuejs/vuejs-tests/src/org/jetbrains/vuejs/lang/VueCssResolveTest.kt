@@ -6,9 +6,9 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.webSymbols.testFramework.assertUnresolvedReference
-import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
-import com.intellij.webSymbols.testFramework.resolveReference
+import com.intellij.polySymbols.testFramework.assertUnresolvedReference
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.resolveReference
 import java.util.Arrays.asList
 
 class VueCssResolveTest : BasePlatformTestCase() {

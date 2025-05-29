@@ -4,7 +4,7 @@ package org.angular2.codeInsight
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.webSymbols.testFramework.DebugOutputPrinter
+import com.intellij.polySymbols.testFramework.DebugOutputPrinter
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestUtil

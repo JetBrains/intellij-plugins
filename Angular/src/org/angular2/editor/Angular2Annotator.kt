@@ -3,13 +3,10 @@ package org.angular2.editor
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
-import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.psi.PsiElement
 import com.intellij.psi.css.impl.util.CssHighlighter
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.webSymbols.highlighting.newSilentAnnotationWithDebugInfo
-import org.angular2.lang.expr.psi.Angular2TemplateBinding
-import org.angular2.lang.expr.psi.Angular2TemplateBindingKey
+import com.intellij.polySymbols.highlighting.newSilentAnnotationWithDebugInfo
 
 class Angular2Annotator : Annotator {
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {

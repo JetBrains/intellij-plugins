@@ -5,9 +5,9 @@ import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.util.Pair
-import com.intellij.webSymbols.PsiSourcedPolySymbol
-import com.intellij.webSymbols.PolySymbolOrigin
-import com.intellij.webSymbols.PolySymbolTypeSupport
+import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolTypeSupport
 import icons.AngularIcons
 import org.angular2.Angular2Framework
 import javax.swing.Icon

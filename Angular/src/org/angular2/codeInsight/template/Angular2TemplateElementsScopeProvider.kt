@@ -13,9 +13,9 @@ import com.intellij.psi.util.*
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.utils.qualifiedKind
-import com.intellij.webSymbols.utils.withNavigationTarget
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.utils.qualifiedKind
+import com.intellij.polySymbols.utils.withNavigationTarget
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.codeInsight.blocks.BLOCK_LET

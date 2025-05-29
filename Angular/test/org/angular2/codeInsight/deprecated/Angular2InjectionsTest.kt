@@ -25,11 +25,11 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
-import com.intellij.webSymbols.context.PolyContext
-import com.intellij.webSymbols.context.PolyContextProvider
-import com.intellij.webSymbols.context.impl.PolyContextProviderExtensionPoint
-import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
-import com.intellij.webSymbols.testFramework.resolveReference
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.context.PolyContextProvider
+import com.intellij.polySymbols.context.impl.PolyContextProviderExtensionPoint
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.resolveReference
 import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule

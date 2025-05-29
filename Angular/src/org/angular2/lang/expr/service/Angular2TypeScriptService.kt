@@ -48,7 +48,7 @@ import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
-import com.intellij.webSymbols.context.PolyContext
+import com.intellij.polySymbols.context.PolyContext
 import icons.AngularIcons
 import kotlinx.coroutines.CompletableDeferred
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression

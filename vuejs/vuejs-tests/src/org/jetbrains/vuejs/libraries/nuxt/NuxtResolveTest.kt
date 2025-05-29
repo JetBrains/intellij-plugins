@@ -3,9 +3,9 @@ package org.jetbrains.vuejs.libraries.nuxt
 
 import com.intellij.lang.javascript.JSTestUtils.checkResolveToDestination
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.webSymbols.testFramework.multiResolveReference
-import com.intellij.webSymbols.testFramework.resolveReference
-import com.intellij.webSymbols.testFramework.resolveToWebSymbolSource
+import com.intellij.polySymbols.testFramework.multiResolveReference
+import com.intellij.polySymbols.testFramework.resolveReference
+import com.intellij.polySymbols.testFramework.resolveToWebSymbolSource
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies

@@ -14,10 +14,10 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.ParsingTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
-import com.intellij.webSymbols.context.PolyContext
-import com.intellij.webSymbols.context.PolyContext.Companion.KIND_FRAMEWORK
-import com.intellij.webSymbols.context.PolyContextProvider
-import com.intellij.webSymbols.context.impl.PolyContextProviderExtensionPoint
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.context.PolyContext.Companion.KIND_FRAMEWORK
+import com.intellij.polySymbols.context.PolyContextProvider
+import com.intellij.polySymbols.context.impl.PolyContextProviderExtensionPoint
 import com.intellij.webcore.libraries.ScriptingLibraryModel
 import junit.framework.TestCase
 import org.jetbrains.vuejs.context.isVueContext

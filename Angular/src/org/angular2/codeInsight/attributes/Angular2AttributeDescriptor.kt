@@ -7,10 +7,10 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.PolySymbolOrigin
+import com.intellij.polySymbols.SymbolKind
+import com.intellij.polySymbols.SymbolNamespace
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute

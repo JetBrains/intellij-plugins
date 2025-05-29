@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolApiStatus
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.BINDING_GUARD
 

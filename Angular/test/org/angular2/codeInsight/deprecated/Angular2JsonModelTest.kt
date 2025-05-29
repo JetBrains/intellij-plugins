@@ -9,9 +9,9 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
-import com.intellij.webSymbols.testFramework.resolveWebSymbolReference
-import com.intellij.webSymbols.testFramework.webSymbolAtCaret
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.resolveWebSymbolReference
+import com.intellij.polySymbols.testFramework.webSymbolAtCaret
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestModule

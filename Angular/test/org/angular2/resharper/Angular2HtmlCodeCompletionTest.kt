@@ -6,7 +6,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol
 
 @TestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2Html")
 class Angular2HtmlCodeCompletionTest : Angular2ReSharperCompletionTestBase() {

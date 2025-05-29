@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PathUtilRt
-import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
