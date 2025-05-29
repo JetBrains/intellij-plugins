@@ -25,7 +25,7 @@ import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolsScopeWithCache
+import com.intellij.webSymbols.PolySymbolsScopeWithCache
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.model.*
@@ -42,7 +42,7 @@ private constructor(
   dataHolder: UserDataHolder,
   private val proximity: VueModelVisitor.Proximity,
   key: K,
-) : WebSymbolsScopeWithCache<UserDataHolder, K>(VueFramework.ID, project, dataHolder, key) {
+) : PolySymbolsScopeWithCache<UserDataHolder, K>(VueFramework.ID, project, dataHolder, key) {
 
   companion object {
 

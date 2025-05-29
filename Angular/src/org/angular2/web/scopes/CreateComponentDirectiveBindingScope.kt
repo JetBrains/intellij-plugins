@@ -14,7 +14,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
-import com.intellij.webSymbols.WebSymbolsScopeWithCache
+import com.intellij.webSymbols.PolySymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.index.getFunctionNameFromIndex
@@ -31,7 +31,7 @@ const val BINDINGS_PROP: String = "bindings"
 const val TYPE_PROP: String = "type"
 
 class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpression)
-  : WebSymbolsScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
+  : PolySymbolsScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
 
   companion object {
     val INPUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive input",

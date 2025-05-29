@@ -63,8 +63,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
   private class HtmlElementStandardPropertyAndEventsExtension(
     templateFile: PsiFile, tagNamespace: String, tagName: String,
-  ) : WebSymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
-                                                              templateFile, Pair(tagNamespace, tagName)), PolySymbol {
+  ) : PolySymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
+                                                               templateFile, Pair(tagNamespace, tagName)), PolySymbol {
 
     override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
       qualifiedKind == JS_PROPERTIES

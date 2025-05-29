@@ -193,7 +193,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
           else ->
             listOfNotNull(DirectivePropertyMappingCompletionScope(element),
                           getCssClassesInJSLiteralInHtmlAttributeScope(element),
-                          element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) })
+                          element.parentOfType<Angular2EmbeddedExpression>()?.let { PolySymbolsTemplateScope(it) })
         }
       }
       is JSLiteralExpression -> {
@@ -202,7 +202,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
           getHostBindingsScopeForLiteral(element),
           getCssClassesInJSLiteralInHtmlAttributeScope(element),
           getViewChildrenScopeForLiteral(element),
-          element.parentOfType<Angular2EmbeddedExpression>()?.let { WebSymbolsTemplateScope(it) },
+          element.parentOfType<Angular2EmbeddedExpression>()?.let { PolySymbolsTemplateScope(it) },
         ) + getCreateComponentBindingsScopeForLiteral(element)
       }
       is JSObjectLiteralExpression -> {

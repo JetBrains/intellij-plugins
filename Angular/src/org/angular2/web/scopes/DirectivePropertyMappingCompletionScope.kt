@@ -47,7 +47,7 @@ import org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesPro
  * Reference resolution is being provided separately by [Angular2DirectivePropertyLiteralReferencesProvider]
  */
 class DirectivePropertyMappingCompletionScope(element: JSElement)
-  : WebSymbolsScopeWithCache<JSElement, Unit>(Angular2Framework.ID, element.project, element, Unit) {
+  : PolySymbolsScopeWithCache<JSElement, Unit>(Angular2Framework.ID, element.project, element, Unit) {
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -118,7 +118,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     /* Do not support reference resolution */
     emptyList()
 
-  override fun createPointer(): Pointer<out WebSymbolsScopeWithCache<JSElement, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<JSElement, Unit>> {
     val elementPtr = dataHolder.createSmartPointer()
     return Pointer {
       elementPtr.dereference()?.let { DirectivePropertyMappingCompletionScope(it) }

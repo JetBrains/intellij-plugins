@@ -17,7 +17,7 @@ import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
 import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class AstroComponent(file: PsiFile)
-  : PsiSourcedPolySymbol, WebSymbolsScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
+  : PsiSourcedPolySymbol, PolySymbolsScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
 
   override val source: PsiElement
     get() = dataHolder

@@ -42,7 +42,7 @@ import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
+internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS
@@ -79,7 +79,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
-  override fun createPointer(): Pointer<out WebSymbolsScopeWithCache<XmlTag, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<XmlTag, Unit>> {
     val tagPtr = dataHolder.createSmartPointer()
     return Pointer {
       tagPtr.dereference()?.let { OneTimeBindingsScope(it) }

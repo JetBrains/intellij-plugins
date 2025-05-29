@@ -8,13 +8,13 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolsScopeWithCache
+import com.intellij.webSymbols.PolySymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateScope
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 
-class WebSymbolsTemplateScope(context: PsiElement) :
-  WebSymbolsScopeWithCache<PsiElement, Unit>(Angular2Framework.ID, context.project, context, Unit) {
+class PolySymbolsTemplateScope(context: PsiElement) :
+  PolySymbolsScopeWithCache<PsiElement, Unit>(Angular2Framework.ID, context.project, context, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_SYMBOLS
@@ -40,10 +40,10 @@ class WebSymbolsTemplateScope(context: PsiElement) :
     }
   }
 
-  override fun createPointer(): Pointer<out WebSymbolsScopeWithCache<PsiElement, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<PsiElement, Unit>> {
     val context = dataHolder.createSmartPointer()
     return Pointer {
-      context.dereference()?.let { WebSymbolsTemplateScope(it) }
+      context.dereference()?.let { PolySymbolsTemplateScope(it) }
     }
   }
 }

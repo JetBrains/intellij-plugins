@@ -20,7 +20,7 @@ import com.intellij.webSymbols.utils.qualifiedKind
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 
 abstract class AstroDefineVarsScope(tag: XmlTag)
-  : WebSymbolsScopeWithCache<XmlTag, Unit>(null, tag.project, tag, Unit) {
+  : PolySymbolsScopeWithCache<XmlTag, Unit>(null, tag.project, tag, Unit) {
 
   protected abstract val providedSymbol: PolySymbol
 
@@ -46,7 +46,7 @@ abstract class AstroDefineVarsScope(tag: XmlTag)
 }
 
 class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scriptTag) {
-  override fun createPointer(): Pointer<out WebSymbolsScopeWithCache<XmlTag, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<XmlTag, Unit>> {
     val ptr = dataHolder.createSmartPointer()
     return Pointer { ptr.dereference()?.let(::AstroScriptDefineVarsScope) }
   }
@@ -83,7 +83,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
 }
 
 class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTag) {
-  override fun createPointer(): Pointer<out WebSymbolsScopeWithCache<XmlTag, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<XmlTag, Unit>> {
     val ptr = dataHolder.createSmartPointer()
     return Pointer { ptr.dereference()?.let(::AstroStyleDefineVarsScope) }
   }

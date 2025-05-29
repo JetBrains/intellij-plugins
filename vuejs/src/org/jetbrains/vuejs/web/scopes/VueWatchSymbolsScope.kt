@@ -35,7 +35,7 @@ import org.jetbrains.vuejs.web.symbols.VueDataPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
 class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
-  : WebSymbolsScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
+  : PolySymbolsScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_PROPERTIES

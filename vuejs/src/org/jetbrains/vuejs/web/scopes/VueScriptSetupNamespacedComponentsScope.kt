@@ -17,8 +17,8 @@ import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueComponentNamespaceSymbol
 
 class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
-  : WebSymbolsScopeWithCache<JSExecutionScope, Unit>(VueFramework.ID, module.project, module, Unit) {
-  override fun createPointer(): Pointer<out WebSymbolsScopeWithCache<JSExecutionScope, Unit>> {
+  : PolySymbolsScopeWithCache<JSExecutionScope, Unit>(VueFramework.ID, module.project, module, Unit) {
+  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<JSExecutionScope, Unit>> {
     val modulePtr = dataHolder.createSmartPointer()
     return Pointer {
       modulePtr.dereference()?.let { VueScriptSetupNamespacedComponentsScope(it) }

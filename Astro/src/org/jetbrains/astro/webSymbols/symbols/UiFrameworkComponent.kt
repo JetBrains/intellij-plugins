@@ -23,14 +23,14 @@ import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
 class UiFrameworkComponent(override val name: String,
                            override val source: PsiElement,
                            override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH)
-  : PsiSourcedPolySymbol, WebSymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit){
+  : PsiSourcedPolySymbol, PolySymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit){
   override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
       emptyList()
     else
-      super<WebSymbolsScopeWithCache>.getMatchingSymbols(qualifiedName, params, scope)
+      super<PolySymbolsScopeWithCache>.getMatchingSymbols(qualifiedName, params, scope)
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == UI_FRAMEWORK_COMPONENT_PROPS
@@ -60,5 +60,5 @@ class UiFrameworkComponent(override val name: String,
     }
   }
 
-  override fun getModificationCount() = super<WebSymbolsScopeWithCache>.getModificationCount()
+  override fun getModificationCount() = super<PolySymbolsScopeWithCache>.getModificationCount()
 }

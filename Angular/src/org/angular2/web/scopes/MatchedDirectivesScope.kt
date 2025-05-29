@@ -10,7 +10,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolsScopeWithCache
+import com.intellij.webSymbols.PolySymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
@@ -29,7 +29,7 @@ private val providedKinds: Set<PolySymbolQualifiedKind> = setOf(
 )
 
 abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T)
-  : WebSymbolsScopeWithCache<T, Unit>(Angular2Framework.ID, dataHolder.project, dataHolder, Unit) {
+  : PolySymbolsScopeWithCache<T, Unit>(Angular2Framework.ID, dataHolder.project, dataHolder, Unit) {
 
   companion object {
     fun createFor(tag: XmlTag): MatchedDirectivesScope<XmlTag> =

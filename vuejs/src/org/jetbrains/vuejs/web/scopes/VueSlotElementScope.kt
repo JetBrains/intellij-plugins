@@ -42,7 +42,7 @@ import org.jetbrains.vuejs.web.asWebSymbol
 private const val SLOT_LOCAL_COMPONENT = "\$local"
 
 class VueSlotElementScope(tag: XmlTag)
-  : WebSymbolsScopeWithCache<XmlTag, Unit>(VueFramework.ID, tag.project, tag, Unit) {
+  : PolySymbolsScopeWithCache<XmlTag, Unit>(VueFramework.ID, tag.project, tag, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == HTML_ATTRIBUTES
