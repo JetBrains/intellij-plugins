@@ -14,7 +14,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
@@ -62,14 +62,14 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
       get() = "Astro Defined Script Variable"
 
     override val pattern: PolySymbolsPattern =
-      WebSymbolsPatternFactory.createComplexPattern(
+      PolySymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(
             qualifiedKind = PolySymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
         )
         ),
         false,
-        WebSymbolsPatternFactory.createPatternSequence(WebSymbolsPatternFactory.createSymbolReferencePlaceholder())
+        PolySymbolsPatternFactory.createPatternSequence(PolySymbolsPatternFactory.createSymbolReferencePlaceholder())
       )
 
     override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
@@ -99,16 +99,16 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
       get() = "Astro Defined CSS Variable"
 
     override val pattern: PolySymbolsPattern =
-      WebSymbolsPatternFactory.createComplexPattern(
+      PolySymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(
             qualifiedKind = PolySymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
         )
         ),
         false,
-        WebSymbolsPatternFactory.createPatternSequence(
-          WebSymbolsPatternFactory.createStringMatch("--"),
-          WebSymbolsPatternFactory.createSymbolReferencePlaceholder()
+        PolySymbolsPatternFactory.createPatternSequence(
+          PolySymbolsPatternFactory.createStringMatch("--"),
+          PolySymbolsPatternFactory.createSymbolReferencePlaceholder()
         )
       )
 

@@ -8,7 +8,7 @@ import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueComponent
@@ -26,7 +26,7 @@ class VueSlotSymbol(
 ) {
 
   override val pattern: PolySymbolsPattern?
-    get() = item.pattern?.let { WebSymbolsPatternFactory.createRegExMatch(it, true) }
+    get() = item.pattern?.let { PolySymbolsPatternFactory.createRegExMatch(it, true) }
 
   override val qualifiedKind: PolySymbolQualifiedKind
     get() = PolySymbol.HTML_SLOTS

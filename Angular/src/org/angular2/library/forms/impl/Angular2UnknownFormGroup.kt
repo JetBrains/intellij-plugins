@@ -5,7 +5,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
@@ -18,7 +18,7 @@ object Angular2UnknownFormGroup : PolySymbol {
   override val name: @NlsSafe String
     get() = "Unknown form group"
 
-  override val pattern: PolySymbolsPattern? = WebSymbolsPatternFactory.createRegExMatch(".*")
+  override val pattern: PolySymbolsPattern? = PolySymbolsPatternFactory.createRegExMatch(".*")
 
   override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     when (qualifiedKind) {

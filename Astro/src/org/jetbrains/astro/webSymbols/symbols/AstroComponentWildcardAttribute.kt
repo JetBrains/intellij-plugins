@@ -10,7 +10,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.PROP_DOC_HIDE_PATTERN
 import com.intellij.webSymbols.PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION
 import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
 import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 object AstroComponentWildcardAttribute: PolySymbol {
@@ -30,7 +30,7 @@ object AstroComponentWildcardAttribute: PolySymbol {
     get() = PolySymbol.Priority.LOWEST
 
   override val pattern: PolySymbolsPattern
-    get() = WebSymbolsPatternFactory.createRegExMatch(".*")
+    get() = PolySymbolsPatternFactory.createRegExMatch(".*")
 
   override val properties: Map<String, Any>
     get() = mapOf(PROP_DOC_HIDE_PATTERN to true,

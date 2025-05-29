@@ -11,11 +11,11 @@ import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createComplexPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createPatternSequence
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createStringMatch
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createSymbolReferencePlaceholder
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createComplexPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createPatternSequence
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createStringMatch
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
@@ -108,7 +108,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
               false,
               createPatternSequence(
                 createStringMatch("."),
-                WebSymbolsPatternFactory.createCompletionAutoPopup(false),
+                PolySymbolsPatternFactory.createCompletionAutoPopup(false),
                 createSymbolReferencePlaceholder(),
               )
             )

@@ -20,8 +20,8 @@ import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue.Kind.EXPRESSION
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue.Type.OF_MATCH
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createComplexPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory.createSymbolReferencePlaceholder
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createComplexPattern
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver
 import com.intellij.webSymbols.patterns.WebSymbolsPatternReferenceResolver.Reference
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules

@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
 
 class VueAnySymbol(
   override val origin: PolySymbolOrigin,
@@ -19,7 +19,7 @@ class VueAnySymbol(
   override val kind: SymbolKind = qualifiedKind.kind
 
   override val pattern: PolySymbolsPattern
-    get() = WebSymbolsPatternFactory.createRegExMatch(".*", false)
+    get() = PolySymbolsPatternFactory.createRegExMatch(".*", false)
 
   override val properties: Map<String, Any> =
     mapOf(PolySymbol.PROP_HIDE_FROM_COMPLETION to true,

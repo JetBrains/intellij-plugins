@@ -7,7 +7,7 @@ import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.patterns.PolySymbolsPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.web.Angular2SymbolOrigin
 
@@ -16,7 +16,7 @@ object Angular2UnknownFormControl : PolySymbol {
   override val name: @NlsSafe String
     get() = "Unknown form control"
 
-  override val pattern: PolySymbolsPattern? = WebSymbolsPatternFactory.createRegExMatch(".*")
+  override val pattern: PolySymbolsPattern? = PolySymbolsPatternFactory.createRegExMatch(".*")
 
   override val namespace: @NlsSafe SymbolNamespace
     get() = PolySymbol.Companion.NAMESPACE_JS
