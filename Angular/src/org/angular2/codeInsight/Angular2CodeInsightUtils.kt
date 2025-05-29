@@ -14,7 +14,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemInsertHandler
+import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItemInsertHandler
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.entities.Angular2Component
@@ -42,7 +42,7 @@ object Angular2CodeInsightUtils {
   @JvmStatic
   fun wrapWithImportDeclarationModuleHandler(item: PolySymbolCodeCompletionItem,
                                              elementClass: Class<out PsiElement>): PolySymbolCodeCompletionItem {
-    return item.withInsertHandlerAdded(object : WebSymbolCodeCompletionItemInsertHandler {
+    return item.withInsertHandlerAdded(object : PolySymbolCodeCompletionItemInsertHandler {
       override val priority: PolySymbol.Priority
         get() = PolySymbol.Priority.LOWEST
 
