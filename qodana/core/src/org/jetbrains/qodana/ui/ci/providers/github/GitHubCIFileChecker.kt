@@ -24,6 +24,8 @@ class GitHubCIFileChecker(
 ) : CIFileChecker {
   override val ciPart: String = "job"
 
+  suspend fun isQodanaPresent(): Boolean = getGithubWorkflowFiles().any { isQodanaPresent(it) }
+
   override suspend fun isQodanaPresent(virtualFile: VirtualFile): Boolean {
     return GitHubCIConfigHandler.isQodanaJobPresent(project, virtualFile)
   }

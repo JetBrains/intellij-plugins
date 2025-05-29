@@ -4,12 +4,15 @@ import com.intellij.codeInspection.InspectionsBundle
 import com.intellij.diagnostic.PluginException
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.project.Project
 import kotlinx.coroutines.*
+import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector
+import org.jetbrains.qodana.ui.ci.providers.github.GitHubCIFileChecker
 
 private val logger = logger<QodanaRunContextFactory>()
 
@@ -30,7 +33,7 @@ internal class DefaultRunContextFactory(
     reporter.reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.initializing.project"))
 
     val loadedProfile = LoadedProfile.load(config, project, reporter)
-    reportUsage(loadedProfile)
+    reportUsage(loadedProfile, project)
     reporter.reportMessage(1, InspectionsBundle.message("inspection.application.chosen.profile.log.message", loadedProfile.profile.name))
 
     scope.launch {
@@ -46,10 +49,15 @@ internal class DefaultRunContextFactory(
       .openRunContext()
   }
 
-  private fun reportUsage(loadedProfile: LoadedProfile) {
+  private fun reportUsage(loadedProfile: LoadedProfile, project: Project) {
     UsageCollector.logEnv(qodanaEnv().QODANA_ENV.value)
     UsageCollector.logConfig(config, loadedProfile.nameForReporting, loadedProfile.pathForReporting)
     UsageCollector.logLicense(config.license)
+    scope.launch(QodanaDispatchers.IO) {
+      if (GitHubCIFileChecker(project, scope).isQodanaPresent()) {
+        UsageCollector.logPromoGithubConfigPresent()
+      }
+    }
 
     if (config.yamlFiles.effectiveQodanaYaml != null) {
       UsageCollector.logQodanaYamlPresent()

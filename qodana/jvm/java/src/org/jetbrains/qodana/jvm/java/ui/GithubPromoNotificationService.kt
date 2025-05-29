@@ -3,14 +3,12 @@ package org.jetbrains.qodana.jvm.java.ui
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.edtWriteAction
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.findDirectory
 import com.intellij.openapi.vfs.refreshAndFindVirtualFile
 import com.intellij.openapi.vfs.writeText
 import com.intellij.ui.EditorNotifications
@@ -18,8 +16,7 @@ import com.intellij.util.io.createParentDirectories
 import com.intellij.vcsUtil.VcsFileUtil.addFilesToVcsWithConfirmation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.QodanaBundle
@@ -29,6 +26,7 @@ import org.jetbrains.qodana.notifications.QodanaNotifications
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.stats.logGithubPromoAddQodanaWorkflowEvent
 import org.jetbrains.qodana.ui.ProjectVcsDataProviderImpl
+import org.jetbrains.qodana.ui.ci.CIFile
 import org.jetbrains.qodana.ui.ci.providers.github.DefaultQodanaGithubWorkflowBuilder
 import org.jetbrains.qodana.ui.ci.providers.github.GitHubCIFileChecker
 import java.io.IOException
@@ -41,14 +39,14 @@ private val LOG = Logger.getInstance(GithubPromoNotificationService::class.java)
 @Service(Service.Level.PROJECT)
 class GithubPromoNotificationService(private val project: Project, private val scope: CoroutineScope) {
 
-  private enum class ComputationState {
+  private enum class ProcessState {
     NOT_STARTED,
-    INITIALIZED,
+    STARTED,
   }
 
   @Volatile
   private var _qodanaJobPresent: Boolean? = null
-  private val qodanaJobSearchState: AtomicReference<ComputationState> = AtomicReference(ComputationState.NOT_STARTED)
+  private val qodanaJobSearchState: AtomicReference<ProcessState> = AtomicReference(ProcessState.NOT_STARTED)
   /**
    * Returns null if the computation is not yet finished
    */
@@ -58,8 +56,8 @@ class GithubPromoNotificationService(private val project: Project, private val s
   /**
    * Launches [runnable] in background if it hasn't been launched yet and returns
    */
-  private fun computeJobOnce(stateReference: AtomicReference<ComputationState>, runnable: suspend () -> Unit) {
-    if (stateReference.compareAndSet(ComputationState.NOT_STARTED, ComputationState.INITIALIZED)) {
+  private fun launchProcessOnce(stateReference: AtomicReference<ProcessState>, runnable: suspend () -> Unit) {
+    if (stateReference.compareAndSet(ProcessState.NOT_STARTED, ProcessState.STARTED)) {
       scope.launch(QodanaDispatchers.IO) {
         runnable()
       }
@@ -67,31 +65,19 @@ class GithubPromoNotificationService(private val project: Project, private val s
   }
 
   private fun determineIfQodanaJobPresent(): Boolean? {
-    computeJobOnce(qodanaJobSearchState) {
-      val workflowDir = readAction {
-        project.guessProjectDir()?.findDirectory(".github/workflows")
-      } ?: run {
-        _qodanaJobPresent = false
-        return@computeJobOnce
+    launchProcessOnce(qodanaJobSearchState) {
+      GitHubCIFileChecker(project, scope).ciFileFlow.filter { ciFile ->
+        // do not update notifications if state didn't change
+        ciFile.qodanaPresent() != _qodanaJobPresent
+      }.collect { ciFile ->
+        _qodanaJobPresent = ciFile.qodanaPresent()
+        EditorNotifications.getInstance(project).updateAllNotifications()
       }
-      val githubCIFileChecker = GitHubCIFileChecker(project, scope)
-
-      _qodanaJobPresent = readAction { workflowDir.children }
-        .map {
-          scope.async {
-            try {
-              githubCIFileChecker.isQodanaPresent(it)
-            } catch (e: IOException) {
-              LOG.warn("Failed to check if Qodana job is present in file ${it.path}", e)
-              false
-            }
-          }
-        }
-        .awaitAll().any { it }
-      EditorNotifications.getInstance(project).updateAllNotifications()
     }
     return _qodanaJobPresent
   }
+
+  private fun CIFile?.qodanaPresent() = this is CIFile.ExistingWithQodana
 
   fun addQodanaFiles() {
     scope.launch(QodanaDispatchers.IO) {
@@ -169,10 +155,10 @@ class GithubPromoNotificationService(private val project: Project, private val s
 
   private fun notifyQodanaActionWorkflowNotAdded() {
     QodanaNotifications.General.notification(
-      null,
+      QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.title"),
       QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.text"),
       NotificationType.ERROR,
-      withQodanaIcon = true
+      withQodanaIcon = false
     ).notify(project)
   }
 }
