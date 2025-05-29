@@ -13,7 +13,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
 import com.intellij.webSymbols.utils.PolySymbolsIsolatedMappingScope
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
@@ -31,7 +31,7 @@ class ViewChildrenScope(
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
     true
 
-  override val subScopeBuilder: (WebSymbolsQueryExecutor, ES6Decorator) -> List<PolySymbolsScope>
+  override val subScopeBuilder: (PolySymbolsQueryExecutor, ES6Decorator) -> List<PolySymbolsScope>
     get() = if (resolveToMultipleSymbols) { executor, decorator ->
       listOfNotNull(
         Angular2EntitiesProvider.getComponent(decorator)

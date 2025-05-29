@@ -4,13 +4,13 @@ package org.jetbrains.vuejs.web
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
 import com.intellij.webSymbols.webTypes.filters.WebSymbolsFilter
 
 class VueBindFilter : WebSymbolsFilter {
   override fun filterCodeCompletions(
     codeCompletions: List<PolySymbolCodeCompletionItem>,
-    queryExecutor: WebSymbolsQueryExecutor,
+    queryExecutor: PolySymbolsQueryExecutor,
     scope: List<PolySymbolsScope>,
     properties: Map<String, Any>,
   ): List<PolySymbolCodeCompletionItem> =
@@ -18,14 +18,14 @@ class VueBindFilter : WebSymbolsFilter {
 
   override fun filterNameMatches(
     matches: List<PolySymbol>,
-    queryExecutor: WebSymbolsQueryExecutor,
+    queryExecutor: PolySymbolsQueryExecutor,
     scope: List<PolySymbolsScope>,
     properties: Map<String, Any>,
   ): List<PolySymbol> =
     matches.filterHtmlEventAttributes(queryExecutor, scope) { name }
 
   private fun <T> List<T>.filterHtmlEventAttributes(
-    queryExecutor: WebSymbolsQueryExecutor,
+    queryExecutor: PolySymbolsQueryExecutor,
     scope: List<PolySymbolsScope>,
     getName: T.() -> String,
   ): List<T> {

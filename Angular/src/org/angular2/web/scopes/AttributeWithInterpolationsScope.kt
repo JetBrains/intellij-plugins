@@ -11,7 +11,7 @@ import com.intellij.webSymbols.patterns.PolySymbolsPattern
 import com.intellij.webSymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.webSymbols.patterns.PolySymbolsPatternSymbolsResolver
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
 import com.intellij.webSymbols.utils.match
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
@@ -77,13 +77,13 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
       name: String,
       position: Int,
       scopeStack: Stack<PolySymbolsScope>,
-      queryExecutor: WebSymbolsQueryExecutor,
+      queryExecutor: PolySymbolsQueryExecutor,
     ): List<PolySymbolCodeCompletionItem> =
       emptyList()
 
     override fun listSymbols(
       scopeStack: Stack<PolySymbolsScope>,
-      queryExecutor: WebSymbolsQueryExecutor,
+      queryExecutor: PolySymbolsQueryExecutor,
       expandPatterns: Boolean,
     ): List<PolySymbol> =
       emptyList()
@@ -91,7 +91,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
     override fun matchName(
       name: String,
       scopeStack: Stack<PolySymbolsScope>,
-      queryExecutor: WebSymbolsQueryExecutor,
+      queryExecutor: PolySymbolsQueryExecutor,
     ): List<PolySymbol> =
       queryExecutor.runNameMatchQuery(JS_PROPERTIES.withName(name), additionalScope = scopeStack) +
       queryExecutor.runNameMatchQuery(NG_DIRECTIVE_INPUTS.withName(name), additionalScope = scopeStack)

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.siblings
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.completion.PolySymbolsCompletionProviderBase
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
 import org.angular2.directiveInputToTemplateBindingVar
 import org.angular2.lang.Angular2LangUtil.`$IMPLICIT`
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
@@ -25,7 +25,7 @@ class Angular2TemplateBindingKeyCompletionProvider : PolySymbolsCompletionProvid
     result: CompletionResultSet,
     position: Int,
     name: String,
-    queryExecutor: WebSymbolsQueryExecutor,
+    queryExecutor: PolySymbolsQueryExecutor,
     context: Angular2TemplateBindingKey,
   ) {
     val patchedResultSet = result.withPrefixMatcher(result.prefixMatcher.cloneWithPrefix(name))

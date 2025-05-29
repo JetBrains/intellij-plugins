@@ -11,7 +11,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
 import org.angular2.Angular2Framework
@@ -70,7 +70,7 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
     }
 
   private class Angular2FormSymbolsScopesBuilder(
-    private val queryExecutor: WebSymbolsQueryExecutor,
+    private val queryExecutor: PolySymbolsQueryExecutor,
     private val formsComponent: Angular2FormsComponent,
     private val holder: WebSymbolsPsiScopesHolder,
   ) : Angular2HtmlRecursiveElementVisitor() {
