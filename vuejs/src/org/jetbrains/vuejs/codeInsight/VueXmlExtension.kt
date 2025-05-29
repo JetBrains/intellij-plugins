@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.html.webSymbols.PolySymbolsXmlExtension
-import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -44,7 +44,7 @@ class VueXmlExtension : PolySymbolsXmlExtension() {
       if (info is VueAttributeNameParser.VueDirectiveInfo) {
         if (info.directiveKind == VueAttributeNameParser.VueDirectiveKind.MODEL) {
           name = info.arguments
-                 ?: (tag.descriptor as? WebSymbolElementDescriptor)?.getModel()?.prop
+                 ?: (tag.descriptor as? PolySymbolElementDescriptor)?.getModel()?.prop
                  ?: VueModelDirectiveProperties.getDefault(tag).prop
         }
         else if (info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND

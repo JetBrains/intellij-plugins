@@ -2,7 +2,7 @@
 package org.angular2.web.scopes
 
 import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
-import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
 import com.intellij.javascript.polySymbols.jsType
 import com.intellij.javascript.polySymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
@@ -49,7 +49,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val queryExecutor = PolySymbolsQueryExecutorFactory.create(dataHolder)
-    val scope = dataHolder.descriptor?.asSafely<WebSymbolElementDescriptor>()
+    val scope = dataHolder.descriptor?.asSafely<PolySymbolElementDescriptor>()
                   ?.symbol?.let { listOf(it) }
                 ?: emptyList()
     val attributeSelectors = queryExecutor

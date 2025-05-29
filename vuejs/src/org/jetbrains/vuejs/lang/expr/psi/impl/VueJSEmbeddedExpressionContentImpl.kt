@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
 import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
-import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
 import com.intellij.javascript.polySymbols.jsType
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
@@ -142,7 +142,7 @@ class VueJSEmbeddedExpressionContentImpl :
             tag
         }, null
       ) as JSTypeSubstitutorImpl
-      val component = (tag.descriptor as? WebSymbolElementDescriptor)
+      val component = (tag.descriptor as? PolySymbolElementDescriptor)
         ?.symbol
         ?.unwrapMatchedSymbols()
         ?.firstNotNullOfOrNull { it as? VueComponentSymbol }

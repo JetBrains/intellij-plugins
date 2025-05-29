@@ -3,7 +3,7 @@ package org.jetbrains.astro.codeInsight
 
 import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.PolySymbolsXmlExtension
-import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
@@ -18,7 +18,7 @@ class AstroHtmlExtension : PolySymbolsXmlExtension() {
 
   override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean {
     val descriptor = tag.descriptor
-    if (descriptor is WebSymbolElementDescriptor) {
+    if (descriptor is PolySymbolElementDescriptor) {
       val hasStandardSymbol = descriptor.symbol
         .unwrapMatchedSymbols()
         .any { it is PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol }

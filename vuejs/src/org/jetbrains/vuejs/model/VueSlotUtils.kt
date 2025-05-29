@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
-import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
 import com.intellij.javascript.polySymbols.jsType
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
@@ -61,10 +61,10 @@ private fun <T> processSlots(
   tag: XmlTag,
   newApi: Boolean,
   anyMatch: () -> List<T>,
-  process: WebSymbolElementDescriptor.() -> List<T>,
+  process: PolySymbolElementDescriptor.() -> List<T>,
 ): List<T> =
   when (val descriptor = if (!newApi || tag.name == TEMPLATE_TAG_NAME) tag.parentTag?.descriptor else tag.descriptor) {
-    is WebSymbolElementDescriptor -> descriptor.process()
+    is PolySymbolElementDescriptor -> descriptor.process()
     is AnyXmlElementDescriptor -> anyMatch()
     else -> emptyList()
   }

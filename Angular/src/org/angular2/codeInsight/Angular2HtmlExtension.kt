@@ -3,7 +3,7 @@ package org.angular2.codeInsight
 
 import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.PolySymbolsXmlExtension
-import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
 import com.intellij.javascript.web.WebFramework
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -33,7 +33,7 @@ class Angular2HtmlExtension : PolySymbolsXmlExtension() {
   override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean {
     if (tag.language.`is`(Angular2SvgLanguage)) return true
     val descriptor = tag.descriptor
-    if (descriptor is WebSymbolElementDescriptor) {
+    if (descriptor is PolySymbolElementDescriptor) {
       val hasStandardSymbol = descriptor.symbol
         .unwrapMatchedSymbols()
         .any { it is PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol }

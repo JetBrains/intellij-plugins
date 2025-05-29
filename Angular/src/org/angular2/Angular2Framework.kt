@@ -3,7 +3,7 @@ package org.angular2
 
 import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
 import com.intellij.html.webSymbols.attributes.PolySymbolHtmlAttributeInfo
-import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
@@ -62,7 +62,7 @@ class Angular2Framework : WebFramework() {
   override fun createHtmlElementDescriptor(
     info: WebSymbolHtmlElementInfo,
     tag: XmlTag,
-  ): WebSymbolElementDescriptor =
+  ): PolySymbolElementDescriptor =
     Angular2ElementDescriptor(info, tag)
 
   override fun getAttributeNameCodeCompletionFilter(tag: XmlTag): Angular2AttributeNameCodeCompletionFilter =

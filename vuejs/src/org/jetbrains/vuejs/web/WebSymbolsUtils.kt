@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
-import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -11,7 +11,7 @@ import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDirectiveSymbol
 import org.jetbrains.vuejs.web.symbols.VueScriptSetupLocalDirectiveSymbol
 
-fun WebSymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
+fun PolySymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
   runListSymbolsQuery(VUE_MODEL, true).firstOrNull()
     ?.let {
       VueModelDirectiveProperties(prop = it.properties[PROP_VUE_MODEL_PROP] as? String,
