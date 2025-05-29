@@ -10,11 +10,11 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol.Companion.CSS_PROPERTIES
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
+import com.intellij.webSymbols.utils.PolySymbolsStructuredScope
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
 import org.angular2.web.scopes.Angular2CustomCssPropertiesScope.Companion.createCustomCssProperty
 
-class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsStructuredScope<PsiElement, PsiFile>(location) {
+class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : PolySymbolsStructuredScope<PsiElement, PsiFile>(location) {
 
   override val rootPsiElement: PsiFile?
     get() = location.containingFile.takeIf { InjectedLanguageManager.getInstance(location.project).isInjectedFragment(it) }

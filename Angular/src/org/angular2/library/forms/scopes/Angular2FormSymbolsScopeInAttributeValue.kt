@@ -13,7 +13,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
 import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
+import com.intellij.webSymbols.utils.PolySymbolsStructuredScope
 import org.angular2.Angular2Framework
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -25,7 +25,7 @@ import org.angular2.library.forms.impl.Angular2UnknownFormArray
 import org.angular2.library.forms.impl.Angular2UnknownFormControl
 import org.angular2.library.forms.impl.Angular2UnknownFormGroup
 
-class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : WebSymbolsStructuredScope<XmlAttribute, PsiFile>(attributeValue) {
+class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : PolySymbolsStructuredScope<XmlAttribute, PsiFile>(attributeValue) {
 
   companion object {
     private const val PROP_SOURCE_SYMBOL = "source-symbol"
