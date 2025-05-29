@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.astro.webSymbols.symbols
+package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.io.FileUtil
@@ -11,10 +11,10 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
 import org.jetbrains.astro.AstroFramework
-import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
-import org.jetbrains.astro.webSymbols.AstroProximity
-import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
-import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
+import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
+import org.jetbrains.astro.polySymbols.AstroProximity
+import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
+import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class AstroComponent(file: PsiFile)
   : PsiSourcedPolySymbol, PolySymbolsScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {

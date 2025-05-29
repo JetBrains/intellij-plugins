@@ -1,5 +1,5 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.astro.webSymbols.symbols
+package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
@@ -11,10 +11,10 @@ import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import org.jetbrains.astro.AstroFramework
-import org.jetbrains.astro.webSymbols.AstroProximity
-import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
-import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENTS
-import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
+import org.jetbrains.astro.polySymbols.AstroProximity
+import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
+import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENTS
+import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 // Currently, we don't support detection of props for components of other UI frameworks and use this
 // symbol as a wildcard for all components that aren't from Astro. Once we implement an extension point

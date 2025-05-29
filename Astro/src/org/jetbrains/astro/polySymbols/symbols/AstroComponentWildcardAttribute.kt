@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.astro.webSymbols.symbols
+package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.SymbolKind
@@ -11,7 +11,7 @@ import com.intellij.polySymbols.PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
-import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
+import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 object AstroComponentWildcardAttribute: PolySymbol {
   override val origin: PolySymbolOrigin

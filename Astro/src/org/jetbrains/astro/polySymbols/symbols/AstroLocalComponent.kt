@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.astro.webSymbols.symbols
+package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.javascript.polySymbols.symbols.asPolySymbol
 import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
@@ -19,10 +19,10 @@ import org.jetbrains.astro.codeInsight.astroContentRoot
 import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.codeInsight.propsInterface
 import org.jetbrains.astro.lang.AstroFileImpl
-import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
-import org.jetbrains.astro.webSymbols.ASTRO_COMPONENT_PROPS
-import org.jetbrains.astro.webSymbols.AstroProximity
-import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
+import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
+import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
+import org.jetbrains.astro.polySymbols.AstroProximity
+import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
 
 class AstroLocalComponent(override val name: String,
                           override val source: PsiElement,

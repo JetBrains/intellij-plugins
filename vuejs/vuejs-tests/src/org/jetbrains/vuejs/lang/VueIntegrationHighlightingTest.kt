@@ -28,14 +28,14 @@ class VueIntegrationHighlightingTest: JSExternalToolIntegrationTest() {
     val tagAtCaret = myFixture.elementAtCaret.asSafely<XmlTag>()
     assertNotNull(tagAtCaret)
 
-    val webSymbolDescriptor = tagAtCaret?.descriptor.asSafely<PolySymbolElementDescriptor>()
-    assertNotNull(webSymbolDescriptor)
+    val polySymbolDescriptor = tagAtCaret?.descriptor.asSafely<PolySymbolElementDescriptor>()
+    assertNotNull(polySymbolDescriptor)
 
-    val webSymbol = webSymbolDescriptor?.symbol.asSafely<PsiSourcedPolySymbol>()
-    val webSymbolSource = webSymbol?.source
-    assertNotNull(webSymbolSource)
+    val polySymbol = polySymbolDescriptor?.symbol.asSafely<PsiSourcedPolySymbol>()
+    val polySymbolSource = polySymbol?.source
+    assertNotNull(polySymbolSource)
 
-    val sourceFileName = webSymbolSource!!.containingFile.name
+    val sourceFileName = polySymbolSource!!.containingFile.name
     assertTrue("Wrong source file: $sourceFileName", sourceFileName == "index.d.ts")
   }
 

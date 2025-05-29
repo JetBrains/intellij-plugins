@@ -13,8 +13,8 @@ import com.intellij.polySymbols.PsiSourcedPolySymbol
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.inspections.quickfixes.AstroImportComponentQuickFix
-import org.jetbrains.astro.webSymbols.AstroProximity
-import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
+import org.jetbrains.astro.polySymbols.AstroProximity
+import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
 
 class AstroMissingComponentImportInspection : LocalInspectionTool() {
 

@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.astro.webSymbols
+package org.jetbrains.astro.polySymbols
 
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
@@ -17,7 +17,7 @@ import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.completion.AstroImportInsertHandler
 import org.jetbrains.astro.lang.AstroFileImpl
-import org.jetbrains.astro.webSymbols.symbols.AstroComponent
+import org.jetbrains.astro.polySymbols.symbols.AstroComponent
 
 class AstroPolySymbolsQueryResultsCustomizer(private val context: PsiElement) : PolySymbolsQueryResultsCustomizer {
 

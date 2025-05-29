@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.astro.webSymbols.scope
+package org.jetbrains.astro.polySymbols.scope
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.application.ApplicationManager
@@ -16,8 +16,8 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScopeWithCache
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
-import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
-import org.jetbrains.astro.webSymbols.symbols.AstroComponent
+import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
+import org.jetbrains.astro.polySymbols.symbols.AstroComponent
 
 internal class AstroAvailableComponentsScope(project: Project) : PolySymbolsScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
 

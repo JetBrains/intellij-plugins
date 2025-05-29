@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.astro.webSymbols.scope
+package org.jetbrains.astro.polySymbols.scope
 
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -14,10 +14,10 @@ import org.jetbrains.astro.codeInsight.astroContentRoot
 import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.astro.lang.AstroFileImpl
-import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
-import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENTS
-import org.jetbrains.astro.webSymbols.symbols.AstroLocalComponent
-import org.jetbrains.astro.webSymbols.symbols.UiFrameworkComponent
+import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
+import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENTS
+import org.jetbrains.astro.polySymbols.symbols.AstroLocalComponent
+import org.jetbrains.astro.polySymbols.symbols.UiFrameworkComponent
 
 class AstroFrontmatterScope(val file: AstroFileImpl)
   : PolySymbolsScopeWithCache<AstroFileImpl, Unit>(AstroFramework.ID, file.project, file, Unit) {

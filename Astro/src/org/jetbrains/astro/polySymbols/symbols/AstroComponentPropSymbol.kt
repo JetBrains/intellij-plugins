@@ -1,5 +1,5 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.astro.webSymbols.symbols
+package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.javascript.polySymbols.jsType
 import com.intellij.javascript.polySymbols.symbols.JSPropertySymbol
@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import org.jetbrains.astro.webSymbols.ASTRO_COMPONENT_PROPS
+import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
 
 class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
   : PsiSourcedPolySymbol {

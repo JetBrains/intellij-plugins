@@ -1,5 +1,5 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.astro.webSymbols
+package org.jetbrains.astro.polySymbols
 
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.openapi.project.Project
@@ -16,10 +16,10 @@ import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileImpl
-import org.jetbrains.astro.webSymbols.scope.AstroAvailableComponentsScope
-import org.jetbrains.astro.webSymbols.scope.AstroFrontmatterScope
-import org.jetbrains.astro.webSymbols.scope.AstroScriptDefineVarsScope
-import org.jetbrains.astro.webSymbols.scope.AstroStyleDefineVarsScope
+import org.jetbrains.astro.polySymbols.scope.AstroAvailableComponentsScope
+import org.jetbrains.astro.polySymbols.scope.AstroFrontmatterScope
+import org.jetbrains.astro.polySymbols.scope.AstroScriptDefineVarsScope
+import org.jetbrains.astro.polySymbols.scope.AstroStyleDefineVarsScope
 
 val ASTRO_COMPONENTS = PolySymbolQualifiedKind(NAMESPACE_HTML, "astro-components")
 val ASTRO_COMPONENT_PROPS = PolySymbolQualifiedKind(NAMESPACE_HTML, "props")
