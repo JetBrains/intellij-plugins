@@ -46,6 +46,7 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
+    "@community//platform/indexing-api:indexing",
     "@community//platform/lang-impl",
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/structure-view-impl:structureView-impl",

@@ -15,6 +15,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/indexing-api:indexing",
     "@community//plugins/yaml/backend",
     "@community//platform/core-api:core",
     "@community//plugins/yaml",
@@ -37,6 +38,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/indexing-api:indexing",
     "@community//platform/refactoring",
     "@community//plugins/yaml/backend",
     "@community//plugins/yaml/backend:backend_test_lib",

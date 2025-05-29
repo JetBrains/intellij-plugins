@@ -21,6 +21,7 @@ jvm_library(
   deps = [
     "//contrib/dts/pp",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",
     "@community//platform/structure-view-impl:structureView-impl",
     "@community//platform/util/progress",
@@ -48,6 +49,7 @@ jvm_library(
     "//contrib/dts/pp",
     "//contrib/dts/pp:pp_test_lib",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",
     "@community//platform/structure-view-impl:structureView-impl",
     "@community//platform/util/progress",

@@ -17,6 +17,7 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/ide-core-impl",
     "@community//java/compiler/openapi:java-compiler",
+    "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",
     "@community//platform/lang-api:lang",
     "//CSS/frontback/css-api:css-frontback",
