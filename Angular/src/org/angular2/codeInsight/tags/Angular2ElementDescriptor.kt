@@ -3,14 +3,14 @@ package org.angular2.codeInsight.tags
 
 import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
-import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
+import com.intellij.html.webSymbols.elements.PolySymbolHtmlElementInfo
 import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.entities.Angular2Directive
 import org.angular2.web.Angular2DescriptorSymbolsProvider
 
-class Angular2ElementDescriptor(info: WebSymbolHtmlElementInfo, tag: XmlTag) : PolySymbolElementDescriptor(info, tag) {
+class Angular2ElementDescriptor(info: PolySymbolHtmlElementInfo, tag: XmlTag) : PolySymbolElementDescriptor(info, tag) {
 
   @get:JvmName("isImplied")
   val implied: Boolean get() = tagInfoProvider.errorSymbols.isEmpty() && tagInfoProvider.nonDirectiveSymbols.isNotEmpty()

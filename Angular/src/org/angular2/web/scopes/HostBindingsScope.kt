@@ -1,7 +1,7 @@
 package org.angular2.web.scopes
 
-import com.intellij.html.webSymbols.WebSymbolsHtmlQueryHelper
-import com.intellij.html.webSymbols.WebSymbolsHtmlQueryHelper.getStandardHtmlElementSymbolsScope
+import com.intellij.html.webSymbols.PolySymbolsHtmlQueryHelper
+import com.intellij.html.webSymbols.PolySymbolsHtmlQueryHelper.getStandardHtmlElementSymbolsScope
 import com.intellij.html.webSymbols.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
@@ -56,14 +56,14 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
 
       if (!elementNames.isNullOrEmpty()) {
         elementNames.forEach {
-          scope.add(WebSymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, it))
+          scope.add(PolySymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, it))
         }
         val scopeList = scope.toList()
         elementNames.flatMapTo(scope) { executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS.withName(it), additionalScope = scopeList) }
         elementNames.mapTo(scope) { MatchedDirectivesScope.createFor(location, it) }
       }
       else {
-        scope.add(WebSymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, "div"))
+        scope.add(PolySymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, "div"))
         executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS.withName("div"), additionalScope = scope.toList())
           .forEach { scope.add(it) }
       }

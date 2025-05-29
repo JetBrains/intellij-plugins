@@ -4,7 +4,7 @@ package org.angular2
 import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
 import com.intellij.html.webSymbols.attributes.PolySymbolHtmlAttributeInfo
 import com.intellij.html.webSymbols.elements.PolySymbolElementDescriptor
-import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
+import com.intellij.html.webSymbols.elements.PolySymbolHtmlElementInfo
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.lang.Language
@@ -60,7 +60,7 @@ class Angular2Framework : WebFramework() {
     Angular2AttributeDescriptor(info, tag)
 
   override fun createHtmlElementDescriptor(
-    info: WebSymbolHtmlElementInfo,
+    info: PolySymbolHtmlElementInfo,
     tag: XmlTag,
   ): PolySymbolElementDescriptor =
     Angular2ElementDescriptor(info, tag)
