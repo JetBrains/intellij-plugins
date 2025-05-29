@@ -1,0 +1,135 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always true",
+            "markdown": "Condition is always true"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 9,
+                  "charOffset": 48,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 65,
+                  "snippet": {
+                    "text": "class A {\n  public static void main() {\n    if (true) {\n    }\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testScoped-script-with-extended-scope",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "608fcaa1778e1823",
+            "equalIndicator/v1": "d700faad6526e5d866f3a75541ba4fd59958c9dc1a21852808ff4cc3df7e6582"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always true",
+            "markdown": "Condition is always true"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 9,
+                  "charOffset": 48,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 65,
+                  "snippet": {
+                    "text": "class B {\n  public static void main() {\n    if (true) {\n    }\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testScoped-script-with-extended-scope",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "33077e607440ec7d",
+            "equalIndicator/v1": "c9bd8a7ff0f83511b759f9595b031703aac907ff8b54e6db84da664a1c31fefd"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "incremental"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}
