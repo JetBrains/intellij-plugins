@@ -16,7 +16,7 @@ import com.intellij.util.Processor
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
@@ -36,7 +36,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
       .asSafely<VueAttributeNameParser.VueDirectiveInfo>()
       ?.takeIf { it.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND } ?: return
 
-    val executor = WebSymbolsQueryExecutorFactory.create(dataHolder)
+    val executor = PolySymbolsQueryExecutorFactory.create(dataHolder)
     val attributes = executor
       .runListSymbolsQuery(PolySymbol.HTML_ATTRIBUTES, virtualSymbols = false, expandPatterns = true,
                            additionalScope = executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS.withName(tag.name)))

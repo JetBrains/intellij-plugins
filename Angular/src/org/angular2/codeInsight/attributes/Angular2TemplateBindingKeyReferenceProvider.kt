@@ -2,7 +2,7 @@ package org.angular2.codeInsight.attributes
 
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
 import com.intellij.webSymbols.utils.asSingleSymbol
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
@@ -13,12 +13,12 @@ class Angular2TemplateBindingKeyReferenceProvider : PsiWebSymbolReferenceProvide
 
   override fun getReferencedSymbol(psiElement: Angular2TemplateBindingKey): PolySymbol? =
     when ((psiElement.parent as? Angular2TemplateBinding)?.keyKind) {
-      Angular2TemplateBinding.KeyKind.LET -> WebSymbolsQueryExecutorFactory.create(psiElement)
+      Angular2TemplateBinding.KeyKind.LET -> PolySymbolsQueryExecutorFactory.create(psiElement)
         .runNameMatchQuery(JS_PROPERTIES.withName(psiElement.name))
         .asSingleSymbol()
 
       Angular2TemplateBinding.KeyKind.BINDING ->
-        WebSymbolsQueryExecutorFactory.create(psiElement)
+        PolySymbolsQueryExecutorFactory.create(psiElement)
           .runNameMatchQuery(NG_TEMPLATE_BINDINGS.withName(psiElement.name))
           .asSingleSymbol()
 

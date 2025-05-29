@@ -14,7 +14,7 @@ import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.declarations.PolySymbolDeclaration
 import com.intellij.webSymbols.declarations.PolySymbolDeclarationProvider
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.VueModelManager
@@ -52,7 +52,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
           ?.let { VueModelManager.findEnclosingComponent(it) }
           ?.asWebSymbol("", VueModelVisitor.Proximity.LOCAL)
           ?.getMatchingSymbols(PolySymbolQualifiedName(NAMESPACE_JS, KIND_JS_EVENTS, name),
-                               WebSymbolsNameMatchQueryParams.create(WebSymbolsQueryExecutorFactory.create(parent, false)),
+                               WebSymbolsNameMatchQueryParams.create(PolySymbolsQueryExecutorFactory.create(parent, false)),
                                Stack())
           ?.getOrNull(0)
           ?.asSafely<PolySymbol>()

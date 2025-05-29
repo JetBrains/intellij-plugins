@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PathUtilRt
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
@@ -71,7 +71,7 @@ class VueExtractComponentRefactoring(
     init {
       forbidden = DefaultXmlExtension.DEFAULT_EXTENSION.getAvailableTagNames(context.containingFile as XmlFile, context)
         .map { it.name }.toSet()
-      alreadyExisting = WebSymbolsQueryExecutorFactory.create(context)
+      alreadyExisting = PolySymbolsQueryExecutorFactory.create(context)
         .runCodeCompletionQuery(VUE_COMPONENTS, "", 0)
         .map { fromAsset(it.name) }
         .toSet()

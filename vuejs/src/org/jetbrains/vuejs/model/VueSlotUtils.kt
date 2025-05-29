@@ -20,7 +20,7 @@ import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolOrigin
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.match
 import com.intellij.xml.impl.schema.AnyXmlElementDescriptor
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
@@ -37,7 +37,7 @@ fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<
   processSlots(
     tag = tag,
     newApi = newApi,
-    anyMatch = { anySlot.match(name, WebSymbolsNameMatchQueryParams.create(WebSymbolsQueryExecutorFactory.getInstance(tag.project).create(null)), Stack()) },
+    anyMatch = { anySlot.match(name, WebSymbolsNameMatchQueryParams.create(PolySymbolsQueryExecutorFactory.getInstance(tag.project).create(null)), Stack()) },
     process = { runNameMatchQuery(PolySymbol.HTML_SLOTS.withName(name)) },
   )
 

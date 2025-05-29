@@ -30,7 +30,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.mapSmartSet
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
@@ -48,7 +48,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
     qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    val queryExecutor = WebSymbolsQueryExecutorFactory.create(dataHolder)
+    val queryExecutor = PolySymbolsQueryExecutorFactory.create(dataHolder)
     val scope = dataHolder.descriptor?.asSafely<WebSymbolElementDescriptor>()
                   ?.symbol?.let { listOf(it) }
                 ?: emptyList()

@@ -26,7 +26,7 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScopeWithCache
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.*
@@ -120,8 +120,8 @@ private constructor(
 
   private fun calculateWebTypesContributions(): MultiMap<WebTypesSymbolLocation, PolySymbol> {
     val registry = container.source
-                     ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
-                   ?: WebSymbolsQueryExecutorFactory.getInstance(project).create(null, false)
+                     ?.let { PolySymbolsQueryExecutorFactory.create(it, false) }
+                   ?: PolySymbolsQueryExecutorFactory.getInstance(project).create(null, false)
     val result = MultiMap.createLinkedSet<WebTypesSymbolLocation, PolySymbol>()
     registry.runListSymbolsQuery(VUE_COMPONENTS, false, virtualSymbols = false)
       .asSequence().plus(registry.runListSymbolsQuery(VUE_DIRECTIVES, false, virtualSymbols = false))

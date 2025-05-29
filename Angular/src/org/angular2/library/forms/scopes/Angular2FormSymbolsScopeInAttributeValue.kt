@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.query.PolySymbolsQueryExecutor
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
 import org.angular2.Angular2Framework
 import org.angular2.lang.expr.psi.Angular2Binding
@@ -46,7 +46,7 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
     get() = provider@{ file, holder ->
       val formsComponent = Angular2FormsComponent.getFor(file)
                            ?: return@provider null
-      val queryExecutor = WebSymbolsQueryExecutorFactory.createCustom {
+      val queryExecutor = PolySymbolsQueryExecutorFactory.createCustom {
         setFramework(Angular2Framework.ID)
       }
       return@provider Angular2FormSymbolsScopesBuilder(
