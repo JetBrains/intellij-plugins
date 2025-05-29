@@ -12,7 +12,7 @@ import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizer
-import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizerFactory
 import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.completion.AstroImportInsertHandler
@@ -70,7 +70,7 @@ class AstroPolySymbolsQueryResultsCustomizer(private val context: PsiElement) : 
     name?.getOrNull(0)?.isLowerCase() == true
     && Html5TagAndAttributeNamesProvider.getTags(Html5TagAndAttributeNamesProvider.Namespace.HTML, false).contains(name)
 
-  class Provider : WebSymbolsQueryResultsCustomizerFactory {
+  class Provider : PolySymbolsQueryResultsCustomizerFactory {
     override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
       if (context.framework == AstroFramework.ID)
         AstroPolySymbolsQueryResultsCustomizer(location)

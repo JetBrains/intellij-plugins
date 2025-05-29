@@ -21,7 +21,7 @@ import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.PolySymbolMatch
 import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizer
-import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizerFactory
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.webSymbols.utils.withSegments
@@ -223,7 +223,7 @@ class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val 
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(context.project).modificationCount
 
-  class Factory : WebSymbolsQueryResultsCustomizerFactory {
+  class Factory : PolySymbolsQueryResultsCustomizerFactory {
     override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
       if (context.framework == Angular2Framework.ID && location.containingFile != null)
         Angular2PolySymbolsQueryResultsCustomizer(location)

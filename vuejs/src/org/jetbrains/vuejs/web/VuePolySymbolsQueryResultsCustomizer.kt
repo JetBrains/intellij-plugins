@@ -15,7 +15,7 @@ import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizer
-import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizerFactory
 import com.intellij.webSymbols.utils.nameSegments
 import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
@@ -109,7 +109,7 @@ class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : Po
   override fun hashCode(): Int =
     context.hashCode()
 
-  class Provider : WebSymbolsQueryResultsCustomizerFactory {
+  class Provider : PolySymbolsQueryResultsCustomizerFactory {
     override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
       if (context.framework == VueFramework.ID)
         VuePolySymbolsQueryResultsCustomizer(location)

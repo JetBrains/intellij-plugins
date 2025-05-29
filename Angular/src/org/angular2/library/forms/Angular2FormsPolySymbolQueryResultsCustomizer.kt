@@ -10,7 +10,7 @@ import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizer
-import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
+import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizerFactory
 import org.angular2.Angular2Framework
 import org.angular2.lang.html.Angular2HtmlFile
 import org.angular2.web.Angular2DirectiveSymbolWrapper
@@ -34,7 +34,7 @@ object Angular2FormsPolySymbolQueryResultsCustomizer : PolySymbolsQueryResultsCu
 
   override fun getModificationCount(): Long = 0
 
-  class Factory : WebSymbolsQueryResultsCustomizerFactory {
+  class Factory : PolySymbolsQueryResultsCustomizerFactory {
     override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
       if (context.framework == Angular2Framework.ID && location.containingFile is Angular2HtmlFile)
         Angular2FormsPolySymbolQueryResultsCustomizer
