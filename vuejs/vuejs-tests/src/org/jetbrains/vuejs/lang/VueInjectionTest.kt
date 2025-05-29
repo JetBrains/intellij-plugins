@@ -16,7 +16,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.context.PolyContext.Companion.KIND_FRAMEWORK
-import com.intellij.webSymbols.context.WebSymbolsContextProvider
+import com.intellij.webSymbols.context.PolyContextProvider
 import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPoint
 import com.intellij.webcore.libraries.ScriptingLibraryModel
 import junit.framework.TestCase
@@ -295,7 +295,7 @@ Vue.options.delimiters = ['<%', '%>']
         WebSymbolsContextProviderExtensionPoint(
           KIND_FRAMEWORK,
           "vue",
-          object : WebSymbolsContextProvider {
+          object : PolyContextProvider {
             override fun isForbidden(contextFile: VirtualFile,
                                      project: Project): Boolean = forbid
           }), disposable)

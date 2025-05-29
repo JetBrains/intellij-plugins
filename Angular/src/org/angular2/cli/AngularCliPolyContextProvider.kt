@@ -4,10 +4,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.util.CachedValueProvider
-import com.intellij.webSymbols.context.WebSymbolsContextProvider
+import com.intellij.webSymbols.context.PolyContextProvider
 import org.angular2.cli.config.AngularConfigProvider
 
-class AngularCliWebSymbolsContextProvider : WebSymbolsContextProvider {
+class AngularCliPolyContextProvider : PolyContextProvider {
 
   override fun isEnabled(project: Project, directory: VirtualFile): CachedValueProvider.Result<Int?> {
     val config = AngularConfigProvider.findAngularConfig(project, directory)

@@ -355,7 +355,7 @@
     <webSymbols.queryConfigurator implementation="org.angular2.web.Angular2WebSymbolsQueryConfigurator"/>
     <webSymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2WebSymbolsQueryResultsCustomizer$Factory"/>
     <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
-    <webSymbols.context kind="framework" name="angular" implementation="org.angular2.cli.AngularCliWebSymbolsContextProvider"/>
+    <webSymbols.context kind="framework" name="angular" implementation="org.angular2.cli.AngularCliPolyContextProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.editor.Angular2Annotator"/>
     <completion.confidence language="Angular2Html" implementationClass="org.angular2.editor.Angular2PreventCompletionAutoPopupOnImport"/>
 
