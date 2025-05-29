@@ -14,21 +14,24 @@ class DefaultQodanaGithubWorkflowBuilder(
   private val project: Project
 ) {
 
-  private val headerText = """
-    #-------------------------------------------------------------------------------#
-    #        Discover additional configuration options in our documentation         #
-    #               https://www.jetbrains.com/help/qodana/github.html               #
-    #-------------------------------------------------------------------------------#
-    
-  """.trimIndent()
+  companion object {
 
-  private val promoHeaderText = """
-    #-------------------------------------------------------------------------------#
-    #            Discover all capabilities of Qodana in our documentation           #
-    #             https://www.jetbrains.com/help/qodana/about-qodana.html           #
-    #-------------------------------------------------------------------------------#
-    
-  """.trimIndent()
+    private val HEADER_TEXT = """
+      #-------------------------------------------------------------------------------#
+      #        Discover additional configuration options in our documentation         #
+      #               https://www.jetbrains.com/help/qodana/github.html               #
+      #-------------------------------------------------------------------------------#
+      
+    """.trimIndent()
+
+    val PROMO_HEADER_TEXT: String = """
+      #-------------------------------------------------------------------------------#
+      #            Discover all capabilities of Qodana in our documentation           #
+      #             https://www.jetbrains.com/help/qodana/about-qodana.html           #
+      #-------------------------------------------------------------------------------#
+      
+    """.trimIndent()
+  }
 
   suspend fun workflowFile(promo: Boolean = false): String {
     val branchesToAdd = projectVcsDataProvider.ciRelevantBranches()
@@ -47,7 +50,7 @@ class DefaultQodanaGithubWorkflowBuilder(
     val jobText = qodanaJobText()
 
     return buildString {
-      appendLine(if (promo) promoHeaderText else headerText)
+      appendLine(if (promo) PROMO_HEADER_TEXT else HEADER_TEXT)
       append(branchesText)
       @Suppress("UnnecessaryVariable")
       @Language("YAML")

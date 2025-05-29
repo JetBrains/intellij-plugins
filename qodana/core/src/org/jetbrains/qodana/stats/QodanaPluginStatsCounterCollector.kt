@@ -24,7 +24,7 @@ import org.jetbrains.qodana.ui.run.wizard.*
 internal object QodanaPluginStatsCounterCollector : CounterUsagesCollector() {
   override fun getGroup() = GROUP
 
-  private val GROUP = EventLogGroup("qodana.plugin", 9)
+  private val GROUP = EventLogGroup("qodana.plugin", 10)
 
   // --------------------
   // Open in IDE
@@ -421,18 +421,6 @@ internal enum class ProblemStatus {
   APPEARED,
   FIXED,
   NOT_FIXED,
-}
-
-enum class GithubPromoNotificationCreation {
-  CREATED,
-  QODANA_CI_ALREADY_EXISTS
-}
-
-enum class GithubPromoCreateWorkflowEvent {
-  CLICKED,
-  QODANA_YAML_EXISTS,
-  CREATED,
-  FAILED,
 }
 
 internal fun ReportDescriptor.toStatsReportType(): StatsReportType {
