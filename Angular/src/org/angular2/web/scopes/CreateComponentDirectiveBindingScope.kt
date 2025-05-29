@@ -13,7 +13,7 @@ import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
@@ -34,12 +34,12 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
   : WebSymbolsScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
 
   companion object {
-    val INPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive input",
-                                                                  true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_INPUTS)
-    val OUTPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive output",
-                                                                   true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_OUTPUTS)
-    val IN_OUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive two-way binding",
-                                                                   true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_IN_OUTS)
+    val INPUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive input",
+                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_INPUTS)
+    val OUTPUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive output",
+                                                                     true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_OUTPUTS)
+    val IN_OUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive two-way binding",
+                                                                     true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_IN_OUTS)
   }
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

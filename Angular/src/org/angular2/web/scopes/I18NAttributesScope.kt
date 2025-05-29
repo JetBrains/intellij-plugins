@@ -19,11 +19,11 @@ import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.NG_I18N_ATTRIBUTES
 import org.jetbrains.annotations.NonNls
 
-class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
+class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<PolySymbol> =
+                                  scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedName.matches(NG_I18N_ATTRIBUTES)) {
       tag.attributes
         .mapNotNull { attr ->
@@ -37,7 +37,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
 
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+                          scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     if (qualifiedKind == NG_I18N_ATTRIBUTES) {
       tag.attributes
         .mapNotNull { attr ->
@@ -50,7 +50,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
     else emptyList()
 
 
-  override fun createPointer(): Pointer<out WebSymbolsScope> {
+  override fun createPointer(): Pointer<out PolySymbolsScope> {
     val tag = this.tag.createSmartPointer()
     return Pointer {
       tag.dereference()?.let { I18NAttributesScope(it) }

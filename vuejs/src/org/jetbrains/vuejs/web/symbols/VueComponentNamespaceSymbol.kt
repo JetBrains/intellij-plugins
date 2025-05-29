@@ -66,7 +66,7 @@ class VueComponentNamespaceSymbol(
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (isNamespacedKind(qualifiedName.qualifiedKind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false)
       getMatchingJSPropertySymbols(qualifiedName.name, params.queryExecutor.namesProvider).adaptToNamespaceComponents(qualifiedName.kind)
@@ -76,8 +76,8 @@ class VueComponentNamespaceSymbol(
   override fun getSymbols(
     qualifiedKind: WebSymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
-    scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbolsScope> =
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbolsScope> =
     if (isNamespacedKind(qualifiedKind))
       getJSPropertySymbols().adaptToNamespaceComponents(qualifiedKind.kind)
     else
@@ -119,13 +119,13 @@ class VueComponentNamespaceSymbol(
       }
     }
 
-    override val queryScope: List<WebSymbolsScope>
+    override val queryScope: List<PolySymbolsScope>
       get() = listOf(this)
 
     override fun getMatchingSymbols(
       qualifiedName: WebSymbolQualifiedName,
       params: WebSymbolsNameMatchQueryParams,
-      scope: Stack<WebSymbolsScope>,
+      scope: Stack<PolySymbolsScope>,
     ): List<PolySymbol> =
       namespaceSymbol.getMatchingSymbols(qualifiedName, params, scope) +
       super.getMatchingSymbols(qualifiedName, params, scope)
@@ -133,15 +133,15 @@ class VueComponentNamespaceSymbol(
     override fun getSymbols(
       qualifiedKind: WebSymbolQualifiedKind,
       params: WebSymbolsListSymbolsQueryParams,
-      scope: Stack<WebSymbolsScope>,
-    ): List<WebSymbolsScope> =
+      scope: Stack<PolySymbolsScope>,
+    ): List<PolySymbolsScope> =
       namespaceSymbol.getSymbols(qualifiedKind, params, scope) +
       super.getSymbols(qualifiedKind, params, scope)
 
     override fun getCodeCompletions(
       qualifiedName: WebSymbolQualifiedName,
       params: WebSymbolsCodeCompletionQueryParams,
-      scope: Stack<WebSymbolsScope>,
+      scope: Stack<PolySymbolsScope>,
     ): List<WebSymbolCodeCompletionItem> =
       namespaceSymbol.getCodeCompletions(qualifiedName, params, scope) +
       super.getCodeCompletions(qualifiedName, params, scope)

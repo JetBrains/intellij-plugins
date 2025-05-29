@@ -72,7 +72,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
   override fun getCodeCompletions(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> =
     super.getCodeCompletions(qualifiedName, params, scope)
       .let { codeCompletions ->

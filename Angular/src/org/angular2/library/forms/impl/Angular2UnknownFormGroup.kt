@@ -20,7 +20,7 @@ object Angular2UnknownFormGroup : PolySymbol {
 
   override val pattern: WebSymbolsPattern? = WebSymbolsPatternFactory.createRegExMatch(".*")
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     when (qualifiedKind) {
       NG_FORM_CONTROL_PROPS -> listOf(Angular2UnknownFormControl)
       NG_FORM_GROUP_FIELDS -> listOf(Angular2UnknownFormArray)

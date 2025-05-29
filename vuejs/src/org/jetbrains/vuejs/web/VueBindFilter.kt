@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.webTypes.filters.WebSymbolsFilter
@@ -11,7 +11,7 @@ class VueBindFilter : WebSymbolsFilter {
   override fun filterCodeCompletions(
     codeCompletions: List<WebSymbolCodeCompletionItem>,
     queryExecutor: WebSymbolsQueryExecutor,
-    scope: List<WebSymbolsScope>,
+    scope: List<PolySymbolsScope>,
     properties: Map<String, Any>,
   ): List<WebSymbolCodeCompletionItem> =
     codeCompletions.filterHtmlEventAttributes(queryExecutor, scope) { name }
@@ -19,14 +19,14 @@ class VueBindFilter : WebSymbolsFilter {
   override fun filterNameMatches(
     matches: List<PolySymbol>,
     queryExecutor: WebSymbolsQueryExecutor,
-    scope: List<WebSymbolsScope>,
+    scope: List<PolySymbolsScope>,
     properties: Map<String, Any>,
   ): List<PolySymbol> =
     matches.filterHtmlEventAttributes(queryExecutor, scope) { name }
 
   private fun <T> List<T>.filterHtmlEventAttributes(
     queryExecutor: WebSymbolsQueryExecutor,
-    scope: List<WebSymbolsScope>,
+    scope: List<PolySymbolsScope>,
     getName: T.() -> String,
   ): List<T> {
     val props = queryExecutor.runListSymbolsQuery(VUE_COMPONENT_PROPS, true, additionalScope = scope)

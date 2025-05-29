@@ -37,15 +37,15 @@ class VueSlotSymbol(
   override fun getSymbols(
     qualifiedKind: WebSymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
-    scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbolsScope> {
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbolsScope> {
     return getJSPropertySymbols(qualifiedKind)
   }
 
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> {
     return getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
   }

@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.model.getMatchingAvailableSlots
 import org.jetbrains.vuejs.web.VUE_AVAILABLE_SLOTS
 import org.jetbrains.vuejs.web.VueFramework
 
-class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
+class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun hashCode(): Int = tag.hashCode()
 
@@ -34,7 +34,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
@@ -48,8 +48,8 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
   override fun getSymbols(
     qualifiedKind: WebSymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
-    scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbolsScope> =
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbolsScope> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
       qualifiedKind == HTML_ATTRIBUTES ->
@@ -62,7 +62,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
   override fun getCodeCompletions(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> =
     if (qualifiedName.matches(VUE_AVAILABLE_SLOTS) && params.queryExecutor.allowResolve)
       getAvailableSlotsCompletions(tag, qualifiedName.name, params.position, true)

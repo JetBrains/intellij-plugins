@@ -26,15 +26,15 @@ abstract class VuePropertySymbol<T : VueProperty>(
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
 
   override fun getSymbols(
     qualifiedKind: WebSymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
-    scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbolsScope> =
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbolsScope> =
     getJSPropertySymbols(qualifiedKind)
 
 }

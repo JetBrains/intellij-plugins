@@ -10,7 +10,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil
@@ -36,7 +36,7 @@ const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
 
 class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
 
-  override fun getScope(project: Project, location: PsiElement?, context: WebSymbolsContext, allowResolve: Boolean): List<WebSymbolsScope> {
+  override fun getScope(project: Project, location: PsiElement?, context: WebSymbolsContext, allowResolve: Boolean): List<PolySymbolsScope> {
     if (context.framework != AstroFramework.ID || location?.containingFile !is AstroFileImpl) return emptyList()
     return when (location) {
       is CssElement -> calculateCssScopes(location)
@@ -45,7 +45,7 @@ class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
     }
   }
 
-  private fun calculateCssScopes(location: CssElement): MutableList<WebSymbolsScope> {
+  private fun calculateCssScopes(location: CssElement): MutableList<PolySymbolsScope> {
     val result = calculateDefaultScopes(location)
     location.parentOfType<XmlTag>()
       ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.STYLE_TAG_NAME) }
@@ -53,7 +53,7 @@ class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
     return result
   }
 
-  private fun calculateJsScopes(location: JSElement): MutableList<WebSymbolsScope> {
+  private fun calculateJsScopes(location: JSElement): MutableList<PolySymbolsScope> {
     val result = calculateDefaultScopes(location)
     location.parentOfType<XmlTag>()
       ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.SCRIPT_TAG_NAME) }
@@ -61,7 +61,7 @@ class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
     return result
   }
 
-  private fun calculateDefaultScopes(location: PsiElement): MutableList<WebSymbolsScope> =
+  private fun calculateDefaultScopes(location: PsiElement): MutableList<PolySymbolsScope> =
     mutableListOf(AstroFrontmatterScope(location.containingFile as AstroFileImpl),
                   AstroAvailableComponentsScope(location.project))
 }

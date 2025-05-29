@@ -6,12 +6,12 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 
-object VueTopLevelElementsScope : WebSymbolsScope {
+object VueTopLevelElementsScope : PolySymbolsScope {
 
   private val referencingSymbol = ReferencingPolySymbol.create(
     PolySymbol.HTML_ELEMENTS,
@@ -23,14 +23,14 @@ object VueTopLevelElementsScope : WebSymbolsScope {
   override fun getSymbols(
     qualifiedKind: WebSymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
-    scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbolsScope> =
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbolsScope> =
     if (qualifiedKind == PolySymbol.HTML_ELEMENTS)
       listOf(referencingSymbol)
     else
       emptyList()
 
-  override fun createPointer(): Pointer<out WebSymbolsScope> = Pointer.hardPointer(this)
+  override fun createPointer(): Pointer<out PolySymbolsScope> = Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0
 

@@ -64,7 +64,7 @@ class VueComponentSymbol(
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(PolySymbol.HTML_SLOTS) && item is VueUnresolvedComponent)
       listOf(PolySymbolMatch.create(qualifiedName.name, PolySymbol.HTML_SLOTS, this.origin,
@@ -75,8 +75,8 @@ class VueComponentSymbol(
   override fun getSymbols(
     qualifiedKind: WebSymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
-    scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbolsScope> =
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbolsScope> =
     when (qualifiedKind) {
       VUE_COMPONENT_PROPS -> {
         val props = mutableListOf<VueInputProperty>()

@@ -61,7 +61,7 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
     }
   }
 
-  override fun findBestMatchingScope(rootScope: WebSymbolsPsiScope): WebSymbolsPsiScope? =
+  override fun findBestMatchingScope(rootScope: PolySymbolsPsiScope): PolySymbolsPsiScope? =
     super.findBestMatchingScope(rootScope)?.let {
       if ((it.source as? XmlTag)?.attributes?.contains(location) == true)
         it.parent

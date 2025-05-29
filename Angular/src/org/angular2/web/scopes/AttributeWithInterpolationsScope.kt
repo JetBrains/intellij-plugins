@@ -17,9 +17,9 @@ import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.PROP_BINDING_PATTERN
 
-object AttributeWithInterpolationsScope : WebSymbolsScope {
+object AttributeWithInterpolationsScope : PolySymbolsScope {
 
-  override fun createPointer(): Pointer<out WebSymbolsScope> =
+  override fun createPointer(): Pointer<out PolySymbolsScope> =
     Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0
@@ -27,7 +27,7 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(PolySymbol.HTML_ATTRIBUTES)) {
       AttributeWithInterpolationsSymbol.match(qualifiedName.name, params, scope)
@@ -76,13 +76,13 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
     override fun codeCompletion(
       name: String,
       position: Int,
-      scopeStack: Stack<WebSymbolsScope>,
+      scopeStack: Stack<PolySymbolsScope>,
       queryExecutor: WebSymbolsQueryExecutor,
     ): List<WebSymbolCodeCompletionItem> =
       emptyList()
 
     override fun listSymbols(
-      scopeStack: Stack<WebSymbolsScope>,
+      scopeStack: Stack<PolySymbolsScope>,
       queryExecutor: WebSymbolsQueryExecutor,
       expandPatterns: Boolean,
     ): List<PolySymbol> =
@@ -90,7 +90,7 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
 
     override fun matchName(
       name: String,
-      scopeStack: Stack<WebSymbolsScope>,
+      scopeStack: Stack<PolySymbolsScope>,
       queryExecutor: WebSymbolsQueryExecutor,
     ): List<PolySymbol> =
       queryExecutor.runNameMatchQuery(JS_PROPERTIES.withName(name), additionalScope = scopeStack) +

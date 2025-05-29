@@ -14,14 +14,14 @@ import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
-import com.intellij.webSymbols.utils.WebSymbolsIsolatedMappingScope
+import com.intellij.webSymbols.utils.PolySymbolsIsolatedMappingScope
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 
 class ViewChildrenScope(
   decorator: ES6Decorator,
   private val resolveToMultipleSymbols: Boolean,
-) : WebSymbolsIsolatedMappingScope<ES6Decorator>(
+) : PolySymbolsIsolatedMappingScope<ES6Decorator>(
   mapOf(JS_STRING_LITERALS to JS_SYMBOLS), Angular2Framework.ID, decorator
 ) {
 
@@ -31,7 +31,7 @@ class ViewChildrenScope(
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
     true
 
-  override val subScopeBuilder: (WebSymbolsQueryExecutor, ES6Decorator) -> List<WebSymbolsScope>
+  override val subScopeBuilder: (WebSymbolsQueryExecutor, ES6Decorator) -> List<PolySymbolsScope>
     get() = if (resolveToMultipleSymbols) { executor, decorator ->
       listOfNotNull(
         Angular2EntitiesProvider.getComponent(decorator)
@@ -47,7 +47,7 @@ class ViewChildrenScope(
       )
     }
 
-  override fun createPointer(): Pointer<out WebSymbolsScope> {
+  override fun createPointer(): Pointer<out PolySymbolsScope> {
     val locationPtr = location.createSmartPointer()
     val resolveToMultipleSymbols = this.resolveToMultipleSymbols
     return Pointer {
@@ -62,7 +62,7 @@ class ViewChildrenScope(
     override fun getCodeCompletions(
       qualifiedName: WebSymbolQualifiedName,
       params: WebSymbolsCodeCompletionQueryParams,
-      scope: Stack<WebSymbolsScope>,
+      scope: Stack<PolySymbolsScope>,
     ): List<WebSymbolCodeCompletionItem> =
       super.getCodeCompletions(qualifiedName, params, scope)
         .map { it.decorateWithSymbolType(dataHolder, it.symbol).decorateWithJsKindIcon() }

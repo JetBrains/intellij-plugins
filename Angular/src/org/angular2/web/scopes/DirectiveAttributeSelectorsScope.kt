@@ -22,9 +22,9 @@ import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates
 import org.angular2.web.*
 
-class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
+class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
 
-  override fun createPointer(): Pointer<out WebSymbolsScope> =
+  override fun createPointer(): Pointer<out PolySymbolsScope> =
     Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0
@@ -32,7 +32,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(PolySymbol.HTML_ELEMENTS)) {
       listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(file, qualifiedName.name))
@@ -82,7 +82,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
       }
     }
 
-    override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
+    override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<WebSymbolCodeCompletionItem> =
       withTypeEvaluationLocation(dataHolder) {
         super<WebSymbolsScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
           .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }

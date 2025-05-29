@@ -20,14 +20,14 @@ import java.util.*
  * This container ensures that components from other container are not self referred without export declaration with component name or script setup
  */
 class VueIncorrectlySelfReferredComponentFilteringScope(
-  private val delegate: WebSymbolsScope,
+  private val delegate: PolySymbolsScope,
   private val file: PsiFile,
-) : WebSymbolsScope {
+) : PolySymbolsScope {
 
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     delegate.getMatchingSymbols(qualifiedName, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
@@ -35,20 +35,20 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
   override fun getSymbols(
     qualifiedKind: WebSymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
-    scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbolsScope> =
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbolsScope> =
     delegate.getSymbols(qualifiedKind, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
 
   override fun getCodeCompletions(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> =
     delegate.getCodeCompletions(qualifiedName, params, scope)
       .filter { isNotIncorrectlySelfReferred(it.symbol) }
 
-  override fun createPointer(): Pointer<out WebSymbolsScope> {
+  override fun createPointer(): Pointer<out PolySymbolsScope> {
     val delegatePtr = delegate.createPointer()
     val filePtr = file.createSmartPointer()
     return Pointer {
@@ -74,7 +74,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
   }
 
   // Cannot self refer without export declaration with component name or script setup
-  private fun isNotIncorrectlySelfReferred(symbol: WebSymbolsScope?) =
+  private fun isNotIncorrectlySelfReferred(symbol: PolySymbolsScope?) =
     symbol !is PsiSourcedPolySymbol
     || (symbol.source as? JSImplicitElement)?.context.let { context ->
       context == null

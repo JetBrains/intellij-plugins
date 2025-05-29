@@ -104,7 +104,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<PolySymbol> =
+                                  scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     /* Do not support reference resolution */
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       // Provide an empty symbol match to avoid unresolved reference on the string literal
@@ -114,7 +114,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
-                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+                          scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     /* Do not support reference resolution */
     emptyList()
 

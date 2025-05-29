@@ -92,7 +92,7 @@ class VuePolyTypesMergedSymbol(
       .distinctBy { it.key }
       .associateBy({ it.key }, { it.value })
 
-  override val queryScope: List<WebSymbolsScope>
+  override val queryScope: List<PolySymbolsScope>
     get() = listOf(this)
 
   override fun createDocumentation(location: PsiElement?): WebSymbolDocumentation =
@@ -108,7 +108,7 @@ class VuePolyTypesMergedSymbol(
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     symbols
       .flatMap {
@@ -127,15 +127,15 @@ class VuePolyTypesMergedSymbol(
   override fun getSymbols(
     qualifiedKind: WebSymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
-    scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbolsScope> =
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbolsScope> =
     symbols
       .flatMap {
         it.getSymbols(qualifiedKind, params, scope)
       }
       .takeIf { it.isNotEmpty() }
       ?.let { list ->
-        val containers = mutableListOf<WebSymbolsScope>()
+        val containers = mutableListOf<PolySymbolsScope>()
         var psiSourcedWebSymbol: PsiSourcedPolySymbol? = null
         val polySymbols = mutableListOf<PolySymbol>()
         for (item in list) {
@@ -163,7 +163,7 @@ class VuePolyTypesMergedSymbol(
   override fun getCodeCompletions(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> =
     symbols.asSequence()
       .flatMap { it.getCodeCompletions(qualifiedName, params, scope) }

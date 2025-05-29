@@ -47,7 +47,7 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
   override fun getCodeCompletions(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> {
     return emptyList()
   }

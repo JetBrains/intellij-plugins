@@ -12,7 +12,7 @@ import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import org.angular2.web.NG_TEMPLATE_BINDINGS
 import org.angular2.web.NG_TEMPLATE_BINDING_KEYWORDS
 
-object TemplateBindingKeywordsScope : WebSymbolsScope {
+object TemplateBindingKeywordsScope : PolySymbolsScope {
 
   private val KEYWORDS_REF_FOR_JS_SYMBOLS = ReferencingPolySymbol.create(
     JS_SYMBOLS, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
@@ -23,7 +23,7 @@ object TemplateBindingKeywordsScope : WebSymbolsScope {
   private val KEYWORDS_REF_FOR_NG_TEMPLATE_BINDINGS = ReferencingPolySymbol.create(
     NG_TEMPLATE_BINDINGS, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     when (qualifiedKind) {
       JS_SYMBOLS -> listOf(KEYWORDS_REF_FOR_JS_SYMBOLS)
       NG_TEMPLATE_BINDINGS -> listOf(KEYWORDS_REF_FOR_NG_TEMPLATE_BINDINGS)
@@ -31,10 +31,10 @@ object TemplateBindingKeywordsScope : WebSymbolsScope {
       else -> emptyList()
     }
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<WebSymbolsScope>): List<PolySymbol> =
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     emptyList()
 
-  override fun createPointer(): Pointer<out WebSymbolsScope> =
+  override fun createPointer(): Pointer<out PolySymbolsScope> =
     hardPointer(this)
 
   override fun getModificationCount(): Long =

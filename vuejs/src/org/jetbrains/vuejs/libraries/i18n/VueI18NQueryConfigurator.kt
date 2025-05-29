@@ -26,7 +26,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
     location: PsiElement?,
     context: WebSymbolsContext,
     allowResolve: Boolean,
-  ): List<WebSymbolsScope> =
+  ): List<PolySymbolsScope> =
     if (context.framework == VueFramework.ID
         && location is HtmlTag
         && location.name == "i18n"
@@ -36,7 +36,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
     }
     else emptyList()
 
-  private class I18nTagInjectionKind(private val tag: HtmlTag) : WebSymbolsScope {
+  private class I18nTagInjectionKind(private val tag: HtmlTag) : PolySymbolsScope {
     override fun equals(other: Any?): Boolean =
       other is I18nTagInjectionKind
       && other.tag == tag
@@ -56,8 +56,8 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
     override fun getSymbols(
       qualifiedKind: WebSymbolQualifiedKind,
       params: WebSymbolsListSymbolsQueryParams,
-      scope: Stack<WebSymbolsScope>,
-    ): List<WebSymbolsScope> {
+      scope: Stack<PolySymbolsScope>,
+    ): List<PolySymbolsScope> {
       if (qualifiedKind == VUE_TOP_LEVEL_ELEMENTS) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }

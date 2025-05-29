@@ -18,7 +18,7 @@ object Angular2UnknownFormArray : PolySymbol {
 
   override val pattern: WebSymbolsPattern? = WebSymbolsPatternFactory.createRegExMatch(".*")
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
+  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     if (qualifiedKind == NG_FORM_CONTROL_PROPS)
       listOf(Angular2FormArrayControl)
     else

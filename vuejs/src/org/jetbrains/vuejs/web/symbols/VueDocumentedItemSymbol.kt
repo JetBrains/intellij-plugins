@@ -13,7 +13,7 @@ import java.util.*
 abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   override val name: String,
   protected val item: T,
-) : VueWebSymbolBase(),
+) : VuePolySymbolBase(),
     PsiSourcedPolySymbol {
 
   override val source: PsiElement?

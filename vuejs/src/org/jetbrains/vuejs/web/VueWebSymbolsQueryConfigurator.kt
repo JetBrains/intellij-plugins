@@ -19,7 +19,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
 import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
@@ -64,13 +64,13 @@ class VueWebSymbolsQueryConfigurator :
     location: PsiElement?,
     context: WebSymbolsContext,
     allowResolve: Boolean,
-  ): List<WebSymbolsScope> {
+  ): List<PolySymbolsScope> {
     if (context.framework != VueFramework.ID || location == null) return emptyList()
 
     if (location is JSElement && location !is XmlElement)
       return getScopeForJSElement(location, allowResolve)
 
-    val result = SmartList<WebSymbolsScope>()
+    val result = SmartList<PolySymbolsScope>()
     val attribute = (location as? XmlAttributeValue)?.parent as? XmlAttribute ?: location as? XmlAttribute
     val tag = attribute?.parent ?: location as? XmlTag
     val fileContext = location.containingFile?.originalFile ?: return emptyList()
@@ -103,7 +103,7 @@ class VueWebSymbolsQueryConfigurator :
     else
       super.getNameConversionRulesProviders(project, element, context)
 
-  private fun getScopeForJSElement(element: JSElement, allowResolve: Boolean): List<WebSymbolsScope> {
+  private fun getScopeForJSElement(element: JSElement, allowResolve: Boolean): List<PolySymbolsScope> {
     if (element is JSObjectLiteralExpression
         && allowResolve
         && element.context?.asSafely<JSProperty>()?.name == WATCH_PROP) {
@@ -150,7 +150,7 @@ class VueWebSymbolsQueryConfigurator :
   private fun addEntityContainers(
     element: PsiElement,
     fileContext: PsiFile,
-    result: SmartList<WebSymbolsScope>,
+    result: SmartList<PolySymbolsScope>,
   ) {
     VueModelManager.findEnclosingContainer(element).let { enclosingContainer ->
       val containerToProximity = mutableMapOf<VueEntitiesContainer, VueModelVisitor.Proximity>()

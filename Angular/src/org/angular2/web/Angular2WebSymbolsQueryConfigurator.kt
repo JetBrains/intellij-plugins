@@ -24,7 +24,7 @@ import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.css.CSS_CLASS_LIST
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
@@ -63,7 +63,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     location: PsiElement?,
     context: WebSymbolsContext,
     allowResolve: Boolean,
-  ): List<WebSymbolsScope> =
+  ): List<PolySymbolsScope> =
     if (context.framework == Angular2Framework.ID && location != null) {
       when (location) {
         is JSElement -> calculateJavaScriptScopes(location)
@@ -143,7 +143,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
   }
 
 
-  private fun calculateHtmlScopes(element: XmlElement): MutableList<WebSymbolsScope> {
+  private fun calculateHtmlScopes(element: XmlElement): MutableList<PolySymbolsScope> {
     val result = mutableListOf(DirectiveElementSelectorsScope(element.containingFile),
                                DirectiveAttributeSelectorsScope(element.containingFile))
 
@@ -166,12 +166,12 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     return result
   }
 
-  private fun calculateCssScopes(element: CssElement): List<WebSymbolsScope> =
+  private fun calculateCssScopes(element: CssElement): List<PolySymbolsScope> =
     listOf(DirectiveElementSelectorsScope(element.containingFile),
            DirectiveAttributeSelectorsScope(element.containingFile),
            HtmlAttributesCustomCssPropertiesScope(element))
 
-  private fun calculateJavaScriptScopes(element: JSElement): List<WebSymbolsScope> =
+  private fun calculateJavaScriptScopes(element: JSElement): List<PolySymbolsScope> =
     when (element) {
       is JSReferenceExpression -> {
         when {
@@ -223,7 +223,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       else -> emptyList()
     }
 
-  private fun getHostBindingsScopeForLiteral(element: JSLiteralExpression): WebSymbolsScope? {
+  private fun getHostBindingsScopeForLiteral(element: JSLiteralExpression): PolySymbolsScope? {
     val mapping = when {
       getDecoratorForLiteralParameter(element)?.decoratorName == HOST_BINDING_DEC -> NG_PROPERTY_BINDINGS
       isHostListenerDecoratorEventLiteral(element) -> NG_EVENT_BINDINGS
@@ -237,7 +237,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       ?.let { HostBindingsScope(mapOf(PolySymbol.JS_STRING_LITERALS to mapping), it) }
   }
 
-  private fun getViewChildrenScopeForLiteral(element: JSLiteralExpression): WebSymbolsScope? {
+  private fun getViewChildrenScopeForLiteral(element: JSLiteralExpression): PolySymbolsScope? {
     val signalCallInfo = getPossibleSignalFunNameForLiteralParameter(element)
     val decorator = getDecoratorForLiteralParameter(element)
     val isChildViewCall = decorator?.decoratorName == VIEW_CHILD_DEC || isViewChildSignalCall(signalCallInfo)
@@ -250,7 +250,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       ?.let { ViewChildrenScope(it, isChildrenViewCall) }
   }
 
-  private fun getCreateComponentBindingsScopeForLiteral(element: JSLiteralExpression): List<WebSymbolsScope> {
+  private fun getCreateComponentBindingsScopeForLiteral(element: JSLiteralExpression): List<PolySymbolsScope> {
     val callExpr =
       element.context
         ?.let { if (it is JSArgumentList) it.parent else it }
@@ -277,7 +277,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     )
   }
 
-  private fun getCssClassesInJSLiteralInHtmlAttributeScope(element: PsiElement): WebSymbolsScope? =
+  private fun getCssClassesInJSLiteralInHtmlAttributeScope(element: PsiElement): PolySymbolsScope? =
     element.takeIf { isNgClassLiteralContext(it) }
       ?.parentOfType<XmlAttribute>()
       ?.let { CssClassListInJSLiteralInHtmlAttributeScope(it) }

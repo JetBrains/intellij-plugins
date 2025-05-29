@@ -32,7 +32,7 @@ import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.EVENT_ATTR_PREFIX
 import java.util.*
 
-class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSymbolsScope {
+class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySymbolsScope {
 
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(templateFile.project).modificationCount
@@ -40,7 +40,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(PolySymbol.HTML_ELEMENTS)) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", qualifiedName.name))

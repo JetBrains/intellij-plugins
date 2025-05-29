@@ -9,17 +9,17 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.css.StylesheetFile
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.css.getWebSymbolsCssScopeForTagClasses
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
-import com.intellij.webSymbols.utils.WebSymbolsIsolatedMappingScope
+import com.intellij.webSymbols.utils.PolySymbolsIsolatedMappingScope
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.PROP_HOST_BINDING
 
 class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualifiedKind>, decorator: ES6Decorator)
-  : WebSymbolsIsolatedMappingScope<ES6Decorator>(mappings, Angular2Framework.ID, decorator) {
+  : PolySymbolsIsolatedMappingScope<ES6Decorator>(mappings, Angular2Framework.ID, decorator) {
 
   override fun createPointer(): Pointer<HostBindingsScope> {
     val decoratorPtr = location.createSmartPointer()
@@ -35,16 +35,16 @@ class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualified
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
     (symbol.properties[PROP_HOST_BINDING] != false && (!symbol.name.startsWith("on") || !symbol.hasOnlyStandardHtmlSymbolsOrExtensions()))
 
-  override val subScopeBuilder: (WebSymbolsQueryExecutor, ES6Decorator) -> List<WebSymbolsScope>
+  override val subScopeBuilder: (WebSymbolsQueryExecutor, ES6Decorator) -> List<PolySymbolsScope>
     get() = ::buildSubScope
 
   companion object {
-    internal fun buildSubScope(executor: WebSymbolsQueryExecutor, location: ES6Decorator): List<WebSymbolsScope> {
+    internal fun buildSubScope(executor: WebSymbolsQueryExecutor, location: ES6Decorator): List<PolySymbolsScope> {
       val file = location.containingFile
       val directive = Angular2EntitiesProvider.getDirective(location)
       val relatedStylesheets = (directive as? Angular2Component)?.cssFiles?.filterIsInstance<StylesheetFile>()
                                ?: emptyList()
-      val scope = mutableSetOf<WebSymbolsScope>(
+      val scope = mutableSetOf<PolySymbolsScope>(
         StandardPropertyAndEventsScope(file),
         DirectiveElementSelectorsScope(file),
         DirectiveAttributeSelectorsScope(file),

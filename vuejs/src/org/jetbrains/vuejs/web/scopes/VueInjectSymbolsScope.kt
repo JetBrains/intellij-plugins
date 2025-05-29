@@ -43,7 +43,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   override fun getCodeCompletions(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
-    scope: Stack<WebSymbolsScope>,
+    scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> {
     return super.getCodeCompletions(qualifiedName, params, scope).filter {
       it.symbol.asSafely<VueProvideSymbol>()?.injectionKey == null
