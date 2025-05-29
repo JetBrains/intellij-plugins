@@ -8,6 +8,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementTypes;
@@ -92,11 +93,12 @@ public class GherkinBlock implements ASTBlock {
         continue;
       }
 
-      boolean isTagInsideScenario = child.getElementType() == GherkinElementTypes.TAG &&
-                  myNode.getElementType() == GherkinElementTypes.SCENARIO_OUTLINE &&
-                  child.getStartOffset() > myNode.getStartOffset();
+      final boolean nodeIsScenarioOutline = myNode.getElementType() == GherkinElementTypes.SCENARIO_OUTLINE;
+      final boolean childNodeIsTag = child.getElementType() == GherkinElementTypes.TAG;
+      final boolean isTagInsideScenario = TreeUtil.findSibling(child, TokenSet.create(GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD)) == null;
+      final boolean shouldIndentTag = nodeIsScenarioOutline && childNodeIsTag && isTagInsideScenario;
       Indent indent;
-      if (BLOCKS_TO_INDENT.contains(child.getElementType()) || isTagInsideScenario) {
+      if (BLOCKS_TO_INDENT.contains(child.getElementType()) || shouldIndentTag) {
         indent = Indent.getNormalIndent();
       }
       else {
