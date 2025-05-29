@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolQualifiedKind
-import com.intellij.webSymbols.highlighting.WebSymbolHighlightingCustomizer
+import com.intellij.webSymbols.highlighting.PolySymbolHighlightingCustomizer
 import com.intellij.webSymbols.js.WebSymbolJsKind
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2DecoratorUtil.isHostBinding
@@ -22,7 +22,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding
 import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 
-class Angular2WebSymbolHighlightingCustomizer : WebSymbolHighlightingCustomizer {
+class Angular2PolySymbolHighlightingCustomizer : PolySymbolHighlightingCustomizer {
 
   override fun getSymbolKindTextAttributes(qualifiedKind: PolySymbolQualifiedKind): TextAttributesKey? =
     when (qualifiedKind) {
