@@ -9,7 +9,7 @@ import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
+import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
 import org.angular2.Angular2Framework
 import org.angular2.lang.html.Angular2HtmlFile
@@ -17,9 +17,9 @@ import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.Angular2SymbolDelegate
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
-object Angular2FormsWebSymbolQueryResultsCustomizer : WebSymbolsQueryResultsCustomizer {
+object Angular2FormsPolySymbolQueryResultsCustomizer : PolySymbolsQueryResultsCustomizer {
 
-  override fun createPointer(): Pointer<out WebSymbolsQueryResultsCustomizer> =
+  override fun createPointer(): Pointer<out PolySymbolsQueryResultsCustomizer> =
     Pointer.hardPointer(this)
 
   override fun apply(matches: List<PolySymbol>, strict: Boolean, qualifiedName: PolySymbolQualifiedName): List<PolySymbol> =
@@ -35,9 +35,9 @@ object Angular2FormsWebSymbolQueryResultsCustomizer : WebSymbolsQueryResultsCust
   override fun getModificationCount(): Long = 0
 
   class Factory : WebSymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: PolyContext): WebSymbolsQueryResultsCustomizer? =
+    override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
       if (context.framework == Angular2Framework.ID && location.containingFile is Angular2HtmlFile)
-        Angular2FormsWebSymbolQueryResultsCustomizer
+        Angular2FormsPolySymbolQueryResultsCustomizer
       else
         null
   }

@@ -20,7 +20,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.PolySymbolMatch
-import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
+import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
@@ -36,7 +36,7 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import java.util.*
 
-class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
+class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val context: PsiElement) : PolySymbolsQueryResultsCustomizer {
 
   private val scope = Angular2DeclarationsScope(context.containingFile)
   private val svgContext = PsiTreeUtil.getParentOfType(context, XmlTag::class.java)?.namespace == HtmlUtil.SVG_NAMESPACE
@@ -205,16 +205,16 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
                               NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
   }
 
-  override fun createPointer(): Pointer<out WebSymbolsQueryResultsCustomizer> {
+  override fun createPointer(): Pointer<out PolySymbolsQueryResultsCustomizer> {
     val contextPtr = context.createSmartPointer()
     return Pointer {
-      contextPtr.dereference()?.let { Angular2WebSymbolsQueryResultsCustomizer(it) }
+      contextPtr.dereference()?.let { Angular2PolySymbolsQueryResultsCustomizer(it) }
     }
   }
 
   override fun equals(other: Any?): Boolean =
     other === this ||
-    other is Angular2WebSymbolsQueryResultsCustomizer
+    other is Angular2PolySymbolsQueryResultsCustomizer
     && other.context == context
 
   override fun hashCode(): Int =
@@ -224,9 +224,9 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     PsiModificationTracker.getInstance(context.project).modificationCount
 
   class Factory : WebSymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: PolyContext): WebSymbolsQueryResultsCustomizer? =
+    override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
       if (context.framework == Angular2Framework.ID && location.containingFile != null)
-        Angular2WebSymbolsQueryResultsCustomizer(location)
+        Angular2PolySymbolsQueryResultsCustomizer(location)
       else null
 
   }

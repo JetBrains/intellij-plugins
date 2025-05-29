@@ -11,7 +11,7 @@ import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.webSymbols.context.PolyContext
-import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
+import com.intellij.webSymbols.query.PolySymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
 import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import org.jetbrains.astro.AstroFramework
@@ -19,7 +19,7 @@ import org.jetbrains.astro.codeInsight.completion.AstroImportInsertHandler
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.webSymbols.symbols.AstroComponent
 
-class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
+class AstroPolySymbolsQueryResultsCustomizer(private val context: PsiElement) : PolySymbolsQueryResultsCustomizer {
 
   override fun apply(matches: List<PolySymbol>,
                      strict: Boolean,
@@ -50,17 +50,17 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
     return item
   }
 
-  override fun createPointer(): Pointer<out WebSymbolsQueryResultsCustomizer> {
+  override fun createPointer(): Pointer<out PolySymbolsQueryResultsCustomizer> {
     val contextPtr = context.createSmartPointer()
     return Pointer {
-      contextPtr.dereference()?.let { AstroWebSymbolsQueryResultsCustomizer(it) }
+      contextPtr.dereference()?.let { AstroPolySymbolsQueryResultsCustomizer(it) }
     }
   }
 
   override fun getModificationCount(): Long = 0
 
   override fun equals(other: Any?): Boolean =
-    other is AstroWebSymbolsQueryResultsCustomizer
+    other is AstroPolySymbolsQueryResultsCustomizer
     && other.context == context
 
   override fun hashCode(): Int =
@@ -71,9 +71,9 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
     && Html5TagAndAttributeNamesProvider.getTags(Html5TagAndAttributeNamesProvider.Namespace.HTML, false).contains(name)
 
   class Provider : WebSymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: PolyContext): WebSymbolsQueryResultsCustomizer? =
+    override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
       if (context.framework == AstroFramework.ID)
-        AstroWebSymbolsQueryResultsCustomizer(location)
+        AstroPolySymbolsQueryResultsCustomizer(location)
       else null
 
   }

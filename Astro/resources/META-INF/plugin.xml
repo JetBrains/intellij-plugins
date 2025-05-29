@@ -80,7 +80,7 @@
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
     <webSymbols.queryConfigurator implementation="org.jetbrains.astro.webSymbols.AstroQueryConfigurator"/>
-    <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.webSymbols.AstroWebSymbolsQueryResultsCustomizer$Provider"/>
+    <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.webSymbols.AstroPolySymbolsQueryResultsCustomizer$Provider"/>
     <webSymbols.codeCompletionItemCustomizer implementation="org.jetbrains.astro.webSymbols.AstroCodeCompletionItemCustomizer" />
 
     <html.embeddedContentSupport implementation="org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport" />

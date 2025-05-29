@@ -353,7 +353,7 @@
     <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
 
     <webSymbols.queryConfigurator implementation="org.angular2.web.Angular2PolySymbolsQueryConfigurator"/>
-    <webSymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2WebSymbolsQueryResultsCustomizer$Factory"/>
+    <webSymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2PolySymbolsQueryResultsCustomizer$Factory"/>
     <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
     <webSymbols.context kind="framework" name="angular" implementation="org.angular2.cli.AngularCliPolyContextProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.editor.Angular2Annotator"/>
@@ -428,7 +428,7 @@
 
     <!-- ReactiveForms support contributions -->
     <webSymbols.queryResultsCustomizerFactory
-      implementation="org.angular2.library.forms.Angular2FormsWebSymbolQueryResultsCustomizer$Factory"/>
+      implementation="org.angular2.library.forms.Angular2FormsPolySymbolQueryResultsCustomizer$Factory"/>
     <webSymbols.queryConfigurator implementation="org.angular2.library.forms.Angular2FormsPolySymbolQueryConfigurator"/>
     <webSymbols.codeCompletionItemCustomizer
       implementation="org.angular2.library.forms.Angular2FormsPolySymbolsCodeCompletionItemCustomizer"/>
