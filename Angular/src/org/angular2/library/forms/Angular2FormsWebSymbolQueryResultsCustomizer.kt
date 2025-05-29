@@ -4,8 +4,8 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolQualifiedName
+import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
@@ -22,14 +22,14 @@ object Angular2FormsWebSymbolQueryResultsCustomizer : WebSymbolsQueryResultsCust
   override fun createPointer(): Pointer<out WebSymbolsQueryResultsCustomizer> =
     Pointer.hardPointer(this)
 
-  override fun apply(matches: List<PolySymbol>, strict: Boolean, qualifiedName: WebSymbolQualifiedName): List<PolySymbol> =
+  override fun apply(matches: List<PolySymbol>, strict: Boolean, qualifiedName: PolySymbolQualifiedName): List<PolySymbol> =
     if (qualifiedName.qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS
         && (qualifiedName.name in FORM_ANY_CONTROL_NAME_ATTRIBUTES))
       matches.map { it.remapFormControlNameSymbol() }
     else
       matches
 
-  override fun apply(item: WebSymbolCodeCompletionItem, qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem? =
+  override fun apply(item: WebSymbolCodeCompletionItem, qualifiedKind: PolySymbolQualifiedKind): WebSymbolCodeCompletionItem? =
     item
 
   override fun getModificationCount(): Long = 0

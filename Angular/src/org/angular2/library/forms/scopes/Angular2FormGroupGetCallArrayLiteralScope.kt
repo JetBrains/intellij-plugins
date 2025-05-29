@@ -22,24 +22,24 @@ import java.util.*
 
 class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2FormGroup, private val location: JSExpression) : PolySymbolsScope {
 
-  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_STRING_LITERALS
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     if (qualifiedKind == JS_STRING_LITERALS)
       listOf(formGroupGetPathRefSymbol)
     else
       findFormSymbol()?.getSymbols(qualifiedKind, params, scope)
       ?: emptyList()
 
-  override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<WebSymbolCodeCompletionItem> =
+  override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<WebSymbolCodeCompletionItem> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getCodeCompletions(qualifiedName, params, scope)
     else
       findFormSymbol()?.getCodeCompletions(qualifiedName, params, scope)
       ?: emptyList()
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getMatchingSymbols(qualifiedName, params, scope)
     else

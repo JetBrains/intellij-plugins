@@ -10,7 +10,7 @@ import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
@@ -33,7 +33,7 @@ class Angular2DirectiveExportAs(
   override val project: Project
     get() = sourceElement.project
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = NG_DIRECTIVE_EXPORTS_AS
 
   override val type: Any?

@@ -3,7 +3,7 @@ package org.angular2.library.forms
 import com.intellij.icons.AllIcons
 import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
 import com.intellij.webSymbols.utils.qualifiedKind
@@ -13,7 +13,7 @@ class Angular2FormsWebSymbolsCodeCompletionItemCustomizer : WebSymbolCodeComplet
   override fun customize(
     item: WebSymbolCodeCompletionItem,
     framework: FrameworkId?,
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     location: PsiElement,
   ): WebSymbolCodeCompletionItem? =
     if (item.symbol?.qualifiedKind in NG_FORM_ANY_CONTROL_PROPS)

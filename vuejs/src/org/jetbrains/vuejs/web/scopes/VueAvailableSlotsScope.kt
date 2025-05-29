@@ -32,7 +32,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
   override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -46,7 +46,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
     }
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =
@@ -60,7 +60,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
     }
 
   override fun getCodeCompletions(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> =

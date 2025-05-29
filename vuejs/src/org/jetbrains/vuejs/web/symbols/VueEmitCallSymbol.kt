@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolOrigin
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
@@ -26,7 +26,7 @@ class VueEmitCallSymbol(
   owner = owner,
 ) {
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = PolySymbol.JS_EVENTS
 
   override val type: JSType?

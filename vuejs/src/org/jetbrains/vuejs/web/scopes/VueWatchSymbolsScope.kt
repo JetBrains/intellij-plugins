@@ -37,7 +37,7 @@ import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
   : WebSymbolsScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_PROPERTIES
     || qualifiedKind == VUE_COMPONENT_DATA_PROPERTIES
     || qualifiedKind == VUE_COMPONENT_COMPUTED_PROPERTIES
@@ -70,7 +70,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
   }
 
   override fun getCodeCompletions(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> =

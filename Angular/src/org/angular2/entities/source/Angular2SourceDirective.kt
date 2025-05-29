@@ -18,14 +18,12 @@ import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValueProvider.Result
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.SmartList
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
@@ -251,7 +249,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       mappings: MutableMap<String, Angular2PropertyInfo>?,
       decorator: String?,
       functionNames: List<String>,
-      qualifiedKind: WebSymbolQualifiedKind,
+      qualifiedKind: PolySymbolQualifiedKind,
       result: MutableMap<String, Angular2DirectiveProperty>,
     ) {
       val info: Angular2PropertyInfo? =

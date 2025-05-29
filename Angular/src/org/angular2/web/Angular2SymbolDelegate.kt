@@ -8,13 +8,13 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.PolySymbolDelegate
 import com.intellij.webSymbols.WebSymbolOrigin
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 
 abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : PolySymbolDelegate<T>(delegate), Angular2Symbol {
 
   abstract override fun createPointer(): Pointer<out Angular2SymbolDelegate<T>>
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = delegate.qualifiedKind
 
   override val namespace: SymbolNamespace

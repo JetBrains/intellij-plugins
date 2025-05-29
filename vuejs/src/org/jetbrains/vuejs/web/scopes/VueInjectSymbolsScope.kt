@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   : WebSymbolsScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == VUE_PROVIDES
     || qualifiedKind == JS_STRING_LITERALS
     || qualifiedKind == JS_PROPERTIES
@@ -41,7 +41,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   }
 
   override fun getCodeCompletions(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> {

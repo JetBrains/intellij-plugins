@@ -9,7 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
@@ -17,14 +17,14 @@ import java.util.*
 
 class Angular2SourceDirectiveVirtualProperty(
   override val owner: TypeScriptClass?,
-  override val qualifiedKind: WebSymbolQualifiedKind,
+  override val qualifiedKind: PolySymbolQualifiedKind,
   override val name: String,
   override val required: Boolean,
   override val sourceElement: PsiElement,
   override val textRangeInSourceElement: TextRange?,
 ) : Angular2ClassBasedDirectiveProperty, PolySymbolDeclaredInPsi {
 
-  constructor(owner: TypeScriptClass, qualifiedKind: WebSymbolQualifiedKind, info: Angular2PropertyInfo)
+  constructor(owner: TypeScriptClass, qualifiedKind: PolySymbolQualifiedKind, info: Angular2PropertyInfo)
     : this(owner, qualifiedKind, info.name, info.required, info.declaringElement ?: info.nameElement ?: owner,
            when {
              info.declarationRange != null -> info.declarationRange

@@ -25,7 +25,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
 ) : PolySymbolsScope {
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -33,7 +33,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
       .filter { isNotIncorrectlySelfReferred(it) }
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =
@@ -41,7 +41,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
       .filter { isNotIncorrectlySelfReferred(it) }
 
   override fun getCodeCompletions(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> =

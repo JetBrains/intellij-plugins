@@ -11,7 +11,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.WebSymbolQualifiedName
+import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.query.WebSymbolNamesProvider
 import com.intellij.webSymbols.query.WebSymbolNamesProvider.Target.NAMES_QUERY
 import com.intellij.webSymbols.query.WebSymbolNamesProvider.Target.RENAME_QUERY
@@ -69,7 +69,7 @@ class Angular2Framework : WebFramework() {
     Angular2AttributeNameCodeCompletionFilter(tag)
 
   override fun getNames(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     target: WebSymbolNamesProvider.Target,
   ): List<String> {
     if ((target == NAMES_QUERY || target == RENAME_QUERY)

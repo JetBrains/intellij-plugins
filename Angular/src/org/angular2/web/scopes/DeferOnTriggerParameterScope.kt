@@ -7,7 +7,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.codeInsight.blocks.getDeferOnTriggerDefinition
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
@@ -17,7 +17,7 @@ import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
   WebSymbolsScopeWithCache<Angular2BlockParameter, Unit>(null, parameter.project, parameter, Unit) {
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == PolySymbol.JS_SYMBOLS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
@@ -36,7 +36,7 @@ class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
     }
   }
 
-  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean {
+  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean {
     return qualifiedKind == PolySymbol.JS_SYMBOLS || qualifiedKind == PolySymbol.JS_KEYWORDS
   }
 

@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.astroContentRoot
@@ -22,7 +22,7 @@ import org.jetbrains.astro.webSymbols.symbols.UiFrameworkComponent
 class AstroFrontmatterScope(val file: AstroFileImpl)
   : WebSymbolsScopeWithCache<AstroFileImpl, Unit>(AstroFramework.ID, file.project, file, Unit) {
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == ASTRO_COMPONENTS || qualifiedKind == UI_FRAMEWORK_COMPONENTS
 
   override fun createPointer(): Pointer<AstroFrontmatterScope> {

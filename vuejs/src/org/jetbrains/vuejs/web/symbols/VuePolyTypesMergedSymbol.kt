@@ -106,7 +106,7 @@ class VuePolyTypesMergedSymbol(
     VueMergedSymbolDocumentationTarget(this, location, originalName ?: name)
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -125,7 +125,7 @@ class VuePolyTypesMergedSymbol(
       }
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =
@@ -161,7 +161,7 @@ class VuePolyTypesMergedSymbol(
     ?: emptyList()
 
   override fun getCodeCompletions(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> =

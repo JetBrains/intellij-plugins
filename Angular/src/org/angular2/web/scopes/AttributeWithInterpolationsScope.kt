@@ -25,7 +25,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
   override fun getModificationCount(): Long = 0
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -67,7 +67,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
   }
 
   private object PropertiesResolver : WebSymbolsPatternSymbolsResolver {
-    override fun getSymbolKinds(context: PolySymbol?): Set<WebSymbolQualifiedKind> = setOf(
+    override fun getSymbolKinds(context: PolySymbol?): Set<PolySymbolQualifiedKind> = setOf(
       JS_PROPERTIES, NG_DIRECTIVE_INPUTS
     )
 

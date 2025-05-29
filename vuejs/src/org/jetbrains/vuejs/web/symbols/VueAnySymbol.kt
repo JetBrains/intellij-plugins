@@ -9,7 +9,7 @@ import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 
 class VueAnySymbol(
   override val origin: WebSymbolOrigin,
-  qualifiedKind: WebSymbolQualifiedKind,
+  qualifiedKind: PolySymbolQualifiedKind,
   override val name: String,
   override val type: JSType? = null,
 ) : PolySymbol {

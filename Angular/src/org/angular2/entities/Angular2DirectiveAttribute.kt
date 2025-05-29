@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTES
 
@@ -18,7 +18,7 @@ interface Angular2DirectiveAttribute : Angular2Symbol, Angular2Element {
   override val project: Project
     get() = sourceElement.project
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = NG_DIRECTIVE_ATTRIBUTES
 
   override val apiStatus: PolySymbolApiStatus

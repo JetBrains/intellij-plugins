@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -29,7 +29,7 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : WebSymbolsStruct
   override val scopesBuilderProvider: (PsiFile, WebSymbolsPsiScopesHolder) -> PsiElementVisitor?
     get() = { _, holder -> ReferenceVariablesStructuredScopeVisitor(holder) }
 
-  override val providedSymbolKinds: Set<WebSymbolQualifiedKind> = PROVIDED_SYMBOL_KINDS
+  override val providedSymbolKinds: Set<PolySymbolQualifiedKind> = PROVIDED_SYMBOL_KINDS
 
   fun flattenSymbols(resolveToMultipleSymbols: Boolean): List<PolySymbol> {
     val rootScope = getRootScope() ?: return emptyList()
@@ -138,7 +138,7 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : WebSymbolsStruct
 
 
   companion object {
-    private val PROVIDED_SYMBOL_KINDS: Set<WebSymbolQualifiedKind> = setOf(JS_SYMBOLS)
+    private val PROVIDED_SYMBOL_KINDS: Set<PolySymbolQualifiedKind> = setOf(JS_SYMBOLS)
   }
 
 }

@@ -38,7 +38,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     PsiModificationTracker.getInstance(templateFile.project).modificationCount
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -66,7 +66,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
   ) : WebSymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
                                                               templateFile, Pair(tagNamespace, tagName)), PolySymbol {
 
-    override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
       qualifiedKind == JS_PROPERTIES
       || qualifiedKind == JS_EVENTS
 
@@ -195,7 +195,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override val type: JSType?
       get() = source?.getJSType(templateFile)
 
-    override val qualifiedKind: WebSymbolQualifiedKind
+    override val qualifiedKind: PolySymbolQualifiedKind
       get() = JS_PROPERTIES
 
     override fun equals(other: Any?): Boolean =
@@ -250,7 +250,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.NORMAL
 
-    override val qualifiedKind: WebSymbolQualifiedKind
+    override val qualifiedKind: PolySymbolQualifiedKind
       get() = JS_EVENTS
 
     override fun equals(other: Any?): Boolean =

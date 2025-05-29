@@ -5,7 +5,7 @@ import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolOrigin
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.utils.ReferencingPolySymbol
@@ -21,7 +21,7 @@ object VueTopLevelElementsScope : PolySymbolsScope {
   )
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =

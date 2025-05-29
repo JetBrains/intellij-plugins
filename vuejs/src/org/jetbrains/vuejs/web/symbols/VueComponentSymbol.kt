@@ -33,7 +33,7 @@ class VueComponentSymbol(
   val typeParameters: List<TypeScriptTypeParameter>
     get() = (item as? VueRegularComponent)?.typeParameters ?: emptyList()
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = VUE_COMPONENTS
 
   // The source field is used for refactoring purposes by Web Symbols framework
@@ -62,7 +62,7 @@ class VueComponentSymbol(
       PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -73,7 +73,7 @@ class VueComponentSymbol(
       super.getMatchingSymbols(qualifiedName, params, scope)
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =

@@ -44,7 +44,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
   override fun apply(
     matches: List<PolySymbol>,
     strict: Boolean,
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
   ): List<PolySymbol> =
     when {
       kinds.contains(qualifiedName.qualifiedKind) ->
@@ -65,7 +65,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
 
   override fun apply(
     item: WebSymbolCodeCompletionItem,
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
   ): WebSymbolCodeCompletionItem? {
     // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
     // remove everything else from completion

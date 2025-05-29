@@ -25,7 +25,7 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
     }
   }
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == VUE_COMPONENT_NAMESPACES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
@@ -45,7 +45,7 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
   }
 
   override fun getCodeCompletions(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> {

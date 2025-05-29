@@ -8,7 +8,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.FrameworkId
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
 import com.intellij.webSymbols.utils.qualifiedKind
@@ -31,7 +31,7 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
 
   override fun customize(item: WebSymbolCodeCompletionItem,
                          framework: FrameworkId?,
-                         qualifiedKind: WebSymbolQualifiedKind,
+                         qualifiedKind: PolySymbolQualifiedKind,
                          location: PsiElement): WebSymbolCodeCompletionItem =
     if (framework != Angular2Framework.ID)
       item

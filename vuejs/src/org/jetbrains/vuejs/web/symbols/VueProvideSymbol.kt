@@ -6,7 +6,7 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiNamedElement
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolOrigin
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueProvide
 import org.jetbrains.vuejs.web.VUE_PROVIDES
@@ -17,7 +17,7 @@ class VueProvideSymbol(
   override val origin: WebSymbolOrigin,
 ) : VueDocumentedItemSymbol<VueProvide>(provide.name, provide) {
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = VUE_PROVIDES
 
   override val type: JSType?

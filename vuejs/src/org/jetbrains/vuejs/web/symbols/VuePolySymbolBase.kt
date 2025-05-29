@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 
 abstract class VuePolySymbolBase : PolySymbolsScope {
@@ -14,6 +14,6 @@ abstract class VuePolySymbolBase : PolySymbolsScope {
   val kind: SymbolKind
     get() = qualifiedKind.kind
 
-  abstract val qualifiedKind: WebSymbolQualifiedKind
+  abstract val qualifiedKind: PolySymbolQualifiedKind
 
 }

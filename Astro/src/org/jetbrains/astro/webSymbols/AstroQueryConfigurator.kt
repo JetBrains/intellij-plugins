@@ -9,7 +9,7 @@ import com.intellij.psi.css.CssElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
@@ -21,16 +21,16 @@ import org.jetbrains.astro.webSymbols.scope.AstroFrontmatterScope
 import org.jetbrains.astro.webSymbols.scope.AstroScriptDefineVarsScope
 import org.jetbrains.astro.webSymbols.scope.AstroStyleDefineVarsScope
 
-val ASTRO_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-components")
-val ASTRO_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, "props")
+val ASTRO_COMPONENTS = PolySymbolQualifiedKind(NAMESPACE_HTML, "astro-components")
+val ASTRO_COMPONENT_PROPS = PolySymbolQualifiedKind(NAMESPACE_HTML, "props")
 
-val UI_FRAMEWORK_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ui-framework-components")
-val UI_FRAMEWORK_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, "ui-framework-component-props")
+val UI_FRAMEWORK_COMPONENTS = PolySymbolQualifiedKind(NAMESPACE_HTML, "ui-framework-components")
+val UI_FRAMEWORK_COMPONENT_PROPS = PolySymbolQualifiedKind(NAMESPACE_HTML, "ui-framework-component-props")
 
-val ASTRO_COMMON_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-common-directives")
-val ASTRO_CLIENT_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-client-directives")
-val ASTRO_STYLE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-style-directives")
-val ASTRO_SCRIPT_STYLE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "astro-script-style-directives")
+val ASTRO_COMMON_DIRECTIVES = PolySymbolQualifiedKind(NAMESPACE_HTML, "astro-common-directives")
+val ASTRO_CLIENT_DIRECTIVES = PolySymbolQualifiedKind(NAMESPACE_HTML, "astro-client-directives")
+val ASTRO_STYLE_DIRECTIVES = PolySymbolQualifiedKind(NAMESPACE_HTML, "astro-style-directives")
+val ASTRO_SCRIPT_STYLE_DIRECTIVES = PolySymbolQualifiedKind(NAMESPACE_HTML, "astro-script-style-directives")
 
 const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
 

@@ -9,7 +9,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol.Companion.CSS_PROPERTIES
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
 import org.angular2.web.scopes.Angular2CustomCssPropertiesScope.Companion.createCustomCssProperty
@@ -24,7 +24,7 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : WebSymbolsS
       CustomCssPropertyTemplateScopeBuilder(holder)
     }
 
-  override val providedSymbolKinds: Set<WebSymbolQualifiedKind>
+  override val providedSymbolKinds: Set<PolySymbolQualifiedKind>
     get() = setOf(CSS_PROPERTIES)
 
   override fun createPointer(): Pointer<HtmlAttributesCustomCssPropertiesScope> {

@@ -23,7 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
@@ -182,7 +182,7 @@ object Angular2LibrariesHacks {
 
     override val name: String = input.name.replace("([A-Z])".toRegex(), "-$1").lowercase(Locale.ENGLISH)
 
-    override val qualifiedKind: WebSymbolQualifiedKind
+    override val qualifiedKind: PolySymbolQualifiedKind
       get() = PolySymbol.HTML_ATTRIBUTES
 
     override fun createPointer(): Pointer<IonicComponentAttribute> {

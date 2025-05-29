@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolQualifiedName
+import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
@@ -39,7 +39,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
   override fun apply(
     matches: List<PolySymbol>,
     strict: Boolean,
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
   ): List<PolySymbol> {
     if (qualifiedName.namespace != PolySymbol.NAMESPACE_HTML) return matches
 
@@ -76,7 +76,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
 
   override fun apply(
     item: WebSymbolCodeCompletionItem,
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
   ): WebSymbolCodeCompletionItem {
     if (qualifiedKind == VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)

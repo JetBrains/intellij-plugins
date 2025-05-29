@@ -25,7 +25,7 @@ class ViewChildrenScope(
   mapOf(JS_STRING_LITERALS to JS_SYMBOLS), Angular2Framework.ID, decorator
 ) {
 
-  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_STRING_LITERALS
 
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
@@ -60,7 +60,7 @@ class ViewChildrenScope(
     : WebSymbolsScopeWithCache<PsiFile, Boolean>(null, file.project, file, resolveToMultipleSymbols) {
 
     override fun getCodeCompletions(
-      qualifiedName: WebSymbolQualifiedName,
+      qualifiedName: PolySymbolQualifiedName,
       params: WebSymbolsCodeCompletionQueryParams,
       scope: Stack<PolySymbolsScope>,
     ): List<WebSymbolCodeCompletionItem> =
@@ -73,7 +73,7 @@ class ViewChildrenScope(
         .forEach(consumer)
     }
 
-    override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
       qualifiedKind == JS_SYMBOLS
 
     override fun createPointer(): Pointer<ReferenceVariablesFlattenedScope> {

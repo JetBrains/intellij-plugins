@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.webSymbols.WebSymbolOrigin
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueInputProperty
@@ -17,7 +17,7 @@ class VueInputPropSymbol(
   origin: WebSymbolOrigin,
 ) : VuePropertySymbol<VueInputProperty>(property, owner, origin) {
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = VUE_COMPONENT_PROPS
 
   override val type: JSType?

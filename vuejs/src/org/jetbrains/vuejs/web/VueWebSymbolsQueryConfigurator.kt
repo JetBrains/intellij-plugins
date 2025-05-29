@@ -18,7 +18,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
@@ -34,21 +34,21 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.scopes.*
 
-val VUE_TOP_LEVEL_ELEMENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-file-top-elements")
-val VUE_COMPONENTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-components")
-val VUE_COMPONENT_PROPS = WebSymbolQualifiedKind(NAMESPACE_HTML, "props")
-val VUE_COMPONENT_COMPUTED_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "computed-properties")
-val VUE_COMPONENT_DATA_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "data-properties")
-val VUE_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-directives")
-val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-script-setup-local-directives")
-val VUE_AVAILABLE_SLOTS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-available-slots")
-val VUE_MODEL = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-model")
-val VUE_DIRECTIVE_ARGUMENT = WebSymbolQualifiedKind(NAMESPACE_HTML, "argument")
-val VUE_DIRECTIVE_MODIFIERS = WebSymbolQualifiedKind(NAMESPACE_HTML, "modifiers")
-val VUE_COMPONENT_NAMESPACES = WebSymbolQualifiedKind(NAMESPACE_JS, "vue-component-namespaces")
-val VUE_PROVIDES = WebSymbolQualifiedKind(NAMESPACE_JS, "vue-provides")
-val VUE_SPECIAL_PROPERTIES = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-special-properties")
-val VUE_BINDING_SHORTHANDS = WebSymbolQualifiedKind(NAMESPACE_HTML, "vue-binding-shorthands")
+val VUE_TOP_LEVEL_ELEMENTS = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-file-top-elements")
+val VUE_COMPONENTS = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-components")
+val VUE_COMPONENT_PROPS = PolySymbolQualifiedKind(NAMESPACE_HTML, "props")
+val VUE_COMPONENT_COMPUTED_PROPERTIES = PolySymbolQualifiedKind(NAMESPACE_HTML, "computed-properties")
+val VUE_COMPONENT_DATA_PROPERTIES = PolySymbolQualifiedKind(NAMESPACE_HTML, "data-properties")
+val VUE_DIRECTIVES = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-directives")
+val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-script-setup-local-directives")
+val VUE_AVAILABLE_SLOTS = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-available-slots")
+val VUE_MODEL = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-model")
+val VUE_DIRECTIVE_ARGUMENT = PolySymbolQualifiedKind(NAMESPACE_HTML, "argument")
+val VUE_DIRECTIVE_MODIFIERS = PolySymbolQualifiedKind(NAMESPACE_HTML, "modifiers")
+val VUE_COMPONENT_NAMESPACES = PolySymbolQualifiedKind(NAMESPACE_JS, "vue-component-namespaces")
+val VUE_PROVIDES = PolySymbolQualifiedKind(NAMESPACE_JS, "vue-provides")
+val VUE_SPECIAL_PROPERTIES = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-special-properties")
+val VUE_BINDING_SHORTHANDS = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-binding-shorthands")
 
 const val PROP_VUE_MODEL_PROP = "prop"
 const val PROP_VUE_MODEL_EVENT = "event"
@@ -208,7 +208,7 @@ class VueWebSymbolsQueryConfigurator :
 
     override fun getModificationCount(): Long = 0
 
-    override val canonicalNames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter> =
+    override val canonicalNames: Map<PolySymbolQualifiedKind, WebSymbolNameConverter> =
       mapOf(VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES to
               WebSymbolNameConverter {
                 listOf(
@@ -219,13 +219,13 @@ class VueWebSymbolsQueryConfigurator :
                 )
               })
 
-    override val renames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
+    override val renames: Map<PolySymbolQualifiedKind, WebSymbolNameConverter>
       get() = canonicalNames
 
-    override val matchNames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
+    override val matchNames: Map<PolySymbolQualifiedKind, WebSymbolNameConverter>
       get() = canonicalNames
 
-    override val completionVariants: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
+    override val completionVariants: Map<PolySymbolQualifiedKind, WebSymbolNameConverter>
       get() = canonicalNames
 
   }

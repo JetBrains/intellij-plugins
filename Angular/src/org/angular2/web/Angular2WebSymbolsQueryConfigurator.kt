@@ -23,7 +23,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.css.CSS_CLASS_LIST
@@ -303,24 +303,24 @@ const val ELEMENT_NG_CONTAINER: String = "ng-container"
 const val ELEMENT_NG_CONTENT: String = "ng-content"
 const val ELEMENT_NG_TEMPLATE: String = "ng-template"
 
-val NG_PROPERTY_BINDINGS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-property-bindings")
-val NG_EVENT_BINDINGS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-event-bindings")
-val NG_STRUCTURAL_DIRECTIVES: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-structural-directives")
-val NG_DIRECTIVE_ONE_TIME_BINDINGS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-one-time-bindings")
-val NG_DIRECTIVE_INPUTS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-inputs")
-val NG_DIRECTIVE_OUTPUTS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-outputs")
-val NG_DIRECTIVE_IN_OUTS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-in-outs")
-val NG_DIRECTIVE_ATTRIBUTES: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attributes")
-val NG_DIRECTIVE_EXPORTS_AS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-exports-as")
-val NG_DIRECTIVE_ELEMENT_SELECTORS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-element-selectors")
-val NG_DIRECTIVE_ATTRIBUTE_SELECTORS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attribute-selectors")
-val NG_I18N_ATTRIBUTES: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-i18n-attributes")
-val NG_BLOCKS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-blocks")
-val NG_BLOCK_PARAMETERS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameters")
-val NG_BLOCK_PARAMETER_PREFIXES: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameter-prefixes")
-val NG_DEFER_ON_TRIGGERS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-defer-on-triggers")
-val NG_TEMPLATE_BINDING_KEYWORDS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-template-binding-keywords")
-val NG_TEMPLATE_BINDINGS: WebSymbolQualifiedKind = WebSymbolQualifiedKind(NAMESPACE_JS, "ng-template-bindings")
+val NG_PROPERTY_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_HTML, "ng-property-bindings")
+val NG_EVENT_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_HTML, "ng-event-bindings")
+val NG_STRUCTURAL_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-structural-directives")
+val NG_DIRECTIVE_ONE_TIME_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-one-time-bindings")
+val NG_DIRECTIVE_INPUTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-directive-inputs")
+val NG_DIRECTIVE_OUTPUTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-directive-outputs")
+val NG_DIRECTIVE_IN_OUTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-directive-in-outs")
+val NG_DIRECTIVE_ATTRIBUTES: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attributes")
+val NG_DIRECTIVE_EXPORTS_AS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-directive-exports-as")
+val NG_DIRECTIVE_ELEMENT_SELECTORS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-directive-element-selectors")
+val NG_DIRECTIVE_ATTRIBUTE_SELECTORS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-directive-attribute-selectors")
+val NG_I18N_ATTRIBUTES: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_HTML, "ng-i18n-attributes")
+val NG_BLOCKS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_HTML, "ng-blocks")
+val NG_BLOCK_PARAMETERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameters")
+val NG_BLOCK_PARAMETER_PREFIXES: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_HTML, "ng-block-parameter-prefixes")
+val NG_DEFER_ON_TRIGGERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-defer-on-triggers")
+val NG_TEMPLATE_BINDING_KEYWORDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-template-binding-keywords")
+val NG_TEMPLATE_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-template-bindings")
 
 fun isNgClassLiteralContext(literal: PsiElement): Boolean =
   isJSLiteralContextFromEmbeddedContent(literal, Angular2Binding::class.java, ::isNgClassAttribute)

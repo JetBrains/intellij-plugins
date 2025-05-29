@@ -25,7 +25,7 @@ import org.jetbrains.vuejs.web.VUE_BINDING_SHORTHANDS
 class VueBindingShorthandScope(attribute: XmlAttribute)
   : WebSymbolsScopeWithCache<XmlAttribute, Unit>(null, attribute.project, attribute, Unit) {
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == VUE_BINDING_SHORTHANDS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

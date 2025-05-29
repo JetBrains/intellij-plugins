@@ -24,7 +24,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.webTypes.WebTypesSymbol
@@ -79,7 +79,7 @@ private constructor(
     PsiModificationTracker.getInstance(project).modificationCount +
     VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS.modificationCount
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == VUE_COMPONENTS
     || qualifiedKind == VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
     || qualifiedKind == VUE_DIRECTIVES

@@ -9,7 +9,7 @@ interface Angular2Symbol : PolySymbol {
 
   val project: Project
 
-  val qualifiedKind: WebSymbolQualifiedKind
+  val qualifiedKind: PolySymbolQualifiedKind
 
   override val kind: SymbolKind
     get() = qualifiedKind.kind

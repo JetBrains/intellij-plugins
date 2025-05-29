@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2LibrariesHacks
@@ -19,7 +19,7 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.web.*
 
-private val providedKinds: Set<WebSymbolQualifiedKind> = setOf(
+private val providedKinds: Set<PolySymbolQualifiedKind> = setOf(
   NG_DIRECTIVE_INPUTS,
   NG_DIRECTIVE_OUTPUTS,
   NG_DIRECTIVE_IN_OUTS,
@@ -43,7 +43,7 @@ abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T)
 
   abstract fun matchDirectives(): List<Angular2Directive>
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind in providedKinds
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

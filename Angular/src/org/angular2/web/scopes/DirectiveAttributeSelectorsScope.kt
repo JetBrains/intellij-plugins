@@ -30,7 +30,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
   override fun getModificationCount(): Long = 0
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -51,7 +51,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
     tagName: String,
   ) : WebSymbolsScopeWithCache<PsiFile, String>(Angular2Framework.ID, file.project, file, tagName), PolySymbol {
 
-    override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
       qualifiedKind in providedKinds
 
     override val name: String
@@ -82,7 +82,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
       }
     }
 
-    override fun getCodeCompletions(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<WebSymbolCodeCompletionItem> =
+    override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<WebSymbolCodeCompletionItem> =
       withTypeEvaluationLocation(dataHolder) {
         super<WebSymbolsScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
           .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }
@@ -167,7 +167,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
 
     companion object {
 
-      val providedKinds: Set<WebSymbolQualifiedKind> = setOf(
+      val providedKinds: Set<PolySymbolQualifiedKind> = setOf(
         NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS, NG_STRUCTURAL_DIRECTIVES,
         NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS, NG_DIRECTIVE_ATTRIBUTES,
       )

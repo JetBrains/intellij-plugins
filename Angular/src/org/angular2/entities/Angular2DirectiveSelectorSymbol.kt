@@ -17,7 +17,7 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.refactoring.rename.api.RenameValidationResult
 import com.intellij.refactoring.rename.api.RenameValidator
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.xml.XmlElementDescriptor
@@ -51,7 +51,7 @@ class Angular2DirectiveSelectorSymbol(
   override val project: Project
     get() = sourceElement.project
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = if (isElementSelector) NG_DIRECTIVE_ELEMENT_SELECTORS else NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
   override val declaration: WebSymbolDeclaration?

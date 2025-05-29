@@ -8,7 +8,7 @@ import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.css.StylesheetFile
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.css.getWebSymbolsCssScopeForTagClasses
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
@@ -18,7 +18,7 @@ import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.PROP_HOST_BINDING
 
-class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualifiedKind>, decorator: ES6Decorator)
+class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifiedKind>, decorator: ES6Decorator)
   : PolySymbolsIsolatedMappingScope<ES6Decorator>(mappings, Angular2Framework.ID, decorator) {
 
   override fun createPointer(): Pointer<HostBindingsScope> {
@@ -29,7 +29,7 @@ class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualified
     }
   }
 
-  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     mappings.containsKey(qualifiedKind)
 
   override fun acceptSymbol(symbol: PolySymbol): Boolean =

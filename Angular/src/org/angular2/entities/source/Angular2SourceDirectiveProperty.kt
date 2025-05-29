@@ -19,7 +19,7 @@ import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
@@ -35,7 +35,7 @@ import java.util.*
 abstract class Angular2SourceDirectiveProperty(
   override val owner: TypeScriptClass,
   protected val signature: JSRecordType.PropertySignature,
-  override val qualifiedKind: WebSymbolQualifiedKind,
+  override val qualifiedKind: PolySymbolQualifiedKind,
   override val name: String,
   override val required: Boolean,
   val declarationSource: PsiElement?,
@@ -45,7 +45,7 @@ abstract class Angular2SourceDirectiveProperty(
     fun create(
       owner: TypeScriptClass,
       signature: JSRecordType.PropertySignature,
-      qualifiedKind: WebSymbolQualifiedKind,
+      qualifiedKind: PolySymbolQualifiedKind,
       info: Angular2PropertyInfo,
     ): Angular2SourceDirectiveProperty =
       if (info.declarationRange == null || info.declaringElement == null)
@@ -150,7 +150,7 @@ abstract class Angular2SourceDirectiveProperty(
   private class Angular2SourceFieldDirectiveProperty(
     owner: TypeScriptClass,
     signature: JSRecordType.PropertySignature,
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     name: String,
     required: Boolean,
     declarationSource: PsiElement?,
@@ -198,7 +198,7 @@ abstract class Angular2SourceDirectiveProperty(
   private class Angular2SourceMappedDirectiveProperty(
     owner: TypeScriptClass,
     signature: JSRecordType.PropertySignature,
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     name: String,
     required: Boolean,
     declarationSource: PsiElement?,

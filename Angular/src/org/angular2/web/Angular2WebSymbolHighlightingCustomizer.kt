@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.highlighting.WebSymbolHighlightingCustomizer
 import com.intellij.webSymbols.js.WebSymbolJsKind
 import com.intellij.webSymbols.utils.qualifiedKind
@@ -24,7 +24,7 @@ import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 
 class Angular2WebSymbolHighlightingCustomizer : WebSymbolHighlightingCustomizer {
 
-  override fun getSymbolKindTextAttributes(qualifiedKind: WebSymbolQualifiedKind): TextAttributesKey? =
+  override fun getSymbolKindTextAttributes(qualifiedKind: PolySymbolQualifiedKind): TextAttributesKey? =
     when (qualifiedKind) {
       NG_DIRECTIVE_INPUTS -> Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
       NG_DIRECTIVE_OUTPUTS -> Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME

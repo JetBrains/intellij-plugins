@@ -60,11 +60,11 @@ class VueComponentNamespaceSymbol(
   override val kind: SymbolKind
     get() = VUE_COMPONENT_NAMESPACES.kind
 
-  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     isNamespacedKind(qualifiedKind)
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -74,7 +74,7 @@ class VueComponentNamespaceSymbol(
       emptyList()
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =
@@ -109,7 +109,7 @@ class VueComponentNamespaceSymbol(
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
 
-    override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+    override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
       isNamespacedKind(qualifiedKind) || super.isExclusiveFor(qualifiedKind)
 
     override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
@@ -123,7 +123,7 @@ class VueComponentNamespaceSymbol(
       get() = listOf(this)
 
     override fun getMatchingSymbols(
-      qualifiedName: WebSymbolQualifiedName,
+      qualifiedName: PolySymbolQualifiedName,
       params: WebSymbolsNameMatchQueryParams,
       scope: Stack<PolySymbolsScope>,
     ): List<PolySymbol> =
@@ -131,7 +131,7 @@ class VueComponentNamespaceSymbol(
       super.getMatchingSymbols(qualifiedName, params, scope)
 
     override fun getSymbols(
-      qualifiedKind: WebSymbolQualifiedKind,
+      qualifiedKind: PolySymbolQualifiedKind,
       params: WebSymbolsListSymbolsQueryParams,
       scope: Stack<PolySymbolsScope>,
     ): List<PolySymbolsScope> =
@@ -139,7 +139,7 @@ class VueComponentNamespaceSymbol(
       super.getSymbols(qualifiedKind, params, scope)
 
     override fun getCodeCompletions(
-      qualifiedName: WebSymbolQualifiedName,
+      qualifiedName: PolySymbolQualifiedName,
       params: WebSymbolsCodeCompletionQueryParams,
       scope: Stack<PolySymbolsScope>,
     ): List<WebSymbolCodeCompletionItem> =
@@ -155,7 +155,7 @@ class VueComponentNamespaceSymbol(
   }
 
   companion object {
-    private fun isNamespacedKind(qualifiedKind: WebSymbolQualifiedKind) =
+    private fun isNamespacedKind(qualifiedKind: PolySymbolQualifiedKind) =
       qualifiedKind == VUE_COMPONENT_NAMESPACES || qualifiedKind == VUE_COMPONENTS
   }
 

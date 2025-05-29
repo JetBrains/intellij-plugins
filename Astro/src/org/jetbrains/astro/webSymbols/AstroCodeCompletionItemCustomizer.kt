@@ -4,7 +4,7 @@ package org.jetbrains.astro.webSymbols
 import com.intellij.javascript.webSymbols.decorateWithSymbolType
 import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
 import org.jetbrains.astro.AstroFramework
@@ -13,7 +13,7 @@ import org.jetbrains.astro.lang.AstroFileImpl
 class AstroCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
   override fun customize(item: WebSymbolCodeCompletionItem,
                          framework: FrameworkId?,
-                         qualifiedKind: WebSymbolQualifiedKind,
+                         qualifiedKind: PolySymbolQualifiedKind,
                          location: PsiElement) =
     item.symbol
       ?.takeIf {

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NonNls
 
 class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
+  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedName.matches(NG_I18N_ATTRIBUTES)) {
@@ -35,7 +35,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
     }
     else emptyList()
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     if (qualifiedKind == NG_I18N_ATTRIBUTES) {
@@ -96,7 +96,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
     override val project: Project
       get() = attribute.project
 
-    override val qualifiedKind: WebSymbolQualifiedKind
+    override val qualifiedKind: PolySymbolQualifiedKind
       get() = NG_I18N_ATTRIBUTES
 
     override fun equals(other: Any?): Boolean =

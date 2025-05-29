@@ -12,7 +12,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
@@ -68,7 +68,7 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
     directive.inOuts.forEach(consumer)
   }
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == NG_DIRECTIVE_INPUTS
     || qualifiedKind == NG_DIRECTIVE_OUTPUTS
     || qualifiedKind == NG_DIRECTIVE_IN_OUTS

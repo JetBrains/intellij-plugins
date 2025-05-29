@@ -6,8 +6,8 @@ import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiSymbolService
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolQualifiedName
+import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -23,7 +23,7 @@ class VueScriptSetupLocalDirectiveSymbol(
   private val vueProximity: VueModelVisitor.Proximity,
 ) : VueScopeElementSymbol<VueScriptSetupLocalDirective>(directive.defaultName, directive) {
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
 
   override val priority: PolySymbol.Priority
@@ -37,7 +37,7 @@ class VueScriptSetupLocalDirectiveSymbol(
   }
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -47,7 +47,7 @@ class VueScriptSetupLocalDirectiveSymbol(
     else emptyList()
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =

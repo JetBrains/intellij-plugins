@@ -37,7 +37,7 @@ class AstroComponent(file: PsiFile)
   override val properties: Map<String, Any>
     get() = mapOf(Pair(PROP_ASTRO_PROXIMITY, AstroProximity.OUT_OF_SCOPE))
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == UI_FRAMEWORK_COMPONENT_PROPS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

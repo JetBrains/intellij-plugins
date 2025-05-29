@@ -10,7 +10,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
@@ -39,7 +39,7 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : W
   override val rootPsiElement: PsiFile
     get() = location.containingFile
 
-  override val providedSymbolKinds: Set<WebSymbolQualifiedKind>
+  override val providedSymbolKinds: Set<PolySymbolQualifiedKind>
     get() = NG_FORM_ANY_CONTROL_PROPS
 
   override val scopesBuilderProvider: (PsiFile, WebSymbolsPsiScopesHolder) -> PsiElementVisitor?

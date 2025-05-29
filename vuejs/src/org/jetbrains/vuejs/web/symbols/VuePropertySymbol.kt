@@ -20,18 +20,18 @@ abstract class VuePropertySymbol<T : VueProperty>(
 
   abstract override fun createPointer(): Pointer<out VuePropertySymbol<T>>
 
-  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_PROPERTIES
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =

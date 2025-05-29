@@ -12,7 +12,7 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndexEx
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
@@ -21,7 +21,7 @@ import org.jetbrains.astro.webSymbols.symbols.AstroComponent
 
 internal class AstroAvailableComponentsScope(project: Project) : WebSymbolsScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == ASTRO_COMPONENTS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

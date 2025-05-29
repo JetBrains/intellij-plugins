@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackCoreDirectiveRequiredInputStatus
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs
@@ -220,7 +220,7 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
       clazz: TypeScriptClass,
       property: JSRecordType.PropertySignature,
       mappings: MutableMap<String, Angular2PropertyInfo>,
-      qualifiedKind: WebSymbolQualifiedKind,
+      qualifiedKind: PolySymbolQualifiedKind,
       result: MutableMap<String, Angular2DirectiveProperty>,
     ) {
       val info = mappings.remove(property.memberName)

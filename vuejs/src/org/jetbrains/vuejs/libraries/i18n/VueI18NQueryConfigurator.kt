@@ -54,7 +54,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
     override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
     override fun getSymbols(
-      qualifiedKind: WebSymbolQualifiedKind,
+      qualifiedKind: PolySymbolQualifiedKind,
       params: WebSymbolsListSymbolsQueryParams,
       scope: Stack<PolySymbolsScope>,
     ): List<PolySymbolsScope> {

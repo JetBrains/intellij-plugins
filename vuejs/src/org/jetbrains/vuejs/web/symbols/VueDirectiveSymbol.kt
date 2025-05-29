@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolQualifiedName
+import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -23,14 +23,14 @@ open class VueDirectiveSymbol(
   private val vueProximity: VueModelVisitor.Proximity,
 ) : VueScopeElementSymbol<VueDirective>(fromAsset(name), directive) {
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = VUE_DIRECTIVES
 
   override val priority: PolySymbol.Priority
     get() = vueProximity.asWebSymbolPriority()
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
@@ -40,7 +40,7 @@ open class VueDirectiveSymbol(
     else emptyList()
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =

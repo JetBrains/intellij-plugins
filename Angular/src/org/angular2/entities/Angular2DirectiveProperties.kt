@@ -13,7 +13,7 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
 import com.intellij.webSymbols.utils.coalesceWith
@@ -70,7 +70,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
   private class InputDirectiveProperty(inOut: Angular2DirectiveProperty)
     : AbstractFromInOutDirectiveProperty(inOut) {
 
-    override val qualifiedKind: WebSymbolQualifiedKind
+    override val qualifiedKind: PolySymbolQualifiedKind
       get() = NG_DIRECTIVE_INPUTS
 
     override val required: Boolean
@@ -91,7 +91,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
     override val name: String =
       inOut.name + OUTPUT_CHANGE_SUFFIX
 
-    override val qualifiedKind: WebSymbolQualifiedKind
+    override val qualifiedKind: PolySymbolQualifiedKind
       get() = NG_DIRECTIVE_OUTPUTS
 
     override val required: Boolean
@@ -185,7 +185,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
                                        private val myOutput: Angular2DirectiveProperty)
     : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
 
-    override val qualifiedKind: WebSymbolQualifiedKind
+    override val qualifiedKind: PolySymbolQualifiedKind
       get() = NG_DIRECTIVE_IN_OUTS
 
 

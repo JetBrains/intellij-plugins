@@ -16,7 +16,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.Angular2LibrariesHacks
@@ -28,7 +28,7 @@ class Angular2MetadataDirectiveProperty internal constructor(
   private val myOwner: Angular2MetadataClassBase<*>,
   private val myFieldName: String,
   override val name: String,
-  override val qualifiedKind: WebSymbolQualifiedKind,
+  override val qualifiedKind: PolySymbolQualifiedKind,
 ) : Angular2ClassBasedDirectiveProperty, PsiSourcedPolySymbol {
 
   private val mySignature: NullableLazyValue<JSRecordType.PropertySignature> =

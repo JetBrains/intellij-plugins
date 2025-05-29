@@ -62,7 +62,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
   }
 
   override fun getCodeCompletions(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<WebSymbolCodeCompletionItem> =
@@ -70,7 +70,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
       it.withPriority(Priority.HIGHEST)
     }
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == NG_TEMPLATE_BINDINGS
     || qualifiedKind == NG_DIRECTIVE_INPUTS
     || qualifiedKind == JS_PROPERTIES

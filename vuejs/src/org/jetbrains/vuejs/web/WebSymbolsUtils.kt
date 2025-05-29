@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedName
+import com.intellij.webSymbols.PolySymbolQualifiedName
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
@@ -35,6 +35,6 @@ fun VueModelVisitor.Proximity.asWebSymbolPriority(): PolySymbol.Priority =
     VueModelVisitor.Proximity.OUT_OF_SCOPE -> PolySymbol.Priority.LOW
   }
 
-internal fun isVueComponentQuery(qualifiedName: WebSymbolQualifiedName): Boolean {
+internal fun isVueComponentQuery(qualifiedName: PolySymbolQualifiedName): Boolean {
   return qualifiedName.name.getOrNull(0)?.isUpperCase() == true || qualifiedName.name.contains('-')
 }

@@ -24,7 +24,7 @@ class UiFrameworkComponent(override val name: String,
                            override val source: PsiElement,
                            override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH)
   : PsiSourcedPolySymbol, WebSymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit){
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
+  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
@@ -32,7 +32,7 @@ class UiFrameworkComponent(override val name: String,
     else
       super<WebSymbolsScopeWithCache>.getMatchingSymbols(qualifiedName, params, scope)
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == UI_FRAMEWORK_COMPONENT_PROPS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

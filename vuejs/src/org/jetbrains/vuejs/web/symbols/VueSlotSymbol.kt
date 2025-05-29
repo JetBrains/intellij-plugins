@@ -28,14 +28,14 @@ class VueSlotSymbol(
   override val pattern: WebSymbolsPattern?
     get() = item.pattern?.let { WebSymbolsPatternFactory.createRegExMatch(it, true) }
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = PolySymbol.HTML_SLOTS
 
   override val type: JSType?
     get() = item.scope
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> {
@@ -43,7 +43,7 @@ class VueSlotSymbol(
   }
 
   override fun getMatchingSymbols(
-    qualifiedName: WebSymbolQualifiedName,
+    qualifiedName: PolySymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> {

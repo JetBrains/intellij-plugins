@@ -7,8 +7,8 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.WebSymbolQualifiedName
+import com.intellij.webSymbols.PolySymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
@@ -23,7 +23,7 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
 
   override fun apply(matches: List<PolySymbol>,
                      strict: Boolean,
-                     qualifiedName: WebSymbolQualifiedName): List<PolySymbol> =
+                     qualifiedName: PolySymbolQualifiedName): List<PolySymbol> =
     if (qualifiedName.qualifiedKind != ASTRO_COMPONENTS)
       matches
     else if (isHtmlTagName(qualifiedName.name))
@@ -36,7 +36,7 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
         })
       }
 
-  override fun apply(item: WebSymbolCodeCompletionItem, qualifiedKind: WebSymbolQualifiedKind): WebSymbolCodeCompletionItem? {
+  override fun apply(item: WebSymbolCodeCompletionItem, qualifiedKind: PolySymbolQualifiedKind): WebSymbolCodeCompletionItem? {
     if (qualifiedKind == ASTRO_COMPONENTS) {
       if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.properties?.get(PROP_ASTRO_PROXIMITY)

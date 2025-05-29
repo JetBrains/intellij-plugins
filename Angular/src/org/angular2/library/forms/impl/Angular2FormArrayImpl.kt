@@ -4,7 +4,7 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import org.angular2.library.forms.Angular2FormArray
@@ -15,11 +15,11 @@ class Angular2FormArrayImpl(
   source: JSProperty,
 ) : Angular2FormArray, Angular2FormAbstractControlImpl(source) {
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = NG_FORM_ARRAY_PROPS
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =

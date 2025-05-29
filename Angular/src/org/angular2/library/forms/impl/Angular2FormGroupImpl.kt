@@ -7,7 +7,7 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import org.angular2.library.forms.Angular2FormAbstractControl
@@ -26,13 +26,13 @@ class Angular2FormGroupImpl(
   }
 
   override fun getSymbols(
-    qualifiedKind: WebSymbolQualifiedKind,
+    qualifiedKind: PolySymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolsScope> =
     members.filter { it.qualifiedKind == qualifiedKind }
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = if (source is TypeScriptField) NG_FORM_GROUP_FIELDS else NG_FORM_GROUP_PROPS
 
   override fun createPointer(): Pointer<Angular2FormGroupImpl> {

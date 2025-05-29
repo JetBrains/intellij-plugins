@@ -24,7 +24,7 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbol.Companion.CSS_PROPERTIES
 import com.intellij.webSymbols.WebSymbolOrigin
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import com.intellij.webSymbols.css.properties.AbstractCssCustomPropertySymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
@@ -78,7 +78,7 @@ class Angular2CustomCssPropertiesScope(file: PsiFile) :
     )
   }
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == CSS_PROPERTIES
 
   override fun createPointer(): Pointer<Angular2CustomCssPropertiesScope> {

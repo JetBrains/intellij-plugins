@@ -102,7 +102,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
       }
   }
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
+  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
                                   scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     /* Do not support reference resolution */
@@ -112,7 +112,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     else
       emptyList()
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind,
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind,
                           params: WebSymbolsListSymbolsQueryParams,
                           scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     /* Do not support reference resolution */
@@ -125,7 +125,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     }
   }
 
-  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_STRING_LITERALS && dataHolder
       .takeIf { it is JSReferenceExpression || it is JSLiteralExpression }
       ?.let { jsElement ->
@@ -136,7 +136,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
         }
       } == true
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_STRING_LITERALS
     || qualifiedKind == NG_DIRECTIVE_INPUTS
     || qualifiedKind == NG_DIRECTIVE_OUTPUTS
@@ -157,7 +157,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
   private class Angular2FieldPropertySymbol(
     delegate: JSPropertySymbol,
-    override val qualifiedKind: WebSymbolQualifiedKind,
+    override val qualifiedKind: PolySymbolQualifiedKind,
     override val project: Project,
     val owner: TypeScriptClass?,
   ) : PolySymbolDelegate<JSPropertySymbol>(delegate), Angular2Symbol {

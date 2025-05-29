@@ -24,7 +24,7 @@ abstract class AstroDefineVarsScope(tag: XmlTag)
 
   protected abstract val providedSymbol: PolySymbol
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == providedSymbol.qualifiedKind
     || qualifiedKind == JS_PROPERTIES
 
@@ -65,7 +65,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
       WebSymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(
-            qualifiedKind = WebSymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
+            qualifiedKind = PolySymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
         )
         ),
         false,
@@ -102,7 +102,7 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
       WebSymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(
-            qualifiedKind = WebSymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
+            qualifiedKind = PolySymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
         )
         ),
         false,

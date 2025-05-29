@@ -11,7 +11,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.PolySymbolApiStatus
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2Directive
@@ -49,7 +49,7 @@ open class Angular2StructuralDirectiveSymbol private constructor(
   override val priority: PolySymbol.Priority?
     get() = PolySymbol.Priority.HIGH
 
-  override val qualifiedKind: WebSymbolQualifiedKind
+  override val qualifiedKind: PolySymbolQualifiedKind
     get() = NG_STRUCTURAL_DIRECTIVES
 
   override val properties: Map<String, Any>

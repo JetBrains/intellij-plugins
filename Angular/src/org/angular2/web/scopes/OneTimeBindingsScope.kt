@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
-  override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

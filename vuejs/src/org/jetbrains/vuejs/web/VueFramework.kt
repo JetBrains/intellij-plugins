@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.PolySymbol
-import com.intellij.webSymbols.WebSymbolQualifiedName
+import com.intellij.webSymbols.PolySymbolQualifiedName
 import com.intellij.webSymbols.query.WebSymbolNamesProvider
 import com.intellij.webSymbols.query.WebSymbolNamesProvider.Target.*
 import org.jetbrains.vuejs.VuejsIcons
@@ -33,7 +33,7 @@ class VueFramework : WebFramework() {
       else -> null
     }
 
-  override fun getNames(qualifiedName: WebSymbolQualifiedName, target: WebSymbolNamesProvider.Target): List<String> {
+  override fun getNames(qualifiedName: PolySymbolQualifiedName, target: WebSymbolNamesProvider.Target): List<String> {
     val name = qualifiedName.name
 
     return when (qualifiedName.qualifiedKind) {

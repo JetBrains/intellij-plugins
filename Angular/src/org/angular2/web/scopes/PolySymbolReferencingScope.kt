@@ -4,28 +4,28 @@ import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.WebSymbolOrigin
-import com.intellij.webSymbols.WebSymbolQualifiedKind
+import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import com.intellij.webSymbols.utils.qualifiedKind
 
 class PolySymbolReferencingScope(
-  qualifiedKind: WebSymbolQualifiedKind,
+  qualifiedKind: PolySymbolQualifiedKind,
   name: String,
   private val isExclusive: Boolean,
   origin: WebSymbolOrigin,
-  vararg qualifiedKinds: WebSymbolQualifiedKind,
+  vararg qualifiedKinds: PolySymbolQualifiedKind,
 ) : PolySymbolsScope {
 
   private val symbol = ReferencingPolySymbol.create(
     qualifiedKind, name, origin, *qualifiedKinds
   )
 
-  override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
+  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     isExclusive && qualifiedKind == symbol.qualifiedKind
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     if (qualifiedKind == symbol.qualifiedKind)
       listOf(symbol)
     else

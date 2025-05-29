@@ -23,7 +23,7 @@ object TemplateBindingKeywordsScope : PolySymbolsScope {
   private val KEYWORDS_REF_FOR_NG_TEMPLATE_BINDINGS = ReferencingPolySymbol.create(
     NG_TEMPLATE_BINDINGS, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
-  override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
     when (qualifiedKind) {
       JS_SYMBOLS -> listOf(KEYWORDS_REF_FOR_JS_SYMBOLS)
       NG_TEMPLATE_BINDINGS -> listOf(KEYWORDS_REF_FOR_NG_TEMPLATE_BINDINGS)
@@ -31,7 +31,7 @@ object TemplateBindingKeywordsScope : PolySymbolsScope {
       else -> emptyList()
     }
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     emptyList()
 
   override fun createPointer(): Pointer<out PolySymbolsScope> =
