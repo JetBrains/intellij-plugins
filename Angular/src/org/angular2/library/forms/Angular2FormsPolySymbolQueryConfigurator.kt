@@ -17,7 +17,7 @@ import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
@@ -27,7 +27,7 @@ import org.angular2.library.forms.scopes.Angular2FormGroupGetCallArrayLiteralSco
 import org.angular2.library.forms.scopes.Angular2FormGroupGetCallLiteralScope
 import org.angular2.library.forms.scopes.Angular2FormSymbolsScopeInAttributeValue
 
-class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
+class Angular2FormsPolySymbolQueryConfigurator : PolySymbolsQueryConfigurator {
 
   override fun getScope(
     project: Project,

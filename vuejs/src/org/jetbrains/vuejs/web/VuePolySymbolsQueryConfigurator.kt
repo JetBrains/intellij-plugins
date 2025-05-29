@@ -24,7 +24,7 @@ import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
 import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
 import com.intellij.webSymbols.query.WebSymbolNameConverter
-import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.isScriptSetupLocalDirectiveName
@@ -56,8 +56,8 @@ const val PROP_VUE_MODEL_EVENT = "event"
 const val PROP_VUE_PROXIMITY = "x-vue-proximity"
 const val PROP_VUE_COMPOSITION_COMPONENT = "x-vue-composition-component"
 
-class VueWebSymbolsQueryConfigurator :
-  WebSymbolsQueryConfigurator {
+class VuePolySymbolsQueryConfigurator :
+  PolySymbolsQueryConfigurator {
 
   override fun getScope(
     project: Project,

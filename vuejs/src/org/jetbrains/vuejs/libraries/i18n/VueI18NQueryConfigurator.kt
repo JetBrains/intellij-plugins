@@ -13,13 +13,13 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 import org.jetbrains.vuejs.web.VueFramework
 
-class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
+class VueI18NQueryConfigurator : PolySymbolsQueryConfigurator {
 
   override fun getScope(
     project: Project,

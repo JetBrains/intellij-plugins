@@ -12,7 +12,7 @@ import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.PolySymbolQualifiedKind
 import com.intellij.webSymbols.PolySymbolsScope
 import com.intellij.webSymbols.context.PolyContext
-import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileImpl
@@ -34,7 +34,7 @@ val ASTRO_SCRIPT_STYLE_DIRECTIVES = PolySymbolQualifiedKind(NAMESPACE_HTML, "ast
 
 const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
 
-class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
+class AstroQueryConfigurator : PolySymbolsQueryConfigurator {
 
   override fun getScope(project: Project, location: PsiElement?, context: PolyContext, allowResolve: Boolean): List<PolySymbolsScope> {
     if (context.framework != AstroFramework.ID || location?.containingFile !is AstroFileImpl) return emptyList()

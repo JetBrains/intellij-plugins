@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
-import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
+import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
@@ -60,7 +60,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
     }
     else if (qualifiedName.matches(PolySymbol.HTML_ELEMENTS)) {
       val standardHtmlSymbols = result.filterTo(LinkedHashSet()) { symbol ->
-        symbol.nameSegments.flatMap { it.symbols }.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
+        symbol.nameSegments.flatMap { it.symbols }.any { it is PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
       }
       if (standardHtmlSymbols.isEmpty()) return result
       if (isVueComponentQuery(qualifiedName)) {

@@ -29,7 +29,7 @@ import com.intellij.webSymbols.context.PolyContext
 import com.intellij.webSymbols.css.CSS_CLASS_LIST
 import com.intellij.webSymbols.query.WebSymbolNameConversionRules
 import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
-import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import com.intellij.webSymbols.query.PolySymbolsQueryConfigurator
 import org.angular2.*
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
@@ -56,7 +56,7 @@ import org.angular2.signals.Angular2SignalUtils.isViewChildSignalCall
 import org.angular2.signals.Angular2SignalUtils.isViewChildrenSignalCall
 import org.angular2.web.scopes.*
 
-class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
+class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
 
   override fun getScope(
     project: Project,

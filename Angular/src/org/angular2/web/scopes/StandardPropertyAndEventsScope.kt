@@ -3,7 +3,7 @@ package org.angular2.web.scopes
 
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
-import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
+import com.intellij.html.webSymbols.PolySymbolsHtmlQueryConfigurator
 import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSFile
@@ -217,7 +217,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     private val mainSource: TypeScriptPropertySignature?,
     private val mapSource: TypeScriptPropertySignature?,
     private val templateFile: PsiFile,
-  ) : WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol(), Angular2PsiSourcedSymbol {
+  ) : PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol(), Angular2PsiSourcedSymbol {
 
     override val source: PsiElement?
       get() = mainSource ?: mapSource
