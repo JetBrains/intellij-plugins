@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
@@ -17,8 +17,8 @@ import org.angular2.lang.types.BindingsTypeResolver
 import org.angular2.web.scopes.OneTimeBindingsScope
 
 
-private val typedKinds = setOf(WebSymbol.JS_EVENTS,
-                               WebSymbol.JS_PROPERTIES,
+private val typedKinds = setOf(PolySymbol.JS_EVENTS,
+                               PolySymbol.JS_PROPERTIES,
                                NG_DIRECTIVE_ATTRIBUTES,
                                NG_DIRECTIVE_INPUTS,
                                NG_DIRECTIVE_OUTPUTS,
@@ -37,13 +37,13 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
       item
     else
       when (qualifiedKind) {
-        WebSymbol.HTML_ATTRIBUTES, WebSymbol.HTML_ATTRIBUTE_VALUES ->
+        PolySymbol.HTML_ATTRIBUTES, PolySymbol.HTML_ATTRIBUTE_VALUES ->
           item.symbol
             ?.let { symbol ->
               val symbolKind = symbol.qualifiedKind
               when {
                 typedKinds.contains(symbolKind) -> item.decorateWithSymbolType(location, symbol)
-                selectorKinds.contains(symbolKind) -> item.withPriority(WebSymbol.Priority.HIGH)
+                selectorKinds.contains(symbolKind) -> item.withPriority(PolySymbol.Priority.HIGH)
 
                 // One time bindings and selectors require special handling
                 // to not override standard attributes and elements
@@ -51,8 +51,8 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
                   item
                     .decorateWithSymbolType(location, symbol)
                     .withPriority(
-                      symbol.properties[OneTimeBindingsScope.PROP_DELEGATE_PRIORITY] as WebSymbol.Priority?
-                      ?: WebSymbol.Priority.HIGH
+                      symbol.properties[OneTimeBindingsScope.PROP_DELEGATE_PRIORITY] as PolySymbol.Priority?
+                      ?: PolySymbol.Priority.HIGH
                     )
 
                 symbolKind == NG_DIRECTIVE_EXPORTS_AS ->
@@ -62,7 +62,7 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
               }
             }
           ?: item
-        else -> if (qualifiedKind.namespace == WebSymbol.NAMESPACE_JS
+        else -> if (qualifiedKind.namespace == PolySymbol.NAMESPACE_JS
                     && typedKinds.contains(item.symbol?.qualifiedKind))
           item.decorateWithSymbolType(location, item.symbol)
         else

@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import org.angular2.entities.Angular2Component
 import org.angular2.lang.Angular2Bundle
 import org.angular2.web.PROP_SYMBOL_DIRECTIVE
@@ -29,7 +29,7 @@ class Angular2TypeDeclarationProvider : TypeDeclarationProvider, SymbolTypeProvi
   }
 
   override fun getSymbolTypes(project: Project, symbol: Symbol): List<Symbol> {
-    if (symbol is WebSymbol) {
+    if (symbol is PolySymbol) {
       symbol.properties[PROP_SYMBOL_DIRECTIVE]
         ?.asSafely<Angular2Component>()
         ?.templateFile

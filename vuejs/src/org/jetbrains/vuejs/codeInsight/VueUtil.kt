@@ -42,8 +42,8 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.PolySymbol
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
@@ -465,7 +465,7 @@ fun SemVer.withoutPreRelease() =
     SemVer("${this.major}.${this.minor}.${this.patch}", this.major, this.minor, this.patch)
   else this
 
-fun WebSymbol.extractComponentSymbol(): WebSymbol? =
+fun PolySymbol.extractComponentSymbol(): PolySymbol? =
   this.takeIf { it.namespace == NAMESPACE_HTML }
     ?.unwrapMatchedSymbols()
     ?.toList()

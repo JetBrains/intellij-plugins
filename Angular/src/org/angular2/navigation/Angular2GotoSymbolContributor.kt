@@ -10,7 +10,7 @@ import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.indexing.FindSymbolParameters
 import com.intellij.util.indexing.IdFilter
-import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi.PsiNavigatableWebSymbolNavigationTarget
+import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi.PsiNavigatableWebSymbolNavigationTarget
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.getDirective

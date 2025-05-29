@@ -2,8 +2,8 @@
 package org.angular2.codeInsight.blocks
 
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.JS_SYMBOLS
+import com.intellij.webSymbols.PolySymbol
+import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.webTypes.WebTypesSymbolBase
 import com.intellij.webSymbols.webTypes.WebTypesSymbolFactory
@@ -38,9 +38,9 @@ class Angular2HtmlBlockSymbol : WebTypesSymbolBase() {
     get() = getSymbols(NG_BLOCK_PARAMETER_PREFIXES, WebSymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
       .filterIsInstance<Angular2BlockParameterPrefixSymbol>()
 
-  val implicitVariables: List<WebSymbol>
+  val implicitVariables: List<PolySymbol>
     get() = getSymbols(JS_SYMBOLS, WebSymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
-      .filterIsInstance<WebSymbol>()
+      .filterIsInstance<PolySymbol>()
 
   class Factory : WebTypesSymbolFactory {
     override fun create(): WebTypesSymbolBase =

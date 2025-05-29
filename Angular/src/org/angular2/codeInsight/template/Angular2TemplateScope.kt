@@ -4,7 +4,7 @@ package org.angular2.codeInsight.template
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import java.util.*
 import java.util.function.Consumer
 
@@ -51,5 +51,5 @@ protected constructor(val parent: Angular2TemplateScope?) {
 
   open val source: PsiElement? get() = null
 
-  open val symbols: List<WebSymbol> get() = emptyList()
+  open val symbols: List<PolySymbol> get() = emptyList()
 }

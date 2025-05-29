@@ -10,8 +10,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.JS_SYMBOLS
+import com.intellij.webSymbols.PolySymbol
+import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
 import org.angular2.codeInsight.template.isTemplateTag
@@ -31,9 +31,9 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : WebSymbolsStruct
 
   override val providedSymbolKinds: Set<WebSymbolQualifiedKind> = PROVIDED_SYMBOL_KINDS
 
-  fun flattenSymbols(resolveToMultipleSymbols: Boolean): List<WebSymbol> {
+  fun flattenSymbols(resolveToMultipleSymbols: Boolean): List<PolySymbol> {
     val rootScope = getRootScope() ?: return emptyList()
-    val result = mutableListOf<WebSymbol>()
+    val result = mutableListOf<PolySymbol>()
     if (resolveToMultipleSymbols) {
       val stack = mutableListOf(rootScope)
       while (!stack.isEmpty()) {

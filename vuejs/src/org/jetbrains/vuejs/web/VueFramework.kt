@@ -7,7 +7,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.query.WebSymbolNamesProvider
 import com.intellij.webSymbols.query.WebSymbolNamesProvider.Target.*
@@ -54,7 +54,7 @@ class VueFramework : WebFramework() {
         NAMES_MAP_STORAGE -> listOf(fromAsset(name))
         CODE_COMPLETION_VARIANTS -> listOf(fromAsset(name))
       }
-      WebSymbol.JS_EVENTS -> when (target) {
+      PolySymbol.JS_EVENTS -> when (target) {
         NAMES_QUERY, RENAME_QUERY -> listOf(fromAsset(name), name, fromAsset(name, hyphenBeforeDigit = true))
         NAMES_MAP_STORAGE -> listOf(fromAsset(name, hyphenBeforeDigit = true))
         // TODO proposed variant should be taken from code style settings synced from ESLint settings

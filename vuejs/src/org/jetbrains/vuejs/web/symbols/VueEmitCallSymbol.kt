@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
@@ -20,20 +20,20 @@ class VueEmitCallSymbol(
   emitCall: VueEmitCall,
   owner: VueComponent,
   origin: WebSymbolOrigin,
-) : VueNamedWebSymbol<VueEmitCall>(
+) : VueNamedPolySymbol<VueEmitCall>(
   item = emitCall,
   origin = origin,
   owner = owner,
 ) {
 
   override val qualifiedKind: WebSymbolQualifiedKind
-    get() = WebSymbol.JS_EVENTS
+    get() = PolySymbol.JS_EVENTS
 
   override val type: JSType?
     get() = item.eventJSType
 
-  override val priority: WebSymbol.Priority
-    get() = WebSymbol.Priority.HIGHEST
+  override val priority: PolySymbol.Priority
+    get() = PolySymbol.Priority.HIGHEST
 
   override val attributeValue: WebSymbolHtmlAttributeValue =
     WebSymbolHtmlAttributeValue.create(WebSymbolHtmlAttributeValue.Kind.EXPRESSION, WebSymbolHtmlAttributeValue.Type.OF_MATCH)

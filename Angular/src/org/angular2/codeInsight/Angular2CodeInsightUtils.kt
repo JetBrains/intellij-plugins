@@ -12,7 +12,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemInsertHandler
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
@@ -43,8 +43,8 @@ object Angular2CodeInsightUtils {
   fun wrapWithImportDeclarationModuleHandler(item: WebSymbolCodeCompletionItem,
                                              elementClass: Class<out PsiElement>): WebSymbolCodeCompletionItem {
     return item.withInsertHandlerAdded(object : WebSymbolCodeCompletionItemInsertHandler {
-      override val priority: WebSymbol.Priority
-        get() = WebSymbol.Priority.LOWEST
+      override val priority: PolySymbol.Priority
+        get() = PolySymbol.Priority.LOWEST
 
       override fun prepare(context: InsertionContext, item: LookupElement, completeAfterInsert: Boolean): Runnable? {
         val templateBindings = Angular2TemplateBindings::class.java == elementClass

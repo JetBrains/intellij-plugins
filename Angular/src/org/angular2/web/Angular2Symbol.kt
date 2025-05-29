@@ -5,7 +5,7 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.webSymbols.*
 
-interface Angular2Symbol : WebSymbol {
+interface Angular2Symbol : PolySymbol {
 
   val project: Project
 

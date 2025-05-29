@@ -16,7 +16,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
@@ -33,27 +33,27 @@ const val SLOT_NAME_ATTRIBUTE = "name"
 
 const val DEPRECATED_SLOT_ATTRIBUTE = "slot"
 
-fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<WebSymbol> =
+fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<PolySymbol> =
   processSlots(
     tag = tag,
     newApi = newApi,
     anyMatch = { anySlot.match(name, WebSymbolsNameMatchQueryParams.create(WebSymbolsQueryExecutorFactory.getInstance(tag.project).create(null)), Stack()) },
-    process = { runNameMatchQuery(WebSymbol.HTML_SLOTS.withName(name)) },
+    process = { runNameMatchQuery(PolySymbol.HTML_SLOTS.withName(name)) },
   )
 
-fun getAvailableSlots(tag: XmlTag, expandPatterns: Boolean, newApi: Boolean): List<WebSymbol> =
+fun getAvailableSlots(tag: XmlTag, expandPatterns: Boolean, newApi: Boolean): List<PolySymbol> =
   processSlots(tag, newApi, { emptyList() }) {
-    runListSymbolsQuery(WebSymbol.HTML_SLOTS, expandPatterns)
+    runListSymbolsQuery(PolySymbol.HTML_SLOTS, expandPatterns)
   }
 
 fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newApi: Boolean): List<WebSymbolCodeCompletionItem> =
   processSlots(tag, newApi, { emptyList() }) {
-    runCodeCompletionQuery(WebSymbol.HTML_SLOTS, name, position)
+    runCodeCompletionQuery(PolySymbol.HTML_SLOTS, name, position)
   }
 
 private val anySlot = VueAnySymbol(
   WebSymbolOrigin.empty(),
-  WebSymbol.HTML_SLOTS,
+  PolySymbol.HTML_SLOTS,
   "Unknown slot"
 )
 

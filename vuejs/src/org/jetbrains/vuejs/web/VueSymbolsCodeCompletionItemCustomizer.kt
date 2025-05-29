@@ -11,7 +11,7 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
@@ -30,12 +30,12 @@ class VueSymbolsCodeCompletionItemCustomizer :
   ): WebSymbolCodeCompletionItem? =
     if (framework == VueFramework.ID)
       when (qualifiedKind) {
-        WebSymbol.HTML_ATTRIBUTES ->
+        PolySymbol.HTML_ATTRIBUTES ->
           item.symbol
-            ?.takeIf { it.kind == VUE_COMPONENT_PROPS.kind || it.kind == WebSymbol.KIND_JS_EVENTS }
+            ?.takeIf { it.kind == VUE_COMPONENT_PROPS.kind || it.kind == PolySymbol.KIND_JS_EVENTS }
             ?.let { item.decorateWithSymbolType(location, it) }
           ?: item
-        WebSymbol.HTML_ELEMENTS ->
+        PolySymbol.HTML_ELEMENTS ->
           item.takeIf { !shouldFilterOutLowerCaseScriptSetupIdentifier(it) }
         else -> item
       }

@@ -6,7 +6,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
+import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
@@ -35,7 +35,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbol> =
+  ): List<PolySymbol> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
       qualifiedName.matches(HTML_ATTRIBUTES) ->
@@ -75,12 +75,12 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
     }
   }
 
-  object DefaultSlotSymbol : WebSymbol {
+  object DefaultSlotSymbol : PolySymbol {
     override val namespace: SymbolNamespace
-      get() = WebSymbol.NAMESPACE_HTML
+      get() = PolySymbol.NAMESPACE_HTML
 
     override val kind: SymbolKind
-      get() = WebSymbol.KIND_HTML_ATTRIBUTES
+      get() = PolySymbol.KIND_HTML_ATTRIBUTES
 
     override val name: String
       get() = "v-slot"
@@ -95,7 +95,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
         listOf(VUE_AVAILABLE_SLOTS.withName(DEFAULT_SLOT_NAME))
       )
 
-    override fun createPointer(): Pointer<out WebSymbol> {
+    override fun createPointer(): Pointer<out PolySymbol> {
       return Pointer.hardPointer(this)
     }
   }

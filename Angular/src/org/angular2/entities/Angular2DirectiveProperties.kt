@@ -10,8 +10,8 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
-import com.intellij.webSymbols.PsiSourcedWebSymbol
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
@@ -112,13 +112,13 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
 
   private abstract class AbstractFromInOutDirectiveProperty(inOut: Angular2DirectiveProperty)
     : Angular2SymbolDelegate<Angular2DirectiveProperty>(inOut),
-      Angular2DirectiveProperty, PsiSourcedWebSymbol {
+      Angular2DirectiveProperty, PsiSourcedPolySymbol {
 
     override val psiContext: PsiElement?
       get() = delegate.psiContext
 
     override val source: PsiElement?
-      get() = (delegate as? PsiSourcedWebSymbol)?.source
+      get() = (delegate as? PsiSourcedPolySymbol)?.source
 
     override val rawJsType: JSType?
       get() = delegate.rawJsType
@@ -143,7 +143,7 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
     override val project: Project
       get() = delegate.project
 
-    override val priority: WebSymbol.Priority?
+    override val priority: PolySymbol.Priority?
       get() = delegate.priority
 
     override val attributeValue: WebSymbolHtmlAttributeValue?

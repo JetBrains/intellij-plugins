@@ -19,9 +19,9 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_EVENTS
-import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.PolySymbol.Companion.JS_EVENTS
+import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
@@ -41,8 +41,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbol> =
-    if (qualifiedName.matches(WebSymbol.HTML_ELEMENTS)) {
+  ): List<PolySymbol> =
+    if (qualifiedName.matches(PolySymbol.HTML_ELEMENTS)) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", qualifiedName.name))
     }
     else emptyList()
@@ -64,7 +64,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
   private class HtmlElementStandardPropertyAndEventsExtension(
     templateFile: PsiFile, tagNamespace: String, tagName: String,
   ) : WebSymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
-                                                              templateFile, Pair(tagNamespace, tagName)), WebSymbol {
+                                                              templateFile, Pair(tagNamespace, tagName)), PolySymbol {
 
     override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
       qualifiedKind == JS_PROPERTIES
@@ -83,7 +83,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       get() = NAMESPACE_HTML
 
     override val kind: SymbolKind
-      get() = WebSymbol.KIND_HTML_ELEMENTS
+      get() = PolySymbol.KIND_HTML_ELEMENTS
 
     override fun getModificationCount(): Long =
       PsiModificationTracker.getInstance(project).modificationCount
@@ -97,7 +97,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       }
     }
 
-    override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+    override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
       val templateFile = dataHolder
       val tagNamespace = key.first
       val tagName = key.second
@@ -247,8 +247,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       get() = Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(templateFile))
               ?: mapSource?.getJSType(templateFile)
 
-    override val priority: WebSymbol.Priority
-      get() = WebSymbol.Priority.NORMAL
+    override val priority: PolySymbol.Priority
+      get() = PolySymbol.Priority.NORMAL
 
     override val qualifiedKind: WebSymbolQualifiedKind
       get() = JS_EVENTS

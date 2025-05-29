@@ -3,18 +3,18 @@ package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.utils.ReferencingWebSymbol
+import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 
 object VueTopLevelElementsScope : WebSymbolsScope {
 
-  private val referencingSymbol = ReferencingWebSymbol.create(
-    WebSymbol.HTML_ELEMENTS,
+  private val referencingSymbol = ReferencingPolySymbol.create(
+    PolySymbol.HTML_ELEMENTS,
     "Vue Top Level Element",
     WebSymbolOrigin.empty(),
     VUE_TOP_LEVEL_ELEMENTS
@@ -25,7 +25,7 @@ object VueTopLevelElementsScope : WebSymbolsScope {
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<WebSymbolsScope>,
   ): List<WebSymbolsScope> =
-    if (qualifiedKind == WebSymbol.HTML_ELEMENTS)
+    if (qualifiedKind == PolySymbol.HTML_ELEMENTS)
       listOf(referencingSymbol)
     else
       emptyList()

@@ -23,7 +23,7 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
@@ -32,7 +32,7 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.*
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol
-import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
+import org.jetbrains.vuejs.web.symbols.VuePolyTypesMergedSymbol
 import java.util.*
 
 class VueCodeModelSymbolsScope<K>
@@ -84,7 +84,7 @@ private constructor(
     || qualifiedKind == VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
     || qualifiedKind == VUE_DIRECTIVES
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val webTypesContributions = calculateWebTypesContributions()
     visitContainer(container, proximity, webTypesContributions, consumer)
     if (container is VueGlobal) {
@@ -96,8 +96,8 @@ private constructor(
   private fun visitContainer(
     container: VueEntitiesContainer,
     forcedProximity: VueModelVisitor.Proximity,
-    webTypesContributions: MultiMap<WebTypesSymbolLocation, WebSymbol>,
-    consumer: (WebSymbol) -> Unit,
+    webTypesContributions: MultiMap<WebTypesSymbolLocation, PolySymbol>,
+    consumer: (PolySymbol) -> Unit,
   ) {
     container.acceptEntities(object : VueModelVisitor() {
 
@@ -118,11 +118,11 @@ private constructor(
     }, VueModelVisitor.Proximity.LOCAL)
   }
 
-  private fun calculateWebTypesContributions(): MultiMap<WebTypesSymbolLocation, WebSymbol> {
+  private fun calculateWebTypesContributions(): MultiMap<WebTypesSymbolLocation, PolySymbol> {
     val registry = container.source
                      ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
                    ?: WebSymbolsQueryExecutorFactory.getInstance(project).create(null, false)
-    val result = MultiMap.createLinkedSet<WebTypesSymbolLocation, WebSymbol>()
+    val result = MultiMap.createLinkedSet<WebTypesSymbolLocation, PolySymbol>()
     registry.runListSymbolsQuery(VUE_COMPONENTS, false, virtualSymbols = false)
       .asSequence().plus(registry.runListSymbolsQuery(VUE_DIRECTIVES, false, virtualSymbols = false))
       .filterIsInstance<WebTypesSymbol>()
@@ -149,7 +149,7 @@ private constructor(
     return result
   }
 
-  private fun WebSymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, WebSymbol>): List<WebSymbol> {
+  private fun PolySymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, PolySymbol>): List<PolySymbol> {
     if (this !is VueDocumentedItemSymbol<*>) return listOf(this)
 
     val source =
@@ -186,10 +186,10 @@ private constructor(
       if (source is ES6ExportDefaultAssignment || source is HtmlFileImpl) {
         // Merge with the source component - we need to merge both ways
         val names = toMerge.asSequence().map { it.name }.plus(this.name).toSet()
-        names.map { VueWebTypesMergedSymbol(it, this, toMerge) }
+        names.map { VuePolyTypesMergedSymbol(it, this, toMerge) }
       }
       else
-        listOf(VueWebTypesMergedSymbol(this.name, this, toMerge))
+        listOf(VuePolyTypesMergedSymbol(this.name, this, toMerge))
     else
       listOf(this)
   }

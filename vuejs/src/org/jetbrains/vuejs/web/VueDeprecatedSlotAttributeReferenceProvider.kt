@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web
 import com.intellij.psi.util.startOffset
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.getMatchingAvailableSlots
@@ -14,7 +14,7 @@ class VueDeprecatedSlotAttributeReferenceProvider : PsiWebSymbolReferenceProvide
   override fun getReferencedSymbolNameOffset(psiElement: XmlAttributeValue): Int =
     psiElement.valueTextRange.startOffset - psiElement.startOffset
 
-  override fun getReferencedSymbol(psiElement: XmlAttributeValue): WebSymbol? {
+  override fun getReferencedSymbol(psiElement: XmlAttributeValue): PolySymbol? {
     if ((psiElement.parent as? XmlAttribute)?.name == DEPRECATED_SLOT_ATTRIBUTE) {
       val value = psiElement.value
       if (value.isNotEmpty()) {

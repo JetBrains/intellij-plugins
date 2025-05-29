@@ -9,9 +9,9 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
+import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_EXPORTS_AS
@@ -22,13 +22,13 @@ class Angular2DirectiveExportAs(
   val directive: Angular2Directive,
   override val sourceElement: PsiElement = directive.sourceElement,
   override val textRangeInSourceElement: TextRange? = null,
-) : Angular2Symbol, Angular2Element, WebSymbolDeclaredInPsi {
+) : Angular2Symbol, Angular2Element, PolySymbolDeclaredInPsi {
 
   override val psiContext: PsiElement
     get() = sourceElement
 
-  override val priority: WebSymbol.Priority
-    get() = WebSymbol.Priority.NORMAL
+  override val priority: PolySymbol.Priority
+    get() = PolySymbol.Priority.NORMAL
 
   override val project: Project
     get() = sourceElement.project

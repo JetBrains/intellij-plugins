@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolNameSegment
 import com.intellij.webSymbols.inspections.WebSymbolsProblemQuickFixProvider
 import com.intellij.webSymbols.references.WebSymbolReferenceProblem
@@ -21,7 +21,7 @@ import org.angular2.library.forms.scopes.resolveFormSymbolForGetCallArrayLiteral
 class Angular2FormsWebSymbolProblemQuickFixProvider : WebSymbolsProblemQuickFixProvider {
   override fun getQuickFixes(
     element: PsiElement,
-    symbol: WebSymbol,
+    symbol: PolySymbol,
     segment: WebSymbolNameSegment,
     problemKind: WebSymbolReferenceProblem.ProblemKind,
   ): List<LocalQuickFix> {

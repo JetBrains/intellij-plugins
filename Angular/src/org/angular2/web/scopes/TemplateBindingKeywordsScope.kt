@@ -4,23 +4,23 @@ import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.WebSymbol.Companion.JS_SYMBOLS
+import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.utils.ReferencingWebSymbol
+import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import org.angular2.web.NG_TEMPLATE_BINDINGS
 import org.angular2.web.NG_TEMPLATE_BINDING_KEYWORDS
 
 object TemplateBindingKeywordsScope : WebSymbolsScope {
 
-  private val KEYWORDS_REF_FOR_JS_SYMBOLS = ReferencingWebSymbol.create(
+  private val KEYWORDS_REF_FOR_JS_SYMBOLS = ReferencingPolySymbol.create(
     JS_SYMBOLS, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
-  private val KEYWORDS_REF_FOR_JS_PROPERTIES = ReferencingWebSymbol.create(
+  private val KEYWORDS_REF_FOR_JS_PROPERTIES = ReferencingPolySymbol.create(
     JS_PROPERTIES, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
-  private val KEYWORDS_REF_FOR_NG_TEMPLATE_BINDINGS = ReferencingWebSymbol.create(
+  private val KEYWORDS_REF_FOR_NG_TEMPLATE_BINDINGS = ReferencingPolySymbol.create(
     NG_TEMPLATE_BINDINGS, "Angular template binding keyword", WebSymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
 
   override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
@@ -31,7 +31,7 @@ object TemplateBindingKeywordsScope : WebSymbolsScope {
       else -> emptyList()
     }
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<WebSymbolsScope>): List<PolySymbol> =
     emptyList()
 
   override fun createPointer(): Pointer<out WebSymbolsScope> =

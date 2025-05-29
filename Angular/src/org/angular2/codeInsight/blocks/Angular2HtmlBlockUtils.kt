@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.*
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import org.angular2.codeInsight.template.getTemplateElementsScopeFor
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
@@ -101,7 +101,7 @@ fun isDeferOnReferenceExpression(element: PsiElement): Boolean =
     ?.asSafely<Angular2BlockParameter>()
     ?.name == PARAMETER_ON
 
-fun getDeferOnTriggerDefinition(parameter: Angular2BlockParameter): WebSymbol? {
+fun getDeferOnTriggerDefinition(parameter: Angular2BlockParameter): PolySymbol? {
   val triggerName = parameter
     .takeIf { it.name == PARAMETER_ON }
     ?.childrenOfType<JSReferenceExpression>()

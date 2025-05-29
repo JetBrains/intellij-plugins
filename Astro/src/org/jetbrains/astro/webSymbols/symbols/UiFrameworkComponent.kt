@@ -7,8 +7,8 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.webSymbols.AstroProximity
@@ -22,11 +22,11 @@ import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class UiFrameworkComponent(override val name: String,
                            override val source: PsiElement,
-                           override val priority: WebSymbol.Priority = WebSymbol.Priority.HIGH)
-  : PsiSourcedWebSymbol, WebSymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit){
+                           override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH)
+  : PsiSourcedPolySymbol, WebSymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit){
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+                                  scope: Stack<WebSymbolsScope>): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
       emptyList()
     else
@@ -35,7 +35,7 @@ class UiFrameworkComponent(override val name: String,
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == UI_FRAMEWORK_COMPONENT_PROPS
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     consumer(AstroComponentWildcardAttribute)
   }

@@ -6,7 +6,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 
 @TestDataPath("\$R#_COMPLETION_TEST_ROOT/Angular2Html")
 class Angular2HtmlCodeCompletionTest : Angular2ReSharperCompletionTestBase() {
@@ -29,7 +29,7 @@ class Angular2HtmlCodeCompletionTest : Angular2ReSharperCompletionTestBase() {
   override fun shouldSkipItem(element: LookupElement): Boolean {
     if (HIGH_PRIORITY_ONLY.contains(name)) {
       return (element !is PrioritizedLookupElement<*>
-              || element.priority < WebSymbol.Priority.HIGH.value)
+              || element.priority < PolySymbol.Priority.HIGH.value)
     }
     val lookupString = element.getLookupString()
     return if (IGNORED_ELEMENT_ATTRS.contains(lookupString)

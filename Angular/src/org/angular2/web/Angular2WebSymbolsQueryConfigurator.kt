@@ -20,9 +20,9 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.PolySymbol
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
@@ -212,7 +212,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
               ?.takeIf { Angular2DecoratorUtil.isAngularEntityDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
               ?.also { decorator = it } != null
         )
-          listOf(HostBindingsScope(mapOf(WebSymbol.JS_PROPERTIES to WebSymbol.HTML_ATTRIBUTES), decorator!!))
+          listOf(HostBindingsScope(mapOf(PolySymbol.JS_PROPERTIES to PolySymbol.HTML_ATTRIBUTES), decorator!!))
         else
           listOfNotNull(getCssClassesInJSLiteralInHtmlAttributeScope(element))
       }
@@ -234,7 +234,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     return element
       .parentOfType<TypeScriptClass>()
       ?.let { Angular2DecoratorUtil.findDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
-      ?.let { HostBindingsScope(mapOf(WebSymbol.JS_STRING_LITERALS to mapping), it) }
+      ?.let { HostBindingsScope(mapOf(PolySymbol.JS_STRING_LITERALS to mapping), it) }
   }
 
   private fun getViewChildrenScopeForLiteral(element: JSLiteralExpression): WebSymbolsScope? {

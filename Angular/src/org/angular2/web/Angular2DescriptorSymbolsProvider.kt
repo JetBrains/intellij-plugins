@@ -2,23 +2,23 @@
 package org.angular2.web
 
 import com.intellij.util.SmartList
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.angular2.entities.Angular2Directive
 
 // TODO - This is a bridge between old and new API - when time comes, this should be removed.
-class Angular2DescriptorSymbolsProvider(symbol: WebSymbol) {
+class Angular2DescriptorSymbolsProvider(symbol: PolySymbol) {
 
-  val nonDirectiveSymbols: List<WebSymbol>
-  val errorSymbols: List<WebSymbol>
-  private val directiveSymbols: List<WebSymbol>
+  val nonDirectiveSymbols: List<PolySymbol>
+  val errorSymbols: List<PolySymbol>
+  private val directiveSymbols: List<PolySymbol>
   val directives: List<Angular2Directive>
 
   init {
-    val nonDirectiveSymbols = SmartList<WebSymbol>()
-    val errorSymbols = SmartList<WebSymbol>()
-    val directiveSymbols = SmartList<WebSymbol>()
+    val nonDirectiveSymbols = SmartList<PolySymbol>()
+    val errorSymbols = SmartList<PolySymbol>()
+    val directiveSymbols = SmartList<PolySymbol>()
     val directives = mutableSetOf<Angular2Directive>()
 
     symbol.unwrapMatchedSymbols()

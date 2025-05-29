@@ -47,7 +47,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val queryExecutor = WebSymbolsQueryExecutorFactory.create(dataHolder)
     val scope = dataHolder.descriptor?.asSafely<WebSymbolElementDescriptor>()
                   ?.symbol?.let { listOf(it) }
@@ -55,7 +55,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
     val attributeSelectors = queryExecutor
       .runListSymbolsQuery(NG_DIRECTIVE_ATTRIBUTE_SELECTORS, expandPatterns = true, additionalScope = scope)
       .plus(queryExecutor
-              .runListSymbolsQuery(WebSymbol.HTML_ATTRIBUTES, expandPatterns = false, virtualSymbols = false, additionalScope = scope)
+              .runListSymbolsQuery(PolySymbol.HTML_ATTRIBUTES, expandPatterns = false, virtualSymbols = false, additionalScope = scope)
               .filterIsInstance<WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol>()
       )
       .filter { it.attributeValue?.required == false }
@@ -94,16 +94,16 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
     private val STRING_TYPE: JSType = JSStringType.STRING_EMPTY_EXPLICIT_TYPE
 
     @JvmStatic
-    fun isOneTimeBindingProperty(property: WebSymbol): Boolean {
+    fun isOneTimeBindingProperty(property: PolySymbol): Boolean {
       if (ONE_TIME_BINDING_EXCLUDES.contains(property.name) || NG_DIRECTIVE_INPUTS != property.qualifiedKind) {
         return false
       }
       if ((property as? Angular2DirectiveProperty)?.virtualProperty == true) return true
       val type = property.jsType ?: return true
-      val source = (property as? PsiSourcedWebSymbol)?.source ?: return true
+      val source = (property as? PsiSourcedPolySymbol)?.source ?: return true
 
       return CachedValuesManager.getCachedValue(source) {
-        CachedValueProvider.Result.create(ConcurrentHashMap<WebSymbol, Boolean>(),
+        CachedValueProvider.Result.create(ConcurrentHashMap<PolySymbol, Boolean>(),
                                           PsiModificationTracker.MODIFICATION_COUNT)
       }.getOrPut(property) {
         withTypeEvaluationLocation(source) {
@@ -118,21 +118,21 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
         .transformTypeHierarchy { toApply -> if (toApply is JSPrimitiveType) STRING_TYPE else toApply }
   }
 
-  private class Angular2OneTimeBinding(delegate: WebSymbol, val typeEvaluationLocation: PsiElement, val requiresValue: Boolean, val resolveOnly: Boolean = false)
-    : WebSymbolDelegate<WebSymbol>(delegate), PsiSourcedWebSymbol {
+  private class Angular2OneTimeBinding(delegate: PolySymbol, val typeEvaluationLocation: PsiElement, val requiresValue: Boolean, val resolveOnly: Boolean = false)
+    : PolySymbolDelegate<PolySymbol>(delegate), PsiSourcedPolySymbol {
     override val source: PsiElement?
-      get() = (delegate as? PsiSourcedWebSymbol)?.source
+      get() = (delegate as? PsiSourcedPolySymbol)?.source
 
     override val kind: SymbolKind get() = NG_DIRECTIVE_ONE_TIME_BINDINGS.kind
 
-    override val priority: WebSymbol.Priority
-      get() = WebSymbol.Priority.LOW
+    override val priority: PolySymbol.Priority
+      get() = PolySymbol.Priority.LOW
 
     override val properties: Map<String, Any>
-      get() = super<WebSymbolDelegate>.properties +
+      get() = super<PolySymbolDelegate>.properties +
               sequenceOf(
-                super<WebSymbolDelegate>.priority?.let { Pair(PROP_DELEGATE_PRIORITY, it) },
-                if (resolveOnly) Pair(WebSymbol.PROP_HIDE_FROM_COMPLETION, true) else null
+                super<PolySymbolDelegate>.priority?.let { Pair(PROP_DELEGATE_PRIORITY, it) },
+                if (resolveOnly) Pair(PolySymbol.PROP_HIDE_FROM_COMPLETION, true) else null
               ).filterNotNull()
 
     // Even though an input property might be required,
@@ -191,7 +191,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
     }
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
-      super<PsiSourcedWebSymbol>.isEquivalentTo(symbol)
+      super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
       || delegate.isEquivalentTo(symbol)
 
     override fun equals(other: Any?): Boolean =
@@ -203,10 +203,10 @@ internal class OneTimeBindingsScope(tag: XmlTag) : WebSymbolsScopeWithCache<XmlT
       Objects.hash(delegate, requiresValue)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-      super<WebSymbolDelegate>.getNavigationTargets(project)
+      super<PolySymbolDelegate>.getNavigationTargets(project)
 
     override val psiContext: PsiElement?
-      get() = super<WebSymbolDelegate>.psiContext
+      get() = super<PolySymbolDelegate>.psiContext
 
   }
 }

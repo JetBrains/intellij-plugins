@@ -16,10 +16,10 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
-import com.intellij.webSymbols.query.WebSymbolMatch
+import com.intellij.webSymbols.query.PolySymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
 import com.intellij.webSymbols.utils.qualifiedKind
@@ -42,10 +42,10 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
   private val svgContext = PsiTreeUtil.getParentOfType(context, XmlTag::class.java)?.namespace == HtmlUtil.SVG_NAMESPACE
 
   override fun apply(
-    matches: List<WebSymbol>,
+    matches: List<PolySymbol>,
     strict: Boolean,
     qualifiedName: WebSymbolQualifiedName,
-  ): List<WebSymbol> =
+  ): List<PolySymbol> =
     when {
       kinds.contains(qualifiedName.qualifiedKind) ->
         withTypeEvaluationLocation(context) {
@@ -70,7 +70,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
     // remove everything else from completion
     if (svgContext
-        && qualifiedKind == WebSymbol.HTML_ELEMENTS
+        && qualifiedKind == PolySymbol.HTML_ELEMENTS
         && item.name !in svgAllowedElements)
       return null
     val symbol = item.symbol
@@ -101,7 +101,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     else item
   }
 
-  private fun List<WebSymbol>.wrapWithScopedSymbols(scope: Angular2DeclarationsScope): List<WebSymbol> {
+  private fun List<PolySymbol>.wrapWithScopedSymbols(scope: Angular2DeclarationsScope): List<PolySymbol> {
     val proximityMap = groupBy {
       val directive = it.properties[PROP_SYMBOL_DIRECTIVE] as? Angular2Directive
       if (directive != null)
@@ -116,13 +116,13 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     } ?: emptyList()
   }
 
-  private fun List<WebSymbol>.filterOutOfScopeOrErrorSymbols(scope: Angular2DeclarationsScope): List<WebSymbol> =
+  private fun List<PolySymbol>.filterOutOfScopeOrErrorSymbols(scope: Angular2DeclarationsScope): List<PolySymbol> =
     filter { symbol ->
       symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
       && symbol.properties[PROP_ERROR_SYMBOL] != true
     }
 
-  private fun List<WebSymbol>.filterByNearestProximity(): List<WebSymbol> {
+  private fun List<PolySymbol>.filterByNearestProximity(): List<PolySymbol> {
     if (size <= 1) return this
     val proximityMap = groupBy { match ->
       match.properties[PROP_SCOPE_PROXIMITY].asSafely<DeclarationProximity>()
@@ -134,7 +134,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     } ?: emptyList()
   }
 
-  private fun List<WebSymbol>.filterOutSelectorSymbolsIfNeeded(): List<WebSymbol> =
+  private fun List<PolySymbol>.filterOutSelectorSymbolsIfNeeded(): List<PolySymbol> =
     if (size <= 1)
       this
     // If we have an HTML symbol, filter out all ng selectors
@@ -144,9 +144,9 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       // If no HTML symbols, group by directive and prefer non-selector symbols for a particular directive.
       // We want to avoid resolving to selectors if there is an input with the same name,
       // but only within the same directive. So we need some complicated logic here to achieve that.
-      val candidates = MultiMap<Angular2Directive, WebSymbol>()
+      val candidates = MultiMap<Angular2Directive, PolySymbol>()
       flatMap {
-        if (it is WebSymbolMatch)
+        if (it is PolySymbolMatch)
           it.nameSegments.flatMap { it.symbols }
         else
           listOf(it)
@@ -165,7 +165,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
 
       // We need to remap matches within WebSymbolMatch, as the selector symbols are nested at this point
       mapNotNull {
-        if (it is WebSymbolMatch) {
+        if (it is PolySymbolMatch) {
           val newSegments = it.nameSegments.mapNotNull { segment ->
             val newSymbols = segment.symbols.mapNotNull {
               it.takeIf {
@@ -192,7 +192,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       }
     }
 
-  private fun WebSymbol.hasSelectorSymbols() =
+  private fun PolySymbol.hasSelectorSymbols() =
     unwrapMatchedSymbols()
       .any { it.qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS || it.qualifiedKind == NG_DIRECTIVE_ELEMENT_SELECTORS }
 
@@ -232,35 +232,35 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
   }
 
   private open class Angular2ScopedSymbol private constructor(
-    symbol: WebSymbol,
+    symbol: PolySymbol,
     private val scopeProximity: DeclarationProximity,
-  ) : WebSymbolDelegate<WebSymbol>(symbol) {
+  ) : PolySymbolDelegate<PolySymbol>(symbol) {
 
     companion object {
 
       @JvmStatic
       fun create(
-        symbol: WebSymbol,
+        symbol: PolySymbol,
         scopeProximity: DeclarationProximity,
       ): Angular2ScopedSymbol =
         when (symbol) {
-          is PsiSourcedWebSymbol -> Angular2PsiSourcedScopedSymbol(symbol, scopeProximity)
+          is PsiSourcedPolySymbol -> Angular2PsiSourcedScopedSymbol(symbol, scopeProximity)
           else -> Angular2ScopedSymbol(symbol, scopeProximity)
         }
 
     }
 
-    override val priority: WebSymbol.Priority?
+    override val priority: PolySymbol.Priority?
       get() = if (scopeProximity == DeclarationProximity.IN_SCOPE || scopeProximity == DeclarationProximity.IMPORTABLE)
         super.priority
       else
-        WebSymbol.Priority.LOWEST
+        PolySymbol.Priority.LOWEST
 
     override fun createPointer(): Pointer<out Angular2ScopedSymbol> =
       createPointer(::Angular2ScopedSymbol)
 
     fun <T : Angular2ScopedSymbol> createPointer(
-      create: (symbol: WebSymbol, scopeProximity: DeclarationProximity) -> T,
+      create: (symbol: PolySymbol, scopeProximity: DeclarationProximity) -> T,
     ): Pointer<T> {
       val delegatePtr = delegate.createPointer()
       val scopeProximity = this.scopeProximity
@@ -285,12 +285,12 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       get() = super.properties + Pair(PROP_SCOPE_PROXIMITY, scopeProximity)
 
     private class Angular2PsiSourcedScopedSymbol(
-      symbol: WebSymbol,
+      symbol: PolySymbol,
       scopeProximity: DeclarationProximity,
-    ) : Angular2ScopedSymbol(symbol, scopeProximity), PsiSourcedWebSymbol {
+    ) : Angular2ScopedSymbol(symbol, scopeProximity), PsiSourcedPolySymbol {
 
       override val source: PsiElement?
-        get() = (delegate as PsiSourcedWebSymbol).source
+        get() = (delegate as PsiSourcedPolySymbol).source
 
       override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
         super<Angular2ScopedSymbol>.getNavigationTargets(project)

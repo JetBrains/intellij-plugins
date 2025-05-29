@@ -2,13 +2,13 @@
 package org.angular2.codeInsight.blocks
 
 import com.intellij.model.psi.PsiSymbolReferenceHints
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 
 class Angular2BlockParameterReferencesProvider : PsiWebSymbolReferenceProvider<Angular2BlockParameter> {
 
-  override fun getOffsetsToReferencedSymbols(psiElement: Angular2BlockParameter, hints: PsiSymbolReferenceHints): Map<Int, WebSymbol> {
+  override fun getOffsetsToReferencedSymbols(psiElement: Angular2BlockParameter, hints: PsiSymbolReferenceHints): Map<Int, PolySymbol> {
     if (psiElement.isPrimaryExpression) {
       return emptyMap()
     }

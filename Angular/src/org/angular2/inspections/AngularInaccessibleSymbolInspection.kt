@@ -24,7 +24,7 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD
@@ -128,7 +128,7 @@ fun getInputSourceElements(element: Angular2HtmlPropertyBinding): List<JSAttribu
   element.descriptor?.asSafely<Angular2AttributeDescriptor>()?.symbol
     ?.unwrapMatchedSymbols()
     ?.filter { it.qualifiedKind == NG_DIRECTIVE_INPUTS }
-    ?.filterIsInstance<PsiSourcedWebSymbol>()
+    ?.filterIsInstance<PsiSourcedPolySymbol>()
     ?.mapNotNull { it.source }
     ?.filterIsInstance<JSAttributeListOwner>()
     ?.toList()

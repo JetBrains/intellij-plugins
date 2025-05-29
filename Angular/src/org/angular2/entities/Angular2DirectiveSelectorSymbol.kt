@@ -16,10 +16,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
 import com.intellij.refactoring.rename.api.RenameValidationResult
 import com.intellij.refactoring.rename.api.RenameValidator
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.declarations.WebSymbolDeclaration
-import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
+import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.xml.XmlElementDescriptor
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
@@ -36,11 +36,11 @@ class Angular2DirectiveSelectorSymbol(
   override val name: @NlsSafe String,
   private val myElementSelector: String?,
   private val isElementSelector: Boolean,
-) : Angular2Symbol, WebSymbolDeclaredInPsi {
+) : Angular2Symbol, PolySymbolDeclaredInPsi {
 
-  override val priority: WebSymbol.Priority
+  override val priority: PolySymbol.Priority
     // Match HTML elements and attributes priority
-    get() = WebSymbol.Priority.LOW
+    get() = PolySymbol.Priority.LOW
 
   override val psiContext: PsiElement
     get() = myParent.psiParent
@@ -60,7 +60,7 @@ class Angular2DirectiveSelectorSymbol(
   /**
    * Selectors should yield to HTML symbols and directive properties
    */
-  val referencedSymbol: WebSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+  val referencedSymbol: PolySymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     JSTypeEvaluationLocationProvider.assertLocationIsSet()
     getReferencedHtmlSymbol(name, sourceElement, isElementSelector, myElementSelector)
     ?: if (!isElementSelector) getReferencedDirectiveProperty(name, myParent) else null
@@ -85,7 +85,7 @@ class Angular2DirectiveSelectorSymbol(
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
     JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(sourceElement) { referencedSymbol == symbol }
-    || super<WebSymbolDeclaredInPsi>.isEquivalentTo(symbol)
+    || super<PolySymbolDeclaredInPsi>.isEquivalentTo(symbol)
 
   override fun createPointer(): Pointer<Angular2DirectiveSelectorSymbol> {
     val parent = myParent.createPointer()
@@ -155,7 +155,7 @@ class Angular2DirectiveSelectorSymbol(
     return null
   }
 
-  private fun getReferencedDirectiveProperty(name: @NlsSafe String, parent: Angular2DirectiveSelectorImpl): WebSymbol? {
+  private fun getReferencedDirectiveProperty(name: @NlsSafe String, parent: Angular2DirectiveSelectorImpl): PolySymbol? {
     val directive = getClassForDecoratorElement(parent.psiParent)
                       ?.let { Angular2EntitiesProvider.getDirective(it) }
                     ?: return null

@@ -9,7 +9,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.webSymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.webSymbols.AstroProximity
@@ -17,7 +17,7 @@ import org.jetbrains.astro.webSymbols.PROP_ASTRO_PROXIMITY
 import org.jetbrains.astro.webSymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class AstroComponent(file: PsiFile)
-  : PsiSourcedWebSymbol, WebSymbolsScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
+  : PsiSourcedPolySymbol, WebSymbolsScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
 
   override val source: PsiElement
     get() = dataHolder
@@ -40,7 +40,7 @@ class AstroComponent(file: PsiFile)
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == UI_FRAMEWORK_COMPONENT_PROPS
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     consumer(AstroComponentWildcardAttribute)
     cacheDependencies.add(dataHolder)
   }

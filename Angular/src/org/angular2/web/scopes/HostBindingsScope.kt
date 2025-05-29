@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.css.StylesheetFile
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.css.getWebSymbolsCssScopeForTagClasses
@@ -32,7 +32,7 @@ class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualified
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     mappings.containsKey(qualifiedKind)
 
-  override fun acceptSymbol(symbol: WebSymbol): Boolean =
+  override fun acceptSymbol(symbol: PolySymbol): Boolean =
     (symbol.properties[PROP_HOST_BINDING] != false && (!symbol.name.startsWith("on") || !symbol.hasOnlyStandardHtmlSymbolsOrExtensions()))
 
   override val subScopeBuilder: (WebSymbolsQueryExecutor, ES6Decorator) -> List<WebSymbolsScope>
@@ -59,12 +59,12 @@ class HostBindingsScope(mappings: Map<WebSymbolQualifiedKind, WebSymbolQualified
           scope.add(WebSymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, it))
         }
         val scopeList = scope.toList()
-        elementNames.flatMapTo(scope) { executor.runNameMatchQuery(WebSymbol.HTML_ELEMENTS.withName(it), additionalScope = scopeList) }
+        elementNames.flatMapTo(scope) { executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS.withName(it), additionalScope = scopeList) }
         elementNames.mapTo(scope) { MatchedDirectivesScope.createFor(location, it) }
       }
       else {
         scope.add(WebSymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, "div"))
-        executor.runNameMatchQuery(WebSymbol.HTML_ELEMENTS.withName("div"), additionalScope = scope.toList())
+        executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS.withName("div"), additionalScope = scope.toList())
           .forEach { scope.add(it) }
       }
       return scope.toList()

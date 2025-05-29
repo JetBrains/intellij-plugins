@@ -6,7 +6,7 @@ import com.intellij.javascript.webSymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueComponent
@@ -16,7 +16,7 @@ abstract class VuePropertySymbol<T : VueProperty>(
   item: T,
   owner: VueComponent,
   origin: WebSymbolOrigin,
-) : VueNamedWebSymbol<T>(item, owner, origin) {
+) : VueNamedPolySymbol<T>(item, owner, origin) {
 
   abstract override fun createPointer(): Pointer<out VuePropertySymbol<T>>
 
@@ -27,7 +27,7 @@ abstract class VuePropertySymbol<T : VueProperty>(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbol> =
+  ): List<PolySymbol> =
     getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
 
   override fun getSymbols(

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
+import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import java.util.*
 
 class Angular2AliasedDirectiveProperty(
@@ -17,7 +17,7 @@ class Angular2AliasedDirectiveProperty(
   override val name: String,
   override val sourceElement: PsiElement,
   override val textRangeInSourceElement: TextRange?
-) : Angular2DirectiveProperty, WebSymbolDeclaredInPsi {
+) : Angular2DirectiveProperty, PolySymbolDeclaredInPsi {
 
   private val delegate: Angular2DirectiveProperty =
     if (delegate is Angular2AliasedDirectiveProperty)

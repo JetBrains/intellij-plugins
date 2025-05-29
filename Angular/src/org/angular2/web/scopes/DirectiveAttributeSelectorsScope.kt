@@ -12,7 +12,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.utils.MappedWebSymbol
+import com.intellij.webSymbols.utils.MappedPolySymbol
 import com.intellij.webSymbols.utils.qualifiedName
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.isTemplateTag
@@ -33,8 +33,8 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbol> =
-    if (qualifiedName.matches(WebSymbol.HTML_ELEMENTS)) {
+  ): List<PolySymbol> =
+    if (qualifiedName.matches(PolySymbol.HTML_ELEMENTS)) {
       listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(file, qualifiedName.name))
     }
     else emptyList()
@@ -49,7 +49,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
   class HtmlAttributeDirectiveAttributeSelectorsExtension(
     file: PsiFile,
     tagName: String,
-  ) : WebSymbolsScopeWithCache<PsiFile, String>(Angular2Framework.ID, file.project, file, tagName), WebSymbol {
+  ) : WebSymbolsScopeWithCache<PsiFile, String>(Angular2Framework.ID, file.project, file, tagName), PolySymbol {
 
     override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
       qualifiedKind in providedKinds
@@ -64,10 +64,10 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
       get() = Angular2SymbolOrigin.empty
 
     override val namespace: SymbolNamespace
-      get() = WebSymbol.NAMESPACE_HTML
+      get() = PolySymbol.NAMESPACE_HTML
 
     override val kind: SymbolKind
-      get() = WebSymbol.KIND_HTML_ELEMENTS
+      get() = PolySymbol.KIND_HTML_ELEMENTS
 
     override fun getModificationCount(): Long =
       PsiModificationTracker.getInstance(project).modificationCount
@@ -75,7 +75,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
     override fun createPointer(): Pointer<HtmlAttributeDirectiveAttributeSelectorsExtension> =
       Pointer.hardPointer(this)
 
-    override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+    override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
       cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
       withTypeEvaluationLocation(dataHolder) {
         initializeWithTypeLocation(consumer)
@@ -88,7 +88,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
           .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }
       }
 
-    private fun initializeWithTypeLocation(consumer: (WebSymbol) -> Unit) {
+    private fun initializeWithTypeLocation(consumer: (PolySymbol) -> Unit) {
       val tagName = key
       val isTemplateTag = isTemplateTag(tagName)
       val inputs = HashMap<String, Angular2Symbol>()
@@ -146,7 +146,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : WebSymbolsScope {
                 consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr, dataHolder))
                 if (kind.isStructural && isTemplateTag && !inputs.containsKey(attrName)) {
                   // Add fake input
-                  consumer(MappedWebSymbol.create(NG_DIRECTIVE_INPUTS, attrName, attr.origin, attr.qualifiedName))
+                  consumer(MappedPolySymbol.create(NG_DIRECTIVE_INPUTS, attrName, attr.origin, attr.qualifiedName))
                 }
               }
             }

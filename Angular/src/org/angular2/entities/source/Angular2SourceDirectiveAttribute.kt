@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
-import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.Pointer
@@ -20,7 +19,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolApiStatus
-import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
+import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.OPTIONAL_PROP
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
@@ -30,7 +29,7 @@ class Angular2SourceDirectiveAttribute private constructor(
   private val typeSource: JSElement,
   private val literal: JSLiteralExpression,
   override val name: String,
-) : Angular2DirectiveAttribute, WebSymbolDeclaredInPsi {
+) : Angular2DirectiveAttribute, PolySymbolDeclaredInPsi {
 
   companion object {
     fun create(typeSource: JSElement, literal: JSLiteralExpression): Angular2SourceDirectiveAttribute? {

@@ -3,7 +3,7 @@ package org.angular2.library.forms
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.psi.PsiElement
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
@@ -22,7 +22,7 @@ object Angular2FormsWebSymbolQueryResultsCustomizer : WebSymbolsQueryResultsCust
   override fun createPointer(): Pointer<out WebSymbolsQueryResultsCustomizer> =
     Pointer.hardPointer(this)
 
-  override fun apply(matches: List<WebSymbol>, strict: Boolean, qualifiedName: WebSymbolQualifiedName): List<WebSymbol> =
+  override fun apply(matches: List<PolySymbol>, strict: Boolean, qualifiedName: WebSymbolQualifiedName): List<PolySymbol> =
     if (qualifiedName.qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS
         && (qualifiedName.name in FORM_ANY_CONTROL_NAME_ATTRIBUTES))
       matches.map { it.remapFormControlNameSymbol() }
@@ -42,7 +42,7 @@ object Angular2FormsWebSymbolQueryResultsCustomizer : WebSymbolsQueryResultsCust
         null
   }
 
-  private fun WebSymbol.remapFormControlNameSymbol(): WebSymbol =
+  private fun PolySymbol.remapFormControlNameSymbol(): PolySymbol =
     if (this is Angular2DirectiveSymbolWrapper)
       Angular2FormControlAttributeWrapper(this)
     else

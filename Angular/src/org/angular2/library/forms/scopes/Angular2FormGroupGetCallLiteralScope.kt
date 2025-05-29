@@ -5,9 +5,9 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.util.containers.Stack
 import com.intellij.util.containers.map2Array
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_STRING_LITERALS
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
+import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_STRING_LITERALS
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
@@ -45,7 +45,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
     else
       formGroup.getCodeCompletions(qualifiedName, params, scope)
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<WebSymbolsScope>): List<PolySymbol> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getMatchingSymbols(qualifiedName, params, scope)
     else
@@ -68,7 +68,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
   override fun getModificationCount(): Long = 0
 
   companion object {
-    object FormGroupGetPathSymbol : WebSymbol {
+    object FormGroupGetPathSymbol : PolySymbol {
 
       override val name: @NlsSafe String
         get() = "FormGroup.get() path"
@@ -115,7 +115,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
           )
         )
 
-      override fun createPointer(): Pointer<out WebSymbol> =
+      override fun createPointer(): Pointer<out PolySymbol> =
         Pointer.hardPointer(this)
 
     }

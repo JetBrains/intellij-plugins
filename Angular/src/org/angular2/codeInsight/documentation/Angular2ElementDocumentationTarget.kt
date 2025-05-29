@@ -34,7 +34,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.toMultiMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import org.angular2.codeInsight.Angular2HighlightingUtils
 import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
@@ -177,7 +177,7 @@ internal class Angular2ElementDocumentationTarget private constructor(
       if (element is Angular2Entity) {
         result.appendEntityType(element, bindingsTypeResolver)
       }
-      else if (element is WebSymbol) {
+      else if (element is PolySymbol) {
         result.append(TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE,
                       (element as? Angular2AliasedDirectiveProperty)?.originalName ?: element.name)
         val jsType = bindingsTypeResolver?.substituteTypeForDocumentation(directive, element.jsType)

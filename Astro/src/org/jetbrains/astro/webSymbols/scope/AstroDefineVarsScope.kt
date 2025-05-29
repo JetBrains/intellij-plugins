@@ -11,7 +11,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
@@ -22,13 +22,13 @@ import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 abstract class AstroDefineVarsScope(tag: XmlTag)
   : WebSymbolsScopeWithCache<XmlTag, Unit>(null, tag.project, tag, Unit) {
 
-  protected abstract val providedSymbol: WebSymbol
+  protected abstract val providedSymbol: PolySymbol
 
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == providedSymbol.qualifiedKind
     || qualifiedKind == JS_PROPERTIES
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
 
     dataHolder.attributes
@@ -51,12 +51,12 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
     return Pointer { ptr.dereference()?.let(::AstroScriptDefineVarsScope) }
   }
 
-  override val providedSymbol: WebSymbol = object : WebSymbol {
+  override val providedSymbol: PolySymbol = object : PolySymbol {
     override val namespace: SymbolNamespace
-      get() = WebSymbol.NAMESPACE_JS
+      get() = PolySymbol.NAMESPACE_JS
 
     override val kind: SymbolKind
-      get() = WebSymbol.KIND_JS_SYMBOLS
+      get() = PolySymbol.KIND_JS_SYMBOLS
 
     override val name: String
       get() = "Astro Defined Script Variable"
@@ -65,7 +65,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
       WebSymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(
-            qualifiedKind = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES)),
+            qualifiedKind = WebSymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
         )
         ),
         false,
@@ -77,7 +77,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
         get() = null
     }
 
-    override fun createPointer(): Pointer<out WebSymbol> =
+    override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
   }
 }
@@ -88,12 +88,12 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
     return Pointer { ptr.dereference()?.let(::AstroStyleDefineVarsScope) }
   }
 
-  override val providedSymbol: WebSymbol = object : WebSymbol {
+  override val providedSymbol: PolySymbol = object : PolySymbol {
     override val namespace: SymbolNamespace
-      get() = WebSymbol.NAMESPACE_CSS
+      get() = PolySymbol.NAMESPACE_CSS
 
     override val kind: SymbolKind
-      get() = WebSymbol.KIND_CSS_PROPERTIES
+      get() = PolySymbol.KIND_CSS_PROPERTIES
 
     override val name: String
       get() = "Astro Defined CSS Variable"
@@ -102,7 +102,7 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
       WebSymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = WebSymbolsPatternReferenceResolver(
           WebSymbolsPatternReferenceResolver.Reference(
-            qualifiedKind = WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES)),
+            qualifiedKind = WebSymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
         )
         ),
         false,
@@ -117,7 +117,7 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
         get() = null
     }
 
-    override fun createPointer(): Pointer<out WebSymbol> =
+    override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
   }
 }

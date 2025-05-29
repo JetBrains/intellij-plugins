@@ -8,8 +8,8 @@ import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.PsiSourcedWebSymbol
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
@@ -21,7 +21,7 @@ import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
+import org.jetbrains.vuejs.web.symbols.VuePolyTypesMergedSymbol
 
 class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
 
@@ -37,16 +37,16 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
   }
 
   override fun apply(
-    matches: List<WebSymbol>,
+    matches: List<PolySymbol>,
     strict: Boolean,
     qualifiedName: WebSymbolQualifiedName,
-  ): List<WebSymbol> {
-    if (qualifiedName.namespace != WebSymbol.NAMESPACE_HTML) return matches
+  ): List<PolySymbol> {
+    if (qualifiedName.namespace != PolySymbol.NAMESPACE_HTML) return matches
 
     var result = matches
     if (qualifiedName.matches(VUE_COMPONENTS)) {
       if (result.size > 1) {
-        val mergedSymbol = result.find { it is VueWebTypesMergedSymbol } as? VueWebTypesMergedSymbol
+        val mergedSymbol = result.find { it is VuePolyTypesMergedSymbol } as? VuePolyTypesMergedSymbol
         if (mergedSymbol != null) {
           val mergedWebTypes = mergedSymbol.webTypesSymbols
           // The check can get very expensive with more web-types merged
@@ -58,7 +58,7 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
       }
       if (!strict) return result
     }
-    else if (qualifiedName.matches(WebSymbol.HTML_ELEMENTS)) {
+    else if (qualifiedName.matches(PolySymbol.HTML_ELEMENTS)) {
       val standardHtmlSymbols = result.filterTo(LinkedHashSet()) { symbol ->
         symbol.nameSegments.flatMap { it.symbols }.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
       }
@@ -80,19 +80,19 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
   ): WebSymbolCodeCompletionItem {
     if (qualifiedKind == VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
-      val element = (item.symbol as? PsiSourcedWebSymbol)?.source
+      val element = (item.symbol as? PsiSourcedPolySymbol)?.source
       if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
         val settings = JSApplicationSettings.getInstance()
         if ((scriptLanguage != null && "ts" == scriptLanguage)
             || (DialectDetector.isTypeScript(element)
                 && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile))) {
           if (settings.hasTSImportCompletionEffective(element.project)) {
-            return item.withInsertHandlerAdded(VueInsertHandler.INSTANCE, WebSymbol.Priority.LOWEST)
+            return item.withInsertHandlerAdded(VueInsertHandler.INSTANCE, PolySymbol.Priority.LOWEST)
           }
         }
         else {
           if (settings.isUseJavaScriptAutoImport) {
-            return item.withInsertHandlerAdded(VueInsertHandler.INSTANCE, WebSymbol.Priority.LOWEST)
+            return item.withInsertHandlerAdded(VueInsertHandler.INSTANCE, PolySymbol.Priority.LOWEST)
           }
         }
       }

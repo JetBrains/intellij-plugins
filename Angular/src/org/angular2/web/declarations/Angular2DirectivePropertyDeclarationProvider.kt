@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.psi.PsiElement
 import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
-import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
+import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.signals.Angular2SignalUtils.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
@@ -32,7 +32,7 @@ class Angular2DirectivePropertyDeclarationProvider : WebSymbolDeclarationProvide
         else -> emptyList()
       }
         .asSequence()
-        .mapNotNull { property -> (property as? WebSymbolDeclaredInPsi)?.takeIf { it.name == name }?.declaration }
+        .mapNotNull { property -> (property as? PolySymbolDeclaredInPsi)?.takeIf { it.name == name }?.declaration }
         .filter { it.declaringElement == element && (offsetInElement == -1 || it.rangeInDeclaringElement.contains(offsetInElement)) }
         .toList()
     }

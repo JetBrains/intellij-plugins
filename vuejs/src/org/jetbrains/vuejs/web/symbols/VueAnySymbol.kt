@@ -12,7 +12,7 @@ class VueAnySymbol(
   qualifiedKind: WebSymbolQualifiedKind,
   override val name: String,
   override val type: JSType? = null,
-) : WebSymbol {
+) : PolySymbol {
 
   override val namespace: SymbolNamespace = qualifiedKind.namespace
 
@@ -22,8 +22,8 @@ class VueAnySymbol(
     get() = WebSymbolsPatternFactory.createRegExMatch(".*", false)
 
   override val properties: Map<String, Any> =
-    mapOf(WebSymbol.PROP_HIDE_FROM_COMPLETION to true,
-          WebSymbol.PROP_DOC_HIDE_PATTERN to true)
+    mapOf(PolySymbol.PROP_HIDE_FROM_COMPLETION to true,
+          PolySymbol.PROP_DOC_HIDE_PATTERN to true)
 
   override fun createPointer(): Pointer<VueAnySymbol> =
     Pointer.hardPointer(this)

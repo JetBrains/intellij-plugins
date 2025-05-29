@@ -8,9 +8,9 @@ import com.intellij.model.Pointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_PROPERTIES
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
@@ -42,7 +42,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
     || qualifiedKind == VUE_COMPONENT_DATA_PROPERTIES
     || qualifiedKind == VUE_COMPONENT_COMPUTED_PROPERTIES
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val origin = VueScopeElementOrigin(enclosingComponent)
     enclosingComponent.acceptPropertiesAndMethods(object : VueModelVisitor() {
       override fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
@@ -97,7 +97,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
   }
 
-  object VueWatchablePropertySymbol : WebSymbol {
+  object VueWatchablePropertySymbol : PolySymbol {
 
     override val namespace: SymbolNamespace get() = NAMESPACE_JS
 
@@ -131,7 +131,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
         get() = VueFramework.ID
     }
 
-    override fun createPointer(): Pointer<out WebSymbol> =
+    override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
   }
 

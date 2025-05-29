@@ -11,7 +11,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndexEx
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.jetbrains.astro.AstroFramework
@@ -24,7 +24,7 @@ internal class AstroAvailableComponentsScope(project: Project) : WebSymbolsScope
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == ASTRO_COMPONENTS
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val psiManager = PsiManager.getInstance(project)
     val files = if (ApplicationManager.getApplication().isUnitTestMode)
       FileTypeIndex.getFiles(AstroFileType, GlobalSearchScope.projectScope(project))

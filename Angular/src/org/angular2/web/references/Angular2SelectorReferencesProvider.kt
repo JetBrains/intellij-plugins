@@ -7,7 +7,7 @@ import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.model.psi.PsiSymbolReferenceHints
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
@@ -34,7 +34,7 @@ abstract class Angular2SelectorReferencesProvider : PsiWebSymbolReferenceProvide
       else null
   }
 
-  override fun getOffsetsToReferencedSymbols(psiElement: PsiExternalReferenceHost, hints: PsiSymbolReferenceHints): Map<Int, WebSymbol> {
+  override fun getOffsetsToReferencedSymbols(psiElement: PsiExternalReferenceHost, hints: PsiSymbolReferenceHints): Map<Int, PolySymbol> {
     val directiveSelector = getDirectiveSelector(psiElement) ?: return emptyMap()
     return JSBuiltInTypeEngineEvaluation.forceBuiltInTypeEngineIfNeeded(psiElement, hints) {
       getReferencedSymbolsInner(directiveSelector)
@@ -43,8 +43,8 @@ abstract class Angular2SelectorReferencesProvider : PsiWebSymbolReferenceProvide
 
   private fun getReferencedSymbolsInner(
     directiveSelector: Angular2DirectiveSelector,
-  ): Map<Int, WebSymbol> {
-    val result = mutableMapOf<Int, WebSymbol>()
+  ): Map<Int, PolySymbol> {
+    val result = mutableMapOf<Int, PolySymbol>()
     val add = { selector: Angular2DirectiveSelectorSymbol ->
       selector.referencedSymbol?.let {
         result[selector.textRangeInSourceElement.startOffset] = it

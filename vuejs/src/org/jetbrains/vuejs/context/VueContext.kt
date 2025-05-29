@@ -12,7 +12,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.xml.util.HtmlUtil
@@ -70,7 +70,7 @@ fun supportsScriptSetup(context: PsiElement?): Boolean =
     ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
     ?.takeIf { it.framework == VueFramework.ID }
     ?.runNameMatchQuery(listOf(VUE_TOP_LEVEL_ELEMENTS.withName(HtmlUtil.SCRIPT_TAG_NAME),
-                               WebSymbol.HTML_ATTRIBUTES.withName(SETUP_ATTRIBUTE_NAME)))
+                               PolySymbol.HTML_ATTRIBUTES.withName(SETUP_ATTRIBUTE_NAME)))
     ?.firstOrNull() != null
 
 

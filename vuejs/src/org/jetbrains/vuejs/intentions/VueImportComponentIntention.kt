@@ -13,8 +13,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PsiSourcedWebSymbol
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
+import com.intellij.webSymbols.PolySymbol
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -61,8 +61,8 @@ class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
     return IntentionPreviewInfo.EMPTY
   }
 
-  private fun WebSymbol.getElementToImport() =
-    this.asSafely<PsiSourcedWebSymbol>()
+  private fun PolySymbol.getElementToImport() =
+    this.asSafely<PsiSourcedPolySymbol>()
       ?.let {
         if (it is VueComponentSymbol)
           it.rawSource

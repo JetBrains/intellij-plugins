@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.jetbrains.astro.AstroFramework
@@ -32,7 +32,7 @@ class AstroFrontmatterScope(val file: AstroFileImpl)
     }
   }
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     file.astroContentRoot()?.frontmatterScript()?.let {
       JSStubBasedPsiTreeUtil.processDeclarationsInScope(it, { element, _ ->
         val namedElement = element as? JSPsiNamedElementBase
@@ -50,7 +50,7 @@ class AstroFrontmatterScope(val file: AstroFileImpl)
       }, false)
     }
     // Self reference
-    consumer(AstroLocalComponent("Astro.self", file, WebSymbol.Priority.NORMAL))
+    consumer(AstroLocalComponent("Astro.self", file, PolySymbol.Priority.NORMAL))
     cacheDependencies.add(file)
   }
 

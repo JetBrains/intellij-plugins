@@ -5,8 +5,8 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PsiSourcedWebSymbol
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
@@ -21,9 +21,9 @@ import org.jetbrains.astro.webSymbols.symbols.AstroComponent
 
 class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
 
-  override fun apply(matches: List<WebSymbol>,
+  override fun apply(matches: List<PolySymbol>,
                      strict: Boolean,
-                     qualifiedName: WebSymbolQualifiedName): List<WebSymbol> =
+                     qualifiedName: WebSymbolQualifiedName): List<PolySymbol> =
     if (qualifiedName.qualifiedKind != ASTRO_COMPONENTS)
       matches
     else if (isHtmlTagName(qualifiedName.name))
@@ -40,10 +40,10 @@ class AstroWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : W
     if (qualifiedKind == ASTRO_COMPONENTS) {
       if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.properties?.get(PROP_ASTRO_PROXIMITY)
-      val element = (item.symbol as? PsiSourcedWebSymbol)?.source
+      val element = (item.symbol as? PsiSourcedPolySymbol)?.source
       if (proximity == AstroProximity.OUT_OF_SCOPE && element is AstroFileImpl) {
         return if (element != context.containingFile.originalFile)
-          item.withInsertHandlerAdded(AstroImportInsertHandler, WebSymbol.Priority.LOWEST)
+          item.withInsertHandlerAdded(AstroImportInsertHandler, PolySymbol.Priority.LOWEST)
         else null
       }
     }

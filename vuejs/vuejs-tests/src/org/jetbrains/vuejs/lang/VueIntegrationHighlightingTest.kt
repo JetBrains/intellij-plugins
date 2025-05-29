@@ -8,7 +8,7 @@ import com.intellij.javascript.nodejs.npm.NpmUtil
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
 import org.jetbrains.vuejs.inspections.VueMissingComponentImportInspection
 
 class VueIntegrationHighlightingTest: JSExternalToolIntegrationTest() {
@@ -31,7 +31,7 @@ class VueIntegrationHighlightingTest: JSExternalToolIntegrationTest() {
     val webSymbolDescriptor = tagAtCaret?.descriptor.asSafely<WebSymbolElementDescriptor>()
     assertNotNull(webSymbolDescriptor)
 
-    val webSymbol = webSymbolDescriptor?.symbol.asSafely<PsiSourcedWebSymbol>()
+    val webSymbol = webSymbolDescriptor?.symbol.asSafely<PsiSourcedPolySymbol>()
     val webSymbolSource = webSymbol?.source
     assertNotNull(webSymbolSource)
 

@@ -11,7 +11,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
@@ -34,15 +34,15 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
   : WebSymbolsScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
 
   companion object {
-    val INPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(WebSymbol.JS_STRING_LITERALS, "Angular directive input",
+    val INPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive input",
                                                                   true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_INPUTS)
-    val OUTPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(WebSymbol.JS_STRING_LITERALS, "Angular directive output",
+    val OUTPUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive output",
                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_OUTPUTS)
-    val IN_OUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(WebSymbol.JS_STRING_LITERALS, "Angular directive two-way binding",
+    val IN_OUTS_SCOPE: WebSymbolsScope = WebSymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive two-way binding",
                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_IN_OUTS)
   }
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
 
     val jsType =

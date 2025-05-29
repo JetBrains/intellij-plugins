@@ -23,7 +23,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
 
   override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName,
                                   params: WebSymbolsNameMatchQueryParams,
-                                  scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+                                  scope: Stack<WebSymbolsScope>): List<PolySymbol> =
     if (qualifiedName.matches(NG_I18N_ATTRIBUTES)) {
       tag.attributes
         .mapNotNull { attr ->
@@ -77,7 +77,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
     }
   }
 
-  private class Angular2I18nAttributeSymbol(private val attribute: XmlAttribute) : Angular2PsiSourcedSymbol, CompositeWebSymbol {
+  private class Angular2I18nAttributeSymbol(private val attribute: XmlAttribute) : Angular2PsiSourcedSymbol, CompositePolySymbol {
 
     override val source: PsiElement
       get() = attribute
@@ -90,8 +90,8 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
       ?: listOf(WebSymbolNameSegment.create(this))
     }
 
-    override val priority: WebSymbol.Priority
-      get() = WebSymbol.Priority.NORMAL
+    override val priority: PolySymbol.Priority
+      get() = PolySymbol.Priority.NORMAL
 
     override val project: Project
       get() = attribute.project

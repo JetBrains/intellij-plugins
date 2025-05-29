@@ -7,7 +7,7 @@ import com.intellij.openapi.util.text.Strings
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationCustomizer
 import com.intellij.webSymbols.utils.qualifiedKind
@@ -16,9 +16,9 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl
 
 class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
-  override fun customize(symbol: WebSymbol, location: PsiElement?, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
-    if (symbol.namespace == WebSymbol.NAMESPACE_HTML
-        && symbol.kind == WebSymbol.KIND_HTML_SLOTS
+  override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
+    if (symbol.namespace == PolySymbol.NAMESPACE_HTML
+        && symbol.kind == PolySymbol.KIND_HTML_SLOTS
         && (symbol.origin.framework == VueFramework.ID
             || symbol.psiContext.let { it != null && isVueContext(it) })) {
       symbol.renderJsTypeForDocs(null, location)
@@ -31,8 +31,8 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
           )
         }
     }
-    else if (symbol.namespace == WebSymbol.NAMESPACE_JS
-             && symbol.kind == WebSymbol.KIND_JS_EVENTS
+    else if (symbol.namespace == PolySymbol.NAMESPACE_JS
+             && symbol.kind == PolySymbol.KIND_JS_EVENTS
              && (symbol.origin.framework == VueFramework.ID
                  || symbol.psiContext.let { it != null && isVueContext(it) })) {
       symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), location, getTypeSubstitutorFor(location))?.let {

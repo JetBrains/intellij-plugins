@@ -6,7 +6,7 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.Companion.configureDependencies
 
@@ -21,7 +21,7 @@ class Angular2CodeCompletionTest : Angular2ReSharperCompletionTestBase() {
     }
     if (HIGH_PRIORITY_ONLY.contains(name)) {
       return (element !is PrioritizedLookupElement<*>
-              || element.priority < WebSymbol.Priority.HIGH.value)
+              || element.priority < PolySymbol.Priority.HIGH.value)
     }
     if (CAMEL_CASE_MATCH_ONLY.contains(name)) {
       val el = myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1)

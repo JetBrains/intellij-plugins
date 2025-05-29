@@ -6,11 +6,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.WebSymbolDelegate
+import com.intellij.webSymbols.PolySymbolDelegate
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 
-abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : WebSymbolDelegate<T>(delegate), Angular2Symbol {
+abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : PolySymbolDelegate<T>(delegate), Angular2Symbol {
 
   abstract override fun createPointer(): Pointer<out Angular2SymbolDelegate<T>>
 
@@ -30,6 +30,6 @@ abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : WebSymb
     get() = delegate.origin
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    super<WebSymbolDelegate>.getNavigationTargets(project)
+    super<PolySymbolDelegate>.getNavigationTargets(project)
 
 }

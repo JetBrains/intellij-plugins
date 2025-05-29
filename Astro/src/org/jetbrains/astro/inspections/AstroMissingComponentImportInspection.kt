@@ -9,7 +9,7 @@ import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.inspections.quickfixes.AstroImportComponentQuickFix
@@ -26,7 +26,7 @@ class AstroMissingComponentImportInspection : LocalInspectionTool() {
           return
 
         val symbol = descriptor.symbol
-        if (symbol !is PsiSourcedWebSymbol
+        if (symbol !is PsiSourcedPolySymbol
             || symbol.properties[PROP_ASTRO_PROXIMITY] != AstroProximity.OUT_OF_SCOPE)
           return
 

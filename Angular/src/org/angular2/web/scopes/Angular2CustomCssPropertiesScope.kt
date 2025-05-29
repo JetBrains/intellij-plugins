@@ -21,8 +21,8 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.elementType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.CSS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol
+import com.intellij.webSymbols.PolySymbol.Companion.CSS_PROPERTIES
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nls
 class Angular2CustomCssPropertiesScope(file: PsiFile) :
   WebSymbolsScopeWithCache<PsiFile, Unit>(Angular2Framework.ID, file.project, file, Unit) {
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(StubIndex.getInstance().getStubIndexModificationTracker(project))
 
     val scope = CssUtil.getCompletionAndResolvingScopeForElement(dataHolder)

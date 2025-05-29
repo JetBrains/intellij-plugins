@@ -28,8 +28,8 @@ import java.util.*
 class VueComponentNamespaceSymbol(
   override val name: String,
   override val source: JSPsiNamedElementBase,
-) : PsiSourcedWebSymbol {
-  override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
+) : PsiSourcedPolySymbol {
+  override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
     val name = name
     val sourcePtr = source.createSmartPointer()
     return Pointer {
@@ -67,7 +67,7 @@ class VueComponentNamespaceSymbol(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbol> =
+  ): List<PolySymbol> =
     if (isNamespacedKind(qualifiedName.qualifiedKind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false)
       getMatchingJSPropertySymbols(qualifiedName.name, params.queryExecutor.namesProvider).adaptToNamespaceComponents(qualifiedName.kind)
     else
@@ -105,14 +105,14 @@ class VueComponentNamespaceSymbol(
   override fun hashCode(): Int =
     Objects.hash(name, source)
 
-  private class VueNamespacedComponent(delegate: VueComponentSymbol) : PsiSourcedWebSymbolDelegate<VueComponentSymbol>(delegate) {
+  private class VueNamespacedComponent(delegate: VueComponentSymbol) : PsiSourcedPolySymbolDelegate<VueComponentSymbol>(delegate) {
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
 
     override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
       isNamespacedKind(qualifiedKind) || super.isExclusiveFor(qualifiedKind)
 
-    override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
+    override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
       val delegatePtr = delegate.createPointer()
       return Pointer {
         delegatePtr.dereference()?.let { VueNamespacedComponent(it) }
@@ -126,7 +126,7 @@ class VueComponentNamespaceSymbol(
       qualifiedName: WebSymbolQualifiedName,
       params: WebSymbolsNameMatchQueryParams,
       scope: Stack<WebSymbolsScope>,
-    ): List<WebSymbol> =
+    ): List<PolySymbol> =
       namespaceSymbol.getMatchingSymbols(qualifiedName, params, scope) +
       super.getMatchingSymbols(qualifiedName, params, scope)
 

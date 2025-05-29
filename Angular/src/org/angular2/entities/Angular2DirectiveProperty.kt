@@ -2,7 +2,6 @@
 package org.angular2.entities
 
 import com.intellij.javascript.webSymbols.documentation.JSWebSymbolWithSubstitutor
-import com.intellij.javascript.webSymbols.jsType
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -16,8 +15,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.css.impl.CssNamedItemPresentation
 import com.intellij.psi.util.contextOfType
 import com.intellij.util.ThreeState
-import com.intellij.util.applyIf
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.search.WebSymbolSearchTarget
@@ -67,8 +65,8 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSWebSymb
   override val project: Project
     get() = sourceElement.project
 
-  override val priority: WebSymbol.Priority?
-    get() = WebSymbol.Priority.LOW
+  override val priority: PolySymbol.Priority?
+    get() = PolySymbol.Priority.LOW
 
   override val type: JSType?
     get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS)

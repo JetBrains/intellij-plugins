@@ -8,8 +8,8 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.PsiSourcedWebSymbol
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
@@ -33,7 +33,7 @@ open class Angular2StructuralDirectiveSymbol private constructor(
       location: PsiFile,
     ): Angular2StructuralDirectiveSymbol =
       when (sourceSymbol) {
-        is PsiSourcedWebSymbol ->
+        is PsiSourcedPolySymbol ->
           Angular2PsiSourcedStructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location)
         else -> Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location)
       }
@@ -46,8 +46,8 @@ open class Angular2StructuralDirectiveSymbol private constructor(
       super.attributeValue
     }
 
-  override val priority: WebSymbol.Priority?
-    get() = WebSymbol.Priority.HIGH
+  override val priority: PolySymbol.Priority?
+    get() = PolySymbol.Priority.HIGH
 
   override val qualifiedKind: WebSymbolQualifiedKind
     get() = NG_STRUCTURAL_DIRECTIVES
@@ -95,10 +95,10 @@ open class Angular2StructuralDirectiveSymbol private constructor(
     hasInputsToBind: Boolean,
     location: PsiFile,
   )
-    : Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location), PsiSourcedWebSymbol {
+    : Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind, location), PsiSourcedPolySymbol {
 
     override val source: PsiElement?
-      get() = (delegate as PsiSourcedWebSymbol).source
+      get() = (delegate as PsiSourcedPolySymbol).source
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<Angular2StructuralDirectiveSymbol>.getNavigationTargets(project)

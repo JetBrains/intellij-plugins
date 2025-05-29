@@ -28,7 +28,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == VUE_BINDING_SHORTHANDS
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
 
     val tag = dataHolder.context as? XmlTag ?: return
@@ -38,12 +38,12 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
 
     val executor = WebSymbolsQueryExecutorFactory.create(dataHolder)
     val attributes = executor
-      .runListSymbolsQuery(WebSymbol.HTML_ATTRIBUTES, virtualSymbols = false, expandPatterns = true,
-                           additionalScope = executor.runNameMatchQuery(WebSymbol.HTML_ELEMENTS.withName(tag.name)))
+      .runListSymbolsQuery(PolySymbol.HTML_ATTRIBUTES, virtualSymbols = false, expandPatterns = true,
+                           additionalScope = executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS.withName(tag.name)))
       .associateBy { it.name }
 
     VueTemplateScopesResolver.resolve(tag, Processor { resolveResult ->
-      val jsSymbol = resolveResult.element.asSafely<JSElement>()?.asWebSymbol() as? PsiSourcedWebSymbol
+      val jsSymbol = resolveResult.element.asSafely<JSElement>()?.asWebSymbol() as? PsiSourcedPolySymbol
       if (jsSymbol != null) {
         attributes[fromAsset(jsSymbol.name)]?.let {
           consumer(VueBindingShorthandSymbol(dataHolder, jsSymbol, it))
@@ -63,10 +63,10 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
 
 class VueBindingShorthandSymbol(
   private val context: XmlAttribute,
-  jsSymbol: PsiSourcedWebSymbol,
-  private val attrSymbol: WebSymbol,
-) : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(jsSymbol),
-    CompositeWebSymbol {
+  jsSymbol: PsiSourcedPolySymbol,
+  private val attrSymbol: PolySymbol,
+) : PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol>(jsSymbol),
+    CompositePolySymbol {
 
   override val nameSegments: List<WebSymbolNameSegment>
     get() = listOf(WebSymbolNameSegment.create(0, delegate.name.length, delegate, attrSymbol))
@@ -80,16 +80,16 @@ class VueBindingShorthandSymbol(
   override val attributeValue: WebSymbolHtmlAttributeValue
     get() = WebSymbolHtmlAttributeValue.create(kind = WebSymbolHtmlAttributeValue.Kind.NO_VALUE)
 
-  override val priority: WebSymbol.Priority
-    get() = WebSymbol.Priority.HIGHEST
+  override val priority: PolySymbol.Priority
+    get() = PolySymbol.Priority.HIGHEST
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     attrSymbol.getDocumentationTarget(location)
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    super<PsiSourcedWebSymbolDelegate>.getNavigationTargets(project) + attrSymbol.getNavigationTargets(project)
+    super<PsiSourcedPolySymbolDelegate>.getNavigationTargets(project) + attrSymbol.getNavigationTargets(project)
 
-  override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
+  override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
     val contextPtr = context.createSmartPointer()
     val psiSourcedSymbolPtr = delegate.createPointer()
     val attrSymbolPtr = attrSymbol.createPointer()

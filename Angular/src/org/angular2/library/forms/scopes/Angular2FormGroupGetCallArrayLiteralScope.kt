@@ -8,12 +8,12 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
+import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.utils.ReferencingWebSymbol
+import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import org.angular2.library.forms.Angular2FormAbstractControl
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
@@ -39,7 +39,7 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
       findFormSymbol()?.getCodeCompletions(qualifiedName, params, scope)
       ?: emptyList()
 
-  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbol> =
+  override fun getMatchingSymbols(qualifiedName: WebSymbolQualifiedName, params: WebSymbolsNameMatchQueryParams, scope: Stack<WebSymbolsScope>): List<PolySymbol> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getMatchingSymbols(qualifiedName, params, scope)
     else
@@ -56,7 +56,7 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
     }
   }
 
-  private fun findFormSymbol(): WebSymbol? =
+  private fun findFormSymbol(): PolySymbol? =
     resolveFormSymbolForGetCallArrayLiteral(formGroup, location)
     ?: Angular2UnknownFormGroup
 
@@ -70,7 +70,7 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
 
 
   companion object {
-    private val formGroupGetPathRefSymbol = ReferencingWebSymbol.create(
+    private val formGroupGetPathRefSymbol = ReferencingPolySymbol.create(
       JS_STRING_LITERALS, "Angular Form control, array or group name", WebSymbolOrigin.empty(),
       *NG_FORM_ANY_CONTROL_PROPS.toTypedArray()
     )

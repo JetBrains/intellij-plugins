@@ -10,8 +10,8 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
-import com.intellij.webSymbols.PsiSourcedWebSymbol
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
@@ -24,7 +24,7 @@ import java.util.*
 open class Angular2DirectiveSymbolWrapper private constructor(
   val directive: Angular2Directive,
   delegate: Angular2Symbol,
-  private val forcedPriority: WebSymbol.Priority? = null,
+  private val forcedPriority: PolySymbol.Priority? = null,
   private val location: PsiFile,
   val isMatchedDirective: Boolean = false,
 ) : Angular2SymbolDelegate<Angular2Symbol>(delegate) {
@@ -36,10 +36,10 @@ open class Angular2DirectiveSymbolWrapper private constructor(
       delegate: Angular2Symbol,
       location: PsiFile,
       isMatchedDirective: Boolean = false,
-      forcedPriority: WebSymbol.Priority? = null,
+      forcedPriority: PolySymbol.Priority? = null,
     ): Angular2DirectiveSymbolWrapper =
       when (delegate) {
-        is PsiSourcedWebSymbol -> Angular2PsiSourcedDirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective)
+        is PsiSourcedPolySymbol -> Angular2PsiSourcedDirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective)
         else -> Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective)
       }
   }
@@ -47,7 +47,7 @@ open class Angular2DirectiveSymbolWrapper private constructor(
   override val required: Boolean?
     get() = isMatchedDirective && super.required == true
 
-  override val priority: WebSymbol.Priority?
+  override val priority: PolySymbol.Priority?
     get() = forcedPriority ?: super.priority
 
   override val attributeValue: WebSymbolHtmlAttributeValue?
@@ -91,7 +91,7 @@ open class Angular2DirectiveSymbolWrapper private constructor(
     create: (
       directive: Angular2Directive,
       delegate: Angular2Symbol,
-      forcedPriority: WebSymbol.Priority?,
+      forcedPriority: PolySymbol.Priority?,
       location: PsiFile,
       isMatchedDirective: Boolean,
     ) -> T,
@@ -112,13 +112,13 @@ open class Angular2DirectiveSymbolWrapper private constructor(
   private class Angular2PsiSourcedDirectiveSymbolWrapper(
     directive: Angular2Directive,
     delegate: Angular2Symbol,
-    forcedPriority: WebSymbol.Priority?,
+    forcedPriority: PolySymbol.Priority?,
     location: PsiFile,
     isMatchedDirective: Boolean,
-  ) : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective), PsiSourcedWebSymbol {
+  ) : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority, location, isMatchedDirective), PsiSourcedPolySymbol {
 
     override val source: PsiElement?
-      get() = (this.delegate as PsiSourcedWebSymbol).source
+      get() = (this.delegate as PsiSourcedPolySymbol).source
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<Angular2DirectiveSymbolWrapper>.getNavigationTargets(project)

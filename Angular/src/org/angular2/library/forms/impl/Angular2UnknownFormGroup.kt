@@ -13,7 +13,7 @@ import org.angular2.library.forms.NG_FORM_GROUP_FIELDS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
 import org.angular2.web.Angular2SymbolOrigin
 
-object Angular2UnknownFormGroup : WebSymbol {
+object Angular2UnknownFormGroup : PolySymbol {
 
   override val name: @NlsSafe String
     get() = "Unknown form group"
@@ -31,15 +31,15 @@ object Angular2UnknownFormGroup : WebSymbol {
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind in NG_FORM_ANY_CONTROL_PROPS
 
-  override val priority: WebSymbol.Priority?
-    get() = WebSymbol.Priority.LOWEST
+  override val priority: PolySymbol.Priority?
+    get() = PolySymbol.Priority.LOWEST
 
   override val properties: Map<String, Any> =
-    mapOf(WebSymbol.Companion.PROP_HIDE_FROM_COMPLETION to true,
-          WebSymbol.Companion.PROP_DOC_HIDE_PATTERN to true)
+    mapOf(PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION to true,
+          PolySymbol.Companion.PROP_DOC_HIDE_PATTERN to true)
 
   override val namespace: @NlsSafe SymbolNamespace
-    get() = WebSymbol.Companion.NAMESPACE_JS
+    get() = PolySymbol.Companion.NAMESPACE_JS
 
   override val kind: @NlsSafe SymbolKind
     get() = NG_FORM_GROUP_PROPS.kind
@@ -47,6 +47,6 @@ object Angular2UnknownFormGroup : WebSymbol {
   override val origin: WebSymbolOrigin
     get() = Angular2SymbolOrigin.empty
 
-  override fun createPointer(): Pointer<out WebSymbol> =
+  override fun createPointer(): Pointer<out PolySymbol> =
     Pointer.hardPointer(this)
 }

@@ -17,8 +17,8 @@ import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.containers.addIfNotNull
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolDelegate
+import com.intellij.webSymbols.PolySymbol
+import com.intellij.webSymbols.PolySymbolDelegate
 import com.intellij.xml.util.XmlTagUtil
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils
@@ -343,7 +343,7 @@ internal class BoundTarget(component: Angular2Component?) {
         }
 
 
-        override fun set(implicitSymbol: WebSymbol, source: PsiElement, localSymbol: TemplateEntity) {
+        override fun set(implicitSymbol: PolySymbol, source: PsiElement, localSymbol: TemplateEntity) {
           referenceMap[ImplicitSymbolWithSource(implicitSymbol, source)] = localSymbol
         }
 
@@ -417,7 +417,7 @@ internal class BoundTarget(component: Angular2Component?) {
       }
       for (symbol in scope.symbols) {
         if (result == null && symbol.name == referencedName) {
-          result = ImplicitSymbolWithSource((symbol as? WebSymbolDelegate<*>)?.delegate ?: symbol, scope.source)
+          result = ImplicitSymbolWithSource((symbol as? PolySymbolDelegate<*>)?.delegate ?: symbol, scope.source)
         }
       }
       scope = scope.parent
@@ -520,13 +520,13 @@ internal class BoundTarget(component: Angular2Component?) {
 }
 
 private data class ImplicitSymbolWithSource(
-  val symbol: WebSymbol,
+  val symbol: PolySymbol,
   val source: PsiElement?,
 )
 
 private interface ReferenceResolver {
   operator fun set(element: PsiElement, localSymbol: TemplateEntity)
-  operator fun set(implicitSymbol: WebSymbol, source: PsiElement, localSymbol: TemplateEntity)
+  operator fun set(implicitSymbol: PolySymbol, source: PsiElement, localSymbol: TemplateEntity)
 }
 
 internal fun buildHostBindingsAst(
@@ -995,7 +995,7 @@ private fun JSVariable.toTmplAstVariable(referenceResolver: ReferenceResolver): 
     referenceResolver.set(this@toTmplAstVariable, this)
   }
 
-private fun WebSymbol.toTmplAstVariable(block: Angular2HtmlBlock, referenceResolver: ReferenceResolver): TmplAstVariable =
+private fun PolySymbol.toTmplAstVariable(block: Angular2HtmlBlock, referenceResolver: ReferenceResolver): TmplAstVariable =
   TmplAstVariable(
     name = name,
     keySpan = null,

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.WebSymbol.Companion.CSS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.CSS_PROPERTIES
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.utils.WebSymbolsStructuredScope
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor

@@ -9,8 +9,8 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
-import com.intellij.webSymbols.WebSymbol.Companion.JS_SYMBOLS
+import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
+import com.intellij.webSymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
@@ -28,7 +28,7 @@ class ViewChildrenScope(
   override fun isExclusiveFor(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == JS_STRING_LITERALS
 
-  override fun acceptSymbol(symbol: WebSymbol): Boolean =
+  override fun acceptSymbol(symbol: PolySymbol): Boolean =
     true
 
   override val subScopeBuilder: (WebSymbolsQueryExecutor, ES6Decorator) -> List<WebSymbolsScope>
@@ -67,7 +67,7 @@ class ViewChildrenScope(
       super.getCodeCompletions(qualifiedName, params, scope)
         .map { it.decorateWithSymbolType(dataHolder, it.symbol).decorateWithJsKindIcon() }
 
-    override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+    override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
       cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
       ReferenceVariablesStructuredScope(dataHolder).flattenSymbols(resolveToMultipleSymbols)
         .forEach(consumer)

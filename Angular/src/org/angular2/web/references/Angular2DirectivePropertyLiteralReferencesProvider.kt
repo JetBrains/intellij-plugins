@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.psi.PsiSymbolReferenceHints
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.references.PsiWebSymbolReferenceProvider
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
@@ -21,7 +21,7 @@ import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 class Angular2DirectivePropertyLiteralReferencesProvider : PsiWebSymbolReferenceProvider<JSLiteralExpression> {
 
-  override fun getOffsetsToReferencedSymbols(psiElement: JSLiteralExpression, hints: PsiSymbolReferenceHints): Map<Int, WebSymbol> {
+  override fun getOffsetsToReferencedSymbols(psiElement: JSLiteralExpression, hints: PsiSymbolReferenceHints): Map<Int, PolySymbol> {
     val stringValue = psiElement.stubSafeStringValue ?: return emptyMap()
     val colonIndex = stringValue.indexOf(':').takeIf { it >= 0 } ?: stringValue.length
     val startOffset = StringUtil.skipWhitespaceForward(stringValue, 0)
@@ -34,7 +34,7 @@ class Angular2DirectivePropertyLiteralReferencesProvider : PsiWebSymbolReference
     }
   }
 
-  private fun map(psiElement: JSLiteralExpression, stringValue: String, startOffset: Int, endOffset: Int): Map<Int, WebSymbol> {
+  private fun map(psiElement: JSLiteralExpression, stringValue: String, startOffset: Int, endOffset: Int): Map<Int, PolySymbol> {
     val (kind, directive, hostDirective) = getPropertyDeclarationOrReferenceKindAndDirective(psiElement, false)
                                            ?: return emptyMap()
     if (kind != INPUTS_PROP && kind != OUTPUTS_PROP)

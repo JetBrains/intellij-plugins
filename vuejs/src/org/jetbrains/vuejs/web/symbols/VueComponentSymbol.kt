@@ -9,7 +9,7 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.query.WebSymbolMatch
+import com.intellij.webSymbols.query.PolySymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.*
@@ -40,7 +40,7 @@ class VueComponentSymbol(
   override val source: PsiElement?
     get() = (item as? VueRegularComponent)?.nameElement ?: item.rawSource
 
-  override val priority: WebSymbol.Priority
+  override val priority: PolySymbol.Priority
     get() = vueProximity.asWebSymbolPriority()
 
   override fun equals(other: Any?): Boolean =
@@ -65,10 +65,10 @@ class VueComponentSymbol(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbol> =
-    if (qualifiedName.matches(WebSymbol.HTML_SLOTS) && item is VueUnresolvedComponent)
-      listOf(WebSymbolMatch.create(qualifiedName.name, WebSymbol.HTML_SLOTS, this.origin,
-                                   WebSymbolNameSegment.create(0, qualifiedName.name.length)))
+  ): List<PolySymbol> =
+    if (qualifiedName.matches(PolySymbol.HTML_SLOTS) && item is VueUnresolvedComponent)
+      listOf(PolySymbolMatch.create(qualifiedName.name, PolySymbol.HTML_SLOTS, this.origin,
+                                    WebSymbolNameSegment.create(0, qualifiedName.name.length)))
     else
       super.getMatchingSymbols(qualifiedName, params, scope)
 
@@ -108,7 +108,7 @@ class VueComponentSymbol(
         }, onlyPublic = false)
         props.map { VueComputedPropertySymbol(it, item, this.origin) }
       }
-      WebSymbol.HTML_SLOTS -> {
+      PolySymbol.HTML_SLOTS -> {
         (item as? VueContainer)
           ?.slots
           ?.map { VueSlotSymbol(it, item, this.origin) }
@@ -121,7 +121,7 @@ class VueComponentSymbol(
           ?.let { listOf(VueModelSymbol(this.origin, it)) }
         ?: emptyList()
       }
-      WebSymbol.JS_EVENTS -> {
+      PolySymbol.JS_EVENTS -> {
         (item as? VueContainer)
           ?.emits
           ?.map { VueEmitCallSymbol(it, item, this.origin) }

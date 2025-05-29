@@ -14,13 +14,13 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_SYMBOLS
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
-import com.intellij.webSymbols.WebSymbol.Priority
+import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_SYMBOLS
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.PolySymbol.Priority
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
-import com.intellij.webSymbols.utils.ReferencingWebSymbol
+import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.entities.Angular2DirectiveProperty
@@ -37,7 +37,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
   : WebSymbolsScopeWithCache<Angular2TemplateBindingKey, Unit>(Angular2Framework.ID, binding.project, binding, Unit) {
 
   @OptIn(IntellijInternalApi::class)
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     val templateBindings = dataHolder.parentOfType<Angular2TemplateBindings>() ?: return
     when ((dataHolder.parent as? Angular2TemplateBinding ?: return).keyKind) {
@@ -53,9 +53,9 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
             .filter { it.name != templateName }
             .forEach(consumer)
         }
-        consumer(ReferencingWebSymbol.create(NG_TEMPLATE_BINDINGS, "Angular template binding mapping",
-                                             Angular2SymbolOrigin.empty,
-                                             NG_DIRECTIVE_INPUTS))
+        consumer(ReferencingPolySymbol.create(NG_TEMPLATE_BINDINGS, "Angular template binding mapping",
+                                              Angular2SymbolOrigin.empty,
+                                              NG_DIRECTIVE_INPUTS))
       }
       else -> {}
     }
@@ -84,7 +84,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
 
   override fun getModificationCount(): Long = 0
 
-  private class TemplateBindingsSymbol(private val bindings: Angular2TemplateBindings) : WebSymbol {
+  private class TemplateBindingsSymbol(private val bindings: Angular2TemplateBindings) : PolySymbol {
     override val origin: WebSymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
@@ -101,7 +101,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
       get() = BindingsTypeResolver.get(bindings)
         .resolveTemplateContextType()
 
-    override fun createPointer(): Pointer<out WebSymbol> {
+    override fun createPointer(): Pointer<out PolySymbol> {
       val bindingsPtr = bindings.createSmartPointer()
       return Pointer {
         bindingsPtr.dereference()?.let { TemplateBindingsSymbol(it) }

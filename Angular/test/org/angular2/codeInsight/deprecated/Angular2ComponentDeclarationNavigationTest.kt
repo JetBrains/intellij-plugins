@@ -10,7 +10,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestUtil
@@ -89,8 +89,8 @@ class Angular2ComponentDeclarationNavigationTest : Angular2CodeInsightFixtureTes
     val symbols: Collection<Symbol?> = targetSymbols(file, focusedEditor.getCaretModel().offset)
     UsefulTestCase.assertSize(1, symbols)
     val symbol = symbols.firstOrNull()
-    if (symbol is WebSymbol) {
-      UsefulTestCase.assertInstanceOf(symbol, WebSymbol::class.java)
+    if (symbol is PolySymbol) {
+      UsefulTestCase.assertInstanceOf(symbol, PolySymbol::class.java)
       assertEquals(elementText, symbol.name)
     }
     else {

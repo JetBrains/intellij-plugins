@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
+import com.intellij.webSymbols.PolySymbol
+import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
@@ -46,13 +46,13 @@ abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T)
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind in providedKinds
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(dataHolder) {
       matchDirectives().forEach { directive ->
         directive.exportAs.forEach { consumer(it.value) }
         collectSymbols(directive, isTemplateTagContext) { symbol ->
-          consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, dataHolder.containingFile, true, WebSymbol.Priority.HIGHEST))
+          consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, dataHolder.containingFile, true, PolySymbol.Priority.HIGHEST))
         }
       }
     }

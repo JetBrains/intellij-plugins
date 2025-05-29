@@ -7,7 +7,7 @@ import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
-import com.intellij.webSymbols.utils.ReferencingWebSymbol
+import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import com.intellij.webSymbols.utils.qualifiedKind
 
 class WebSymbolReferencingScope(
@@ -18,7 +18,7 @@ class WebSymbolReferencingScope(
   vararg qualifiedKinds: WebSymbolQualifiedKind,
 ) : WebSymbolsScope {
 
-  private val symbol = ReferencingWebSymbol.create(
+  private val symbol = ReferencingPolySymbol.create(
     qualifiedKind, name, origin, *qualifiedKinds
   )
 

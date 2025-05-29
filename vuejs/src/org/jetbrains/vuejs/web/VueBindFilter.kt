@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
@@ -17,11 +17,11 @@ class VueBindFilter : WebSymbolsFilter {
     codeCompletions.filterHtmlEventAttributes(queryExecutor, scope) { name }
 
   override fun filterNameMatches(
-    matches: List<WebSymbol>,
+    matches: List<PolySymbol>,
     queryExecutor: WebSymbolsQueryExecutor,
     scope: List<WebSymbolsScope>,
     properties: Map<String, Any>,
-  ): List<WebSymbol> =
+  ): List<PolySymbol> =
     matches.filterHtmlEventAttributes(queryExecutor, scope) { name }
 
   private fun <T> List<T>.filterHtmlEventAttributes(

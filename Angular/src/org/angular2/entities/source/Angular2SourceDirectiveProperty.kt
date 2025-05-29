@@ -17,10 +17,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.WebSymbolQualifiedKind
-import com.intellij.webSymbols.utils.WebSymbolDeclaredInPsi
+import com.intellij.webSymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.Angular2DecoratorUtil
@@ -154,7 +154,7 @@ abstract class Angular2SourceDirectiveProperty(
     name: String,
     required: Boolean,
     declarationSource: PsiElement?,
-  ) : Angular2SourceDirectiveProperty(owner, signature, qualifiedKind, name, required, declarationSource), PsiSourcedWebSymbol {
+  ) : Angular2SourceDirectiveProperty(owner, signature, qualifiedKind, name, required, declarationSource), PsiSourcedPolySymbol {
     override val sourceElement: PsiElement
       get() = sources[0]
 
@@ -204,7 +204,7 @@ abstract class Angular2SourceDirectiveProperty(
     declarationSource: PsiElement?,
     override val sourceElement: PsiElement,
     override val textRangeInSourceElement: TextRange,
-  ) : Angular2SourceDirectiveProperty(owner, signature, qualifiedKind, name, required, declarationSource), WebSymbolDeclaredInPsi {
+  ) : Angular2SourceDirectiveProperty(owner, signature, qualifiedKind, name, required, declarationSource), PolySymbolDeclaredInPsi {
 
     override fun createPointer(): Pointer<Angular2SourceMappedDirectiveProperty> {
       val ownerPtr = owner.createSmartPointer()

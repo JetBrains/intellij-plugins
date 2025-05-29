@@ -4,7 +4,7 @@ package org.angular2.web.scopes
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
@@ -21,7 +21,7 @@ internal class DirectiveElementSelectorsScope(file: PsiFile)
   override fun createPointer(): Pointer<DirectiveElementSelectorsScope> =
     Pointer.hardPointer(this)
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     Angular2EntitiesProvider.getAllElementDirectives(project)
       .asSequence()
       .filter { (name, list) -> list.isNotEmpty() && name.isNotEmpty() }

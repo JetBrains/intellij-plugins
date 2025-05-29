@@ -3,7 +3,6 @@ package org.angular2.codeInsight.template
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.javascript.psi.JSPsiElementBase
-import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
@@ -14,13 +13,12 @@ import com.intellij.psi.util.*
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.utils.qualifiedKind
 import com.intellij.webSymbols.utils.withNavigationTarget
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.codeInsight.blocks.BLOCK_LET
-import org.angular2.codeInsight.blocks.PARAMETER_LET
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -65,7 +63,7 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
     override val source: PsiElement
       get() = root
 
-    override val symbols = ArrayList<WebSymbol>()
+    override val symbols = ArrayList<PolySymbol>()
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {
       elements.forEach { el -> consumer.accept(JSResolveResult(el)) }
@@ -75,8 +73,8 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
       elements.add(element)
     }
 
-    fun add(symbol: WebSymbol) {
-      assert(symbol.qualifiedKind == WebSymbol.JS_SYMBOLS)
+    fun add(symbol: PolySymbol) {
+      assert(symbol.qualifiedKind == PolySymbol.JS_SYMBOLS)
       symbols.add(symbol)
     }
 
@@ -145,7 +143,7 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
       currentScope().add(element)
     }
 
-    fun addSymbol(symbol: WebSymbol) {
+    fun addSymbol(symbol: PolySymbol) {
       currentScope().add(symbol)
     }
 

@@ -11,10 +11,10 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.HTML_ATTRIBUTES
-import com.intellij.webSymbols.WebSymbol.Companion.HTML_SLOTS
-import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.PolySymbol.Companion.HTML_ATTRIBUTES
+import com.intellij.webSymbols.PolySymbol.Companion.HTML_SLOTS
+import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue.Kind.EXPRESSION
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue.Type.OF_MATCH
@@ -48,7 +48,7 @@ class VueSlotElementScope(tag: XmlTag)
     qualifiedKind == HTML_ATTRIBUTES
     || qualifiedKind == VUE_COMPONENTS
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     VueModelManager.findEnclosingContainer(dataHolder)
       .asWebSymbol(SLOT_LOCAL_COMPONENT, VueModelVisitor.Proximity.LOCAL)
       ?.let(consumer)
@@ -85,13 +85,13 @@ class VueSlotElementScope(tag: XmlTag)
     }
   }
 
-  private class VueSlotPropertiesSymbol(slotName: String?) : WebSymbol {
+  private class VueSlotPropertiesSymbol(slotName: String?) : PolySymbol {
 
     override val namespace: SymbolNamespace
       get() = NAMESPACE_HTML
 
     override val kind: SymbolKind
-      get() = WebSymbol.KIND_HTML_ATTRIBUTES
+      get() = PolySymbol.KIND_HTML_ATTRIBUTES
 
     override val name: String
       get() = "Vue Slot Properties"
@@ -126,7 +126,7 @@ class VueSlotElementScope(tag: XmlTag)
         get() = VueFramework.ID
     }
 
-    override fun createPointer(): Pointer<out WebSymbol> =
+    override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
   }
 

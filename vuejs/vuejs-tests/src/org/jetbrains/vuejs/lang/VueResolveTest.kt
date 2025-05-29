@@ -2283,7 +2283,7 @@ export default class UsageComponent extends Vue {
     assertEquals(
       "default?: (props: { field: FieldSlotPropText }) => any",
       myFixture.multiResolveWebSymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
-        ?.asSafely<PsiSourcedWebSymbol>()?.source?.text
+        ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
     )
   }
 
@@ -2307,7 +2307,7 @@ export default class UsageComponent extends Vue {
     assertEquals(
       "default?: (props: { field: FieldSlotPropText }) => any",
       myFixture.multiResolveWebSymbolReference("v-sl<caret>ot='{ field }'").asSingleSymbol()
-        ?.asSafely<PsiSourcedWebSymbol>()?.source?.text
+        ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
     )
   }
 
@@ -2331,7 +2331,7 @@ export default class UsageComponent extends Vue {
     assertEquals(
       "default?: (props: { field: FieldSlotPropText }) => any",
       myFixture.multiResolveWebSymbolReference("v-slot:def<caret>ault='{ field }'").asSingleSymbol()
-        ?.asSafely<PsiSourcedWebSymbol>()?.source?.text
+        ?.asSafely<PsiSourcedPolySymbol>()?.source?.text
     )
   }
 
@@ -2378,7 +2378,7 @@ export default class UsageComponent extends Vue {
       .filterIsInstance<VueBindingShorthandSymbol>()
       .flatMap { it.nameSegments }
       .flatMap { it.symbols }
-      .filterIsInstance<PsiSourcedWebSymbol>()
+      .filterIsInstance<PsiSourcedPolySymbol>()
       .mapNotNull { if (it.source is JSImplicitElement) it.source?.context else it.source }
       .map { it.text }
       .toList()

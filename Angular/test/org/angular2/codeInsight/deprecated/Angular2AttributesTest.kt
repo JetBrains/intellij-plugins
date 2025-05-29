@@ -21,7 +21,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbolDelegate.Companion.unwrapAllDelegates
+import com.intellij.webSymbols.PolySymbolDelegate.Companion.unwrapAllDelegates
 import com.intellij.webSymbols.testFramework.checkListByFile
 import com.intellij.webSymbols.testFramework.doCompletionItemsTest
 import com.intellij.webSymbols.testFramework.enableIdempotenceChecksOnEveryCache
@@ -66,7 +66,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     return myFixture.resolveReference(signature)
   }
 
-  private fun resolveWebSymbolReference(signature: String): WebSymbol {
+  private fun resolveWebSymbolReference(signature: String): PolySymbol {
     return myFixture.resolveWebSymbolReference(signature)
   }
 
@@ -494,7 +494,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       for (i in attrWrap.indices) {
         val wrap = attrWrap[i]
         val ref = myFixture.multiResolveWebSymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
-          .filter { s: WebSymbol ->
+          .filter { s: PolySymbol ->
             s.properties[PROP_ERROR_SYMBOL] != true
             && s.properties[PROP_BINDING_PATTERN] != true
           }
@@ -858,7 +858,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       UsefulTestCase.assertSameElements(
         myFixture.multiResolveWebSymbolReference(location)
           .map {
-            if (it is PsiSourcedWebSymbol) {
+            if (it is PsiSourcedPolySymbol) {
               val source = it.source
               when {
                 source == null -> "<null>"

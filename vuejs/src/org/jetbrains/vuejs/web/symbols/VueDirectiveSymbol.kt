@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.WebSymbolsScope
@@ -26,14 +26,14 @@ open class VueDirectiveSymbol(
   override val qualifiedKind: WebSymbolQualifiedKind
     get() = VUE_DIRECTIVES
 
-  override val priority: WebSymbol.Priority
+  override val priority: PolySymbol.Priority
     get() = vueProximity.asWebSymbolPriority()
 
   override fun getMatchingSymbols(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbol> =
+  ): List<PolySymbol> =
     if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
       listOf(VueAnySymbol(this.origin, qualifiedName.qualifiedKind, qualifiedName.name))
     }
@@ -43,7 +43,7 @@ open class VueDirectiveSymbol(
     qualifiedKind: WebSymbolQualifiedKind,
     params: WebSymbolsListSymbolsQueryParams,
     scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbol> =
+  ): List<PolySymbol> =
     if (qualifiedKind == VUE_DIRECTIVE_ARGUMENT) {
       listOf(VueAnySymbol(this.origin, qualifiedKind, "Vue directive argument"))
     }

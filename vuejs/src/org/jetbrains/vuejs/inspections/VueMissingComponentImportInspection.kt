@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -30,7 +30,7 @@ class VueMissingComponentImportInspection : LocalInspectionTool() {
           return
 
         val symbol = descriptor.symbol
-        if (symbol !is PsiSourcedWebSymbol
+        if (symbol !is PsiSourcedPolySymbol
             || symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE
             || symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true)
           return

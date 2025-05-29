@@ -7,9 +7,9 @@ import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_EVENTS
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.PolySymbol
+import com.intellij.webSymbols.PolySymbol.Companion.KIND_JS_EVENTS
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
@@ -55,7 +55,7 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
                                WebSymbolsNameMatchQueryParams.create(WebSymbolsQueryExecutorFactory.create(parent, false)),
                                Stack())
           ?.getOrNull(0)
-          ?.asSafely<WebSymbol>()
+          ?.asSafely<PolySymbol>()
       }
       else -> null
     }
@@ -66,7 +66,7 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
   }
 
   private class VueSymbolDeclaration(
-    private val symbol: WebSymbol,
+    private val symbol: PolySymbol,
     private val literal: JSLiteralExpression,
   ) : WebSymbolDeclaration {
 
@@ -76,7 +76,7 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
     override fun getRangeInDeclaringElement(): TextRange =
       ElementManipulators.getValueTextRange(literal)
 
-    override fun getSymbol(): WebSymbol =
+    override fun getSymbol(): PolySymbol =
       symbol
   }
 }

@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedName
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
@@ -19,7 +19,7 @@ fun WebSymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
     }
   ?: VueModelDirectiveProperties()
 
-fun VueScopeElement.asWebSymbol(name: String, forcedProximity: VueModelVisitor.Proximity): WebSymbol? =
+fun VueScopeElement.asWebSymbol(name: String, forcedProximity: VueModelVisitor.Proximity): PolySymbol? =
   when (this) {
     is VueComponent -> VueComponentSymbol(toAsset(name, true), this, forcedProximity)
     is VueScriptSetupLocalDirective -> VueScriptSetupLocalDirectiveSymbol(this, forcedProximity)
@@ -27,12 +27,12 @@ fun VueScopeElement.asWebSymbol(name: String, forcedProximity: VueModelVisitor.P
     else -> null
   }
 
-fun VueModelVisitor.Proximity.asWebSymbolPriority(): WebSymbol.Priority =
+fun VueModelVisitor.Proximity.asWebSymbolPriority(): PolySymbol.Priority =
   when (this) {
-    VueModelVisitor.Proximity.LOCAL -> WebSymbol.Priority.HIGHEST
-    VueModelVisitor.Proximity.APP -> WebSymbol.Priority.HIGH
-    VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.GLOBAL -> WebSymbol.Priority.NORMAL
-    VueModelVisitor.Proximity.OUT_OF_SCOPE -> WebSymbol.Priority.LOW
+    VueModelVisitor.Proximity.LOCAL -> PolySymbol.Priority.HIGHEST
+    VueModelVisitor.Proximity.APP -> PolySymbol.Priority.HIGH
+    VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.GLOBAL -> PolySymbol.Priority.NORMAL
+    VueModelVisitor.Proximity.OUT_OF_SCOPE -> PolySymbol.Priority.LOW
   }
 
 internal fun isVueComponentQuery(qualifiedName: WebSymbolQualifiedName): Boolean {

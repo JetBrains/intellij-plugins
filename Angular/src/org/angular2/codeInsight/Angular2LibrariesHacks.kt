@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
@@ -23,7 +22,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
@@ -184,7 +183,7 @@ object Angular2LibrariesHacks {
     override val name: String = input.name.replace("([A-Z])".toRegex(), "-$1").lowercase(Locale.ENGLISH)
 
     override val qualifiedKind: WebSymbolQualifiedKind
-      get() = WebSymbol.HTML_ATTRIBUTES
+      get() = PolySymbol.HTML_ATTRIBUTES
 
     override fun createPointer(): Pointer<IonicComponentAttribute> {
       val input = this.delegate.createPointer()

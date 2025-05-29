@@ -28,7 +28,7 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
   override fun provides(qualifiedKind: WebSymbolQualifiedKind): Boolean =
     qualifiedKind == VUE_COMPONENT_NAMESPACES
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     JSStubBasedPsiTreeUtil.processDeclarationsInScope(
       dataHolder,
       { element, _ ->

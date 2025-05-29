@@ -9,7 +9,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.siblings
 import com.intellij.util.ProcessingContext
 import com.intellij.util.applyIf
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
@@ -32,7 +32,7 @@ class Angular2BlockParameterNameCompletionProvider : CompletionProvider<Completi
       )
       .toMutableSet()
 
-    val candidates = mutableListOf<WebSymbol>()
+    val candidates = mutableListOf<PolySymbol>()
 
     if (parameters.position.siblings(false, false)
         .none {

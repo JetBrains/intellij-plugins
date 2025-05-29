@@ -5,7 +5,7 @@ import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.util.Pair
-import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.PsiSourcedPolySymbol
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolTypeSupport
 import icons.AngularIcons
@@ -15,8 +15,8 @@ import javax.swing.Icon
 class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : WebSymbolOrigin {
 
   private val versionAndName: Pair<String, String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    val source = if (mySymbol is PsiSourcedWebSymbol)
-      (mySymbol as PsiSourcedWebSymbol).source
+    val source = if (mySymbol is PsiSourcedPolySymbol)
+      (mySymbol as PsiSourcedPolySymbol).source
     else
       null
     val psiFile = source?.containingFile

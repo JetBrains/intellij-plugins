@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.psi.PsiSymbolReferenceService
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.PolySymbol
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
@@ -28,8 +28,8 @@ class Angular2HostEventType : Angular2BaseType<JSProperty> {
     val references = PsiSymbolReferenceService.getService().getReferences(property)
     val eventType = references.asSequence()
       .flatMap { it.resolveReference() }
-      .filterIsInstance<WebSymbol>()
-      .find { it.qualifiedKind == WebSymbol.JS_EVENTS || it.qualifiedKind == NG_DIRECTIVE_OUTPUTS }
+      .filterIsInstance<PolySymbol>()
+      .find { it.qualifiedKind == PolySymbol.JS_EVENTS || it.qualifiedKind == NG_DIRECTIVE_OUTPUTS }
       ?.jsType
     return eventType ?: JSAnyType.get(property)
   }

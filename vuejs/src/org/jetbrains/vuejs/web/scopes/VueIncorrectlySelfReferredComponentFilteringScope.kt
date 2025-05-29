@@ -28,7 +28,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
     qualifiedName: WebSymbolQualifiedName,
     params: WebSymbolsNameMatchQueryParams,
     scope: Stack<WebSymbolsScope>,
-  ): List<WebSymbol> =
+  ): List<PolySymbol> =
     delegate.getMatchingSymbols(qualifiedName, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
 
@@ -75,7 +75,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
 
   // Cannot self refer without export declaration with component name or script setup
   private fun isNotIncorrectlySelfReferred(symbol: WebSymbolsScope?) =
-    symbol !is PsiSourcedWebSymbol
+    symbol !is PsiSourcedPolySymbol
     || (symbol.source as? JSImplicitElement)?.context.let { context ->
       context == null
       || context != file

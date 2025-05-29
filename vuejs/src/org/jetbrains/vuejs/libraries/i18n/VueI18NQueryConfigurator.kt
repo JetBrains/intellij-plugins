@@ -72,7 +72,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
     }
   }
 
-  private class I18nTagExtension(private val lang: String) : WebSymbol {
+  private class I18nTagExtension(private val lang: String) : PolySymbol {
 
     override val name: String
       get() = "i18n"
@@ -81,18 +81,18 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
       WebSymbolOrigin.create(VueFramework.ID, "vue-i18n")
 
     override val namespace: SymbolNamespace
-      get() = WebSymbol.NAMESPACE_HTML
+      get() = PolySymbol.NAMESPACE_HTML
 
     override val kind: SymbolKind
-      get() = WebSymbol.KIND_HTML_ELEMENTS
+      get() = PolySymbol.KIND_HTML_ELEMENTS
 
     override val extension: Boolean
       get() = true
 
     override val properties: Map<String, Any>
-      get() = mapOf(Pair(WebSymbol.PROP_INJECT_LANGUAGE, lang))
+      get() = mapOf(Pair(PolySymbol.PROP_INJECT_LANGUAGE, lang))
 
-    override fun createPointer(): Pointer<out WebSymbol> =
+    override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
   }
 

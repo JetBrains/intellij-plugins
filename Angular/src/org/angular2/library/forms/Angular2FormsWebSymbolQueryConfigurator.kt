@@ -10,15 +10,15 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.PolySymbol
+import com.intellij.webSymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsListSymbolsQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
-import com.intellij.webSymbols.utils.ReferencingWebSymbol
+import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import com.intellij.webSymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
 import org.angular2.lang.expr.Angular2Language
@@ -69,22 +69,22 @@ class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
     return emptyList()
   }
 
-  private val ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL = ReferencingWebSymbol.create(
-    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form control name", WebSymbolOrigin.empty(),
+  private val ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL = ReferencingPolySymbol.create(
+    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form control name", WebSymbolOrigin.empty(),
     NG_FORM_CONTROL_PROPS,
   )
 
-  private val ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL = ReferencingWebSymbol.create(
-    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form array name", WebSymbolOrigin.empty(),
+  private val ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL = ReferencingPolySymbol.create(
+    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form array name", WebSymbolOrigin.empty(),
     NG_FORM_ARRAY_PROPS,
   )
 
-  private val ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL = ReferencingWebSymbol.create(
-    WebSymbol.HTML_ATTRIBUTE_VALUES, "Angular Form group name", WebSymbolOrigin.empty(),
+  private val ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL = ReferencingPolySymbol.create(
+    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form group name", WebSymbolOrigin.empty(),
     NG_FORM_GROUP_PROPS,
   )
 
-  private class SingleSymbolExclusiveScope(private val symbol: WebSymbol) : WebSymbolsScope {
+  private class SingleSymbolExclusiveScope(private val symbol: PolySymbol) : WebSymbolsScope {
 
     override fun getSymbols(qualifiedKind: WebSymbolQualifiedKind, params: WebSymbolsListSymbolsQueryParams, scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
       if (symbol.qualifiedKind == qualifiedKind)

@@ -6,11 +6,11 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbol.Companion.JS_PROPERTIES
-import com.intellij.webSymbols.WebSymbol.Companion.JS_STRING_LITERALS
+import com.intellij.webSymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.webSymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
-import com.intellij.webSymbols.utils.ReferencingWebSymbol
+import com.intellij.webSymbols.utils.ReferencingPolySymbol
 import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_PROVIDES
@@ -26,7 +26,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
     || qualifiedKind == JS_STRING_LITERALS
     || qualifiedKind == JS_PROPERTIES
 
-  override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+  override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val origin = VueScopeElementOrigin(enclosingComponent)
     val provides = enclosingComponent.global.provides
 
@@ -65,14 +65,14 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
       get() = VueFramework.ID
   }
 
-  private val vueInjectStringSymbol = ReferencingWebSymbol.create(
+  private val vueInjectStringSymbol = ReferencingPolySymbol.create(
     JS_STRING_LITERALS,
     "Vue Inject String",
     VueInjectSymbolOrigin,
     VUE_PROVIDES
   )
 
-  private val vueInjectPropertySymbol = ReferencingWebSymbol.create(
+  private val vueInjectPropertySymbol = ReferencingPolySymbol.create(
     JS_PROPERTIES,
     "Vue Inject Property",
     VueInjectSymbolOrigin,
