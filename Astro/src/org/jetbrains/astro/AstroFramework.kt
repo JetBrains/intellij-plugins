@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro
 
-import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
 import com.intellij.html.webSymbols.attributes.PolySymbolHtmlAttributeInfo
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
@@ -26,7 +26,7 @@ class AstroFramework : WebFramework() {
   override val icon: Icon
     get() = AstroIcons.Astro
 
-  override fun createHtmlAttributeDescriptor(info: PolySymbolHtmlAttributeInfo, tag: XmlTag?): WebSymbolAttributeDescriptor =
+  override fun createHtmlAttributeDescriptor(info: PolySymbolHtmlAttributeInfo, tag: XmlTag?): PolySymbolAttributeDescriptor =
     AstroAttributeDescriptor(info, tag)
 }
 

@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
-import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.polySymbols.jsType
 import com.intellij.lang.ASTNode
@@ -114,7 +114,7 @@ class VueJSEmbeddedExpressionContentImpl :
 
         val expectedType =
           attr.descriptor
-            ?.asSafely<WebSymbolAttributeDescriptor>()
+            ?.asSafely<PolySymbolAttributeDescriptor>()
             ?.symbol
             ?.jsType
         if (expectedType != null)

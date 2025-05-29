@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes
 
-import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
 import com.intellij.html.webSymbols.attributes.PolySymbolHtmlAttributeInfo
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
@@ -18,7 +18,7 @@ import org.angular2.web.Angular2DescriptorSymbolsProvider
 import org.angular2.web.Angular2SymbolOrigin
 
 class Angular2AttributeDescriptor(info: PolySymbolHtmlAttributeInfo, tag: XmlTag?)
-  : WebSymbolAttributeDescriptor(info, tag) {
+  : PolySymbolAttributeDescriptor(info, tag) {
 
   /**
    * Represents most of the matched directives, even these out-of-scopes. Some directives

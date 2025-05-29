@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
-import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
@@ -27,7 +27,7 @@ class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
     val info = VueAttributeNameParser.parse(attr.name, attr.parent)
     names.add(attr.name)
     if (info is VueAttributeNameParser.VueDirectiveInfo) {
-      val descriptor = attr.descriptor as? WebSymbolAttributeDescriptor
+      val descriptor = attr.descriptor as? PolySymbolAttributeDescriptor
       when (info.directiveKind) {
         VueAttributeNameParser.VueDirectiveKind.ON -> return
         VueAttributeNameParser.VueDirectiveKind.BIND -> {

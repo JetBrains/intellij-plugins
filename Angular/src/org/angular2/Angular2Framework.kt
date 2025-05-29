@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
-import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.attributes.PolySymbolAttributeDescriptor
 import com.intellij.html.webSymbols.attributes.PolySymbolHtmlAttributeInfo
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
@@ -56,7 +56,7 @@ class Angular2Framework : WebFramework() {
   override fun createHtmlAttributeDescriptor(
     info: PolySymbolHtmlAttributeInfo,
     tag: XmlTag?,
-  ): WebSymbolAttributeDescriptor =
+  ): PolySymbolAttributeDescriptor =
     Angular2AttributeDescriptor(info, tag)
 
   override fun createHtmlElementDescriptor(
