@@ -282,7 +282,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     return snippet;
   }
 
-  private static PsiMethod createStepDefinitionFromSnippet(@NotNull PsiMethod methodFromSnippet, @NotNull GherkinStep step,
+  private static PsiMethod createStepDefinitionFromSnippet(@NotNull PsiMethod methodFromSnippet,
+                                                           @NotNull GherkinStep step,
                                                            @NotNull JVMElementFactory factory) {
     List<PsiAnnotation> annotationsFromSnippetMethod = getCucumberStepAnnotations(methodFromSnippet);
     PsiAnnotation cucumberStepAnnotation = annotationsFromSnippetMethod.get(0);
@@ -297,7 +298,11 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     String text = fileTemplate.getText();
     text = text.replace("${STEP_KEYWORD}", stepAnnotationName).replace("${STEP_REGEXP}", "\"" + regexp + "\"")
       .replace("${METHOD_NAME}", methodFromSnippet.getName())
-      .replace("${PARAMETERS}", methodFromSnippet.getParameterList().getText()).replace("${BODY}\n", "");
+      .replace("${PARAMETERS}", methodFromSnippet.getParameterList().getText())
+      .replace("${BODY}\n", """
+        // Write code here that turns the phrase above into concrete actions
+        throw new PendingException();
+        """);
 
     text = processGeneratedStepDefinition(text, methodFromSnippet);
 
