@@ -2,28 +2,21 @@
 package org.angular2.entities.source
 
 import com.intellij.javascript.polySymbols.apiStatus
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSDocOwner
-import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.JSTypeOwner
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.OPTIONAL_PROP
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
-import java.util.*
 
 class Angular2SourceDirectiveAttribute private constructor(
   private val typeSource: JSElement,
@@ -81,7 +74,7 @@ class Angular2SourceDirectiveAttribute private constructor(
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(typeSource, name)
+    return 31 * typeSource.hashCode() + name.hashCode()
   }
 
   override fun createPointer(): Pointer<Angular2SourceDirectiveAttribute> {

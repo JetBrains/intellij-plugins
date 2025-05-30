@@ -8,29 +8,31 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.contextOfType
-import com.intellij.polySymbols.PsiSourcedPolySymbol
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PsiSourcedPolySymbol
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.utils.coalesceWith
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.contextOfType
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.web.*
 import java.util.*
 
-class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectiveProperty>,
-                                  rawOutputs: Collection<Angular2DirectiveProperty>,
-                                  rawInOuts: Collection<Angular2DirectiveProperty>) {
+class Angular2DirectiveProperties(
+  rawInputs: Collection<Angular2DirectiveProperty>,
+  rawOutputs: Collection<Angular2DirectiveProperty>,
+  rawInOuts: Collection<Angular2DirectiveProperty>,
+) {
 
   constructor(
     inputs: Collection<Angular2DirectiveProperty>,
-    outputs: Collection<Angular2DirectiveProperty>
-  ): this(inputs, outputs, emptyList())
+    outputs: Collection<Angular2DirectiveProperty>,
+  ) : this(inputs, outputs, emptyList())
 
   val inputs: Collection<Angular2DirectiveProperty> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     if (rawInOuts.isEmpty()) {
@@ -181,8 +183,10 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
       ?: super<Angular2DirectiveProperty>.getDocumentationTarget(location)
   }
 
-  private class InOutDirectiveProperty(input: Angular2DirectiveProperty,
-                                       private val myOutput: Angular2DirectiveProperty)
+  private class InOutDirectiveProperty(
+    input: Angular2DirectiveProperty,
+    private val myOutput: Angular2DirectiveProperty,
+  )
     : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
 
     override val qualifiedKind: PolySymbolQualifiedKind
@@ -210,7 +214,9 @@ class Angular2DirectiveProperties(rawInputs: Collection<Angular2DirectivePropert
     }
 
     override fun hashCode(): Int {
-      return Objects.hash(myOutput, delegate)
+      var result = myOutput.hashCode()
+      result = 31 * result + delegate.hashCode()
+      return result
     }
 
     override fun toString(): String {

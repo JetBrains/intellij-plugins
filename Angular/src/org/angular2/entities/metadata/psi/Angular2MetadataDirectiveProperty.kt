@@ -22,7 +22,6 @@ import com.intellij.util.asSafely
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
-import java.util.*
 
 class Angular2MetadataDirectiveProperty internal constructor(
   private val myOwner: Angular2MetadataClassBase<*>,
@@ -92,6 +91,10 @@ class Angular2MetadataDirectiveProperty internal constructor(
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(myFieldName, name, qualifiedKind, myOwner)
+    var result = myFieldName.hashCode()
+    result = 31 * result + name.hashCode()
+    result = 31 * result + qualifiedKind.hashCode()
+    result = 31 * result + myOwner.hashCode()
+    return result
   }
 }

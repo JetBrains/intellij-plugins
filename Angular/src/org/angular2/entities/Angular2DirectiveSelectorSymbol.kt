@@ -12,14 +12,14 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.contextOfType
-import com.intellij.refactoring.rename.api.RenameValidationResult
-import com.intellij.refactoring.rename.api.RenameValidator
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.declarations.PolySymbolDeclaration
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.contextOfType
+import com.intellij.refactoring.rename.api.RenameValidationResult
+import com.intellij.refactoring.rename.api.RenameValidator
 import com.intellij.xml.XmlElementDescriptor
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
@@ -27,7 +27,6 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.NG_DIRECTIVE_ELEMENT_SELECTORS
-import java.util.*
 import java.util.regex.Pattern
 
 class Angular2DirectiveSelectorSymbol(
@@ -115,7 +114,12 @@ class Angular2DirectiveSelectorSymbol(
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(myParent, textRangeInSourceElement, name, myElementSelector, isElementSelector)
+    var result = myParent.hashCode()
+    result = 31 * result + textRangeInSourceElement.hashCode()
+    result = 31 * result + name.hashCode()
+    result = 31 * result + myElementSelector.hashCode()
+    result = 31 * result + isElementSelector.hashCode()
+    return result
   }
 
   override fun validator(): RenameValidator {

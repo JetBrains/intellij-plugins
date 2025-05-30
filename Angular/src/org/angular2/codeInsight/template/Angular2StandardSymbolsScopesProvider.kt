@@ -21,7 +21,6 @@ import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.types.Angular2EventType
 import org.angular2.lang.types.Angular2HostEventType
 import org.jetbrains.annotations.NonNls
-import java.util.*
 import java.util.function.Consumer
 
 class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
@@ -128,10 +127,13 @@ class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
     }
 
     override fun hashCode(): Int {
-      return Objects.hash(javaClass, myName, myProvider, myKind)
+      var result = javaClass.hashCode()
+      result = 31 * result + myName.hashCode()
+      result = 31 * result + myProvider.hashCode()
+      result = 31 * result + myKind.hashCode()
+      return result
     }
   }
-
 
   private class Angular2HostEventImplicitElement(property: JSProperty)
     : JSLocalImplicitElementImpl(`$EVENT`, Angular2HostEventType(property), property, JSImplicitElement.Type.Variable) {
@@ -146,7 +148,11 @@ class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
     }
 
     override fun hashCode(): Int {
-      return Objects.hash(javaClass, myName, myProvider, myKind)
+      var result = javaClass.hashCode()
+      result = 31 * result + myName.hashCode()
+      result = 31 * result + myProvider.hashCode()
+      result = 31 * result + myKind.hashCode()
+      return result
     }
   }
 

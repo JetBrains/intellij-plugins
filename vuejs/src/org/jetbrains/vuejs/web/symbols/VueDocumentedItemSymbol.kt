@@ -3,12 +3,11 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Symbol
 import com.intellij.platform.backend.presentation.TargetPresentation
-import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
-import java.util.*
 
 abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   override val name: String,
@@ -37,7 +36,8 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
      && name == other.name
      && item == other.item)
 
-  override fun hashCode(): Int = Objects.hash(name, item)
+  override fun hashCode(): Int =
+    31 * name.hashCode() + item.hashCode()
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
     if (symbol is VueDocumentedItemSymbol<*>)

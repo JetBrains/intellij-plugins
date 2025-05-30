@@ -30,7 +30,6 @@ import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropert
 import org.angular2.lang.expr.service.tcb.R3Identifiers
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
-import java.util.*
 
 abstract class Angular2SourceDirectiveProperty(
   override val owner: TypeScriptClass,
@@ -127,7 +126,12 @@ abstract class Angular2SourceDirectiveProperty(
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(owner, signature.memberName, name, qualifiedKind, required)
+    var result = owner.hashCode()
+    result = 31 * result + signature.memberName.hashCode()
+    result = 31 * result + name.hashCode()
+    result = 31 * result + qualifiedKind.hashCode()
+    result = 31 * result + required.hashCode()
+    return result
   }
 
   abstract override fun createPointer(): Pointer<out Angular2SourceDirectiveProperty>
@@ -190,9 +194,6 @@ abstract class Angular2SourceDirectiveProperty(
       other is Angular2SourceFieldDirectiveProperty
       && super.equals(other)
 
-    override fun hashCode(): Int =
-      super.hashCode()
-
   }
 
   private class Angular2SourceMappedDirectiveProperty(
@@ -237,8 +238,13 @@ abstract class Angular2SourceDirectiveProperty(
       && other.sourceElement == sourceElement
       && other.textRangeInSourceElement == textRangeInSourceElement
 
-    override fun hashCode(): Int =
-      Objects.hash(super.hashCode(), sourceElement, textRangeInSourceElement)
+
+    override fun hashCode(): Int {
+      var result = super.hashCode()
+      result = 31 * result + sourceElement.hashCode()
+      result = 31 * result + textRangeInSourceElement.hashCode()
+      return result
+    }
 
   }
 

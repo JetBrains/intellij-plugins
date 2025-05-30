@@ -19,7 +19,6 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.Processor
 import org.angular2.cli.config.AngularConfigProvider
 import org.angular2.cli.config.AngularProject
-import java.util.*
 
 class Angular2CssFileReferenceHelper : FileReferenceHelper() {
 
@@ -28,10 +27,12 @@ class Angular2CssFileReferenceHelper : FileReferenceHelper() {
     return psiFile is StylesheetFile || CssSupportLoader.isInFileThatSupportsEmbeddedCss(psiFile)
   }
 
-  override fun processContexts(parameters: FileReferenceSetParameters,
-                               hostFile: VirtualFile,
-                               bind: Boolean,
-                               processor: Processor<in PsiFileSystemItem>): Boolean {
+  override fun processContexts(
+    parameters: FileReferenceSetParameters,
+    hostFile: VirtualFile,
+    bind: Boolean,
+    processor: Processor<in PsiFileSystemItem>,
+  ): Boolean {
     val pathString = parameters.pathString
     val hasTilde = pathString.startsWith("~")
 
@@ -61,9 +62,11 @@ class Angular2CssFileReferenceHelper : FileReferenceHelper() {
   }
 }
 
-private fun getOverrideTildeContexts(angularProject: AngularProject,
-                                     actualText: String,
-                                     element: PsiElement): Collection<PsiFileSystemItem> {
+private fun getOverrideTildeContexts(
+  angularProject: AngularProject,
+  actualText: String,
+  element: PsiElement,
+): Collection<PsiFileSystemItem> {
   val mappingContext = object : JSDefaultFileReferenceContext(actualText, element, null) {
     override fun getDefaultRoots(project: Project, moduleName: String, contextFile: VirtualFile): Collection<VirtualFile> {
       return getOverrideContextFiles(angularProject, element)
@@ -75,8 +78,10 @@ private fun getOverrideTildeContexts(angularProject: AngularProject,
   return listOf(item)
 }
 
-private class Angular2OverrideContextFilesProvider(val angularProject: AngularProject,
-                                                   val element: PsiElement) : TildeFileSystemItemCompletion.AdditionalContextsProvider {
+private class Angular2OverrideContextFilesProvider(
+  val angularProject: AngularProject,
+  val element: PsiElement,
+) : TildeFileSystemItemCompletion.AdditionalContextsProvider {
   override fun get(): Collection<VirtualFile> =
     getOverrideContextFiles(angularProject, element)
 
@@ -86,7 +91,7 @@ private class Angular2OverrideContextFilesProvider(val angularProject: AngularPr
     && other.element == element
 
   override fun hashCode(): Int =
-    Objects.hash(angularProject, element)
+    31 * angularProject.hashCode() + element.hashCode()
 
 }
 

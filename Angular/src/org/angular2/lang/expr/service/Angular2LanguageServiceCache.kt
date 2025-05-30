@@ -13,7 +13,6 @@ import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTempla
 import org.angular2.lang.expr.service.protocol.commands.toAngular2TranspiledTemplateRequestArgs
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageServiceCache(project) {
@@ -51,8 +50,8 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
         override fun toSerializableObject(): JSLanguageServiceObject = serviceObject
       }),
       listOf({
-        transpiledComponentCache[componentVirtualFile] = newInfo
-      })
+               transpiledComponentCache[componentVirtualFile] = newInfo
+             })
     )
   }
 
@@ -67,7 +66,7 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
     }
 
     override fun hashCode(): Int {
-      return Objects.hash(contentsHash, timestamps)
+      return 31 * contentsHash.hashCode() + timestamps.hashCode()
     }
   }
 

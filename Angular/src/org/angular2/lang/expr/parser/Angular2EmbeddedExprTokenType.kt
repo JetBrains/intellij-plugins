@@ -12,7 +12,6 @@ import com.intellij.util.ThreeState
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.jetbrains.annotations.NonNls
-import java.util.*
 
 open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
 
@@ -48,8 +47,12 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
     return expressionType == type!!.expressionType && name == type.name
   }
 
+
   override fun hashCode(): Int {
-    return Objects.hash(super.hashCode(), expressionType, name)
+    var result = super.hashCode()
+    result = 31 * result + expressionType.hashCode()
+    result = 31 * result + name.hashCode()
+    return result
   }
 
   override fun createLexer(): Lexer =

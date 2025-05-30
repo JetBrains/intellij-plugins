@@ -13,7 +13,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
-import java.util.*
 
 class Angular2SourceDirectiveVirtualProperty(
   override val owner: TypeScriptClass?,
@@ -63,8 +62,13 @@ class Angular2SourceDirectiveVirtualProperty(
            && required == property.required
   }
 
+
   override fun hashCode(): Int {
-    return Objects.hash(owner, name, qualifiedKind, required)
+    var result = owner.hashCode()
+    result = 31 * result + name.hashCode()
+    result = 31 * result + qualifiedKind.hashCode()
+    result = 31 * result + required.hashCode()
+    return result
   }
 
   override fun createPointer(): Pointer<Angular2SourceDirectiveVirtualProperty> {

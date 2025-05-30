@@ -8,18 +8,19 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NullableLazyValue
 import com.intellij.openapi.util.NullableLazyValue.lazyNullable
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.utils.coalesceWith
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
-import java.util.*
 
-class Angular2MetadataDirectiveAttribute internal constructor(private val myOwner: Angular2MetadataDirectiveBase<*>,
-                                                              private val myIndex: Int,
-                                                              override val name: String) : Angular2DirectiveAttribute {
+class Angular2MetadataDirectiveAttribute internal constructor(
+  private val myOwner: Angular2MetadataDirectiveBase<*>,
+  private val myIndex: Int,
+  override val name: String,
+) : Angular2DirectiveAttribute {
 
   private val myParameter: NullableLazyValue<JSParameter> = lazyNullable { myOwner.getConstructorParameter(myIndex) }
 
@@ -43,8 +44,12 @@ class Angular2MetadataDirectiveAttribute internal constructor(private val myOwne
     return myIndex == attribute!!.myIndex && myOwner == attribute.myOwner && name == attribute.name
   }
 
+
   override fun hashCode(): Int {
-    return Objects.hash(myOwner, myIndex, name)
+    var result = myOwner.hashCode()
+    result = 31 * result + myIndex
+    result = 31 * result + name.hashCode()
+    return result
   }
 
   override fun createPointer(): Pointer<Angular2MetadataDirectiveAttribute> {

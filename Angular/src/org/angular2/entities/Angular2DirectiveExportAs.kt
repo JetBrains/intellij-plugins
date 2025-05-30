@@ -7,15 +7,14 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
-import com.intellij.psi.PsiElement
-import com.intellij.psi.createSmartPointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
+import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_EXPORTS_AS
-import java.util.*
 
 class Angular2DirectiveExportAs(
   override val name: @NlsSafe String,
@@ -74,5 +73,5 @@ class Angular2DirectiveExportAs(
     )
 
   override fun hashCode(): Int =
-    Objects.hash(name, directive)
+    31 * name.hashCode() + directive.hashCode()
 }

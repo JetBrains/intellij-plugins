@@ -29,7 +29,6 @@ import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.EVENT_ATTR_PREFIX
-import java.util.*
 
 class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySymbolsScope {
 
@@ -202,8 +201,13 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       && other.source == source
       && other.templateFile == templateFile
 
-    override fun hashCode(): Int =
-      Objects.hash(name, project, source, templateFile)
+    override fun hashCode(): Int {
+      var result = name.hashCode()
+      result = 31 * result + project.hashCode()
+      result = 31 * result + source.hashCode()
+      result = 31 * result + templateFile.hashCode()
+      return result
+    }
 
   }
 
@@ -258,8 +262,14 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       && other.mapSource == mapSource
       && other.templateFile == templateFile
 
-    override fun hashCode(): Int =
-      Objects.hash(name, project, mainSource, mapSource, templateFile)
+    override fun hashCode(): Int {
+      var result = name.hashCode()
+      result = 31 * result + project.hashCode()
+      result = 31 * result + mainSource.hashCode()
+      result = 31 * result + mapSource.hashCode()
+      result = 31 * result + templateFile.hashCode()
+      return result
+    }
 
   }
 

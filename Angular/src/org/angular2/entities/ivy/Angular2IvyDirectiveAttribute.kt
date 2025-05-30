@@ -7,12 +7,11 @@ import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import com.intellij.polySymbols.PolySymbolApiStatus
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
-import java.util.*
 
 class Angular2IvyDirectiveAttribute internal constructor(
   override val name: String,
@@ -40,7 +39,9 @@ class Angular2IvyDirectiveAttribute internal constructor(
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(name, mySource)
+    var result = name.hashCode()
+    result = 31 * result + mySource.hashCode()
+    return result
   }
 
   override fun createPointer(): Pointer<Angular2IvyDirectiveAttribute> {

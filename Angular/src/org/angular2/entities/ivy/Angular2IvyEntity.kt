@@ -11,7 +11,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2Entity
 import org.angular2.entities.source.Angular2SourceEntityBase
-import java.util.*
 
 abstract class Angular2IvyEntity<T : Angular2IvySymbolDef.Entity> protected constructor(protected val myEntityDef: T)
   : Angular2SourceEntityBase(PsiTreeUtil.getContextOfType(myEntityDef.field, TypeScriptClass::class.java)!!) {
@@ -36,14 +35,16 @@ abstract class Angular2IvyEntity<T : Angular2IvySymbolDef.Entity> protected cons
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(field, typeScriptClass)
+    return 31 * field.hashCode() + typeScriptClass.hashCode()
   }
 
   companion object {
     @JvmStatic
-    protected fun <T : Angular2Entity> resolveTypeofTypeToEntity(typeOfType: TypeScriptTypeofType,
-                                                                 symbolClazz: Class<T>,
-                                                                 dependencies: MutableSet<Any>): T? {
+    protected fun <T : Angular2Entity> resolveTypeofTypeToEntity(
+      typeOfType: TypeScriptTypeofType,
+      symbolClazz: Class<T>,
+      dependencies: MutableSet<Any>,
+    ): T? {
       val reference = typeOfType.referenceText
       if (reference == null) {
         return null

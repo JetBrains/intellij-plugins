@@ -4,9 +4,6 @@ import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
-import com.intellij.psi.createSmartPointer
-import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
@@ -14,11 +11,13 @@ import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
+import com.intellij.psi.createSmartPointer
+import com.intellij.util.asSafely
+import com.intellij.util.containers.Stack
 import org.angular2.library.forms.Angular2FormAbstractControl
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.impl.Angular2UnknownFormGroup
-import java.util.*
 
 class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2FormGroup, private val location: JSExpression) : PolySymbolsScope {
 
@@ -64,7 +63,7 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
     other === this || (other is Angular2FormGroupGetCallArrayLiteralScope && other.formGroup == formGroup && other.location == location)
 
   override fun hashCode(): Int =
-    Objects.hash(formGroup, location)
+    31 * formGroup.hashCode() + location.hashCode()
 
   override fun getModificationCount(): Long = 0
 

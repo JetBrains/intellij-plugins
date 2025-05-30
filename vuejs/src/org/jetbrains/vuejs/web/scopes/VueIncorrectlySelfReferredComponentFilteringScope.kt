@@ -3,18 +3,17 @@ package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
-import com.intellij.psi.PsiFile
-import com.intellij.psi.createSmartPointer
-import com.intellij.psi.xml.XmlFile
-import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
+import com.intellij.psi.xml.XmlFile
+import com.intellij.util.asSafely
+import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.index.findScriptTag
-import java.util.*
 
 /**
  * This container ensures that components from other container are not self referred without export declaration with component name or script setup
@@ -67,7 +66,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
     && other.file == file
 
   override fun hashCode(): Int =
-    Objects.hash(delegate, file)
+    31 * delegate.hashCode() + file.hashCode()
 
   override fun toString(): String {
     return "IncorrectlySelfReferredComponentFilteringContainer($delegate)"

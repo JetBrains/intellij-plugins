@@ -16,9 +16,11 @@ import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Angular2Direct
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException
 import java.util.*
 
-class Angular2DirectiveSelectorImpl(private val myElement: PsiElement,
-                                    private val myText: String?,
-                                    private val myRangeOffset: Int?) : Angular2DirectiveSelector {
+class Angular2DirectiveSelectorImpl(
+  private val myElement: PsiElement,
+  private val myText: String?,
+  private val myRangeOffset: Int?,
+) : Angular2DirectiveSelector {
   private val myLazyParent: SynchronizedClearableLazy<PsiElement>? = if (myElement is Angular2MetadataDirectiveBase<*>)
     SynchronizedClearableLazy { myElement.typeScriptClass ?: myElement }
   else
@@ -88,9 +90,11 @@ class Angular2DirectiveSelectorImpl(private val myElement: PsiElement,
     return text
   }
 
-  private fun convert(range: Pair<String, Int>,
-                      elementSelector: String?,
-                      isElement: Boolean): Angular2DirectiveSelectorSymbol {
+  private fun convert(
+    range: Pair<String, Int>,
+    elementSelector: String?,
+    isElement: Boolean,
+  ): Angular2DirectiveSelectorSymbol {
     return Angular2DirectiveSelectorSymbol(
       this,
       if (myRangeOffset != null)
@@ -115,11 +119,16 @@ class Angular2DirectiveSelectorImpl(private val myElement: PsiElement,
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(myElement, myText, myRangeOffset)
+    var result = myElement.hashCode()
+    result = 31 * result + myText.hashCode()
+    result = 31 * result + myRangeOffset.hashCode()
+    return result
   }
 
-  private inner class SimpleSelectorWithPsiImpl(selectorWithRanges: Angular2DirectiveSimpleSelectorWithRanges,
-                                                mainElementSelector: String?) : SimpleSelectorWithPsi {
+  private inner class SimpleSelectorWithPsiImpl(
+    selectorWithRanges: Angular2DirectiveSimpleSelectorWithRanges,
+    mainElementSelector: String?,
+  ) : SimpleSelectorWithPsi {
 
     override val element: Angular2DirectiveSelectorSymbol?
     private val myAttributes = SmartList<Angular2DirectiveSelectorSymbol>()

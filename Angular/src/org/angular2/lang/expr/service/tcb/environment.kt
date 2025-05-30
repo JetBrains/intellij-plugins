@@ -32,7 +32,6 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.DiagnosticKind
-import java.util.Objects
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -387,7 +386,7 @@ internal class OutOfBandDiagnosticRecorder {
         "angular.inspection.illegal-for-loop-access.message",
         ast.text.withColor(TextAttributesKind.TS_LOCAL_VARIABLE, ast),
         sequenceOfNotNull(block.item).plus(block.contextVariables.get("\$index").map { it.first })
-          .joinToString(", ") {it.name.withColor(TextAttributesKind.TS_LOCAL_VARIABLE, ast) },
+          .joinToString(", ") { it.name.withColor(TextAttributesKind.TS_LOCAL_VARIABLE, ast) },
       ),
       highlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
     )
@@ -466,6 +465,13 @@ internal data class DiagnosticData(
     && other.category == category
     && other.highlightType == highlightType
 
-  override fun hashCode(): Int =
-    Objects.hash(kind, startOffset, length, message, category, highlightType)
+  override fun hashCode(): Int {
+    var result = kind.hashCode()
+    result = 31 * result + startOffset
+    result = 31 * result + length
+    result = 31 * result + message.hashCode()
+    result = 31 * result + category.hashCode()
+    result = 31 * result + highlightType.hashCode()
+    return result
+  }
 }

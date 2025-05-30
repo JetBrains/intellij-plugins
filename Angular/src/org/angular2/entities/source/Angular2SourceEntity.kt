@@ -7,10 +7,11 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
-import java.util.*
 
-abstract class Angular2SourceEntity(override val decorator: ES6Decorator,
-                                    protected val implicitElement: JSImplicitElement)
+abstract class Angular2SourceEntity(
+  override val decorator: ES6Decorator,
+  protected val implicitElement: JSImplicitElement,
+)
   : Angular2SourceEntityBase(getClassForDecoratorElement(decorator)!!) {
 
   override val isModifiable: Boolean
@@ -43,6 +44,6 @@ abstract class Angular2SourceEntity(override val decorator: ES6Decorator,
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(decorator, typeScriptClass)
+    return 31 * decorator.hashCode() + typeScriptClass.hashCode()
   }
 }

@@ -33,7 +33,6 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
-import java.util.*
 
 class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val context: PsiElement) : PolySymbolsQueryResultsCustomizer {
 
@@ -278,7 +277,7 @@ class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val 
       && other.scopeProximity == scopeProximity
 
     override fun hashCode(): Int =
-      Objects.hash(delegate, scopeProximity)
+      31 * delegate.hashCode() + scopeProximity.hashCode()
 
     override val properties: Map<String, Any>
       get() = super.properties + Pair(PROP_SCOPE_PROXIMITY, scopeProximity)

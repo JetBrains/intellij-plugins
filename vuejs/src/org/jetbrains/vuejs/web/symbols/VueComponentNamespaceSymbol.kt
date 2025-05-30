@@ -23,7 +23,6 @@ import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 import org.jetbrains.vuejs.web.VueFramework
-import java.util.*
 
 class VueComponentNamespaceSymbol(
   override val name: String,
@@ -101,7 +100,7 @@ class VueComponentNamespaceSymbol(
     && other.source == source
 
   override fun hashCode(): Int =
-    Objects.hash(name, source)
+    31 * name.hashCode() + source.hashCode()
 
   private class VueNamespacedComponent(delegate: VueComponentSymbol) : PsiSourcedPolySymbolDelegate<VueComponentSymbol>(delegate) {
 

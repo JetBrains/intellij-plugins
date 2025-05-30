@@ -200,7 +200,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
       && other.requiresValue == requiresValue
 
     override fun hashCode(): Int =
-      Objects.hash(delegate, requiresValue)
+      31 * delegate.hashCode() + requiresValue.hashCode()
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<PolySymbolDelegate>.getNavigationTargets(project)

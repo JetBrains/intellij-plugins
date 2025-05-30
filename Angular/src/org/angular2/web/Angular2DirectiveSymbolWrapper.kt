@@ -7,14 +7,14 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
-import com.intellij.polySymbols.PsiSourcedPolySymbol
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.polySymbols.utils.coalesceWith
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2AliasedDirectiveProperty
 import org.angular2.entities.Angular2Directive
@@ -85,7 +85,7 @@ open class Angular2DirectiveSymbolWrapper private constructor(
     && other.delegate == delegate
 
   override fun hashCode(): Int =
-    Objects.hash(directive, delegate)
+    31 * directive.hashCode() + delegate.hashCode()
 
   protected fun <T : Angular2DirectiveSymbolWrapper> createPointer(
     create: (
