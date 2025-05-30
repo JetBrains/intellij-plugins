@@ -10,7 +10,7 @@ import kotlinx.coroutines.coroutineScope
  * Used to determine which QodanaYamlItems should be provided in [QodanaYamlItemProvider.provideAll]
  * Should be used in [QodanaYamlItemProvider.provide]
  */
-sealed class QodanaYamlItemContext
+sealed interface QodanaYamlItemContext
 class QodanaYamlItem(
   val id: String,
   val weight: Int,

@@ -13,6 +13,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector
 import org.jetbrains.qodana.ui.ci.providers.github.GitHubCIFileChecker
+import org.jetbrains.qodana.ui.ci.providers.github.isQodanaPresent
 
 private val logger = logger<QodanaRunContextFactory>()
 
