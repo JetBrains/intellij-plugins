@@ -20,7 +20,7 @@ internal const val SCOPE_ARG = "scope-file"
 const val SCOPED_SCRIPT_NAME = "scoped"
 internal const val SCOPED_BASELINE_PROPERTY = "qodana.scoped.baseline.path"
 internal const val COVERAGE_SKIP_REPORTING_PROPERTY = "qodana.skip.coverage.issues.reporting"
-internal const val COVERAGE_SKIP_COMPUTATION_PROPERTY = "qodana.skip.coverage.computation"
+const val COVERAGE_SKIP_COMPUTATION_PROPERTY = "qodana.skip.coverage.computation"
 
 internal class ScopedScriptFactory : QodanaScriptFactory {
   override val scriptName get() = SCOPED_SCRIPT_NAME
