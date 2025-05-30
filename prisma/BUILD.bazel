@@ -50,7 +50,6 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//platform/lsp",
     "@community//platform/execution",
-    "//platform/lsp-impl",
   ],
   runtime_deps = [
     ":prisma_resources",
