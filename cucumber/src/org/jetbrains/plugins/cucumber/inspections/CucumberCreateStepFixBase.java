@@ -5,6 +5,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -80,13 +81,13 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
 
             StepDefinitionCreator stepDefinitionCreator =
               CucumberStepHelper.getExtensionMap().get(value.getFrameworkType()).getStepDefinitionCreator();
-            return stepDefinitionCreator.getStepDefinitionFilePath(psiFile);
+            return ReadAction.compute(() -> stepDefinitionCreator.getStepDefinitionFilePath(psiFile));
           }
 
           @Override
           public Icon getIconFor(CucumberStepDefinitionCreationContext value) {
             PsiFile psiFile = value.getPsiFile();
-            return psiFile == null ? AllIcons.Actions.IntentionBulb : psiFile.getIcon(0);
+            return psiFile == null ? AllIcons.Actions.IntentionBulb : ReadAction.compute(() -> psiFile.getIcon(0));
           }
 
           @Override
@@ -125,25 +126,28 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     final BDDFrameworkType frameworkType = model.getSelectedFileType();
     context.setFrameworkType(frameworkType);
 
-    // show error if file already exists
+    // show error if the file already exists
     Project project = step.getProject();
     if (LocalFileSystem.getInstance().findFileByPath(filePath) == null) {
       final String parentDirPath = model.getStepDefinitionFolderPath();
 
       WriteCommandAction.runWriteCommandAction(project, CucumberBundle.message("create.step.definition"), null,
                                                () -> CommandProcessor.getInstance().executeCommand(project, () -> {
-          try {
-            VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);
-            PsiDirectory parentPsiDir = PsiManager.getInstance(project).findDirectory(parentDir);
-            assert parentPsiDir != null;
-            PsiFile newFile = CucumberStepHelper.createStepDefinitionFile(parentPsiDir, model.getFileName(), frameworkType);
-            createStepDefinition(step, new CucumberStepDefinitionCreationContext(newFile, frameworkType));
-            context.setPsiFile(newFile);
-          }
-          catch (IOException e) {
-            LOG.error(e);
-          }
-        }, CucumberBundle.message("cucumber.quick.fix.create.step.command.name.create"), null));
+                                                 try {
+                                                   VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);
+                                                   PsiDirectory parentPsiDir = PsiManager.getInstance(project).findDirectory(parentDir);
+                                                   assert parentPsiDir != null;
+                                                   PsiFile newFile =
+                                                     CucumberStepHelper.createStepDefinitionFile(parentPsiDir, model.getFileName(),
+                                                                                                 frameworkType);
+                                                   createStepDefinition(step,
+                                                                        new CucumberStepDefinitionCreationContext(newFile, frameworkType));
+                                                   context.setPsiFile(newFile);
+                                                 }
+                                                 catch (IOException e) {
+                                                   LOG.error(e);
+                                                 }
+                                               }, CucumberBundle.message("cucumber.quick.fix.create.step.command.name.create"), null));
       return true;
     }
     else {
