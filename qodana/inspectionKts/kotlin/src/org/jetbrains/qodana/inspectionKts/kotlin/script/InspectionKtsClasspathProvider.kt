@@ -204,9 +204,6 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
         jarName.startsWith("kotlinc.high-level-api") || // Semantics of Kotlin PSI (old JAR naming)
         jarName.startsWith("kotlinc.analysis-api") // Semantics of Kotlin PSI
       }
-      isDatabasePlugin -> {
-        jarName.startsWith("database-openapi") // TODO there is no database-openapi.jar anymore, it is probably `intellij.database.sql.jar` now
-      }
       isYamlPlugin -> {
         jarName.startsWith("intellij.yaml") // YAML PSI
       }
