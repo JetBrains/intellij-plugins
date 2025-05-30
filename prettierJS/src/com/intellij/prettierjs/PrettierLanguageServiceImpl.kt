@@ -16,7 +16,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.webcore.util.JsonUtil
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.future.future
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -114,7 +113,7 @@ class PrettierLanguageServiceImpl(
 
   private inner class Protocol(
     project: Project,
-  ) : JSLanguageServiceNodeStdProtocolBase("prettier", project, CompletableDeferred()) {
+  ) : JSLanguageServiceNodeStdProtocolBase("prettier", project) {
     override fun addNodeProcessAdditionalArguments(targetRun: NodeTargetRun) {
       super.addNodeProcessAdditionalArguments(targetRun)
       targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "prettierLanguageService")!!.absolutePath)

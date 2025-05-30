@@ -1,7 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.classic
 
-import com.google.gson.JsonObject
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer
 import com.intellij.lang.javascript.service.protocol.LocalFilePath
@@ -9,16 +8,14 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptServiceStandardOutputProtocol
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptServiceInitialStateObject
 import com.intellij.openapi.project.Project
-import kotlinx.coroutines.CompletableDeferred
 import java.util.function.Consumer
 
 internal class VueTypeScriptServiceProtocol(
   project: Project,
   settings: TypeScriptCompilerSettings,
-  deferredInitialState: CompletableDeferred<JsonObject>,
   eventConsumer: Consumer<in JSLanguageServiceAnswer>,
   tsServicePath: String,
-) : TypeScriptServiceStandardOutputProtocol(project, settings, deferredInitialState, eventConsumer, "VueService", tsServicePath) {
+) : TypeScriptServiceStandardOutputProtocol(project, settings, eventConsumer, "VueService", tsServicePath) {
 
   override fun createState(): TypeScriptServiceInitialStateObject {
     val state = super.createState()
