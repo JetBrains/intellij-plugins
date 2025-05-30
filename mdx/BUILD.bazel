@@ -32,7 +32,6 @@ jvm_library(
     "@community//plugins/markdown/core:markdown",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/impl",
-    "@community//xml/relaxng",
   ],
   runtime_deps = [":mdx_resources"]
 )
@@ -66,8 +65,6 @@ jvm_library(
     "@community//plugins/markdown/core:markdown",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/impl",
-    "@community//xml/relaxng",
-    "@community//xml/relaxng:relaxng_test_lib",
   ],
   runtime_deps = [":mdx_resources"]
 )
