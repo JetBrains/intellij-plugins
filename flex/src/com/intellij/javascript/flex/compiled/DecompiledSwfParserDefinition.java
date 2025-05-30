@@ -8,7 +8,7 @@ import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.annotations.NotNull;
 
 public final class DecompiledSwfParserDefinition extends ECMAL4ParserDefinition {
-  private static final IFileElementType FILE_TYPE = JSFileElementType.create(FlexApplicationComponent.DECOMPILED_SWF);
+  public static final IFileElementType FILE_TYPE = JSFileElementType.create(FlexApplicationComponent.DECOMPILED_SWF);
 
   @Override
   public @NotNull IFileElementType getFileNodeType() {

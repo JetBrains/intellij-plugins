@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.importer.FlexImporter;
 import com.intellij.lang.javascript.psi.stubs.impl.JSFileCachedData;
 import com.intellij.lang.javascript.psi.stubs.impl.JSFileStubImpl;
-import com.intellij.lang.javascript.types.JSFileElementType;
+import com.intellij.lang.javascript.stubs.JSStubVersionUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -56,6 +56,6 @@ public final class SwfFileStubBuilder implements BinaryFileStubBuilder {
 
   @Override
   public int getStubVersion() {
-    return JSFileElementType.getVersion(VERSION);
+    return JSStubVersionUtil.getVersion(VERSION);
   }
 }

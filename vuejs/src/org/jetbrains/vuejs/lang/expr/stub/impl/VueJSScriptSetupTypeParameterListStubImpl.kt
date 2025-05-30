@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.expr.stub.impl
 
-import com.intellij.lang.javascript.psi.JSStubElementType
+import com.intellij.lang.javascript.psi.JSElementType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameterList
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptTypeParameterListImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSStubBase
@@ -18,13 +18,13 @@ class VueJSScriptSetupTypeParameterListStubImpl :
   constructor(
     psi: TypeScriptTypeParameterList?,
     parent: StubElement<*>?,
-    elementType: JSStubElementType<*, *>,
+    elementType: JSElementType<*>,
   ) : super(psi!!, parent, elementType)
 
   constructor(
     dataStream: StubInputStream?,
     parent: StubElement<*>?,
-    elementType: JSStubElementType<*, *>,
+    elementType: JSElementType<*>,
   ) : super(dataStream!!, parent, elementType)
 
   override fun createPsi(): TypeScriptTypeParameterList {

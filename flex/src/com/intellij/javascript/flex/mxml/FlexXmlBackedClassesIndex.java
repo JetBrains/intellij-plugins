@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
-import com.intellij.lang.javascript.types.JSFileElementType;
+import com.intellij.lang.javascript.stubs.JSStubVersionUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -76,7 +76,7 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
 
   @Override
   public int getVersion() {
-    return JSFileElementType.getVersion(INDEX_VERSION);
+    return JSStubVersionUtil.getVersion(INDEX_VERSION);
   }
 
   public static Collection<JSClass> searchClassInheritors(ID<String, Void> indexId, String name, Project project, final GlobalSearchScope scope) {

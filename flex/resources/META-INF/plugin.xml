@@ -182,6 +182,7 @@
     <resolveScopeProvider implementation="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
 
     <stubElementTypeHolder class="com.intellij.lang.actionscript.ActionScriptSpecificStubElementTypes" externalIdPrefix="JS:"/>
+    <stubElementRegistryExtension implementation="com.intellij.lang.actionscript.stubs.ActionScriptStubRegistryExtension"/>
 
     <indexedRootsProvider implementation="com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor"/>
 

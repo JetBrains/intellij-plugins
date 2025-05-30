@@ -9,9 +9,8 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.psi.JSStubElementType
+import com.intellij.lang.javascript.psi.JSElementType
 import com.intellij.lang.javascript.psi.JSVariable
-import com.intellij.lang.javascript.psi.stubs.JSVariableStub
 import com.intellij.lexer.Lexer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTokenType
@@ -20,7 +19,7 @@ import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import java.util.function.Supplier
 
 class Angular2HtmlVarAttrTokenType(debugName: String,
-                                   private val myVarElementType: JSStubElementType<JSVariableStub<JSVariable>, JSVariable>,
+                                   private val myVarElementType: JSElementType<JSVariable>,
                                    private val myPrefixTokenParserConstructor: Supplier<out TokenParser>)
   : HtmlCustomEmbeddedContentTokenType(debugName, Angular2Language) {
   override fun createLexer(): Lexer {

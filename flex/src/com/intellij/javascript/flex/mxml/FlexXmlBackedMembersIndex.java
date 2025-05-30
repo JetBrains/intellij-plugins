@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.lang.javascript.types.JSFileElementType;
+import com.intellij.lang.javascript.stubs.JSStubVersionUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiRecursiveElementVisitor;
@@ -114,7 +114,7 @@ public final class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String
 
   @Override
   public int getVersion() {
-    return JSFileElementType.getVersion(INDEX_VERSION);
+    return JSStubVersionUtil.getVersion(INDEX_VERSION);
   }
 
 

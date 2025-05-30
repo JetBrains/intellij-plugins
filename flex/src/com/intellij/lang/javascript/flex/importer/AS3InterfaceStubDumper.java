@@ -187,7 +187,7 @@ final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     if (!it.base.isStarReference()) {
       String ref = getTypeRef(it.base, null, false);
       JSReferenceListStub<JSReferenceList> parent =
-        JSStubElementTypes.EXTENDS_LIST.createStub(parents.getLast());
+        new JSReferenceListStubImpl(parents.getLast(), JSStubElementTypes.EXTENDS_LIST);
 
       new JSReferenceListMemberStubImpl(parent, ref);
     }

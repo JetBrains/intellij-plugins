@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.lang.expr.parser
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.psi.JSStubElementType
+import com.intellij.lang.javascript.psi.JSElementType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
@@ -17,7 +17,7 @@ import org.jetbrains.vuejs.lang.expr.stub.impl.VueJSEmbeddedExpressionContentStu
 import java.io.IOException
 
 class VueJSEmbeddedExpressionContentElementType(debugName: String, private val language: Language)
-  : JSStubElementType<VueJSEmbeddedExpressionContentStub, VueJSEmbeddedExpressionContent>(debugName) {
+  : JSElementType<VueJSEmbeddedExpressionContent>(debugName) {
 
   override fun getLanguage(): Language = language
 
