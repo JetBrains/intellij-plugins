@@ -38,7 +38,8 @@ import java.util.*;
 
 public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   private static final Logger LOG = Logger.getInstance(CucumberCreateStepFixBase.class);
-  protected abstract void createStepOrSteps(GherkinStep step, final @NotNull CucumberStepDefinitionCreationContext fileAndFrameworkType);
+
+  protected abstract void createStepOrSteps(GherkinStep step, @NotNull CucumberStepDefinitionCreationContext fileAndFrameworkType);
 
   @Override
   public boolean startInWriteAction() {
@@ -51,7 +52,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   }
 
   @Override
-  public void applyFix(final @NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinStep step = (GherkinStep)descriptor.getPsiElement();
     final GherkinFile featureFile = (GherkinFile)step.getContainingFile();
     // TODO + step defs pairs from other content roots
@@ -60,9 +61,8 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
       pairs.add(0, new CucumberStepDefinitionCreationContext());
 
       final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
-      final ListPopup popupStep =
-        popupFactory.createListPopup(new BaseListPopupStep<>(
-          CucumberBundle.message("choose.step.definition.file"), new ArrayList<>(pairs)) {
+      final ListPopup popupStep = popupFactory.createListPopup(
+        new BaseListPopupStep<>(CucumberBundle.message("choose.step.definition.file"), new ArrayList<>(pairs)) {
           @Override
           public boolean isSpeedSearchEnabled() {
             return true;
@@ -90,14 +90,15 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
           }
 
           @Override
-          public PopupStep<?> onChosen(final CucumberStepDefinitionCreationContext selectedValue, boolean finalChoice) {
+          public PopupStep<?> onChosen(CucumberStepDefinitionCreationContext selectedValue, boolean finalChoice) {
             return doFinalStep(() -> createStepOrSteps(step, selectedValue));
           }
         });
 
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
         popupStep.showCenteredInCurrentWindow(step.getProject());
-      } else {
+      }
+      else {
         createStepOrSteps(step, pairs.get(1));
       }
     }
@@ -106,13 +107,13 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     }
   }
 
-  public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(final @NotNull GherkinFile featureFile) {
+  public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull GherkinFile featureFile) {
     final Set<CucumberStepDefinitionCreationContext> result = CucumberStepHelper.getStepDefinitionContainers(featureFile);
     result.removeIf(e -> CucumberStepHelper.getExtensionMap().get(e.getFrameworkType()) == null);
     return result;
   }
 
-  private boolean createStepDefinitionFile(final GherkinStep step, final @NotNull CucumberStepDefinitionCreationContext context) {
+  private boolean createStepDefinitionFile(GherkinStep step, @NotNull CucumberStepDefinitionCreationContext context) {
     final PsiFile featureFile = step.getContainingFile();
     assert featureFile != null;
 
@@ -146,17 +147,16 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
       return true;
     }
     else {
-      Messages.showErrorDialog(project,
-                               CucumberBundle.message("cucumber.quick.fix.create.step.error.already.exist.msg", filePath),
+      Messages.showErrorDialog(project, CucumberBundle.message("cucumber.quick.fix.create.step.error.already.exist.msg", filePath),
                                CucumberBundle.message("cucumber.quick.fix.create.step.file.name.title"));
       return false;
     }
   }
 
   /**
-   * @return false if was cancelled
+   * @return false if was canceled
    */
-  protected boolean createFileOrStepDefinition(final GherkinStep step, final @NotNull CucumberStepDefinitionCreationContext context) {
+  protected boolean createFileOrStepDefinition(GherkinStep step, @NotNull CucumberStepDefinitionCreationContext context) {
     if (context.getFrameworkType() == null) {
       return createStepDefinitionFile(step, context);
     }
@@ -168,15 +168,15 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     return true;
   }
 
-  private static @Nullable CreateStepDefinitionFileModel askUserForFilePath(final @NotNull GherkinStep step) {
+  private static @Nullable CreateStepDefinitionFileModel askUserForFilePath(@NotNull GherkinStep step) {
     final InputValidator validator = new InputValidator() {
       @Override
-      public boolean checkInput(final String filePath) {
+      public boolean checkInput(String filePath) {
         return !StringUtil.isEmpty(filePath);
       }
 
       @Override
-      public boolean canClose(final String fileName) {
+      public boolean canClose(String fileName) {
         return true;
       }
     };
@@ -205,7 +205,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     }
   }
 
-  private void createStepDefinition(GherkinStep step, final @NotNull CucumberStepDefinitionCreationContext context) {
+  private void createStepDefinition(GherkinStep step, @NotNull CucumberStepDefinitionCreationContext context) {
     StepDefinitionCreator stepDefCreator = CucumberStepHelper.getExtensionMap().get(context.getFrameworkType()).getStepDefinitionCreator();
     PsiFile file = context.getPsiFile();
     if (file != null) {
