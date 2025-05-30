@@ -68,6 +68,7 @@ jvm_library(
   associates = [":coverage"],
   deps = [
     "@lib//:kotlin-stdlib",
+    "@community//platform/core-ui",
     "//contrib/qodana",
     "//contrib/qodana:qodana_test_lib",
     "//contrib/qodana/coverage",

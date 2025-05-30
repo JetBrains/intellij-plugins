@@ -60,6 +60,7 @@ jvm_library(
     "@lib//:junit4",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-impl",
+    "@community//platform/core-ui",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//jps/model-api:model",
     "//contrib/PerforceIntegration:vcs-perforce",

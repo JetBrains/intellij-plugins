@@ -40,6 +40,7 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "@lib//:assert_j",
     "@community//java/openapi:java",
+    "@community//platform/core-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
