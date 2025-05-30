@@ -2,15 +2,12 @@ package org.jetbrains.qodana.staticAnalysis.scopes
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.util.progress.reportProgress
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import java.util.concurrent.ConcurrentHashMap
-
-private val SCOPE_EXTENDER = Key.create<Set<String>>("qodana.applied.scope.extenders")
 
 /**
  * Provides the ability to map certain inspections to specific scope extenders.
@@ -78,13 +75,9 @@ suspend fun collectExtendedFiles(
   val scopeExtendedMap = ConcurrentHashMap<VirtualFile, Set<String>>(
     fileToExtenders.mapValues { emptySet() }
   )
-  suspend fun InspectionToolScopeExtender.extendFrom(fromFile: VirtualFile) {
+  suspend fun InspectionToolScopeExtender.extend(fromFile: VirtualFile) {
     extendScope(fromFile, project, scopeExtendedMap).forEach { file ->
-      synchronized(scopeExtendedMap) {
-        scopeExtendedMap.putIfAbsent(file, setOf(name))?.also { list ->
-          scopeExtendedMap[file] = list + name
-        }
-      }
+      scopeExtendedMap.compute(file) { _, list -> list.orEmpty() + name }
     }
   }
   val queueSize = fileToExtenders.values.sumOf { it.size }
@@ -93,11 +86,11 @@ suspend fun collectExtendedFiles(
       fileToExtenders.forEach { (file, extenders) ->
         extenders.forEach { extender ->
           launch {
-            reporter.itemStep { extender.extendFrom(file) }
+            reporter.itemStep { extender.extend(file) }
           }
         }
       }
     }
   }
-  return scopeExtendedMap.filterKeys { it !in fileToExtenders }.toMap()
+  return scopeExtendedMap.filterKeys { it !in fileToExtenders.keys }.toMap()
 }
