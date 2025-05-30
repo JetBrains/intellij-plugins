@@ -58,6 +58,7 @@ jvm_library(
     "@community//platform/foldings",
     "@community//platform/platform-api:ide",
     "//dbe/sql/impl",
+    "//dbe/sql/intellij.database.sql.backend.core:database-sql-backend-core",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/indexing-api:indexing",
