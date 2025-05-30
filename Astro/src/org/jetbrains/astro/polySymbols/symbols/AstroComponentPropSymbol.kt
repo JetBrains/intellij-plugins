@@ -6,10 +6,12 @@ import com.intellij.javascript.polySymbols.symbols.JSPropertySymbol
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
 
 class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
@@ -20,11 +22,8 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
-  override val namespace: SymbolNamespace
-    get() = ASTRO_COMPONENT_PROPS.namespace
-
-  override val kind: SymbolKind
-    get() = ASTRO_COMPONENT_PROPS.kind
+  override val qualifiedKind: PolySymbolQualifiedKind
+    get() = ASTRO_COMPONENT_PROPS
 
   override val name: String
     get() = propertySymbol.name

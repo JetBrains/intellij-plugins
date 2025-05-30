@@ -6,17 +6,16 @@ import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
-import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.childrenOfType
-import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
-import com.intellij.polySymbols.utils.qualifiedKind
+import com.intellij.psi.createSmartPointer
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.childrenOfType
+import com.intellij.psi.xml.XmlTag
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 
 abstract class AstroDefineVarsScope(tag: XmlTag)
@@ -52,11 +51,9 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
   }
 
   override val providedSymbol: PolySymbol = object : PolySymbol {
-    override val namespace: SymbolNamespace
-      get() = PolySymbol.NAMESPACE_JS
 
-    override val kind: SymbolKind
-      get() = PolySymbol.KIND_JS_SYMBOLS
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = PolySymbol.JS_SYMBOLS
 
     override val name: String
       get() = "Astro Defined Script Variable"
@@ -64,8 +61,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
     override val pattern: PolySymbolsPattern =
       PolySymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
-          PolySymbolsPatternReferenceResolver.Reference(
-            qualifiedKind = PolySymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
+          PolySymbolsPatternReferenceResolver.Reference(qualifiedKind = JS_PROPERTIES),
         )
         ),
         false,
@@ -89,11 +85,9 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
   }
 
   override val providedSymbol: PolySymbol = object : PolySymbol {
-    override val namespace: SymbolNamespace
-      get() = PolySymbol.NAMESPACE_CSS
 
-    override val kind: SymbolKind
-      get() = PolySymbol.KIND_CSS_PROPERTIES
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = PolySymbol.CSS_PROPERTIES
 
     override val name: String
       get() = "Astro Defined CSS Variable"
@@ -101,10 +95,8 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
     override val pattern: PolySymbolsPattern =
       PolySymbolsPatternFactory.createComplexPattern(
         ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
-          PolySymbolsPatternReferenceResolver.Reference(
-            qualifiedKind = PolySymbolQualifiedKind(PolySymbol.NAMESPACE_JS, PolySymbol.KIND_JS_PROPERTIES)),
-        )
-        ),
+          PolySymbolsPatternReferenceResolver.Reference(qualifiedKind = JS_PROPERTIES),
+        )),
         false,
         PolySymbolsPatternFactory.createPatternSequence(
           PolySymbolsPatternFactory.createStringMatch("--"),

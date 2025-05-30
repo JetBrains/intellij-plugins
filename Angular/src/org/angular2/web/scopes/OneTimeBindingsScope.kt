@@ -19,6 +19,9 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -28,10 +31,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ThreeState
 import com.intellij.util.asSafely
 import com.intellij.util.containers.mapSmartSet
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.polySymbols.utils.qualifiedKind
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
@@ -123,7 +122,8 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
     override val source: PsiElement?
       get() = (delegate as? PsiSourcedPolySymbol)?.source
 
-    override val kind: SymbolKind get() = NG_DIRECTIVE_ONE_TIME_BINDINGS.kind
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = NG_DIRECTIVE_ONE_TIME_BINDINGS
 
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.LOW

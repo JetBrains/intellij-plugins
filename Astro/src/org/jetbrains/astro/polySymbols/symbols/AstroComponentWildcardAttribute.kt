@@ -2,26 +2,21 @@
 package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.SymbolKind
-import com.intellij.polySymbols.SymbolNamespace
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_PATTERN
 import com.intellij.polySymbols.PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
-object AstroComponentWildcardAttribute: PolySymbol {
+object AstroComponentWildcardAttribute : PolySymbol {
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
-  override val namespace: SymbolNamespace
-    get() = NAMESPACE_HTML
-
-  override val kind: SymbolKind
-    get() = UI_FRAMEWORK_COMPONENT_PROPS.kind
+  override val qualifiedKind: PolySymbolQualifiedKind
+    get() = UI_FRAMEWORK_COMPONENT_PROPS
 
   override val name: String
     get() = "Component Attribute"

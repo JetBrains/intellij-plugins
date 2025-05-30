@@ -6,15 +6,15 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.contextOfType
-import com.intellij.psi.xml.XmlTag
-import com.intellij.util.asSafely
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.contextOfType
+import com.intellij.psi.xml.XmlTag
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.isVueFileName
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
@@ -32,7 +32,7 @@ class VueSymbolsCodeCompletionItemCustomizer :
       when (qualifiedKind) {
         PolySymbol.HTML_ATTRIBUTES ->
           item.symbol
-            ?.takeIf { it.kind == VUE_COMPONENT_PROPS.kind || it.kind == PolySymbol.KIND_JS_EVENTS }
+            ?.takeIf { it.qualifiedKind == VUE_COMPONENT_PROPS || it.qualifiedKind == PolySymbol.JS_EVENTS }
             ?.let { item.decorateWithSymbolType(location, it) }
           ?: item
         PolySymbol.HTML_ELEMENTS ->

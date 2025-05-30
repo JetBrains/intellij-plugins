@@ -3,6 +3,10 @@ package org.angular2.library.forms.scopes
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.utils.PolySymbolsStructuredScope
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -10,10 +14,6 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.polySymbols.utils.PolySymbolsStructuredScope
 import org.angular2.Angular2Framework
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -84,10 +84,10 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : P
           ?.asSafely<JSReferenceExpression>()
           ?.let { formsComponent.getFormGroupFor(it) }
         ?: formGroupName
-          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_GROUP_PROPS.withName(it), additionalScope = listOf(holder.currentScope())) }
+          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_GROUP_PROPS, it, additionalScope = listOf(holder.currentScope())) }
           ?.firstNotNullOfOrNull { it as? Angular2FormGroup }
         ?: formArrayName
-          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_ARRAY_PROPS.withName(it), additionalScope = listOf(holder.currentScope())) }
+          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_ARRAY_PROPS, it, additionalScope = listOf(holder.currentScope())) }
           ?.firstNotNullOfOrNull { it as? Angular2FormArray }
 
       if (formGroupBinding != null || formGroupName != null || formArrayName != null) {

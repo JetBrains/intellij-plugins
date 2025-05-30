@@ -5,14 +5,14 @@ import com.intellij.html.polySymbols.PolySymbolsHtmlQueryHelper.getStandardHtmlE
 import com.intellij.html.polySymbols.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
-import com.intellij.psi.createSmartPointer
-import com.intellij.psi.css.StylesheetFile
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.css.getPolySymbolsCssScopeForTagClasses
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
+import com.intellij.psi.createSmartPointer
+import com.intellij.psi.css.StylesheetFile
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2EntitiesProvider
@@ -59,12 +59,12 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
           scope.add(PolySymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, it))
         }
         val scopeList = scope.toList()
-        elementNames.flatMapTo(scope) { executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS.withName(it), additionalScope = scopeList) }
+        elementNames.flatMapTo(scope) { executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS, it, additionalScope = scopeList) }
         elementNames.mapTo(scope) { MatchedDirectivesScope.createFor(location, it) }
       }
       else {
         scope.add(PolySymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, "div"))
-        executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS.withName("div"), additionalScope = scope.toList())
+        executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS, "div", additionalScope = scope.toList())
           .forEach { scope.add(it) }
       }
       return scope.toList()

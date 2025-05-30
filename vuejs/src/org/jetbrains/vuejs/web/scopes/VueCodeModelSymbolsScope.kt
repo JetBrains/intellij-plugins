@@ -15,6 +15,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.utils.kind
+import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.source.html.HtmlFileImpl
@@ -22,12 +29,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.contextOfType
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
-import com.intellij.polySymbols.SymbolKind
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScopeWithCache
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.*
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
@@ -242,7 +243,7 @@ private constructor(
     }
     else emptyList()
 
-  private fun symbolLocationFromPropertySignature(property: TypeScriptPropertySignature, kind: SymbolKind): WebTypesSymbolLocation? {
+  private fun symbolLocationFromPropertySignature(property: TypeScriptPropertySignature, kind: PolySymbolKind): WebTypesSymbolLocation? {
     if (!property.isValid) return null
 
     // TypeScript GlobalComponents definition

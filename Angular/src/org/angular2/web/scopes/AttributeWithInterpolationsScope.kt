@@ -2,7 +2,6 @@
 package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
@@ -13,6 +12,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternSymbolsResolver
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.polySymbols.utils.match
+import com.intellij.util.containers.Stack
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.PROP_BINDING_PATTERN
@@ -39,13 +39,8 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
-    override val namespace: SymbolNamespace
-      get() =
-        PolySymbol.NAMESPACE_HTML
-
-    override val kind: SymbolKind
-      get() =
-        PolySymbol.KIND_HTML_ATTRIBUTES
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = PolySymbol.HTML_ATTRIBUTES
 
     override val name: String
       get() = "Attribute with interpolations"
@@ -93,8 +88,8 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
       scopeStack: Stack<PolySymbolsScope>,
       queryExecutor: PolySymbolsQueryExecutor,
     ): List<PolySymbol> =
-      queryExecutor.runNameMatchQuery(JS_PROPERTIES.withName(name), additionalScope = scopeStack) +
-      queryExecutor.runNameMatchQuery(NG_DIRECTIVE_INPUTS.withName(name), additionalScope = scopeStack)
+      queryExecutor.runNameMatchQuery(JS_PROPERTIES, name, additionalScope = scopeStack) +
+      queryExecutor.runNameMatchQuery(NG_DIRECTIVE_INPUTS, name, additionalScope = scopeStack)
 
   }
 }

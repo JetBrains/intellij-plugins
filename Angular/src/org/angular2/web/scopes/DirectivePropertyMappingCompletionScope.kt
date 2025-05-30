@@ -13,6 +13,12 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
+import com.intellij.polySymbols.query.PolySymbolMatch
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -20,12 +26,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.siblings
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
-import com.intellij.polySymbols.query.PolySymbolMatch
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
-import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
@@ -102,19 +102,23 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
       }
   }
 
-  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName,
-                                  params: PolySymbolsNameMatchQueryParams,
-                                  scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: PolySymbolQualifiedName,
+    params: PolySymbolsNameMatchQueryParams,
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbol> =
     /* Do not support reference resolution */
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
-      // Provide an empty symbol match to avoid unresolved reference on the string literal
+    // Provide an empty symbol match to avoid unresolved reference on the string literal
       listOf(PolySymbolMatch.create("", JS_STRING_LITERALS, AngularEmptyOrigin, PolySymbolNameSegment.create(0, 0)))
     else
       emptyList()
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind,
-                          params: PolySymbolsListSymbolsQueryParams,
-                          scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
+  override fun getSymbols(
+    qualifiedKind: PolySymbolQualifiedKind,
+    params: PolySymbolsListSymbolsQueryParams,
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbolsScope> =
     /* Do not support reference resolution */
     emptyList()
 
@@ -161,12 +165,6 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     override val project: Project,
     val owner: TypeScriptClass?,
   ) : PolySymbolDelegate<JSPropertySymbol>(delegate), Angular2Symbol {
-
-    override val namespace: SymbolNamespace
-      get() = super<Angular2Symbol>.namespace
-
-    override val kind: SymbolKind
-      get() = super<Angular2Symbol>.kind
 
     override val origin: PolySymbolOrigin
       get() = super<Angular2Symbol>.origin

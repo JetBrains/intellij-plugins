@@ -8,19 +8,18 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.PolySymbol.Companion.JS_SYMBOLS
+import com.intellij.polySymbols.PolySymbol.Priority
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.polySymbols.PolySymbol.Companion.KIND_JS_SYMBOLS
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_JS
-import com.intellij.polySymbols.PolySymbol.Priority
-import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.entities.Angular2DirectiveProperty
@@ -88,11 +87,8 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
-    override val namespace: @NlsSafe SymbolNamespace
-      get() = NAMESPACE_JS
-
-    override val kind: @NlsSafe SymbolKind
-      get() = KIND_JS_SYMBOLS
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = JS_SYMBOLS
 
     override val name: @NlsSafe String
       get() = bindings.templateName

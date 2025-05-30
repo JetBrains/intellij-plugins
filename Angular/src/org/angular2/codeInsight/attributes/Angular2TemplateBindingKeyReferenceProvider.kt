@@ -14,12 +14,12 @@ class Angular2TemplateBindingKeyReferenceProvider : PsiPolySymbolReferenceProvid
   override fun getReferencedSymbol(psiElement: Angular2TemplateBindingKey): PolySymbol? =
     when ((psiElement.parent as? Angular2TemplateBinding)?.keyKind) {
       Angular2TemplateBinding.KeyKind.LET -> PolySymbolsQueryExecutorFactory.create(psiElement)
-        .runNameMatchQuery(JS_PROPERTIES.withName(psiElement.name))
+        .runNameMatchQuery(JS_PROPERTIES, psiElement.name)
         .asSingleSymbol()
 
       Angular2TemplateBinding.KeyKind.BINDING ->
         PolySymbolsQueryExecutorFactory.create(psiElement)
-          .runNameMatchQuery(NG_TEMPLATE_BINDINGS.withName(psiElement.name))
+          .runNameMatchQuery(NG_TEMPLATE_BINDINGS, psiElement.name)
           .asSingleSymbol()
 
       else -> null

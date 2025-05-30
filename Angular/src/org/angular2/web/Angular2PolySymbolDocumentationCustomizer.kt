@@ -3,12 +3,11 @@ package org.angular2.web
 
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationCustomizer
-import com.intellij.polySymbols.utils.qualifiedKind
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol
 import org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol

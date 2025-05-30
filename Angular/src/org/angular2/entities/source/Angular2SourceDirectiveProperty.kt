@@ -13,16 +13,16 @@ import com.intellij.navigation.SymbolNavigationService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
+import com.intellij.polySymbols.utils.coalesceApiStatus
+import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PsiSourcedPolySymbol
-import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
-import com.intellij.polySymbols.utils.coalesceApiStatus
-import com.intellij.polySymbols.utils.coalesceWith
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
@@ -121,13 +121,13 @@ abstract class Angular2SourceDirectiveProperty(
     return (owner == property!!.owner
             && signature.memberName == property.signature.memberName
             && name == property.name
-            && kind == property.kind
+            && qualifiedKind == property.qualifiedKind
             && required == property.required
            )
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(owner, signature.memberName, name, kind, required)
+    return Objects.hash(owner, signature.memberName, name, qualifiedKind, required)
   }
 
   abstract override fun createPointer(): Pointer<out Angular2SourceDirectiveProperty>

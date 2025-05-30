@@ -18,15 +18,14 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil.getPresentableAccessModifier
 import com.intellij.lang.javascript.validation.fixes.JSRemoveReadonlyModifierFix
 import com.intellij.openapi.util.text.StringUtil.capitalize
+import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.qualifiedKind
-import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind.TS_KEYWORD
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlName
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor

@@ -10,9 +10,8 @@ import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.validation.JSTypeChecker
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.polySymbols.utils.qualifiedKind
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
+import com.intellij.psi.xml.XmlAttribute
 import org.angular2.codeInsight.Angular2HighlightingUtils
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor

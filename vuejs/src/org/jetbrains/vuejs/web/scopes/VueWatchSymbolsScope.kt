@@ -5,12 +5,8 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.polySymbols.PolySymbol.Companion.KIND_JS_PROPERTIES
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
@@ -22,6 +18,8 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolR
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueDataProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -99,9 +97,8 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
   object VueWatchablePropertySymbol : PolySymbol {
 
-    override val namespace: SymbolNamespace get() = NAMESPACE_JS
-
-    override val kind: SymbolKind get() = KIND_JS_PROPERTIES
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = JS_PROPERTIES
 
     override val name: String get() = "Vue Watchable Property"
 

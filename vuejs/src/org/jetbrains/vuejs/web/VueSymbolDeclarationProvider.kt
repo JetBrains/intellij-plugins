@@ -3,18 +3,17 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.ElementManipulators
-import com.intellij.psi.PsiElement
-import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbol.Companion.KIND_JS_EVENTS
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_JS
+import com.intellij.polySymbols.PolySymbol.Companion.JS_EVENTS
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.declarations.PolySymbolDeclaration
 import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.psi.ElementManipulators
+import com.intellij.psi.PsiElement
+import com.intellij.util.asSafely
+import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.VueModelManager
@@ -51,7 +50,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
         }
           ?.let { VueModelManager.findEnclosingComponent(it) }
           ?.asPolySymbol("", VueModelVisitor.Proximity.LOCAL)
-          ?.getMatchingSymbols(PolySymbolQualifiedName(NAMESPACE_JS, KIND_JS_EVENTS, name),
+          ?.getMatchingSymbols(PolySymbolQualifiedName(JS_EVENTS, name),
                                PolySymbolsNameMatchQueryParams.create(PolySymbolsQueryExecutorFactory.create(parent, false)),
                                Stack())
           ?.getOrNull(0)

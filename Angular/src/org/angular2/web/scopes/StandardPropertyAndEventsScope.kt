@@ -13,16 +13,15 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.JS_EVENTS
+import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.PolySymbol.Companion.JS_EVENTS
-import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -79,11 +78,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
-    override val namespace: SymbolNamespace
-      get() = NAMESPACE_HTML
-
-    override val kind: SymbolKind
-      get() = PolySymbol.KIND_HTML_ELEMENTS
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = PolySymbol.HTML_ELEMENTS
 
     override fun getModificationCount(): Long =
       PsiModificationTracker.getInstance(project).modificationCount

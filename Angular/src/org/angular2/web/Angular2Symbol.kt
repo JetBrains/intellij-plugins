@@ -3,19 +3,12 @@ package org.angular2.web
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
 
 interface Angular2Symbol : PolySymbol {
 
   val project: Project
-
-  val qualifiedKind: PolySymbolQualifiedKind
-
-  override val kind: SymbolKind
-    get() = qualifiedKind.kind
-
-  override val namespace: SymbolNamespace
-    get() = qualifiedKind.namespace
 
   override val origin: PolySymbolOrigin
     get() = Angular2SymbolOrigin(this)

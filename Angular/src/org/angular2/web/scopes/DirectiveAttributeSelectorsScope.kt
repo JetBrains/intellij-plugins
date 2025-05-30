@@ -4,16 +4,16 @@ package org.angular2.web.scopes
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.model.Pointer
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.utils.MappedPolySymbol
 import com.intellij.polySymbols.utils.qualifiedName
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.asSafely
+import com.intellij.util.containers.Stack
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
@@ -63,11 +63,8 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
-    override val namespace: SymbolNamespace
-      get() = PolySymbol.NAMESPACE_HTML
-
-    override val kind: SymbolKind
-      get() = PolySymbol.KIND_HTML_ELEMENTS
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = PolySymbol.HTML_ELEMENTS
 
     override fun getModificationCount(): Long =
       PsiModificationTracker.getInstance(project).modificationCount

@@ -2,9 +2,6 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
-import com.intellij.psi.createSmartPointer
-import com.intellij.psi.xml.XmlTag
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
@@ -14,6 +11,9 @@ import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.utils.match
+import com.intellij.psi.createSmartPointer
+import com.intellij.psi.xml.XmlTag
+import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.DEFAULT_SLOT_NAME
 import org.jetbrains.vuejs.model.getAvailableSlots
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
@@ -76,11 +76,8 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
   }
 
   object DefaultSlotSymbol : PolySymbol {
-    override val namespace: SymbolNamespace
-      get() = PolySymbol.NAMESPACE_HTML
-
-    override val kind: SymbolKind
-      get() = PolySymbol.KIND_HTML_ATTRIBUTES
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = HTML_ATTRIBUTES
 
     override val name: String
       get() = "v-slot"

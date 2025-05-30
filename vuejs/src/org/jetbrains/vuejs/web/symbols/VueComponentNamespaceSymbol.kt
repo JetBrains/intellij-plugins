@@ -9,13 +9,13 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
-import com.intellij.psi.createSmartPointer
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.psi.createSmartPointer
+import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueLocallyDefinedRegularComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -54,11 +54,9 @@ class VueComponentNamespaceSymbol(
       override val framework: FrameworkId
         get() = VueFramework.ID
     }
-  override val namespace: SymbolNamespace
-    get() = VUE_COMPONENT_NAMESPACES.namespace
 
-  override val kind: SymbolKind
-    get() = VUE_COMPONENT_NAMESPACES.kind
+  override val qualifiedKind: PolySymbolQualifiedKind
+    get() = VUE_COMPONENT_NAMESPACES
 
   override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     isNamespacedKind(qualifiedKind)
@@ -83,7 +81,7 @@ class VueComponentNamespaceSymbol(
     else
       emptyList()
 
-  private fun List<JSPropertySymbol>.adaptToNamespaceComponents(kind: SymbolKind) =
+  private fun List<JSPropertySymbol>.adaptToNamespaceComponents(kind: PolySymbolKind) =
     mapNotNull { symbol ->
       val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
       val component = VueModelManager.getComponent(source) as? VueRegularComponent

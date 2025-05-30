@@ -2,11 +2,14 @@ package org.angular2.library.forms.impl
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.util.containers.Stack
 import org.angular2.library.forms.NG_FORM_ARRAY_PROPS
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.web.Angular2SymbolOrigin
@@ -24,11 +27,8 @@ object Angular2UnknownFormArray : PolySymbol {
     else
       emptyList()
 
-  override val namespace: @NlsSafe SymbolNamespace
-    get() = PolySymbol.Companion.NAMESPACE_JS
-
-  override val kind: @NlsSafe SymbolKind
-    get() = NG_FORM_ARRAY_PROPS.kind
+  override val qualifiedKind: PolySymbolQualifiedKind
+    get() = NG_FORM_ARRAY_PROPS
 
   override val origin: PolySymbolOrigin
     get() = Angular2SymbolOrigin.empty

@@ -4,21 +4,19 @@ package org.jetbrains.vuejs.web
 import com.intellij.javascript.polySymbols.renderJsTypeForDocs
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor
 import com.intellij.openapi.util.text.Strings
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
-import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationCustomizer
-import com.intellij.polySymbols.utils.qualifiedKind
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
+import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl
 
 class VueDocumentationCustomizer : PolySymbolDocumentationCustomizer {
   override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: PolySymbolDocumentation): PolySymbolDocumentation {
-    if (symbol.namespace == PolySymbol.NAMESPACE_HTML
-        && symbol.kind == PolySymbol.KIND_HTML_SLOTS
+    if (symbol.qualifiedKind == PolySymbol.HTML_SLOTS
         && (symbol.origin.framework == VueFramework.ID
             || symbol.psiContext.let { it != null && isVueContext(it) })) {
       symbol.renderJsTypeForDocs(null, location)
@@ -31,8 +29,7 @@ class VueDocumentationCustomizer : PolySymbolDocumentationCustomizer {
           )
         }
     }
-    else if (symbol.namespace == PolySymbol.NAMESPACE_JS
-             && symbol.kind == PolySymbol.KIND_JS_EVENTS
+    else if (symbol.qualifiedKind == PolySymbol.JS_EVENTS
              && (symbol.origin.framework == VueFramework.ID
                  || symbol.psiContext.let { it != null && isVueContext(it) })) {
       symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), location, getTypeSubstitutorFor(location))?.let {

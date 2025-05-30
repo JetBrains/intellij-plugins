@@ -3,15 +3,14 @@ package org.angular2.web
 
 import com.intellij.javascript.polySymbols.decorateWithJsType
 import com.intellij.javascript.polySymbols.decorateWithSymbolType
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
-import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
-import com.intellij.polySymbols.utils.qualifiedKind
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
+import com.intellij.psi.xml.XmlTag
 import org.angular2.Angular2Framework
 import org.angular2.lang.types.BindingsTypeResolver
 import org.angular2.web.scopes.OneTimeBindingsScope
@@ -29,10 +28,12 @@ private val selectorKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS,
 
 class Angular2CompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {
 
-  override fun customize(item: PolySymbolCodeCompletionItem,
-                         framework: FrameworkId?,
-                         qualifiedKind: PolySymbolQualifiedKind,
-                         location: PsiElement): PolySymbolCodeCompletionItem =
+  override fun customize(
+    item: PolySymbolCodeCompletionItem,
+    framework: FrameworkId?,
+    qualifiedKind: PolySymbolQualifiedKind,
+    location: PsiElement,
+  ): PolySymbolCodeCompletionItem =
     if (framework != Angular2Framework.ID)
       item
     else
@@ -57,7 +58,7 @@ class Angular2CompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer 
 
                 symbolKind == NG_DIRECTIVE_EXPORTS_AS ->
                   item.decorateWithJsType(location,
-                    location.parentOfType<XmlTag>()?.let { BindingsTypeResolver.get(it).resolveDirectiveExportAsType(item.name) })
+                                          location.parentOfType<XmlTag>()?.let { BindingsTypeResolver.get(it).resolveDirectiveExportAsType(item.name) })
                 else -> item
               }
             }

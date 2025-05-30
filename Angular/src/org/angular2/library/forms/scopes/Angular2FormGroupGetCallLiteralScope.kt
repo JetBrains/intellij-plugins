@@ -2,12 +2,8 @@ package org.angular2.library.forms.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.util.containers.Stack
-import com.intellij.util.containers.map2Array
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
-import com.intellij.polySymbols.PolySymbol.Companion.KIND_JS_STRING_LITERALS
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
@@ -20,8 +16,9 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
-import com.intellij.polySymbols.utils.qualifiedKind
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
+import com.intellij.util.containers.Stack
+import com.intellij.util.containers.map2Array
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
@@ -76,11 +73,8 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
       override val origin: PolySymbolOrigin
         get() = Angular2SymbolOrigin.empty
 
-      override val namespace: @NlsSafe SymbolNamespace
-        get() = NAMESPACE_JS
-
-      override val kind: @NlsSafe SymbolKind
-        get() = KIND_JS_STRING_LITERALS
+      override val qualifiedKind: PolySymbolQualifiedKind
+        get() = JS_STRING_LITERALS
 
       override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
         qualifiedKind == JS_STRING_LITERALS

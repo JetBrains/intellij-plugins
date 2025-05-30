@@ -4,12 +4,6 @@ import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.psi.*
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.polySymbols.PolySymbolOrigin
@@ -19,7 +13,12 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
-import com.intellij.polySymbols.utils.qualifiedKind
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
+import com.intellij.util.asSafely
+import com.intellij.util.containers.Stack
 import org.angular2.Angular2Framework
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlFile

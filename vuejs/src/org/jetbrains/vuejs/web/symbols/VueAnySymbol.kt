@@ -3,20 +3,18 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 
 class VueAnySymbol(
   override val origin: PolySymbolOrigin,
-  qualifiedKind: PolySymbolQualifiedKind,
+  override val qualifiedKind: PolySymbolQualifiedKind,
   override val name: String,
   override val type: JSType? = null,
 ) : PolySymbol {
-
-  override val namespace: SymbolNamespace = qualifiedKind.namespace
-
-  override val kind: SymbolKind = qualifiedKind.kind
 
   override val pattern: PolySymbolsPattern
     get() = PolySymbolsPatternFactory.createRegExMatch(".*", false)

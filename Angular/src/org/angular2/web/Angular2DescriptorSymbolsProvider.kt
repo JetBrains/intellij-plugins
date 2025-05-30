@@ -1,10 +1,9 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.util.SmartList
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.utils.qualifiedKind
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
+import com.intellij.util.SmartList
 import org.angular2.entities.Angular2Directive
 
 // TODO - This is a bridge between old and new API - when time comes, this should be removed.

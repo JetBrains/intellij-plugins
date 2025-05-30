@@ -5,15 +5,14 @@ import com.intellij.javascript.polySymbols.symbols.asPolySymbol
 import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
+import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.astroContentRoot
 import org.jetbrains.astro.codeInsight.frontmatterScript
@@ -24,14 +23,17 @@ import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
 import org.jetbrains.astro.polySymbols.AstroProximity
 import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
 
-class AstroLocalComponent(override val name: String,
-                          override val source: PsiElement,
-                          override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH)
-  : PsiSourcedPolySymbol, PolySymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit) {
+class AstroLocalComponent(
+  override val name: String,
+  override val source: PsiElement,
+  override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH,
+) : PsiSourcedPolySymbol, PolySymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit) {
 
-  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName,
-                                  params: PolySymbolsNameMatchQueryParams,
-                                  scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+  override fun getMatchingSymbols(
+    qualifiedName: PolySymbolQualifiedName,
+    params: PolySymbolsNameMatchQueryParams,
+    scope: Stack<PolySymbolsScope>,
+  ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
       emptyList()
     else
@@ -61,11 +63,8 @@ class AstroLocalComponent(override val name: String,
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
-  override val namespace: SymbolNamespace
-    get() = NAMESPACE_HTML
-
-  override val kind: SymbolKind
-    get() = ASTRO_COMPONENTS.kind
+  override val qualifiedKind: PolySymbolQualifiedKind
+    get() = ASTRO_COMPONENTS
 
   override val properties: Map<String, Any>
     get() = mapOf(PROP_ASTRO_PROXIMITY to AstroProximity.LOCAL)

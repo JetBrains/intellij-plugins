@@ -2,24 +2,26 @@
 package org.jetbrains.astro.polySymbols
 
 import com.intellij.javascript.polySymbols.decorateWithSymbolType
-import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
+import com.intellij.psi.PsiElement
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileImpl
 
 class AstroCodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {
-  override fun customize(item: PolySymbolCodeCompletionItem,
-                         framework: FrameworkId?,
-                         qualifiedKind: PolySymbolQualifiedKind,
-                         location: PsiElement) =
+  override fun customize(
+    item: PolySymbolCodeCompletionItem,
+    framework: FrameworkId?,
+    qualifiedKind: PolySymbolQualifiedKind,
+    location: PsiElement,
+  ) =
     item.symbol
       ?.takeIf {
         framework == AstroFramework.ID &&
         location.containingFile is AstroFileImpl &&
-        it.kind == ASTRO_COMPONENT_PROPS.kind
+        it.qualifiedKind == ASTRO_COMPONENT_PROPS
       }?.let { item.decorateWithSymbolType(location, it) }
     ?: item
 }

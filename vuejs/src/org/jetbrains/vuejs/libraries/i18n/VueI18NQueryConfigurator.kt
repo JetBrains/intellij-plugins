@@ -4,16 +4,19 @@ package org.jetbrains.vuejs.libraries.i18n
 import com.intellij.lang.Language
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
@@ -80,11 +83,8 @@ class VueI18NQueryConfigurator : PolySymbolsQueryConfigurator {
     override val origin: PolySymbolOrigin =
       PolySymbolOrigin.create(VueFramework.ID, "vue-i18n")
 
-    override val namespace: SymbolNamespace
-      get() = PolySymbol.NAMESPACE_HTML
-
-    override val kind: SymbolKind
-      get() = PolySymbol.KIND_HTML_ELEMENTS
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = PolySymbol.HTML_ELEMENTS
 
     override val extension: Boolean
       get() = true

@@ -2,10 +2,9 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.SymbolKind
-import com.intellij.polySymbols.SymbolNamespace
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.web.PROP_VUE_MODEL_EVENT
 import org.jetbrains.vuejs.web.PROP_VUE_MODEL_PROP
@@ -18,8 +17,9 @@ class VueModelSymbol(
 
   override val name: String
     get() = "Vue Model"
-  override val namespace: SymbolNamespace get() = PolySymbol.NAMESPACE_HTML
-  override val kind: SymbolKind get() = VUE_MODEL.kind
+
+  override val qualifiedKind: PolySymbolQualifiedKind
+    get() = VUE_MODEL
 
   override val properties: Map<String, Any>
     get() {

@@ -7,6 +7,9 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -14,9 +17,6 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.Processor
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
@@ -39,7 +39,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
     val executor = PolySymbolsQueryExecutorFactory.create(dataHolder)
     val attributes = executor
       .runListSymbolsQuery(PolySymbol.HTML_ATTRIBUTES, virtualSymbols = false, expandPatterns = true,
-                           additionalScope = executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS.withName(tag.name)))
+                           additionalScope = executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS, tag.name))
       .associateBy { it.name }
 
     VueTemplateScopesResolver.resolve(tag, Processor { resolveResult ->
@@ -71,11 +71,8 @@ class VueBindingShorthandSymbol(
   override val nameSegments: List<PolySymbolNameSegment>
     get() = listOf(PolySymbolNameSegment.create(0, delegate.name.length, delegate, attrSymbol))
 
-  override val namespace: SymbolNamespace
-    get() = VUE_BINDING_SHORTHANDS.namespace
-
-  override val kind: SymbolKind
-    get() = VUE_BINDING_SHORTHANDS.kind
+  override val qualifiedKind: PolySymbolQualifiedKind
+    get() = VUE_BINDING_SHORTHANDS
 
   override val attributeValue: PolySymbolHtmlAttributeValue
     get() = PolySymbolHtmlAttributeValue.create(kind = PolySymbolHtmlAttributeValue.Kind.NO_VALUE)

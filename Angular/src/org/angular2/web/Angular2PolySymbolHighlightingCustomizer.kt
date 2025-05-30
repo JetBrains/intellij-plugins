@@ -6,12 +6,11 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.polySymbols.PsiSourcedPolySymbol
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PsiSourcedPolySymbol
 import com.intellij.polySymbols.highlighting.PolySymbolHighlightingCustomizer
 import com.intellij.polySymbols.js.PolySymbolJsKind
-import com.intellij.polySymbols.utils.qualifiedKind
 import org.angular2.Angular2DecoratorUtil.isHostBinding
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
@@ -55,7 +54,8 @@ class Angular2PolySymbolHighlightingCustomizer : PolySymbolHighlightingCustomize
             Angular2AttributeType.EVENT -> Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME
             else -> null
           }
-        } else if (level == 0)
+        }
+        else if (level == 0)
           return when (host) {
             is Angular2HtmlPropertyBinding -> Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
             is Angular2HtmlEvent -> Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME

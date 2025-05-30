@@ -6,15 +6,10 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.model.Pointer
-import com.intellij.psi.createSmartPointer
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.xml.XmlTag
-import com.intellij.util.asSafely
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.polySymbols.PolySymbol.Companion.HTML_SLOTS
 import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Kind.EXPRESSION
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Type.OF_MATCH
@@ -25,6 +20,10 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolR
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
+import com.intellij.psi.createSmartPointer
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.xml.XmlTag
+import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.findJSExpression
@@ -87,11 +86,8 @@ class VueSlotElementScope(tag: XmlTag)
 
   private class VueSlotPropertiesSymbol(slotName: String?) : PolySymbol {
 
-    override val namespace: SymbolNamespace
-      get() = NAMESPACE_HTML
-
-    override val kind: SymbolKind
-      get() = PolySymbol.KIND_HTML_ATTRIBUTES
+    override val qualifiedKind: PolySymbolQualifiedKind
+      get() = HTML_ATTRIBUTES
 
     override val name: String
       get() = "Vue Slot Properties"
