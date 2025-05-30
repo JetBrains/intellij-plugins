@@ -22,8 +22,9 @@ import java.util.*;
 
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 
-/// The canonical source of truth is the [gherkin-languages.json](https://github.com/cucumber/gherkin/blob/main/gherkin-languages.json) file.
-/// 
+/// The canonical source of truth is the [gherkin-languages.json](https://github.com/cucumber/gherkin/blob/main/gherkin-languages.json)
+/// file, with one modification from us: "Значения" (see RUBY-29359).
+///
 /// Our `i18n.json` file has to be manually updated to keep track of upstream changes.
 public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
 
