@@ -63,7 +63,7 @@ public final class CucumberUtil {
 
   private static final Pattern ESCAPE_PATTERN = Pattern.compile("([\\\\^\\[$.|?*+\\]])");
   private static final Pattern OPTIONAL_PATTERN = Pattern.compile("(\\\\\\\\)?\\(([^)]+)\\)");
-  private static final Pattern PARAMETER_SUBSTITUTION_PATTERN = Pattern.compile("<([^>\n\r]+)>");
+  private static final Pattern PARAMETER_SUBSTITUTION_PATTERN = Pattern.compile("<(?!<)([^>\n\r]+)>");
 
   public static final Map<String, String> STANDARD_PARAMETER_TYPES;
 
@@ -240,13 +240,23 @@ public final class CucumberUtil {
     return result.toString();
   }
 
-  /**
-   * Replaces ParameterType-s injected into step definition.
-   * Step definition {@code provided {int} cucumbers } will be presented by regexp {@code ([+-]?\d+) customers }
-   *
-   * @param parameterTypeManager provides mapping from ParameterTypes name to its value
-   * @return regular expression defined by Cucumber Expression and ParameterTypes value
-   */
+  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
+  /// Builds a regexp from the `cucumberExpression` containing `ParameterType`s.
+  /// ### Example
+  /// We can go from Cucumber expression:
+  /// ```plaintext
+  /// provided {int} cucumbers
+  /// ```
+  /// to regexp:
+  /// ```
+  /// ^provided (-?\d+) cucumbers$
+  /// ```
+  ///
+  /// @param parameterTypeManager provides mapping from `ParameterType`s name to its value
+  /// @return regular expression defined by Cucumber Expression and `ParameterType`s value
+  /// @see <a href="https://cucumber.io/docs/cucumber/configuration/#parameter-types">Cucumber Reference | Step Definitions</a>
+  /// @see <a href="https://github.com/cucumber/cucumber-expressions">Cucumber Expressions on GitHub</a>
+  //@formatter:on
   public static @NotNull String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
                                                                   @NotNull ParameterTypeManager parameterTypeManager) {
     cucumberExpression = escapeCucumberExpression(cucumberExpression);

@@ -75,4 +75,20 @@ public class CucumberTableInspectionTest extends BasePlatformTestCase {
 
     myFixture.checkHighlighting();
   }
+
+  // Test for IDEA-245889
+  public void testParameterWrappedInDoubleCaret() {
+    myFixture.configureByText(GherkinFileType.INSTANCE, """
+      Feature: Sample feature
+      
+        Scenario Outline: Double caret test
+          Given my another step definition with param "<<param>>"
+          Examples:
+            | param |
+            | hello |
+            | there |
+      """);
+
+    myFixture.checkHighlighting();
+  }
 }

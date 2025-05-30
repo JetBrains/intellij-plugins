@@ -1,8 +1,8 @@
 Feature: Shopping
+
   Scenario: Subtraction
     Given my step definition
     Given my java8 step
-
 
 
   Scenario: my test
@@ -14,3 +14,17 @@ Feature: Shopping
     Examples:
       | color |
       | red   |
+
+  Scenario Outline: Single caret test
+    Given my another step definition with param "<param>"
+    Examples:
+      | param |
+      | hello |
+      | there |
+
+  Scenario Outline: Double caret test
+    Given my another step definition with param "<<param>>"
+    Examples:
+      | param |
+      | hello |
+      | there |

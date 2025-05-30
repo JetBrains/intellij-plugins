@@ -28,6 +28,7 @@ public class CucumberUtilTest {
   public void testBuildRegexpFromCucumberExpression() {
     assertEquals("^(-?\\d+) cucumbers$", buildRegexpFromCucumberExpression("{int} cucumbers", MapParameterTypeManager.DEFAULT));
     assertEquals("^(-?\\d*[.,]?\\d+) cucumbers$", buildRegexpFromCucumberExpression("{float} cucumbers", MapParameterTypeManager.DEFAULT));
+    assertEquals("^provided (-?\\d+) cucumbers$", buildRegexpFromCucumberExpression("provided {int} cucumbers", MapParameterTypeManager.DEFAULT));
     assertEquals("^provided ([^\\s]+)$", buildRegexpFromCucumberExpression("provided {word}", MapParameterTypeManager.DEFAULT));
     assertEquals("^provided (\"(?:[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'(?:[^'\\\\]*(?:\\\\.[^'\\\\]*)*)')$",
                  buildRegexpFromCucumberExpression("provided {string}", MapParameterTypeManager.DEFAULT));

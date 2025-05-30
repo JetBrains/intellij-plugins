@@ -15,6 +15,10 @@ public class ShoppingStepdefs implements En {
   @Given("my step definition")
   public void my_step_definition() {
   }
+  
+  @Given("my another step definition with param {string}")
+  public void my_another_step_definition(String param) {
+  }
 
   @Given("^step (red|black):$")
   public void my_step_with_colon(String param) {

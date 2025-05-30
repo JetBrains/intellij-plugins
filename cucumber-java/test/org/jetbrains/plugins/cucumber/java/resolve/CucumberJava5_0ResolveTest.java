@@ -20,6 +20,16 @@ public class CucumberJava5_0ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("step <caret><color>:", "my_step_with_colon");
   }
 
+  public void testResolveSingleCaret() {
+    init("stepResolve_cucumber_5");
+    checkReference("my another <caret>step definition with param \"<param>\"", "my_another_step_definition");
+  }
+
+  public void testResolveDoubleCaret() {
+    init("stepResolve_cucumber_5");
+    checkReference("my another <caret>step definition with param \"<<param>>\"", "my_another_step_definition");
+  }
+
   public void testResolveWithSeveralStepDefinitionAnnotations() {
     init("stepResolve_cucumber_5");
     checkReference("first <caret>regex", "my_double_definition");
