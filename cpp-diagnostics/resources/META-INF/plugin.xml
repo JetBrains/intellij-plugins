@@ -13,6 +13,7 @@
     <plugin id="com.intellij.clion.cmake"/>
     <module name="intellij.cidr.workspaceModel"/>
     <module name="intellij.cidr.projectModel"/>
+    <module name="intellij.cidr.psi.base"/>
     <module name="intellij.clion.toolchains"/>
   </dependencies>
 
