@@ -12,11 +12,11 @@ import org.jetbrains.astro.AstroIcons
 import org.jetbrains.astro.service.settings.AstroServiceConfigurable
 
 
-class AstroLspServerSupportProvider : JSFrameworkLspServerSupportProvider(AstroServiceSetActivationRule) {
+class AstroLspServerSupportProvider : JSFrameworkLspServerSupportProvider(AstroLspServerActivationRule) {
   override fun createLspServerDescriptor(project: Project): JSFrameworkLspServerDescriptor = AstroLspServerDescriptor(project)
 
   override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
     JSLspServerWidgetItem(lspServer, currentFile, AstroIcons.Astro, AstroIcons.Astro, AstroServiceConfigurable::class.java)
 }
 
-class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroServiceSetActivationRule, "Astro")
+class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, AstroLspServerActivationRule, "Astro")

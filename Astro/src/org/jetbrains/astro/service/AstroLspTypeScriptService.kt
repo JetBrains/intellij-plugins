@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 
 class AstroLspTypeScriptService(project: Project)
-  : JSFrameworkLspTypeScriptService(project, AstroLspServerSupportProvider::class.java, AstroServiceSetActivationRule) {
+  : JSFrameworkLspTypeScriptService(project, AstroLspServerSupportProvider::class.java, AstroLspServerActivationRule) {
   override val name = "Astro LSP"
   override val prefix = "Astro"
 

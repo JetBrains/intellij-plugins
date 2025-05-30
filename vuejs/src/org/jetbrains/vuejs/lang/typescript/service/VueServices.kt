@@ -65,13 +65,19 @@ object VueLspServerLoader : LspServerLoader(VueLspServerPackageDescriptor) {
 
 internal val vueLspNewEvalVersion = SemVer.parseFromText("2.0.26-eval")
 
-object VueServiceSetActivationRule : JSServiceSetActivationRule(VueLspServerLoader, null) {
-  override fun isFileAcceptableForLspServer(file: VirtualFile): Boolean {
+private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
+  return context.fileType is VueFileType || isVueContext(context, project)
+}
+
+object VueLspServerActivationRule : LspServerActivationRule(VueLspServerLoader, VueActivationHelper) {
+  override fun isFileAcceptable(file: VirtualFile): Boolean {
     if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
 
     return file.isVueFile || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
   }
+}
 
+private object VueActivationHelper : ServiceActivationHelper {
   override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
     return isVueServiceContext(project, context)
   }
@@ -83,10 +89,6 @@ object VueServiceSetActivationRule : JSServiceSetActivationRule(VueLspServerLoad
       VueServiceSettings.DISABLED -> false
     }
   }
-}
-
-private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
-  return context.fileType is VueFileType || isVueContext(context, project)
 }
 
 //<editor-fold desc="VueClassicTypeScriptService">

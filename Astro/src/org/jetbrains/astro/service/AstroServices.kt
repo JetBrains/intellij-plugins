@@ -3,10 +3,7 @@ package org.jetbrains.astro.service
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
-import com.intellij.lang.typescript.lsp.JSServiceSetActivationRule
-import com.intellij.lang.typescript.lsp.LspServerLoader
-import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
-import com.intellij.lang.typescript.lsp.PackageVersion
+import com.intellij.lang.typescript.lsp.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
@@ -33,12 +30,14 @@ object AstroLspServerLoader : LspServerLoader(AstroLspServerPackageDescriptor) {
   }
 }
 
-object AstroServiceSetActivationRule : JSServiceSetActivationRule(AstroLspServerLoader, null) {
-  override fun isFileAcceptableForLspServer(file: VirtualFile): Boolean {
+object AstroLspServerActivationRule : LspServerActivationRule(AstroLspServerLoader, AstroActivationHelper) {
+  override fun isFileAcceptable(file: VirtualFile): Boolean {
     if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
     return file.fileType == AstroFileType || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
   }
+}
 
+object AstroActivationHelper : ServiceActivationHelper {
   override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
     return context.fileType == AstroFileType
   }
