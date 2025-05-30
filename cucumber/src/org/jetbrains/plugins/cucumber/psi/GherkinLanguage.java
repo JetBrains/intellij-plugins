@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class GherkinLanguage extends Language {
-  public static GherkinLanguage INSTANCE = new GherkinLanguage();
+  public static final GherkinLanguage INSTANCE = new GherkinLanguage();
 
   protected GherkinLanguage() {
     super("Gherkin");
