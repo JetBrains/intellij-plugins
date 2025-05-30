@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class PlainGherkinKeywordProvider implements GherkinKeywordProvider {
-  public static GherkinKeywordTable DEFAULT_KEYWORD_TABLE = new GherkinKeywordTable();
-  public static Map<String, IElementType> DEFAULT_KEYWORDS = new HashMap<>();
+  public static final GherkinKeywordTable DEFAULT_KEYWORD_TABLE = new GherkinKeywordTable();
+  public static final Map<String, IElementType> DEFAULT_KEYWORDS = new HashMap<>();
   private static final Set<String> ourKeywordsWithNoSpaceAfter = new HashSet<>();
 
   static {

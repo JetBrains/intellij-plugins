@@ -8,10 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public final class GherkinKeywordList {
-  // i18n.json file contains list of keywords and some meta-information about the language. At the moment it's three attributes below.
+  /// The `i18n.json` file contains the list of keywords and some meta-information about the language.
+  /// At the moment it's three attributes below.
   private static final Collection<String> GHERKIN_LANGUAGE_META_ATTRIBUTES = Arrays.asList("name", "native", "encoding");
 
-  // maps custom language keyword to base (English) keyword
+  /// Maps custom language keyword to the base (English) keyword.
   private final Map<String, String> myKeyword2BaseNameTable = new HashMap<>();
   private final Set<String> mySpaceAfterKeywords = new HashSet<>();
   private final GherkinKeywordTable myKeywordsTable = new GherkinKeywordTable();
