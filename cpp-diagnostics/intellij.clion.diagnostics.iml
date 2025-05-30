@@ -20,6 +20,7 @@
     <orderEntry type="module" module-name="intellij.cidr.util" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.cidr.projectModel" />
+    <orderEntry type="module" module-name="intellij.cidr.psi.base" />
     <orderEntry type="module" module-name="intellij.clion.toolchains" />
   </component>
 </module>

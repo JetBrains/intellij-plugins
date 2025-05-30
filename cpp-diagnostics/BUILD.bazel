@@ -25,6 +25,7 @@ jvm_library(
     "//CIDR/cidr-util",
     "@community//platform/platform-impl:ide-impl",
     "//CIDR/cidr-projectModel",
+    "//CIDR/cidr-psi-base",
     "//CIDR/clion-toolchains",
   ],
   runtime_deps = [":clion-diagnostics_resources"]
