@@ -31,7 +31,7 @@
     <orderEntry type="module" module-name="intellij.javascript" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.css.impl" />
-    <orderEntry type="module" module-name="intellij.platform.webSymbols.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="library" name="gson" level="project" />
@@ -93,7 +93,7 @@
     <orderEntry type="module" module-name="intellij.javascript.web" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
-    <orderEntry type="module" module-name="intellij.platform.webSymbols" />
+    <orderEntry type="module" module-name="intellij.platform.polySymbols" />
     <orderEntry type="library" name="fastutil-min" level="project" />
     <orderEntry type="module" module-name="intellij.platform.images" />
     <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />

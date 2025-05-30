@@ -97,10 +97,10 @@ jvm_library(
     "//platform/lsp/testFramework",
     "//ultimate/ultimate-resources:idea-ultimate-customization",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
-    "@community//platform/webSymbols",
+    "@community//platform/polySymbols",
     "//platform/lsp-impl",
     "//platform/lsp-impl:lsp-impl_test_lib",
-    "@community//platform/webSymbols:webSymbols-testFramework",
+    "@community//platform/polySymbols:polySymbols-testFramework",
   ],
   runtime_deps = [
     ":prisma_resources",

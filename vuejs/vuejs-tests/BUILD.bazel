@@ -61,10 +61,10 @@ jvm_library(
     "//plugins/webpack",
     "//plugins/webpack:webpack_test_lib",
     "//platform/lsp",
-    "@community//platform/webSymbols",
+    "@community//platform/polySymbols",
     "//platform/lsp/testFramework",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
-    "@community//platform/webSymbols:webSymbols-testFramework",
+    "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
   ],
   runtime_deps = [":tests_test_resources"]

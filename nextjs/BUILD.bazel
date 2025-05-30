@@ -33,7 +33,7 @@ jvm_library(
     "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
-    "@community//platform/webSymbols",
+    "@community//platform/polySymbols",
   ],
   runtime_deps = [":nextjs_resources"]
 )
@@ -63,7 +63,7 @@ jvm_library(
     "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
-    "@community//platform/webSymbols",
+    "@community//platform/polySymbols",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
   ],
   runtime_deps = [

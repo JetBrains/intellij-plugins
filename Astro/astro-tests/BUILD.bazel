@@ -34,13 +34,13 @@ jvm_library(
     "@lib//:stream_ex",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
-    "@community//platform/webSymbols",
+    "@community//platform/polySymbols",
     "//contrib/postcss",
     "//contrib/postcss:postcss_test_lib",
     "//platform/lsp",
     "//platform/lsp/testFramework",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
-    "@community//platform/webSymbols:webSymbols-testFramework",
+    "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
   ]
 )

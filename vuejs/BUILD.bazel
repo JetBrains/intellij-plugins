@@ -72,7 +72,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@lib//:caffeine",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
-    "@community//platform/webSymbols",
+    "@community//platform/polySymbols",
     "//contrib/postcss",
     "//platform/lsp-impl",
     "@community//platform/platform-util-io:ide-util-io",

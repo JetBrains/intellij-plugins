@@ -33,7 +33,7 @@ jvm_library(
     "@community//platform/analysis-impl",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
-    "@community//platform/webSymbols",
+    "@community//platform/polySymbols",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
