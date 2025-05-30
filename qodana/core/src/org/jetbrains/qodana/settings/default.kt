@@ -19,6 +19,7 @@ import org.intellij.lang.annotations.Language
 import org.jdom.JDOMException
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfile
+import org.jetbrains.qodana.ui.Linter
 import org.jetbrains.qodana.ui.getQodanaImageNameMatchingIDE
 import java.io.IOException
 import java.nio.file.Path
@@ -26,7 +27,9 @@ import kotlin.io.path.Path
 
 const val APPLIED_IN_CI_COMMENT = "(Applied in CI/CD pipeline)"
 
-open class DefaultQodanaItemContext: QodanaYamlItemContext()
+class DefaultQodanaItemContext(
+  val githubPromo: Boolean = false
+): QodanaYamlItemContext
 
 class QodanaYamlHeaderItemProvider : QodanaYamlItemProvider {
   companion object {
@@ -231,24 +234,34 @@ class QodanaYamlLinterItemProvider : QodanaYamlItemProvider {
   companion object {
     const val ID = "linter"
   }
+  @Language("YAML")
+  private val githubPromoContent = """
+      
+    #Qodana supports other languages, for example, Python, JavaScript, TypeScript, Go, C#, PHP
+    #For all supported languages see https://www.jetbrains.com/help/qodana/linters.html
+    linter: ${getQodanaImageNameMatchingIDE(useVersionPostfix = true, Linter.IC)}
+  """.trimIndent()
+
+  @Language("YAML")
+  private val dotnetContent = """
+    
+    #Specify IDE code to run analysis without container $APPLIED_IN_CI_COMMENT
+    ide: QDNET
+  """.trimIndent()
+
+  @Language("YAML")
+  private val defaultContent = """
+    
+    #Specify Qodana linter for analysis $APPLIED_IN_CI_COMMENT
+    linter: ${getQodanaImageNameMatchingIDE(useVersionPostfix = true)}
+  """.trimIndent()
 
   override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
     if (context !is DefaultQodanaItemContext) return null
     if (ApplicationInfo.getInstance().build.productCode == "RD") {
-      @Language("YAML")
-      val content = """
-      
-      #Specify IDE code to run analysis without container $APPLIED_IN_CI_COMMENT
-      ide: QDNET
-    """.trimIndent()
-      return QodanaYamlItem(ID, 1, content)
+      return QodanaYamlItem(ID, 1, dotnetContent)
     }
-    @Language("YAML")
-    val content = """
-      
-      #Specify Qodana linter for analysis $APPLIED_IN_CI_COMMENT
-      linter: ${getQodanaImageNameMatchingIDE(useVersionPostfix = true)}
-    """.trimIndent()
+    val content = if (context.githubPromo) githubPromoContent else defaultContent
     return QodanaYamlItem(ID, 1000, content)
   }
 }

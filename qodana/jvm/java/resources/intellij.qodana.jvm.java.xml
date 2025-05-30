@@ -5,7 +5,6 @@
   <extensions defaultExtensionNs="org.intellij.qodana">
     <projectDescriber implementation="org.jetbrains.qodana.jvm.java.JavaDescriber"/>
     <qodanaYamlItemProvider implementation="org.jetbrains.qodana.jvm.java.ui.QodanaYamlJdkItemProvider"/>
-    <qodanaYamlItemProvider implementation="org.jetbrains.qodana.jvm.java.ui.QodanaYamlGithubPromoLinterItemProvider"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.jvm.java.migrate.MigrateClassesScriptFactory"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.jvm.java.JvmLocalTaintOutputConsumer"/>
     <workflowExtension implementation="org.jetbrains.qodana.jvm.java.QodanaJavaConfigApplier" />
