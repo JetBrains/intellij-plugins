@@ -99,7 +99,7 @@ internal class TmplAstElement(
 
 internal class TmplAstTemplate(
   val tagName: String?,
-  override val tag: XmlTag,
+  override val tag: XmlTag?,
   val templateAttrs: List<TmplAstAttribute>,
   override val directives: Set<TmplDirectiveMetadata>,
   override val inputs: Map<String, TmplAstBoundAttribute>,
@@ -709,10 +709,10 @@ private fun XmlTag.toTmplAstDirectiveContainer(
           ?: emptySequence())
     .toList()
 
-  return if (isTemplateTag) {
+  val element = if (isTemplateTag) {
     TmplAstTemplate(
       tagName = null,
-      tag = this,
+      tag = this.takeIf { templateBindings == null },
       templateAttrs = emptyList(),
       directives = directives,
       inputs = inputs,
@@ -726,7 +726,21 @@ private fun XmlTag.toTmplAstDirectiveContainer(
       references.forEach { it.value.parent = this }
     }
   }
-  else if (templateBindings != null) {
+  else TmplAstElement(
+    name = name,
+    tag = this.takeIf { templateBindings == null },
+    directives = directives,
+    inputs = inputs,
+    outputs = outputs,
+    attributes = attributes,
+    references = references,
+    startSourceSpan = startSourceSpan,
+    children = children
+  ).apply {
+    references.forEach { it.value.parent = this }
+  }
+
+  return if (templateBindings != null)
     TmplAstTemplate(
       tagName = name,
       tag = this,
@@ -738,38 +752,9 @@ private fun XmlTag.toTmplAstDirectiveContainer(
       references = emptyMap(),
       variables = templateBindings.variables,
       startSourceSpan = templateBindingAttribute?.nameElement?.textRange ?: startSourceSpan,
-      children = listOf(
-        TmplAstElement(
-          name = name,
-          tag = null,
-          directives = directives,
-          inputs = inputs,
-          outputs = outputs,
-          attributes = attributes,
-          references = references,
-          startSourceSpan = startSourceSpan,
-          children = children
-        ).apply {
-          references.forEach { it.value.parent = this }
-        }
-      )
+      children = listOf(element)
     )
-  }
-  else {
-    TmplAstElement(
-      name = name,
-      tag = this,
-      directives = directives,
-      inputs = inputs,
-      outputs = outputs,
-      attributes = attributes,
-      references = references,
-      startSourceSpan = startSourceSpan,
-      children = children
-    ).apply {
-      references.forEach { it.value.parent = this }
-    }
-  }
+  else element
 }
 
 internal fun buildMetadata(directive: Angular2Directive): List<TmplDirectiveMetadata> {

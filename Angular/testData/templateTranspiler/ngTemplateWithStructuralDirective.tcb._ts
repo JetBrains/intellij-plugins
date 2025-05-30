@@ -1,0 +1,29 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "@angular/core";
+import * as _i2 from "@angular/common";
+/* Directives */
+const _ctor1: <T = unknown>(init: Pick<_i2.NgIf<T>, "ngIf" | "ngIfThen" | "ngIfElse">) => _i2.NgIf<T> = null!;
+
+/* TCB for ngTemplateWithStructuralDirective.ts */
+
+function _tcb1(this: MyComp2) {
+var _t3 = null! as any;
+var _t2 = (_t3 as any as _i1.TemplateRef<any>);
+var _t1 = _ctor1({"ngIf": this.test, "ngIfElse": _t2, "ngIfThen": 0 as any});
+_t1.ngIf = this.test;
+_t1.ngIfElse = _t2;
+var _t4 = null! as any;
+if (_i2.NgIf.ngTemplateContextGuard(_t1, _t4) && this.test) {
+_t4;
+var _t5 = _t4.ngIf;
+var _t6 = null! as any;
+{
+_t6;
+var _t7 = _t6.$implicit;
+var _t8 = document.createElement("p");
+"" + _t5('text1');
+}
+var _t9 = (_t6 as any as _i1.TemplateRef<any>);
+}
+}
