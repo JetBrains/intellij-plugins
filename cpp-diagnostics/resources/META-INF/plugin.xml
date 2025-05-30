@@ -14,6 +14,7 @@
     <module name="intellij.cidr.workspaceModel"/>
     <module name="intellij.cidr.projectModel"/>
     <module name="intellij.cidr.psi.base"/>
+    <module name="intellij.cidr.util"/>
     <module name="intellij.clion.toolchains"/>
   </dependencies>
 
