@@ -97,8 +97,6 @@ jvm_library(
     "//ultimate/ultimate-resources:idea-ultimate-customization",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//platform/polySymbols",
-    "//platform/lsp-impl",
-    "//platform/lsp-impl:lsp-impl_test_lib",
     "@community//platform/polySymbols:polySymbols-testFramework",
   ],
   runtime_deps = [
