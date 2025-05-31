@@ -3,8 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.scopes
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.util.progress.reportProgress
-import kotlinx.coroutines.coroutineScope
+import com.intellij.platform.util.progress.reportProgressScope
 import kotlinx.coroutines.launch
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import java.util.concurrent.ConcurrentHashMap
@@ -89,13 +88,11 @@ suspend fun collectExtendedFiles(
     }
   }
   val queueSize = fileToExtenders.values.sumOf { it.size }
-  reportProgress(queueSize) { reporter ->
-    coroutineScope {
-      fileToExtenders.forEach { (file, extenders) ->
-        extenders.forEach { extender ->
-          launch {
-            reporter.itemStep { extender.extend(file) }
-          }
+  reportProgressScope(queueSize) { reporter ->
+    fileToExtenders.forEach { (file, extenders) ->
+      extenders.forEach { extender ->
+        launch {
+          reporter.itemStep { extender.extend(file) }
         }
       }
     }
