@@ -243,7 +243,7 @@ internal suspend fun QodanaRunContext.applyExternalFileScope(
   val toolsWithExtenders = findToolsWithScopeExtenders()
   val manager = PsiManager.getInstance(project)
   val fileToExtenders = computeFileToScopeExtenders(files, manager, toolsWithExtenders)
-  val additionalFiles = collectExtendedFiles(project, fileToExtenders)
+  val additionalFiles = if (fileToExtenders.isNotEmpty()) collectExtendedFiles(project, fileToExtenders) else emptyMap()
 
   return QodanaRunContext(
     project,
