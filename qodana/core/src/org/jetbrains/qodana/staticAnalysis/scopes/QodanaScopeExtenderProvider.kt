@@ -65,6 +65,14 @@ interface InspectionToolScopeExtender {
 
   val name: String
 
+  /**
+   * Returns dependent files on the given [virtualFile].
+   *
+   * @param virtualFile The source file whose dependent files should be found.
+   * @param project The current project.
+   * @param acceptedFiles A map of files that have already been processed, each associated with a set of extender names.
+   * Used to prevent redundant computation.
+   */
   suspend fun extendScope(virtualFile: VirtualFile, project: Project, acceptedFiles: Map<VirtualFile, Set<String>>): List<VirtualFile>
 }
 
