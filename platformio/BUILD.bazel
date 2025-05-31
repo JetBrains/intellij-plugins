@@ -44,6 +44,7 @@ jvm_library(
     "@community//platform/ui.jcef",
     "//CIDR/cidr-projectModel",
     "//CIDR/cidr-psi-base",
+    "//CIDR/cidr-core",
   ],
   runtime_deps = [":platformio_resources"]
 )
@@ -91,6 +92,7 @@ jvm_library(
     "//CIDR/clion-testFramework",
     "//CIDR/cidr-projectModel",
     "//CIDR/cidr-psi-base",
+    "//CIDR/cidr-core",
   ],
   runtime_deps = [
     ":platformio_resources",
