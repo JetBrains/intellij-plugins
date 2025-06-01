@@ -19,6 +19,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//jps/model-api:model",
     "@community//platform/refactoring",
@@ -98,6 +99,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test-ex/**/*.kt", "test-ex/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//jps/model-api:model",
     "@community//platform/refactoring",

@@ -17,6 +17,7 @@
     <orderEntry type="module" module-name="intellij.css.frontback" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />
     <orderEntry type="module" module-name="intellij.css" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.editor.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.indexing" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />

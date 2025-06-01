@@ -19,6 +19,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//platform/refactoring",
@@ -67,6 +68,7 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":angularJS"],
   deps = [
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",

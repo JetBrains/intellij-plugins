@@ -22,6 +22,7 @@ jvm_library(
     "//CSS/frontback/css-api:css-frontback",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//CSS:css",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",

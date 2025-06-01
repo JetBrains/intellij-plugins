@@ -12,6 +12,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src-ext/**/*.kt", "src-ext/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/analysis-api:analysis",
     "@community//platform/indexing-api:indexing",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",

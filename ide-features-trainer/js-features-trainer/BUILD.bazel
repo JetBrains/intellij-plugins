@@ -20,6 +20,7 @@ jvm_library(
   deps = [
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@lib//:kotlin-stdlib",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/testRunner",
     "//plugins/JavaScriptLanguage:javascript",
@@ -45,6 +46,7 @@ jvm_library(
   deps = [
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@lib//:kotlin-stdlib",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/testRunner",
     "@community//platform/testRunner:testRunner_test_lib",

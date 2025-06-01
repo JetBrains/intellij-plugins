@@ -14,6 +14,7 @@ jvm_library(
   srcs = glob(["src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java", "src/main/gen/**/*.kt", "src/main/gen/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//plugins/yaml/backend",
@@ -37,6 +38,7 @@ jvm_library(
   associates = [":cloudFormation"],
   deps = [
     "@lib//:kotlin-stdlib",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//platform/refactoring",

@@ -21,6 +21,7 @@ jvm_library(
   deps = [
     "@lib//:gson",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/indexing-api:indexing",
@@ -67,6 +68,7 @@ jvm_library(
   deps = [
     "@lib//:gson",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/indexing-api:indexing",

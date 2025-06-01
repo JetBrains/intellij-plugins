@@ -13,6 +13,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
+    "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
     "@community//platform/ide-core-impl",
@@ -40,6 +41,7 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
   associates = [":makefile"],
   deps = [
+    "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
     "@community//platform/ide-core-impl",

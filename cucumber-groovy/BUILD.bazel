@@ -14,6 +14,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "//contrib/cucumber:gherkin",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
@@ -41,6 +42,7 @@ jvm_library(
   deps = [
     "//contrib/cucumber:gherkin",
     "//contrib/cucumber:gherkin_test_lib",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",

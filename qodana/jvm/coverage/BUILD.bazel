@@ -15,6 +15,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//java/openapi:java",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
     "@community//jps/model-api:model",
@@ -40,6 +41,7 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "@lib//:assert_j",
     "@community//java/openapi:java",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/core-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",

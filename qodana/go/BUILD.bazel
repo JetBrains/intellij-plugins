@@ -59,6 +59,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
+    "@community//platform/analysis-api:analysis",
     "//contrib/qodana/coverage",
     ":ide_provided",
     ":ide-impl_provided",
@@ -80,6 +81,7 @@ jvm_library(
   associates = [":go"],
   deps = [
     "@lib//:kotlin-stdlib",
+    "@community//platform/analysis-api:analysis",
     "@community//platform/core-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
