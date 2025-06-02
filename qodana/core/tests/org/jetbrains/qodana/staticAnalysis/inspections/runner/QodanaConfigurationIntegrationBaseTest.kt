@@ -8,6 +8,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.PreconfiguredRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
+import org.jetbrains.qodana.staticAnalysis.script.QodanaSingleRunScript
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
@@ -33,8 +34,9 @@ abstract class QodanaConfigurationIntegrationBaseTest : HeavyPlatformTestCase() 
     val runner = app.constructQodanaRunner(contextFactory)
 
     val script = runner.script
+    val scriptContextFactory = (script as? QodanaSingleRunScript)?.runContextFactory ?: contextFactory
 
-    return ScriptEnv(script, contextFactory.openRunContext(), app.config, app)
+    return ScriptEnv(script, scriptContextFactory.openRunContext(), app.config, app)
   }
 
   @Language("XML")
