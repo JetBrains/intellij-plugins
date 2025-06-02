@@ -264,7 +264,6 @@
     <codeInsight.codeVisionSettingsPreviewLanguage modelId="references" language="HCL-Terraform"/>
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.config.psi.TfReferenceContributor"/>
 
-    <platform.backend.documentation.targetProvider implementation="org.intellij.terraform.config.documentation.TfDocTargetProvider"/>
     <platform.backend.documentation.psiTargetProvider implementation="org.intellij.terraform.config.documentation.TfPsiDocTargetProvider"/>
 
     <registryKey key="terraform.registry.connection.timeout" defaultValue="1000"
