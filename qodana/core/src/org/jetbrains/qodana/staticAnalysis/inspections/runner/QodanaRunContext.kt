@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
@@ -18,6 +19,7 @@ data class QodanaRunContext(
   val runCoroutineScope: CoroutineScope,
   val messageReporter: QodanaMessageReporter,
   val changes: Map<String, Set<Int>>? = null,
+  val scopeExtended: Map<VirtualFile, Set<String>> = emptyMap()
 )
 val QodanaRunContext.baseProfile: QodanaInspectionProfile
   get() = loadedProfile.profile

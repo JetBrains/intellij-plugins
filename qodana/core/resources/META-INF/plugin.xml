@@ -344,6 +344,12 @@
     <extensionPoint name="loggingActivity"
                     interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.log.QodanaLoggingActivity"
                     dynamic="true"/>
+    <extensionPoint name="scopeExtenderProvider"
+                    interface="org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider"
+                    dynamic="true"/>
+    <extensionPoint name="scopeExtender"
+                    interface="org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.intellij.qodana">

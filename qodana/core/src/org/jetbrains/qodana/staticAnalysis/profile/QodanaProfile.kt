@@ -11,9 +11,11 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfile
+import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
 import java.util.concurrent.ConcurrentHashMap
 
 private const val EFFECTIVE_PROFILE_NAME = "qodana.effective.profile"
+
 
 /**
  * The Qodana profile determines on which files the inspections are run.
@@ -157,8 +159,9 @@ class QodanaProfile(
       LOG.debug("Received counters:\n $receivedMessage")
     }
 
-    fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
-      return stateByInspectionId[inspectionId]?.shouldSkip(inspectionId, file, wrappers) ?: true
+    fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers, ctx: QodanaGlobalInspectionContext): Boolean {
+      return QodanaScopeExtenderProvider.shouldSkip(ctx.scopeExtended, file.virtualFile, inspectionId)
+             || (stateByInspectionId [inspectionId]?.shouldSkip(inspectionId, file, wrappers) ?: true)
     }
 
     fun onFinish() {
