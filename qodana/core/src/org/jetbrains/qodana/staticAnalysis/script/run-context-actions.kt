@@ -216,7 +216,6 @@ private suspend fun QodanaRunContext.resolveVirtualFiles(paths: Iterable<Path>):
 }
 
 private fun QodanaRunContext.findToolsWithScopeExtenders(): Map<InspectionToolScopeExtender, ToolsImpl> = qodanaProfile.effectiveProfile.tools
-  .filter { toolsImpl -> toolsImpl.isEnabled }
   .mapNotNull { toolsImpl -> QodanaScopeExtenderProvider.getExtender(toolsImpl.tool.shortName) to toolsImpl }
   .mapNotNull { (key, value) -> key?.let { it to value } }
   .toMap()
@@ -228,10 +227,13 @@ private suspend fun computeFileToScopeExtenders(
 ): Map<VirtualFile, List<InspectionToolScopeExtender>> = readAction {
   files
     .mapNotNull { psiManager.findFile(it) }
-    .associate { psiFile ->
+    .mapNotNull { psiFile ->
       val enabledExtenders = toolsWithExtenders.filter { (_, tool) -> tool.getEnabledTool(psiFile) != null }.keys.toList()
-      psiFile.virtualFile to enabledExtenders
+      enabledExtenders.takeIf { it.isNotEmpty() }?.let {
+        psiFile.virtualFile to enabledExtenders
+      }
     }
+    .toMap()
 }
 
 internal suspend fun QodanaRunContext.applyExternalFileScope(
