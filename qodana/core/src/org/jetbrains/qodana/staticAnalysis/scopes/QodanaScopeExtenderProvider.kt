@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.scopes
 
-import com.intellij.concurrency.JobSchedulerImpl
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -8,8 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.util.progress.reportProgress
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import java.util.concurrent.ConcurrentHashMap
 
@@ -78,30 +75,25 @@ suspend fun collectExtendedFiles(
   project: Project,
   fileToExtenders: Map<VirtualFile, List<InspectionToolScopeExtender>>
 ): Map<VirtualFile, Set<String>> {
-  val scopeExtendedMap = ConcurrentHashMap<VirtualFile, Set<String>>().apply {
-    fileToExtenders.forEach { (file, _) -> put(file, emptySet()) }
+  val scopeExtendedMap = ConcurrentHashMap<VirtualFile, Set<String>>(
+    fileToExtenders.mapValues { emptySet() }
+  )
+  suspend fun InspectionToolScopeExtender.extendFrom(fromFile: VirtualFile) {
+    extendScope(fromFile, project, scopeExtendedMap).forEach { file ->
+      synchronized(scopeExtendedMap) {
+        scopeExtendedMap.putIfAbsent(file, setOf(name))?.also { list ->
+          scopeExtendedMap[file] = list + name
+        }
+      }
+    }
   }
-  val cores = JobSchedulerImpl.getJobPoolParallelism().coerceAtLeast(1)
-  val semaphore = Semaphore(cores)
-  val queueSize = fileToExtenders.values.flatten().size
+  val queueSize = fileToExtenders.values.sumOf { it.size }
   reportProgress(queueSize) { reporter ->
     coroutineScope {
       fileToExtenders.forEach { (file, extenders) ->
-        extenders.map { extender ->
-          semaphore.withPermit {
-            launch {
-              extender.extendScope(file, project, scopeExtendedMap).also { files ->
-                reporter.itemStep {
-                  files.forEach { file ->
-                    synchronized(scopeExtendedMap) {
-                      scopeExtendedMap.putIfAbsent(file, mutableSetOf())?.also { list ->
-                        scopeExtendedMap[file] = list + extender.name
-                      }
-                    }
-                  }
-                }
-              }
-            }
+        extenders.forEach { extender ->
+          launch {
+            reporter.itemStep { extender.extendFrom(file) }
           }
         }
       }
