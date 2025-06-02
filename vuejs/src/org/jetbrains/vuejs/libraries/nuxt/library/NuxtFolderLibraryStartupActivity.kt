@@ -1,27 +1,35 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.library
 
 import com.intellij.javascript.nodejs.library.yarn.pnp.workspaceModel.createStorageFrom
+import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
-import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
+import org.jetbrains.annotations.TestOnly
 
-class NuxtFolderLibraryStartupActivity : ProjectActivity {
+private class NuxtFolderLibraryStartupActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
-    NuxtFolderModelSynchronizer(project).sync()
+    NuxtFolderModelSynchronizer(
+      project = project,
+      workspaceModel = project.serviceAsync<WorkspaceModel>(),
+      nuxtFolderManager = project.serviceAsync<NuxtFolderManager>(),
+    ).sync()
   }
 }
 
-class NuxtFolderModelSynchronizer(private val project: Project) {
-
-  private val workspaceModel: WorkspaceModel = WorkspaceModel.getInstance(project)
-  private val nuxtFolderManager: NuxtFolderManager = NuxtFolderManager.getInstance(project)
+class NuxtFolderModelSynchronizer internal constructor(
+  private val project: Project,
+  private val workspaceModel: WorkspaceModel,
+  nuxtFolderManager: NuxtFolderManager,
+) {
   private val libraries: List<NuxtFolderLibrary> = nuxtFolderManager.nuxtFolders.map {
     NuxtFolderLibrary(it)
   }
-  private val virtualFileUrlManager: VirtualFileUrlManager = workspaceModel.getVirtualFileUrlManager()
+
+  @TestOnly
+  constructor(project: Project) : this(project, WorkspaceModel.getInstance(project), NuxtFolderManager.getInstance(project))
 
   fun sync() {
     val actualEntities = buildActualEntities()
@@ -32,7 +40,7 @@ class NuxtFolderModelSynchronizer(private val project: Project) {
 
   private fun buildActualEntities(): List<NuxtFolderEntity.Builder> {
     return libraries.map {
-      NuxtFolderManager.createEntity(it, virtualFileUrlManager)
+      NuxtFolderManager.createEntity(it, workspaceModel.getVirtualFileUrlManager())
     }
   }
 
