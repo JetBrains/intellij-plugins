@@ -81,7 +81,7 @@ suspend fun QodanaRunContext.writeProjectDescriptionAfterWork(projectStructurePa
 suspend fun QodanaRunContext.createGlobalInspectionContext(
   outputPath: Path = config.resultsStorage,
   profile: QodanaProfile = qodanaProfile,
-  coverageComputationState: QodanaCoverageComputationState = QodanaCoverageComputationState.DEFAULT,
+  coverageComputationState: QodanaCoverageComputationState = QodanaCoverageComputationState.DEFAULT
 ): QodanaGlobalInspectionContext {
   val contentManagerProvider = NotNullLazyValue.lazy {
     val mockContentManager = ToolWindowHeadlessManagerImpl.MockToolWindow(project).contentManager
@@ -105,7 +105,7 @@ suspend fun QodanaRunContext.runAnalysis(
   scope: QodanaAnalysisScope = this.scope,
   context: QodanaGlobalInspectionContext,
   progressIndicator: ProgressIndicatorEx = QodanaProgressIndicator(messageReporter),
-  isOffline: Boolean = true,
+  isOffline: Boolean = true
 ) {
   scope.patchToNotAnalyzeGeneratedCode(project)
   if (!GlobalInspectionContextUtil.canRunInspections(project, false) {}) {
@@ -132,7 +132,7 @@ suspend fun QodanaRunContext.runAnalysis(
 
 suspend fun QodanaRunContext.getResultsForInspectionGroup(
   context: QodanaGlobalInspectionContext,
-  inspectionGroupState: NamedInspectionGroup.State = context.profileState.mainState,
+  inspectionGroupState: NamedInspectionGroup.State = context.profileState.mainState
 ): List<Result> {
   val consumer = context.consumer
   consumer.close()
@@ -260,7 +260,7 @@ internal suspend fun QodanaRunContext.applyExternalFileScope(
 internal suspend fun QodanaRunContext.externalFileScope(
   files: Iterable<VirtualFile>,
   onFileIncluded: ((VirtualFile) -> Unit)? = null,
-  onFileExcluded: ((VirtualFile) -> Unit)? = null,
+  onFileExcluded: ((VirtualFile) -> Unit)? = null
 ): QodanaAnalysisScope {
   val (included, excluded) = readAction { files.partition(scope::contains) }
   onFileIncluded?.let(included::forEach)
