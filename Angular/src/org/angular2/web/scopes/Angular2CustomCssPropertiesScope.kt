@@ -25,7 +25,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.Companion.CSS_PROPERTIES
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.css.properties.AbstractCssCustomPropertySymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
 import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter

@@ -8,6 +8,8 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker

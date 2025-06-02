@@ -21,7 +21,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.PolySymbolDelegate.Companion.unwrapAllDelegates
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.PolySymbolDelegate.Companion.unwrapAllDelegates
 import com.intellij.polySymbols.testFramework.checkListByFile
 import com.intellij.polySymbols.testFramework.doCompletionItemsTest
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache

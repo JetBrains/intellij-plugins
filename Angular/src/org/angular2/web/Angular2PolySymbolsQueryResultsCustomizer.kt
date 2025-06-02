@@ -14,6 +14,8 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.polySymbols.utils.withSegments
 import com.intellij.polySymbols.utils.withSymbols

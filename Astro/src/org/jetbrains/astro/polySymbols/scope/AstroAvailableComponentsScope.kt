@@ -13,7 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndexEx
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS

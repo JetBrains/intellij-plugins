@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateScope
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver

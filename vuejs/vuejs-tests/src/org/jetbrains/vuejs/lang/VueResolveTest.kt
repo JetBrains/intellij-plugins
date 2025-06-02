@@ -15,6 +15,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import com.intellij.polySymbols.*
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.testFramework.assertUnresolvedReference
 import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature

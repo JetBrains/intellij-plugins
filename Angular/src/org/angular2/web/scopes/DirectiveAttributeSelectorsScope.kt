@@ -9,6 +9,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.utils.MappedPolySymbol
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.qualifiedName
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker

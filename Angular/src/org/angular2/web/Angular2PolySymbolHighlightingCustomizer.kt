@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.highlighting.PolySymbolHighlightingCustomizer
 import com.intellij.polySymbols.js.PolySymbolJsKind
 import org.angular2.Angular2DecoratorUtil.isHostBinding

@@ -18,6 +18,8 @@ import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.merge
 import org.jetbrains.annotations.Nls

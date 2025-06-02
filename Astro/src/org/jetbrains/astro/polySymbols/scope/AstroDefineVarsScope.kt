@@ -12,6 +12,7 @@ import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.childrenOfType

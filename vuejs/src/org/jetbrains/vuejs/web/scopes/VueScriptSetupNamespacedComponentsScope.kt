@@ -12,6 +12,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueComponentNamespaceSymbol

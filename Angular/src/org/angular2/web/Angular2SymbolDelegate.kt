@@ -4,7 +4,7 @@ package org.angular2.web
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.PolySymbolDelegate
+import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.PolySymbolOrigin
 
 abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : PolySymbolDelegate<T>(delegate), Angular2Symbol {

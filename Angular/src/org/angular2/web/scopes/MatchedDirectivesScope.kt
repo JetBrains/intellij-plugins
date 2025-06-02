@@ -10,7 +10,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider

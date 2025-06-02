@@ -18,7 +18,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil.getPresentableAccessModifier
 import com.intellij.lang.javascript.validation.fixes.JSRemoveReadonlyModifierFix
 import com.intellij.openapi.util.text.StringUtil.capitalize
-import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor

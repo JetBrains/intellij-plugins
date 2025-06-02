@@ -14,7 +14,7 @@ import com.intellij.util.asSafely
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScope
-import com.intellij.polySymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.index.getFunctionNameFromIndex

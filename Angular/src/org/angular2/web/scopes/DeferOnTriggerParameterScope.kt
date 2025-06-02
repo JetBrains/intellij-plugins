@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import org.angular2.codeInsight.blocks.getDeferOnTriggerDefinition
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.lang.expr.psi.Angular2BlockParameter

@@ -18,6 +18,8 @@ import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.utils.PolySymbolDelegate
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider

@@ -8,7 +8,7 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
-import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolQualifiedKind

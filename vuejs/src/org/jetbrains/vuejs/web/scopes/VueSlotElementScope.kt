@@ -20,6 +20,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolR
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag

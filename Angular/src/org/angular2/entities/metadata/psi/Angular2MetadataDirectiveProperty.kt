@@ -13,7 +13,7 @@ import com.intellij.openapi.util.NullableLazyValue
 import com.intellij.openapi.util.NullableLazyValue.lazyNullable
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement

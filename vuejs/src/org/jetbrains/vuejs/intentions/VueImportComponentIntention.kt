@@ -13,7 +13,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.PolySymbol
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.extractComponentSymbol

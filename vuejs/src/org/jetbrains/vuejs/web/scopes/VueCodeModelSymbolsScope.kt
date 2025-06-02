@@ -18,7 +18,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.polySymbols.utils.kind
 import com.intellij.polySymbols.webTypes.WebTypesSymbol

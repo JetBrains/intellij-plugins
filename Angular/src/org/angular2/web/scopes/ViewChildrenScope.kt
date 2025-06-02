@@ -15,6 +15,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 

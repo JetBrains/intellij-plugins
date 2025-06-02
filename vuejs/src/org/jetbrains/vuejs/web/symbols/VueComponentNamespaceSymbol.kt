@@ -14,6 +14,8 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueLocallyDefinedRegularComponent

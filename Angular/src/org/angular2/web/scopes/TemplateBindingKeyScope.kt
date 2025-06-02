@@ -14,6 +14,7 @@ import com.intellij.polySymbols.PolySymbol.Companion.JS_SYMBOLS
 import com.intellij.polySymbols.PolySymbol.Priority
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker

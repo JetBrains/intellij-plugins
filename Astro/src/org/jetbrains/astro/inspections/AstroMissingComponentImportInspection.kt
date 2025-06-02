@@ -9,7 +9,7 @@ import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
-import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.inspections.quickfixes.AstroImportComponentQuickFix

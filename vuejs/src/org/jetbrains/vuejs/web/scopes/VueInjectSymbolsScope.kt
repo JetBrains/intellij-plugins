@@ -10,6 +10,7 @@ import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent

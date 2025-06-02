@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Symbol
 import com.intellij.platform.backend.presentation.TargetPresentation
-import com.intellij.polySymbols.PsiSourcedPolySymbol
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem

@@ -18,6 +18,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolR
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueComputedProperty

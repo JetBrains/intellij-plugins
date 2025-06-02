@@ -10,6 +10,9 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker

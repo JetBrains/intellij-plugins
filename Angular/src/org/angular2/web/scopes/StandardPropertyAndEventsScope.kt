@@ -17,6 +17,7 @@ import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_EVENTS
 import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
