@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.patterns
 
 import com.intellij.patterns.*
@@ -7,7 +7,6 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
-import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.*
@@ -41,7 +40,7 @@ object HCLPatterns {
       .withParent(Block)
       .with(object : PatternCondition<HCLStringLiteral>("resource/data block type identifier") {
         override fun accepts(literal: HCLStringLiteral, context: ProcessingContext?): Boolean {
-          val validIdentifiers = setOf(HCL_PROVIDER_IDENTIFIER, HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER)
+          val validIdentifiers = setOf(HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER)
           return literal.parentsOfType<HCLBlock>(true)
             .filter { it.getNameElementUnquoted(0) in validIdentifiers }
             .firstOrNull { block -> block.getNameElementUnquoted(1) == HCLPsiUtil.stripQuotes(literal.text) } != null

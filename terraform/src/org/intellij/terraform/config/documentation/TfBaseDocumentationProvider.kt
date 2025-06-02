@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.documentation
 
 import com.intellij.model.Pointer
@@ -33,7 +33,7 @@ internal abstract class TfBaseDocumentationProvider {
 
     override fun computePresentation(): TargetPresentation {
       return TargetPresentation.builder(getHelpWindowHeader(pointer.element))
-        .icon(pointer.element?.let { TfCompletionUtil.getLookupIcon(it)})
+        .icon(pointer.element?.let { TfCompletionUtil.getLookupIcon(it) })
         .presentation()
     }
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.documentation
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
@@ -49,10 +50,10 @@ internal class DocReferenceTestCase : BasePlatformTestCase() {
       myFixture.editor.caretModel.moveToOffset(offset)
       myFixture.elementAtCaret is TfDocumentPsi
     }
-    assertSize(3, documented)
-    assertSize(2, unDocumented)
-    assertSameElements(documented.map { StringUtil.unquoteString(it.text) }, listOf("docker", "docker_image", "docker_container"))
-    assertSameElements(unDocumented.map { StringUtil.unquoteString(it.text) }, listOf("foo", "foo"))
+    assertSize(2, documented)
+    assertSize(3, unDocumented)
+    assertSameElements(documented.map { StringUtil.unquoteString(it.text) }, listOf("docker_image", "docker_container"))
+    assertSameElements(unDocumented.map { StringUtil.unquoteString(it.text) }, listOf("docker", "foo", "foo"))
   }
 
   fun testDocReferenceDoesntBreakVarDeclaration() {
