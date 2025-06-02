@@ -3,6 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.script
 import com.intellij.codeInspection.InspectionApplicationBase
 import com.intellij.codeInspection.InspectionsBundle
 import com.intellij.codeInspection.ex.GlobalInspectionContextUtil
+import com.intellij.codeInspection.ex.ToolsImpl
 import com.intellij.configurationStore.JbXmlOutputter
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.readAction
@@ -16,6 +17,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx
 import com.intellij.profile.ProfileEx
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
 import com.intellij.util.io.createDirectories
@@ -42,7 +44,10 @@ import org.jetbrains.qodana.staticAnalysis.sarif.automationDetails
 import org.jetbrains.qodana.staticAnalysis.sarif.configProfile
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 import org.jetbrains.qodana.staticAnalysis.sarif.resultsFlowByGroup
+import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
+import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
+import org.jetbrains.qodana.staticAnalysis.scopes.collectExtendedFiles
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.QodanaActivityKind
 import java.nio.file.Files
 import java.nio.file.Path
@@ -76,7 +81,7 @@ suspend fun QodanaRunContext.writeProjectDescriptionAfterWork(projectStructurePa
 suspend fun QodanaRunContext.createGlobalInspectionContext(
   outputPath: Path = config.resultsStorage,
   profile: QodanaProfile = qodanaProfile,
-  coverageComputationState: QodanaCoverageComputationState = QodanaCoverageComputationState.DEFAULT
+  coverageComputationState: QodanaCoverageComputationState = QodanaCoverageComputationState.DEFAULT,
 ): QodanaGlobalInspectionContext {
   val contentManagerProvider = NotNullLazyValue.lazy {
     val mockContentManager = ToolWindowHeadlessManagerImpl.MockToolWindow(project).contentManager
@@ -90,7 +95,8 @@ suspend fun QodanaRunContext.createGlobalInspectionContext(
       outputPath,
       profile,
       runCoroutineScope,
-      CoverageStatisticsData(coverageComputationState, project, changes)
+      CoverageStatisticsData(coverageComputationState, project, changes),
+      scopeExtended
     )
   }
 }
@@ -99,7 +105,7 @@ suspend fun QodanaRunContext.runAnalysis(
   scope: QodanaAnalysisScope = this.scope,
   context: QodanaGlobalInspectionContext,
   progressIndicator: ProgressIndicatorEx = QodanaProgressIndicator(messageReporter),
-  isOffline: Boolean = true
+  isOffline: Boolean = true,
 ) {
   scope.patchToNotAnalyzeGeneratedCode(project)
   if (!GlobalInspectionContextUtil.canRunInspections(project, false) {}) {
@@ -126,7 +132,7 @@ suspend fun QodanaRunContext.runAnalysis(
 
 suspend fun QodanaRunContext.getResultsForInspectionGroup(
   context: QodanaGlobalInspectionContext,
-  inspectionGroupState: NamedInspectionGroup.State = context.profileState.mainState
+  inspectionGroupState: NamedInspectionGroup.State = context.profileState.mainState,
 ): List<Result> {
   val consumer = context.consumer
   consumer.close()
@@ -199,34 +205,62 @@ private fun QodanaAnalysisScope.patchToNotAnalyzeGeneratedCode(project: Project)
   })
 }
 
-internal suspend fun QodanaRunContext.applyExternalFileScope(
-  paths: Iterable<Path>,
-  onFileIncluded: ((VirtualFile) -> Unit)? = null,
-  onFileExcluded: ((VirtualFile) -> Unit)? = null
-): QodanaRunContext {
+private suspend fun QodanaRunContext.resolveVirtualFiles(paths: Iterable<Path>): List<VirtualFile> {
   val fs = LocalFileSystem.getInstance()
-  val files = runInterruptible(StaticAnalysisDispatchers.IO) {
+  return runInterruptible(StaticAnalysisDispatchers.IO) {
     paths.asSequence()
       .map { if (it.isAbsolute) it else config.projectPath.resolve(it) }
       .mapNotNull(fs::findFileByNioFile)
       .toList()
   }
+}
+
+private fun QodanaRunContext.findToolsWithScopeExtenders(): Map<InspectionToolScopeExtender, ToolsImpl> = qodanaProfile.effectiveProfile.tools
+  .mapNotNull { toolsImpl -> QodanaScopeExtenderProvider.getExtender(toolsImpl.tool.shortName) to toolsImpl }
+  .mapNotNull { (key, value) -> key?.let { it to value } }
+  .toMap()
+
+private suspend fun computeFileToScopeExtenders(
+  files: List<VirtualFile>,
+  psiManager: PsiManager,
+  toolsWithExtenders: Map<InspectionToolScopeExtender, ToolsImpl>
+): Map<VirtualFile, List<InspectionToolScopeExtender>> = readAction {
+  files
+    .mapNotNull { psiManager.findFile(it) }
+    .associate { psiFile ->
+      val enabledExtenders = toolsWithExtenders.filter { (_, tool) -> tool.getEnabledTool(psiFile) != null }.keys.toList()
+      psiFile.virtualFile to enabledExtenders
+    }
+}
+
+internal suspend fun QodanaRunContext.applyExternalFileScope(
+  paths: Iterable<Path>,
+  onFileIncluded: ((VirtualFile) -> Unit)? = null,
+  onFileExcluded: ((VirtualFile) -> Unit)? = null
+): QodanaRunContext {
+  val files = resolveVirtualFiles(paths)
+  val toolsWithExtenders = findToolsWithScopeExtenders()
+  val manager = PsiManager.getInstance(project)
+  val fileToExtenders = computeFileToScopeExtenders(files, manager, toolsWithExtenders)
+  val additionalFiles = collectExtendedFiles(project, fileToExtenders)
+
   return QodanaRunContext(
     project,
     loadedProfile,
-    externalFileScope(files, onFileIncluded, onFileExcluded),
+    externalFileScope(files + additionalFiles.keys, onFileIncluded, onFileExcluded),
     qodanaProfile,
     config,
     runCoroutineScope,
     messageReporter,
-    changes
+    changes,
+    additionalFiles
   )
 }
 
 internal suspend fun QodanaRunContext.externalFileScope(
   files: Iterable<VirtualFile>,
   onFileIncluded: ((VirtualFile) -> Unit)? = null,
-  onFileExcluded: ((VirtualFile) -> Unit)? = null
+  onFileExcluded: ((VirtualFile) -> Unit)? = null,
 ): QodanaAnalysisScope {
   val (included, excluded) = readAction { files.partition(scope::contains) }
   onFileIncluded?.let(included::forEach)

@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ex.Tools
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.ui.content.ContentManager
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +28,8 @@ class QodanaGlobalInspectionContext(
   private val outputPath: Path,
   val profile: QodanaProfile,
   val qodanaRunScope: CoroutineScope,
-  val coverageStatisticsData: CoverageStatisticsData
+  val coverageStatisticsData: CoverageStatisticsData,
+  val scopeExtended: Map<VirtualFile, Set<String>>
 ) : GlobalInspectionContextImpl(project, contentManager) {
 
   /** In the Docker container, this is `/data/results`. */
@@ -55,8 +57,8 @@ class QodanaGlobalInspectionContext(
   ): EnabledInspectionsProvider.ToolWrappers {
     val wrappers = super.getWrappersFromTools(enabledInspectionsProvider, file, includeDoNotShow)
     return EnabledInspectionsProvider.ToolWrappers(
-      wrappers.allLocalWrappers.filterNot { profileState.shouldSkip(it.shortName, file, wrappers) },
-      wrappers.allGlobalSimpleWrappers.filterNot { profileState.shouldSkip(it.shortName, file, wrappers) },
+      wrappers.allLocalWrappers.filterNot { profileState.shouldSkip(it.shortName, file, wrappers, this) },
+      wrappers.allGlobalSimpleWrappers.filterNot { profileState.shouldSkip(it.shortName, file, wrappers, this) },
     )
   }
 
