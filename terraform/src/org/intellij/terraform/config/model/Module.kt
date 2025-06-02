@@ -28,6 +28,8 @@ import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
@@ -247,11 +249,22 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return getDefinedHclBlocks(HCL_RESOURCE_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
   }
 
+  fun findDefinedRequiredProvider(type: String): HCLProperty? {
+    // `required_providers` should be only 1 in terraform module
+    val requiredProvidersBlock = getDefinedHclBlocks(HCL_TERRAFORM_IDENTIFIER, numberOfArguments = 0).firstNotNullOfOrNull { terraformBlock ->
+      terraformBlock.`object`?.blockList?.firstOrNull { it.name == HCL_TERRAFORM_REQUIRED_PROVIDERS }
+    } ?: return null
+
+    return requiredProvidersBlock.`object`?.findProperty(type)
+  }
+
+  // numberOfArguments should be 0, 1 or 2:
+  // for example, terraform {} - 0, variable "some_variable" {} - 1, data "some_provider" "name" {} - 2
   private fun getDefinedHclBlocks(
     identifier: String,
     numberOfArguments: Int,
-    firstArgument: String?,
-    secondArgument: String?,
+    firstArgument: String? = null,
+    secondArgument: String? = null,
   ): List<HCLBlock> {
     val found = mutableListOf<HCLBlock>()
 
@@ -259,10 +272,13 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(block: HCLBlock) {
           if (block.getNameElementUnquoted(0) != identifier) return
+          if (numberOfArguments == 0) {
+            found.add(block)
+            return
+          }
 
           val first = block.getNameElementUnquoted(1) ?: return
           if (firstArgument != null && first != firstArgument) return
-
           if (numberOfArguments == 1) {
             found.add(block)
           }
@@ -331,11 +347,11 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
   }
 
   fun getDefinedModules(name: String? = null): List<HCLBlock> {
-    return getDefinedHclBlocks(HCL_MODULE_IDENTIFIER, numberOfArguments = 1, firstArgument = name, secondArgument = null)
+    return getDefinedHclBlocks(HCL_MODULE_IDENTIFIER, numberOfArguments = 1, firstArgument = name)
   }
 
   fun getDefinedOutputs(): List<HCLBlock> {
-    return getDefinedHclBlocks(HCL_OUTPUT_IDENTIFIER, numberOfArguments = 1, firstArgument = null, secondArgument = null)
+    return getDefinedHclBlocks(HCL_OUTPUT_IDENTIFIER, numberOfArguments = 1)
   }
 
   // Returns all 'terraform.required_version' defined in module.

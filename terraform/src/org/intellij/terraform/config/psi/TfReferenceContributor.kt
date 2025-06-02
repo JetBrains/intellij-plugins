@@ -99,6 +99,13 @@ class TfReferenceContributor : PsiReferenceContributor() {
 
     // Documentation reference for provider-defined functions
     registrar.registerReferenceProvider(HCLPatterns.ProviderDefinedFunction, WebDocumentationReferenceProvider)
+
+    registrar.registerReferenceProvider(
+      psiElement(HCLStringLiteral::class.java)
+        .inFile(TerraformConfigFile)
+        .withParent(TfPsiPatterns.ProviderRootBlock),
+      RequiredProvidersReference
+    )
   }
 }
 
@@ -107,6 +114,18 @@ internal object WebDocumentationReferenceProvider : PsiReferenceProvider() {
                                       context: ProcessingContext): Array<PsiReference> {
     val webReference = TfDocReference(element)
     return arrayOf(webReference)
+  }
+}
+
+internal object RequiredProvidersReference : PsiReferenceProvider() {
+  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference?> {
+    if (element !is HCLStringLiteral) return PsiReference.EMPTY_ARRAY
+
+    return arrayOf(HCLElementLazyReference(element, false) { _, _ ->
+      val module = element.getTerraformModule()
+      val requiredProvider = module.findDefinedRequiredProvider(element.unquotedText)
+      requiredProvider?.let { listOf(it) } ?: emptyList()
+    })
   }
 }
 

@@ -14,6 +14,7 @@ import com.intellij.testFramework.findReferenceByText
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import org.intellij.terraform.config.inspection.TfIncorrectVariableTypeInspection
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
@@ -600,6 +601,43 @@ class TfReferencesTest : BasePlatformTestCase() {
 
     assertResolvedNames(file.findReferenceByText("local.dev", -1), "dev")
     assertResolvedNames(file.findReferenceByText("local.test", -1), "test")
+  }
+
+  @Test
+  fun testResolveRequiredProperty() {
+    myFixture.configureByText("main.tf", """
+      terraform {
+        required_providers {
+          aws = {
+            source  = "hashicorp/aws"
+            version = "~> 5.0"
+          }
+          azurerm = {
+            source  = "hashicorp/azurerm"
+            version = "~> 3.0"
+          }
+        }
+      }
+
+      provider "aws<caret>" {
+        region  = "us-east-1"
+        profile = "default"
+      }
+      provider "azurerm" {
+        features {}
+      }
+    """.trimIndent())
+
+    myFixture.checkHighlighting()
+    val requiredPropertyReference = myFixture.getReferenceAtCaretPosition()
+    assertNotNull(requiredPropertyReference)
+
+    val requiredProvider = requiredPropertyReference?.resolve() as? HCLProperty
+                           ?: throw AssertionError("Expected HCLProperty, got ${requiredPropertyReference?.javaClass}")
+    assertEquals("aws", requiredProvider.name)
+
+    val requiredProviderBlock = requiredProvider.parentOfType<HCLBlock>()
+    assertTrue(TfPsiPatterns.RequiredProvidersBlock.accepts(requiredProviderBlock))
   }
 
   private val DLR = "$"
