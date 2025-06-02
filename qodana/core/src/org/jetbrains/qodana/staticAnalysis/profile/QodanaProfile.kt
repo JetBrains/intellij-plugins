@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 private const val EFFECTIVE_PROFILE_NAME = "qodana.effective.profile"
 
-
 /**
  * The Qodana profile determines on which files the inspections are run.
  *
