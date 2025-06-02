@@ -194,7 +194,7 @@ private suspend fun buildEffectiveQodanaYamlText(text: String, yamlPath: Path): 
   return when (effectiveConfiguration) {
     is QdConfigurationResult.Failure -> effectiveConfiguration
     is QdConfigurationResult.Success -> {
-      val irYaml = effectiveConfiguration.value.effectiveQodanaIrYaml
+      val irYaml = effectiveConfiguration.value.effectiveYaml.effectiveQodanaIrYaml
       val effectiveYamlText = irYaml.generateYamlText()
       QdConfigurationResult.Success(effectiveYamlText)
     }

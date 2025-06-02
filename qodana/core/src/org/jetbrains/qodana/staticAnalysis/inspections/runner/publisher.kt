@@ -1,10 +1,10 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
+import org.jetbrains.qodana.cloudclient.s3.QDCloudS3Client
 import org.jetbrains.qodana.cloudclient.v1.QDCloudProjectApiV1
 import org.jetbrains.qodana.publisher.PublishResult
 import org.jetbrains.qodana.publisher.Publisher
 import org.jetbrains.qodana.publisher.PublisherParameters
-import org.jetbrains.qodana.publisher.QDCloudAwsClient
 import org.jetbrains.qodana.publisher.schemas.PublisherReportType
 import org.jetbrains.qodana.publisher.schemas.UploadedReport
 import java.net.http.HttpClient
@@ -16,8 +16,8 @@ suspend fun publishToCloud(
   reportPath: Path
 ): PublishResult {
 
-  val awsClient = QDCloudAwsClient(HttpClient.newHttpClient())
-  return Publisher(projectApi, awsClient).publish(
+  val s3Client = QDCloudS3Client(HttpClient.newHttpClient())
+  return Publisher(projectApi, s3Client).publish(
     PublisherParameters(
       reportPath = reportPath,
       reportType = PublisherReportType.SARIF
