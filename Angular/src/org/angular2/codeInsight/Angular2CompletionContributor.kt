@@ -212,7 +212,7 @@ class Angular2CompletionContributor : CompletionContributor() {
 
         // Block support
         if (Angular2HtmlBlockReferenceExpressionCompletionProvider.addCompletions(result, ref)
-            || PolySymbolsCompletionProviderBase.noMoreCodeCompletionsFor(parameters, PolySymbol.JS_PROPERTIES, PolySymbol.JS_KEYWORDS, PolySymbol.JS_SYMBOLS)) {
+            || PolySymbolsCompletionProviderBase.isFurtherCodeCompletionPreventedFor(parameters, PolySymbol.JS_PROPERTIES, PolySymbol.JS_KEYWORDS, PolySymbol.JS_SYMBOLS)) {
           return
         }
 
