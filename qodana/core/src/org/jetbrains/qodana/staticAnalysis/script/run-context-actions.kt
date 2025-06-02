@@ -216,6 +216,7 @@ private suspend fun QodanaRunContext.resolveVirtualFiles(paths: Iterable<Path>):
 }
 
 private fun QodanaRunContext.findToolsWithScopeExtenders(): Map<InspectionToolScopeExtender, ToolsImpl> = qodanaProfile.effectiveProfile.tools
+  .filter { toolsImpl -> toolsImpl.isEnabled }
   .mapNotNull { toolsImpl -> QodanaScopeExtenderProvider.getExtender(toolsImpl.tool.shortName) to toolsImpl }
   .mapNotNull { (key, value) -> key?.let { it to value } }
   .toMap()

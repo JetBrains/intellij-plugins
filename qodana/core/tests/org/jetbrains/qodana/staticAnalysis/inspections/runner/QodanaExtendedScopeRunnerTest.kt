@@ -52,7 +52,7 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
   }
 }
 
-private object QodanaScopeExtenderProviderMock: QodanaScopeExtenderProvider {
+object QodanaScopeExtenderProviderMock: QodanaScopeExtenderProvider {
   const val INSPECTION_NAME = "ConstantValue"
   override val name: String
     get() = InspectionToolScopeExtenderMock.name
@@ -62,11 +62,17 @@ private object QodanaScopeExtenderProviderMock: QodanaScopeExtenderProvider {
   }
 }
 
-private object InspectionToolScopeExtenderMock: InspectionToolScopeExtender {
+object InspectionToolScopeExtenderMock: InspectionToolScopeExtender {
   override val name: String
-    get() = InspectionToolScopeExtenderMock::class.java.simpleName
+    get() = javaClass.simpleName
+
+  private val extendingMap: Map<String, String> = mapOf(
+    "A.java" to "B.java",
+    "B.java" to "C.java"
+  )
 
   override suspend fun extendScope(virtualFile: VirtualFile, project: Project, acceptedFiles: Map<VirtualFile, Set<String>>): List<VirtualFile> {
-    return listOfNotNull(project.guessProjectDir()?.findChild("B.java"))
+    val fileName = extendingMap[virtualFile.name] ?: return emptyList()
+    return listOfNotNull(project.guessProjectDir()?.findChild(fileName))
   }
 }
