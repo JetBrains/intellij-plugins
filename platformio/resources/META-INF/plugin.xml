@@ -23,7 +23,7 @@
 
   <dependencies>
     <plugin id="com.intellij.cidr.base"/>
-    <plugin id="com.intellij.modules.clion"/>
+    <plugin id="com.intellij.modules.clion.ide"/>
     <plugin id="com.intellij.modules.externalSystem"/>
     <module name="intellij.cidr.core"/>
     <module name="intellij.cidr.execution"/>

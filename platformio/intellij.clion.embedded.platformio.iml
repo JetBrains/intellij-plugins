@@ -16,12 +16,12 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.clion.embedded" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
-    <orderEntry type="module" module-name="intellij.clion" />
     <orderEntry type="module" module-name="intellij.clion.toolchains" />
     <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core.nolang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.debugger" />
     <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.execution" />
+    <orderEntry type="module" module-name="intellij.cidr.execution" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
     <orderEntry type="module" module-name="intellij.clion.externalSystem" />
@@ -41,6 +41,7 @@
     <orderEntry type="module" module-name="intellij.clion.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.projectModel" />
     <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
+    <orderEntry type="module" module-name="intellij.cidr.runner" />
     <orderEntry type="module" module-name="intellij.cidr.psi.base" />
     <orderEntry type="module" module-name="intellij.cidr.core" />
   </component>
