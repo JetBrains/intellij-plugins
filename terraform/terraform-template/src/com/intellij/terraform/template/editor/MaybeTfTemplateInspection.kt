@@ -15,16 +15,17 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings
-import org.intellij.terraform.runtime.TfProjectSettings
-import com.intellij.terraform.template.TftplFileType
 import com.intellij.terraform.template.TftplBundle
+import com.intellij.terraform.template.TftplFileType
 import com.intellij.terraform.template.getLanguageByExtension
 import com.intellij.terraform.template.model.findTemplateUsage
+import org.intellij.terraform.runtime.TfProjectSettings
 
 internal class MaybeTfTemplateInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    if (isFileWithAlreadyOverriddenTemplateType(holder.file.virtualFile)
-        || TfProjectSettings.getInstance(holder.project).isIgnoredTemplateCandidate(holder.file.virtualFile.url)
+    val virtualFile = holder.file.virtualFile
+    if (virtualFile == null || isFileWithAlreadyOverriddenTemplateType(virtualFile)
+        || TfProjectSettings.getInstance(holder.project).isIgnoredTemplateCandidate(virtualFile.url)
         || !isPossibleTemplateFile(holder.file)
     ) {
       return PsiElementVisitor.EMPTY_VISITOR
