@@ -26,6 +26,7 @@
 
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
+    <module name="intellij.spellchecker"/>
   </dependencies>
 
   <extensionPoints>

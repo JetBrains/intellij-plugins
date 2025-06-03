@@ -146,6 +146,7 @@
 
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
+    <module name="intellij.spellchecker"/>
     <module name="intellij.platform.vcs.impl"/>
   </dependencies>
 

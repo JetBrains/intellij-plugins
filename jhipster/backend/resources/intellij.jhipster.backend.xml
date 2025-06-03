@@ -1,6 +1,7 @@
 <idea-plugin>
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
+    <module name="intellij.spellchecker"/>
     <module name="intellij.platform.backend"/>
     <plugin id="com.intellij.java"/>
   </dependencies>

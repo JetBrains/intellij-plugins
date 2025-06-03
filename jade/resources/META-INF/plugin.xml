@@ -20,6 +20,7 @@
   <category>Template Languages</category>
 
   <dependencies>
+    <module name="intellij.spellchecker"/>
     <plugin id="com.intellij.modules.xml"/>
     <plugin id="com.intellij.css"/>
     <plugin id="JavaScript"/>

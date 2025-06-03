@@ -12,6 +12,7 @@ Note that this plugin is not actively maintained and may stop working in future 
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.json</depends>
+  <depends>com.intellij.modules.spellchecker</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <projectConfigurable id="Settings.JavaScript.Bower"

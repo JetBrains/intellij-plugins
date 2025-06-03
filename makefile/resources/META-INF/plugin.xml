@@ -28,6 +28,7 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     ]]></description>
 
   <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.spellchecker</depends>
   <depends optional="true" config-file="terminal-config.xml">org.jetbrains.plugins.terminal</depends>
 
   <extensions defaultExtensionNs="com.intellij">
