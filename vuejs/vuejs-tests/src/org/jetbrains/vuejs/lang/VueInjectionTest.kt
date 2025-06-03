@@ -289,7 +289,7 @@ Vue.options.delimiters = ['<%', '%>']
 
     val disposable = Disposer.newDisposable()
     var forbid = true
-    PolyContext.WEB_SYMBOLS_CONTEXT_EP
+    PolyContext.POLY_SYMBOLS_CONTEXT_EP
       .point
       ?.registerExtension(
         PolyContextProviderExtensionPoint(

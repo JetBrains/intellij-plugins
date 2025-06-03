@@ -49,7 +49,7 @@ dependencies {
     testFramework(TestFrameworkType.Platform)
     testFramework(TestFrameworkType.Plugin.XML)
     testFramework(TestFrameworkType.Plugin.JavaScript)
-    platformDependency(Coordinates("com.jetbrains.intellij.platform", "web-symbols-test-framework"))
+    platformDependency(Coordinates("com.jetbrains.intellij.platform", "poly-symbols-test-framework"))
     platformDependency(Coordinates("com.jetbrains.intellij.resharper", "resharper-test-framework"))
   }
   testImplementation("com.mscharhag.oleaster:oleaster-matcher:0.2.0")

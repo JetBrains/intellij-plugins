@@ -45,7 +45,7 @@ class Angular2AttributeDescriptor(info: PolySymbolHtmlAttributeInfo, tag: XmlTag
 
   companion object {
     @JvmStatic
-    @Deprecated(message = "Deprecated, returns fake descriptor. Use web-types or Web Symbols instead")
+    @Deprecated(message = "Deprecated, returns fake descriptor. Use web-types or Poly Symbols instead")
     fun create(
       tag: XmlTag,
       attributeName: String,

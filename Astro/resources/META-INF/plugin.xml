@@ -58,7 +58,7 @@
     <implicitUsageProvider implementation="org.jetbrains.astro.codeInsight.refs.AstroConfigImplicitUsageProvider"/>
 
     <html.compatibleLanguage language="Astro"/>
-    <xml.xmlExtension implementation="org.jetbrains.astro.codeInsight.AstroHtmlExtension" order="before html, before web-symbols-react"
+    <xml.xmlExtension implementation="org.jetbrains.astro.codeInsight.AstroHtmlExtension" order="before html, before poly-symbols-react"
                       id="astro"/>
     <xml.zenCodingGenerator implementation="org.jetbrains.astro.editor.AstroHtmlZenCodingGenerator" />
     <xml.fileNSInfoProvider implementation="org.jetbrains.astro.codeInsight.AstroNSInfoProvider"/>

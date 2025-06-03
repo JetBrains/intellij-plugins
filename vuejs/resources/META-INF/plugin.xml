@@ -87,7 +87,7 @@
     <lang.syntaxHighlighterFactory language="Vue"
                                    implementationClass="org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory"/>
 
-    <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension" order="before web-symbols-react"/>
+    <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension" order="before poly-symbols-react"/>
     <xml.xmlSuppressionProvider implementation="org.jetbrains.vuejs.inspections.VueXmlSuppressionProvider" order="first"/>
     <notificationGroup displayType="BALLOON" id="Vue" isLogByDefault="true"
                        bundle="messages.VueBundle" key="vue.documentation.vue"/>

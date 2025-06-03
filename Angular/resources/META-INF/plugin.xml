@@ -244,7 +244,7 @@
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Html"/>
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="after JSCommentInjector, before JSConfigurationInjector"
                        id="angular2"/>
-    <xml.xmlExtension implementation="org.angular2.codeInsight.Angular2HtmlExtension" order="before html, before web-symbols-react"
+    <xml.xmlExtension implementation="org.angular2.codeInsight.Angular2HtmlExtension" order="before html, before poly-symbols-react"
                       id="angular2"/>
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
     <lang.parserDefinition language="Angular17Html" implementationClass="org.angular2.lang.html.parser.Angular17HtmlParserDefinition"/>

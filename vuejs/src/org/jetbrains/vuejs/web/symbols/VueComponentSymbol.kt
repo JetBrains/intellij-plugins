@@ -36,7 +36,7 @@ class VueComponentSymbol(
   override val qualifiedKind: PolySymbolQualifiedKind
     get() = VUE_COMPONENTS
 
-  // The source field is used for refactoring purposes by Web Symbols framework
+  // The source field is used for refactoring purposes by Poly Symbols framework
   override val source: PsiElement?
     get() = (item as? VueRegularComponent)?.nameElement ?: item.rawSource
 

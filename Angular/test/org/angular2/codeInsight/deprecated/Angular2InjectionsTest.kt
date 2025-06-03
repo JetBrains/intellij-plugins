@@ -234,7 +234,7 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testCustomContextProvider() {
     val disposable = Disposer.newDisposable()
-    PolyContext.WEB_SYMBOLS_CONTEXT_EP
+    PolyContext.POLY_SYMBOLS_CONTEXT_EP
       .point!!
       .registerExtension(
         PolyContextProviderExtensionPoint(PolyContext.KIND_FRAMEWORK, "angular", object : PolyContextProvider {
