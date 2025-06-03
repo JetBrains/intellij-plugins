@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.library
 
 import com.intellij.lang.javascript.library.JSLibraryUtil
@@ -23,14 +23,15 @@ import com.intellij.platform.workspace.storage.EntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntity
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
-import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.xmlb.annotations.XCollection
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
+import java.util.concurrent.ConcurrentHashMap
 
 @Service(Service.Level.PROJECT)
 @State(name = "DotNuxtFolderManager", storages = [Storage(StoragePathMacros.CACHE_FILE)])
-class NuxtFolderManager(private val project: Project) : PersistentStateComponent<NuxtFolderManagerState>, Disposable {
-  private val folders = ContainerUtil.newConcurrentSet<VirtualFile>()
+internal class NuxtFolderManager(private val project: Project) : PersistentStateComponent<NuxtFolderManagerState>, Disposable {
+  private val folders = ConcurrentHashMap.newKeySet<VirtualFile>()
   val nuxtFolders: List<VirtualFile>
     get() = folders.filter { it.isValid }
 
@@ -39,29 +40,32 @@ class NuxtFolderManager(private val project: Project) : PersistentStateComponent
   }
 
   override fun getState(): NuxtFolderManagerState {
-    return NuxtFolderManagerState().also {
-      it.folders = folders.map { folder -> folder.path }
-    }
+    return NuxtFolderManagerState(folders.map { folder -> folder.path })
   }
 
   override fun loadState(state: NuxtFolderManagerState) {
-    val newFolders: List<VirtualFile> = state.folders.mapNotNull {
+    val newFolders = state.folders.mapNotNull {
       val file = LocalFileSystem.getInstance().findFileByPath(it)
-      if (file != null && isAccepted(file, false)) file else null
+      if (file != null && isAccepted(file, false)) {
+        file
+      }
+      else null
     }
     folders.clear()
     folders.addAll(newFolders)
   }
 
   private fun isAccepted(nuxtFolder: VirtualFile, asNewFolder: Boolean): Boolean {
-    return nuxtFolder.isValid && isNuxtFolder(nuxtFolder) && ReadAction.compute<Boolean, Throwable> {
-      if (asNewFolder) {
-        ProjectFileIndex.getInstance(project).isInContent(nuxtFolder)
+    if (nuxtFolder.isValid && isNuxtFolder(nuxtFolder)) {
+      return if (asNewFolder) {
+        val projectFileIndex = ProjectFileIndex.getInstance(project)
+        ReadAction.compute<Boolean, Throwable> { projectFileIndex.isInContent(nuxtFolder) }
       }
       else {
-        JSLibraryUtil.isInProjectAndOutsideOfLibraryRoots(project, nuxtFolder)
+        ReadAction.compute<Boolean, Throwable> { JSLibraryUtil.isInProjectAndOutsideOfLibraryRoots(project, nuxtFolder) }
       }
     }
+    return false
   }
 
   fun addIfMissing(nuxtFolder: VirtualFile) {
@@ -121,7 +125,7 @@ class NuxtFolderManager(private val project: Project) : PersistentStateComponent
   override fun dispose() {}
 
   companion object {
-
+    @RequiresBlockingContext
     fun getInstance(project: Project): NuxtFolderManager = project.service<NuxtFolderManager>()
 
     private fun isNuxtFolder(file: VirtualFile): Boolean = file.isDirectory && file.name == NUXT_OUTPUT_FOLDER
@@ -182,8 +186,8 @@ class NuxtFolderManager(private val project: Project) : PersistentStateComponent
   }
 }
 
-
-class NuxtFolderManagerState {
-  @XCollection(propertyElementName = "nuxtFolders")
-  internal var folders: List<String> = listOf()
-}
+internal class NuxtFolderManagerState @JvmOverloads constructor(
+  @field:XCollection(propertyElementName = "nuxtFolders")
+  @JvmField
+  internal val folders: List<String> = listOf(),
+)
