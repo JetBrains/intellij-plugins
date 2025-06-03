@@ -34,7 +34,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
 
   @Override
   public @NotNull PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
-    final PsiFile result =  super.createStepDefinitionContainer(dir, name);
+    final PsiFile result = super.createStepDefinitionContainer(dir, name);
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(dir.getProject()).getFileIndex();
     final Module module = fileIndex.getModuleForFile(result.getVirtualFile());
@@ -151,11 +151,12 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     String snippet = processGeneratedStepDefinition(snippetTemplate, step);
 
     JVMElementFactory factory = JVMElementFactories.requireFactory(language, step.getProject());
-    PsiElement expression =  factory.createExpressionFromText(snippet, step);
+    PsiElement expression = factory.createExpressionFromText(snippet, step);
 
     try {
       return createStepDefinitionFromSnippet(expression, step, factory);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       return expression;
     }
   }
@@ -167,11 +168,15 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     PsiLambdaExpression lambda = (PsiLambdaExpression)arguments[1];
 
     FileTemplateDescriptor fileTemplateDescriptor = new FileTemplateDescriptor(FILE_TEMPLATE_CUCUMBER_JAVA_8_STEP_DEFINITION_JAVA);
-    FileTemplate fileTemplate = FileTemplateManager.getInstance(snippetExpression.getProject()).getCodeTemplate(fileTemplateDescriptor.getFileName());
+    FileTemplate fileTemplate =
+      FileTemplateManager.getInstance(snippetExpression.getProject()).getCodeTemplate(fileTemplateDescriptor.getFileName());
     String text = fileTemplate.getText().replace("${STEP_KEYWORD}", callExpression.getMethodExpression().getText())
       .replace("${STEP_REGEXP}", arguments[0].getText())
       .replace("${PARAMETERS}", lambda.getParameterList().getText())
-      .replace("${BODY}\n", "");
+      .replace("${BODY}\n", """
+        // Write code here that turns the phrase above into concrete actions
+        throw new PendingException();
+        """);
 
     text = processGeneratedStepDefinition(text, snippetExpression);
 
