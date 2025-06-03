@@ -9,6 +9,7 @@ public class CreateAllStepDefs {
 
     @Given("step with integer param {int}")
     public void stepWithIntegerParam(int arg0) {
-        
+        // Write code here that turns the phrase above into concrete actions
+        throw new cucumber.runtime.PendingException();
     }
 }

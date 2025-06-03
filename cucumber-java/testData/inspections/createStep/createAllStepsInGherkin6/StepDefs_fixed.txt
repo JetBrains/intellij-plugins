@@ -9,9 +9,13 @@ public class CreateAllStepDefs {
 
     @Given("^test$")
     public void test() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new cucumber.runtime.PendingException();
     }
 
     @Given("^super test$")
     public void superTest() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new cucumber.runtime.PendingException();
     }
 }
