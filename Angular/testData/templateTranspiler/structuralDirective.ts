@@ -12,9 +12,16 @@ interface IData {
   imports: [NgForOf, NgIf],
   template: `
       <div *ngFor="let foo of bar; trackBy track; let index = index"></div>
-      <div *ngIf="true as foo; else template as bar; let value = ngIf"></div>
+      <div *ngIf="value as foo; else template as bar; let value = ngIf">
+        <a (click)="use(foo)">test</a>
+      </div>
   `,
   standalone: true
 })
 export class AppComponent {
+
+  value: boolean
+  use (v: boolean) {
+
+  }
 }

@@ -19,15 +19,21 @@ var _t3 = _t2.$implicit;
 var _t4 = _t2.index;
 var _t5 = document.createElement("div");
 }
-var _t6 = _ctor2({"ngIf": true, "ngIfElse": this.template, "ngIfThen": 0 as any});
-_t6.ngIf = true;
+var _t6 = _ctor2({"ngIf": this.value, "ngIfElse": this.template, "ngIfThen": 0 as any});
+_t6.ngIf = this.value;
 _t6.ngIfElse = this.template;
 var _t7 = null! as any;
-if (_i1.NgIf.ngTemplateContextGuard(_t6, _t7) && true) {
+if (_i1.NgIf.ngTemplateContextGuard(_t6, _t7) && this.value) {
 _t7;
 var _t8 = _t7.ngIf;
 var _t9 = _t7.ngIfElse;
 var _t10 = _t7.ngIf;
 var _t11 = document.createElement("div");
+var _t12 = document.createElement("a");
+_t12.addEventListener("click", ($event): any => {
+if (_i1.NgIf.ngTemplateContextGuard(_t6, _t7) && this.value){
+this.use(_t8);
+}
+});
 }
 }
