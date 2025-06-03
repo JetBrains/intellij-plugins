@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.documentation
 
 import com.intellij.codeInsight.CodeInsightBundle
@@ -18,12 +18,9 @@ import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.psi.TfDocumentPsi
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLIdentifier
-import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.getRequiredProviderProperty
 import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction
-import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.hcl.psi.getNameOrText
 import org.jetbrains.annotations.Nls
 import java.util.*
 
@@ -47,6 +44,7 @@ internal fun getBlockForDocumentationLink(element: TfDocumentPsi?, blockTypeLite
 @RequiresReadLock
 internal fun getHelpWindowHeader(element: PsiElement?): @Nls String {
   getTextIfProviderFunction(element)?.let { return it }
+  getTextIfRequiredProvider(element)?.let { return it }
 
   return when (element) {
     is HCLProperty -> {
@@ -110,4 +108,9 @@ private fun getTextIfProviderFunction(element: PsiElement?): @Nls String? {
   val providerName = function.provider.getNameOrText()
   val functionName = function.function.getNameOrText()
   return HCLBundle.message("terraform.doc.provider.function", functionName, providerName)
+}
+
+private fun getTextIfRequiredProvider(element: PsiElement?): @Nls String? {
+  val providerProperty = element?.getRequiredProviderProperty() ?: return null
+  return HCLBundle.message("terraform.doc.provider.0", providerProperty.name)
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.psi
 
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -8,14 +8,16 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.siblings
+import org.intellij.terraform.config.patterns.TfPsiPatterns
+import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.IndexSelectExpression
 import org.intellij.terraform.hcl.psi.common.SelectExpression
 
 /**
  * Various helper methods for working with PSI of JSON language.
  */
-object HCLPsiUtil {
-  internal fun getIdentifierPsi(element: HCLElement): PsiElement? = when (element) {
+internal object HCLPsiUtil {
+  fun getIdentifierPsi(element: HCLElement): PsiElement? = when (element) {
     is HCLProperty -> element.firstChild
     is HCLBlock -> element.children.lastOrNull { it !is HCLObject }
     else -> null
@@ -183,11 +185,26 @@ object HCLPsiUtil {
     return property.parent is HCLObject && property.parent?.parent is HCLParameterList
   }
 
+  fun PsiElement.getRequiredProviderProperty(): HCLProperty? {
+    val providerProperty = when {
+      this is HCLProperty -> this
+      this is Identifier && this.parent is HCLProperty -> this.parent as HCLProperty
+      else -> return null
+    }
+
+    val requiredProvidersObject = providerProperty.parent as? HCLObject ?: return null
+    val providerBlock = requiredProvidersObject.parent as? HCLBlock ?: return null
+    if (!TfPsiPatterns.RequiredProvidersBlock.accepts(providerBlock)) {
+      return null
+    }
+    return providerProperty
+  }
+
   @JvmStatic
   fun PsiElement.getPrevSiblingNonWhiteSpace(): PsiElement? =
-    this.siblings(forward = false, withSelf = false).firstOrNull { it !is PsiWhiteSpace}
+    this.siblings(forward = false, withSelf = false).firstOrNull { it !is PsiWhiteSpace }
 
   @JvmStatic
   fun PsiElement.getNextSiblingNonWhiteSpace(): PsiElement? =
-    this.siblings(forward = true, withSelf = false).firstOrNull { it !is PsiWhiteSpace}
+    this.siblings(forward = true, withSelf = false).firstOrNull { it !is PsiWhiteSpace }
 }

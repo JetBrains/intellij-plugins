@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.psi
 
 import com.intellij.openapi.project.Project
@@ -50,7 +50,7 @@ open class HCLElementGenerator(private val project: Project) {
   }
 
   fun createObject(content: String): HCLObject {
-    val file = createDummyFile("foo {$content}")
+    val file = createDummyFile("foo {\n$content\n}")
     val block = file.firstChild as HCLBlock
     return block.`object`!!
   }

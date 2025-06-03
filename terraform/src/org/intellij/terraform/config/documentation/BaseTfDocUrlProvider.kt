@@ -1,8 +1,9 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.documentation
 
 import com.intellij.openapi.application.readAction
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
@@ -13,8 +14,8 @@ import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.psi.TfDocumentPsi
 import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLPsiUtil.getRequiredProviderProperty
 import org.intellij.terraform.hcl.psi.common.ProviderDefinedFunction
-import org.intellij.terraform.hcl.psi.getNameOrText
 
 internal abstract class BaseTfDocUrlProvider {
 
@@ -51,7 +52,9 @@ internal abstract class BaseTfDocUrlProvider {
 
   private suspend fun buildBlockData(pointer: SmartPsiElementPointer<PsiElement>): BlockData = readAction {
     val element = pointer.element ?: return@readAction BlockData("", "", null, null)
+    // These HCL elements are not related with root HCLBlock, that's why we return BlockData directly
     getBlockDataIfProviderFunction(element)?.let { return@readAction it }
+    getBlockDataIfRequiredProvider(element)?.let { return@readAction it }
 
     val (block, parameter) = when (element) {
       is HCLBlock -> {
@@ -94,12 +97,28 @@ internal abstract class BaseTfDocUrlProvider {
   }
 
   private fun getBlockDataIfProviderFunction(element: PsiElement): BlockData? {
-    val function = element as? ProviderDefinedFunction<*> ?: element.parent as? ProviderDefinedFunction<*>  ?: return null
+    val function = element as? ProviderDefinedFunction<*> ?: element.parent as? ProviderDefinedFunction<*> ?: return null
 
     val providerName = function.provider.getNameOrText()
     val functionName = function.function.getNameOrText()
 
     val providerData = getProviderData(function, providerName)
     return BlockData(functionName, FUNCTION, null, providerData)
+  }
+
+  private fun getBlockDataIfRequiredProvider(element: PsiElement): BlockData? {
+    val providerProperty = element.getRequiredProviderProperty() ?: return null
+
+    val providerName = providerProperty.name
+    val providerData = parseToProviderDataFromProperty(providerProperty, providerName)
+    return BlockData(providerName, PROVIDER, null, providerData)
+  }
+
+  private fun parseToProviderDataFromProperty(providerProperty: HCLProperty, providerName: String): ProviderData? {
+    val providerObject = providerProperty.value as? HCLObject ?: return null
+    val source = providerObject.findProperty("source")?.value as? HCLStringLiteral ?: return null
+    val version = providerObject.findProperty("version")?.value as? HCLStringLiteral ?: return null
+
+    return ProviderData(source.value.takeWhile { it != '/' }, providerName, version.value)
   }
 }
