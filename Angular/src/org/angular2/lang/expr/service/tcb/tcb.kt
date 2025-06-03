@@ -1377,18 +1377,18 @@ private class TcbIfOp(
       // because it was already checked as a part of the block's condition and we don't
       // want it to produce a duplicate diagnostic.
       expression = Expression {
-        withIgnoreMappings({
-                             tcbExpression(branch.expression, tcb, expressionScope)
-                           })
+        withIgnoreMappings {
+          append(tcbExpression(branch.expression, tcb, expressionScope))
+        }
       }
       if (branch.expressionAlias !== null) {
         expression = Expression {
-          withIgnoreMappings({
-                               append("(")
-                               append(expression)
-                               append(") && ")
-                               append(expressionScope.resolve(branch.expressionAlias))
-                             })
+          withIgnoreMappings {
+            append("(")
+            append(expression)
+            append(") && ")
+            append(expressionScope.resolve(branch.expressionAlias))
+          }
         }
       }
 
@@ -1463,10 +1463,9 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
       // The expression needs to be ignored for diagnostics since it has been checked already.
       val expression = tcbExpression(node.expression, this.tcb, this.scope)
       return Expression {
-        append(switchValue).append(" === ")
-        withIgnoreMappings({
-                             append(expression)
-                           })
+        withIgnoreMappings {
+          append(switchValue).append(" === ").append(expression)
+        }
       }
     }
 
@@ -1488,8 +1487,9 @@ private class TcbSwitchOp(private val tcb: Context, private val scope: Scope, pr
       // The expression needs to be ignored for diagnostics since it has been checked already.
       val expression = tcbExpression(current.expression, this.tcb, this.scope)
       val comparison = Expression {
-        append(switchValue).append(" !== ")
-        withIgnoreMappings({ append(expression) })
+        withIgnoreMappings {
+          append(switchValue).append(" !== ").append(expression)
+        }
       }
 
       if (guard == null) {

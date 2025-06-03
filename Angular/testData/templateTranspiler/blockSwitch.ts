@@ -14,16 +14,23 @@ export interface User {
     @switch (user.name; ff) {
         @case ("foo") {
             {{user.name}}
+            <a (click)="use(user.name)">test</a>
         }
         @case ("bar"; foo) {
             {{user.name}}
+            <a (click)="use(user.name)">test</a>
         }
         @default {
             {{user.name}}
+            <a (click)="use(user.name)">test</a>
         }
     }
   `
 })
 export class RobotProfileComponent {
     user!: User
+
+    use(value: "foo") {
+
+    }
 }
