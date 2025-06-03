@@ -36,7 +36,7 @@ class Angular2FormsWebSymbolQueryConfigurator : WebSymbolsQueryConfigurator {
     allowResolve: Boolean,
   ): List<WebSymbolsScope> {
     if (context.framework == Angular2Framework.ID && location != null) {
-      val file = location.containingFile
+      val file = location.containingFile ?: return emptyList()
       if (file is Angular2HtmlFile) {
         if (location is XmlAttribute || location is XmlAttributeValue) {
           val attribute = location.parentOfType<XmlAttribute>(true)
