@@ -15,13 +15,10 @@ public final class GherkinChangeUtil {
                                                   "  Scenario: Dummy\n" +
                                                   "    " + text
     );
-
     final PsiElement feature = dummyFile.getFirstChild();
-    assert feature != null;
     final GherkinScenario scenario = PsiTreeUtil.getChildOfType(feature, GherkinScenario.class);
-    assert scenario != null;
     final GherkinStep element = PsiTreeUtil.getChildOfType(scenario, GherkinStep.class);
-    assert element != null;
+    if (element == null) throw new IllegalStateException("element must not be null");
     return element;
   }
 
