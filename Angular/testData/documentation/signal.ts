@@ -13,7 +13,7 @@ export interface Movie {
 
 @Component({
              selector: 'app-root',
-             template: `{{ newMovie<caret>Sig() }}`,
+             template: `{{ newMovie<caret>Sig }}`,
              standalone: true,
            })
 export class AppComponent {
