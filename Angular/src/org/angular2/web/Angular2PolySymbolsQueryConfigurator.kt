@@ -70,7 +70,7 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
         is XmlElement -> calculateHtmlScopes(location)
         is CssElement -> calculateCssScopes(location)
         else -> emptyList()
-      } + Angular2CustomCssPropertiesScope(location.containingFile)
+      } + (location.containingFile?.let { listOf(Angular2CustomCssPropertiesScope(it)) } ?: emptyList())
     }
     else emptyList()
 
