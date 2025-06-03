@@ -2,13 +2,14 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils;
-import com.intellij.codeInsight.template.*;
+import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.codeInsight.template.TemplateBuilderImpl;
+import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.lang.Language;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -124,37 +125,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     Template template = builder.buildInlineTemplate();
 
     editor.getCaretModel().moveToOffset(addedElement.getTextRange().getStartOffset());
-    TemplateEditingAdapter adapter = new TemplateEditingAdapter() {
-        @Override
-        public void templateFinished(@NotNull Template template, boolean brokenOff) {
-          ApplicationManager.getApplication().runWriteAction(() -> {
-            PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
-            PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-            if (psiFile == null) {
-              return;
-            }
-            int offset = editor.getCaretModel().getOffset() - 1;
-            PsiCodeBlock codeBlock = null;
-            PsiLambdaExpression lambda = PsiTreeUtil.findElementOfClassAtOffset(psiFile, offset, PsiLambdaExpression.class, false);
-            if (lambda != null) {
-              PsiElement body = lambda.getBody();
-              codeBlock = body instanceof PsiCodeBlock ? (PsiCodeBlock)body : null;
-            }
-            if (codeBlock == null) {
-              PsiMethod method = PsiTreeUtil.findElementOfClassAtOffset(psiFile, offset, PsiMethod.class, false);
-              if (method != null) {
-                codeBlock = method.getBody();
-              }
-            }
-
-            if (codeBlock != null) {
-              CreateFromUsageUtils.setupEditor(codeBlock, editor);
-            }
-          });
-        }
-      };
-
-    TemplateManager.getInstance(project).startTemplate(editor, template, adapter);
+    TemplateManager.getInstance(project).startTemplate(editor, template);
   }
 
   @Override
@@ -257,7 +228,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
     try {
       return createStepDefinitionFromSnippet(methodFromCucumberLibraryTemplate, step, factory);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       return methodFromCucumberLibraryTemplate;
     }
   }
