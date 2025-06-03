@@ -97,9 +97,15 @@ public final class CucumberJavaUtil {
     return "";
   }
 
-  public static String getCucumberPendingExceptionFqn(final @NotNull PsiElement context) {
+  public static @NotNull String getCucumberPendingExceptionFqn(@NotNull PsiElement context) {
+    // The commit that changed 'cucumber.api.PendingException' to 'io.cucumber.java.PendingException':
+    // https://github.com/cucumber/cucumber-jvm/commits/ee6b693184b463c023a265fe98fa9ab5ab2ce819/java/src/main/java/io/cucumber/java/PendingException.java
+    // It was released in cucumber-jvm 5.0.0-RC1
     final String version = CucumberConfigUtil.getCucumberCoreVersion(context);
-    if (version == null || version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_1_1) >= 0) {
+    if (version == null || version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_5_0) >= 0) {
+      return "io.cucumber.java.PendingException";
+    }
+    else if (version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_4_5) >= 0) {
       return "cucumber.api.PendingException";
     }
     return "cucumber.runtime.PendingException";

@@ -35,6 +35,8 @@ public final class CucumberConfigUtil {
 
   public static final @NonNls String CUCUMBER_VERSION_4_5 = "4.5";
 
+  public static final @NonNls String CUCUMBER_VERSION_5_0 = "5.0";
+  
   public static @Nullable String getCucumberCoreVersion(@NotNull PsiElement place) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(place);
     if (module == null) return null;
