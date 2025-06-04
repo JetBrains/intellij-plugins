@@ -64,8 +64,13 @@ class QodanaGlobalInspectionContext(
   }
 
   private fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
-    return QodanaScopeExtenderProvider.shouldSkip(scopeExtended, file.virtualFile, inspectionId) ||
-           profileState.shouldSkip(inspectionId, file, wrappers)
+    return !isInExtendedScope(inspectionId, file.virtualFile) && profileState.shouldSkip(inspectionId, file, wrappers)
+  }
+
+  private fun isInExtendedScope(inspectionId: String, file: VirtualFile): Boolean {
+    val extender = QodanaScopeExtenderProvider.getExtender(inspectionId)
+    val fileExtenders = scopeExtended[file].orEmpty()
+    return extender?.name in fileExtenders
   }
 
   override fun runExternalTools() {

@@ -30,13 +30,6 @@ interface QodanaScopeExtenderProvider {
       }
       return extender
     }
-
-
-    fun shouldSkip(extendedFiles: Map<VirtualFile, Set<String>>, file: VirtualFile, inspectionId: String): Boolean {
-      val fileExtenders = extendedFiles[file] ?: return false
-      val extender = getExtender(inspectionId) ?: return true
-      return !fileExtenders.contains(extender.name)
-    }
   }
 
   val name: String
