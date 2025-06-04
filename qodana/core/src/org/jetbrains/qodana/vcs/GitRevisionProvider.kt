@@ -1,7 +1,6 @@
 package org.jetbrains.qodana.vcs
 
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vcs.VcsException
@@ -37,14 +36,12 @@ internal class GitRevisionProvider : VcsRevisionProvider {
     return GitRepositoryManager.getInstance(project).repositories
       .flatMap { repository ->
         val commits: List<TimedVcsCommit?> = withContext(QodanaDispatchers.IO) {
-          blockingContext {
-            try {
-              GitHistoryUtils.collectTimedCommits(project, repository.root, "--max-count=$revisionsToFetchCount", "HEAD~$fromCommitIdx")
-            }
-            catch (e : VcsException) {
-              thisLogger().warn("Failed loading revisions", e)
-              emptyList()
-            }
+          try {
+            GitHistoryUtils.collectTimedCommits(project, repository.root, "--max-count=$revisionsToFetchCount", "HEAD~$fromCommitIdx")
+          }
+          catch (e: VcsException) {
+            thisLogger().warn("Failed loading revisions", e)
+            emptyList()
           }
         }
         commits
