@@ -22,13 +22,14 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ui.configuration.DefaultModuleConfigurationEditorFactory;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationEditorProvider;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 final class GaugeModuleConfigurationProvider implements ModuleConfigurationEditorProvider {
   @Override
-  public ModuleConfigurationEditor[] createEditors(ModuleConfigurationState state) {
+  public @NotNull ModuleConfigurationEditor @NotNull [] createEditors(@NotNull ModuleConfigurationState state) {
     Module module = state.getCurrentRootModel().getModule();
 
     ModuleType<?> moduleType = ModuleType.get(module);
