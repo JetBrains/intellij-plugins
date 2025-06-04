@@ -9,8 +9,10 @@ import com.intellij.rt.coverage.data.LineCoverage
 import com.intellij.rt.coverage.data.LineData
 import com.intellij.rt.coverage.report.XMLProjectData
 import com.intellij.rt.coverage.report.XMLProjectData.FileInfo
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
 
+@ApiStatus.ScheduledForRemoval
 @Deprecated("Only for API compatibility. QodanaGlobalInspectionContext.coverageStatisticsData should be used directly instead")
 @Suppress("unused") // used in Scala plugin
 class CoverageStatistics(private val statData: CoverageStatisticsData) {
