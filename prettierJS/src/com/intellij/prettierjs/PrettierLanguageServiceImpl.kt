@@ -5,7 +5,10 @@ import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage
 import com.intellij.javascript.nodejs.util.NodePackage
-import com.intellij.lang.javascript.service.*
+import com.intellij.lang.javascript.service.JSLanguageServiceBase
+import com.intellij.lang.javascript.service.JSLanguageServiceQueue
+import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.service.protocol.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
@@ -108,8 +111,7 @@ class PrettierLanguageServiceImpl(
     JSLanguageServiceQueueImpl(myProject,
                                Protocol(myProject),
                                null,
-                               myDefaultReporter,
-                               JSLanguageServiceDefaultCacheData())
+                               myDefaultReporter)
 
   private inner class Protocol(
     project: Project,
