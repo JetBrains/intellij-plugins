@@ -33,6 +33,8 @@ jvm_library(
     "//CIDR/cidr-runner",
     "//CIDR/cidr-workspaceModel",
     "@community//platform/core-impl",
+    "@community//platform/platform-api:ide",
+    "@community//platform/execution",
     "//CIDR/cidr-util/execution",
   ],
   runtime_deps = [

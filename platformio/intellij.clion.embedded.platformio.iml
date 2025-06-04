@@ -17,8 +17,10 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.clion.embedded" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="module" module-name="intellij.clion.toolchains" />
     <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core.nolang" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cidr.debugger.backend" />
     <orderEntry type="module" module-name="intellij.cidr.debugger.core" />
     <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.clion.execution" />
