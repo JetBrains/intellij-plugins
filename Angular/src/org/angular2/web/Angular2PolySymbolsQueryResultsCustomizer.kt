@@ -232,9 +232,9 @@ class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val 
   }
 
   private open class Angular2ScopedSymbol private constructor(
-    symbol: PolySymbol,
+    override val delegate: PolySymbol,
     private val scopeProximity: DeclarationProximity,
-  ) : PolySymbolDelegate<PolySymbol>(symbol) {
+  ) : PolySymbolDelegate<PolySymbol> {
 
     companion object {
 

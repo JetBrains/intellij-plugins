@@ -104,7 +104,7 @@ class VueComponentNamespaceSymbol(
   override fun hashCode(): Int =
     31 * name.hashCode() + source.hashCode()
 
-  private class VueNamespacedComponent(delegate: VueComponentSymbol) : PsiSourcedPolySymbolDelegate<VueComponentSymbol>(delegate) {
+  private class VueNamespacedComponent(override val delegate: VueComponentSymbol) : PsiSourcedPolySymbolDelegate<VueComponentSymbol> {
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
 

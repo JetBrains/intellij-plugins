@@ -19,7 +19,8 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -41,7 +42,6 @@ import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
@@ -120,8 +120,12 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
         .transformTypeHierarchy { toApply -> if (toApply is JSPrimitiveType) STRING_TYPE else toApply }
   }
 
-  private class Angular2OneTimeBinding(delegate: PolySymbol, val typeEvaluationLocation: PsiElement, val requiresValue: Boolean, val resolveOnly: Boolean = false)
-    : PolySymbolDelegate<PolySymbol>(delegate), PsiSourcedPolySymbol {
+  private class Angular2OneTimeBinding(
+    override val delegate: PolySymbol,
+    val typeEvaluationLocation: PsiElement,
+    val requiresValue: Boolean,
+    val resolveOnly: Boolean = false,
+  ) : PolySymbolDelegate<PolySymbol>, PsiSourcedPolySymbol {
     override val source: PsiElement?
       get() = (delegate as? PsiSourcedPolySymbol)?.source
 

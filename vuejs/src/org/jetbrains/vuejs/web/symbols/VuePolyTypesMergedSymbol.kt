@@ -5,15 +5,14 @@ import com.intellij.javascript.polySymbols.jsType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.platform.backend.documentation.DocumentationResult
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
-import com.intellij.psi.PsiElement
-import com.intellij.psi.createSmartPointer
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
+import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
@@ -22,18 +21,22 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.merge
+import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
+import com.intellij.util.asSafely
+import com.intellij.util.containers.Stack
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
 
 class VuePolyTypesMergedSymbol(
   override val name: String,
-  sourceSymbol: PsiSourcedPolySymbol,
+  override val delegate: PsiSourcedPolySymbol,
   val webTypesSymbols: Collection<PolySymbol>,
-) : PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol>(sourceSymbol),
-    CompositePolySymbol {
+) : PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol>,
+    CompositePolySymbol, PolySymbolWithDocumentation {
 
-  private val symbols: List<PolySymbol> = sequenceOf(sourceSymbol)
+  private val symbols: List<PolySymbol> = sequenceOf(delegate)
     .plus(webTypesSymbols).toList()
 
   private val originalName: String?
@@ -53,16 +56,18 @@ class VuePolyTypesMergedSymbol(
     ))
 
   override val description: String?
-    get() = symbols.firstNotNullOfOrNull { it.description }
+    get() = symbols.firstNotNullOfOrNull {
+      it.asSafely<PolySymbolWithDocumentation>()?.description
+    }
 
   override val descriptionSections: Map<String, String>
     get() = symbols.asSequence()
-      .flatMap { it.descriptionSections.entries }
+      .flatMap { it.asSafely<PolySymbolWithDocumentation>()?.descriptionSections?.entries ?: emptySet() }
       .distinctBy { it.key }
       .associateBy({ it.key }, { it.value })
 
   override val docUrl: String?
-    get() = symbols.firstNotNullOfOrNull { it.docUrl }
+    get() = symbols.firstNotNullOfOrNull { it.asSafely<PolySymbolWithDocumentation>()?.docUrl }
 
   override val icon: Icon?
     get() = symbols.firstNotNullOfOrNull { it.icon }
@@ -74,7 +79,7 @@ class VuePolyTypesMergedSymbol(
     get() = symbols.firstNotNullOfOrNull { it.required }
 
   override val defaultValue: String?
-    get() = symbols.firstNotNullOfOrNull { it.defaultValue }
+    get() = symbols.firstNotNullOfOrNull { it.asSafely<PolySymbolWithDocumentation>()?.defaultValue }
 
   override val priority: PolySymbol.Priority?
     get() = symbols.asSequence().mapNotNull { it.priority }.maxOrNull()
@@ -188,7 +193,7 @@ class VuePolyTypesMergedSymbol(
         }
       }
 
-  override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
+  override fun createPointer(): Pointer<out VuePolyTypesMergedSymbol> {
     val pointers = symbols.map { it.createPointer() }
     val matchedName = name
     return Pointer {
@@ -200,7 +205,7 @@ class VuePolyTypesMergedSymbol(
   }
 
   class VueMergedSymbolDocumentationTarget(
-    override val symbol: PolySymbol,
+    override val symbol: VuePolyTypesMergedSymbol,
     override val location: PsiElement?,
     @Nls val displayName: String,
   ) : PolySymbolDocumentationTarget {
@@ -210,6 +215,12 @@ class VuePolyTypesMergedSymbol(
         .icon(symbol.icon)
         .presentation()
     }
+
+    override fun computeDocumentation(): DocumentationResult? =
+      symbol.createDocumentation(location)
+        .takeIf { it.isNotEmpty() }
+        ?.build(symbol.origin)
+
 
     override fun createPointer(): Pointer<out DocumentationTarget> {
       val pointer = symbol.createPointer()

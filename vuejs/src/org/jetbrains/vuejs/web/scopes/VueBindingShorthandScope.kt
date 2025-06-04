@@ -66,9 +66,9 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
 
 class VueBindingShorthandSymbol(
   private val context: XmlAttribute,
-  jsSymbol: PsiSourcedPolySymbol,
+  override val delegate: PsiSourcedPolySymbol,
   private val attrSymbol: PolySymbol,
-) : PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol>(jsSymbol),
+) : PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol>,
     CompositePolySymbol {
 
   override val nameSegments: List<PolySymbolNameSegment>

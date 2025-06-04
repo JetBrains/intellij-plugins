@@ -17,6 +17,7 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.util.ThreeState
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import icons.AngularIcons

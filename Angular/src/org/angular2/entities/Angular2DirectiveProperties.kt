@@ -11,9 +11,9 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
@@ -116,6 +116,9 @@ class Angular2DirectiveProperties(
     : Angular2SymbolDelegate<Angular2DirectiveProperty>(inOut),
       Angular2DirectiveProperty, PsiSourcedPolySymbol {
 
+    override val name: String
+      get() = delegate.name
+
     override val psiContext: PsiElement?
       get() = delegate.psiContext
 
@@ -186,8 +189,7 @@ class Angular2DirectiveProperties(
   private class InOutDirectiveProperty(
     input: Angular2DirectiveProperty,
     private val myOutput: Angular2DirectiveProperty,
-  )
-    : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
+  ) : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
 
     override val qualifiedKind: PolySymbolQualifiedKind
       get() = NG_DIRECTIVE_IN_OUTS

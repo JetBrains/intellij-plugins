@@ -6,8 +6,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.utils.PolySymbolDelegateWithDocumentation
 
-abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : PolySymbolDelegate<T>(delegate), Angular2Symbol {
+abstract class Angular2SymbolDelegate<T : Angular2Symbol>(override val delegate: T) : PolySymbolDelegateWithDocumentation<T>, Angular2Symbol {
 
   abstract override fun createPointer(): Pointer<out Angular2SymbolDelegate<T>>
 
@@ -18,6 +19,6 @@ abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : PolySym
     get() = delegate.origin
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    super<PolySymbolDelegate>.getNavigationTargets(project)
+    super<PolySymbolDelegateWithDocumentation>.getNavigationTargets(project)
 
 }

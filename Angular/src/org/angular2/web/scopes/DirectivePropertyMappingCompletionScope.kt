@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.PolySymbol.Companion.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolMatch
@@ -21,6 +22,7 @@ import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
+import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -162,11 +164,14 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
   )
 
   private class Angular2FieldPropertySymbol(
-    delegate: JSPropertySymbol,
+    override val delegate: JSPropertySymbol,
     override val qualifiedKind: PolySymbolQualifiedKind,
     override val project: Project,
     val owner: TypeScriptClass?,
-  ) : PolySymbolDelegate<JSPropertySymbol>(delegate), Angular2Symbol {
+  ) : PolySymbolDelegate<JSPropertySymbol>, Angular2Symbol {
+
+    override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
+      delegate.getDocumentationTarget(location)
 
     override val origin: PolySymbolOrigin
       get() = super<Angular2Symbol>.origin

@@ -5,8 +5,9 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
 
-interface Angular2Symbol : PolySymbol {
+interface Angular2Symbol : PolySymbolWithDocumentation {
 
   val project: Project
 
