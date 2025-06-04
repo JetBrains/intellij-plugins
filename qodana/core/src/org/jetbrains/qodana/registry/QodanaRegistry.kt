@@ -20,6 +20,9 @@ object QodanaRegistry {
   val isQodanaCloudIntegrationEnabled: Boolean
     get() = Registry.`is`(CLOUD_INTEGRATION_ENABLE_KEY, true)
 
+  val isScopeExtendingEnabled: Boolean
+    get() = Registry.`is`("qd.scope.extending.enabled", false)
+
   val openSarifInEditor: Boolean
     get() = Registry.`is`("qd.open.sarif.in.editor", false)
 
