@@ -16,7 +16,6 @@ import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -256,5 +255,5 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   }
 
   private suspend fun <T> blockOn(context: CoroutineContext, action: () -> T) =
-    withContext(context) { blockingContext(action) }
+    withContext(context) { action() }
 }
