@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.ui.content.ContentManager
 import kotlinx.coroutines.CoroutineScope
+import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalInspectionToolWrapper
@@ -68,6 +69,7 @@ class QodanaGlobalInspectionContext(
   }
 
   private fun isInExtendedScope(inspectionId: String, file: VirtualFile): Boolean {
+    if (!QodanaRegistry.isScopeExtendingEnabled) return false
     val extender = QodanaScopeExtenderProvider.getExtender(inspectionId)
     val fileExtenders = scopeExtended[file].orEmpty()
     return extender?.name in fileExtenders

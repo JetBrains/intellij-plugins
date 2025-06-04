@@ -29,6 +29,7 @@ import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.jdom.Element
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
+import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
@@ -242,11 +243,7 @@ internal suspend fun QodanaRunContext.applyExternalFileScope(
   onFileExcluded: ((VirtualFile) -> Unit)? = null
 ): QodanaRunContext {
   val files = resolveVirtualFiles(paths)
-  val toolsWithExtenders = findToolsWithScopeExtenders()
-  val manager = PsiManager.getInstance(project)
-  val fileToExtenders = computeFileToScopeExtenders(files, manager, toolsWithExtenders)
-  val additionalFiles = if (fileToExtenders.isNotEmpty()) collectExtendedFiles(project, fileToExtenders) else emptyMap()
-
+  val additionalFiles = collectExtendedFiles(files)
   return QodanaRunContext(
     project,
     loadedProfile,
@@ -258,6 +255,14 @@ internal suspend fun QodanaRunContext.applyExternalFileScope(
     changes,
     additionalFiles
   )
+}
+
+internal suspend fun QodanaRunContext.collectExtendedFiles(files: List<VirtualFile>): Map<VirtualFile, Set<String>> {
+  if (!QodanaRegistry.isScopeExtendingEnabled) return emptyMap()
+  val toolsWithExtenders = findToolsWithScopeExtenders()
+  val manager = PsiManager.getInstance(project)
+  val fileToExtenders = computeFileToScopeExtenders(files, manager, toolsWithExtenders)
+  return if (fileToExtenders.isNotEmpty()) collectExtendedFiles(project, fileToExtenders) else emptyMap()
 }
 
 internal suspend fun QodanaRunContext.externalFileScope(

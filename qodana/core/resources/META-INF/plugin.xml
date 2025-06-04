@@ -107,6 +107,7 @@
     <registryKey defaultValue="true" description="Enable Qodana Cloud license agreement check" key="qd.license.agreement.callback.enabled"/>
     <registryKey defaultValue="false" description="Force enabling of Qodana local run" key="qd.force.local.run.enabled"/>
     <registryKey defaultValue="false" description="Force enabling of Qodana Setup CI" key="qd.force.setup.ci.enabled"/>
+    <registryKey defaultValue="false" description="Enable analysis scope extending" key="qd.scope.extending.enabled"/>
     <registryKey defaultValue="false" description="Open SARIF in editor" key="qd.open.sarif.in.editor"/>
     <registryKey defaultValue="" description="Qodana Web UI sources" key="qd.web.ui.sources.url"/>
     <registryKey defaultValue="true" description="Open coverage report from Qodana Cloud" key="qd.open.coverage.enabled"/>
