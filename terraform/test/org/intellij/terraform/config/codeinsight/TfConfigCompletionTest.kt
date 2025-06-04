@@ -709,7 +709,9 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
           }
         }
         """.trimIndent(), 0)
+  }
 
+  fun testModuleObjectVariableCompletion() {
     doBasicCompletionTest(
       """
         variable "obj-var" {
@@ -740,6 +742,29 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
           }
         }
       """.trimIndent(), listOf("var6", "var7", "var8"))
+
+    myFixture.addFileToProject("directory/sub_directory/variables.tf", """
+      variable "obj-var" {
+        type = object({
+          var1 = string
+          var2 = list(string)
+          var3 = object({
+            var4 = string
+            var5 = list(string)
+          })
+        })
+      }
+    """.trimIndent())
+    doBasicCompletionTest(
+      """
+        module "test" {
+          source = "./directory/sub_directory"
+
+          obj-var = {
+            <caret>
+          }
+        }
+      """.trimIndent(), 3, "var1", "var2", "var3")
   }
 
   fun testModuleProvidersValueCompletion() {

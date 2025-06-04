@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionParameters
@@ -92,7 +92,8 @@ object TfPropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfC
   }
 
   private fun findObjectTypeInModule(block: HCLBlock, pathFromRoot: List<String>): ObjectType? {
-    val rootObject: ObjectType? = block.getTerraformModule().findVariables(pathFromRoot.first()).firstOrNull()?.getType() as? ObjectType
+    val module = Module.getAsModuleBlock(block) ?: return null
+    val rootObject: ObjectType? = module.findVariables(pathFromRoot.first()).firstOrNull()?.getType() as? ObjectType
     return pathFromRoot.tail().fold(rootObject) { current, pathElement ->
       current?.elements?.get(pathElement) as? ObjectType ?: return current
     }
