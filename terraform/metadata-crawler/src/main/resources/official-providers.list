@@ -1,5 +1,6 @@
 hashicorp/ad
 hashicorp/archive
+hashicorp/assert
 hashicorp/aws
 hashicorp/awscc
 hashicorp/azuread
