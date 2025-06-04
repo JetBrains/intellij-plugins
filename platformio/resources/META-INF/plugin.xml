@@ -39,6 +39,7 @@
     <module name="intellij.clion.execution"/>
     <module name="intellij.clion.externalSystem"/>
     <plugin id="com.jetbrains.plugins.ini4idea"/>
+    <module name="intellij.cidr.debugger.core"/>
   </dependencies>
 
   <content>

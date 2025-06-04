@@ -26,7 +26,7 @@ jvm_library(
     "@community//platform/statistics",
     "@community//platform/ide-core-impl",
     "@community//platform/platform-util-io:ide-util-io",
-    "//CIDR/cidr-debugger",
+    "//CIDR/cidr-debugger/core",
     "@community//platform/util/jdom",
     "@community//platform/util:util-ui",
     "//CIDR/cidr-projectModel",
