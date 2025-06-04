@@ -5,7 +5,6 @@ import com.intellij.openapi.application.readActionBlocking
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.FilePath
@@ -167,9 +166,7 @@ open class LocalChangesScript(
     }
     try {
       vcsSettings.saveChangesPolicy = LocalChangesService.getInstance(project).getGitPolicy()
-      blockingContext {
-        VcsPreservingExecutor.executeOperation(project, versionedRoots, message, progressIndicator, afterShelveRunnable)
-      }
+      VcsPreservingExecutor.executeOperation(project, versionedRoots, message, progressIndicator, afterShelveRunnable)
     } finally {
       vcsSettings.saveChangesPolicy = oldPolicy
     }
