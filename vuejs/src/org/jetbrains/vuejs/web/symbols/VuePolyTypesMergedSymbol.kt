@@ -84,9 +84,6 @@ class VuePolyTypesMergedSymbol(
   override val priority: PolySymbol.Priority?
     get() = symbols.asSequence().mapNotNull { it.priority }.maxOrNull()
 
-  override val proximity: Int?
-    get() = symbols.asSequence().mapNotNull { it.proximity }.maxOrNull()
-
   override val type: JSType?
     get() = symbols.firstNotNullOfOrNull { it.jsType }
 
