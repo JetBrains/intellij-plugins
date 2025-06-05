@@ -20,6 +20,7 @@ import com.intellij.lang.javascript.validation.fixes.JSRemoveReadonlyModifierFix
 import com.intellij.openapi.util.text.StringUtil.capitalize
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
+import com.intellij.psi.HintedPsiElementVisitor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiNamedElement
@@ -46,13 +47,16 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 
 class AngularInaccessibleSymbolInspection : JSInspection() {
 
-  override fun getElementsToOptimizeForTSServiceHighlighting(): Set<Class<out PsiElement>> =
-    setOf(JSReferenceExpression::class.java, Angular2HtmlPropertyBinding::class.java)
+  override val isCoveredByTypeScriptServiceHighlighting: Boolean
+    get() = true
 
   override fun createVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
     val fileLang = holder.file.language
     if (fileLang.isKindOf(Angular2HtmlLanguage) || Angular2Language.`is`(fileLang)) {
-      return object : Angular2ElementVisitor() {
+      return object : Angular2ElementVisitor(), HintedPsiElementVisitor {
+
+        override fun getHintPsiElements(): List<Class<*>> =
+          listOf(JSReferenceExpression::class.java, Angular2HtmlPropertyBinding::class.java)
 
         override fun visitElement(element: PsiElement) {
           when (element) {
