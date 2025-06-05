@@ -3,23 +3,17 @@ package org.jetbrains.qodana.staticAnalysis.script
 import com.intellij.codeInspection.InspectionApplicationBase
 import com.intellij.codeInspection.InspectionsBundle
 import com.intellij.codeInspection.ex.GlobalInspectionContextUtil
-import com.intellij.codeInspection.ex.ToolsImpl
 import com.intellij.configurationStore.JbXmlOutputter
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.readAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.jobToIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.GeneratedSourcesFilter
-import com.intellij.openapi.util.NotNullLazyValue
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx
 import com.intellij.profile.ProfileEx
-import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
 import com.intellij.util.io.createDirectories
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Run
@@ -29,11 +23,8 @@ import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.jdom.Element
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
-import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
-import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
@@ -45,10 +36,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.automationDetails
 import org.jetbrains.qodana.staticAnalysis.sarif.configProfile
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrAssignProperties
 import org.jetbrains.qodana.staticAnalysis.sarif.resultsFlowByGroup
-import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
-import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
-import org.jetbrains.qodana.staticAnalysis.scopes.collectExtendedFiles
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.QodanaActivityKind
 import java.nio.file.Files
 import java.nio.file.Path
@@ -77,29 +65,6 @@ suspend fun QodanaRunContext.writeProjectDescriptionAfterWork(projectStructurePa
     projectStructure.toFile().mkdirs()
   }
   QodanaProjectDescriber.runDescribersAfterWork(projectStructure, project)
-}
-
-suspend fun QodanaRunContext.createGlobalInspectionContext(
-  outputPath: Path = config.resultsStorage,
-  profile: QodanaProfile = qodanaProfile,
-  coverageComputationState: QodanaCoverageComputationState = QodanaCoverageComputationState.DEFAULT
-): QodanaGlobalInspectionContext {
-  val contentManagerProvider = NotNullLazyValue.lazy {
-    val mockContentManager = ToolWindowHeadlessManagerImpl.MockToolWindow(project).contentManager
-    mockContentManager
-  }
-  return withContext(StaticAnalysisDispatchers.IO) {
-    QodanaGlobalInspectionContext(
-      project,
-      contentManagerProvider,
-      config,
-      outputPath,
-      profile,
-      runCoroutineScope,
-      CoverageStatisticsData(coverageComputationState, project, changes),
-      scopeExtended
-    )
-  }
 }
 
 suspend fun QodanaRunContext.runAnalysis(
@@ -204,74 +169,4 @@ private fun QodanaAnalysisScope.patchToNotAnalyzeGeneratedCode(project: Project)
       return true
     }
   })
-}
-
-private suspend fun QodanaRunContext.resolveVirtualFiles(paths: Iterable<Path>): List<VirtualFile> {
-  val fs = LocalFileSystem.getInstance()
-  return runInterruptible(StaticAnalysisDispatchers.IO) {
-    paths.asSequence()
-      .map { if (it.isAbsolute) it else config.projectPath.resolve(it) }
-      .mapNotNull(fs::findFileByNioFile)
-      .toList()
-  }
-}
-
-private fun QodanaRunContext.findToolsWithScopeExtenders(): Map<InspectionToolScopeExtender, ToolsImpl> = qodanaProfile.effectiveProfile.tools
-  .mapNotNull { toolsImpl -> QodanaScopeExtenderProvider.getExtender(toolsImpl.tool.shortName) to toolsImpl }
-  .mapNotNull { (key, value) -> key?.let { it to value } }
-  .toMap()
-
-private suspend fun computeFileToScopeExtenders(
-  files: List<VirtualFile>,
-  psiManager: PsiManager,
-  toolsWithExtenders: Map<InspectionToolScopeExtender, ToolsImpl>
-): Map<VirtualFile, List<InspectionToolScopeExtender>> = readAction {
-  files
-    .mapNotNull { psiManager.findFile(it) }
-    .mapNotNull { psiFile ->
-      val enabledExtenders = toolsWithExtenders.filter { (_, tool) -> tool.getEnabledTool(psiFile) != null }.keys.toList()
-      enabledExtenders.takeIf { it.isNotEmpty() }?.let {
-        psiFile.virtualFile to enabledExtenders
-      }
-    }
-    .toMap()
-}
-
-internal suspend fun QodanaRunContext.applyExternalFileScope(
-  paths: Iterable<Path>,
-  onFileIncluded: ((VirtualFile) -> Unit)? = null,
-  onFileExcluded: ((VirtualFile) -> Unit)? = null
-): QodanaRunContext {
-  val files = resolveVirtualFiles(paths)
-  val additionalFiles = collectExtendedFiles(files)
-  return QodanaRunContext(
-    project,
-    loadedProfile,
-    externalFileScope(files + additionalFiles.keys, onFileIncluded, onFileExcluded),
-    qodanaProfile,
-    config,
-    runCoroutineScope,
-    messageReporter,
-    changes,
-    additionalFiles
-  )
-}
-
-internal suspend fun QodanaRunContext.collectExtendedFiles(files: List<VirtualFile>): Map<VirtualFile, Set<String>> {
-  if (!QodanaRegistry.isScopeExtendingEnabled) return emptyMap()
-  val toolsWithExtenders = findToolsWithScopeExtenders()
-  val manager = PsiManager.getInstance(project)
-  val fileToExtenders = computeFileToScopeExtenders(files, manager, toolsWithExtenders)
-  return if (fileToExtenders.isNotEmpty()) collectExtendedFiles(project, fileToExtenders) else emptyMap()
-}
-
-internal suspend fun QodanaRunContext.externalFileScope(
-  files: Iterable<VirtualFile>,
-  onFileIncluded: ((VirtualFile) -> Unit)? = null,
-  onFileExcluded: ((VirtualFile) -> Unit)? = null
-): QodanaAnalysisScope {
-  val (included, excluded) = readAction { files.partition(scope::contains) }
-  onFileIncluded?.let(included::forEach)
-  onFileExcluded?.let(excluded::forEach)
-  return QodanaAnalysisScope(project, included)
 }
