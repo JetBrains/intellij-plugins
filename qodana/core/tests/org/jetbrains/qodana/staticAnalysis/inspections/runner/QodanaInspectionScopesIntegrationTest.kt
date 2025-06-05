@@ -22,7 +22,6 @@ import org.jetbrains.qodana.staticAnalysis.newProfileWithInspections
 import org.jetbrains.qodana.staticAnalysis.profile.MainInspectionGroup
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
-import org.jetbrains.qodana.staticAnalysis.script.createGlobalInspectionContext
 import org.junit.Test
 import java.nio.file.Path
 
@@ -85,7 +84,7 @@ class QodanaInspectionScopesIntegrationTest : QodanaTestCase() {
 
   @Test
   fun `include for part of project`() {
-    val includedInspectionName = "PhpDivisionByZeroInspection"
+    val includedInspectionName = "JavaReflectionInvocation"
     val includedPaths = listOf("a", "b")
     val wrappersByFile = provideTest(includedInspections = mapOf(includedInspectionName to includedPaths))
 
