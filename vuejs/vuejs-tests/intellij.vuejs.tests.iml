@@ -38,6 +38,7 @@
     <orderEntry type="module" module-name="intellij.jade" scope="TEST" />
     <orderEntry type="module" module-name="intellij.postcss" scope="TEST" />
     <orderEntry type="module" module-name="intellij.stylus" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.psi" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.tests" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="StreamEx" level="project" />
     <orderEntry type="library" scope="TEST" name="gson" level="project" />

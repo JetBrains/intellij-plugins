@@ -32,6 +32,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//plugins/markdown/core:markdown",
     "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//xml/xml-psi-api:psi",
     "@community//xml/impl",
   ],
   runtime_deps = [":mdx_resources"]
@@ -66,6 +67,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//plugins/markdown/core:markdown",
     "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//xml/xml-psi-api:psi",
     "@community//xml/impl",
   ],
   runtime_deps = [":mdx_resources"]

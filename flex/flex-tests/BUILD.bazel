@@ -60,6 +60,7 @@ jvm_library(
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "@community//platform/structuralsearch:structuralSearch-tests_test_lib",
+    "@community//xml/xml-psi-api:psi",
     "@community//platform/structuralsearch:structuralSearch",
   ]
 )

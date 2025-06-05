@@ -53,6 +53,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
+    "@community//xml/xml-psi-api:psi",
   ],
   runtime_deps = [
     ":karma_resources",
@@ -101,6 +102,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "//plugins/js-test-common/test:javascript-testing-tests_test_lib",
+    "@community//xml/xml-psi-api:psi",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
   ],
   runtime_deps = [

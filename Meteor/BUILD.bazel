@@ -52,6 +52,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
+    "@community//xml/xml-psi-api:psi",
     "@community//platform/script-debugger/backend",
   ],
   runtime_deps = [
@@ -107,6 +108,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
+    "@community//xml/xml-psi-api:psi",
     "@community//platform/script-debugger/backend",
   ],
   runtime_deps = [

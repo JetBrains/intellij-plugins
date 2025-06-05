@@ -41,6 +41,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@lib//:plexus-utils",
+    "@community//xml/xml-psi-api:psi",
     "@lib//:jgoodies-forms",
   ],
   runtime_deps = [
@@ -90,6 +91,7 @@ jvm_library(
     "@lib//:plexus-utils",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
+    "@community//xml/xml-psi-api:psi",
     "@lib//:jgoodies-forms",
   ],
   runtime_deps = [

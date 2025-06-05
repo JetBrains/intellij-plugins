@@ -24,6 +24,7 @@ jvm_library(
     "//CSS/frontback/css-api:css-frontback",
     "@community//platform/refactoring",
     "@community//platform/structure-view-impl:structureView-impl",
+    "@community//xml/xml-psi-api:psi",
     "@community//xml/xml-structure-view-api:structureView",
     "@community//platform/usageView",
     "//plugins/JavaScriptLanguage/javascript-parser",

@@ -39,6 +39,7 @@
     <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.fileWatcher" />
     <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.xml.psi" />
     <orderEntry type="module" module-name="intellij.xml.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.coffeescript" scope="TEST" />

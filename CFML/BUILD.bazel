@@ -36,6 +36,7 @@ jvm_library(
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/platform-util-io:ide-util-io",
+    "@community//xml/xml-psi-api:psi",
     "@community//platform/util/jdom",
   ],
   runtime_deps = [
@@ -83,6 +84,7 @@ jvm_library(
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/platform-util-io:ide-util-io",
+    "@community//xml/xml-psi-api:psi",
     "@community//platform/util/jdom",
   ],
   runtime_deps = [

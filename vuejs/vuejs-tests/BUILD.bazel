@@ -54,6 +54,7 @@ jvm_library(
     "//contrib/postcss:postcss_test_lib",
     "//plugins/stylus",
     "//plugins/stylus:stylus_test_lib",
+    "@community//xml/xml-psi-api:psi",
     "@community//xml/tests:tests_test_lib",
     "@lib//:stream_ex",
     "@lib//:gson",
