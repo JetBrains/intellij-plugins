@@ -54,7 +54,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
     override val pattern: PolySymbolsPattern = PolySymbolsPatternFactory.createComplexPattern(
       ComplexPatternOptions(
         null, null, true,
-        PolySymbol.Priority.HIGHEST, null, false, false,
+        PolySymbol.Priority.HIGHEST, false, false,
         PropertiesResolver),
       false,
       PolySymbolsPatternFactory.createSymbolReferencePlaceholder(null))

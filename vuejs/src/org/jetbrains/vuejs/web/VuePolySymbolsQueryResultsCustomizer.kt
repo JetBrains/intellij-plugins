@@ -6,18 +6,20 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
-import com.intellij.psi.PsiElement
-import com.intellij.psi.createSmartPointer
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.nameSegments
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
+import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -78,22 +80,32 @@ class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : Po
     item: PolySymbolCodeCompletionItem,
     qualifiedKind: PolySymbolQualifiedKind,
   ): PolySymbolCodeCompletionItem {
-    if (qualifiedKind == VUE_COMPONENTS) {
-      val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
-      val element = (item.symbol as? PsiSourcedPolySymbol)?.source
-      if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
-        val settings = JSApplicationSettings.getInstance()
-        if ((scriptLanguage != null && "ts" == scriptLanguage)
-            || (DialectDetector.isTypeScript(element)
-                && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile))) {
-          if (settings.hasTSImportCompletionEffective(element.project)) {
-            return item.withInsertHandlerAdded(VueInsertHandler.INSTANCE, PolySymbol.Priority.LOWEST)
+    when (qualifiedKind) {
+      VUE_COMPONENTS -> {
+        val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
+        val element = (item.symbol as? PsiSourcedPolySymbol)?.source
+        if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
+          val settings = JSApplicationSettings.getInstance()
+          if ((scriptLanguage != null && "ts" == scriptLanguage)
+              || (DialectDetector.isTypeScript(element)
+                  && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile))) {
+            if (settings.hasTSImportCompletionEffective(element.project)) {
+              return item.withInsertHandlerAdded(VueInsertHandler.INSTANCE, PolySymbol.Priority.LOWEST)
+            }
+          }
+          else {
+            if (settings.isUseJavaScriptAutoImport) {
+              return item.withInsertHandlerAdded(VueInsertHandler.INSTANCE, PolySymbol.Priority.LOWEST)
+            }
           }
         }
-        else {
-          if (settings.isUseJavaScriptAutoImport) {
-            return item.withInsertHandlerAdded(VueInsertHandler.INSTANCE, PolySymbol.Priority.LOWEST)
-          }
+      }
+      HTML_ATTRIBUTES -> {
+        if (item.name.let { it.startsWith("v-") && it.contains(":") }) {
+          return item.withProximity((item.proximity ?: 0) + 5)
+        }
+        else if (item.name.let { it.startsWith("#") || it.startsWith(":") || it.startsWith("@") }) {
+          return item.withProximity((item.proximity ?: 0) + 10)
         }
       }
     }

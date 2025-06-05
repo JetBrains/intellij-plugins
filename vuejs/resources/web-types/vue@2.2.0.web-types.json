@@ -155,8 +155,7 @@
                   "#...",
                   "#item:argument"
                 ],
-                "required": false,
-                "proximity": 5
+                "required": false
               },
               {
                 "items": "/html/modifiers",
@@ -184,7 +183,6 @@
             "/html/modifiers"
           ],
           "pattern": {
-            "proximity": 10,
             "delegate": "/html/vue-directives/on",
             "template": [
               "@",
@@ -222,7 +220,6 @@
             "/html/modifiers"
           ],
           "pattern": {
-            "proximity": 10,
             "delegate": "/html/vue-directives/bind",
             "template": [
               ":",

@@ -31,8 +31,8 @@
                 "items": "/html/vue-components"
               },
               {
-                "items":"/js/vue-component-namespaces",
-                "template":  [
+                "items": "/js/vue-component-namespaces",
+                "template": [
                   "#item",
                   {
                     "items": [
@@ -40,8 +40,12 @@
                         "path": "/html/vue-components",
                         "name-conversion": {
                           "canonical-names": "as-is",
-                          "match-names": ["as-is"],
-                          "name-variants": ["as-is"]
+                          "match-names": [
+                            "as-is"
+                          ],
+                          "name-variants": [
+                            "as-is"
+                          ]
                         }
                       },
                       "/js/vue-component-namespaces"
@@ -186,8 +190,7 @@
                   "#...",
                   "#item:argument"
                 ],
-                "required": false,
-                "proximity": 5
+                "required": false
               },
               {
                 "items": "/html/modifiers",
@@ -215,7 +218,6 @@
             "/html/modifiers"
           ],
           "pattern": {
-            "proximity": 10,
             "delegate": "/html/vue-directives/on",
             "template": [
               "@",
@@ -253,7 +255,6 @@
             "/html/modifiers"
           ],
           "pattern": {
-            "proximity": 10,
             "delegate": "/html/vue-directives/bind",
             "template": [
               ":",
@@ -288,7 +289,6 @@
             "required": false
           },
           "pattern": {
-            "proximity": 10,
             "items": [
               "vue-available-slots",
               "/html/vue-dynamic-argument"
@@ -319,7 +319,6 @@
                   "/html/vue-dynamic-argument"
                 ],
                 "required": false,
-                "proximity": 5,
                 "template": [
                   ":",
                   "#...",

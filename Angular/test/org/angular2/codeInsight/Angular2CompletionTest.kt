@@ -37,7 +37,7 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
 
   fun testHostDirectiveInputMappingOutsideLiteral() =
     doLookupTest(renderTypeText = true, renderPriority = false, renderPresentedText = true) {
-      it.priority >= 100
+      it.priority >= 90
     }
 
   fun testHostDirectiveOutputMapping() =
