@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
-import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.vfs.toNioPathOrNull
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
@@ -9,6 +8,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunIncrementalContext.Companion.asIncremental
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import java.nio.file.Paths
 import kotlin.io.path.*
@@ -68,24 +68,20 @@ private class TeamcityRunContextFactory(
 ) : QodanaRunContextFactory {
 
   override suspend fun openRunContext(): QodanaRunContext {
-    val sourceContext = delegate.openRunContext()
     val recordMap = changes.filter { it.status != TeamcityChangeStatus.REMOVED }
       .associateBy { Path(it.relativePath) }
     val scopeBuffer = StringBuilder()
     scopeBuffer.appendLine("Script teamcity-changes scope:")
-
-    val res = sourceContext.applyExternalFileScope(
-      recordMap.keys,
-      onFileIncluded = { file ->
-        val relPath = file.toNioPathOrNull()?.relativeTo(sourceContext.config.projectPath)
-        recordMap[relPath]?.let(scopeBuffer::appendLine)
-      }
-    )
-    res.project.serviceAsync<LocalChangesService>()
-      .isIncrementalAnalysis
-      .set(true)
-    sourceContext.messageReporter.reportMessage(1, scopeBuffer.toString())
-    return res
+    val context = delegate.openRunContext()
+    return context.asIncremental(
+      emptyMap(),
+      recordMap.keys
+    ) { file ->
+      val relPath = file.toNioPathOrNull()?.relativeTo(context.config.projectPath)
+      recordMap[relPath]?.let(scopeBuffer::appendLine)
+    }.also {
+      it.messageReporter.reportMessage(1, scopeBuffer.toString())
+    }
   }
 }
 

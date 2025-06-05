@@ -231,7 +231,7 @@ open class LocalChangesScript(
   private suspend fun getSearchScopeFromChangedFiles(runContext: QodanaRunContext): QodanaAnalysisScope {
     val files = runContext.project.serviceAsync<ChangeListManager>().changedFilesAfterUpdate()
     val excluded = mutableListOf<VirtualFile>()
-    val result = runContext.externalFileScope(
+    val result = runContext.scope.externalFileScope(
       files,
       onFileIncluded = { messageReporter.reportMessage(0, "modified file: ${it.path}") },
       onFileExcluded = excluded::add

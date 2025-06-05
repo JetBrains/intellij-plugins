@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.script.scoped
 
-import com.intellij.openapi.components.serviceAsync
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.Options
@@ -9,6 +8,7 @@ import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.*
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunIncrementalContext.Companion.asIncremental
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.*
@@ -94,17 +94,10 @@ internal class ScopedRunContextFactory(
 ) : QodanaRunContextFactory {
 
   override suspend fun openRunContext(): QodanaRunContext {
-    var sourceContext = delegate.openRunContext()
     val changedFiles = parseChangedFiles(scopeFile)
     val paths = changedFiles.files.map { Path.of(it.path) }
     val addedLines = collectAddedLines(changedFiles, config)
-
-    sourceContext = sourceContext.copy(changes = addedLines)
-
-    sourceContext.project.serviceAsync<LocalChangesService>()
-      .isIncrementalAnalysis
-      .set(true)
-
-    return sourceContext.applyExternalFileScope(paths)
+    return delegate.openRunContext()
+      .asIncremental(changes = addedLines, paths = paths)
   }
 }

@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.scopes
 
 import com.intellij.analysis.AnalysisScope
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
@@ -31,6 +32,17 @@ class QodanaAnalysisScope : AnalysisScope {
     else {
       !module.isDisposed() && ModuleRootManager.getInstance(module).contentRoots.any { myScope.contains(it) }
     }
+  }
+
+  suspend fun externalFileScope(
+    files: Iterable<VirtualFile>,
+    onFileIncluded: ((VirtualFile) -> Unit)? = null,
+    onFileExcluded: ((VirtualFile) -> Unit)? = null
+  ): QodanaAnalysisScope {
+    val (included, excluded) = readAction { files.partition(::contains) }
+    onFileIncluded?.let(included::forEach)
+    onFileExcluded?.let(excluded::forEach)
+    return QodanaAnalysisScope(project, included)
   }
 
   companion object {

@@ -7,11 +7,9 @@ import com.intellij.codeInspection.ex.Tools
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NotNullLazyValue
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.ui.content.ContentManager
 import kotlinx.coroutines.CoroutineScope
-import org.jetbrains.qodana.registry.QodanaRegistry
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalInspectionToolWrapper
@@ -19,11 +17,10 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.Exte
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.externalTools.ExternalToolsProvider
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
-import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
 import java.nio.file.Path
 
 /** @param outputPath in the Docker container, this is `/data/results` */
-class QodanaGlobalInspectionContext(
+open class QodanaGlobalInspectionContext(
   project: Project,
   contentManager: NotNullLazyValue<out ContentManager>,
   val config: QodanaConfig,
@@ -31,7 +28,6 @@ class QodanaGlobalInspectionContext(
   val profile: QodanaProfile,
   val qodanaRunScope: CoroutineScope,
   val coverageStatisticsData: CoverageStatisticsData,
-  val scopeExtended: Map<VirtualFile, Set<String>>
 ) : GlobalInspectionContextImpl(project, contentManager) {
 
   /** In the Docker container, this is `/data/results`. */
@@ -64,15 +60,8 @@ class QodanaGlobalInspectionContext(
     )
   }
 
-  private fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
-    return !isInExtendedScope(inspectionId, file.virtualFile) && profileState.shouldSkip(inspectionId, file, wrappers)
-  }
-
-  private fun isInExtendedScope(inspectionId: String, file: VirtualFile): Boolean {
-    if (!QodanaRegistry.isScopeExtendingEnabled) return false
-    val extender = QodanaScopeExtenderProvider.getExtender(inspectionId)
-    val fileExtenders = scopeExtended[file].orEmpty()
-    return extender?.name in fileExtenders
+  protected open fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
+    return profileState.shouldSkip(inspectionId, file, wrappers)
   }
 
   override fun runExternalTools() {

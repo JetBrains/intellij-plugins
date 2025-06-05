@@ -7,6 +7,8 @@ import java.util.*
 object QodanaRegistry {
   @VisibleForTesting
   const val CLOUD_INTEGRATION_ENABLE_KEY = "qd.cloud.integration.enabled"
+  @VisibleForTesting
+  const val SCOPE_EXTENDING_ENABLE_KEY = "qd.scope.extending.enabled"
 
   val isQodanaLicenseAgreementCallbackEnabled: Boolean
     get() = Registry.`is`("qd.license.agreement.callback.enabled", true)
@@ -21,7 +23,7 @@ object QodanaRegistry {
     get() = Registry.`is`(CLOUD_INTEGRATION_ENABLE_KEY, true)
 
   val isScopeExtendingEnabled: Boolean
-    get() = Registry.`is`("qd.scope.extending.enabled", false)
+    get() = Registry.`is`(SCOPE_EXTENDING_ENABLE_KEY, false)
 
   val openSarifInEditor: Boolean
     get() = Registry.`is`("qd.open.sarif.in.editor", false)
