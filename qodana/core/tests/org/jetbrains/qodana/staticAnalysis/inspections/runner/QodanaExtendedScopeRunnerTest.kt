@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.qodana.registry.QodanaRegistry.SCOPE_EXTENDING_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
@@ -44,10 +45,12 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
 
     try {
       System.setProperty(COVERAGE_SKIP_COMPUTATION_PROPERTY, "true")
+      System.setProperty(SCOPE_EXTENDING_ENABLE_KEY, "true")
       runAnalysis()
       assertSarifResults()
     } finally {
       System.clearProperty(COVERAGE_SKIP_COMPUTATION_PROPERTY)
+      System.clearProperty(SCOPE_EXTENDING_ENABLE_KEY)
     }
   }
 }

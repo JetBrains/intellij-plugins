@@ -2,6 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.codeInspection.ex.InspectionProfileImpl
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.qodana.registry.QodanaRegistry.SCOPE_EXTENDING_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
@@ -126,12 +127,20 @@ class QodanaScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegr
       "$testProjectPath/out")
 
     val additionalFiles = mutableSetOf<String>()
-    QodanaTestCase.runTest {
-      val script = buildScript(cliArgs, project, projectFiles, this)
-      additionalFiles.addAll(script.runContext.getAdditionalFiles())
+    try {
+      System.setProperty(SCOPE_EXTENDING_ENABLE_KEY, "true")
+      QodanaTestCase.runTest {
+        val script = buildScript(cliArgs, project, projectFiles, this)
+        additionalFiles.addAll(script.runContext.getAdditionalFiles())
+      }
+    } finally {
+      System.clearProperty(SCOPE_EXTENDING_ENABLE_KEY)
     }
     return additionalFiles
   }
 
-  private fun QodanaRunContext.getAdditionalFiles() = scopeExtended.keys.map { it.name }
+  private fun QodanaRunContext.getAdditionalFiles() = when(this) {
+    is QodanaRunIncrementalContext -> scopeExtended.keys.map { it.name }
+    else -> emptyList()
+  }
 }
