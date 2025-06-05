@@ -325,8 +325,7 @@
         },
         {
           "name": "ref",
-          "priority": "low",
-          "proximity": 10,
+          "priority": 2.0,
           "description": "`ref` is used to register a reference to an element or a child component. The reference will be registered under the parent component’s `$refs` object. If used on a plain DOM element, the reference will be that element; if used on a child component, the reference will be component instance.",
           "doc-url": "https://vuejs.org/v2/api/#ref",
           "value": {
@@ -335,8 +334,7 @@
         },
         {
           "name": "is",
-          "priority": "low",
-          "proximity": 10,
+          "priority": 2.0,
           "description": "Used for [dynamic components](https://vuejs.org/v2/guide/components.html#Dynamic-Components) and to work around [limitations of in-DOM templates](https://vuejs.org/v2/guide/components.html#DOM-Template-Parsing-Caveats).",
           "doc-url": "https://vuejs.org/v2/api/#is",
           "value": {
@@ -348,8 +346,7 @@
         },
         {
           "name": "key",
-          "priority": "low",
-          "proximity": 10,
+          "priority": 2.0,
           "description": "The `key` special attribute is primarily used as a hint for Vue’s virtual DOM algorithm to identify VNodes when diffing the new list of nodes against the old list. Without keys, Vue uses an algorithm that minimizes element movement and tries to patch/reuse elements of the same type in-place as much as possible. With keys, it will reorder elements based on the order change of keys, and elements with keys that are no longer present will always be removed/destroyed.\n\nChildren of the same common parent must have unique keys. Duplicate keys will cause render errors.\n\nThe most common use case is combined with v-for:",
           "doc-url": "https://vuejs.org/v2/api/#key",
           "value": {
