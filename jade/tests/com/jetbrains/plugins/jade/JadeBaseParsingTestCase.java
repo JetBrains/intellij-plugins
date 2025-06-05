@@ -74,7 +74,11 @@ public abstract class JadeBaseParsingTestCase extends ParsingTestCase {
 
     registerExtensionPoint(FileIndentOptionsProvider.EP_NAME, FileIndentOptionsProvider.class);
     getApplication().registerService(CodeStyleSettingsService.class, new CodeStyleSettingsServiceImpl());
-    getProject().registerService(ProjectCodeStyleSettingsManager.class, new ProjectCodeStyleSettingsManager(getProject()));
+    LanguageCodeStyleSettingsProvider.mockLanguageCodeStyleSettingsProviderService((aClass, o) -> {
+      //noinspection unchecked
+      getApplication().registerService((Class<Object>)aClass, o);
+    });
+    getProject().registerService(ProjectCodeStyleSettingsManager.class, new ProjectCodeStyleSettingsManager(getProject(), false));
     getApplication().registerService(AppCodeStyleSettingsManager.class, new AppCodeStyleSettingsManager());
     getApplication().registerService(CodeStyleSchemes.class, new PersistableCodeStyleSchemes(
       ApplicationManager.getApplication().getComponent(SchemeManagerFactory.class)));
