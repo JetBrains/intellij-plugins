@@ -27,6 +27,9 @@ public final class GherkinParameterRenameHandler extends VariableInplaceRenameHa
 
   @Override
   protected @NotNull VariableInplaceRenamer createRenamer(@NotNull PsiElement elementToRename, @NotNull Editor editor) {
-    return new GherkinInplaceRenamer((PsiNamedElement)elementToRename, editor);
+    if (!(elementToRename instanceof PsiNamedElement namedElementToRename)) {
+      throw new IllegalArgumentException("elementToRename must be PsiNamedElement, but was: " + elementToRename.getClass());
+    }
+    return new GherkinInplaceRenamer(namedElementToRename, editor);
   }
 }
