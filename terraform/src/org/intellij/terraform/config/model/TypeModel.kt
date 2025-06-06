@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.intellij.psi.PsiDirectory
@@ -270,9 +270,11 @@ class TypeModel(
     ).toMap())
     val Locals: BlockType = BlockType(HCL_LOCALS_IDENTIFIER)
     val Import: BlockType = BlockType(HCL_IMPORT_IDENTIFIER, properties = listOf(
-      PropertyType("id", Types.String, required = true),
-      PropertyType("to", Types.Identifier, required = true),
-      PropertyType("provider", Types.String, required = false)
+      ToProperty,
+      PropertyType("id", Types.String, required = true, conflictsWith = listOf("identity")),
+      BlockType("identity", args = 0, conflictsWith = listOf("id")),
+      PropertyType("provider", Types.String, required = false),
+      ForEachProperty
     ).toMap())
 
     val AssertBlock: BlockType = BlockType(HCL_ASSERT_BLOCK_IDENTIFIER, 0, required = true,

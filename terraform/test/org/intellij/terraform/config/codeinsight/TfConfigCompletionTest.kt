@@ -177,12 +177,12 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n\"<caret>\" {}\n}", "additional_capabilities")
 
     // Should understand a interpolation result
-    doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret> = \"\${true}\"\n}") { items ->
+    doBasicCompletionTest($$"resource azurerm_linux_virtual_machine x {\n<caret> = \"${true}\"\n}") { items ->
       items.containsAll(listOf("allow_extension_operations", "bypass_platform_safety_checks_on_user_schedule_enabled")) &&
       listOf("additional_capabilities", "size", "location").none { it in items }
     }
     // Or not
-    doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret> = \"\${}\"\n}") { items ->
+    doBasicCompletionTest($$"resource azurerm_linux_virtual_machine x {\n<caret> = \"${}\"\n}") { items ->
       items.containsAll(listOf("allow_extension_operations", "bypass_platform_safety_checks_on_user_schedule_enabled", "size", "location")) &&
       "additional_capabilities" !in items
     }
@@ -295,11 +295,11 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
   fun testCheckBlockCompletion() {
     doBasicCompletionTest("check {<caret>}", "assert", "data")
     doBasicCompletionTest(
-      """
+      $$"""
         check "certificate" {
           assert {
             condition     = aws_acm_certificate.cert.status == "ERRORED"
-            error_message = "Certificate status is ${'$'}{aws_acm_certificate.cert.status}"
+            error_message = "Certificate status is ${aws_acm_certificate.cert.status}"
           }
           data abc {
             <caret>
@@ -382,7 +382,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("data azurerm_storage_account_blob_container_sas x {\n<caret> {}\n}", "lifecycle", "permissions", "timeouts")
 
     // Should understand interpolation result
-    doBasicCompletionTest("data  azurerm_storage_account_sas x {\n<caret> = \"\${true}\"\n}") { items ->
+    doBasicCompletionTest($$"data  azurerm_storage_account_sas x {\n<caret> = \"${true}\"\n}") { items ->
       items.contains("https_only") && listOf("connection_string", "services").none { it in items }
     }
   }
@@ -816,6 +816,14 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
 
     doBasicCompletionTest("variable v{}\nresource x y {}\nmodule b {depends_on=[<caret>]}", 2, "x.y", "var.v")
     doBasicCompletionTest("variable v{}\ndata x y {}\nmodule b {depends_on=[<caret>]}", 2, "data.x.y", "var.v")
+  }
+
+  fun testImportBlockProperties() {
+    doBasicCompletionTest("""
+      import {
+        <caret>
+      }
+    """.trimIndent(), "id", "to", "provider", "for_each")
   }
 
   fun testCompleteResourceFromAnotherModuleInImportBlock() {

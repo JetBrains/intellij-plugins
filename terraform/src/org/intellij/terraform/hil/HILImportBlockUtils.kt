@@ -1,7 +1,8 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil
 
 import com.intellij.psi.util.parentOfType
+import org.intellij.terraform.config.Constants.HCL_IMPORT_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -16,7 +17,7 @@ enum class HilContainingBlockType {
 internal fun guessContainingBlockType(expression: BaseExpression): HilContainingBlockType {
   val containingImportBlock = expression.parentOfType<HCLBlock>() ?: return HilContainingBlockType.UNSPECIFIED
   val type = TfModelHelper.getBlockType(containingImportBlock)
-  return if (type is BlockType && (type.literal == "import" || type.literal == "moved"))
+  return if (type is BlockType && (type.literal == HCL_IMPORT_IDENTIFIER || type.literal == "moved"))
     HilContainingBlockType.IMPORT_OR_MOVED_BLOCK
   else
     HilContainingBlockType.UNSPECIFIED
