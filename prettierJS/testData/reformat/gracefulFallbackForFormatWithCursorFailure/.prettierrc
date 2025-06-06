@@ -1,0 +1,20 @@
+{
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "singleAttributePerLine": true,
+  "endOfLine": "lf",
+  "arrowParens": "avoid",
+  "plugins": [
+        "prettier-plugin-tailwindcss",
+        "prettier-plugin-classnames",
+        "prettier-plugin-merge",
+        "prettier-plugin-organize-imports"
+  ],
+  "htmlWhitespaceSensitivity": "strict"
+}

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "prettier": "3.5.3",
+    "prettier-plugin-classnames": "^0.7.8",
+    "prettier-plugin-merge": "^0.7.4",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier-plugin-tailwindcss": "^0.6.12"
+  }
+}

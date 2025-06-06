@@ -170,7 +170,13 @@ async function performFormat(
 
     if (api.formatWithCursor != null) {
       config.cursorOffset = args.cursorOffset || -1;
-      return api.formatWithCursor(args.content, config);
+      try {
+        return await api.formatWithCursor(args.content, config);
+      }
+      catch (e) {
+        // Fallback to simple format if formatWithCursor throws an error
+        return { formatted: await api.format(args.content, config) };
+      }
     }
 
     return { formatted: await api.format(args.content, config) };

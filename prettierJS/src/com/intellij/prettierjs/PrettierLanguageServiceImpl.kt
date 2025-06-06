@@ -83,7 +83,7 @@ class PrettierLanguageServiceImpl(
     }
 
     var formattedResult = JsonUtil.getChildAsString(jsonObject, "formatted")!!
-    var cursorOffset = JsonUtil.getChildAsInteger(jsonObject, "cursorOffset", -1)
+    val cursorOffset = JsonUtil.getChildAsInteger(jsonObject, "cursorOffset", -1)
     if (forceLineBreakAtEof && !formattedResult.endsWith("\n")) {
       // Prettier may remove a trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
       // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
