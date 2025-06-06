@@ -22,5 +22,6 @@
     <orderEntry type="module" module-name="intellij.cidr.projectModel" />
     <orderEntry type="module" module-name="intellij.cidr.psi.base" />
     <orderEntry type="module" module-name="intellij.clion.toolchains" />
+    <orderEntry type="module" module-name="intellij.cidr.util.execution" />
   </component>
 </module>

@@ -33,6 +33,7 @@ jvm_library(
     "//CIDR/cidr-runner",
     "//CIDR/cidr-workspaceModel",
     "@community//platform/core-impl",
+    "//CIDR/cidr-util/execution",
   ],
   runtime_deps = [
     ":appcode-reveal_resources",
