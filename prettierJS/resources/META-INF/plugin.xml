@@ -57,6 +57,8 @@
     <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
     <postFormatProcessor implementation="com.intellij.prettierjs.PrettierPostFormatProcessor"/>
 
+    <registryKey key="prettier.service.node.arguments" defaultValue=""
+                 description="Command line options for the Prettier service process. Separate multiple arguments with a space. If an argument contains a space, wrap the argument in double quotes. To escape a double quote, use the \\&quot; sequence."/>
     <registryKey key="prettier.use.async.formatting.service" defaultValue="true"
                  description="Enable or disable the Prettier asynchronous formatting service. When enabled, the post format processor is disabled."/>
     <formattingService id="PrettierFormattingService" implementation="com.intellij.prettierjs.PrettierFormattingService"/>

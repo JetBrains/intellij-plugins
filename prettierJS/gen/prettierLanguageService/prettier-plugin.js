@@ -178,23 +178,35 @@ var PrettierPlugin = /** @class */ (function () {
 exports.PrettierPlugin = PrettierPlugin;
 function performFormat(api, config, args) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var e_2;
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     if (!args.flushConfigCache) return [3 /*break*/, 2];
                     return [4 /*yield*/, api.clearConfigCache()];
                 case 1:
-                    _b.sent();
-                    _b.label = 2;
+                    _c.sent();
+                    _c.label = 2;
                 case 2:
-                    if (api.formatWithCursor != null) {
-                        config.cursorOffset = args.cursorOffset || -1;
-                        return [2 /*return*/, api.formatWithCursor(args.content, config)];
-                    }
+                    if (!(api.formatWithCursor != null)) return [3 /*break*/, 7];
+                    config.cursorOffset = args.cursorOffset || -1;
+                    _c.label = 3;
+                case 3:
+                    _c.trys.push([3, 5, , 7]);
+                    return [4 /*yield*/, api.formatWithCursor(args.content, config)];
+                case 4: return [2 /*return*/, _c.sent()];
+                case 5:
+                    e_2 = _c.sent();
                     _a = {};
                     return [4 /*yield*/, api.format(args.content, config)];
-                case 3: return [2 /*return*/, (_a.formatted = _b.sent(), _a)];
+                case 6: 
+                // Fallback to simple format if formatWithCursor throws an error
+                return [2 /*return*/, (_a.formatted = _c.sent(), _a)];
+                case 7:
+                    _b = {};
+                    return [4 /*yield*/, api.format(args.content, config)];
+                case 8: return [2 /*return*/, (_b.formatted = _c.sent(), _b)];
             }
         });
     });

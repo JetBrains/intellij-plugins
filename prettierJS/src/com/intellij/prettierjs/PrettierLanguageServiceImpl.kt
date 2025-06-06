@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.webcore.util.JsonUtil
 import kotlinx.coroutines.future.future
@@ -85,7 +86,7 @@ class PrettierLanguageServiceImpl(
     }
 
     var formattedResult = JsonUtil.getChildAsString(jsonObject, "formatted")!!
-    var cursorOffset = JsonUtil.getChildAsInteger(jsonObject, "cursorOffset", -1)
+    val cursorOffset = JsonUtil.getChildAsInteger(jsonObject, "cursorOffset", -1)
     if (forceLineBreakAtEof && !formattedResult.endsWith("\n")) {
       // Prettier may remove a trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
       // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
@@ -118,6 +119,9 @@ class PrettierLanguageServiceImpl(
   ) : JSLanguageServiceNodeStdProtocolBase("prettier", project) {
     override fun addNodeProcessAdditionalArguments(targetRun: NodeTargetRun) {
       super.addNodeProcessAdditionalArguments(targetRun)
+      JSLanguageServiceUtil.addNodeProcessArgumentsFromRegistry(targetRun.commandLineBuilder, serviceName) {
+        Registry.stringValue("prettier.service.node.arguments")
+      }
       targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "prettierLanguageService")!!.absolutePath)
     }
 

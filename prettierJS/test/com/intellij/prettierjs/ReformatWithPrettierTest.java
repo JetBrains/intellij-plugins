@@ -398,6 +398,12 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     configureRunOnReformat(() -> doTestEditorReformat(""));
   }
 
+  public void testGracefulFallbackForFormatWithCursorFailure() {
+    doReformatFile("toReformat", "html", () -> {
+      performNpmInstallForPackageJson("package.json");
+    });
+  }
+
   public void testRangeInVue() {
     // Prettier doesn't support range formatting in Vue (WEB-52196, WEB-52196, https://github.com/prettier/prettier/issues/13399),
     // and even removes line break at the end of the file. This test checks IDE's workaround of Prettier bug.

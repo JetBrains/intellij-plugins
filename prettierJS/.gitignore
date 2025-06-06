@@ -18,3 +18,7 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+
+# Node modules
+resources/javascript/node_modules

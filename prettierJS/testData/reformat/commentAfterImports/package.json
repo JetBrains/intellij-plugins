@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "devDependencies": {
-    "prettier": "latest"
+    "prettier": "3.5.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
