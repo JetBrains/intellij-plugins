@@ -48,5 +48,6 @@
     <orderEntry type="module" module-name="intellij.cidr.runner" />
     <orderEntry type="module" module-name="intellij.cidr.psi.base" />
     <orderEntry type="module" module-name="intellij.cidr.core" />
+    <orderEntry type="module" module-name="intellij.clion.testFramework.nolang" scope="TEST" />
   </component>
 </module>

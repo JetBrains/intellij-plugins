@@ -17,7 +17,7 @@ import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.asSafely
 import com.intellij.util.system.OS
-import com.jetbrains.cidr.cpp.CPPTestCase
+import com.jetbrains.cidr.cpp.CPPTestUtil
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.external.system.model.ExternalModule
@@ -74,7 +74,7 @@ class TestProjectResolve : LightPlatformTestCase() {
   fun testScanFiles2023() = doTestScanFiles("-2023")
 
   private fun doTestScanFiles(suffix: String = "") {
-    Assume.assumeFalse(CPPTestCase.getTestToolSet().kind.isRemoteLike)
+    Assume.assumeFalse(CPPTestUtil.getTestToolSet().kind.isRemoteLike)
 
     val taskId: ExternalSystemTaskId = ExternalSystemTaskId.create(ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
     val testListener = TaskNotificationListerForTest()
