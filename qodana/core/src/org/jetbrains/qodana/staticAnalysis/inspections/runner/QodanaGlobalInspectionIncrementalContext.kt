@@ -12,7 +12,9 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
+import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Instantiated in the case of scoped-like scripts for incremental analysis.
@@ -30,14 +32,16 @@ class QodanaGlobalInspectionIncrementalContext(
   coverageStatisticsData: CoverageStatisticsData,
   val scopeExtended: Map<VirtualFile, Set<String>>
 ): QodanaGlobalInspectionContext(project, contentManager, config, outputPath, profile, qodanaRunScope, coverageStatisticsData) {
+  private val extenderCache = ConcurrentHashMap<String, InspectionToolScopeExtender?>()
+
   override fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
     return !isInExtendedScope(inspectionId, file.virtualFile) && profileState.shouldSkip(inspectionId, file, wrappers)
   }
 
   private fun isInExtendedScope(inspectionId: String, file: VirtualFile): Boolean {
     if (!QodanaRegistry.isScopeExtendingEnabled) return false
-    val extender = QodanaScopeExtenderProvider.Companion.getExtender(inspectionId)
-    val fileExtenders = scopeExtended[file].orEmpty()
-    return extender?.name in fileExtenders
+    val extender = extenderCache.computeIfAbsent(inspectionId) { QodanaScopeExtenderProvider.getExtender(it) } ?: return false
+    val fileExtenders = scopeExtended[file] ?: return false
+    return extender.name in fileExtenders
   }
 }

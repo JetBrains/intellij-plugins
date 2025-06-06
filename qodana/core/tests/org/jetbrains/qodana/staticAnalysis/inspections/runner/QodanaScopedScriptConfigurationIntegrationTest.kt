@@ -72,6 +72,28 @@ class QodanaScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegr
   }
 
   @Test
+  fun `scoped with disabled extending inspection on one file`() {
+    val extendedScope = buildExtendedScope("""
+      {
+        "files" : [{
+            "path" : "A.java",
+            "added" : [ ],
+            "deleted" : [ ]
+          },
+          {
+            "path" : "B.java",
+            "added" : [ ],
+            "deleted" : [ ]
+          }
+        ]
+      }
+    """.trimIndent(), fileToIgnore = "B.java")
+    // A.java -> B.java. B.java should not be included in extendedScope even though no extenders are enabled on it
+    // Since B.java is not included in extendedScope, it is not being processed, so C.java doesn't get there as well.
+    assertEmpty(extendedScope)
+  }
+
+  @Test
   fun `scoped with non referenced file`() {
     val extendedScope = buildExtendedScope("""
       {
@@ -95,17 +117,17 @@ class QodanaScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegr
             "deleted" : [ ]
           }]
       }
-    """.trimIndent(), profileName = "qodana.single:unused")
+    """.trimIndent(), inspectionToInclude = "unused")
     assertEmpty(extendedScope)
   }
 
-  private fun buildExtendedScope(scopeFileText: String, profileName: String = "qodana.single:ConstantValue"): Collection<String> {
+  private fun buildExtendedScope(scopeFileText: String, inspectionToInclude: String = "ConstantValue", fileToIgnore: String = ""): Collection<String> {
     val testProjectPath = project.basePath
 
     val qodanaYAML = """
       version: 1.0
       profile:
-        name: $profileName
+        path: profile.yaml
       script:
         name: $SCOPED_SCRIPT_NAME
         parameters:
@@ -113,9 +135,23 @@ class QodanaScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegr
       runPromoInspections: false
       disableSanityInspections: true
     """.trimIndent()
+    val ignorePart = if (fileToIgnore.isNotEmpty()) """
+          ignore:
+            - "$fileToIgnore"
+    """.trim() else ""
+
+    val profileYAML = """
+      inspections:
+        - group: ALL
+          enabled: false
+        - inspection: $inspectionToInclude
+          enabled: true
+          ${ignorePart}
+    """.trimIndent()
 
     val projectFiles = listOf(
       "qodana.yaml" to qodanaYAML,
+      "profile.yaml" to profileYAML,
       "scope" to scopeFileText,
       "A.java" to "class A {}",
       "B.java" to "class B {}",

@@ -83,7 +83,7 @@ private suspend fun collectExtendedFiles(files: List<VirtualFile>, qodanaProfile
   val toolsWithExtenders = findToolsWithScopeExtenders(qodanaProfile)
   val manager = PsiManager.getInstance(project)
   val fileToExtenders = computeFileToScopeExtenders(files, manager, toolsWithExtenders)
-  return if (fileToExtenders.isNotEmpty()) collectExtendedFiles(project, fileToExtenders) else emptyMap()
+  return if (fileToExtenders.any { it.value.isNotEmpty() }) collectExtendedFiles(project, fileToExtenders) else emptyMap()
 }
 
 private fun findToolsWithScopeExtenders(qodanaProfile: QodanaProfile): Map<InspectionToolScopeExtender, ToolsImpl> = qodanaProfile.effectiveProfile.tools
@@ -98,13 +98,12 @@ private suspend fun computeFileToScopeExtenders(
 ): Map<VirtualFile, List<InspectionToolScopeExtender>> = readAction {
   files
     .mapNotNull { psiManager.findFile(it) }
-    .mapNotNull { psiFile ->
+    .associate { psiFile ->
       val enabledExtenders = toolsWithExtenders.filter { (_, tool) -> tool.getEnabledTool(psiFile) != null }.keys.toList()
-      enabledExtenders.takeIf { it.isNotEmpty() }?.let {
+      enabledExtenders.let {
         psiFile.virtualFile to enabledExtenders
       }
     }
-    .toMap()
 }
 
 private suspend fun resolveVirtualFiles(projectPath: Path, paths: Iterable<Path>): List<VirtualFile> {
