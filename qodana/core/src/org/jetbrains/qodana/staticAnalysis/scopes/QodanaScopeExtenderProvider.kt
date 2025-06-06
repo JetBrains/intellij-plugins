@@ -73,7 +73,7 @@ suspend fun collectExtendedFiles(
   fileToExtenders: Map<VirtualFile, List<InspectionToolScopeExtender>>
 ): Map<VirtualFile, Set<String>> {
   val scopeExtendedMap = ConcurrentHashMap<VirtualFile, Set<String>>(
-    fileToExtenders.mapValues { emptySet() }
+    fileToExtenders.filter { it.value.isNotEmpty() }.mapValues { emptySet() }
   )
   suspend fun InspectionToolScopeExtender.extend(fromFile: VirtualFile) {
     extendScope(fromFile, project, scopeExtendedMap).forEach { file ->
