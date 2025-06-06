@@ -32,6 +32,7 @@
     <module name="intellij.cidr.projectModel"/>
     <module name="intellij.cidr.psi.base"/>
     <module name="intellij.cidr.util"/>
+    <module name="intellij.cidr.util.execution"/>
     <plugin id="com.intellij.clion.embedded"/>
     <module name="intellij.clion.toolchains"/>
     <module name="intellij.clion.execution"/>

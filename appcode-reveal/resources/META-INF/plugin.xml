@@ -17,6 +17,7 @@
     <plugin id="com.intellij.modules.appcode"/>
     <module name="intellij.cidr.workspaceModel"/>
     <module name="intellij.cidr.projectModel"/>
+    <module name="intellij.cidr.util.execution"/>
     <module name="intellij.apple.sdk"/>
   </dependencies>
 
