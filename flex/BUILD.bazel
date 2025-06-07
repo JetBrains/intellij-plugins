@@ -72,7 +72,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "//plugins/uml/impl",
     "@community//platform/util/jdom",
-    "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
+    "//plugins/JavaScriptDebugger/debugger-ui:javascript-debugger-ui",
     "@community//platform/util/text-matching",
     "//CSS/frontback/css-psi-impl:css-frontback-psi",
   ],

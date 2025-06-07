@@ -30,7 +30,6 @@ jvm_library(
     "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
     "//plugins/JavaScriptDebugger:javascript-debugger",
     "//plugins/JavaScriptDebugger/backend",
-    "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
     "@community//xml/xml-psi-api:psi",
     "@community//plugins/yaml/backend",
     "@community//plugins/copyright",
@@ -60,7 +59,7 @@ jvm_library(
     "@community//platform/markdown-utils",
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
-    "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
+    "//plugins/JavaScriptDebugger/debugger-ui:javascript-debugger-ui",
   ],
   runtime_deps = [":dart_resources"]
 )
@@ -90,7 +89,6 @@ jvm_library(
     "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
     "//plugins/JavaScriptDebugger:javascript-debugger",
     "//plugins/JavaScriptDebugger/backend",
-    "//plugins/JavaScriptDebugger/ChromeConnector:javascript-chrome-connector",
     "@community//xml/xml-psi-api:psi",
     "@community//plugins/yaml/backend",
     "@community//plugins/yaml/backend:backend_test_lib",
@@ -134,8 +132,7 @@ jvm_library(
     "@community//platform/markdown-utils:markdown-utils_test_lib",
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
-    "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
-    "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui_test_lib",
+    "//plugins/JavaScriptDebugger/debugger-ui:javascript-debugger-ui",
     "@community//xml/testFramework",
   ],
   runtime_deps = [":dart_resources"]

@@ -25,7 +25,6 @@
     <orderEntry type="module" module-name="intellij.javascript.debugger" />
     <orderEntry type="module" module-name="intellij.javascript.debugger.backend" />
     <orderEntry type="module" module-name="intellij.platform.coverage.agent" />
-    <orderEntry type="module" module-name="intellij.javascript.debugger.sdk.backend" />
     <orderEntry type="module" module-name="intellij.javascript" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
@@ -36,7 +35,6 @@
     <orderEntry type="module" module-name="intellij.javascript.wip.protocol" />
     <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
     <orderEntry type="module" module-name="intellij.platform.scriptDebugger.backend" />
-    <orderEntry type="module" module-name="intellij.javascript.chrome.connector" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
