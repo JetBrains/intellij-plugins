@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil;
 
 import com.intellij.lang.Language;
@@ -311,8 +311,8 @@ public class HILCompletionTest extends CompletionTestCase {
   public void testDefinedFunctionsCompletion() {
     doBasicCompletionTest(
       "test = '${aws<caret>}'",
-      3,
-      "provider::aws::arn_build", "provider::aws::arn_parse", "provider::aws::trim_iam_role_path"
-    );
+      5,
+      "provider::aws::arn_build", "provider::aws::arn_parse", "provider::aws::trim_iam_role_path", "provider::timeconv::aws_at",
+      "provider::timeconv::aws_cron");
   }
 }

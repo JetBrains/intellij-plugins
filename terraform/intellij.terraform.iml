@@ -30,15 +30,15 @@
     <orderEntry type="library" name="jackson-databind" level="project" />
     <orderEntry type="module-library">
       <library name="terraform-metadata" type="repository">
-        <properties maven-id="org.intellij.plugins.hcl.terraform:terraform-metadata:2024.1.21">
+        <properties maven-id="org.intellij.plugins.hcl.terraform:terraform-metadata:2025.2.0">
           <verification>
-            <artifact url="file://$MAVEN_REPOSITORY$/org/intellij/plugins/hcl/terraform/terraform-metadata/2024.1.21/terraform-metadata-2024.1.21.jar">
-              <sha256sum>07c1181d111329bf7d660eaba9f153c0ce5a1119820777e05b6e3d27ec958246</sha256sum>
+            <artifact url="file://$MAVEN_REPOSITORY$/org/intellij/plugins/hcl/terraform/terraform-metadata/2025.2.0/terraform-metadata-2025.2.0.jar">
+              <sha256sum>6ed9af4a5b34824486707242416056c93df2ac1bbc4183c3113583b09226070e</sha256sum>
             </artifact>
           </verification>
         </properties>
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/intellij/plugins/hcl/terraform/terraform-metadata/2024.1.21/terraform-metadata-2024.1.21.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/intellij/plugins/hcl/terraform/terraform-metadata/2025.2.0/terraform-metadata-2025.2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

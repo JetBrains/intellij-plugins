@@ -1,6 +1,6 @@
 # intention: "HCLBlockMissingProperty"
 # fix: "Add missing properties"
-# position: 10: ""vault""
+# position: 19: ""test-module""
 #
 terraform {
   required_providers {
@@ -13,7 +13,6 @@ terraform {
 provider "docker" {
 }
 provider "vault" {
-  address = ""
 }
 //noinspection MissingProperty
 provider "atlas" {
@@ -23,4 +22,5 @@ terraform {
   }
 }
 module "test-module" {
+  source = ""
 }

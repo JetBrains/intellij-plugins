@@ -55,5 +55,16 @@
     <offset>0</offset>
     <length>25</length>
   </problem>
+  <problem>
+    <file>test8.tf</file>
+    <line>30</line>
+    <module>15</module>
+    <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown resource type</problem_class>
+    <description>Unknown resource: "dockerk_image"</description>
+    <highlighted_element>resource "dockerk_image" "img" { name = "img" }</highlighted_element>
+    <language>HCL</language>
+    <offset>0</offset>
+    <length>49</length>
+  </problem>
 </problems>
 

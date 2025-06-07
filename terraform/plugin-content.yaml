@@ -5,7 +5,7 @@
   library: terraform-metadata
   module: intellij.terraform
   files:
-  - name: $MAVEN_REPOSITORY$/org/intellij/plugins/hcl/terraform/terraform-metadata/2024/terraform-metadata-2024.jar
+  - name: $MAVEN_REPOSITORY$/org/intellij/plugins/hcl/terraform/terraform-metadata/2025/terraform-metadata-2025.jar
 - name: lib/terraform.jar
   modules:
   - name: intellij.terraform
