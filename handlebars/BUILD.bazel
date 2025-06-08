@@ -46,6 +46,8 @@ jvm_library(
   associates = [":handlebars"],
   deps = [
     "@community//platform/analysis-api:analysis",
+    "@community//platform/util/concurrency",
+    "@community//platform/util/concurrency:concurrency_test_lib",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
