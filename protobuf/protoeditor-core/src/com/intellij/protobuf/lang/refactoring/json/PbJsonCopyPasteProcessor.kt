@@ -55,8 +55,9 @@ internal class PbJsonCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
                                        caretOffset: Int,
                                        indented: Ref<in Boolean>,
                                        values: MutableList<out TextBlockTransferableData?>) {
-    if (editor.virtualFile.fileType != PbFileType.INSTANCE) return
-    val pbFile = PsiManager.getInstance(project).findFile(editor.virtualFile).asSafely<PbFile>() ?: return
+    val virtualFile = editor.virtualFile ?: return
+    if (virtualFile.fileType != PbFileType.INSTANCE) return
+    val pbFile = PsiManager.getInstance(project).findFile(virtualFile).asSafely<PbFile>() ?: return
     val syntaxLevel = pbFile.syntaxLevel
     val data = values.filterIsInstance<PbJsonTransferableData>().singleOrNull() ?: return
 
