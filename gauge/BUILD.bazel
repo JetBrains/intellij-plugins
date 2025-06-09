@@ -13,6 +13,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
+    "@community//java/java-indexing-api:indexing",
     "@community//platform/analysis-api:analysis",
     "@community//platform/util/concurrency",
     "@community//platform/core-api:core",
@@ -59,6 +60,7 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [":gauge"],
   deps = [
+    "@community//java/java-indexing-api:indexing",
     "@community//platform/analysis-api:analysis",
     "@community//platform/util/concurrency",
     "@community//platform/util/concurrency:concurrency_test_lib",
