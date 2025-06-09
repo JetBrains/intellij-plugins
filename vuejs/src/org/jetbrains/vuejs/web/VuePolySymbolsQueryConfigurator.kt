@@ -8,14 +8,6 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.findPsiFile
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.psi.xml.XmlElement
-import com.intellij.psi.xml.XmlTag
-import com.intellij.util.SmartList
-import com.intellij.util.asSafely
 import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
 import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_JS
 import com.intellij.polySymbols.PolySymbolQualifiedKind
@@ -25,6 +17,14 @@ import com.intellij.polySymbols.query.PolySymbolNameConversionRules
 import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
 import com.intellij.polySymbols.query.PolySymbolNameConverter
 import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
+import com.intellij.psi.xml.XmlElement
+import com.intellij.psi.xml.XmlTag
+import com.intellij.util.SmartList
+import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.isScriptSetupLocalDirectiveName
@@ -34,27 +34,27 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.scopes.*
 
-val VUE_TOP_LEVEL_ELEMENTS = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-file-top-elements")
-val VUE_COMPONENTS = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-components")
-val VUE_COMPONENT_PROPS = PolySymbolQualifiedKind(NAMESPACE_HTML, "props")
-val VUE_COMPONENT_COMPUTED_PROPERTIES = PolySymbolQualifiedKind(NAMESPACE_HTML, "computed-properties")
-val VUE_COMPONENT_DATA_PROPERTIES = PolySymbolQualifiedKind(NAMESPACE_HTML, "data-properties")
-val VUE_DIRECTIVES = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-directives")
-val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-script-setup-local-directives")
-val VUE_AVAILABLE_SLOTS = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-available-slots")
-val VUE_MODEL = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-model")
-val VUE_DIRECTIVE_ARGUMENT = PolySymbolQualifiedKind(NAMESPACE_HTML, "argument")
-val VUE_DIRECTIVE_MODIFIERS = PolySymbolQualifiedKind(NAMESPACE_HTML, "modifiers")
-val VUE_COMPONENT_NAMESPACES = PolySymbolQualifiedKind(NAMESPACE_JS, "vue-component-namespaces")
-val VUE_PROVIDES = PolySymbolQualifiedKind(NAMESPACE_JS, "vue-provides")
-val VUE_SPECIAL_PROPERTIES = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-special-properties")
-val VUE_BINDING_SHORTHANDS = PolySymbolQualifiedKind(NAMESPACE_HTML, "vue-binding-shorthands")
+val VUE_TOP_LEVEL_ELEMENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-file-top-elements"]
+val VUE_COMPONENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-components"]
+val VUE_COMPONENT_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "props"]
+val VUE_COMPONENT_COMPUTED_PROPERTIES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "computed-properties"]
+val VUE_COMPONENT_DATA_PROPERTIES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "data-properties"]
+val VUE_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-directives"]
+val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-script-setup-local-directives"]
+val VUE_AVAILABLE_SLOTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-available-slots"]
+val VUE_MODEL: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-model"]
+val VUE_DIRECTIVE_ARGUMENT: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "argument"]
+val VUE_DIRECTIVE_MODIFIERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "modifiers"]
+val VUE_COMPONENT_NAMESPACES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "vue-component-namespaces"]
+val VUE_PROVIDES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "vue-provides"]
+val VUE_SPECIAL_PROPERTIES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-special-properties"]
+val VUE_BINDING_SHORTHANDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-binding-shorthands"]
 
-const val PROP_VUE_MODEL_PROP = "prop"
-const val PROP_VUE_MODEL_EVENT = "event"
+const val PROP_VUE_MODEL_PROP: String = "prop"
+const val PROP_VUE_MODEL_EVENT: String = "event"
 
-const val PROP_VUE_PROXIMITY = "x-vue-proximity"
-const val PROP_VUE_COMPOSITION_COMPONENT = "x-vue-composition-component"
+const val PROP_VUE_PROXIMITY: String = "x-vue-proximity"
+const val PROP_VUE_COMPOSITION_COMPONENT: String = "x-vue-composition-component"
 
 class VuePolySymbolsQueryConfigurator :
   PolySymbolsQueryConfigurator {

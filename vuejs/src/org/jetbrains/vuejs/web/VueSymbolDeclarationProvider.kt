@@ -50,7 +50,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
         }
           ?.let { VueModelManager.findEnclosingComponent(it) }
           ?.asPolySymbol("", VueModelVisitor.Proximity.LOCAL)
-          ?.getMatchingSymbols(PolySymbolQualifiedName(JS_EVENTS, name),
+          ?.getMatchingSymbols(JS_EVENTS.withName(name),
                                PolySymbolsNameMatchQueryParams.create(PolySymbolsQueryExecutorFactory.create(parent, false)),
                                Stack())
           ?.getOrNull(0)

@@ -125,11 +125,11 @@ fun findFormGroupForGetCallParameterArray(element: JSExpression): Angular2FormGr
     .parent.asSafely<JSArrayLiteralExpression>()
     ?.let { findFormGroupForGetCallParameter(it) }
 
-val NG_FORM_GROUP_FIELDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-form-group-fields")
+val NG_FORM_GROUP_FIELDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-form-group-fields"]
 
-val NG_FORM_CONTROL_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-form-control-props")
-val NG_FORM_GROUP_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-form-group-props")
-val NG_FORM_ARRAY_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind(NAMESPACE_JS, "ng-form-array-props")
+val NG_FORM_CONTROL_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-form-control-props"]
+val NG_FORM_GROUP_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-form-group-props"]
+val NG_FORM_ARRAY_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-form-array-props"]
 
 val NG_FORM_ANY_CONTROL_PROPS: Set<PolySymbolQualifiedKind> = setOf(
   NG_FORM_CONTROL_PROPS,
