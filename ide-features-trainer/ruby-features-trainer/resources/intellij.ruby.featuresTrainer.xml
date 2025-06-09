@@ -1,6 +1,7 @@
-<idea-plugin package="org.jetbrains.ruby.ift">
+<idea-plugin>
   <dependencies>
     <plugin id="training"/>
+    <module name="intellij.ruby.backend"/>
   </dependencies>
   <extensions defaultExtensionNs="training">
     <ift.language.extension language="ruby" defaultProductName="RubyMine" implementationClass="org.jetbrains.ruby.ift.RubyLangSupport"/>
