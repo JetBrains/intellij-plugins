@@ -7,22 +7,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.LineSeparator
 
-internal interface PrettierApplyFormattingStrategy {
-  fun apply(project: Project, file: VirtualFile, context: PrettierFormattingContext): Boolean
+fun interface PrettierFormattingApplier {
+  fun apply(project: Project, virtualFile: VirtualFile, context: PrettierFormattingContext): Boolean
 
   companion object {
-    fun from(context: PrettierFormattingContext): PrettierApplyFormattingStrategy {
+    fun from(context: PrettierFormattingContext): PrettierFormattingApplier {
       val diff = computeFormattingDiff(context)
-      return DiffBased(diff)
-    }
-  }
-
-  class DiffBased(
-    private val formattingDiff: PrettierFormattingDiff,
-  ) : PrettierApplyFormattingStrategy {
-    override fun apply(project: Project, virtualFile: VirtualFile, context: PrettierFormattingContext): Boolean {
-      applyTextDifferencesToDocument(context, formattingDiff)
-      return updateLineSeparatorIfNeeded(project, virtualFile, context.detectedLineSeparator)
+      return PrettierFormattingApplier { project, virtualFile, formattingContext ->
+        applyTextDifferencesToDocument(formattingContext, diff)
+        updateLineSeparatorIfNeeded(project, virtualFile, formattingContext.detectedLineSeparator)
+      }
     }
   }
 }

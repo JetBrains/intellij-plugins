@@ -29,7 +29,7 @@ import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.prettierjs.formatting.PrettierApplyFormattingStrategy;
+import com.intellij.prettierjs.formatting.PrettierFormattingApplier;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -167,7 +167,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
        */
       Ref<Boolean> lineSeparatorUpdated = new Ref<>(Boolean.FALSE);
       var formattingContext = createFormattingContext(document, newContent, result.cursorOffset);
-      var strategy = PrettierApplyFormattingStrategy.Companion.from(formattingContext);
+      var strategy = PrettierFormattingApplier.Companion.from(formattingContext);
 
       EditorScrollingPositionKeeper.perform(editor, true, () -> {
         runWriteCommandAction(project, () -> {
@@ -286,7 +286,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     }
   }
 
-  static @Nullable String processFileAsFormattingTask(@NotNull PsiFile psiFile, @NotNull String text, @NotNull TextRange range) {
+  static @Nullable PrettierLanguageService.FormatResult processFileAsFormattingTask(@NotNull PsiFile psiFile, @NotNull String text, @NotNull TextRange range) {
     ProgressManager.checkCanceled();
 
     VirtualFile vFile = psiFile.getVirtualFile();
@@ -298,12 +298,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
       ensureConfigsSaved(Collections.singletonList(vFile), project);
     });
 
-    PrettierLanguageService.FormatResult result = performRequestForFile(psiFile, range, text);
-    if (result != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported && result.result != null) {
-      return StringUtil.convertLineSeparators(result.result);
-    }
-
-    return null;
+    return performRequestForFile(psiFile, range, text);
   }
 
   /**
@@ -315,7 +310,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported && (result.result != null)) {
       var formattingContext = createFormattingContext(document, result.result, result.cursorOffset);
-      var strategy = PrettierApplyFormattingStrategy.Companion.from(formattingContext);
+      var strategy = PrettierFormattingApplier.Companion.from(formattingContext);
       strategy.apply(project, virtualFile, formattingContext);
 
       var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();

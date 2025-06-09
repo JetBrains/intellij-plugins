@@ -14,7 +14,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.prettierjs.formatting.PrettierApplyFormattingStrategy
+import com.intellij.prettierjs.formatting.PrettierFormattingApplier
 import com.intellij.prettierjs.formatting.createFormattingContext
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -67,7 +67,7 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
       result.cursorOffset,
     )
 
-    val strategy = PrettierApplyFormattingStrategy.from(formattingContext)
+    val strategy = PrettierFormattingApplier.from(formattingContext)
     writeCommandAction(project, PrettierBundle.message("reformat.with.prettier.command.name")) {
       strategy.apply(project, file, formattingContext)
       moveCursor(file, psiFile, formattingContext.cursorOffset)

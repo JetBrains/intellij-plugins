@@ -390,6 +390,18 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     });
   }
 
+  public void testCaretPositionReformat() {
+    configureRunOnReformat(() -> doTestEditorReformat(""));
+  }
+
+  public void testCrlfCaretPositionReformat() {
+    configureRunOnReformat(() -> {
+      doTestEditorReformat("", () -> {
+        JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF);
+      });
+    });
+  }
+
   public void testCommentAfterImports() {
     configureRunOnReformat(() -> doTestEditorReformat(""));
   }
@@ -544,8 +556,15 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   private void doTestEditorReformat(@NotNull String subDir) {
+    doTestEditorReformat(subDir, null);
+  }
+
+  private void doTestEditorReformat(@NotNull String subDir, @Nullable Runnable configureFile) {
     String dirName = getTestName(true);
     myFixture.configureFromTempProjectFile(subDir + "toReformat.js");
+    if (configureFile != null) {
+      configureFile.run();
+    }
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
     myFixture.checkResultByFile(dirName + "/" + subDir + "toReformat_after.js");
   }
