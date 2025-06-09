@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
@@ -27,7 +28,7 @@ class VueEmitCallSymbol(
 ) {
 
   override val qualifiedKind: PolySymbolQualifiedKind
-    get() = PolySymbol.JS_EVENTS
+    get() = JS_EVENTS
 
   override val type: JSType?
     get() = item.eventJSType

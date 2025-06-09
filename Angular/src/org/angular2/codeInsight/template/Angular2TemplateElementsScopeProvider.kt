@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.utils.withNavigationTarget
 import com.intellij.psi.PsiElement
@@ -73,7 +74,7 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
     }
 
     fun add(symbol: PolySymbol) {
-      assert(symbol.qualifiedKind == PolySymbol.JS_SYMBOLS)
+      assert(symbol.qualifiedKind == JS_SYMBOLS)
       symbols.add(symbol)
     }
 

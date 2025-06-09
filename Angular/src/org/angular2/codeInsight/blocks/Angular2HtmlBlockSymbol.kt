@@ -3,7 +3,7 @@ package org.angular2.codeInsight.blocks
 
 import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbol.Companion.JS_SYMBOLS
+import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.webTypes.WebTypesSymbolBase
 import com.intellij.polySymbols.webTypes.WebTypesSymbolFactory

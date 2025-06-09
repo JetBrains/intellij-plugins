@@ -4,6 +4,11 @@ package org.angular2.web
 import com.intellij.javascript.polySymbols.decorateWithJsType
 import com.intellij.javascript.polySymbols.decorateWithSymbolType
 import com.intellij.polySymbols.FrameworkId
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
+import com.intellij.polySymbols.js.NAMESPACE_JS
+import com.intellij.polySymbols.js.JS_EVENTS
+import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
@@ -16,8 +21,8 @@ import org.angular2.lang.types.BindingsTypeResolver
 import org.angular2.web.scopes.OneTimeBindingsScope
 
 
-private val typedKinds = setOf(PolySymbol.JS_EVENTS,
-                               PolySymbol.JS_PROPERTIES,
+private val typedKinds = setOf(JS_EVENTS,
+                               JS_PROPERTIES,
                                NG_DIRECTIVE_ATTRIBUTES,
                                NG_DIRECTIVE_INPUTS,
                                NG_DIRECTIVE_OUTPUTS,
@@ -38,7 +43,7 @@ class Angular2CompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer 
       item
     else
       when (qualifiedKind) {
-        PolySymbol.HTML_ATTRIBUTES, PolySymbol.HTML_ATTRIBUTE_VALUES ->
+        HTML_ATTRIBUTES, HTML_ATTRIBUTE_VALUES ->
           item.symbol
             ?.let { symbol ->
               val symbolKind = symbol.qualifiedKind
@@ -63,7 +68,7 @@ class Angular2CompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer 
               }
             }
           ?: item
-        else -> if (qualifiedKind.namespace == PolySymbol.NAMESPACE_JS
+        else -> if (qualifiedKind.namespace == NAMESPACE_JS
                     && typedKinds.contains(item.symbol?.qualifiedKind))
           item.decorateWithSymbolType(location, item.symbol)
         else

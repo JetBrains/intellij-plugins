@@ -8,9 +8,10 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
+import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
@@ -70,7 +71,7 @@ class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val 
     // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
     // remove everything else from completion
     if (svgContext
-        && qualifiedKind == PolySymbol.HTML_ELEMENTS
+        && qualifiedKind == HTML_ELEMENTS
         && item.name !in svgAllowedElements)
       return null
     val symbol = item.symbol

@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
+import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
@@ -29,7 +30,7 @@ class VueSlotSymbol(
     get() = item.pattern?.let { PolySymbolsPatternFactory.createRegExMatch(it, true) }
 
   override val qualifiedKind: PolySymbolQualifiedKind
-    get() = PolySymbol.HTML_SLOTS
+    get() = HTML_SLOTS
 
   override val type: JSType?
     get() = item.scope

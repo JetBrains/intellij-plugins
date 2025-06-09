@@ -6,11 +6,13 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.highlighting.PolySymbolHighlightingCustomizer
-import com.intellij.polySymbols.js.PolySymbolJsKind
+import com.intellij.polySymbols.js.JsSymbolSymbolKind
 import org.angular2.Angular2DecoratorUtil.isHostBinding
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
@@ -42,11 +44,11 @@ class Angular2PolySymbolHighlightingCustomizer : PolySymbolHighlightingCustomize
 
   override fun getSymbolTextAttributes(host: PsiExternalReferenceHost, symbol: PolySymbol, level: Int): TextAttributesKey? {
     when (symbol.qualifiedKind) {
-      PolySymbol.JS_SYMBOLS ->
-        if (symbol.jsKind == PolySymbolJsKind.Variable
+      JS_SYMBOLS ->
+        if (symbol.jsKind == JsSymbolSymbolKind.Variable
             && symbol is PsiSourcedPolySymbol && symbol.source?.language == Angular2Language)
           return Angular2HighlighterColors.NG_VARIABLE
-      PolySymbol.HTML_ATTRIBUTES ->
+      HTML_ATTRIBUTES ->
         if (host is JSProperty && isHostBinding(host)) {
           val info = Angular2AttributeNameParser.parse(symbol.name)
           return when (info.type) {

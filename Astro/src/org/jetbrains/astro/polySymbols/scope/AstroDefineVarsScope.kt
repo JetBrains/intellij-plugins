@@ -7,7 +7,9 @@ import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.css.CSS_PROPERTIES
+import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
@@ -54,7 +56,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
   override val providedSymbol: PolySymbol = object : PolySymbol {
 
     override val qualifiedKind: PolySymbolQualifiedKind
-      get() = PolySymbol.JS_SYMBOLS
+      get() = JS_SYMBOLS
 
     override val name: String
       get() = "Astro Defined Script Variable"
@@ -88,7 +90,7 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
   override val providedSymbol: PolySymbol = object : PolySymbol {
 
     override val qualifiedKind: PolySymbolQualifiedKind
-      get() = PolySymbol.CSS_PROPERTIES
+      get() = CSS_PROPERTIES
 
     override val name: String
       get() = "Astro Defined CSS Variable"

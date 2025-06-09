@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.libraries.i18n
 import com.intellij.lang.Language
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
@@ -84,7 +85,7 @@ class VueI18NQueryConfigurator : PolySymbolsQueryConfigurator {
       PolySymbolOrigin.create(VueFramework.ID, "vue-i18n")
 
     override val qualifiedKind: PolySymbolQualifiedKind
-      get() = PolySymbol.HTML_ELEMENTS
+      get() = HTML_ELEMENTS
 
     override val extension: Boolean
       get() = true

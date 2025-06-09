@@ -5,6 +5,7 @@ import com.intellij.html.polySymbols.PolySymbolsHtmlQueryHelper.getStandardHtmlE
 import com.intellij.html.polySymbols.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScope
@@ -59,12 +60,12 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
           scope.add(PolySymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, it))
         }
         val scopeList = scope.toList()
-        elementNames.flatMapTo(scope) { executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS, it, additionalScope = scopeList) }
+        elementNames.flatMapTo(scope) { executor.runNameMatchQuery(HTML_ELEMENTS, it, additionalScope = scopeList) }
         elementNames.mapTo(scope) { MatchedDirectivesScope.createFor(location, it) }
       }
       else {
         scope.add(PolySymbolsHtmlQueryHelper.getStandardHtmlAttributeSymbolsScopeForTag(file.project, "div"))
-        executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS, "div", additionalScope = scope.toList())
+        executor.runNameMatchQuery(HTML_ELEMENTS, "div", additionalScope = scope.toList())
           .forEach { scope.add(it) }
       }
       return scope.toList()

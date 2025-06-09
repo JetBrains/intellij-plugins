@@ -3,6 +3,8 @@ package org.angular2.web.scopes
 
 import com.intellij.javascript.polySymbols.symbols.asPolySymbol
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.js.JS_KEYWORDS
+import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
@@ -18,7 +20,7 @@ class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
   PolySymbolsScopeWithCache<Angular2BlockParameter, Unit>(null, parameter.project, parameter, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == PolySymbol.JS_SYMBOLS
+    qualifiedKind == JS_SYMBOLS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -37,7 +39,7 @@ class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
   }
 
   override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean {
-    return qualifiedKind == PolySymbol.JS_SYMBOLS || qualifiedKind == PolySymbol.JS_KEYWORDS
+    return qualifiedKind == JS_SYMBOLS || qualifiedKind == JS_KEYWORDS
   }
 
   override fun createPointer(): Pointer<DeferOnTriggerParameterScope> {

@@ -6,13 +6,14 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbol.Companion.HTML_ATTRIBUTES
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -43,7 +44,7 @@ class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : Po
     strict: Boolean,
     qualifiedName: PolySymbolQualifiedName,
   ): List<PolySymbol> {
-    if (qualifiedName.namespace != PolySymbol.NAMESPACE_HTML) return matches
+    if (qualifiedName.namespace != NAMESPACE_HTML) return matches
 
     var result = matches
     if (qualifiedName.matches(VUE_COMPONENTS)) {
@@ -60,7 +61,7 @@ class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : Po
       }
       if (!strict) return result
     }
-    else if (qualifiedName.matches(PolySymbol.HTML_ELEMENTS)) {
+    else if (qualifiedName.matches(HTML_ELEMENTS)) {
       val standardHtmlSymbols = result.filterTo(LinkedHashSet()) { symbol ->
         symbol.nameSegments.flatMap { it.symbols }.any { it is PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
       }

@@ -4,6 +4,7 @@ package org.angular2.codeInsight.attributes
 import com.intellij.html.polySymbols.attributes.PolySymbolAttributeDescriptor
 import com.intellij.html.polySymbols.attributes.PolySymbolHtmlAttributeInfo
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
@@ -57,7 +58,7 @@ class Angular2AttributeDescriptor(info: PolySymbolHtmlAttributeInfo, tag: XmlTag
           get() = Angular2SymbolOrigin.empty
 
         override val qualifiedKind: PolySymbolQualifiedKind
-          get() = PolySymbol.HTML_ATTRIBUTES
+          get() = HTML_ATTRIBUTES
 
         override val name: String
           get() = "Fake symbol"

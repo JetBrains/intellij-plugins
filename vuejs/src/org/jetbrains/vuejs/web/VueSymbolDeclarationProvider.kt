@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web
 import com.intellij.lang.javascript.psi.*
 import com.intellij.openapi.util.TextRange
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbol.Companion.JS_EVENTS
+import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.declarations.PolySymbolDeclaration
 import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider

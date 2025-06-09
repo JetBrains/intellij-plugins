@@ -4,6 +4,8 @@ package org.jetbrains.vuejs.web
 import com.intellij.javascript.polySymbols.renderJsTypeForDocs
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor
 import com.intellij.openapi.util.text.Strings
+import com.intellij.polySymbols.html.HTML_SLOTS
+import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationCustomizer
@@ -16,7 +18,7 @@ import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl
 
 class VueDocumentationCustomizer : PolySymbolDocumentationCustomizer {
   override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: PolySymbolDocumentation): PolySymbolDocumentation {
-    if (symbol.qualifiedKind == PolySymbol.HTML_SLOTS
+    if (symbol.qualifiedKind == HTML_SLOTS
         && (symbol.origin.framework == VueFramework.ID
             || symbol.psiContext.let { it != null && isVueContext(it) })) {
       symbol.renderJsTypeForDocs(null, location)
@@ -29,7 +31,7 @@ class VueDocumentationCustomizer : PolySymbolDocumentationCustomizer {
           )
         }
     }
-    else if (symbol.qualifiedKind == PolySymbol.JS_EVENTS
+    else if (symbol.qualifiedKind == JS_EVENTS
              && (symbol.origin.framework == VueFramework.ID
                  || symbol.psiContext.let { it != null && isVueContext(it) })) {
       symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), location, getTypeSubstitutorFor(location))?.let {

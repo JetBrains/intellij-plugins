@@ -7,7 +7,9 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.polySymbols.FrameworkId
-import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.html.HTML_ELEMENTS
+import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
@@ -30,12 +32,12 @@ class VueSymbolsCodeCompletionItemCustomizer :
   ): PolySymbolCodeCompletionItem? =
     if (framework == VueFramework.ID)
       when (qualifiedKind) {
-        PolySymbol.HTML_ATTRIBUTES ->
+        HTML_ATTRIBUTES ->
           item.symbol
-            ?.takeIf { it.qualifiedKind == VUE_COMPONENT_PROPS || it.qualifiedKind == PolySymbol.JS_EVENTS }
+            ?.takeIf { it.qualifiedKind == VUE_COMPONENT_PROPS || it.qualifiedKind == JS_EVENTS }
             ?.let { item.decorateWithSymbolType(location, it) }
           ?: item
-        PolySymbol.HTML_ELEMENTS ->
+        HTML_ELEMENTS ->
           item.takeIf { !shouldFilterOutLowerCaseScriptSetupIdentifier(it) }
         else -> item
       }

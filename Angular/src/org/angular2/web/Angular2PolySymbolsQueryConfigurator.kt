@@ -9,6 +9,9 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.js.JS_STRING_LITERALS
+import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.css.CssElement
@@ -20,9 +23,8 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_JS
+import com.intellij.polySymbols.html.NAMESPACE_HTML
+import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.context.PolyContext
@@ -212,7 +214,7 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
               ?.takeIf { Angular2DecoratorUtil.isAngularEntityDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
               ?.also { decorator = it } != null
         )
-          listOf(HostBindingsScope(mapOf(PolySymbol.JS_PROPERTIES to PolySymbol.HTML_ATTRIBUTES), decorator!!))
+          listOf(HostBindingsScope(mapOf(JS_PROPERTIES to HTML_ATTRIBUTES), decorator!!))
         else
           listOfNotNull(getCssClassesInJSLiteralInHtmlAttributeScope(element))
       }
@@ -234,7 +236,7 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
     return element
       .parentOfType<TypeScriptClass>()
       ?.let { Angular2DecoratorUtil.findDecorator(it, true, COMPONENT_DEC, DIRECTIVE_DEC) }
-      ?.let { HostBindingsScope(mapOf(PolySymbol.JS_STRING_LITERALS to mapping), it) }
+      ?.let { HostBindingsScope(mapOf(JS_STRING_LITERALS to mapping), it) }
   }
 
   private fun getViewChildrenScopeForLiteral(element: JSLiteralExpression): PolySymbolsScope? {

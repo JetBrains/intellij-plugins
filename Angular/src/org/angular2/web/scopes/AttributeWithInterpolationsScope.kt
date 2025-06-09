@@ -3,8 +3,9 @@ package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
@@ -29,7 +30,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
     params: PolySymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
-    if (qualifiedName.matches(PolySymbol.HTML_ATTRIBUTES)) {
+    if (qualifiedName.matches(HTML_ATTRIBUTES)) {
       AttributeWithInterpolationsSymbol.match(qualifiedName.name, params, scope)
     }
     else emptyList()
@@ -40,7 +41,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
       get() = Angular2SymbolOrigin.empty
 
     override val qualifiedKind: PolySymbolQualifiedKind
-      get() = PolySymbol.HTML_ATTRIBUTES
+      get() = HTML_ATTRIBUTES
 
     override val name: String
       get() = "Attribute with interpolations"

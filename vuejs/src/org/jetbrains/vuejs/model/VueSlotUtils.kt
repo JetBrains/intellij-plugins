@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.StubSafe
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
 import com.intellij.lang.javascript.psi.types.JSNamedType
+import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
@@ -38,22 +39,22 @@ fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<
     tag = tag,
     newApi = newApi,
     anyMatch = { anySlot.match(name, PolySymbolsNameMatchQueryParams.create(PolySymbolsQueryExecutorFactory.getInstance(tag.project).create(null)), Stack()) },
-    process = { runNameMatchQuery(PolySymbol.HTML_SLOTS.withName(name)) },
+    process = { runNameMatchQuery(HTML_SLOTS.withName(name)) },
   )
 
 fun getAvailableSlots(tag: XmlTag, expandPatterns: Boolean, newApi: Boolean): List<PolySymbol> =
   processSlots(tag, newApi, { emptyList() }) {
-    runListSymbolsQuery(PolySymbol.HTML_SLOTS, expandPatterns)
+    runListSymbolsQuery(HTML_SLOTS, expandPatterns)
   }
 
 fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newApi: Boolean): List<PolySymbolCodeCompletionItem> =
   processSlots(tag, newApi, { emptyList() }) {
-    runCodeCompletionQuery(PolySymbol.HTML_SLOTS, name, position)
+    runCodeCompletionQuery(HTML_SLOTS, name, position)
   }
 
 private val anySlot = VueAnySymbol(
   PolySymbolOrigin.empty(),
-  PolySymbol.HTML_SLOTS,
+  HTML_SLOTS,
   "Unknown slot"
 )
 

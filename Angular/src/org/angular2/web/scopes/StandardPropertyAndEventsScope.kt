@@ -14,8 +14,9 @@ import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.PolySymbol.Companion.JS_EVENTS
-import com.intellij.polySymbols.PolySymbol.Companion.JS_PROPERTIES
+import com.intellij.polySymbols.html.HTML_ELEMENTS
+import com.intellij.polySymbols.js.JS_EVENTS
+import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.PsiElement
@@ -41,7 +42,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     params: PolySymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
-    if (qualifiedName.matches(PolySymbol.HTML_ELEMENTS)) {
+    if (qualifiedName.matches(HTML_ELEMENTS)) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", qualifiedName.name))
     }
     else emptyList()
@@ -79,7 +80,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       get() = Angular2SymbolOrigin.empty
 
     override val qualifiedKind: PolySymbolQualifiedKind
-      get() = PolySymbol.HTML_ELEMENTS
+      get() = HTML_ELEMENTS
 
     override fun getModificationCount(): Long =
       PsiModificationTracker.getInstance(project).modificationCount

@@ -4,8 +4,9 @@ import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.psi.*
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_JS
+import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScope
@@ -69,17 +70,17 @@ class Angular2FormsPolySymbolQueryConfigurator : PolySymbolsQueryConfigurator {
   }
 
   private val ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL = ReferencingPolySymbol.create(
-    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form control name", PolySymbolOrigin.empty(),
+    HTML_ATTRIBUTE_VALUES, "Angular Form control name", PolySymbolOrigin.empty(),
     NG_FORM_CONTROL_PROPS,
   )
 
   private val ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL = ReferencingPolySymbol.create(
-    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form array name", PolySymbolOrigin.empty(),
+    HTML_ATTRIBUTE_VALUES, "Angular Form array name", PolySymbolOrigin.empty(),
     NG_FORM_ARRAY_PROPS,
   )
 
   private val ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL = ReferencingPolySymbol.create(
-    PolySymbol.HTML_ATTRIBUTE_VALUES, "Angular Form group name", PolySymbolOrigin.empty(),
+    HTML_ATTRIBUTE_VALUES, "Angular Form group name", PolySymbolOrigin.empty(),
     NG_FORM_GROUP_PROPS,
   )
 

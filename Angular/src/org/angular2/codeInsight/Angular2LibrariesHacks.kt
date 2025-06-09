@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager.getCachedValue
@@ -22,7 +23,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
@@ -183,7 +183,7 @@ object Angular2LibrariesHacks {
     override val name: String = input.name.replace("([A-Z])".toRegex(), "-$1").lowercase(Locale.ENGLISH)
 
     override val qualifiedKind: PolySymbolQualifiedKind
-      get() = PolySymbol.HTML_ATTRIBUTES
+      get() = HTML_ATTRIBUTES
 
     override fun createPointer(): Pointer<IonicComponentAttribute> {
       val input = this.delegate.createPointer()

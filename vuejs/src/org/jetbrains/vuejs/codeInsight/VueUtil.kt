@@ -34,7 +34,7 @@ import com.intellij.notification.NotificationGroupManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbol.Companion.NAMESPACE_HTML
+import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.utils.namespace
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.*

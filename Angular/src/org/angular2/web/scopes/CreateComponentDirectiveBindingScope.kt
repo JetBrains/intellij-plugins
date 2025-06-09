@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.AstLoadingFilter
@@ -34,11 +35,11 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
   : PolySymbolsScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
 
   companion object {
-    val INPUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive input",
+    val INPUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive input",
                                                                     true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_INPUTS)
-    val OUTPUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive output",
+    val OUTPUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive output",
                                                                      true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_OUTPUTS)
-    val IN_OUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(PolySymbol.JS_STRING_LITERALS, "Angular directive two-way binding",
+    val IN_OUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive two-way binding",
                                                                      true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_IN_OUTS)
   }
 

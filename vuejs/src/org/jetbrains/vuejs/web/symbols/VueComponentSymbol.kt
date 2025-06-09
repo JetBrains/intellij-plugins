@@ -9,6 +9,8 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
+import com.intellij.polySymbols.html.HTML_SLOTS
+import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
@@ -66,8 +68,8 @@ class VueComponentSymbol(
     params: PolySymbolsNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
-    if (qualifiedName.matches(PolySymbol.HTML_SLOTS) && item is VueUnresolvedComponent)
-      listOf(PolySymbolMatch.create(qualifiedName.name, PolySymbol.HTML_SLOTS, this.origin,
+    if (qualifiedName.matches(HTML_SLOTS) && item is VueUnresolvedComponent)
+      listOf(PolySymbolMatch.create(qualifiedName.name, HTML_SLOTS, this.origin,
                                     PolySymbolNameSegment.create(0, qualifiedName.name.length)))
     else
       super.getMatchingSymbols(qualifiedName, params, scope)
@@ -108,7 +110,7 @@ class VueComponentSymbol(
         }, onlyPublic = false)
         props.map { VueComputedPropertySymbol(it, item, this.origin) }
       }
-      PolySymbol.HTML_SLOTS -> {
+      HTML_SLOTS -> {
         (item as? VueContainer)
           ?.slots
           ?.map { VueSlotSymbol(it, item, this.origin) }
@@ -121,7 +123,7 @@ class VueComponentSymbol(
           ?.let { listOf(VueModelSymbol(this.origin, it)) }
         ?: emptyList()
       }
-      PolySymbol.JS_EVENTS -> {
+      JS_EVENTS -> {
         (item as? VueContainer)
           ?.emits
           ?.map { VueEmitCallSymbol(it, item, this.origin) }

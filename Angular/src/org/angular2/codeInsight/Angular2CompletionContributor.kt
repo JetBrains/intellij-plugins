@@ -25,6 +25,9 @@ import com.intellij.lang.javascript.psi.util.runWithTimeout
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.polySymbols.js.JS_KEYWORDS
+import com.intellij.polySymbols.js.JS_SYMBOLS
+import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
@@ -34,7 +37,6 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil
@@ -212,7 +214,7 @@ class Angular2CompletionContributor : CompletionContributor() {
 
         // Block support
         if (Angular2HtmlBlockReferenceExpressionCompletionProvider.addCompletions(result, ref)
-            || PolySymbolsCompletionProviderBase.isFurtherCodeCompletionPreventedFor(parameters, PolySymbol.JS_PROPERTIES, PolySymbol.JS_KEYWORDS, PolySymbol.JS_SYMBOLS)) {
+            || PolySymbolsCompletionProviderBase.isFurtherCodeCompletionPreventedFor(parameters, JS_PROPERTIES, JS_KEYWORDS, JS_SYMBOLS)) {
           return
         }
 
@@ -249,7 +251,7 @@ class Angular2CompletionContributor : CompletionContributor() {
         }
 
         if (ref.qualifier != null) {
-          PolySymbolsCompletionProviderBase.preventFurtherCodeCompletionsFor(parameters, PolySymbol.JS_PROPERTIES)
+          PolySymbolsCompletionProviderBase.preventFurtherCodeCompletionsFor(parameters, JS_PROPERTIES)
           return
         }
 

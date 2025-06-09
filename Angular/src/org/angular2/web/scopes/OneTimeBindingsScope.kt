@@ -19,6 +19,7 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
@@ -57,7 +58,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
     val attributeSelectors = queryExecutor
       .runListSymbolsQuery(NG_DIRECTIVE_ATTRIBUTE_SELECTORS, expandPatterns = true, additionalScope = scope)
       .plus(queryExecutor
-              .runListSymbolsQuery(PolySymbol.HTML_ATTRIBUTES, expandPatterns = false, virtualSymbols = false, additionalScope = scope)
+              .runListSymbolsQuery(HTML_ATTRIBUTES, expandPatterns = false, virtualSymbols = false, additionalScope = scope)
               .filterIsInstance<PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol>()
       )
       .filter { it.attributeValue?.required == false }

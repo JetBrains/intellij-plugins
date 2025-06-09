@@ -8,6 +8,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.*
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -41,8 +43,8 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
 
     val executor = PolySymbolsQueryExecutorFactory.create(dataHolder)
     val attributes = executor
-      .runListSymbolsQuery(PolySymbol.HTML_ATTRIBUTES, virtualSymbols = false, expandPatterns = true,
-                           additionalScope = executor.runNameMatchQuery(PolySymbol.HTML_ELEMENTS, tag.name))
+      .runListSymbolsQuery(HTML_ATTRIBUTES, virtualSymbols = false, expandPatterns = true,
+                           additionalScope = executor.runNameMatchQuery(HTML_ELEMENTS, tag.name))
       .associateBy { it.name }
 
     VueTemplateScopesResolver.resolve(tag, Processor { resolveResult ->
