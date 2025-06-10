@@ -8,6 +8,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.tree.IElementType
 import org.angular2.entities.Angular2DirectiveSelector
 import org.angular2.entities.Angular2DirectiveSelectorImpl
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
@@ -16,10 +17,13 @@ import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorStub
 
 class Angular2HtmlNgContentSelectorImpl : StubBasedPsiElementBase<Angular2HtmlNgContentSelectorStub?>,
                                           Angular2HtmlNgContentSelector, StubBasedPsiElement<Angular2HtmlNgContentSelectorStub?> {
-  constructor(stub: Angular2HtmlNgContentSelectorStub, nodeType: IStubElementType<*, *>)
+  constructor(stub: Angular2HtmlNgContentSelectorStub, nodeType: IElementType)
     : super(stub, nodeType)
 
   constructor(node: ASTNode) : super(node)
+
+  override fun getIElementType(): IElementType =
+    elementTypeImpl
 
   override val selector: Angular2DirectiveSelector
     get() {

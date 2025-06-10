@@ -7,16 +7,16 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
+import com.intellij.psi.tree.IElementType
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
-import org.angular2.lang.html.stub.Angular2HtmlAttributeStubElementType
 import org.angular2.lang.html.stub.impl.Angular2HtmlBoundAttributeStubImpl
 
 internal class Angular2HtmlPropertyBindingImpl : Angular2HtmlPropertyBindingBase, Angular2HtmlPropertyBinding {
 
 
-  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: Angular2HtmlAttributeStubElementType)
+  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: IElementType)
     : super(stub, nodeType)
 
   constructor(node: ASTNode) : super(node)

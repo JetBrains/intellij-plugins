@@ -23,17 +23,15 @@ import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 import org.angular2.lang.html.psi.Angular2HtmlLet
 import org.angular2.lang.html.psi.Angular2HtmlReference
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import org.angular2.lang.html.stub.Angular2HtmlVariableElementType
 import org.angular2.lang.types.Angular2LetType
 import org.angular2.lang.types.Angular2ReferenceType
 
 class Angular2HtmlAttrVariableImpl : JSVariableImpl<JSVariableStub<JSVariable>, JSVariable>, Angular2HtmlAttrVariable, HintedReferenceHost {
   constructor(node: ASTNode) : super(node)
-  constructor(stub: JSVariableStub<JSVariable>) : super(stub, Angular2HtmlStubElementTypes.REFERENCE_VARIABLE)
 
   override val kind: Angular2HtmlAttrVariable.Kind
-    get() = (elementType as Angular2HtmlVariableElementType).kind
+    get() = (iElementType as Angular2HtmlVariableElementType).kind
 
   override fun calculateType(): JSType {
     return when (kind) {

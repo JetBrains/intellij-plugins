@@ -5,12 +5,12 @@ import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.psi.tree.IElementType
 import com.intellij.util.io.StringRef
 import org.angular2.lang.html.psi.impl.Angular2HtmlBoundAttributeImpl
-import org.angular2.lang.html.stub.Angular2HtmlAttributeStubElementType
 import java.io.IOException
 
-internal class Angular2HtmlBoundAttributeStubImpl : StubBase<Angular2HtmlBoundAttributeImpl>, XmlAttributeStub<Angular2HtmlBoundAttributeImpl> {
+class Angular2HtmlBoundAttributeStubImpl : StubBase<Angular2HtmlBoundAttributeImpl>, XmlAttributeStub<Angular2HtmlBoundAttributeImpl> {
 
   private val name: String
   private val value: String?
@@ -18,7 +18,7 @@ internal class Angular2HtmlBoundAttributeStubImpl : StubBase<Angular2HtmlBoundAt
   constructor(
     parent: StubElement<*>?,
     dataStream: StubInputStream,
-    elementType: Angular2HtmlAttributeStubElementType,
+    elementType: IElementType,
   ) : super(parent, elementType) {
     name = (StringRef.toString(dataStream.readName())) ?: ""
     value = StringRef.toString(dataStream.readName());
@@ -27,7 +27,7 @@ internal class Angular2HtmlBoundAttributeStubImpl : StubBase<Angular2HtmlBoundAt
   constructor(
     psi: Angular2HtmlBoundAttributeImpl,
     parent: StubElement<*>?,
-    elementType: Angular2HtmlAttributeStubElementType,
+    elementType: IElementType,
   ) : super(parent, elementType) {
     name = psi.getName()
     value = psi.getValue()

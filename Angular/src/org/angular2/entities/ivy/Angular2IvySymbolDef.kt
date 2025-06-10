@@ -5,9 +5,11 @@ import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.ecma6.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.stubs.JSAttributeListStub
 import com.intellij.lang.javascript.psi.stubs.JSVarStatementStub
 import com.intellij.lang.javascript.psi.stubs.TypeScriptClassStub
 import com.intellij.lang.javascript.psi.stubs.TypeScriptFieldStub
+import com.intellij.lang.javascript.psi.stubs.TypeScriptSingleTypeStub
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
@@ -379,7 +381,7 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       allowAbstractClasses: Boolean,
       symbolFactory: (String, Any) -> T?,
     ): T? {
-      val clsAttrs = jsClassStub.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST)
+      val clsAttrs = jsClassStub.findChildStubByElementType(JSStubElementTypes.ATTRIBUTE_LIST) as? JSAttributeListStub
       if (clsAttrs == null || !allowAbstractClasses && clsAttrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) {
         return null
       }
@@ -387,11 +389,11 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
         if (classChild !is JSVarStatementStub) {
           continue
         }
-        val attrs = classChild.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST)
+        val attrs = classChild.findChildStubByElementType(JSStubElementTypes.ATTRIBUTE_LIST) as? JSAttributeListStub
         if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
           continue
         }
-        val fieldStub = classChild.findChildStubByType(TypeScriptStubElementTypes.TYPESCRIPT_FIELD)
+        val fieldStub = classChild.findChildStubByElementType(TypeScriptStubElementTypes.TYPESCRIPT_FIELD)
         if (fieldStub !is TypeScriptFieldStub) {
           continue
         }
@@ -469,10 +471,10 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       index: Int,
       typeNames: List<String>,
     ): JSTypeDeclaration? {
-      val type = field.findChildStubByType(TypeScriptStubElementTypes.SINGLE_TYPE)
+      val type = field.findChildStubByElementType(TypeScriptStubElementTypes.SINGLE_TYPE) as? TypeScriptSingleTypeStub
       val qualifiedName = type?.qualifiedTypeName ?: return null
       if (typeNames.any { name -> qualifiedName.endsWith(name) }) {
-        val typeArguments = type.findChildStubByType(TypeScriptStubElementTypes.TYPE_ARGUMENT_LIST)
+        val typeArguments = type.findChildStubByElementType(TypeScriptStubElementTypes.TYPE_ARGUMENT_LIST)
         if (typeArguments != null) {
           val declarations = typeArguments.childrenStubs
           if (index < declarations.size) {

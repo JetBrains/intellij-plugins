@@ -8,15 +8,11 @@ import org.angular2.lang.expr.psi.impl.Angular2DeferredTimeLiteralExpressionImpl
 
 class Angular2DeferredTimeLiteralExpressionElementType : JSLiteralExpressionElementTypeImpl("NG:DEFERRED_TIME_LITERAL_EXPRESSION") {
 
-  override fun construct(node: ASTNode): PsiElement? {
+  override fun construct(node: ASTNode): PsiElement {
     return Angular2DeferredTimeLiteralExpressionImpl(node)
   }
 
-  override fun getExternalId(): String {
+  override fun toString(): String {
     return debugName
-  }
-
-  override fun shouldCreateStub(node: ASTNode?): Boolean {
-    return false
   }
 }

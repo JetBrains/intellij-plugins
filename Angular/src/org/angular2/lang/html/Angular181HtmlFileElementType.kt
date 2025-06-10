@@ -4,11 +4,12 @@ package org.angular2.lang.html
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.tree.IStubFileElementType
+import org.angular2.lang.stubs.Angular2HtmlLanguageStubDefinition
 
 class Angular181HtmlFileElementType private constructor()
   : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("html.angular181", Angular181HtmlLanguage) {
   override fun getStubVersion(): Int {
-    return Angular2HtmlFileElementType.angular2HtmlStubVersion
+    return Angular2HtmlLanguageStubDefinition.angular2HtmlStubVersion
   }
 
   companion object {

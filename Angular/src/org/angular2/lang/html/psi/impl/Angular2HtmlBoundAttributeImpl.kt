@@ -5,18 +5,18 @@ import com.intellij.lang.ASTNode
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.impl.source.xml.XmlStubBasedAttributeBase
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTokenType
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
-import org.angular2.lang.html.stub.Angular2HtmlAttributeStubElementType
 import org.angular2.lang.html.stub.impl.Angular2HtmlBoundAttributeStubImpl
 import org.jetbrains.annotations.NonNls
 
-internal open class Angular2HtmlBoundAttributeImpl
+open class Angular2HtmlBoundAttributeImpl
   : XmlStubBasedAttributeBase<Angular2HtmlBoundAttributeStubImpl>, Angular2HtmlBoundAttribute {
 
-  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: Angular2HtmlAttributeStubElementType)
+  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: IElementType)
     : super(stub, nodeType)
 
   constructor(node: ASTNode) : super(node)
@@ -34,8 +34,8 @@ internal open class Angular2HtmlBoundAttributeImpl
   override val attributeInfo: Angular2AttributeNameParser.AttributeInfo
     get() {
       val info = Angular2AttributeNameParser.parseBound(name, parent?.localName ?: "")
-      if (info.type.elementType !== elementType) {
-        LOG.error("Element type mismatch on attribute info. Expected " + elementType
+      if (info.type.elementType !== iElementType) {
+        LOG.error("Element type mismatch on attribute info. Expected " + iElementType
                   + ", but got " + info.type.elementType + ". Error for " +
                   javaClass.simpleName.removeSuffix(IMPL_SUFFIX) + " <" + name + ">",
                   Throwable())

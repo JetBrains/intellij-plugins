@@ -5,17 +5,17 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlElement
 import org.angular2.lang.html.parser.Angular2HtmlVarAttrTokenType
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlLet
-import org.angular2.lang.html.stub.Angular2HtmlAttributeStubElementType
 import org.angular2.lang.html.stub.impl.Angular2HtmlBoundAttributeStubImpl
 
 internal class Angular2HtmlLetImpl : Angular2HtmlBoundAttributeImpl, Angular2HtmlLet {
 
-  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: Angular2HtmlAttributeStubElementType)
+  constructor(stub: Angular2HtmlBoundAttributeStubImpl, nodeType: IElementType)
     : super(stub, nodeType)
 
   constructor(node: ASTNode) : super(node)

@@ -4,12 +4,12 @@ package org.angular2.lang.svg
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.tree.IStubFileElementType
-import org.angular2.lang.html.Angular2HtmlFileElementType
+import org.angular2.lang.stubs.Angular2HtmlLanguageStubDefinition
 
 class Angular2SvgFileElementType private constructor()
   : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("svg.angular2", Angular2SvgLanguage) {
   override fun getStubVersion(): Int {
-    return Angular2HtmlFileElementType.angular2HtmlStubVersion
+    return Angular2HtmlLanguageStubDefinition.angular2HtmlStubVersion
   }
 
   companion object {

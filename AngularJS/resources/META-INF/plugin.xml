@@ -73,6 +73,7 @@
     <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
     <annotator language="AngularJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <fileType name="HTML" extensions="ng"/>
+    <stubElementRegistryExtension implementation="org.angularjs.lang.stubs.AngularJSStubRegistryExtension"/>
 
     <!--suppress PluginXmlValidity -->
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"

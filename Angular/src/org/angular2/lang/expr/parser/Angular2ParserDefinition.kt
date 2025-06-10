@@ -50,4 +50,4 @@ class Angular2ParserDefinition : JavascriptParserDefinition() {
 
 }
 
-private val FILE: IFileElementType = JSFileElementType.create(Angular2Language)
+val FILE: IFileElementType = JSFileElementType.create(Angular2Language)
