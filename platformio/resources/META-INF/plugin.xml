@@ -28,6 +28,7 @@
     <module name="intellij.cidr.core"/>
     <module name="intellij.cidr.execution"/>
     <module name="intellij.cidr.externalSystem"/>
+    <module name="intellij.cidr.lang.base"/>
     <module name="intellij.cidr.workspaceModel"/>
     <module name="intellij.cidr.projectModel"/>
     <module name="intellij.cidr.psi.base"/>

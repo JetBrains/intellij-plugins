@@ -55,6 +55,7 @@ jvm_library(
     "//CIDR/cidr-runner",
     "//CIDR/cidr-psi-base",
     "//CIDR/cidr-core",
+    "//CIDR/cidr-lang-base",
   ],
   runtime_deps = [":platformio_resources"]
 )
@@ -117,6 +118,7 @@ jvm_library(
     "//CIDR/cidr-psi-base",
     "//CIDR/cidr-core",
     "//CIDR/clion-testFramework-nolang",
+    "//CIDR/cidr-lang-base",
   ],
   runtime_deps = [
     ":platformio_resources",
