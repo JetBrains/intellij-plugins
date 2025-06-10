@@ -35,6 +35,7 @@
     <colorSettingsPage implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"/>
 
     <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
+    <stubElementRegistryExtension implementation="org.intellij.plugin.mdx.js.MdxJSStubRegistryExtension"/>
     <outerLanguageRangePatcher language="MdxJS"
                                implementationClass="org.intellij.plugin.mdx.lang.psi.MdxOuterLanguagePatcher"/>
     <lang.inspectionSuppressor language="MDX"

@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.psi.tree.IFileElementType
 
-private val FILE: IFileElementType = JSFileElementType.create(MdxJSLanguage.INSTANCE)
+val FILE: IFileElementType = JSFileElementType.create(MdxJSLanguage.INSTANCE)
 
 internal class MdxJSParserDefinition : ECMA6ParserDefinition() {
   override fun getFileNodeType(): IFileElementType = FILE
