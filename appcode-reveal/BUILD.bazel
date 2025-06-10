@@ -35,6 +35,7 @@ jvm_library(
     "@community//platform/core-impl",
     "@community//platform/platform-api:ide",
     "@community//platform/execution",
+    "@community//platform/execution-impl",
     "//CIDR/cidr-util/execution",
   ],
   runtime_deps = [
