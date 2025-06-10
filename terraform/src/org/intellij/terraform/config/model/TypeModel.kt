@@ -52,6 +52,8 @@ enum class ProviderTier(val label: String) {
     fun findByLabel(label: String): ProviderTier? {
       return entries.find { it.label == label }
     }
+    
+    val PreferedProviders: Set<ProviderTier> = setOf(TIER_BUILTIN, TIER_LOCAL, TIER_OFFICIAL)
   }
 }
 

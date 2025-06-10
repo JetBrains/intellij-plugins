@@ -59,7 +59,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
                   else -> null
                 } ?: return emptyList()
 
-    return items.filter { it.provider.tier in tiers }
+    return items.filter { it.provider.tier in ProviderTier.PreferedProviders }
       .map { it.type }
       .sorted()
       .take(ENTRIES_LIST_SIZE)
@@ -271,7 +271,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
   }
 
   private fun containsResourceTypes(vararg elements: String): Boolean = globalModel.allResources()
-    .filter { it.provider.tier in tiers }
+    .filter { it.provider.tier in ProviderTier.PreferedProviders }
     .map { it.type }
     .toList()
     .containsAll(elements.toList())
@@ -1028,7 +1028,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
   )
 
   fun testRequiredProvidersCompletion() {
-    val providers = globalModel.allProviders().filter { it.tier in tiers }
+    val providers = globalModel.allProviders().filter { it.tier in ProviderTier.PreferedProviders }
       .map { it.type }
       .sorted()
       .take(ENTRIES_LIST_SIZE)
@@ -1046,8 +1046,6 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       """.trimIndent(), "aws", "azurerm", "google", "kubernetes", "alicloud", "oci"
     )
   }
-
-  private val tiers = setOf(ProviderTier.TIER_BUILTIN, ProviderTier.TIER_OFFICIAL, ProviderTier.TIER_LOCAL)
 }
 
 private const val ENTRIES_LIST_SIZE = 900

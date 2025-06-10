@@ -12,8 +12,10 @@ import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.patterns.PlatformPatterns.not
 import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.psi.*
-import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.PsiLanguageInjectionHost
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.Plow.Companion.toPlow
@@ -29,6 +31,8 @@ import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockSorted
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil.buildLookupForProviderBlock
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil.buildLookupForRequiredProvider
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.dumpPsiFileModel
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getClearTextValue
@@ -37,13 +41,11 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getLookupIcon
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getOriginalObject
 import org.intellij.terraform.config.documentation.psi.HCLFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.model.TypeModel.Companion.getTerraformBlock
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
 import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersBlock
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformVariablesFile
-import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
@@ -262,26 +264,18 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       val prefix = result.prefixMatcher.prefix
 
       val providers = TypeModelProvider.getModel(element).allProviders()
-      result.addAllElements(
-        providers
-          .filter { it.type.startsWith(prefix) }
-          .map { provider -> getProviderLookup(provider) }
-          .toList()
-      )
+        .filter { it.type.startsWith(prefix) }
+        .map { buildLookupForRequiredProvider(it, element) }
+        .toList()
+
+      val sorter = CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("tf.providers.weigher") {
+        override fun weigh(element: LookupElement): Int {
+          val providerType = element.`object` as? ProviderType
+          return if (providerType?.tier in ProviderTier.PreferedProviders) 0 else 1
+        }
+      })
+      result.withRelevanceSorter(sorter).addAllElements(providers)
     }
-
-    private fun getProviderLookup(provider: ProviderType): LookupElement = create(provider.type).withTypeText(provider.fullName)
-      .withInsertHandler { context, item ->
-        val project = context.project
-        val providerProperty = TfElementGenerator(project).createRequiredProviderProperty(provider)
-        val document = context.document
-        document.replaceString(context.startOffset, context.tailOffset, providerProperty.text)
-        PsiDocumentManager.getInstance(project).commitDocument(document)
-
-        val psiFile = context.file
-        val terraformBlock = getTerraformBlock(psiFile) ?: return@withInsertHandler
-        CodeStyleManager.getInstance(project).reformatText(psiFile, listOf(terraformBlock.textRange))
-      }
   }
 
   object BlockTypeOrNameCompletionProvider : TfCompletionProvider() {
@@ -293,7 +287,6 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
         !result.isStopped
       })
     }
-
 
     private fun doCompletion(position: PsiElement, parameters: CompletionParameters, result: CompletionResultSet, consumer: Processor<LookupElement>): Boolean {
       val parent = position.parent
@@ -310,7 +303,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       val type = getClearTextValue(leftNWS) ?: return true
       val typeModel = TypeModelProvider.getModel(position)
       val localProviders = TypeModel.collectProviderLocalNames(position)
-      val tiers = setOf(ProviderTier.TIER_BUILTIN, ProviderTier.TIER_OFFICIAL, ProviderTier.TIER_LOCAL)
+      val tiers = ProviderTier.PreferedProviders
       if (parameters.invocationCount == 1) {
         val message = HCLBundle.message("popup.advertisement.press.to.show.partner.community.providers", KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CODE_COMPLETION))
         result.addLookupAdvertisement(message)
@@ -335,7 +328,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
         HCL_PROVIDER_IDENTIFIER -> {
           typeModel.allProviders().toPlow()
             .filter { parameters.invocationCount > 1 || it.tier in tiers || localProviders.containsValue(it.fullName) }
-            .map { buildProviderLookupElement(it, position) }
+            .map { buildLookupForProviderBlock(it, position) }
             .processWith(consumer)
         }
         HCL_PROVISIONER_IDENTIFIER ->
@@ -370,21 +363,6 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
           }
         })
         .withInsertHandler(BlockSubNameInsertHandler(it as BlockType))
-        .withPsiElement(position.project.service<HCLFakeElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
-    }
-
-    private fun buildProviderLookupElement(it: ProviderType, position: PsiElement): LookupElementBuilder {
-      return create(it, it.type)
-        .withRenderer(object : LookupElementRenderer<LookupElement>() {
-          override fun renderElement(element: LookupElement, presentation: LookupElementPresentation) {
-            presentation.setItemText(it.type)
-            presentation.tailText = " (${it.namespace})"
-            presentation.typeText = it.version
-            presentation.isTypeGrayed = true
-            presentation.icon = getLookupIcon(position)
-          }
-        })
-        .withInsertHandler(BlockSubNameInsertHandler(it))
         .withPsiElement(position.project.service<HCLFakeElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
     }
 

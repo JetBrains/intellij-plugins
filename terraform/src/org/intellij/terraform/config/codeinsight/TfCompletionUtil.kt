@@ -6,17 +6,23 @@ import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupElementRenderer
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.components.service
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.DebugUtil
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.documentation.psi.HCLFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.Icons
@@ -30,7 +36,7 @@ import org.intellij.terraform.opentofu.OpenTofuFileType
 import java.util.*
 import javax.swing.Icon
 
-object TfCompletionUtil {
+internal object TfCompletionUtil {
   val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module", HCL_EPHEMERAL_IDENTIFIER) + OpenTofuScopes
   val GlobalScopes: SortedSet<String> = (setOf("var", "path", "data", "module", "local", HCL_EPHEMERAL_IDENTIFIER) + OpenTofuScopes).toSortedSet()
   val RootBlockKeywords: Set<String> = TypeModel.RootBlocksMap.keys
@@ -38,8 +44,8 @@ object TfCompletionUtil {
 
   fun createPropertyOrBlockType(value: PropertyOrBlockType, lookupString: String? = null, psiElement: PsiElement? = null): LookupElementBuilder {
     val elementBuilder = when {
-      psiElement == null -> LookupElementBuilder.create(value, lookupString ?: value.name)
-      else -> LookupElementBuilder.create(value, lookupString ?: value.name).withPsiElement(psiElement)
+      psiElement == null -> create(value, lookupString ?: value.name)
+      else -> create(value, lookupString ?: value.name).withPsiElement(psiElement)
     }
     return elementBuilder
       .withRenderer(TfLookupElementRenderer())
@@ -61,11 +67,36 @@ object TfCompletionUtil {
       }
     })
 
-  fun createFunction(function: TfFunction): LookupElementBuilder = LookupElementBuilder.create(function.presentableName)
+  fun createFunction(function: TfFunction): LookupElementBuilder = create(function, function.presentableName)
     .withInsertHandler(if (function.arguments.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
     .withTailText(function.getArgumentsAsText())
     .withTypeText(function.returnType.presentableText)
     .withIcon(AllIcons.Nodes.Function)
+
+  fun buildLookupForProviderBlock(provider: ProviderType, element: PsiElement): LookupElement =
+    createProviderLookupElement(provider, element)
+      .withInsertHandler(BlockSubNameInsertHandler(provider))
+      .withPsiElement(element.project.service<HCLFakeElementPsiFactory>().createFakeHCLBlock(provider, element.containingFile.originalFile))
+
+  fun buildLookupForRequiredProvider(provider: ProviderType, element: PsiElement): LookupElement =
+    createProviderLookupElement(provider, element)
+      .withInsertHandler { context, item ->
+        val project = context.project
+        val providerProperty = TfElementGenerator(project).createRequiredProviderProperty(provider)
+        val document = context.document
+        document.replaceString(context.startOffset, context.tailOffset, providerProperty.text)
+        PsiDocumentManager.getInstance(project).commitDocument(document)
+
+        val psiFile = context.file
+        val terraformBlock = TypeModel.getTerraformBlock(psiFile) ?: return@withInsertHandler
+        CodeStyleManager.getInstance(project).reformatText(psiFile, listOf(terraformBlock.textRange))
+      }
+
+  private fun createProviderLookupElement(provider: ProviderType, element: PsiElement): LookupElementBuilder =
+    create(provider, provider.type)
+      .withTailText(" ${provider.fullName}")
+      .withTypeText(provider.version)
+      .withIcon(getLookupIcon(element))
 
   fun dumpPsiFileModel(element: PsiElement): () -> String = { DebugUtil.psiToString(element.containingFile, true) }
 
@@ -127,12 +158,9 @@ object TfCompletionUtil {
     }
   }
 
-  internal fun getLookupIcon(element: PsiElement): Icon {
-    return when (element.containingFile.fileType) {
-      is TerraformFileType -> {TerraformIcons.Terraform}
-      is OpenTofuFileType -> {TerraformIcons.Opentofu}
-      else -> Icons.FileTypes.HCL
-    }
+  fun getLookupIcon(element: PsiElement): Icon = when (element.containingFile.fileType) {
+    is TerraformFileType -> TerraformIcons.Terraform
+    is OpenTofuFileType -> TerraformIcons.Opentofu
+    else -> Icons.FileTypes.HCL
   }
-
 }
