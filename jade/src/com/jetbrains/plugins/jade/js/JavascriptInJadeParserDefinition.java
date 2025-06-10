@@ -14,7 +14,7 @@ import com.jetbrains.plugins.jade.psi.JadeTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public final class JavascriptInJadeParserDefinition extends JavascriptParserDefinition {
-  private static final IFileElementType JS_IN_JADE_FILE = JSFileElementType.create(JavaScriptInJadeLanguageDialect.INSTANCE);
+  static final IFileElementType JS_IN_JADE_FILE = JSFileElementType.create(JavaScriptInJadeLanguageDialect.INSTANCE);
 
   @Override
   public @NotNull IFileElementType getFileNodeType() {

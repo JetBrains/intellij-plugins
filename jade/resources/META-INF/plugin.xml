@@ -61,6 +61,7 @@
     <spellchecker.support language="Jade" implementationClass="com.jetbrains.plugins.jade.spellcheck.JadeSpellcheckingStrategy"/>
 
     <lang.parserDefinition language="JSInJade" implementationClass="com.jetbrains.plugins.jade.js.JavascriptInJadeParserDefinition"/>
+    <stubElementRegistryExtension implementation="com.jetbrains.plugins.jade.js.JavaScriptInJadeStubRegistryExtension"/>
     <annotator language="Jade" implementationClass="com.jetbrains.plugins.jade.validation.JadeAnnotatingVisitor"/>
 
     <editor.backspaceModeOverride language="Jade" implementationClass="com.intellij.codeInsight.editorActions.SmartBackspaceDisabler"/>
