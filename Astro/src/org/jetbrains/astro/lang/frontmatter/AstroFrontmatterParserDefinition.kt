@@ -5,9 +5,9 @@ import com.intellij.lang.javascript.dialects.TypeScriptParserDefinition
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.psi.tree.IFileElementType
 
-class AstroFrontmatterParserDefinition: TypeScriptParserDefinition() {
-  private val AFM_FILE = JSFileElementType.create(AstroFrontmatterLanguage.INSTANCE)
+val AFM_FILE: IFileElementType = JSFileElementType.create(AstroFrontmatterLanguage.INSTANCE)
 
+class AstroFrontmatterParserDefinition: TypeScriptParserDefinition() {
   override fun getFileNodeType(): IFileElementType =
     AFM_FILE
 

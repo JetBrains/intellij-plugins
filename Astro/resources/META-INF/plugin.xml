@@ -44,6 +44,7 @@
               fieldName="INSTANCE"/>
     <lang.parserDefinition language="Astro" implementationClass="org.jetbrains.astro.lang.parser.AstroParserDefinition"/>
     <lang.parserDefinition language="AstroFrontmatter" implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterParserDefinition"/>
+    <stubElementRegistryExtension implementation="org.jetbrains.astro.lang.AstroStubRegistryExtension"/>
 
     <lang.syntaxHighlighterFactory language="Astro"
                                    implementationClass="org.jetbrains.astro.lang.highlighting.AstroHighlighterFactory"/>
