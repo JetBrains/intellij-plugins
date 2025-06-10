@@ -17,6 +17,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
+import com.intellij.polySymbols.search.impl.create
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.css.impl.CssNamedItemPresentation

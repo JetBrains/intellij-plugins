@@ -6,6 +6,7 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
+import com.intellij.polySymbols.search.impl.create
 import org.jetbrains.vuejs.model.VueScopeElement
 
 abstract class VueScopeElementSymbol<T : VueScopeElement>(name: String, item: T) :

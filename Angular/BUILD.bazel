@@ -66,6 +66,7 @@ jvm_library(
     "@lib//:opentelemetry",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "@community//platform/polySymbols/backend",
   ],
   runtime_deps = [
     ":angular_resources",

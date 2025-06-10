@@ -10,6 +10,7 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
+import com.intellij.polySymbols.search.impl.create
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueEmitCall

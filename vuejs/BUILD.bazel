@@ -83,6 +83,7 @@ jvm_library(
     "@lib//:commons-text",
     "@community//plugins/markdown/core:markdown",
     "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "@community//platform/polySymbols/backend",
   ],
   runtime_deps = [
     ":vuejs_resources",

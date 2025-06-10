@@ -70,5 +70,6 @@
     <orderEntry type="library" name="commons-text" level="project" />
     <orderEntry type="module" module-name="intellij.markdown" />
     <orderEntry type="module" module-name="intellij.css.frontback.psi" />
+    <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />
   </component>
 </module>
