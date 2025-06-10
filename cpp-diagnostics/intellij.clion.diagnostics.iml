@@ -16,10 +16,12 @@
     <orderEntry type="module" module-name="intellij.platform.ssh.ui" />
     <orderEntry type="module" module-name="intellij.platform.core.impl" />
     <orderEntry type="module" module-name="intellij.platform.util.ex" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.platform.analysis" />
     <orderEntry type="module" module-name="intellij.cidr.util" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.cidr.projectModel" />
+    <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
     <orderEntry type="module" module-name="intellij.cidr.psi.base" />
     <orderEntry type="module" module-name="intellij.clion.toolchains" />
     <orderEntry type="module" module-name="intellij.cidr.util.execution" />

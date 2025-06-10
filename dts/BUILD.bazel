@@ -25,6 +25,7 @@ jvm_library(
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",
     "@community//platform/structure-view-impl:structureView-impl",
+    "@community//platform/util/jdom",
     "@community//platform/util/progress",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/core-api:core",
@@ -37,6 +38,7 @@ jvm_library(
     "@community//xml/dom-impl",
     "@lib//:snakeyaml",
     "//CIDR/clion-cmake",
+    "//CIDR/cidr-workspaceModel",
   ],
   runtime_deps = [":dts_resources"]
 )
@@ -54,6 +56,7 @@ jvm_library(
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",
     "@community//platform/structure-view-impl:structureView-impl",
+    "@community//platform/util/jdom",
     "@community//platform/util/progress",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
@@ -77,6 +80,7 @@ jvm_library(
     "@lib//:jackson-dataformat-yaml",
     "@community//platform/syntax/syntax-api:syntax",
     "@community//platform/syntax/syntax-api:syntax_test_lib",
+    "//CIDR/cidr-workspaceModel",
   ],
   runtime_deps = [
     ":dts_resources",

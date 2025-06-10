@@ -18,6 +18,7 @@
     <orderEntry type="module" module-name="intellij.platform.indexing" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" />
     <orderEntry type="module" module-name="intellij.platform.structureView.impl" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.platform.util.progress" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.core" />
@@ -37,5 +38,6 @@
     <orderEntry type="library" scope="TEST" name="jackson-databind" level="project" />
     <orderEntry type="library" scope="TEST" name="jackson-dataformat-yaml" level="project" />
     <orderEntry type="module" module-name="intellij.platform.syntax" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
   </component>
 </module>
