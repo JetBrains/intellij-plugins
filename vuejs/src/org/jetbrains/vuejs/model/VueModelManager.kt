@@ -356,7 +356,7 @@ class VueModelManager {
           val stub = (call as? StubBasedPsiElement<*>)?.stub
           if (stub != null) {
             stub.childrenStubs.asSequence()
-              .filter { it.stubType !== JSStubElementTypes.LITERAL_EXPRESSION }
+              .filter { it.elementType !== JSStubElementTypes.LITERAL_EXPRESSION }
               .firstOrNull()
               ?.let { filterMethod = it.psi }
           }

@@ -2,15 +2,16 @@
 package org.jetbrains.vuejs.lang.expr.stub.impl
 
 import com.intellij.psi.stubs.*
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl
 import org.jetbrains.vuejs.lang.expr.stub.VueJSEmbeddedExpressionContentStub
 import java.io.IOException
 
-class VueJSEmbeddedExpressionContentStubImpl(parent: StubElement<*>?, elementType: IStubElementType<*, *>)
+class VueJSEmbeddedExpressionContentStubImpl(parent: StubElement<*>?, elementType: IElementType)
   : StubBase<VueJSEmbeddedExpressionContent>(parent, elementType), VueJSEmbeddedExpressionContentStub {
   override fun createPsi(): VueJSEmbeddedExpressionContent {
-    return VueJSEmbeddedExpressionContentImpl(this, stubType)
+    return VueJSEmbeddedExpressionContentImpl(this, elementType)
   }
 
   override fun index(sink: IndexSink) {}

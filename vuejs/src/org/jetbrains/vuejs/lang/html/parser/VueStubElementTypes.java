@@ -6,7 +6,6 @@ import com.intellij.psi.impl.source.xml.stub.XmlStubBasedAttributeElementType;
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedElementType;
 import org.jetbrains.vuejs.lang.html.VueLanguage;
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeImpl;
-import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeStubImpl;
 
 public interface VueStubElementTypes {
 
@@ -23,7 +22,7 @@ public interface VueStubElementTypes {
 
   VueSrcAttributeElementType SRC_ATTRIBUTE = new VueSrcAttributeElementType();
 
-  XmlStubBasedElementType<VueRefAttributeStubImpl, VueRefAttributeImpl> REF_ATTRIBUTE = new VueRefAttributeElementType();
+  XmlStubBasedElementType<VueRefAttributeImpl> REF_ATTRIBUTE = new VueRefAttributeElementType();
 
   VueScriptSetupEmbeddedContentElementType SCRIPT_SETUP_TS_EMBEDDED_CONTENT =
     new VueScriptSetupEmbeddedContentElementType(JavaScriptSupportLoader.TYPESCRIPT, "SCRIPT_SETUP_TS_");

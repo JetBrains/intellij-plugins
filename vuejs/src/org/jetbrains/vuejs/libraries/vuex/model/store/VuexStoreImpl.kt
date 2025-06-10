@@ -96,8 +96,8 @@ class VuexStoreImpl(override val source: JSCallExpression) : VuexContainerImpl()
         ?.stub
         ?.let {
           @Suppress("USELESS_CAST")
-          return it.findChildStubByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
-            ?.psi as JSObjectLiteralExpression?
+          return it.findChildStubByElementType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+            ?.psi as? JSObjectLiteralExpression
         }
       return call.arguments.getOrNull(0) as? JSObjectLiteralExpression
     }

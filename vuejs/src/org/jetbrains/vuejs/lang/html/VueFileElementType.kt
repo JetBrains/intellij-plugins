@@ -6,25 +6,14 @@ import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.PsiBuilderFactory
 import com.intellij.psi.ParsingDiagnostics
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.StubBuilder
 import com.intellij.psi.impl.source.tree.SharedImplUtil
-import com.intellij.psi.stubs.DefaultStubBuilder
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
-import com.intellij.psi.tree.IStubFileElementType
-import com.intellij.psi.xml.HtmlFileElementType
-import org.jetbrains.vuejs.lang.LangMode
+import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.lang.VueScriptLangs
-import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
 import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 import org.jetbrains.vuejs.lang.html.parser.VueParsing
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
-import org.jetbrains.vuejs.lang.html.stub.impl.VueFileStubImpl
 
-class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLanguage.INSTANCE) {
+class VueFileElementType : IFileElementType("vue", VueLanguage.INSTANCE) {
   companion object {
     @JvmStatic
     val INSTANCE: VueFileElementType = VueFileElementType()
@@ -43,28 +32,8 @@ class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLangu
     }
   }
 
-  override fun getStubVersion(): Int {
-    return HtmlFileElementType.getHtmlStubVersion() + VueStubElementTypes.VERSION + VueJSStubElementTypes.STUB_VERSION
-  }
-
-  override fun getExternalId(): String {
-    return "$language:$this"
-  }
-
-  override fun getBuilder(): StubBuilder {
-    return object : DefaultStubBuilder() {
-      override fun createStubForFile(file: PsiFile): StubElement<*> {
-        return if (file is VueFile) VueFileStubImpl(file) else super.createStubForFile(file)
-      }
-    }
-  }
-
-  override fun serialize(stub: VueFileStubImpl, dataStream: StubOutputStream) {
-    dataStream.writeName(stub.langMode.canonicalAttrValue)
-  }
-
-  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): VueFileStubImpl {
-    return VueFileStubImpl(LangMode.fromAttrValue(dataStream.readNameString()!!))
+  override fun toString(): String {
+    return "$language:${super.toString()}"
   }
 
   override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode {

@@ -2,10 +2,8 @@
 package org.jetbrains.vuejs.lang.html.parser
 
 import com.intellij.lang.ASTNode
-import com.intellij.psi.impl.source.xml.stub.XmlTagStubImpl
 import org.jetbrains.vuejs.lang.html.psi.impl.VueTemplateTagImpl
 
 class VueTemplateTagElementType : VueStubBasedTagElementType("TEMPLATE_TAG") {
   override fun createPsi(node: ASTNode) = VueTemplateTagImpl(node)
-  override fun createPsi(stub: XmlTagStubImpl) = VueTemplateTagImpl(stub, this)
 }

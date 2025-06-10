@@ -149,9 +149,9 @@ class VueComponents {
 
       if (decorator is StubBasedPsiElementBase<*>) {
         decorator.stub?.let {
-          return (it.findChildStubByType(JSStubElementTypes.CALL_EXPRESSION) ?: it)
-            .findChildStubByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
-            ?.psi
+          return (it.findChildStubByElementType(JSStubElementTypes.CALL_EXPRESSION) ?: it)
+            .findChildStubByElementType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+            ?.psi as? JSObjectLiteralExpression
         }
       }
       val callExpression = decorator.expression as? JSCallExpression ?: return null

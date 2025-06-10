@@ -6,10 +6,10 @@ import com.intellij.lang.javascript.psi.JSExecutionScope
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
 import com.intellij.psi.impl.source.html.HtmlStubBasedTagImpl
 import com.intellij.psi.impl.source.xml.stub.XmlTagStubImpl
-import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.tree.IElementType
 
 class VueTemplateTagImpl : HtmlStubBasedTagImpl, JSExecutionScope {
-  constructor(stub: XmlTagStubImpl, nodeType: IStubElementType<out XmlTagStubImpl?, out HtmlStubBasedTagImpl?>) : super(stub, nodeType)
+  constructor(stub: XmlTagStubImpl, nodeType: IElementType) : super(stub, nodeType)
   constructor(node: ASTNode) : super(node)
 
   override fun isTopmostControlFlowScope() = true

@@ -18,7 +18,7 @@ import com.intellij.pom.PomTargetPsiElement
 import com.intellij.pom.PsiDeclaredTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.xml.XmlStubBasedAttributeBase
-import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -36,7 +36,7 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
 
   constructor(
     stub: VueRefAttributeStubImpl,
-    nodeType: IStubElementType<out VueRefAttributeStubImpl, out VueRefAttributeImpl>,
+    nodeType: IElementType,
   ) : super(stub, nodeType)
 
   constructor(node: ASTNode) : super(node)

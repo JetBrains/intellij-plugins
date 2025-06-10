@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.html.stub.impl
 
 import com.intellij.psi.stubs.PsiFileStubImpl
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileElementType
@@ -17,5 +18,5 @@ class VueFileStubImpl : PsiFileStubImpl<VueFile> {
     this.langMode = langMode
   }
 
-  override fun getType(): VueFileElementType = VueFileElementType.INSTANCE
+  override fun getFileElementType(): IElementType = VueFileElementType.INSTANCE
 }

@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.contextOfType
 import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlTag
@@ -30,7 +30,7 @@ class VueScriptSetupEmbeddedContentImpl : JSEmbeddedContentImpl, TypeScriptTypeP
 
   constructor(node: ASTNode?) : super(node)
 
-  constructor(stub: JSEmbeddedContentStub, type: IStubElementType<*, *>) : super(stub, type)
+  constructor(stub: JSEmbeddedContentStub, type: IElementType) : super(stub, type)
 
   override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean =
     super.processDeclarations(processor, state, lastParent, place)
@@ -62,9 +62,9 @@ class VueScriptSetupEmbeddedContentImpl : JSEmbeddedContentImpl, TypeScriptTypeP
         ?.let {
           val stub = (it as? StubBasedPsiElement<*>)?.stub
           if (stub != null) {
-            stub.findChildStubByType(VueJSStubElementTypes.EMBEDDED_EXPR_CONTENT_TS)
-              ?.findChildStubByType(VueJSStubElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST)
-              ?.psi
+            stub.findChildStubByElementType(VueJSStubElementTypes.EMBEDDED_EXPR_CONTENT_TS)
+              ?.findChildStubByElementType(VueJSStubElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST)
+              ?.psi as? TypeScriptTypeParameterList
           }
           else {
             it.valueElement

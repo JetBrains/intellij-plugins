@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.html.psi.impl
 
 import com.intellij.psi.impl.source.xml.stub.XmlAttributeStub
 import com.intellij.psi.stubs.*
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 
 class VueRefAttributeStubImpl :
@@ -16,7 +17,7 @@ class VueRefAttributeStubImpl :
   constructor(
     parent: StubElement<*>?,
     dataStream: StubInputStream,
-    elementType: IStubElementType<out VueRefAttributeStubImpl, out VueRefAttributeImpl>,
+    elementType: IElementType,
   ) : super(parent, elementType) {
     value = dataStream.readNameString() ?: ""
     isList = dataStream.readBoolean()
@@ -26,7 +27,7 @@ class VueRefAttributeStubImpl :
   constructor(
     psi: VueRefAttributeImpl,
     parent: StubElement<*>?,
-    elementType: IStubElementType<out VueRefAttributeStubImpl, out VueRefAttributeImpl>,
+    elementType: IElementType,
   ) : super(parent, elementType) {
     value = psi.value ?: ""
     isList = psi.isList

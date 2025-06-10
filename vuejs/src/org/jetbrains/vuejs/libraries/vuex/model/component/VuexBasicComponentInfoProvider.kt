@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitFunctionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.stubs.JSObjectLiteralExpressionStub
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValueProvider
@@ -112,7 +113,8 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
       }
 
       fun readStubbedArguments(call: StubElement<PsiElement>): List<Pair<String, JSElement>> {
-        call.findChildStubByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+        call.findChildStubByElementType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+          ?.asSafely<JSObjectLiteralExpressionStub>()
           ?.let { stub ->
             return stub.psi.properties.asSequence()
               .filter { it.name != null }

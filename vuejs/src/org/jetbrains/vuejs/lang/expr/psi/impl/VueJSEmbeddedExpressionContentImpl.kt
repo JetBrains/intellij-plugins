@@ -19,7 +19,7 @@ import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
@@ -42,11 +42,14 @@ class VueJSEmbeddedExpressionContentImpl :
 
   constructor(node: ASTNode) : super(node)
 
-  constructor(stub: VueJSEmbeddedExpressionContentStub, type: IStubElementType<*, *>) : super(stub, type)
+  constructor(stub: VueJSEmbeddedExpressionContentStub, type: IElementType) : super(stub, type)
 
   override fun getLanguage(): Language {
-    return elementType.language
+    return iElementType.language
   }
+
+  override fun getIElementType(): IElementType =
+    super<JSStubElementImpl>.elementTypeImpl
 
   override fun accept(visitor: PsiElementVisitor) {
     if (visitor is JSElementVisitor) {

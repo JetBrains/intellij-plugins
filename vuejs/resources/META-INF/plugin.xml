@@ -109,6 +109,9 @@
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes" externalIdPrefix="VUE-JS:"/>
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes" externalIdPrefix="VUE:"/>
 
+    <languageStubDefinition language="Vue" implementationClass="org.jetbrains.vuejs.lang.stubs.VueLanguageStubDefinition"/>
+    <stubElementRegistryExtension implementation="org.jetbrains.vuejs.lang.stubs.VueStubRegistryExtension"/>
+
     <langCodeStyleSettingsProvider implementation="org.jetbrains.vuejs.options.VueCodeStyleSettingsProvider"/>
     <fileIndentOptionsProvider implementation="org.jetbrains.vuejs.lang.html.psi.formatter.VueFileIndentOptionsProvider"
                                id="vue" order="before html"/>

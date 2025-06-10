@@ -514,12 +514,12 @@ fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
         is JSStatement -> {
           stub.childrenStubs.asSequence()
             .filter {
-              it.stubType == JSStubElementTypes.VARIABLE ||
-              it.stubType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE ||
-              it.stubType == JSStubElementTypes.DESTRUCTURING_ELEMENT
+              it.elementType == JSStubElementTypes.VARIABLE ||
+              it.elementType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE ||
+              it.elementType == JSStubElementTypes.DESTRUCTURING_ELEMENT
             }
             .flatMap { it.childrenStubs.asSequence() }
-            .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
+            .filter { it.elementType == JSStubElementTypes.CALL_EXPRESSION }
             .mapNotNull { it.psi as? JSCallExpression }
         }
         else -> emptySequence()

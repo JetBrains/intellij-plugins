@@ -5,8 +5,12 @@ import com.intellij.javascript.polySymbols.PolySymbolsExpressionWithExpectedType
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.types.JSExportScope
 import com.intellij.psi.StubBasedPsiElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.stub.VueJSEmbeddedExpressionContentStub
 
 interface VueJSEmbeddedExpressionContent : JSEmbeddedContent, PolySymbolsExpressionWithExpectedTypeHolder,
                                            JSExportScope,
-                                           StubBasedPsiElement<VueJSEmbeddedExpressionContentStub>
+                                           StubBasedPsiElement<VueJSEmbeddedExpressionContentStub> {
+  override fun getIElementType(): IElementType? =
+    super<StubBasedPsiElement>.iElementType
+}

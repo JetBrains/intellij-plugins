@@ -16,7 +16,7 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 
-private val FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INSTANCE)
+val VUEJS_FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INSTANCE)
 
 class VueJSParserDefinition : JavascriptParserDefinition() {
   object Util {
@@ -41,7 +41,7 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun getFileNodeType(): IFileElementType {
-    return FILE
+    return VUEJS_FILE
   }
 
   override fun createFile(viewProvider: FileViewProvider): JSFile {
