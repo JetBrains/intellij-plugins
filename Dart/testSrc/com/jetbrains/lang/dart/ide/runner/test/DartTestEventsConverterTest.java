@@ -2,7 +2,6 @@
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.google.gson.JsonSyntaxException;
-import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.*;
 import com.intellij.execution.testframework.sm.runner.events.*;
@@ -29,84 +28,7 @@ import java.util.Map;
 public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
 
   // Do not reformat this list.
-  private static final String[] Sample1Events = {
-    // @formatter:off
-    "/usr/local/opt/dart/libexec/bin/dart --checked --enable-vm-service:51706 file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json test/formatter_test.dart -n \"line endings\"\n",
-    "Observatory listening on http://127.0.0.1:51706\n",
-    "\n",
-    "{\"protocolVersion\":\"0.1.0\",\"runnerVersion\":\"0.12.6\",\"type\":\"start\",\"time\":0}\n",
-    "{\"test\":{\"id\":0,\"name\":\"loading test/formatter_test.dart\",\"groupIDs\":[],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":0}\n",
-    "{\"testID\":0,\"result\":\"success\",\"hidden\":true,\"type\":\"testDone\",\"time\":877}\n",
-    "{\"group\":{\"id\":1,\"parentID\":null,\"name\":null,\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":880}\n",
-    "{\"group\":{\"id\":2,\"parentID\":1,\"name\":\"line endings\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":880}\n",
-    "{\"test\":{\"id\":3,\"name\":\"line endings uses given line ending\",\"groupIDs\":[1,2],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":880}\n",
-    "{\"testID\":3,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":970}\n",
-    "{\"test\":{\"id\":4,\"name\":\"line endings fails once\",\"groupIDs\":[1,2],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":971}\n",
-    "{\"testID\":4,\"message\":\"something\",\"type\":\"print\",\"time\":973}\n",
-    "{\"testID\":4,\"error\":\"boom\",\"stackTrace\":\"package:test                    fail\\ntest/formatter_test.dart 108:7  main.<fn>.<fn>\\n\",\"isFailure\":true,\"type\":\"error\",\"time\":1088}\n",
-    "{\"testID\":4,\"result\":\"failure\",\"hidden\":false,\"type\":\"testDone\",\"time\":1088}\n",
-    "{\"test\":{\"id\":5,\"name\":\"line endings fails twice\",\"groupIDs\":[1,2],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":1088}\n",
-    "{\"testID\":5,\"message\":\"message\",\"type\":\"print\",\"time\":1090}\n",
-    "{\"testID\":5,\"error\":\"No top-level method 'fail' with matching arguments declared.\\n\\nNoSuchMethodError: incorrect number of arguments passed to method named 'fail'\\nReceiver: top-level\\nTried calling: fail(...)\\nFound: fail(String)\",\"stackTrace\":\"dart:core                       NoSuchMethodError._throwNew\\ntest/formatter_test.dart 112:7  main.<fn>.<fn>\\n\",\"isFailure\":false,\"type\":\"error\",\"time\":1128}\n",
-    "{\"testID\":5,\"result\":\"error\",\"hidden\":false,\"type\":\"testDone\",\"time\":1128}\n",
-    "{\"test\":{\"id\":6,\"name\":\"line endings fails thrice\",\"groupIDs\":[1,2],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":1128}\n",
-    "{\"testID\":6,\"error\":\"Expected: 'alphabet\\\\n'\\n  'soup'\\n  Actual: 'alpha\\\\n'\\n  'beta'\\n   Which: is different.\\nExpected: alphabet\\\\nsoup\\n  Actual: alpha\\\\nbeta\\n               ^\\n Differ at offset 5\\n\",\"stackTrace\":\"package:test                    expect\\ntest/formatter_test.dart 115:7  main.<fn>.<fn>\\n\",\"isFailure\":true,\"type\":\"error\",\"time\":1154}\n",
-    "{\"testID\":6,\"result\":\"failure\",\"hidden\":false,\"type\":\"testDone\",\"time\":1155}\n",
-    "{\"group\":{\"id\":7,\"parentID\":2,\"name\":\"line endings infers\",\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"group\",\"time\":1155}\n",
-    "{\"test\":{\"id\":8,\"name\":\"line endings infers \\\\r\\\\n if the first newline uses that\",\"groupIDs\":[1,2,7],\"metadata\":{\"skip\":true,\"skipReason\":null}},\"type\":\"testStart\",\"time\":1155}\n",
-    "{\"testID\":8,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":1156}\n",
-    "{\"test\":{\"id\":9,\"name\":\"line endings infers \\\\n if the first newline uses that\",\"groupIDs\":[1,2,7],\"metadata\":{\"skip\":true,\"skipReason\":\"just because\"}},\"type\":\"testStart\",\"time\":1156}\n",
-    "{\"testID\":9,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":1157}\n",
-    "{\"test\":{\"id\":10,\"name\":\"line endings defaults to \\\\n if there are no newlines\",\"groupIDs\":[1,2],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":1157}\n",
-    "{\"testID\":10,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":1159}\n",
-    "{\"test\":{\"id\":11,\"name\":\"line endings handles Windows line endings in multiline strings\",\"groupIDs\":[1,2],\"metadata\":{\"skip\":false,\"skipReason\":null}},\"type\":\"testStart\",\"time\":1159}\n",
-    "{\"testID\":11,\"result\":\"success\",\"hidden\":false,\"type\":\"testDone\",\"time\":1173}\n",
-    "{\"success\":false,\"type\":\"done\",\"time\":1175}\n",
-    "\n",
-    "Process finished with exit code 1\n",
-    // @formatter:on
-  };
-
-  // Do not reformat this list.
-  private static final String[] Sample1Signals = {
-    // @formatter:off
-    "suite started line endings",
-    "start uses given line ending",
-    "finish uses given line ending",
-    "start fails once",
-    "print fails once something\n",
-    "fail fails once false",
-    "print fails once package:test                    fail\ntest/formatter_test.dart 108:7  main.<fn>.<fn>\n",
-    "finish fails once",
-    "start fails twice",
-    "print fails twice message\n",
-    "fail fails twice false",
-    "print fails twice dart:core                       NoSuchMethodError._throwNew\ntest/formatter_test.dart 112:7  main.<fn>.<fn>\n",
-    "finish fails twice",
-    "start fails thrice",
-    "fail fails thrice false",
-    "print fails thrice package:test                    expect\ntest/formatter_test.dart 115:7  main.<fn>.<fn>\n",
-    "finish fails thrice",
-    "suite started infers",
-    "start \\r\\n if the first newline uses that",
-    "skip \\r\\n if the first newline uses that Test ignored.",
-    "finish \\r\\n if the first newline uses that",
-    "start \\n if the first newline uses that",
-    "skip \\n if the first newline uses that just because",
-    "finish \\n if the first newline uses that",
-    "start defaults to \\n if there are no newlines",
-    "finish defaults to \\n if there are no newlines",
-    "start handles Windows line endings in multiline strings",
-    "finish handles Windows line endings in multiline strings",
-    "suite finished line endings",
-    "suite finished infers"
-    // @formatter:on
-  };
-
-  private static final int[] Sample1Parents = {0, 0, 0, 2, 2, 2, 2, 2, 7, 7, 2, 2};
-
-  // Do not reformat this list.
-  private static final String[] Sample2Events = {
+  private static final String[] DART_TEST_RUNNER_0_12_9_EVENTS = {
     // @formatter:off
     "/usr/local/opt/dart/libexec/bin/dart --checked file:///usr/local/opt/dart/libexec/bin/snapshots/pub.dart.snapshot run test:test -r json /Users/messick/src/quiver-dart/test/\n",
     "{\"protocolVersion\":\"0.1.0\",\"runnerVersion\":\"0.12.9-dev (from ../test-master)\",\"type\":\"start\",\"time\":0}\n",
@@ -167,7 +89,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     // @formatter:on
   };
 
-  private static final String[] Sample2Signals = {
+  private static final String[] DART_TEST_RUNNER_0_12_9_SIGNALS = {
     "suite started countdown_timer_test.dart",
     "suite started CountdownTimer",
     "start should countdown",
@@ -213,12 +135,27 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   private MockPrinter myMockResettablePrinter;
   private Map<String, DefaultMutableTreeNode> myNodes;
 
-  public void testSample1() {
-    runTest(Sample1Events, Sample1Signals, Sample1Parents);
-  }
+  public void testSample() {
+    Map<Integer, Integer> parents = new HashMap<>();
+    // Group relationships
+    parents.put(17, 16);
+    parents.put(20, 19);
+    parents.put(23, 22);
+    parents.put(26, 25);
+    parents.put(28, 22);
+    parents.put(34, 33);
 
-  public void testSample2() {
-    runTest(Sample2Events, Sample2Signals, new int[]{});
+    // Test relationships
+    parents.put(18, 17);
+    parents.put(21, 20);
+    parents.put(24, 23);
+    parents.put(27, 26);
+    parents.put(29, 28);
+    parents.put(30, 20);
+    parents.put(35, 34);
+    parents.put(36, 26);
+
+    runTest(DART_TEST_RUNNER_0_12_9_EVENTS, DART_TEST_RUNNER_0_12_9_SIGNALS, parents);
   }
 
   public void testLoadFailure() {
@@ -247,7 +184,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       "print loading another_bad_test.dart some stack\n",
       "finish loading another_bad_test.dart"
     };
-    runTest(events, signals, new int[]{});
+    runTest(events, signals, Map.of());
   }
 
   public void testSetUpAllFailure() {
@@ -271,7 +208,8 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       "finish (setUpAll)",
       "suite finished next_test.dart"
     };
-    runTest(events, signals, new int[]{});
+
+    runTest(events, signals, Map.of());
   }
 
   public void testGroupsDone() {
@@ -336,10 +274,11 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       "finish passing test 3",
       "suite finished foo_test.dart"
     };
-    runTest(events, signals, new int[]{});
+
+    runTest(events, signals, Map.of());
   }
 
-  private void runTest(String[] jsonEvents, String[] signals, int[] parents) {
+  private void runTest(String[] jsonEvents, String[] expectedSignals, Map<Integer, Integer> parents) {
     DartTestEventsConverter parser = myEventsConverter;
     Key key = new Key("stdout");
     for (String event : jsonEvents) {
@@ -351,10 +290,11 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
       }
     }
 
-    assertOrderedEquals(myEventsProcessor.signals, signals);
+    assertOrderedEquals(myEventsProcessor.signals, expectedSignals);
 
-    for (int childIdx = 0; childIdx < parents.length; childIdx++) {
-      int parentIdx = parents[childIdx];
+    for (Map.Entry<Integer, Integer> entry : parents.entrySet()) {
+      int childIdx = entry.getKey();
+      int parentIdx = entry.getValue();
       if (parentIdx > 0) {
         DefaultMutableTreeNode child = myNodes.get(String.valueOf(childIdx));
         DefaultMutableTreeNode parent = myNodes.get(String.valueOf(parentIdx));
@@ -367,10 +307,9 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     myNodes = new HashMap<>();
-    final ExecutionEnvironment environment = new ExecutionEnvironment();
     myMockResettablePrinter = new MockPrinter();
     TestConsoleProperties consoleProperties = createConsoleProperties();
-    myConsole = new MyConsoleView(consoleProperties, environment);
+    myConsole = new MyConsoleView(consoleProperties);
     myConsole.initUI();
     myResultsViewer = myConsole.getResultsViewer();
     myEventsConverter = new DartTestEventsConverter(DartTestRunningState.DART_FRAMEWORK_NAME, consoleProperties,
@@ -413,7 +352,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   private final class MyConsoleView extends SMTRunnerConsoleView {
     private final TestsOutputConsolePrinter myTestsOutputConsolePrinter;
 
-    private MyConsoleView(final TestConsoleProperties consoleProperties, final ExecutionEnvironment environment) {
+    private MyConsoleView(final TestConsoleProperties consoleProperties) {
       super(consoleProperties);
 
       myTestsOutputConsolePrinter = new TestsOutputConsolePrinter(this, consoleProperties, null) {

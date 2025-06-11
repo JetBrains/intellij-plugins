@@ -8,7 +8,6 @@ import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsC
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.util.text.Strings;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
@@ -88,7 +87,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
 
   private final @NotNull DartUrlResolver myUrlResolver;
 
-  private String myLocation;
   private Key myCurrentOutputType;
   private ServiceMessageVisitor myCurrentVisitor;
   private final Int2LongOpenHashMap myTestIdToTimestamp;
@@ -118,10 +116,9 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
   }
 
   private boolean processEventText(final String text) throws JsonSyntaxException, ParseException {
-    JsonParser jp = new JsonParser();
     JsonElement elem;
     try {
-      elem = jp.parse(text);
+      elem = JsonParser.parseString(text);
     }
     catch (JsonSyntaxException ex) {
       if (text.contains("\"json\" is not an allowed value for option \"reporter\"")) {
@@ -187,16 +184,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     if (shouldTestBeHiddenIfPassed(test)) {
       // Virtual test that represents loading or compiling a test suite. See lib/src/runner/loader.dart -> Loader.loadFile() in pkg/test source code
       // At this point we do not report anything to the framework, but if error occurs, we'll report it as a normal test
-      String path = "";
-
-      if (test.getName().startsWith(LOADING_PREFIX)) {
-        path = test.getName().substring(LOADING_PREFIX.length());
-      }
-      else if (test.getName().startsWith(COMPILING_PREFIX)) {
-        path = test.getName().substring(COMPILING_PREFIX.length());
-      }
-
-      if (!path.isEmpty()) myLocation = FILE_URL_PREFIX + path;
 
       test.myTestStartReported = false;
       return true;
@@ -270,7 +257,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
       doProcessServiceMessages(testCount.toString());
     }
 
-    if (group.isArtificial()) return true; // Ignore artificial groups.
     ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteStarted(group.getBaseName());
     // Possible attributes: "nodeType" "nodeArgs" "running"
     addLocationHint(groupMsg, group);
@@ -278,10 +264,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
   }
 
   private boolean handleSuite(JsonObject obj) throws ParseException {
-    Suite suite = getSuite(obj.getAsJsonObject(DEF_SUITE));
-    if (!suite.hasPath()) {
-      mySuiteData.remove(suite.getId());
-    }
+    getSuite(obj.getAsJsonObject(DEF_SUITE));
     return true;
   }
 
@@ -408,8 +391,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
   }
 
   private boolean processGroupDone(final @NotNull Group group) throws ParseException {
-    if (group.isArtificial()) return true;
-
     ServiceMessageBuilder groupMsg = ServiceMessageBuilder.testSuiteFinished(group.getBaseName());
     return finishMessage(groupMsg, group.getId(), group.getValidParentId());
   }
@@ -421,7 +402,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
   }
 
   private void addLocationHint(ServiceMessageBuilder messageBuilder, Item item) {
-    String location = "unknown";
+    String location;
     String loc;
 
     final boolean badUrl = item.getUrl() == null || item.getUrl().endsWith(".dart.js");
@@ -429,23 +410,18 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     if (file != null) {
       loc = FILE_URL_PREFIX + file.getPath();
     }
-    else if (item.hasSuite()) {
+    else {
       loc = FILE_URL_PREFIX + item.getSuite().getPath();
     }
-    else {
-      loc = myLocation;
-    }
 
-    if (loc != null) {
-      if (badUrl) {
-        loc += ",-1,-1";
-      }
-      else {
-        loc += "," + item.getLine() + "," + item.getColumn();
-      }
-      String nameList = GSON.toJson(item.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
-      location = loc + "," + nameList;
+    if (badUrl) {
+      loc += ",-1,-1";
     }
+    else {
+      loc += "," + item.getLine() + "," + item.getColumn();
+    }
+    String nameList = GSON.toJson(item.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
+    location = loc + "," + nameList;
 
     messageBuilder.addAttribute("locationHint", location);
   }
@@ -458,12 +434,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     JsonElement val = obj == null ? null : obj.get(name);
     if (val == null || !val.isJsonPrimitive()) throw new ParseException("Value is not type long: " + val, 0);
     return val.getAsLong();
-  }
-
-  private static boolean getBoolean(JsonObject obj, String name) throws ParseException {
-    JsonElement val = obj == null ? null : obj.get(name);
-    if (val == null || !val.isJsonPrimitive()) throw new ParseException("Value is not type boolean: " + val, 0);
-    return val.getAsBoolean();
   }
 
   private @NotNull Test getTest(JsonObject obj) throws ParseException {
@@ -539,7 +509,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
   }
 
   private static class Item {
-    protected static final String NO_NAME = "<no name>";
+    protected static final String NO_NAME = "";
     private final int myId;
     private final String myName;
     private final Group myParent;
@@ -607,11 +577,11 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
       }
 
       // file-level group
-      if (this instanceof Group && NO_NAME.equals(myName) && myParent == null && hasSuite()) {
+      if (this instanceof Group && NO_NAME.equals(myName) && myParent == null) {
         return PathUtil.getFileName(getSuite().getPath());
       }
 
-      // top-level group in suite
+      // top-level group in a suite
       if (this instanceof Group && myParent != null && myParent.getParent() == null && NO_NAME.equals(myParent.getName())) {
         return myName;
       }
@@ -626,10 +596,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
       return myName;
     }
 
-    boolean hasSuite() {
-      return mySuite != null && mySuite.hasPath();
-    }
-
     Suite getSuite() {
       return mySuite;
     }
@@ -642,12 +608,8 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
       return myMetadata;
     }
 
-    boolean isArtificial() {
-      return NO_NAME.equals(myName) && myParent == null && !hasSuite();
-    }
-
     boolean hasValidParent() {
-      return !(myParent == null || myParent.isArtificial());
+      return !(myParent == null);
     }
 
     int getValidParentId() {
@@ -785,10 +747,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
 
     String getPlatform() {
       return myPlatform;
-    }
-
-    boolean hasPath() {
-      return !Strings.areSameInstance(getPath(), NONE);
     }
   }
 
