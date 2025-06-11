@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.web.PROP_VUE_MODEL_EVENT
@@ -21,12 +22,11 @@ class VueModelSymbol(
   override val qualifiedKind: PolySymbolQualifiedKind
     get() = VUE_MODEL
 
-  override val properties: Map<String, Any>
-    get() {
-      val map = mutableMapOf<String, Any>()
-      vueModel.prop?.let { map[PROP_VUE_MODEL_PROP] = it }
-      vueModel.event?.let { map[PROP_VUE_MODEL_EVENT] = it }
-      return map
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_VUE_MODEL_PROP -> vueModel.prop as T?
+      PROP_VUE_MODEL_EVENT -> vueModel.event as T?
+      else -> null
     }
 
   override fun createPointer(): Pointer<VueModelSymbol> =

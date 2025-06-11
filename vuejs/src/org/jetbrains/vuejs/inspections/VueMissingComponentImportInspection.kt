@@ -6,11 +6,11 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -31,8 +31,8 @@ class VueMissingComponentImportInspection : LocalInspectionTool() {
 
         val symbol = descriptor.symbol
         if (symbol !is PsiSourcedPolySymbol
-            || symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE
-            || symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true)
+            || symbol[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE
+            || symbol[PROP_VUE_COMPOSITION_COMPONENT] == true)
           return
 
         val elementToImport = symbol.source ?: return

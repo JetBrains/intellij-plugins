@@ -14,8 +14,8 @@ import org.jetbrains.vuejs.web.symbols.VueScriptSetupLocalDirectiveSymbol
 fun PolySymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
   runListSymbolsQuery(VUE_MODEL, true).firstOrNull()
     ?.let {
-      VueModelDirectiveProperties(prop = it.properties[PROP_VUE_MODEL_PROP] as? String,
-                                  event = it.properties[PROP_VUE_MODEL_EVENT] as? String)
+      VueModelDirectiveProperties(prop = it[PROP_VUE_MODEL_PROP],
+                                  event = it[PROP_VUE_MODEL_EVENT])
     }
   ?: VueModelDirectiveProperties()
 

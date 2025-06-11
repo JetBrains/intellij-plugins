@@ -9,8 +9,9 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -19,7 +20,6 @@ import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.entities.Angular2AliasedDirectiveProperty
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
-import java.util.*
 
 open class Angular2DirectiveSymbolWrapper private constructor(
   val directive: Angular2Directive,
@@ -60,8 +60,11 @@ open class Angular2DirectiveSymbolWrapper private constructor(
   override fun createPointer(): Pointer<out Angular2DirectiveSymbolWrapper> =
     createPointer(::Angular2DirectiveSymbolWrapper)
 
-  override val properties: Map<String, Any>
-    get() = super.properties + Pair(PROP_SYMBOL_DIRECTIVE, directive)
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_SYMBOL_DIRECTIVE -> property.tryCast(directive)
+      else -> super.get(property)
+    }
 
   override val apiStatus: PolySymbolApiStatus
     get() = directive.apiStatus.coalesceWith(delegate.apiStatus)

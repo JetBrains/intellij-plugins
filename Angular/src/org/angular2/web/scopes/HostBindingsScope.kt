@@ -5,12 +5,12 @@ import com.intellij.html.polySymbols.PolySymbolsHtmlQueryHelper.getStandardHtmlE
 import com.intellij.html.polySymbols.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.css.getPolySymbolsCssScopeForTagClasses
+import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
 import com.intellij.psi.createSmartPointer
@@ -35,7 +35,7 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
     mappings.containsKey(qualifiedKind)
 
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
-    (symbol.properties[PROP_HOST_BINDING] != false && (!symbol.name.startsWith("on") || !symbol.hasOnlyStandardHtmlSymbolsOrExtensions()))
+    (symbol[PROP_HOST_BINDING] != false && (!symbol.name.startsWith("on") || !symbol.hasOnlyStandardHtmlSymbolsOrExtensions()))
 
   override val subScopeBuilder: (PolySymbolsQueryExecutor, ES6Decorator) -> List<PolySymbolsScope>
     get() = ::buildSubScope

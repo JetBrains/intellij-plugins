@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
@@ -19,9 +20,13 @@ class VueAnySymbol(
   override val pattern: PolySymbolsPattern
     get() = PolySymbolsPatternFactory.createRegExMatch(".*", false)
 
-  override val properties: Map<String, Any> =
-    mapOf(PolySymbol.PROP_HIDE_FROM_COMPLETION to true,
-          PolySymbol.PROP_DOC_HIDE_PATTERN to true)
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as? T
+      PolySymbol.PROP_DOC_HIDE_PATTERN -> true as? T
+      else -> null
+    }
 
   override fun createPointer(): Pointer<VueAnySymbol> =
     Pointer.hardPointer(this)

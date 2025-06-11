@@ -4,12 +4,9 @@ package org.jetbrains.vuejs.libraries.i18n
 import com.intellij.lang.Language
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.polySymbols.html.HTML_ELEMENTS
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.*
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.psi.PsiElement
@@ -90,8 +87,11 @@ class VueI18NQueryConfigurator : PolySymbolsQueryConfigurator {
     override val extension: Boolean
       get() = true
 
-    override val properties: Map<String, Any>
-      get() = mapOf(Pair(PolySymbol.PROP_INJECT_LANGUAGE, lang))
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when (property) {
+        PolySymbol.PROP_INJECT_LANGUAGE -> property.tryCast(lang)
+        else -> null
+      }
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

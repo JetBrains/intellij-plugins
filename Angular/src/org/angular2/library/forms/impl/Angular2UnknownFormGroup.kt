@@ -2,10 +2,7 @@ package org.angular2.library.forms.impl
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.*
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
@@ -37,9 +34,13 @@ object Angular2UnknownFormGroup : PolySymbol {
   override val priority: PolySymbol.Priority?
     get() = PolySymbol.Priority.LOWEST
 
-  override val properties: Map<String, Any> =
-    mapOf(PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION to true,
-          PolySymbol.Companion.PROP_DOC_HIDE_PATTERN to true)
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as T
+      PolySymbol.PROP_DOC_HIDE_PATTERN -> true as T
+      else -> null
+    }
 
   override val qualifiedKind: PolySymbolQualifiedKind
     get() = NG_FORM_GROUP_PROPS

@@ -3,9 +3,9 @@ package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
@@ -46,8 +46,12 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
     override val name: String
       get() = "Attribute with interpolations"
 
-    override val properties: Map<String, Any>
-      get() = mapOf(PROP_BINDING_PATTERN to true)
+
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when (property) {
+        PROP_BINDING_PATTERN -> property.tryCast(true)
+        else -> super.get(property)
+      }
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

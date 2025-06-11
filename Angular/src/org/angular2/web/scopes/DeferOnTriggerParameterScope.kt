@@ -3,14 +3,15 @@ package org.angular2.web.scopes
 
 import com.intellij.javascript.polySymbols.symbols.asPolySymbol
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.js.JS_KEYWORDS
 import com.intellij.polySymbols.js.JS_SYMBOLS
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import org.angular2.codeInsight.blocks.PROP_PARAMETER
 import org.angular2.codeInsight.blocks.getDeferOnTriggerDefinition
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.lang.expr.psi.Angular2BlockParameter
@@ -26,7 +27,7 @@ class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     val names = mutableSetOf<String>()
     val trigger = getDeferOnTriggerDefinition(dataHolder)
-    if (trigger?.properties?.get("parameter") == "template-reference-variable") {
+    if (trigger?.get(PROP_PARAMETER) == "template-reference-variable") {
       Angular2TemplateScopesResolver.resolve(dataHolder) { resolve ->
         resolve.element?.takeIf { resolve.isValidResult }
           ?.asSafely<Angular2HtmlAttrVariable>()

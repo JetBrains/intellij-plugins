@@ -90,11 +90,8 @@ class VuePolyTypesMergedSymbol(
   override val attributeValue: PolySymbolHtmlAttributeValue?
     get() = symbols.asSequence().map { it.attributeValue }.merge()
 
-  override val properties: Map<String, Any>
-    get() = symbols.asSequence()
-      .flatMap { it.properties.entries }
-      .distinctBy { it.key }
-      .associateBy({ it.key }, { it.value })
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    symbols.asSequence().mapNotNull { it[property] }.firstOrNull()
 
   override val queryScope: List<PolySymbolsScope>
     get() = listOf(this)

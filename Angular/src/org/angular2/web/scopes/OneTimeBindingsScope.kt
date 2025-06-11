@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolModifier
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
@@ -100,7 +101,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
 
   companion object {
 
-    const val PROP_DELEGATE_PRIORITY = "ng-delegate-priority"
+    val PROP_DELEGATE_PRIORITY: PolySymbolProperty<PolySymbol.Priority> = PolySymbolProperty["ng-delegate-priority"]
 
     private val ONE_TIME_BINDING_EXCLUDES = listOf(Angular2AttributeValueProvider.NG_CLASS_ATTR)
     private val STRING_TYPE: JSType = JSStringType.STRING_EMPTY_EXPLICIT_TYPE
@@ -145,12 +146,12 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.LOW
 
-    override val properties: Map<String, Any>
-      get() = super<PolySymbolDelegate>.properties +
-              sequenceOf(
-                super<PolySymbolDelegate>.priority?.let { Pair(PROP_DELEGATE_PRIORITY, it) },
-                if (resolveOnly) Pair(PolySymbol.PROP_HIDE_FROM_COMPLETION, true) else null
-              ).filterNotNull()
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when {
+        property == PROP_DELEGATE_PRIORITY -> property.tryCast(super<PolySymbolDelegate>.priority)
+        resolveOnly && property == PolySymbol.PROP_HIDE_FROM_COMPLETION -> property.tryCast(true)
+        else -> super<PolySymbolDelegate>.get(property)
+      }
 
     // Even though an input property might be required,
     // we need to do the check through AngularMissingRequiredDirectiveInputBindingInspection

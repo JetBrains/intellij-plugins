@@ -9,9 +9,19 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.css.CSS_CLASS_LIST
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
-import com.intellij.polySymbols.js.JS_STRING_LITERALS
+import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.JS_STRING_LITERALS
+import com.intellij.polySymbols.js.NAMESPACE_JS
+import com.intellij.polySymbols.query.PolySymbolNameConversionRules
+import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
+import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.css.CssElement
@@ -23,15 +33,6 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.html.NAMESPACE_HTML
-import com.intellij.polySymbols.js.NAMESPACE_JS
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
-import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.css.CSS_CLASS_LIST
-import com.intellij.polySymbols.query.PolySymbolNameConversionRules
-import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
-import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
 import org.angular2.*
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
@@ -41,11 +42,13 @@ import org.angular2.Angular2DecoratorUtil.VIEW_CHILD_DEC
 import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
+import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.isNgClassAttribute
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
 import org.angular2.codeInsight.blocks.isDeferOnTriggerParameterReference
 import org.angular2.codeInsight.blocks.isDeferOnTriggerReference
 import org.angular2.codeInsight.blocks.isJSReferenceAfterEqInForBlockLetParameterAssignment
+import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.lang.expr.psi.*
@@ -290,11 +293,20 @@ class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
     && element.siblings(forward = false, withSelf = false).filter { it !is PsiWhiteSpace }.firstOrNull() !is Angular2TemplateBindingKey
 }
 
-const val PROP_BINDING_PATTERN: String = "ng-binding-pattern"
-const val PROP_ERROR_SYMBOL: String = "ng-error-symbol"
-const val PROP_SYMBOL_DIRECTIVE: String = "ng-symbol-directive"
-const val PROP_SCOPE_PROXIMITY: String = "scope-proximity"
-const val PROP_HOST_BINDING: String = "ng-host-binding"
+@JvmField
+val PROP_BINDING_PATTERN: PolySymbolProperty<Boolean> = PolySymbolProperty["ng-binding-pattern"]
+
+@JvmField
+val PROP_ERROR_SYMBOL: PolySymbolProperty<Boolean> = PolySymbolProperty["ng-error-symbol"]
+
+@JvmField
+val PROP_SYMBOL_DIRECTIVE: PolySymbolProperty<Angular2Directive> = PolySymbolProperty["ng-symbol-directive"]
+
+@JvmField
+val PROP_SCOPE_PROXIMITY: PolySymbolProperty<Angular2DeclarationsScope.DeclarationProximity> = PolySymbolProperty["scope-proximity"]
+
+@JvmField
+val PROP_HOST_BINDING: PolySymbolProperty<Boolean> = PolySymbolProperty["ng-host-binding"]
 
 const val EVENT_ATTR_PREFIX: String = "on"
 

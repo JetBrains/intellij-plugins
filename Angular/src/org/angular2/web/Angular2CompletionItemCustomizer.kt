@@ -4,15 +4,15 @@ package org.angular2.web
 import com.intellij.javascript.polySymbols.decorateWithJsType
 import com.intellij.javascript.polySymbols.decorateWithSymbolType
 import com.intellij.polySymbols.FrameworkId
-import com.intellij.polySymbols.html.HTML_ATTRIBUTES
-import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
-import com.intellij.polySymbols.js.NAMESPACE_JS
-import com.intellij.polySymbols.js.JS_EVENTS
-import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
+import com.intellij.polySymbols.js.JS_EVENTS
+import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
@@ -57,7 +57,7 @@ class Angular2CompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer 
                   item
                     .decorateWithSymbolType(location, symbol)
                     .withPriority(
-                      symbol.properties[OneTimeBindingsScope.PROP_DELEGATE_PRIORITY] as PolySymbol.Priority?
+                      symbol[OneTimeBindingsScope.PROP_DELEGATE_PRIORITY]
                       ?: PolySymbol.Priority.HIGH
                     )
 

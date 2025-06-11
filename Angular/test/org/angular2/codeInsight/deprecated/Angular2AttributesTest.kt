@@ -6,7 +6,10 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSField
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor
@@ -15,23 +18,15 @@ import com.intellij.lang.javascript.psi.types.JSNamedType
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.testFramework.*
+import com.intellij.polySymbols.utils.PolySymbolDelegate.Companion.unwrapAllDelegates
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.PolySymbolDelegate.Companion.unwrapAllDelegates
-import com.intellij.polySymbols.testFramework.checkListByFile
-import com.intellij.polySymbols.testFramework.doCompletionItemsTest
-import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
-import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.multiResolvePolySymbolReference
-import com.intellij.polySymbols.testFramework.renderLookupItems
-import com.intellij.polySymbols.testFramework.resolveReference
-import com.intellij.polySymbols.testFramework.resolveToPolySymbolSource
-import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import com.intellij.xml.util.XmlInvalidIdInspection
 import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
@@ -496,8 +491,8 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
         val wrap = attrWrap[i]
         val ref = myFixture.multiResolvePolySymbolReference(wrap.first + "<caret>" + name + wrap.second + "=")
           .filter { s: PolySymbol ->
-            s.properties[PROP_ERROR_SYMBOL] != true
-            && s.properties[PROP_BINDING_PATTERN] != true
+            s[PROP_ERROR_SYMBOL] != true
+            && s[PROP_BINDING_PATTERN] != true
           }
         val sources = ref.map { it.psiContext }
         val messageStart = "Attribute " + wrap.first + name + wrap.second

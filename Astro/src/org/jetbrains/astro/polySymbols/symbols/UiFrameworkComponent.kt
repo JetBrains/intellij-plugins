@@ -50,8 +50,11 @@ class UiFrameworkComponent(
   override val qualifiedKind: PolySymbolQualifiedKind
     get() = UI_FRAMEWORK_COMPONENTS
 
-  override val properties: Map<String, Any>
-    get() = mapOf(PROP_ASTRO_PROXIMITY to AstroProximity.LOCAL)
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.LOCAL)
+      else -> null
+    }
 
   override fun createPointer(): Pointer<out UiFrameworkComponent> {
     val name = name

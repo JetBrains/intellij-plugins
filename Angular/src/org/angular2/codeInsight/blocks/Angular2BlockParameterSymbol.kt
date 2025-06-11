@@ -9,13 +9,13 @@ import org.angular2.web.NG_DEFER_ON_TRIGGERS
 class Angular2BlockParameterSymbol : WebTypesSymbolBase() {
 
   val isUnique: Boolean
-    get() = properties["unique"] as? Boolean == true
+    get() = this[PROP_UNIQUE] == true
 
   val isPrimaryExpression: Boolean
     get() = name == PRIMARY_EXPRESSION
 
   val hasContent: Boolean
-    get() = properties["no-content"] as? Boolean != true
+    get() = this[PROP_NO_CONTENT] != true
 
   val triggers: List<PolySymbol>
     get() = queryExecutor.listSymbolsQuery(NG_DEFER_ON_TRIGGERS, true)

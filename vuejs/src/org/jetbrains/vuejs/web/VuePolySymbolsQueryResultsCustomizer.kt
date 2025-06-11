@@ -6,14 +6,14 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.html.HTML_ATTRIBUTES
-import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.html.HTML_ELEMENTS
+import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -72,8 +72,8 @@ class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : Po
     }
 
     return result.filter { symbol ->
-      symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
-      symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true
+      symbol[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
+      symbol[PROP_VUE_COMPOSITION_COMPONENT] == true
     }
   }
 
@@ -83,7 +83,7 @@ class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : Po
   ): PolySymbolCodeCompletionItem {
     when (qualifiedKind) {
       VUE_COMPONENTS -> {
-        val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
+        val proximity = item.symbol?.get(PROP_VUE_PROXIMITY)
         val element = (item.symbol as? PsiSourcedPolySymbol)?.source
         if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
           val settings = JSApplicationSettings.getInstance()

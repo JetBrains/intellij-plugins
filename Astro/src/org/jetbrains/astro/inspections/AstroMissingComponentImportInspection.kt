@@ -6,10 +6,10 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.inspections.quickfixes.AstroImportComponentQuickFix
@@ -27,7 +27,7 @@ class AstroMissingComponentImportInspection : LocalInspectionTool() {
 
         val symbol = descriptor.symbol
         if (symbol !is PsiSourcedPolySymbol
-            || symbol.properties[PROP_ASTRO_PROXIMITY] != AstroProximity.OUT_OF_SCOPE)
+            || symbol[PROP_ASTRO_PROXIMITY] != AstroProximity.OUT_OF_SCOPE)
           return
 
         val elementToImport = symbol.source ?: return

@@ -3,6 +3,7 @@ package org.angular2;
 
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.polySymbols.testFramework.WebTestUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -11,7 +12,6 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.polySymbols.testFramework.WebTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -92,7 +92,7 @@ public final class Angular2TestUtil {
   public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture,
                                                Boolean okWithNoRef, Boolean allowSelfReference) {
     var symbols = WebTestUtil.multiResolvePolySymbolReference(fixture, signature);
-    if (!symbols.isEmpty() && ContainerUtil.and(symbols, s -> s.getProperties().get(PROP_ERROR_SYMBOL) == Boolean.TRUE)) {
+    if (!symbols.isEmpty() && ContainerUtil.and(symbols, s -> s.get(PROP_ERROR_SYMBOL) == Boolean.TRUE)) {
       return;
     }
     WebTestUtil.assertUnresolvedReference(fixture, signature, okWithNoRef, allowSelfReference);

@@ -8,11 +8,12 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.findPsiFile
-import com.intellij.polySymbols.html.NAMESPACE_HTML
-import com.intellij.polySymbols.js.NAMESPACE_JS
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.html.NAMESPACE_HTML
+import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
 import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
 import com.intellij.polySymbols.query.PolySymbolNameConverter
@@ -50,11 +51,11 @@ val VUE_PROVIDES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS
 val VUE_SPECIAL_PROPERTIES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-special-properties"]
 val VUE_BINDING_SHORTHANDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-binding-shorthands"]
 
-const val PROP_VUE_MODEL_PROP: String = "prop"
-const val PROP_VUE_MODEL_EVENT: String = "event"
+val PROP_VUE_MODEL_PROP: PolySymbolProperty<String> = PolySymbolProperty["prop"]
+val PROP_VUE_MODEL_EVENT: PolySymbolProperty<String> = PolySymbolProperty["event"]
 
-const val PROP_VUE_PROXIMITY: String = "x-vue-proximity"
-const val PROP_VUE_COMPOSITION_COMPONENT: String = "x-vue-composition-component"
+val PROP_VUE_PROXIMITY: PolySymbolProperty<VueModelVisitor.Proximity> = PolySymbolProperty["x-vue-proximity"]
+val PROP_VUE_COMPOSITION_COMPONENT: PolySymbolProperty<Boolean> = PolySymbolProperty["x-vue-composition-component"]
 
 class VuePolySymbolsQueryConfigurator :
   PolySymbolsQueryConfigurator {

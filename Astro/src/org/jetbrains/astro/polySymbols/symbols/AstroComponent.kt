@@ -4,7 +4,10 @@ package org.jetbrains.astro.polySymbols.symbols
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.PsiElement
@@ -32,8 +35,11 @@ class AstroComponent(file: PsiFile)
   override val name: String
     get() = StringUtil.capitalize(FileUtil.getNameWithoutExtension(dataHolder.name))
 
-  override val properties: Map<String, Any>
-    get() = mapOf(Pair(PROP_ASTRO_PROXIMITY, AstroProximity.OUT_OF_SCOPE))
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.OUT_OF_SCOPE)
+      else -> null
+    }
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == UI_FRAMEWORK_COMPONENT_PROPS

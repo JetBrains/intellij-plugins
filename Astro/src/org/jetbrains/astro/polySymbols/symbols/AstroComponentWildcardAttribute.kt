@@ -6,6 +6,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_PATTERN
 import com.intellij.polySymbols.PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
@@ -27,9 +28,12 @@ object AstroComponentWildcardAttribute : PolySymbol {
   override val pattern: PolySymbolsPattern
     get() = PolySymbolsPatternFactory.createRegExMatch(".*")
 
-  override val properties: Map<String, Any>
-    get() = mapOf(PROP_DOC_HIDE_PATTERN to true,
-                  PROP_HIDE_FROM_COMPLETION to true)
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_DOC_HIDE_PATTERN -> property.tryCast(true)
+      PROP_HIDE_FROM_COMPLETION -> property.tryCast(true)
+      else -> null
+    }
 
   override fun createPointer(): Pointer<out PolySymbol> =
     Pointer.hardPointer(this)

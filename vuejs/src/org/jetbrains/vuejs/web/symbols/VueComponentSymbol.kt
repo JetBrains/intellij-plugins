@@ -6,14 +6,14 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.psi.PsiElement
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.psi.PsiElement
+import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp
 import org.jetbrains.vuejs.model.source.VueSourceContainer
@@ -59,9 +59,13 @@ class VueComponentSymbol(
     return listOf(VueComponentSourceNavigationTarget(adjustedSources))
   }
 
-  override val properties: Map<String, Any>
-    get() = mapOf(Pair(PROP_VUE_PROXIMITY, vueProximity), Pair(
-      PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
+  @Suppress("UNCHECKED_CAST")
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_VUE_PROXIMITY -> vueProximity as T
+      PROP_VUE_COMPOSITION_COMPONENT -> isCompositionComponent as T
+      else -> null
+    }
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
