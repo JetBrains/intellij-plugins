@@ -7,7 +7,6 @@ import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
