@@ -43,8 +43,14 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
 
     val executor = PolySymbolsQueryExecutorFactory.create(dataHolder)
     val attributes = executor
-      .runListSymbolsQuery(HTML_ATTRIBUTES, virtualSymbols = false, expandPatterns = true,
-                           additionalScope = executor.runNameMatchQuery(HTML_ELEMENTS, tag.name))
+      .listSymbolsQuery(HTML_ATTRIBUTES, expandPatterns = true)
+      .exclude(PolySymbolModifier.ABSTRACT, PolySymbolModifier.VIRTUAL)
+      .additionalScope(
+        executor.nameMatchQuery(HTML_ELEMENTS, tag.name)
+          .exclude(PolySymbolModifier.ABSTRACT)
+          .run()
+      )
+      .run()
       .associateBy { it.name }
 
     VueTemplateScopesResolver.resolve(tag, Processor { resolveResult ->

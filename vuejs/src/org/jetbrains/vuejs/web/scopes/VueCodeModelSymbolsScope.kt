@@ -17,6 +17,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
@@ -124,8 +125,14 @@ private constructor(
                      ?.let { PolySymbolsQueryExecutorFactory.create(it, false) }
                    ?: PolySymbolsQueryExecutorFactory.getInstance(project).create(null, false)
     val result = MultiMap.createLinkedSet<WebTypesSymbolLocation, PolySymbol>()
-    registry.runListSymbolsQuery(VUE_COMPONENTS, false, virtualSymbols = false)
-      .asSequence().plus(registry.runListSymbolsQuery(VUE_DIRECTIVES, false, virtualSymbols = false))
+    registry.listSymbolsQuery(VUE_COMPONENTS, false)
+      .exclude(PolySymbolModifier.ABSTRACT, PolySymbolModifier.VIRTUAL)
+      .run()
+      .asSequence().plus(
+        registry.listSymbolsQuery(VUE_DIRECTIVES, false)
+          .exclude(PolySymbolModifier.ABSTRACT, PolySymbolModifier.VIRTUAL)
+          .run()
+      )
       .filterIsInstance<WebTypesSymbol>()
       .forEach { symbol ->
         when (val location = symbol.location) {

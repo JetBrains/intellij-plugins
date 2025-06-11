@@ -18,7 +18,9 @@ class Angular2BlockParameterSymbol : WebTypesSymbolBase() {
     get() = properties["no-content"] as? Boolean != true
 
   val triggers: List<PolySymbol>
-    get() = queryExecutor.runListSymbolsQuery(NG_DEFER_ON_TRIGGERS, true, additionalScope = listOf(this))
+    get() = queryExecutor.listSymbolsQuery(NG_DEFER_ON_TRIGGERS, true)
+      .additionalScope(this)
+      .run()
 
   companion object {
     const val PRIMARY_EXPRESSION: String = "\$primary-expression"

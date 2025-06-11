@@ -48,7 +48,9 @@ class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
           val symbol = descriptor?.symbol
           if (symbol != null
               && PolySymbolsQueryExecutorFactory.create(attr)
-                .runListSymbolsQuery(VUE_DIRECTIVE_ARGUMENT, true, additionalScope = listOf(symbol))
+                .listSymbolsQuery(VUE_DIRECTIVE_ARGUMENT, true)
+                .additionalScope(symbol)
+                .run()
                 .count { !it.hideFromCompletion } == 0
           ) {
             names.add(ATTR_DIRECTIVE_PREFIX + info.name)

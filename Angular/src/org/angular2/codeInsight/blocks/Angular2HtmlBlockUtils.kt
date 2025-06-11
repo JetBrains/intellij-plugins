@@ -84,7 +84,8 @@ fun getAngular2HtmlBlocksConfig(location: PsiElement): Angular2HtmlBlocksConfig 
     val queryExecutor = PolySymbolsQueryExecutorFactory.create(file, false)
     CachedValueProvider.Result.create(Angular2HtmlBlocksConfig(
       queryExecutor
-        .runListSymbolsQuery(NG_BLOCKS, true)
+        .listSymbolsQuery(NG_BLOCKS, true)
+        .run()
         .filterIsInstance<Angular2HtmlBlockSymbol>()
         .associateBy { it.name }), queryExecutor)
   }

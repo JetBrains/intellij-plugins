@@ -72,7 +72,8 @@ class VueExtractComponentRefactoring(
       forbidden = DefaultXmlExtension.DEFAULT_EXTENSION.getAvailableTagNames(context.containingFile as XmlFile, context)
         .map { it.name }.toSet()
       alreadyExisting = PolySymbolsQueryExecutorFactory.create(context)
-        .runCodeCompletionQuery(VUE_COMPONENTS, "", 0)
+        .codeCompletionQuery(VUE_COMPONENTS, "", 0)
+        .run()
         .map { fromAsset(it.name) }
         .toSet()
     }

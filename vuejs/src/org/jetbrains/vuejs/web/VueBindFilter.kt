@@ -29,7 +29,9 @@ class VueBindFilter : PolySymbolsFilter {
     scope: List<PolySymbolsScope>,
     getName: T.() -> String,
   ): List<T> {
-    val props = queryExecutor.runListSymbolsQuery(VUE_COMPONENT_PROPS, true, additionalScope = scope)
+    val props = queryExecutor.listSymbolsQuery(VUE_COMPONENT_PROPS, true)
+      .additionalScope(scope)
+      .run()
       .mapTo(HashSet()) { it.name }
     return filter {
       val name = it.getName()

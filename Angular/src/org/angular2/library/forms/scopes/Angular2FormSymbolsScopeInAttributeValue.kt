@@ -84,10 +84,18 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : P
           ?.asSafely<JSReferenceExpression>()
           ?.let { formsComponent.getFormGroupFor(it) }
         ?: formGroupName
-          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_GROUP_PROPS, it, additionalScope = listOf(holder.currentScope())) }
+          ?.let {
+            queryExecutor.nameMatchQuery(NG_FORM_GROUP_PROPS, it)
+              .additionalScope(holder.currentScope())
+              .run()
+          }
           ?.firstNotNullOfOrNull { it as? Angular2FormGroup }
         ?: formArrayName
-          ?.let { queryExecutor.runNameMatchQuery(NG_FORM_ARRAY_PROPS, it, additionalScope = listOf(holder.currentScope())) }
+          ?.let {
+            queryExecutor.nameMatchQuery(NG_FORM_ARRAY_PROPS, it)
+              .additionalScope(holder.currentScope())
+              .run()
+          }
           ?.firstNotNullOfOrNull { it as? Angular2FormArray }
 
       if (formGroupBinding != null || formGroupName != null || formArrayName != null) {

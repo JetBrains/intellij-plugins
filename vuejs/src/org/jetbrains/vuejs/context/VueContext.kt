@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
@@ -69,8 +70,10 @@ fun supportsScriptSetup(context: PsiElement?): Boolean =
   context
     ?.let { PolySymbolsQueryExecutorFactory.create(it, false) }
     ?.takeIf { it.framework == VueFramework.ID }
-    ?.runNameMatchQuery(listOf(VUE_TOP_LEVEL_ELEMENTS.withName(HtmlUtil.SCRIPT_TAG_NAME),
+    ?.nameMatchQuery(listOf(VUE_TOP_LEVEL_ELEMENTS.withName(HtmlUtil.SCRIPT_TAG_NAME),
                                HTML_ATTRIBUTES.withName(SETUP_ATTRIBUTE_NAME)))
+    ?.exclude(PolySymbolModifier.ABSTRACT)
+    ?.run()
     ?.firstOrNull() != null
 
 

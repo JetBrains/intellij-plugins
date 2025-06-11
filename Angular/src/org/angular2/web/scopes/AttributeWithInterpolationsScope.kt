@@ -89,8 +89,8 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
       scopeStack: Stack<PolySymbolsScope>,
       queryExecutor: PolySymbolsQueryExecutor,
     ): List<PolySymbol> =
-      queryExecutor.runNameMatchQuery(JS_PROPERTIES, name, additionalScope = scopeStack) +
-      queryExecutor.runNameMatchQuery(NG_DIRECTIVE_INPUTS, name, additionalScope = scopeStack)
+      queryExecutor.nameMatchQuery(JS_PROPERTIES, name).additionalScope(scopeStack).run() +
+      queryExecutor.nameMatchQuery(NG_DIRECTIVE_INPUTS, name).additionalScope(scopeStack).run()
 
   }
 }

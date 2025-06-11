@@ -19,9 +19,10 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -56,9 +57,14 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
                   ?.symbol?.let { listOf(it) }
                 ?: emptyList()
     val attributeSelectors = queryExecutor
-      .runListSymbolsQuery(NG_DIRECTIVE_ATTRIBUTE_SELECTORS, expandPatterns = true, additionalScope = scope)
+      .listSymbolsQuery(NG_DIRECTIVE_ATTRIBUTE_SELECTORS, expandPatterns = true)
+      .additionalScope(scope)
+      .run()
       .plus(queryExecutor
-              .runListSymbolsQuery(HTML_ATTRIBUTES, expandPatterns = false, virtualSymbols = false, additionalScope = scope)
+              .listSymbolsQuery(HTML_ATTRIBUTES, expandPatterns = false)
+              .additionalScope(scope)
+              .exclude(PolySymbolModifier.VIRTUAL, PolySymbolModifier.ABSTRACT)
+              .run()
               .filterIsInstance<PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol>()
       )
       .filter { it.attributeValue?.required == false }
@@ -66,7 +72,10 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
 
     val isStrictTemplates = isStrictTemplates(dataHolder)
     for (input in queryExecutor
-      .runListSymbolsQuery(NG_DIRECTIVE_INPUTS, expandPatterns = false, additionalScope = scope)) {
+      .listSymbolsQuery(NG_DIRECTIVE_INPUTS, expandPatterns = false)
+      .additionalScope(scope)
+      .run()
+    ) {
       if (input.pattern != null) continue
       val isOneTimeBinding = withTypeEvaluationLocation(dataHolder) {
         isOneTimeBindingProperty(input)
