@@ -7,8 +7,6 @@ import cucumber.api.java.en.And;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
 public class ShoppingStepdefs {
   @And("^test \\\"([^\\\"]*)\\\"$")
   public void test(String arg1) throws Throwable {

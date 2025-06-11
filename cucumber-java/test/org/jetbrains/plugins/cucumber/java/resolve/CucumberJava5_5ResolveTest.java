@@ -5,6 +5,10 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 public class CucumberJava5_5ResolveTest extends BaseCucumberJavaResolveTest {
+  public void testHighlightingOK() {
+    init("stepResolve_cucumber_5");
+    myFixture.testHighlighting("ShoppingStepdefs.java");
+  }
   public void testResolveAnnotatedParameterType() {
     init("stepResolve_cucumber_5", "ShoppingStepdefs.java");
 

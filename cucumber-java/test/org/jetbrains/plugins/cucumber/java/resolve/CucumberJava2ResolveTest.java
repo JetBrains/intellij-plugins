@@ -4,6 +4,10 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 public class CucumberJava2ResolveTest extends BaseCucumberJavaResolveTest {
+  public void testHighlightingOK() {
+    init("stepResolve_01");
+    myFixture.testHighlighting("ShoppingStepdefs.java");
+  }
   public void testNavigationFromStepToStepDef01() {
     doTest("stepResolve_01", "I p<caret>ay 25", "i_pay");
   }

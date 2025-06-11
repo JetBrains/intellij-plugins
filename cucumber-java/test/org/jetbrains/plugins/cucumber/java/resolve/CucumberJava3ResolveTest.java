@@ -5,6 +5,20 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 public class CucumberJava3ResolveTest extends BaseCucumberJavaResolveTest {
+  public void testHighlightingOK_1() {
+    init("stepResolve_ParameterType");
+    myFixture.testHighlighting("ParameterTypeSteps.java");
+  }
+
+  public void testHighlightingOK_2() {
+    init("stepResolveJava8CucumberExpressions");
+    myFixture.testHighlighting(
+      "ParameterTypeSteps.java",
+      "TargetStatusSteps.java",
+      "io/cucumber/cucumberexpressions/ParameterType.java"
+    );
+  }
+
   public void testResolveOfStepWithParameterType() {
     init("stepResolve_ParameterType");
     checkReference("tod<caret>ay", "step_method");

@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_5;
+
 public final class CucumberJavaTestUtil {
   public static final String RELATED_TEST_DATA_PATH = "/contrib/cucumber-java/testData/";
 
@@ -45,6 +47,7 @@ public final class CucumberJavaTestUtil {
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         attachCucumberCore3(model);
         attachStandardCucumberLibraries(model);
+        
       }
     };
   }
@@ -72,8 +75,10 @@ public final class CucumberJavaTestUtil {
         libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java-" + version);
         PsiTestUtil.addProjectLibrary(model, "cucumber-java", libraryRoots.getClassesPaths());
 
-        libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java-" + version);
-        PsiTestUtil.addProjectLibrary(model, "cucumber-java8", libraryRoots.getClassesPaths());
+        if (VersionComparatorUtil.compare(version, CUCUMBER_CORE_VERSION_5) >= 0) {
+          libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java8-" + version);
+          PsiTestUtil.addProjectLibrary(model, "cucumber-java8", libraryRoots.getClassesPaths());
+        }
 
         attachCucumberExpressionsLibrary(model);
       }

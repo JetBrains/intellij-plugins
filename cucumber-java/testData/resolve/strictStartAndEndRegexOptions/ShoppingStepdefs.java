@@ -6,8 +6,6 @@ import cucumber.api.java.en.When;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
 public class ShoppingStepdefs {
   @When("^I have short step$")
   public void I_have_short_step() throws Throwable {

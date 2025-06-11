@@ -11,6 +11,11 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterTypeReference;
 
 public class CucumberJavaParameterTypeResolveTest extends BaseCucumberJavaResolveTest {
+  public void testHighlightingOK() {
+    init("stepResolve_ParameterType", "ParameterTypeSteps.java");
+    myFixture.testHighlighting("ParameterTypeSteps.java");
+  }
+
   public void testParameterTypeResolve() {
     init("stepResolve_ParameterType", "ParameterTypeSteps.java");
 
@@ -38,8 +43,8 @@ public class CucumberJavaParameterTypeResolveTest extends BaseCucumberJavaResolv
   @Nullable
   @Override
   protected String getStepDefinitionName(@NotNull final PsiElement element) {
-    if (element instanceof PomTargetPsiElementImpl) {
-      return ((PomTargetPsiElementImpl)element).getName();
+    if (element instanceof PomTargetPsiElementImpl psiElement) {
+      return psiElement.getName();
     }
     return null;
   }

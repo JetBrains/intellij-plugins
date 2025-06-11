@@ -5,8 +5,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.ParameterType;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
 public class ShoppingStepdefs implements En {
   public ShoppingStepdefs() {
     Given("my java8 step", () -> System.out.println("step"));
