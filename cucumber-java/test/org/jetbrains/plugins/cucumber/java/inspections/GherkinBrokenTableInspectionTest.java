@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.inspections;
 
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.inspections.GherkinBrokenTableInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
@@ -25,5 +26,10 @@ public class GherkinBrokenTableInspectionTest extends CucumberJavaCodeInsightTes
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.allowTreeAccessForAllFiles();
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
 }

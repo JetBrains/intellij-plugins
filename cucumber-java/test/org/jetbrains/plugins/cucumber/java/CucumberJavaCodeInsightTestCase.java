@@ -4,8 +4,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 
 abstract public class CucumberJavaCodeInsightTestCase extends CucumberCodeInsightTestCase {
+  // Making it abstract again to force implementors to explicitly specify what version of Cucumber they want to use.
   @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
-  }
+  protected abstract LightProjectDescriptor getProjectDescriptor();
 }

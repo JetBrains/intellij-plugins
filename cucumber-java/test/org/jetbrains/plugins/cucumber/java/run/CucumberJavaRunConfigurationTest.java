@@ -12,6 +12,7 @@ import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.TestApplicationManager;
 import com.intellij.testFramework.TestDataProvider;
 import org.jetbrains.annotations.NonNls;
@@ -112,5 +113,10 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
         return super.getData(dataId);
       }
     });
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
 }

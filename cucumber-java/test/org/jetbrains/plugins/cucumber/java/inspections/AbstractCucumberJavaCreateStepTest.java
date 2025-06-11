@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java.inspections;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
@@ -40,5 +41,10 @@ public abstract class AbstractCucumberJavaCreateStepTest extends CucumberJavaCod
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.allowTreeAccessForAllFiles();
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
 }

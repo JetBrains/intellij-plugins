@@ -7,7 +7,9 @@ import com.intellij.execution.testframework.sm.runner.states.TestStateInfo;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor;
 
@@ -51,5 +53,10 @@ public class CucumberScenarioRunLineContributorTest extends CucumberJavaCodeInsi
     RunLineMarkerContributor.Info info = new CucumberRunLineMarkerContributor().getInfo(element);
     assertNotNull(info);
     assertEquals(run, info.icon);
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
 }

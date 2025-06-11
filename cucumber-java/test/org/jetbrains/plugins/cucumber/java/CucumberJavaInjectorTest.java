@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.testFramework.LightProjectDescriptor;
 
 public class CucumberJavaInjectorTest extends CucumberJavaCodeInsightTestCase {
   public void testRegexIntoHookAndStepAnnotation() {
@@ -19,5 +20,10 @@ public class CucumberJavaInjectorTest extends CucumberJavaCodeInsightTestCase {
     );
 
     assertEquals(CucumberJavaInjector.regexpLanguage, myFixture.getFile().getLanguage());
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return null;
   }
 }

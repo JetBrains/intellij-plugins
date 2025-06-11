@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.java.completion;
 
 
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CompletionTester;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
@@ -75,5 +76,10 @@ public class CucumberJavaCompletionTest extends CucumberJavaCodeInsightTestCase 
   protected void setUp() throws Exception {
     super.setUp();
     myCompletionTester = new CompletionTester(myFixture);
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
 }

@@ -6,7 +6,9 @@ import com.intellij.execution.lineMarker.RunLineMarkerContributor;
 import com.intellij.execution.testframework.sm.runner.states.TestStateInfo;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor;
 
 import java.util.Date;
@@ -39,5 +41,10 @@ public class CucumberFeatureRunLineContributorTest extends CucumberJavaCodeInsig
     RunLineMarkerContributor.Info info = new CucumberRunLineMarkerContributor().getInfo(file.findElementAt(myFixture.getCaretOffset()));
     assertNotNull(info);
     assertEquals(AllIcons.RunConfigurations.TestState.Green2, info.icon);
+  }
+  
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
 }

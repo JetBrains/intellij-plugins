@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.inspections;
 
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.inspections.GherkinMisplacedBackgroundInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
@@ -25,6 +26,11 @@ public class GherkinMisplacedBackgroundInspectionTest extends CucumberJavaCodeIn
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.allowTreeAccessForAllFiles();
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
 }
 
