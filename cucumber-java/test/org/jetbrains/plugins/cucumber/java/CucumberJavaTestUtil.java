@@ -47,7 +47,6 @@ public final class CucumberJavaTestUtil {
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         attachCucumberCore3(model);
         attachStandardCucumberLibraries(model);
-        
       }
     };
   }
