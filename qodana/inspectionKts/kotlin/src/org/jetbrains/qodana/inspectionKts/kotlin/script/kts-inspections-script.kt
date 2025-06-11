@@ -21,7 +21,7 @@ internal fun qodanaInspectionsKtsScriptCompilationConfiguration(
  * Need to return new instance of [ScriptCompilationConfiguration] class from [beforeCompiling] so that
  * [org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration] would return an instance of [ScriptCompilationConfiguration],
  * (not instance of our class loaded by qodana classloader!), otherwise we will fail to read cached value from file's attributes:
- * [org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshotFile]
+ * [org.jetbrains.kotlin.idea.core.script.k1.configuration.cache.ScriptConfigurationSnapshotFile]
  *
  * The dependencies are provided in `refineConfiguration.beforeCompiling` to achieve a lazy collection of dependencies:
  * when the .inspection.kts file is actually met (for example, opened in editor), the [InspectionKtsClasspathProvider.collectClassPath] is called
