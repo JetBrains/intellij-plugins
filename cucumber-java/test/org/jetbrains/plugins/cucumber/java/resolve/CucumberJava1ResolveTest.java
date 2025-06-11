@@ -5,6 +5,11 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 public class CucumberJava1ResolveTest extends BaseCucumberJavaResolveTest {
+  public void testHighlightingOK() {
+    init("stepResolve_01");
+    myFixture.testHighlighting("ShoppingStepdefs.java");
+  }
+
   public void testExactStepMatching() {
     init("stepResolve_01");
     checkReference("test sho<caret>uld pass", null);
