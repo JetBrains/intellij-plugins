@@ -65,7 +65,7 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
 
   override fun createElement(node: ASTNode): PsiElement {
     return when (val elementType = node.elementType) {
-      is XmlStubBasedElementType<*, *> -> {
+      is XmlStubBasedElementType<*> -> {
         elementType.createPsi(node)
       }
       is HtmlCustomEmbeddedContentTokenType -> {

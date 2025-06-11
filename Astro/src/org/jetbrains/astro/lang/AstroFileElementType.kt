@@ -3,13 +3,13 @@ package org.jetbrains.astro.lang
 
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.tree.IStubFileElementType
-import com.intellij.psi.xml.HtmlFileElementType
+import com.intellij.psi.xml.HtmlLanguageStubDefinition
 import org.jetbrains.astro.lang.parser.AstroStubElementTypes
 
 class AstroFileElementType : IStubFileElementType<PsiFileStub<*>>("astro", AstroLanguage.INSTANCE) {
 
   override fun getStubVersion(): Int {
-    return HtmlFileElementType.getHtmlStubVersion() + 3 + AstroStubElementTypes.STUB_VERSION
+    return HtmlLanguageStubDefinition.getHtmlStubVersion() + 3 + AstroStubElementTypes.STUB_VERSION
   }
 
   companion object {
