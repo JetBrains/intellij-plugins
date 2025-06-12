@@ -82,7 +82,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
     registerTool(tool)
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
     runYamlTest()
-    val rule = manager.qodanaRunner.sarifRun.tool.extensions.flatMap { it.rules }.find { it.id == tool.shortName }
+    val rule = manager.sarifRun.tool.extensions.flatMap { it.rules }.find { it.id == tool.shortName }
     Assert.assertEquals("""Language/A_B/C\/test""", rule?.relationships?.first()?.target?.id)
   }
 
@@ -92,7 +92,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
     registerTool(tool)
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
     runYamlTest()
-    val rule = manager.qodanaRunner.sarifRun.tool.extensions.flatMap { it.rules }.find { it.id == tool.shortName }
+    val rule = manager.sarifRun.tool.extensions.flatMap { it.rules }.find { it.id == tool.shortName }
     Assert.assertEquals("""Language/A_B/C\/test""", rule?.relationships?.first()?.target?.id)
     Assert.assertTrue(rule?.defaultConfiguration?.enabled!!)
   }

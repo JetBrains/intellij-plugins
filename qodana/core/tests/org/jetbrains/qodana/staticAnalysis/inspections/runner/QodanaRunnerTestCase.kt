@@ -58,8 +58,6 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
 
   protected val outputBasePath: Path = FileUtil.generateRandomTemporaryPath().toPath()
 
-  protected fun qodanaRunner() = manager.qodanaRunner
-
   override fun runInDispatchThread(): Boolean = false
 
   override fun setUp() {
@@ -146,17 +144,17 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
   }
 
   protected fun assertSarifExitCode(expected: Int) {
-    assertEquals(expected, qodanaRunner().sarifRun.invocations[0].exitCode)
+    assertEquals(expected, manager.sarifRun.invocations[0].exitCode)
   }
 
   protected fun assertSarifEnabledRules(vararg expectedRulesIds: String) {
-    val allRules = qodanaRunner().sarifRun.tool.extensions.flatMap { it.rules }
+    val allRules = manager.sarifRun.tool.extensions.flatMap { it.rules }
     val enabledRules = allRules.filter { it.defaultConfiguration.enabled }
     assertEquals(expectedRulesIds.toSortedSet(), enabledRules.map { it.id }.toSortedSet())
   }
 
   protected fun assertNoSarifResults() {
-    assertEquals(null, qodanaRunner().sarifRun.results)
+    assertEquals(null, manager.sarifRun.results)
   }
 
   /**
@@ -180,7 +178,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
       .thenBy { it.locations[0].physicalLocation.region.startLine }
       .thenBy { it.locations[0].physicalLocation.region.charOffset }
 
-    val results = qodanaRunner().sarifRun.results.sortedWith(comparator)
+    val results = manager.sarifRun.results.sortedWith(comparator)
     val actualEntries = results.map { result ->
       val loc = result.locations[0].physicalLocation
       val locStr = "${loc.artifactLocation.uri}:${loc.region.startLine}:${loc.region.startColumn}"

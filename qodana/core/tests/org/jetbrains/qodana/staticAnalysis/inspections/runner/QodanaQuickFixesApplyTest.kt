@@ -60,7 +60,7 @@ class QodanaQuickFixesApplyTest: QodanaQuickFixesCommonTests(FixesStrategy.APPLY
   }
 
   private fun assertIncorrectFormattingRegionInvariant() {
-    val results = manager.qodanaRunner.sarifRun.results
+    val results = manager.sarifRun.results
     results.filter { it.properties?.get("problemType") == ProblemType.INCORRECT_FORMATTING.toString() }.forEach { result ->
       for (location in result.locations) {
         assertEquals(location.physicalLocation?.region?.startLine, 0)

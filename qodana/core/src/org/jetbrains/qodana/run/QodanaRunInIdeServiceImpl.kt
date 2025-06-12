@@ -128,12 +128,10 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
           writeQodanaYaml(runContext.config.outPath.resolve("log"))
           writeQodanaYaml(Path(PathManager.getLogPath()))
 
-          qodanaRunner.run()
-          qodanaRunner.writeFullSarifReport()
+          val sarif = qodanaRunner.run()
 
-          val guid = qodanaRunner.sarif.guid
           this.coroutineContext.job.cancelChildren()
-          QodanaInIdeOutput(guid, runContext.config.outPath)
+          QodanaInIdeOutput(sarif.guid, runContext.config.outPath)
         }
       }
     }

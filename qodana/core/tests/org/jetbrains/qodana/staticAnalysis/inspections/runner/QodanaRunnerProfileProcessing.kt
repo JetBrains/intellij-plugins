@@ -30,7 +30,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
     assertEquals(false, testConfigureObject.deconfigured)
     runAnalysis()
     assertSarifEnabledRules("inspection-1", "inspection-2", "inspection-3")
-    val allRules = qodanaRunner().sarifRun.tool.extensions.flatMap { it.rules }
+    val allRules = manager.sarifRun.tool.extensions.flatMap { it.rules }
     val rulesToLevels = allRules.associate { it.id to it.defaultConfiguration.level }
     assertEquals(Level.WARNING, rulesToLevels["inspection-1"])
     assertEquals(Level.WARNING, rulesToLevels["inspection-3"])
@@ -42,7 +42,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
   fun `import custom settings`() {
     runAnalysis()
     assertSarifEnabledRules("inspection-1", "inspection-3")
-    val allRules = qodanaRunner().sarifRun.tool.extensions.flatMap { it.rules }
+    val allRules = manager.sarifRun.tool.extensions.flatMap { it.rules }
     val rulesToLevels = allRules.associate { it.id to it.defaultConfiguration.level }
     assertEquals(Level.WARNING, rulesToLevels["inspection-1"])
     assertEquals(Level.ERROR, rulesToLevels["inspection-3"])
@@ -57,7 +57,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
     }
     runAnalysis()
     assertSarifEnabledRules("inspection-1", "inspection-3")
-    val allRules = qodanaRunner().sarifRun.tool.extensions.flatMap { it.rules }
+    val allRules = manager.sarifRun.tool.extensions.flatMap { it.rules }
     val rulesToLevels = allRules.associate { it.id to it.defaultConfiguration.level }
     assertEquals(Level.WARNING, rulesToLevels["inspection-1"])
     assertEquals(Level.ERROR, rulesToLevels["inspection-3"])
@@ -192,7 +192,7 @@ class QodanaRunnerProfileProcessing : QodanaRunnerTestCase() {
   }
 
   private fun getEnabledRules(): List<String> {
-    val allRules = qodanaRunner().sarifRun.tool.extensions.flatMap { it.rules }
+    val allRules = manager.sarifRun.tool.extensions.flatMap { it.rules }
     return allRules.filter { it.defaultConfiguration.enabled }.map { it.id }
   }
 

@@ -2,6 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.sarif
 
 import com.google.gson.JsonObject
 import com.jetbrains.qodana.sarif.SarifUtil
+import com.jetbrains.qodana.sarif.model.SarifReport
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
@@ -22,7 +23,7 @@ class FailureConditionsContributorTest : QodanaRunnerTestCase() {
   private fun getSerializedValue(): JsonObject? {
     val path = Files.createTempFile(null, ".sarif")
     return try {
-      SarifUtil.writeReport(path, qodanaRunner().sarif)
+      SarifUtil.writeReport(path, SarifReport().withRuns(listOf(manager.sarifRun)))
       gson.fromJson(path.readText(), JsonObject::class.java)
         .getAsJsonArray("runs")
         ?.first()

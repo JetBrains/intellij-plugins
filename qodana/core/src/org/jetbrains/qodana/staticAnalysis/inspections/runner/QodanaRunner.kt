@@ -37,9 +37,6 @@ private val LOG = logger<QodanaRunner>()
  * The [QodanaRunner] runs a [QodanaScript] and after run processes SARIF (adds needed fields etc.)
  */
 class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, private val messageReporter: QodanaMessageReporter) {
-  val sarifRun: Run = createRun()
-  val sarif: SarifReport = createSarifReport(mutableListOf(sarifRun))
-
   companion object {
     internal suspend fun getInspectionIdToNameMap(
       inspectionNames: Map<String, String>,
@@ -54,7 +51,9 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     }
   }
 
-  suspend fun run() {
+  suspend fun run(): SarifReport {
+    val sarifRun: Run = createRun()
+    val sarif: SarifReport = createSarifReport(listOf(sarifRun))
     try {
       val resultsStorageDir = config.resultsStorage
       runInterruptible(StaticAnalysisDispatchers.IO) {
@@ -134,7 +133,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
         sarifRun.codeQualityMetrics = metrics.mapKeys { (k, _) -> k.prop }
         commandLineResultsPrinter?.printCodeQualityMetrics(metrics, sectionTitle = QodanaBundle.message("cli.metrics.title"))
       }
-
+      return sarif
     }
     catch (e: Throwable) {
       val invocation = sarifRun.invocations.first()
@@ -147,6 +146,8 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       setInvocationExitStatus(sarifRun, config)
       withContext(NonCancellable) {
         clearResultsDirIfNeeded()
+        writeFullSarifReport(sarif)
+        writeShortSarifReport(sarif, sarifRun)
       }
     }
   }
@@ -181,11 +182,11 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     }
   }
 
-  suspend fun writeFullSarifReport() {
+  suspend fun writeFullSarifReport(sarif: SarifReport) {
     writeReport(config.outPath.resolve(FULL_SARIF_REPORT_NAME), sarif)
   }
 
-  suspend fun writeShortSarifReport() {
+  suspend fun writeShortSarifReport(sarif: SarifReport, sarifRun: Run) {
     // avoid creating a copy because it can easily OOM on large reports
     val ext = sarifRun.tool.extensions
     val taxa = sarifRun.tool.driver.taxa

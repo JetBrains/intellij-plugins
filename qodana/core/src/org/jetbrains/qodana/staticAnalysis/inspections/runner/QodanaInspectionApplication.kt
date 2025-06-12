@@ -19,6 +19,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.util.application
 import com.intellij.util.io.createParentDirectories
+import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.*
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.QodanaBundle
@@ -110,9 +111,9 @@ class QodanaInspectionApplication(
       supervisorScope {
         val contextFactory = DefaultRunContextFactory(reporter, config, this)
         val runner = constructQodanaRunner(contextFactory)
-        launchRunner(runner)
+        val sarif = launchRunner(runner)
         this.coroutineContext.job.cancelChildren()
-        runner.sarifRun.firstExitStatus
+        sarif.runs.first().firstExitStatus
       }
     }
     if (status.code != 0) {
@@ -137,9 +138,9 @@ class QodanaInspectionApplication(
   }
 
   @VisibleForTesting
-  suspend fun launchRunner(runner: QodanaRunner) {
+  suspend fun launchRunner(runner: QodanaRunner): SarifReport {
     copyConfigToLog(config)
-    try {
+    val sarif = try {
       try {
         application.addQodanaAnalysisConfig(config)
         runner.run()
@@ -155,10 +156,6 @@ class QodanaInspectionApplication(
       throw e
     }
     finally {
-      withContext(NonCancellable) {
-        runner.writeFullSarifReport()
-        runner.writeShortSarifReport()
-      }
       LOG.info("sessionId: " + EventLogConfiguration.getInstance().getOrCreate("FUS").sessionId)
     }
 
@@ -167,11 +164,12 @@ class QodanaInspectionApplication(
       if (openInIdeCloudMetadata != null) {
         val openInIdeMetadata = OpenInIdeMetadata(
           openInIdeCloudMetadata,
-          OpenInIdeMetadata.Vcs(runner.sarif.runs?.firstOrNull()?.versionControlProvenance?.firstOrNull()?.repositoryUri?.toString())
+          OpenInIdeMetadata.Vcs(sarif.runs?.firstOrNull()?.versionControlProvenance?.firstOrNull()?.repositoryUri?.toString())
         )
         writeOpenInIdeMetadata(openInIdeMetadata, config.outPath)
       }
     }
+    return sarif
   }
 
   private suspend fun publishResultsToCloudIfNeeded(): OpenInIdeMetadata.Cloud? {

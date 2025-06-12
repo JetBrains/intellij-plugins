@@ -2,6 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.sarif
 
 import com.intellij.testFramework.TestDataPath
 import com.jetbrains.qodana.sarif.SarifUtil
+import com.jetbrains.qodana.sarif.model.SarifReport
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunnerTestCase
 import org.junit.Test
@@ -14,7 +15,7 @@ class ResultSummaryContributorTest: QodanaRunnerTestCase() {
   private fun getSerializedValue(): Map<String, Int>? {
     val path = Files.createTempFile(null, ".sarif")
     return try {
-      SarifUtil.writeReport(path, qodanaRunner().sarif)
+      SarifUtil.writeReport(path, SarifReport().withRuns(listOf(manager.sarifRun)))
       SarifUtil.readReport(path)
         .runs
         .single()

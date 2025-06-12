@@ -64,7 +64,7 @@ abstract class QodanaQuickFixesTestBase(private val strategy: FixesStrategy) : Q
   }
 
   private fun assertFixes() {
-    val run = manager.qodanaRunner.sarifRun
+    val run = manager.sarifRun
     val afterFixesPath = getTestDataPath("afterFixes")
 
     val projectDir = VfsUtil.findFile(qodanaConfig.projectPath, false)
