@@ -2,15 +2,17 @@ package org.angular2.library.forms
 
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
-import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
+import com.intellij.psi.PsiElement
 import org.angular2.Angular2Framework
 import org.angular2.lang.html.Angular2HtmlFile
 import org.angular2.web.Angular2DirectiveSymbolWrapper
@@ -51,12 +53,18 @@ object Angular2FormsPolySymbolQueryResultsCustomizer : PolySymbolsQueryResultsCu
   private class Angular2FormControlAttributeWrapper(
     delegate: Angular2DirectiveSymbolWrapper,
   ) : Angular2SymbolDelegate<Angular2DirectiveSymbolWrapper>(delegate) {
-    override val attributeValue: PolySymbolHtmlAttributeValue?
-      get() = PolySymbolHtmlAttributeValue.create(
-        PolySymbolHtmlAttributeValue.Kind.PLAIN,
-        PolySymbolHtmlAttributeValue.Type.SYMBOL,
-        required = true,
-      )
+
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when (property) {
+        PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(
+          PolySymbolHtmlAttributeValue.create(
+            PolySymbolHtmlAttributeValue.Kind.PLAIN,
+            PolySymbolHtmlAttributeValue.Type.SYMBOL,
+            required = true,
+          )
+        )
+        else -> super[property]
+      }
 
     override fun isEquivalentTo(symbol: Symbol): Boolean {
       return this == symbol || delegate.isEquivalentTo(symbol)

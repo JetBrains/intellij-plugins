@@ -10,8 +10,8 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
@@ -115,6 +115,10 @@ class Angular2DirectiveProperties(
   private abstract class AbstractFromInOutDirectiveProperty(inOut: Angular2DirectiveProperty)
     : Angular2SymbolDelegate<Angular2DirectiveProperty>(inOut),
       Angular2DirectiveProperty, PsiSourcedPolySymbol {
+
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      super<Angular2DirectiveProperty>.get(property)
+      ?: delegate[property]
 
     override val name: String
       get() = delegate.name

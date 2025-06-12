@@ -3,21 +3,21 @@ package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.javascript.polySymbols.jsType
 import com.intellij.javascript.polySymbols.symbols.JSPropertySymbol
+import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
-import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
 
 class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
   : PsiSourcedPolySymbol {
-  override val type: JSType?
-    get() = propertySymbol.jsType
 
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
@@ -31,8 +31,12 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
   override val source: PsiElement?
     get() = propertySymbol.source
 
-  override val attributeValue: PolySymbolHtmlAttributeValue
-    get() = PolySymbolHtmlAttributeValue.create(kind = PolySymbolHtmlAttributeValue.Kind.PLAIN)
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_JS_TYPE -> property.tryCast(propertySymbol.jsType)
+      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(PolySymbolHtmlAttributeValue.create(kind = PolySymbolHtmlAttributeValue.Kind.PLAIN))
+      else -> null
+    }
 
   override val required: Boolean
     get() = !(propertySymbol.psiContext.asSafely<PropertySignature>()?.isOptional ?: false)

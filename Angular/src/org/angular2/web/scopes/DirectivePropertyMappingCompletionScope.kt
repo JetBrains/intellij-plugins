@@ -5,11 +5,11 @@ import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.javascript.polySymbols.symbols.JSPropertySymbol
 import com.intellij.javascript.polySymbols.symbols.asPolySymbol
 import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
+import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -176,12 +176,17 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     override val origin: PolySymbolOrigin
       get() = super<Angular2Symbol>.origin
 
-    override val type: Any?
-      get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS) {
-        Angular2TypeUtils.extractEventVariableType(super<PolySymbolDelegate>.type as? JSType)
-      }
-      else {
-        Angular2EntityUtils.jsTypeFromAcceptInputType(owner, name) ?: super<PolySymbolDelegate>.type as? JSType
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when (property) {
+        PROP_JS_TYPE -> property.tryCast(
+          if (qualifiedKind == NG_DIRECTIVE_OUTPUTS) {
+            Angular2TypeUtils.extractEventVariableType(super<PolySymbolDelegate>[PROP_JS_TYPE])
+          }
+          else {
+            Angular2EntityUtils.jsTypeFromAcceptInputType(owner, name) ?: super<PolySymbolDelegate>[PROP_JS_TYPE]
+          }
+        )
+        else -> super<PolySymbolDelegate>.get(property)
       }
 
     override fun createPointer(): Pointer<out Angular2FieldPropertySymbol> {

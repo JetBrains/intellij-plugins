@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
+import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
@@ -14,7 +15,7 @@ class VueAnySymbol(
   override val origin: PolySymbolOrigin,
   override val qualifiedKind: PolySymbolQualifiedKind,
   override val name: String,
-  override val type: JSType? = null,
+  val type: JSType? = null,
 ) : PolySymbol {
 
   override val pattern: PolySymbolsPattern
@@ -25,6 +26,7 @@ class VueAnySymbol(
     when (property) {
       PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as? T
       PolySymbol.PROP_DOC_HIDE_PATTERN -> true as? T
+      PROP_JS_TYPE -> type as? T
       else -> null
     }
 

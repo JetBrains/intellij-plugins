@@ -24,6 +24,7 @@ import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.html.htmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
@@ -150,6 +151,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       when {
         property == PROP_DELEGATE_PRIORITY -> property.tryCast(super<PolySymbolDelegate>.priority)
+        property == PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
         resolveOnly && property == PolySymbol.PROP_HIDE_FROM_COMPLETION -> property.tryCast(true)
         else -> super<PolySymbolDelegate>.get(property)
       }
@@ -159,7 +161,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
     override val required: Boolean
       get() = false
 
-    override val attributeValue: PolySymbolHtmlAttributeValue? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val attributeValue: PolySymbolHtmlAttributeValue? by lazy(LazyThreadSafetyMode.PUBLICATION) {
       withTypeEvaluationLocation(typeEvaluationLocation) {
         if (isStrictTemplates(this.psiContext)) {
           PolySymbolHtmlAttributeValue.create(

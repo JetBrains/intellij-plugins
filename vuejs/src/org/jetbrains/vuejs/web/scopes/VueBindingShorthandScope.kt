@@ -10,6 +10,7 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ELEMENTS
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -85,8 +86,11 @@ class VueBindingShorthandSymbol(
   override val qualifiedKind: PolySymbolQualifiedKind
     get() = VUE_BINDING_SHORTHANDS
 
-  override val attributeValue: PolySymbolHtmlAttributeValue
-    get() = PolySymbolHtmlAttributeValue.create(kind = PolySymbolHtmlAttributeValue.Kind.NO_VALUE)
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(PolySymbolHtmlAttributeValue.create(kind = PolySymbolHtmlAttributeValue.Kind.NO_VALUE))
+      else -> super<CompositePolySymbol>.get(property)
+    }
 
   override val priority: PolySymbol.Priority
     get() = PolySymbol.Priority.HIGHEST

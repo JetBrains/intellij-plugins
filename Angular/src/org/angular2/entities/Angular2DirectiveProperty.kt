@@ -2,6 +2,7 @@
 package org.angular2.entities
 
 import com.intellij.javascript.polySymbols.documentation.JSPolySymbolWithSubstitutor
+import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.javascript.polySymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -10,16 +11,17 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.css.impl.CssNamedItemPresentation
 import com.intellij.psi.util.contextOfType
 import com.intellij.util.ThreeState
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
-import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import icons.AngularIcons
 import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.lang.Angular2Bundle
@@ -52,9 +54,9 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSPolySym
       .containerText(
         when (qualifiedKind) {
           NG_DIRECTIVE_INPUTS -> Angular2Bundle.message("angular.entity.directive.input")
-          NG_DIRECTIVE_OUTPUTS ->  Angular2Bundle.message("angular.entity.directive.output")
-          NG_DIRECTIVE_IN_OUTS ->  Angular2Bundle.message("angular.entity.directive.inout")
-          else ->  Angular2Bundle.message("angular.entity.directive.property")
+          NG_DIRECTIVE_OUTPUTS -> Angular2Bundle.message("angular.entity.directive.output")
+          NG_DIRECTIVE_IN_OUTS -> Angular2Bundle.message("angular.entity.directive.inout")
+          else -> Angular2Bundle.message("angular.entity.directive.property")
         })
       .locationText((sourceElement as? NavigatablePsiElement)?.presentation?.locationString
                     ?: CssNamedItemPresentation.getLocationString(sourceElement))
@@ -69,19 +71,25 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSPolySym
   override val priority: PolySymbol.Priority?
     get() = PolySymbol.Priority.LOW
 
-  override val type: JSType?
+  val type: JSType?
     get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS)
       Angular2TypeUtils.extractEventVariableType(rawJsType)
     else
       rawJsType
 
-
-  override val attributeValue: PolySymbolHtmlAttributeValue?
+  val attributeValue: PolySymbolHtmlAttributeValue?
     get() = if (TypeScriptSymbolTypeSupport.isBoolean(type, sourceElement) != ThreeState.NO) {
       PolySymbolHtmlAttributeValue.create(null, null, false, null, null)
     }
     else {
       null
+    }
+
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_JS_TYPE -> property.tryCast(type)
+      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
+      else -> super.get(property)
     }
 
   override val apiStatus: PolySymbolApiStatus

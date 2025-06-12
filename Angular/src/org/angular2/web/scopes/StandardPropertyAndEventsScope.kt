@@ -4,10 +4,10 @@ package org.angular2.web.scopes
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
 import com.intellij.html.polySymbols.PolySymbolsHtmlQueryConfigurator
+import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
@@ -189,8 +189,11 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       }
     }
 
-    override val type: JSType?
-      get() = source?.getJSType(templateFile)
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when (property) {
+        PROP_JS_TYPE -> property.tryCast(source?.getJSType(templateFile))
+        else -> super.get(property)
+      }
 
     override val qualifiedKind: PolySymbolQualifiedKind
       get() = JS_PROPERTIES
@@ -245,9 +248,14 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
       }
     }
 
-    override val type: JSType?
-      get() = Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(templateFile))
-              ?: mapSource?.getJSType(templateFile)
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when (property) {
+        PROP_JS_TYPE -> property.tryCast(
+          Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(templateFile))
+          ?: mapSource?.getJSType(templateFile)
+        )
+        else -> super<PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol>.get(property)
+      }
 
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.NORMAL

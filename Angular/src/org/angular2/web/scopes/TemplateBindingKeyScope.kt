@@ -4,15 +4,16 @@ package org.angular2.web.scopes
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
+import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.js.JS_PROPERTIES
-import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.PolySymbol.Priority
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
@@ -94,9 +95,11 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
     override val name: @NlsSafe String
       get() = bindings.templateName
 
-    override val type: Any?
-      get() = BindingsTypeResolver.get(bindings)
-        .resolveTemplateContextType()
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when (property) {
+        PROP_JS_TYPE -> property.tryCast(BindingsTypeResolver.get(bindings).resolveTemplateContextType())
+        else -> super.get(property)
+      }
 
     override fun createPointer(): Pointer<out PolySymbol> {
       val bindingsPtr = bindings.createSmartPointer()

@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
@@ -8,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
@@ -35,8 +37,11 @@ class Angular2DirectiveExportAs(
   override val qualifiedKind: PolySymbolQualifiedKind
     get() = NG_DIRECTIVE_EXPORTS_AS
 
-  override val type: Any?
-    get() = directive.entityJsType
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_JS_TYPE -> property.tryCast(directive.entityJsType)
+      else -> super<Angular2Symbol>.get(property)
+    }
 
   override fun createPointer(): Pointer<out Angular2DirectiveExportAs> {
     val name = name

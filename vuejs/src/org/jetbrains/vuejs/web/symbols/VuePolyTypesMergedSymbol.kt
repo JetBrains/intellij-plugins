@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.javascript.polySymbols.jsType
-import com.intellij.lang.javascript.psi.JSType
+import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.backend.documentation.DocumentationResult
@@ -13,6 +13,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
@@ -20,7 +21,6 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.merge
-import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
@@ -84,12 +84,10 @@ class VuePolyTypesMergedSymbol(
   override val priority: PolySymbol.Priority?
     get() = symbols.asSequence().mapNotNull { it.priority }.maxOrNull()
 
-  override val type: JSType?
-    get() = symbols.firstNotNullOfOrNull { it.jsType }
-
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(symbols.asSequence().map { it[PROP_HTML_ATTRIBUTE_VALUE] }.merge())
+      PROP_JS_TYPE -> property.tryCast(symbols.firstNotNullOfOrNull { it.jsType })
       else -> symbols.asSequence().mapNotNull { it[property] }.firstOrNull()
     }
 

@@ -9,10 +9,11 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_SLOTS
-import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Kind.EXPRESSION
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Type.OF_MATCH
+import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createComplexPattern
@@ -93,8 +94,11 @@ class VueSlotElementScope(tag: XmlTag)
     override val name: String
       get() = "Vue Slot Properties"
 
-    override val attributeValue: PolySymbolHtmlAttributeValue
-      get() = PolySymbolHtmlAttributeValue.create(kind = EXPRESSION, type = OF_MATCH)
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+      when (property) {
+        PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(PolySymbolHtmlAttributeValue.create(kind = EXPRESSION, type = OF_MATCH))
+        else -> super<PolySymbol>.get(property)
+      }
 
     override val pattern: PolySymbolsPattern =
       createComplexPattern(

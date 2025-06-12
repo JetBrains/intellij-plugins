@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.javascript.polySymbols.symbols.JSPropertySymbol
 import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
 import com.intellij.javascript.polySymbols.symbols.getMatchingJSPropertySymbols
+import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
@@ -38,7 +39,13 @@ class VueComponentNamespaceSymbol(
     }
   }
 
-  override val type: Any
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_JS_TYPE -> property.tryCast(type)
+      else -> super.get(property)
+    }
+
+  private val type: Any
     get() = JSPsiBasedTypeOfType(
       when (val source = source) {
         is ES6ImportedBinding -> source.multiResolve(false)
