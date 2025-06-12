@@ -112,6 +112,7 @@
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
             "problemType": "REGULAR",
+            "hasFixes": true,
             "tags": [
               "JAVA"
             ]

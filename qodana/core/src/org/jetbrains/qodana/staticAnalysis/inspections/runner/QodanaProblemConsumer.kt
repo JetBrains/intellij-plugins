@@ -3,11 +3,11 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 import com.intellij.codeInspection.CommonProblemDescriptor
 import com.intellij.codeInspection.ex.InspectionProblemConsumer
 import com.intellij.codeInspection.ex.InspectionToolWrapper
+import com.intellij.modcommand.ModCommandQuickFix
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderEx
 import com.intellij.platform.util.coroutines.childScope
-import com.jetbrains.qodana.sarif.model.Fix
 import kotlinx.coroutines.CoroutineScope
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.problemDescriptors.MetricCodeDescriptor
@@ -42,10 +42,9 @@ class QodanaProblemConsumer(
       return
     }
 
-    val fileUri = element.getChildText("file")
     val problem = XmlProblem(
       element,
-      buildFixes(macroManager.collapsePath(fileUri), descriptor),
+      descriptor.fixes?.any { it is ModCommandQuickFix } == true,
       descriptor as? UserDataHolderEx
     )
 
@@ -54,10 +53,6 @@ class QodanaProblemConsumer(
 
   private fun consumeCodeQualityMetricsInfo(descriptor: MetricCodeDescriptor, toolWrapper: InspectionToolWrapper<*, *>) {
     databaseMetricWriter.consume(descriptor.fileData)
-  }
-
-  private fun buildFixes(fileUri: String, descriptor: CommonProblemDescriptor): Set<Fix> {
-    return emptySet()
   }
 
   suspend fun consumeGlobalOutput(paths: List<Path>) {
