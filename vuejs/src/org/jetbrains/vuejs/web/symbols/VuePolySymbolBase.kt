@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolNamespace
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolsScope
 
 abstract class VuePolySymbolBase : PolySymbolsScope {
 

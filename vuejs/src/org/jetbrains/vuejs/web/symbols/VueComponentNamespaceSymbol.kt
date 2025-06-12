@@ -15,9 +15,11 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.createSmartPointer
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueLocallyDefinedRegularComponent
 import org.jetbrains.vuejs.model.VueModelManager
@@ -30,8 +32,8 @@ import org.jetbrains.vuejs.web.VueFramework
 class VueComponentNamespaceSymbol(
   override val name: String,
   override val source: JSPsiNamedElementBase,
-) : PsiSourcedPolySymbol {
-  override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
+) : PsiSourcedPolySymbol, PolySymbolsScope {
+  override fun createPointer(): Pointer<out VueComponentNamespaceSymbol> {
     val name = name
     val sourcePtr = source.createSmartPointer()
     return Pointer {
@@ -39,7 +41,10 @@ class VueComponentNamespaceSymbol(
     }
   }
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+  override fun getModificationCount(): Long =
+    PsiModificationTracker.getInstance(source.project).modificationCount
+
+    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_JS_TYPE -> property.tryCast(type)
       else -> super.get(property)
@@ -83,13 +88,13 @@ class VueComponentNamespaceSymbol(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbol> =
     if (isNamespacedKind(qualifiedKind))
       getJSPropertySymbols().adaptToNamespaceComponents(qualifiedKind.kind)
     else
       emptyList()
 
-  private fun List<JSPropertySymbol>.adaptToNamespaceComponents(kind: PolySymbolKind) =
+  private fun List<JSPropertySymbol>.adaptToNamespaceComponents(kind: PolySymbolKind): List<PolySymbol> =
     mapNotNull { symbol ->
       val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
       val component = VueModelManager.getComponent(source) as? VueRegularComponent
@@ -111,14 +116,15 @@ class VueComponentNamespaceSymbol(
   override fun hashCode(): Int =
     31 * name.hashCode() + source.hashCode()
 
-  private class VueNamespacedComponent(override val delegate: VueComponentSymbol) : PsiSourcedPolySymbolDelegate<VueComponentSymbol> {
+  private class VueNamespacedComponent(override val delegate: VueComponentSymbol)
+    : PsiSourcedPolySymbolDelegate<VueComponentSymbol> {
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
 
     override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
       isNamespacedKind(qualifiedKind) || super.isExclusiveFor(qualifiedKind)
 
-    override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
+    override fun createPointer(): Pointer<out VueNamespacedComponent> {
       val delegatePtr = delegate.createPointer()
       return Pointer {
         delegatePtr.dereference()?.let { VueNamespacedComponent(it) }
@@ -140,7 +146,7 @@ class VueComponentNamespaceSymbol(
       qualifiedKind: PolySymbolQualifiedKind,
       params: PolySymbolsListSymbolsQueryParams,
       scope: Stack<PolySymbolsScope>,
-    ): List<PolySymbolsScope> =
+    ): List<PolySymbol> =
       namespaceSymbol.getSymbols(qualifiedKind, params, scope) +
       super.getSymbols(qualifiedKind, params, scope)
 

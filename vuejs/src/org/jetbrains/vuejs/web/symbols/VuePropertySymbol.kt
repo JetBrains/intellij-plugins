@@ -4,11 +4,15 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
 import com.intellij.javascript.polySymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.model.Pointer
-import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueProperty
 
@@ -34,7 +38,7 @@ abstract class VuePropertySymbol<T : VueProperty>(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbol> =
     getJSPropertySymbols(qualifiedKind)
 
 }

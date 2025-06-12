@@ -4,11 +4,15 @@ package org.jetbrains.vuejs.libraries.i18n
 import com.intellij.lang.Language
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.html.HtmlTag
@@ -58,7 +62,7 @@ class VueI18NQueryConfigurator : PolySymbolsQueryConfigurator {
       qualifiedKind: PolySymbolQualifiedKind,
       params: PolySymbolsListSymbolsQueryParams,
       scope: Stack<PolySymbolsScope>,
-    ): List<PolySymbolsScope> {
+    ): List<PolySymbol> {
       if (qualifiedKind == VUE_TOP_LEVEL_ELEMENTS) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }

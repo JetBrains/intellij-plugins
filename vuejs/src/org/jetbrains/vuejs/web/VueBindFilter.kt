@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.webTypes.filters.PolySymbolsFilter
 
 class VueBindFilter : PolySymbolsFilter {

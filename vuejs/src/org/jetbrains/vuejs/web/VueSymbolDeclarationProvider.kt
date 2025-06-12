@@ -4,12 +4,12 @@ package org.jetbrains.vuejs.web
 import com.intellij.lang.javascript.psi.*
 import com.intellij.openapi.util.TextRange
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.js.JS_EVENTS
-import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.declarations.PolySymbolDeclaration
 import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider
+import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
@@ -50,6 +50,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
         }
           ?.let { VueModelManager.findEnclosingComponent(it) }
           ?.asPolySymbol("", VueModelVisitor.Proximity.LOCAL)
+          ?.asSafely<PolySymbolsScope>()
           ?.getMatchingSymbols(JS_EVENTS.withName(name),
                                PolySymbolsNameMatchQueryParams.create(PolySymbolsQueryExecutorFactory.create(parent, false)),
                                Stack())

@@ -10,14 +10,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.js.NAMESPACE_JS
-import com.intellij.polySymbols.query.PolySymbolNameConversionRules
-import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
-import com.intellij.polySymbols.query.PolySymbolNameConverter
-import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
+import com.intellij.polySymbols.query.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlAttribute

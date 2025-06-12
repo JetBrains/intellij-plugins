@@ -2,10 +2,10 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.html.polySymbols.attributes.PolySymbolAttributeDescriptor
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.polySymbols.utils.hideFromCompletion
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.codeInsight.ATTR_ARGUMENT_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_SLOT_SHORTHAND
@@ -49,7 +49,7 @@ class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
           if (symbol != null
               && PolySymbolsQueryExecutorFactory.create(attr)
                 .listSymbolsQuery(VUE_DIRECTIVE_ARGUMENT, true)
-                .additionalScope(symbol)
+                .additionalScope(symbol.queryScope)
                 .run()
                 .count { !it.hideFromCompletion } == 0
           ) {

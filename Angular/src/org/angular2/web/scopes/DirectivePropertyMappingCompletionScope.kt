@@ -19,6 +19,7 @@ import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
@@ -122,7 +123,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbol> =
     /* Do not support reference resolution */
     emptyList()
 

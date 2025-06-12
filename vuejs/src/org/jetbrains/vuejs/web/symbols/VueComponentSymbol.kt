@@ -12,6 +12,7 @@ import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.*
@@ -82,7 +83,7 @@ class VueComponentSymbol(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbol> =
     when (qualifiedKind) {
       VUE_COMPONENT_PROPS -> {
         val props = mutableListOf<VueInputProperty>()

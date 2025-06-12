@@ -4,15 +4,15 @@ import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.psi.*
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
+import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
@@ -86,7 +86,7 @@ class Angular2FormsPolySymbolQueryConfigurator : PolySymbolsQueryConfigurator {
 
   private class SingleSymbolExclusiveScope(private val symbol: PolySymbol) : PolySymbolsScope {
 
-    override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
+    override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
       if (symbol.qualifiedKind == qualifiedKind)
         listOf(symbol)
       else

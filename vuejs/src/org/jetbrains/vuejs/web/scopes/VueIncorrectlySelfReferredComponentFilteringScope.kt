@@ -3,11 +3,14 @@ package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -36,7 +39,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbol> =
     delegate.getSymbols(qualifiedKind, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
 
@@ -74,7 +77,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
   }
 
   // Cannot self refer without export declaration with component name or script setup
-  private fun isNotIncorrectlySelfReferred(symbol: PolySymbolsScope?) =
+  private fun isNotIncorrectlySelfReferred(symbol: PolySymbol?) =
     symbol !is PsiSourcedPolySymbol
     || (symbol.source as? JSImplicitElement)?.context.let { context ->
       context == null

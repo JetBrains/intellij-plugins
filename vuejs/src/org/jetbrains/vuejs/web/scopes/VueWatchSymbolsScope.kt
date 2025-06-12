@@ -6,8 +6,8 @@ import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createCompletionAutoPopup
@@ -18,6 +18,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolR
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack

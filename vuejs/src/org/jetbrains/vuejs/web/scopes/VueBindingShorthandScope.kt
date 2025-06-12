@@ -50,6 +50,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
         executor.nameMatchQuery(HTML_ELEMENTS, tag.name)
           .exclude(PolySymbolModifier.ABSTRACT)
           .run()
+          .flatMap { it.queryScope }
       )
       .run()
       .associateBy { it.name }
@@ -101,7 +102,7 @@ class VueBindingShorthandSymbol(
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     super<PsiSourcedPolySymbolDelegate>.getNavigationTargets(project) + attrSymbol.getNavigationTargets(project)
 
-  override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {
+  override fun createPointer(): Pointer<out VueBindingShorthandSymbol> {
     val contextPtr = context.createSmartPointer()
     val psiSourcedSymbolPtr = delegate.createPointer()
     val attrSymbolPtr = attrSymbol.createPointer()

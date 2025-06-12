@@ -2,10 +2,14 @@ package org.angular2.library.forms.impl
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.util.containers.Stack
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
@@ -13,14 +17,14 @@ import org.angular2.library.forms.NG_FORM_GROUP_FIELDS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
 import org.angular2.web.Angular2SymbolOrigin
 
-object Angular2UnknownFormGroup : PolySymbol {
+object Angular2UnknownFormGroup : PolySymbol, PolySymbolsScope {
 
   override val name: @NlsSafe String
     get() = "Unknown form group"
 
   override val pattern: PolySymbolsPattern? = PolySymbolsPatternFactory.createRegExMatch(".*")
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     when (qualifiedKind) {
       NG_FORM_CONTROL_PROPS -> listOf(Angular2UnknownFormControl)
       NG_FORM_GROUP_FIELDS -> listOf(Angular2UnknownFormArray)
@@ -33,6 +37,8 @@ object Angular2UnknownFormGroup : PolySymbol {
 
   override val priority: PolySymbol.Priority?
     get() = PolySymbol.Priority.LOWEST
+
+  override fun getModificationCount(): Long = 0
 
   @Suppress("UNCHECKED_CAST")
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
@@ -48,6 +54,6 @@ object Angular2UnknownFormGroup : PolySymbol {
   override val origin: PolySymbolOrigin
     get() = Angular2SymbolOrigin.empty
 
-  override fun createPointer(): Pointer<out PolySymbol> =
+  override fun createPointer(): Pointer<out Angular2UnknownFormGroup> =
     Pointer.hardPointer(this)
 }

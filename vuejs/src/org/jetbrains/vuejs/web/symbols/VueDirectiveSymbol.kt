@@ -2,13 +2,13 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.util.containers.Stack
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
-import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueModelVisitor

@@ -11,7 +11,6 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.css.CSS_CLASS_LIST
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
@@ -22,6 +21,7 @@ import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
 import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
 import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.css.CssElement

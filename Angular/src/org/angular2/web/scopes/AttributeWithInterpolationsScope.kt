@@ -12,6 +12,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolsPatternSymbolsResolver
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.match
 import com.intellij.util.containers.Stack
 import org.angular2.web.Angular2SymbolOrigin

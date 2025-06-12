@@ -3,13 +3,14 @@ package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.match
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlTag
@@ -49,7 +50,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbol> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
       qualifiedKind == HTML_ATTRIBUTES ->

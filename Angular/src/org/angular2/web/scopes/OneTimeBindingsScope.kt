@@ -57,7 +57,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val queryExecutor = PolySymbolsQueryExecutorFactory.create(dataHolder)
     val scope = dataHolder.descriptor?.asSafely<PolySymbolElementDescriptor>()
-                  ?.symbol?.let { listOf(it) }
+                  ?.symbol?.queryScope
                 ?: emptyList()
     val attributeSelectors = queryExecutor
       .listSymbolsQuery(NG_DIRECTIVE_ATTRIBUTE_SELECTORS, expandPatterns = true)

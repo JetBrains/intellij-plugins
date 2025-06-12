@@ -2,16 +2,17 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.JS_STRING_LITERALS
+import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.js.JS_PROPERTIES
-import com.intellij.polySymbols.js.JS_STRING_LITERALS
-import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
-import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_PROVIDES

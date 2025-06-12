@@ -8,10 +8,10 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
 import com.intellij.polySymbols.css.getPolySymbolsCssScopeForTagClasses
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.css.StylesheetFile
@@ -46,7 +46,7 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
       val directive = Angular2EntitiesProvider.getDirective(location)
       val relatedStylesheets = (directive as? Angular2Component)?.cssFiles?.filterIsInstance<StylesheetFile>()
                                ?: emptyList()
-      val scope = mutableSetOf<PolySymbolsScope>(
+      val scope = mutableSetOf(
         StandardPropertyAndEventsScope(file),
         DirectiveElementSelectorsScope(file),
         DirectiveAttributeSelectorsScope(file),
@@ -66,6 +66,8 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
             .exclude(PolySymbolModifier.ABSTRACT)
             .additionalScope(scopeList)
             .run()
+            .asSequence()
+            .flatMap { s -> s.queryScope }
         }
         elementNames.mapTo(scope) { MatchedDirectivesScope.createFor(location, it) }
       }
@@ -75,7 +77,7 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
           .exclude(PolySymbolModifier.ABSTRACT)
           .additionalScope(scope.toList())
           .run()
-          .forEach { scope.add(it) }
+          .flatMapTo(scope) { s -> s.queryScope }
       }
       return scope.toList()
     }

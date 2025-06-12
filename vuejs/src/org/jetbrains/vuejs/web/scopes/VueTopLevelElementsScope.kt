@@ -2,13 +2,14 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.html.HTML_ELEMENTS
-import com.intellij.util.containers.Stack
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
+import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
+import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 
 object VueTopLevelElementsScope : PolySymbolsScope {
@@ -24,7 +25,7 @@ object VueTopLevelElementsScope : PolySymbolsScope {
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbol> =
     if (qualifiedKind == HTML_ELEMENTS)
       listOf(referencingSymbol)
     else

@@ -2,9 +2,12 @@ package org.angular2.library.forms.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.js.JS_STRING_LITERALS
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
@@ -16,6 +19,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.util.containers.Stack
 import com.intellij.util.containers.map2Array
@@ -29,7 +33,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
   override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_STRING_LITERALS
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolsScope> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedKind == JS_STRING_LITERALS)
       listOf(FormGroupGetPathSymbol)
     else
@@ -65,7 +69,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
   override fun getModificationCount(): Long = 0
 
   companion object {
-    object FormGroupGetPathSymbol : PolySymbol {
+    object FormGroupGetPathSymbol : PolySymbol, PolySymbolsScope {
 
       override val name: @NlsSafe String
         get() = "FormGroup.get() path"
@@ -78,6 +82,8 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
 
       override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
         qualifiedKind == JS_STRING_LITERALS
+
+      override fun getModificationCount(): Long = 0
 
       override val pattern: PolySymbolsPattern?
         get() = createComplexPattern(
@@ -109,7 +115,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
           )
         )
 
-      override fun createPointer(): Pointer<out PolySymbol> =
+      override fun createPointer(): Pointer<out FormGroupGetPathSymbol> =
         Pointer.hardPointer(this)
 
     }

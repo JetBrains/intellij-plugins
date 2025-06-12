@@ -2,11 +2,12 @@ package org.angular2.library.forms.impl
 
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolsScope
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import org.angular2.library.forms.Angular2FormArray
 import org.angular2.library.forms.NG_FORM_ARRAY_PROPS
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
@@ -22,7 +23,7 @@ class Angular2FormArrayImpl(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolsListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbol> =
     if (qualifiedKind == NG_FORM_CONTROL_PROPS)
       listOf(Angular2FormArrayControl)
     else
