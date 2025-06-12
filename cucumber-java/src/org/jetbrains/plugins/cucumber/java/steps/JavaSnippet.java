@@ -1,12 +1,11 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import cucumber.runtime.snippets.Snippet;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.util.List;
 
 class JavaSnippet implements Snippet {
-  JavaSnippet() {}
-
   @Override
   public String arguments(List<Class<?>> argumentTypes) {
     StringBuilder result = new StringBuilder();
@@ -47,6 +46,6 @@ class JavaSnippet implements Snippet {
 
   @Override
   public String escapePattern(String pattern) {
-    return pattern.replace("\\", "\\\\").replace("\"", "\\\"");
+    return CucumberJavaUtil.unescapeCucumberRegex(pattern);
   }
 }

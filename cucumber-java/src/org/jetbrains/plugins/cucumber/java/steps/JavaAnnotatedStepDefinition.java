@@ -2,10 +2,10 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   private final @NotNull String myAnnotationValue;
@@ -25,7 +25,7 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
       return null;
     }
     if (myAnnotationValue.length() > 1) {
-      return myAnnotationValue.replace("\\\\", "\\").replace("\\\"", "\"");
+      return CucumberJavaUtil.escapeCucumberRegex(myAnnotationValue);
     }
     return null;
   }

@@ -7,6 +7,7 @@ import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.find.findUsages.JavaFindUsagesHelper;
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressManager;
@@ -24,6 +25,9 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.Query;
 import com.intellij.util.text.VersionComparatorUtil;
 import com.siyeh.ig.callMatcher.CallMatcher;
+import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
+import io.cucumber.cucumberexpressions.GeneratedExpression;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
@@ -46,6 +50,8 @@ import static org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurati
 import static org.jetbrains.plugins.cucumber.java.steps.AnnotationPackageProvider.CUCUMBER_ANNOTATION_PACKAGES;
 
 public final class CucumberJavaUtil {
+  private static final Logger LOG = Logger.getInstance(CucumberJavaUtil.class);
+
   public static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
 
   private static final Map<String, String> JAVA_PARAMETER_TYPES;
@@ -86,6 +92,41 @@ public final class CucumberJavaUtil {
    */
   public static boolean isCucumberExpression(@NotNull String expression) {
     return !expression.startsWith("^") && !expression.endsWith("$") && !SCRIPT_STYLE_REGEXP.matcher(expression).find();
+  }
+
+  /// - Backslashes become `\\\\`
+  /// - Quotes become `\\"`
+  public static @NotNull String escapeCucumberRegex(@NotNull String regex) {
+    return regex
+      .replace("\\\\", "\\")
+      .replace("\\\"", "\"");
+  }
+
+  public static @NotNull String unescapeCucumberRegex(@NotNull String pattern) {
+    return pattern
+      .replace("\\", "\\\\")
+      .replace("\"", "\\\"");
+  }
+
+  public static @NotNull String replaceRegexpWithCucumberExpression(@NotNull String snippet, @NotNull String step) {
+    try {
+      ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.getDefault());
+      CucumberExpressionGenerator generator = new CucumberExpressionGenerator(registry);
+      GeneratedExpression result = generator.generateExpressions(step).get(0);
+      if (result != null) {
+        String cucumberExpression = unescapeCucumberRegex(result.getSource());
+        String[] lines = snippet.split("\n");
+
+        int start = lines[0].indexOf('(') + 1;
+        lines[0] = lines[0].substring(0, start + 1) + cucumberExpression + "\")";
+        return StringUtil.join(lines, "");
+      }
+    }
+    catch (Exception ignored) {
+      LOG.warn("Failed to replace regex with Cucumber Expression for step: " + step);
+      // TODO(bartekpacia): We should probably return null in this case.
+    }
+    return snippet;
   }
 
   private static @NotNull String getCucumberAnnotationSuffix(@NotNull String name) {

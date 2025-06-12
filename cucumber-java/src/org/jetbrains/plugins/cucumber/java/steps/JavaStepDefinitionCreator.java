@@ -10,7 +10,6 @@ import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.lang.Language;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
@@ -30,9 +29,6 @@ import cucumber.runtime.snippets.CamelCaseConcatenator;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
-import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
-import io.cucumber.cucumberexpressions.GeneratedExpression;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.AbstractStepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
@@ -40,7 +36,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberStepAnnotations;
@@ -49,8 +44,6 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   private static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
   private static final String FILE_TEMPLATE_CUCUMBER_JAVA_STEP_DEFINITION_JAVA = "Cucumber Java Step Definition.java";
   private static final String DEFAULT_STEP_KEYWORD = "Given";
-
-  private static final Logger LOG = Logger.getInstance(JavaStepDefinitionCreator.class);
 
   @Override
   public @NotNull PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
@@ -217,7 +210,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     String snippet = generator.getSnippet(cucumberStep, new FunctionNameGenerator(new CamelCaseConcatenator()));
 
     if (CucumberJavaUtil.isCucumberExpressionsAvailable(step)) {
-      snippet = replaceRegexpWithCucumberExpression(snippet, step.getName());
+      snippet = CucumberJavaUtil.replaceRegexpWithCucumberExpression(snippet, step.getName());
     }
 
     snippet = snippet.replaceFirst("@", methodAnnotation);
@@ -232,26 +225,6 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     catch (Exception e) {
       return methodFromCucumberLibraryTemplate;
     }
-  }
-
-  private static String replaceRegexpWithCucumberExpression(@NotNull String snippet, @NotNull String step) {
-    try {
-      ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.getDefault());
-      CucumberExpressionGenerator generator = new CucumberExpressionGenerator(registry);
-      GeneratedExpression result = generator.generateExpressions(step).get(0);
-      if (result != null) {
-        String cucumberExpression = new JavaSnippet().escapePattern(result.getSource());
-        String[] lines = snippet.split("\n");
-
-        int start = lines[0].indexOf('(') + 1;
-        lines[0] = lines[0].substring(0, start + 1) + cucumberExpression + "\")";
-        return StringUtil.join(lines, "");
-      }
-    }
-    catch (Exception ignored) {
-      LOG.warn("Failed to replace regex with Cucumber Expression for step: " + step);
-    }
-    return snippet;
   }
 
   private static PsiMethod createStepDefinitionFromSnippet(@NotNull PsiMethod methodFromSnippet,
