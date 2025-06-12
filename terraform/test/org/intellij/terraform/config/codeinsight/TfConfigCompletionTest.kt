@@ -993,6 +993,16 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
         }
       """.trimIndent(), "aws", "azurerm", "google", "kubernetes", "alicloud", "oci"
     )
+
+    doBasicCompletionTest("""
+      terraform {
+        required_providers {
+          aws = {
+            <caret>
+          }
+        }
+      }
+    """.trimIndent(), 2, "source", "version")
   }
 }
 

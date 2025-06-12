@@ -117,10 +117,9 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       .withSuperParent(3, Object)
       .withSuperParent(4, Block), BlockPropertiesCompletionProvider)
 
-    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-      .inFile(TerraformConfigFile)
-      .withParent(Object)
-      .withSuperParent(2, RequiredProvidersBlock), RequiredProviderCompletion)
+    extend(CompletionType.BASIC, TfPsiPatterns.RequiredProviderIdentifier, RequiredProviderCompletion)
+    extend(CompletionType.BASIC, TfPsiPatterns.IdentifierOfRequiredProviderProperty, RequiredProviderCompletion)
+
     //```
     //resource "X" "Y" {
     //  count<caret>
@@ -261,20 +260,29 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
   object RequiredProviderCompletion : TfCompletionProvider() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val element = parameters.position
-      val prefix = result.prefixMatcher.prefix
+      val superParent = element.parent?.parent
 
-      val providers = TypeModelProvider.getModel(element).allProviders()
-        .filter { it.type.startsWith(prefix) }
-        .map { buildLookupForRequiredProvider(it, element) }
-        .toList()
+      // Completion of all types of providers
+      if (RequiredProvidersBlock.accepts(superParent)) {
+        val prefix = result.prefixMatcher.prefix
+        val providers = TypeModelProvider.getModel(element).allProviders()
+          .filter { it.type.startsWith(prefix) }
+          .map { buildLookupForRequiredProvider(it, element) }
+          .toList()
 
-      val sorter = CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("tf.providers.weigher") {
-        override fun weigh(element: LookupElement): Int {
-          val providerType = element.`object` as? ProviderType
-          return if (providerType?.tier in ProviderTier.PreferedProviders) 0 else 1
-        }
-      })
-      result.withRelevanceSorter(sorter).addAllElements(providers)
+        val sorter = CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("tf.providers.weigher") {
+          override fun weigh(element: LookupElement): Int {
+            val providerType = element.`object` as? ProviderType
+            return if (providerType?.tier in ProviderTier.PreferedProviders) 0 else 1
+          }
+        })
+        result.withRelevanceSorter(sorter).addAllElements(providers)
+      }
+      // Completion properties in the required provider type
+      else {
+        val properties = listOf("source", "version").map { PropertyType(it, Types.String) }
+        result.addAllElements(properties.map { createPropertyOrBlockType(it) })
+      }
     }
   }
 
