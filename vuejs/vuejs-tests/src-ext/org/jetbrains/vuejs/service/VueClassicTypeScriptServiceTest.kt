@@ -270,9 +270,9 @@ class VueClassicTypeScriptServiceTest : TypeScriptServiceTestBase() {
   @Test
   fun testNoVueCompileOnSave() {
     val settings = TypeScriptCompilerSettings.getSettings(project)
-    settings.isRecompileOnChanges = true
-    settings.setUseServiceForProjectsWithoutConfig(true)
-    settings.setUseService(true)
+    settings.recompileOnChanges = true
+    settings.useServiceForProjectsWithoutConfig = true
+    settings.useService = true
     myFixture.copyDirectoryToProject(getTestName(false), "")
     myFixture.configureFromTempProjectFile(getTestName(false) + "." + extension)
     myFixture.checkHighlighting()

@@ -56,8 +56,7 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
 
   var useTypesFromServer: Boolean
     get() {
-      val useTypesFromServerInTests = TypeScriptCompilerSettings.isUseTypesFromServerInTests()
-      return useTypesFromServerInTests ?: state.useTypesFromServer
+      return TypeScriptCompilerSettings.useTypesFromServerInTests ?: state.useTypesFromServer
     }
     set(value) {
       val prevUseTypesFromServer = state.useTypesFromServer

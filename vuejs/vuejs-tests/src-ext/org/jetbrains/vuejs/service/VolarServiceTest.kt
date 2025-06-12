@@ -88,8 +88,8 @@ class VolarServiceTest : VueLspServiceTestBase() {
   @Test
   fun testDisableSuggestions() {
     val settings = TypeScriptCompilerSettings.getSettings(project)
-    settings.isShowSuggestions = false
-    disposeOnTearDown(Disposable { settings.isShowSuggestions = true })
+    settings.showSuggestions = false
+    disposeOnTearDown(Disposable { settings.showSuggestions = true })
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     myFixture.addFileToProject("tsconfig.json", tsconfig)
     myFixture.configureByText("Simple.vue", """

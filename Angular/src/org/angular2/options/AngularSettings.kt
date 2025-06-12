@@ -42,8 +42,7 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
 
   var useTypesFromServer: Boolean
     get() {
-      val useTypesFromServerInTests = TypeScriptCompilerSettings.isUseTypesFromServerInTests()
-      return useTypesFromServerInTests ?: state.useTypesFromServer
+      return TypeScriptCompilerSettings.useTypesFromServerInTests ?: state.useTypesFromServer
     }
     set(value) {
       val prevUseTypesFromServer = state.useTypesFromServer
