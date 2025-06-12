@@ -69,6 +69,11 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
   private val DEFAULT_EXPECTED_YML by lazy {
     @Language("YAML")
     val expected = """
+      #-------------------------------------------------------------------------------#
+      #        Discover additional configuration options in our documentation         #
+      #               https://www.jetbrains.com/help/qodana/github.html               #
+      #-------------------------------------------------------------------------------#
+      
       name: Qodana
       on:
         workflow_dispatch:
@@ -85,7 +90,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
             pull-requests: write
             checks: write
           steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
                 ref: $$REF_TEXT
                 fetch-depth: 0
@@ -93,6 +98,16 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
               uses: JetBrains/qodana-action@v${ApplicationInfo.getInstance().shortVersion}
               env:
                 QODANA_TOKEN: $$TOKEN_TEXT
+              with:
+                # In pr-mode: 'true' Qodana checks only changed files
+                pr-mode: false
+                use-caches: true
+                post-pr-comment: true
+                use-annotations: true
+                # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+                upload-result: false
+                # quick-fixes available in Ultimate and Ultimate Plus plans
+                push-fixes: 'none'
     """.trimIndent()
     expected
   }
@@ -174,7 +189,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
             pull-requests: write
             checks: write
           steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
                 ref: $$REF_TEXT
                 fetch-depth: 0
@@ -182,6 +197,16 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
               uses: JetBrains/qodana-action@v${ApplicationInfo.getInstance().shortVersion}
               env:
                 QODANA_TOKEN: $$TOKEN_TEXT
+              with:
+                # In pr-mode: 'true' Qodana checks only changed files
+                pr-mode: false
+                use-caches: true
+                post-pr-comment: true
+                use-annotations: true
+                # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+                upload-result: false
+                # quick-fixes available in Ultimate and Ultimate Plus plans
+                push-fixes: 'none'
     """.trimIndent()
     val path = Path(myFixture.tempDirFixture.tempDirPath)
     val viewModel = SetupGitHubActionsViewModel(path, project, scope, emptyProjectVcsDataProvider)
@@ -362,7 +387,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
             pull-requests: write
             checks: write
           steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
                 ref: $$REF_TEXT
                 fetch-depth: 0
@@ -370,6 +395,16 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
               uses: JetBrains/qodana-action@v${ApplicationInfo.getInstance().shortVersion}
               env:
                 QODANA_TOKEN: $$TOKEN_TEXT
+              with:
+                # In pr-mode: 'true' Qodana checks only changed files
+                pr-mode: false
+                use-caches: true
+                post-pr-comment: true
+                use-annotations: true
+                # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+                upload-result: false
+                # quick-fixes available in Ultimate and Ultimate Plus plans
+                push-fixes: 'none'
     """.trimIndent()
     val path = Path(myFixture.tempDirFixture.tempDirPath)
     val viewModel = SetupGitHubActionsViewModel(path, project, scope, emptyProjectVcsDataProvider)
@@ -404,6 +439,11 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
   fun `test setting git branches`() = runDispatchingOnUi {
     @Language("YAML")
     val expected = """
+      #-------------------------------------------------------------------------------#
+      #        Discover additional configuration options in our documentation         #
+      #               https://www.jetbrains.com/help/qodana/github.html               #
+      #-------------------------------------------------------------------------------#
+      
       name: Qodana
       on:
         workflow_dispatch:
@@ -422,7 +462,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
             pull-requests: write
             checks: write
           steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
                 ref: $$REF_TEXT
                 fetch-depth: 0
@@ -430,6 +470,16 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
               uses: JetBrains/qodana-action@v${ApplicationInfo.getInstance().shortVersion}
               env:
                 QODANA_TOKEN: $$TOKEN_TEXT
+              with:
+                # In pr-mode: 'true' Qodana checks only changed files
+                pr-mode: false
+                use-caches: true
+                post-pr-comment: true
+                use-annotations: true
+                # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+                upload-result: false
+                # quick-fixes available in Ultimate and Ultimate Plus plans
+                push-fixes: 'none'
     """.trimIndent()
 
     val projectVcsDataProviderWithBranches = ProjectVcsDataProviderMock(
@@ -450,6 +500,11 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
   fun `test sarif baseline in project`() = runDispatchingOnUi {
     @Language("YAML")
     val expected = """
+      #-------------------------------------------------------------------------------#
+      #        Discover additional configuration options in our documentation         #
+      #               https://www.jetbrains.com/help/qodana/github.html               #
+      #-------------------------------------------------------------------------------#
+      
       name: Qodana
       on:
         workflow_dispatch:
@@ -466,7 +521,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
             pull-requests: write
             checks: write
           steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
                 ref: $$REF_TEXT
                 fetch-depth: 0
@@ -476,6 +531,15 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
                 QODANA_TOKEN: $$TOKEN_TEXT
               with:
                 args: --baseline,qodana.sarif.json
+                # In pr-mode: 'true' Qodana checks only changed files
+                pr-mode: false
+                use-caches: true
+                post-pr-comment: true
+                use-annotations: true
+                # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+                upload-result: false
+                # quick-fixes available in Ultimate and Ultimate Plus plans
+                push-fixes: 'none'
     """.trimIndent()
 
     val path = Path(myFixture.tempDirFixture.tempDirPath)

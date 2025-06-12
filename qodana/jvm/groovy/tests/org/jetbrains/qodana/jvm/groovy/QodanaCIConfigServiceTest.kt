@@ -3,7 +3,7 @@ package org.jetbrains.qodana.jvm.groovy
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.assertions.Assertions.assertThat
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import org.jetbrains.qodana.QodanaPluginHeavyTestBase
 import org.jetbrains.qodana.runDispatchingOnUi
@@ -31,7 +31,7 @@ class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
 
   fun `test jenkins file with qodana`() = runDispatchingOnUi {
     val checker = JenkinsCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filterNotNull().first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
 
     assertThat(presentFile).isNotNull
     assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
@@ -39,9 +39,9 @@ class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
 
   fun `test jenkins file without qodana`() = runDispatchingOnUi {
     val checker = JenkinsCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filterNotNull().first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
 
     assertThat(presentFile).isNotNull
-    assertThat(presentFile).isInstanceOf(CIFile.Existing::class.java)
+    assertThat(presentFile).isInstanceOf(CIFile.ExistingSingleInstance::class.java)
   }
 }

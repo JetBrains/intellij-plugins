@@ -160,6 +160,18 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
       #plugins:
       #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
       
+      # Quality gate. Will fail the CI/CD pipeline if any condition is not met
+      # severityThresholds - configures maximum thresholds for different problem severities
+      # testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
+      # Code Coverage is available in Ultimate and Ultimate Plus plans
+      #failureConditions:
+      #  severityThresholds:
+      #    any: 15
+      #    critical: 5
+      #  testCoverageThresholds:
+      #    fresh: 70
+      #    total: 50
+      
       #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
       linter: jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
       
@@ -198,6 +210,18 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
         #Install IDE plugins before Qodana execution (Applied in CI/CD pipeline)
         #plugins:
         #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
+        
+        # Quality gate. Will fail the CI/CD pipeline if any condition is not met
+        # severityThresholds - configures maximum thresholds for different problem severities
+        # testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
+        # Code Coverage is available in Ultimate and Ultimate Plus plans
+        #failureConditions:
+        #  severityThresholds:
+        #    any: 15
+        #    critical: 5
+        #  testCoverageThresholds:
+        #    fresh: 70
+        #    total: 50
         
         #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
         linter: jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
@@ -238,6 +262,18 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
         #Install IDE plugins before Qodana execution (Applied in CI/CD pipeline)
         #plugins:
         #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
+        
+        # Quality gate. Will fail the CI/CD pipeline if any condition is not met
+        # severityThresholds - configures maximum thresholds for different problem severities
+        # testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
+        # Code Coverage is available in Ultimate and Ultimate Plus plans
+        #failureConditions:
+        #  severityThresholds:
+        #    any: 15
+        #    critical: 5
+        #  testCoverageThresholds:
+        #    fresh: 70
+        #    total: 50
         
         #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
         linter: jetbrains/qodana-<linter>:LINTER_PLACEHOLDER

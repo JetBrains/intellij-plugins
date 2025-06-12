@@ -14,7 +14,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
 interface CIFileChecker {
-  val ciFileFlow: Flow<CIFile?>
+  val ciFileFlow: Flow<CIFile>
 
   suspend fun isQodanaPresent(virtualFile: VirtualFile): Boolean
 
@@ -38,7 +38,7 @@ internal fun createRefreshSingleCIFile(
           CIFile.ExistingWithQodana(configAbsolutePath.pathString, ciFileChecker, physicalConfigFile)
         }
         else {
-          CIFile.Existing(configAbsolutePath.pathString, ciFileChecker, physicalConfigFile)
+          CIFile.ExistingSingleInstance(configAbsolutePath.pathString, ciFileChecker, physicalConfigFile)
         }
       }
       else -> CIFile.NotExisting(configAbsolutePath.pathString)
@@ -47,11 +47,11 @@ internal fun createRefreshSingleCIFile(
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal fun createCIFileFlow(scope: CoroutineScope, refreshCIFile: suspend () -> CIFile): Flow<CIFile?> {
-  val flow = MutableStateFlow<CIFile?>(null)
+internal fun createCIFileFlow(scope: CoroutineScope, refreshCIFile: suspend () -> CIFile): Flow<CIFile> {
+  val flow = MutableStateFlow<CIFile>(CIFile.InitRequest)
   scope.launch(QodanaDispatchers.Default) {
     flow
-      .flatMapLatest { it?.refreshRequestFlow ?: flowOf(CIFile.RefreshRequest) }
+      .flatMapLatest { it.refreshRequestFlow }
       .collectLatest { flow.value = refreshCIFile() }
   }
   return flow

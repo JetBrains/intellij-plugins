@@ -29,7 +29,7 @@ class QodanaCIConfigService(project: Project, scope: CoroutineScope)
   val presentCIFile = _presentCIFile.asStateFlow()
 
   private val toCheck = mapOf(
-    Pair(CIType.GITHUB, GitHubCIFileChecker(project, scope)),
+    Pair(CIType.GITHUB, GitHubCIFileChecker(project)),
     Pair(CIType.GITLAB, GitLabCIFileChecker(project, scope)),
     Pair(CIType.JENKINS, JenkinsCIFileChecker(project, scope)),
     Pair(CIType.AZURE, AzurePipelinesCIFileChecker(project, scope)),

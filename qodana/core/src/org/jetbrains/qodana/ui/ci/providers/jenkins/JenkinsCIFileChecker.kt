@@ -20,5 +20,5 @@ class JenkinsCIFileChecker(
     return JenkinsConfigHandler.isQodanaStagePresent(project, virtualFile)
   }
 
-  override val ciFileFlow: Flow<CIFile?> = createCIFileFlow(scope, createRefreshSingleCIFile(project, JENKINS_FILE, this))
+  override val ciFileFlow: Flow<CIFile> = createCIFileFlow(scope, createRefreshSingleCIFile(project, JENKINS_FILE, this))
 }

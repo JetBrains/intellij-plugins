@@ -20,5 +20,5 @@ class CircleCIFileChecker(
     return CircleCIConfigHandler.isQodanaStepPresent(project, virtualFile)
   }
 
-  override val ciFileFlow: Flow<CIFile?> = createCIFileFlow(scope, createRefreshSingleCIFile(project, CIRCLE_CI_FILE, this))
+  override val ciFileFlow: Flow<CIFile> = createCIFileFlow(scope, createRefreshSingleCIFile(project, CIRCLE_CI_FILE, this))
 }

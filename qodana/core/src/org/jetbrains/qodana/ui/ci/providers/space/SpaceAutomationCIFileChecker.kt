@@ -20,5 +20,5 @@ class SpaceAutomationCIFileChecker(
     return virtualFile.readText().contains("jetbrains/qodana")
   }
 
-  override val ciFileFlow: Flow<CIFile?> = createCIFileFlow(scope, createRefreshSingleCIFile(project, SPACE_AUTOMATION_CI_FILE, this))
+  override val ciFileFlow: Flow<CIFile> = createCIFileFlow(scope, createRefreshSingleCIFile(project, SPACE_AUTOMATION_CI_FILE, this))
 }
