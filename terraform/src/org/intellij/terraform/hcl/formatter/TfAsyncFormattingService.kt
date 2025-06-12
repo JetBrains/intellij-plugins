@@ -7,9 +7,7 @@ import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.runBlockingCancellable
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.eel.EelProcess
 import com.intellij.platform.eel.provider.getEelDescriptor
@@ -23,9 +21,7 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TfToolPathDetector
-import org.intellij.terraform.runtime.showIncorrectPathNotification
 import java.util.concurrent.CancellationException
 
 internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
@@ -53,34 +49,41 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
 
       override fun run() {
         try {
-          configureTfPath(project, toolType)
-          val exePath = toolType.getToolSettings(project).toolPath
-
           runBlockingCancellable {
-            job = launch {
-              var process: EelProcess? = null
-              try {
-                withContext(Dispatchers.IO) {
-                  val eelApi = project.getEelDescriptor().toEelApi()
-                  process = eelApi.exec.spawnProcess(exePath).args("fmt", "-").eelIt()
+            val isToolConfigured = TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
+            val exePath = toolType.getToolSettings(project).toolPath
+            if (!isToolConfigured) {
+              request.onError(
+                HCLBundle.message("run.configuration.terraform.path.title", toolType.displayName),
+                HCLBundle.message("run.configuration.terraform.path.incorrect", exePath.ifEmpty { toolType.executableName }, toolType.displayName)
+              )
+            }
+            else {
+              job = launch {
+                var process: EelProcess? = null
+                try {
+                  withContext(Dispatchers.IO) {
+                    val eelApi = project.getEelDescriptor().toEelApi()
+                    process = eelApi.exec.spawnProcess(exePath).args("fmt", "-").eelIt()
 
-                  process.stdin.sendWholeText(request.documentText)
-                  process.stdin.close()
+                    process.stdin.sendWholeText(request.documentText)
+                    process.stdin.close()
 
-                  val formattedText = process.stdout.readWholeText()
-                  val exitCode = process.exitCode.await()
-                  if (exitCode == 0) {
-                    request.onTextReady(formattedText)
-                  }
-                  else {
-                    @NlsSafe val errorMessage = process.stderr.readWholeText()
-                    request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), errorMessage)
+                    val formattedText = process.stdout.readWholeText()
+                    val exitCode = process.exitCode.await()
+                    if (exitCode == 0) {
+                      request.onTextReady(formattedText)
+                    }
+                    else {
+                      @NlsSafe val errorMessage = process.stderr.readWholeText()
+                      request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), errorMessage)
+                    }
                   }
                 }
-              }
-              finally {
-                withContext(NonCancellable) {
-                  process?.kill()
+                finally {
+                  withContext(NonCancellable) {
+                    process?.kill()
+                  }
                 }
               }
             }
@@ -102,17 +105,6 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
       }
 
       override fun isRunUnderProgress(): Boolean = true
-    }
-  }
-
-  private fun configureTfPath(project: Project, toolType: TfToolType) {
-    val isToolConfigured = runBlockingCancellable {
-      TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
-    }
-
-    if (!isToolConfigured) {
-      showIncorrectPathNotification(project, toolType)
-      throw ProcessCanceledException()
     }
   }
 }
