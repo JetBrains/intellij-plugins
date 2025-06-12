@@ -81,6 +81,16 @@ fun createRun(): Run {
     })
 }
 
+internal fun SarifReport.getOrCreateRun(): Run {
+  return if (runs.isNotEmpty()) {
+    runs.first()
+  } else {
+    val run = createRun()
+    withRuns(listOf(run))
+    run
+  }
+}
+
 internal fun automationDetails(project: Project, analysisKind: AnalysisKind) =
   RunAutomationDetails()
     .withGuid(System.getProperty(SARIF_AUTOMATION_GUID_PROPERTY) ?: UUID.randomUUID().toString())

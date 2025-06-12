@@ -8,7 +8,6 @@ import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringManager
 import com.intellij.refactoring.migration.MigrationProcessor
 import com.intellij.usageView.UsageInfo
-import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.QodanaBundle
@@ -50,7 +49,6 @@ internal class MigrateClassesScript(
 
   override suspend fun execute(
     report: SarifReport,
-    run: Run,
     runContext: QodanaRunContext,
     inspectionContext: QodanaGlobalInspectionContext
   ) {

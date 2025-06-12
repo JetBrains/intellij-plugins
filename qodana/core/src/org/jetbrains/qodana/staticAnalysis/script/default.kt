@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
-import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
@@ -9,6 +8,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageRepor
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.applyBaselineCalculation
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
+import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 
 const val DEFAULT_SCRIPT_NAME = "default"
 
@@ -35,10 +35,10 @@ internal open class DefaultScript(
 
   override suspend fun execute(
     report: SarifReport,
-    run: Run,
     runContext: QodanaRunContext,
     inspectionContext: QodanaGlobalInspectionContext
   ) {
+    val run = report.getOrCreateRun()
     runContext.runAnalysis(context = inspectionContext)
     run.results = runContext.getResultsForInspectionGroup(inspectionContext)
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)

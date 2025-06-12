@@ -19,8 +19,8 @@ import org.jetbrains.qodana.staticAnalysis.inspections.metrics.CodeQualityMetric
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.MetricAggregator
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.codeQualityMetrics
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.results.MetricResult
-import org.jetbrains.qodana.staticAnalysis.sarif.createRun
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
+import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.sarif.resultsFlowByGroup
 import org.jetbrains.qodana.staticAnalysis.sarif.writeReport
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
@@ -52,8 +52,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
   }
 
   suspend fun run(): SarifReport {
-    val sarifRun: Run = createRun()
-    val sarif: SarifReport = createSarifReport(listOf(sarifRun))
+    val sarif: SarifReport = createSarifReport(emptyList()) // script could later decide on how to manage run in sarif
     try {
       val resultsStorageDir = config.resultsStorage
       runInterruptible(StaticAnalysisDispatchers.IO) {
@@ -70,8 +69,9 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
 
       val scriptName = config.script.name
       val scriptResult = qodanaTracer().spanBuilder("qodanaScriptRun").setAttribute("name", scriptName).useWithScope {
-        script.execute(sarif, sarifRun)
+        script.execute(sarif)
       }
+      val sarifRun = sarif.getOrCreateRun()
       val commandLineResultsPrinter = createCommandLineResultsPrinter(scriptResult.inspectionNames)
       val properties = sarifRun.properties ?: PropertyBag()
       sarifRun.properties = properties
@@ -136,18 +136,18 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       return sarif
     }
     catch (e: Throwable) {
-      val invocation = sarifRun.invocations.first()
+      val invocation = sarif.getOrCreateRun().invocations.first()
       invocation.exitCode = 1
       invocation.executionSuccessful = false
       invocation.exitCodeDescription = "Internal error"
       throw e
     }
     finally {
-      setInvocationExitStatus(sarifRun, config)
+      setInvocationExitStatus(sarif.getOrCreateRun(), config)
       withContext(NonCancellable) {
         clearResultsDirIfNeeded()
         writeFullSarifReport(sarif)
-        writeShortSarifReport(sarif, sarifRun)
+        writeShortSarifReport(sarif)
       }
     }
   }
@@ -186,7 +186,8 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     writeReport(config.outPath.resolve(FULL_SARIF_REPORT_NAME), sarif)
   }
 
-  suspend fun writeShortSarifReport(sarif: SarifReport, sarifRun: Run) {
+  suspend fun writeShortSarifReport(sarif: SarifReport) {
+    val sarifRun = sarif.getOrCreateRun()
     // avoid creating a copy because it can easily OOM on large reports
     val ext = sarifRun.tool.extensions
     val taxa = sarifRun.tool.driver.taxa

@@ -1,7 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
 import com.intellij.psi.PsiElement
-import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
@@ -14,7 +13,7 @@ import java.io.File
 import java.nio.file.Path
 
 interface QodanaScript {
-  suspend fun execute(report: SarifReport, run: Run): QodanaScriptResult
+  suspend fun execute(report: SarifReport): QodanaScriptResult
 }
 
 data class QodanaScriptResult(
