@@ -29,7 +29,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.metrics.codeQualityMetric
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QDCloudLinterProjectApi
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionApplication
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunner
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.PreconfiguredRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider
@@ -53,7 +52,7 @@ class QodanaTestManager {
 
   private var qodanaApp: QodanaInspectionApplication? = null
   private lateinit var qodanaConfig: QodanaConfig
-  lateinit var qodanaRunner: QodanaRunner
+  lateinit var sarifRun: Run
 
   @Suppress("RAW_RUN_BLOCKING")
   fun setUp(testData_: TestData): QodanaConfig {
@@ -137,26 +136,35 @@ class QodanaTestManager {
     qodanaApp = QodanaInspectionApplication(qodanaConfig, api)
   }
 
-  fun runAnalysis(project: Project, messageReporter: QodanaMessageReporter = QodanaMessageReporter.DEFAULT): QodanaRunner {
+  fun runAnalysis(project: Project, messageReporter: QodanaMessageReporter = QodanaMessageReporter.DEFAULT): SarifReport {
     return ProgressManager.getInstance().runProcess(
       Computable { runBlockingCancellable { doRunAnalysis(project, messageReporter) } },
       EmptyProgressIndicator()
     )
   }
 
-  private suspend fun doRunAnalysis(project: Project, messageReporter: QodanaMessageReporter): QodanaRunner {
+  private suspend fun doRunAnalysis(project: Project, messageReporter: QodanaMessageReporter): SarifReport {
     return coroutineScope {
       QodanaWorkflowExtension.callAfterConfiguration(qodanaConfig, project)
-
+      val app = qodanaApp!!
       val loadedProfile = loadInspectionProfile(project)
-      val runner = qodanaApp!!.constructQodanaRunner(
+      val runner = app.constructQodanaRunner(
         PreconfiguredRunContextFactory(qodanaConfig, messageReporter, project, loadedProfile, this),
         messageReporter
       )
-      qodanaRunner = runner
-      qodanaApp!!.launchRunner(runner)
-      coroutineContext.cancelChildren()
-      runner
+      try {
+        app.launchRunner(runner)
+      } catch (e: Throwable) {
+        // if launcher throws error, we need to fetch generated report for checking in tests anyways
+        val path = qodanaConfig.outPath.resolve("qodana.sarif.json")
+        if (path.exists()) {
+          sarifRun = SarifUtil.readReport(path).runs.first()
+        }
+        throw e
+      }.also {
+        sarifRun = it.runs.first()
+        coroutineContext.cancelChildren()
+      }
     }
   }
 
@@ -168,7 +176,6 @@ class QodanaTestManager {
       .thenBy { it.locations.getOrNull(0)?.physicalLocation?.region?.startLine }
       .thenBy { it.locations.getOrNull(0)?.physicalLocation?.region?.charOffset }
 
-    val sarifRun = qodanaRunner.sarifRun
     val sortedMainResults = sarifRun.results.distinct().sortedWith(comparator)
 
     val sanityResultsKey = "qodana.sanity.results"

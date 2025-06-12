@@ -714,7 +714,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
 
     runAnalysis()
 
-    val run = qodanaRunner().sarifRun
+    val run = manager.sarifRun
     assertEquals(ExitStatus(0, null, true), run.firstExitStatus)
     val notifications = run.invocations.orEmpty()
       .flatMap { it.toolExecutionNotifications.orEmpty() }
@@ -732,7 +732,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
 
     runAnalysis()
 
-    val notifications = qodanaRunner().sarifRun.invocations.orEmpty()
+    val notifications = manager.sarifRun.invocations.orEmpty()
       .flatMap { it.toolExecutionNotifications.orEmpty() }
     assertEquals(0, notifications.size)
   }
