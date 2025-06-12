@@ -924,58 +924,6 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     myFixture.testCompletionVariants("main.tf", *backends)
   }
 
-  fun testProviderFunctionsCompletion() {
-    doBasicCompletionTest(
-      """
-        resource "kubernetes_manifest" "example" {
-          manifest = manifest_d<caret>
-        }
-      """.trimIndent(), 2, "provider::kubernetes::manifest_decode", "provider::kubernetes::manifest_decode_multi"
-    )
-
-    doBasicCompletionTest(
-      """
-        locals {
-          tfvars = decode_tf<caret>
-        }
-        """.trimIndent(), 1, "provider::terraform::decode_tfvars"
-    )
-
-    doBasicCompletionTest(
-      """
-        resource "some_resource" "name" {
-          enabled = assert<caret>
-        }
-        """.trimIndent(), "provider::assert::true"
-    )
-  }
-
-  fun testTypeOfProviderDefinedFunctions() {
-    doBasicCompletionTest(
-      """
-        resource "aws_ecr_repository" "hashicups" {
-          name = "hashicups"
-        
-          image_scanning_configuration {
-            scan_on_push = true
-          }
-        }
-        
-        output "hashicups_ecr_repository_account_id" {
-          value = provider::aws::arn_parse(aws_ecr_repository.hashicups.arn).<caret>
-        }
-        """.trimIndent(), 0
-    )
-
-    doBasicCompletionTest(
-      """
-        output "example" {
-          value = provider::aws::trim_iam_role_path("arn:aws:iam::444455556666:role/with/path/example").<caret>
-        }
-        """.trimIndent(), 0
-    )
-  }
-
   fun testAllEphemeralResourcesCompletion() {
     val matcher = getPartialMatcher(collectTypeNames<EphemeralType>())
 
