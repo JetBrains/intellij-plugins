@@ -2,7 +2,7 @@
 package org.angular2.options
 
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings.isEffectiveUseTypesFromServer
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil.isEffectiveUseTypesFromServer
 import com.intellij.lang.typescript.compiler.ui.TypeScriptServiceRestartService
 import com.intellij.lang.typescript.lsp.defaultPackageKey
 import com.intellij.openapi.Disposable
