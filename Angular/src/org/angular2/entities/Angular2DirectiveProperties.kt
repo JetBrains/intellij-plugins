@@ -151,9 +151,6 @@ class Angular2DirectiveProperties(
     override val priority: PolySymbol.Priority?
       get() = delegate.priority
 
-    override val attributeValue: PolySymbolHtmlAttributeValue?
-      get() = delegate.attributeValue
-
     override val isSignalProperty: Boolean
       get() = delegate.isSignalProperty
 

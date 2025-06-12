@@ -13,7 +13,6 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
-import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
@@ -21,6 +20,7 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.merge
+import com.intellij.polySymbols.webTypes.WebTypesSymbol.Companion.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
@@ -87,11 +87,12 @@ class VuePolyTypesMergedSymbol(
   override val type: JSType?
     get() = symbols.firstNotNullOfOrNull { it.jsType }
 
-  override val attributeValue: PolySymbolHtmlAttributeValue?
-    get() = symbols.asSequence().map { it.attributeValue }.merge()
-
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    symbols.asSequence().mapNotNull { it[property] }.firstOrNull()
+    when (property) {
+      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(symbols.asSequence().map { it[PROP_HTML_ATTRIBUTE_VALUE] }.merge())
+      else -> symbols.asSequence().mapNotNull { it[property] }.firstOrNull()
+    }
+
 
   override val queryScope: List<PolySymbolsScope>
     get() = listOf(this)

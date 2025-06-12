@@ -12,10 +12,12 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
+import com.intellij.polySymbols.webTypes.WebTypesSymbol.Companion.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2DirectiveSelectorSymbol
 
 open class Angular2StructuralDirectiveSymbol private constructor(
   val directive: Angular2Directive,
@@ -40,13 +42,6 @@ open class Angular2StructuralDirectiveSymbol private constructor(
       }
   }
 
-  override val attributeValue: PolySymbolHtmlAttributeValue?
-    get() = if (!hasInputsToBind)
-      PolySymbolHtmlAttributeValue.create(required = false)
-    else JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
-      super.attributeValue
-    }
-
   override val priority: PolySymbol.Priority?
     get() = PolySymbol.Priority.HIGH
 
@@ -56,6 +51,12 @@ open class Angular2StructuralDirectiveSymbol private constructor(
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_SYMBOL_DIRECTIVE -> property.tryCast(directive)
+      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(
+        if (!hasInputsToBind)
+          PolySymbolHtmlAttributeValue.create(required = false)
+        else JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
+          super[PROP_HTML_ATTRIBUTE_VALUE]
+        })
       else -> super.get(property)
     }
 

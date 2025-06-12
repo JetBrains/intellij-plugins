@@ -25,6 +25,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.html.htmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
@@ -68,7 +69,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
               .run()
               .filterIsInstance<PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol>()
       )
-      .filter { it.attributeValue?.required == false }
+      .filter { it.htmlAttributeValue?.required == false }
       .mapSmartSet { it.name }
 
     val isStrictTemplates = isStrictTemplates(dataHolder)

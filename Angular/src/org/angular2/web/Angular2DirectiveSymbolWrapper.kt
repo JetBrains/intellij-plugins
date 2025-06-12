@@ -13,6 +13,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
+import com.intellij.polySymbols.webTypes.WebTypesSymbol.Companion.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -50,19 +51,18 @@ open class Angular2DirectiveSymbolWrapper private constructor(
   override val priority: PolySymbol.Priority?
     get() = forcedPriority ?: super.priority
 
-  override val attributeValue: PolySymbolHtmlAttributeValue?
-    get() = if (delegate is Angular2DirectiveSelectorSymbol)
-      PolySymbolHtmlAttributeValue.create(required = false)
-    else JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
-      super.attributeValue
-    }
-
   override fun createPointer(): Pointer<out Angular2DirectiveSymbolWrapper> =
     createPointer(::Angular2DirectiveSymbolWrapper)
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_SYMBOL_DIRECTIVE -> property.tryCast(directive)
+      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(
+        if (delegate is Angular2DirectiveSelectorSymbol)
+          PolySymbolHtmlAttributeValue.create(required = false)
+        else JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(location) {
+          super[PROP_HTML_ATTRIBUTE_VALUE]
+        })
       else -> super.get(property)
     }
 
