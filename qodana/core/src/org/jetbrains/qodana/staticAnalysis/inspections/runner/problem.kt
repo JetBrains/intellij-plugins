@@ -7,13 +7,13 @@ import com.intellij.codeInsight.daemon.impl.RELATED_PROBLEMS_ROOT_HASH
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.util.UserDataHolderEx
 import com.jetbrains.qodana.sarif.model.Location
-import com.jetbrains.qodana.sarif.model.Fix
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Region
 import com.jetbrains.qodana.sarif.model.Result
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter.toSarifLocation
+import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_HAS_FIXES
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_CHILD_HASH_PROP
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_ROOT_HASH_PROP
@@ -30,15 +30,15 @@ interface Problem {
 }
 
 internal class XmlProblem(private val element: Element,
-                          private val fixes: Set<Fix> = emptySet(),
+                          private val hasFixes: Boolean = false,
                           private val userData: UserDataHolderEx? = null): Problem {
   override suspend fun getSarif(macroManager: PathMacroManager, database: QodanaToolResultDatabase): Result {
     macroManager.collapsePathsRecursively(element)
     return ElementToSarifConverter.convertFromXmlFormat(element, macroManager) { result ->
       val props = result.properties ?: PropertyBag()
       addRelatedProblemsHashes(props)
+      addHasFixes(props, hasFixes)
       result.properties = props
-      result.fixes = fixes.ifEmpty { null }
       props.tags.addAll(userData?.getUserData(PROBLEM_DESCRIPTOR_TAG) ?: emptyList())
       result.relatedLocations = userData?.getUserData(RELATED_LOCATIONS)
         ?.map { it.toSarifLocation(macroManager, result) }
@@ -88,6 +88,12 @@ internal class XmlProblem(private val element: Element,
     }
     userData?.getUserData(RELATED_PROBLEMS_ROOT_HASH)?.let {
       props += RELATED_PROBLEMS_ROOT_HASH_PROP to it
+    }
+  }
+
+  private fun addHasFixes(props: PropertyBag, hasFixes: Boolean) {
+    if (hasFixes) {
+      props += PROBLEM_HAS_FIXES to true
     }
   }
 }

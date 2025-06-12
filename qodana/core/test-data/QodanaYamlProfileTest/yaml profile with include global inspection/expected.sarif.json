@@ -226,6 +226,7 @@
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
             "problemType": "REGULAR",
+            "hasFixes": true,
             "tags": [
               "JAVA"
             ]
@@ -283,6 +284,7 @@
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
             "problemType": "REGULAR",
+            "hasFixes": true,
             "tags": [
               "JAVA"
             ]
@@ -340,6 +342,7 @@
             "ideaSeverity": "WARNING",
             "qodanaSeverity": "High",
             "problemType": "REGULAR",
+            "hasFixes": true,
             "tags": [
               "JAVA"
             ]
@@ -739,6 +742,7 @@
             "ideaSeverity": "ERROR",
             "qodanaSeverity": "Critical",
             "problemType": "REGULAR",
+            "hasFixes": true,
             "tags": [
               "JAVA"
             ]

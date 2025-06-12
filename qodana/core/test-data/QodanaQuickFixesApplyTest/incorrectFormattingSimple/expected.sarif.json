@@ -154,6 +154,7 @@
             "ideaSeverity": "WEAK WARNING",
             "qodanaSeverity": "Moderate",
             "problemType": "INCORRECT_FORMATTING",
+            "hasFixes": true,
             "tags": [
               "JAVA"
             ]
