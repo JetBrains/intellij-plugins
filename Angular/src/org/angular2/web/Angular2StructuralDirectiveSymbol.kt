@@ -12,12 +12,11 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
-import com.intellij.polySymbols.webTypes.WebTypesSymbol.Companion.PROP_HTML_ATTRIBUTE_VALUE
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import org.angular2.entities.Angular2Directive
-import org.angular2.entities.Angular2DirectiveSelectorSymbol
 
 open class Angular2StructuralDirectiveSymbol private constructor(
   val directive: Angular2Directive,

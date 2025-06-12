@@ -13,7 +13,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
-import com.intellij.polySymbols.webTypes.WebTypesSymbol.Companion.PROP_HTML_ATTRIBUTE_VALUE
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer

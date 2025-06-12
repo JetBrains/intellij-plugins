@@ -20,7 +20,7 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.merge
-import com.intellij.polySymbols.webTypes.WebTypesSymbol.Companion.PROP_HTML_ATTRIBUTE_VALUE
+import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
