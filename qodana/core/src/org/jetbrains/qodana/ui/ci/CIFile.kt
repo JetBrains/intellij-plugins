@@ -18,7 +18,11 @@ sealed interface CIFile {
 
   object RefreshRequest
 
-  class Existing(override val path: String, ciFileChecker: CIFileChecker, virtualFile: VirtualFile?) : CIFile {
+  /**
+   * Represents an existing CI configuration without Qodana. This file should be used when CI tool provides only one file to
+   * configure itself (i.e., Azure)
+   */
+  class ExistingSingleInstance(override val path: String, ciFileChecker: CIFileChecker, virtualFile: VirtualFile?) : CIFile {
     override val refreshRequestFlow: Flow<RefreshRequest> = createFlow(virtualFile, ciFileChecker)
 
     private fun createFlow(virtualFile: VirtualFile?, ciFileChecker: CIFileChecker): Flow<RefreshRequest> {
@@ -32,7 +36,25 @@ sealed interface CIFile {
     }
   }
 
-  class ExistingWithQodana(override val path: String, val ciFileChecker: CIFileChecker, virtualFile: VirtualFile?) : CIFile {
+  /**
+   * Represents an existing CI configuration without Qodana. This file should be used when CI tool can be configured via
+   * multiple configuration files (i.e., GitHub)
+   */
+  class ExistingMultipleInstances(override val path: String) : CIFile {
+    override val refreshRequestFlow: Flow<RefreshRequest> =
+      vfsChangesFilterFlow {
+        val toCheck = createAbsoluteNioPath() ?: return@vfsChangesFilterFlow false
+        it.path.toNioPathSafe()?.startsWith(toCheck) == true
+      }.map { RefreshRequest }
+
+    private fun createAbsoluteNioPath(): Path? {
+      val path = path.toNioPathSafe() ?: return null
+      if (!path.isAbsolute) return null
+      return path
+    }
+  }
+
+  class ExistingWithQodana(override val path: String, val ciFileChecker: CIFileChecker, val virtualFile: VirtualFile?) : CIFile {
     override val refreshRequestFlow: Flow<RefreshRequest> = createFlow(virtualFile, ciFileChecker)
 
     private fun createFlow(virtualFile: VirtualFile?, ciFileChecker: CIFileChecker): Flow<RefreshRequest> {
@@ -63,6 +85,13 @@ sealed interface CIFile {
   object Empty : CIFile {
     override val path: String = ""
     override val refreshRequestFlow: Flow<RefreshRequest> = emptyFlow()
+  }
 
+  /**
+   * Mock CIFile for initialisation of flow
+   */
+  object InitRequest : CIFile {
+    override val path: String = ""
+    override val refreshRequestFlow: Flow<RefreshRequest> = flowOf(RefreshRequest)
   }
 }

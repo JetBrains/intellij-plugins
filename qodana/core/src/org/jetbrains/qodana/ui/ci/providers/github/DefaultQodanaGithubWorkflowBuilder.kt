@@ -67,7 +67,19 @@ class DefaultQodanaGithubWorkflowBuilder(
     val cloudTokenText = "\${{ secrets.QODANA_TOKEN }}"
     val refsText = "\${{ github.event.pull_request.head.sha }}"
 
-    val baselineText = getSarifBaseline(project)?.let { "args: --baseline,$it" }
+    val baselineText = getSarifBaseline(project)?.let { "  args: --baseline,$it" }
+    val otherArgsText = """
+      # In pr-mode: 'true' Qodana checks only changed files
+      pr-mode: false
+      use-caches: true
+      post-pr-comment: true
+      use-annotations: true
+      # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+      upload-result: false
+      # quick-fixes available in Ultimate and Ultimate Plus plans
+      push-fixes: 'none'
+    """.replaceIndent("  ")
+    val argsBlock = listOfNotNull("with:", baselineText, otherArgsText).joinToString("\n")
 
     val qodanaGitHubActionVersion = ApplicationInfo.getInstance().shortVersion
 
@@ -88,17 +100,7 @@ class DefaultQodanaGithubWorkflowBuilder(
             uses: JetBrains/qodana-action@v$qodanaGitHubActionVersion
             env:
               QODANA_TOKEN: $cloudTokenText
-            with:
-              # In pr-mode: 'true' Qodana checks only changed files
-              pr-mode: false
-              use-caches: true
-              post-pr-comment: true
-              use-annotations: true
-              # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
-              upload-result: false
-              # quick-fixes available in Ultimate and Ultimate Plus plans
-              push-fixes: 'none'
-            ${baselineText?.let { "  $it" } ?: ""}
+${argsBlock.replaceIndent("            ")}
     """.replaceIndent("  ").trimEnd()
     return jobText
   }

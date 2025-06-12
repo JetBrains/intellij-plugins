@@ -27,8 +27,13 @@ import kotlin.io.path.Path
 
 const val APPLIED_IN_CI_COMMENT = "(Applied in CI/CD pipeline)"
 
+enum class LinterUsed {
+  GITHUB_PROMO,
+  DEFAULT
+}
+
 class DefaultQodanaItemContext(
-  val githubPromo: Boolean = false
+  val linterUsed: LinterUsed = LinterUsed.DEFAULT
 ): QodanaYamlItemContext
 
 class QodanaYamlHeaderItemProvider : QodanaYamlItemProvider {
@@ -261,7 +266,10 @@ class QodanaYamlLinterItemProvider : QodanaYamlItemProvider {
     if (ApplicationInfo.getInstance().build.productCode == "RD") {
       return QodanaYamlItem(ID, 1, dotnetContent)
     }
-    val content = if (context.githubPromo) githubPromoContent else defaultContent
+    val content = when (context.linterUsed) {
+      LinterUsed.DEFAULT -> defaultContent
+      LinterUsed.GITHUB_PROMO -> githubPromoContent
+    }
     return QodanaYamlItem(ID, 1000, content)
   }
 }

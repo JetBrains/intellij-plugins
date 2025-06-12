@@ -249,17 +249,17 @@ internal object QodanaPluginStatsCounterCollector : CounterUsagesCollector() {
   private val GITHUB_PROMO_CREATE_WORKFLOW_QODANA_EXISTS_FIELD = EventFields.Boolean("qodana_exists")
   @JvmField
   val GITHUB_PROMO_CREATE_WORKFLOW = GROUP.registerEvent(
-    "qodana.github.promo.create.workflow",
+    "qodana.github.promo.workflow.created",
     GITHUB_PROMO_CREATE_WORKFLOW_QODANA_EXISTS_FIELD
   )
 
   @JvmField
-  val GITHUB_PROMO_EXPLORE = GROUP.registerEvent("qodana.github.promo.explore")
+  val GITHUB_PROMO_EXPLORE = GROUP.registerEvent("qodana.github.promo.explore.pressed")
 
   @JvmField
-  val GITHUB_PROMO_DISMISSED = GROUP.registerEvent("qodana.github.promo.dismissed")
+  val GITHUB_PROMO_DISMISSED = GROUP.registerEvent("qodana.github.promo.notification.dismissed")
   @JvmField
-  val GITHUB_PROMO_NOTIFICATION_SHOWN = GROUP.registerEvent("qodana.github.promo.notification.creation")
+  val GITHUB_PROMO_NOTIFICATION_SHOWN = GROUP.registerEvent("qodana.github.promo.notification.shown")
 }
 
 internal enum class OpenInIdeProtocol {

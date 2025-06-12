@@ -20,5 +20,5 @@ class BitbucketCIFIleChecker(
     return BitbucketCIConfigHandler.isQodanaStepPresent(project, virtualFile)
   }
 
-  override val ciFileFlow: Flow<CIFile?> = createCIFileFlow(scope, createRefreshSingleCIFile(project, BITBUCKET_CI_FILE, this))
+  override val ciFileFlow: Flow<CIFile> = createCIFileFlow(scope, createRefreshSingleCIFile(project, BITBUCKET_CI_FILE, this))
 }

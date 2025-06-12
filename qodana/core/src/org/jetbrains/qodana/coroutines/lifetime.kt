@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 internal val qodanaApplicationScope: CoroutineScope get() = service<QodanaApplicationScopeService>().scope
 
 @Suppress("unused")
-internal val Project.qodanaProjectScope: CoroutineScope get() = this.service<QodanaProjectScopeService>().scope
+val Project.qodanaProjectScope: CoroutineScope get() = this.service<QodanaProjectScopeService>().scope
 
 internal val Project.qodanaProjectDisposable: Disposable get() = this.service<QodanaProjectScopeService>()
 

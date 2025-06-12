@@ -5,13 +5,24 @@ import com.intellij.internal.statistic.eventLog.events.EventField
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.eventLog.events.EventPair
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.Strings
+import com.intellij.openapi.vfs.readText
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.withContext
+import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.license.QodanaLicense
 import org.jetbrains.qodana.license.QodanaLicenseType
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.script.DEFAULT_SCRIPT_NAME
+import org.jetbrains.qodana.ui.ci.CIFile
+import org.jetbrains.qodana.ui.ci.providers.github.DefaultQodanaGithubWorkflowBuilder
+import org.jetbrains.qodana.ui.ci.providers.github.GitHubCIFileChecker
+import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 
@@ -244,8 +255,19 @@ object UsageCollector : CounterUsagesCollector() {
     failureConditionMinimumFreshCoverageField logIfPresent failureConditions.testCoverageThresholds.fresh
   }
 
-  fun logPromoGithubConfigPresent() {
-    qodanaGithubPromoWorkflowUsed.log()
+  suspend fun logPromoGithubConfigPresent(project: Project) {
+    GitHubCIFileChecker(project).ciFileFlow.filter { it !is CIFile.InitRequest }.firstOrNull().let { ciFile ->
+      if (ciFile is CIFile.ExistingWithQodana) {
+        try {
+          val ciFileText = withContext(QodanaDispatchers.IO) { ciFile.virtualFile?.readText() }
+          if (ciFileText?.contains(DefaultQodanaGithubWorkflowBuilder.PROMO_HEADER_TEXT) == true) {
+            qodanaGithubPromoWorkflowUsed.log()
+          }
+        } catch (e: IOException) {
+          Logger.getInstance(UsageCollector::class.java).warn("Couldn't read the contents of CI file", e)
+        }
+      }
+    }
   }
 
 }

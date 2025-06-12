@@ -5,12 +5,12 @@ import org.jetbrains.annotations.VisibleForTesting
 
 class DefaultQodanaYamlBuilder(private val project: Project) {
 
-  suspend fun build(githubPromo: Boolean = false): String {
-    return build(getYamlItems(githubPromo))
+  suspend fun build(context: DefaultQodanaItemContext = DefaultQodanaItemContext()): String {
+    return build(getYamlItems(context))
   }
 
-  private suspend fun getYamlItems(githubPromo: Boolean): List<QodanaYamlItem> {
-    return QodanaYamlItemProvider.provideAll(project, DefaultQodanaItemContext(githubPromo))
+  private suspend fun getYamlItems(context: DefaultQodanaItemContext): List<QodanaYamlItem> {
+    return QodanaYamlItemProvider.provideAll(project, context)
   }
 
   @VisibleForTesting

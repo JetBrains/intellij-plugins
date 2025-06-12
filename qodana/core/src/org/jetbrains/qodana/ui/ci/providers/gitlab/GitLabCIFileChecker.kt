@@ -20,5 +20,5 @@ class GitLabCIFileChecker(
     return GitLabCIConfigHandler.isQodanaPipelinePresent(project, virtualFile)
   }
 
-  override val ciFileFlow: Flow<CIFile?> = createCIFileFlow(scope, createRefreshSingleCIFile(project, GITLAB_CI_FILE, this))
+  override val ciFileFlow: Flow<CIFile> = createCIFileFlow(scope, createRefreshSingleCIFile(project, GITLAB_CI_FILE, this))
 }

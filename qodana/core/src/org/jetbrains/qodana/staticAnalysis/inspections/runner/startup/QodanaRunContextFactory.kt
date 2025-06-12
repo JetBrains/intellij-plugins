@@ -6,14 +6,12 @@ import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogg
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.*
-import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector
-import org.jetbrains.qodana.ui.ci.providers.github.GitHubCIFileChecker
-import org.jetbrains.qodana.ui.ci.providers.github.isQodanaPresent
+import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector.logPromoGithubConfigPresent
 
 private val logger = logger<QodanaRunContextFactory>()
 
@@ -54,10 +52,8 @@ internal class DefaultRunContextFactory(
     UsageCollector.logEnv(qodanaEnv().QODANA_ENV.value)
     UsageCollector.logConfig(config, loadedProfile.nameForReporting, loadedProfile.pathForReporting)
     UsageCollector.logLicense(config.license)
-    scope.launch(QodanaDispatchers.IO) {
-      if (GitHubCIFileChecker(project, scope).isQodanaPresent()) {
-        UsageCollector.logPromoGithubConfigPresent()
-      }
+    scope.launch {
+      logPromoGithubConfigPresent(project)
     }
 
     if (config.yamlFiles.effectiveQodanaYaml != null) {

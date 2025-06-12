@@ -20,5 +20,5 @@ class AzurePipelinesCIFileChecker(
     return AzureCIConfigHandler.isQodanaTaskPresent(project, virtualFile)
   }
 
-  override val ciFileFlow: Flow<CIFile?> = createCIFileFlow(scope, createRefreshSingleCIFile(project, AZURE_PIPELINES_FILE, this))
+  override val ciFileFlow: Flow<CIFile> = createCIFileFlow(scope, createRefreshSingleCIFile(project, AZURE_PIPELINES_FILE, this))
 }
