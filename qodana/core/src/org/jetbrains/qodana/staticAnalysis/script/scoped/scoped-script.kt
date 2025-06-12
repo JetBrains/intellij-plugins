@@ -4,13 +4,13 @@ import com.intellij.openapi.components.serviceAsync
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.Options
-import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.*
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
+import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.*
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -52,7 +52,8 @@ internal class ScopedScriptFactory : QodanaScriptFactory {
 
 internal class ScopedScript(runContextFactory: ScopedRunContextFactory) :
   DefaultScript(runContextFactory, AnalysisKind.INCREMENTAL) {
-  override suspend fun execute(report: SarifReport, run: Run, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
+  override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
+    val run = report.getOrCreateRun()
     runContext.runAnalysis(context = inspectionContext)
     run.results = runContext.getResultsForInspectionGroup(inspectionContext)
 

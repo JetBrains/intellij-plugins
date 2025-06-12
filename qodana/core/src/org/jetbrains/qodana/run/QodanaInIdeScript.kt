@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.util.ProgressIndicatorWithDelayedPresentati
 import com.intellij.platform.util.progress.RawProgressReporter
 import com.intellij.platform.util.progress.reportRawProgress
 import com.jetbrains.qodana.sarif.model.PropertyBag
-import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
@@ -19,6 +18,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.applyBaselineCalculation
 import org.jetbrains.qodana.staticAnalysis.sarif.SarifReportContributor
 import org.jetbrains.qodana.staticAnalysis.sarif.fillComponents
+import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.*
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector
 
@@ -26,7 +26,8 @@ const val RUN_TIMESTAMP = "runTimestamp"
 
 class QodanaInIdeScript(private val runContext: QodanaRunContext) : QodanaScript {
 
-  override suspend fun execute(report: SarifReport, run: Run): QodanaScriptResult {
+  override suspend fun execute(report: SarifReport): QodanaScriptResult {
+    val run = report.getOrCreateRun()
     val inspectionContext = runContext.createGlobalInspectionContext()
     fillComponents(run.tool, runContext.qodanaProfile)
 
