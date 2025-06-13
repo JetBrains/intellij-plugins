@@ -62,7 +62,7 @@ final class GaugeMavenImporter implements GaugeModuleImporter {
     if (archetype == null) return new AsyncPromise<>();
 
     MavenRunnerParameters params = new MavenRunnerParameters(
-      false, workingDir.getPath(), (String)null,
+      false, workingDir.getPath(), null,
       Collections.singletonList("org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate"),
       Collections.emptyList());
 
