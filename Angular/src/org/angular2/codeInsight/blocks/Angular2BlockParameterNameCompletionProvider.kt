@@ -4,13 +4,12 @@ package org.angular2.codeInsight.blocks
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.siblings
 import com.intellij.util.ProcessingContext
-import com.intellij.util.applyIf
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.psi.Angular2HtmlBlock
@@ -52,11 +51,11 @@ class Angular2BlockParameterNameCompletionProvider : CompletionProvider<Completi
 
     for (param in candidates) {
       if (param.pattern == null && (param !is Angular2BlockParameterSymbol || !param.isPrimaryExpression) && providedParams.add(param.name)) {
-        PolySymbolCodeCompletionItem.create(param.name, 0, symbol = param)
-          .applyIf(param !is Angular2BlockParameterSymbol || param.hasContent) {
-            withInsertHandlerAdded(Angular2BlockKeywordInsertHandler)
+        PolySymbolCodeCompletionItem.create(param.name, 0, symbol = param) {
+          if (param !is Angular2BlockParameterSymbol || param.hasContent) {
+            insertHandler(Angular2BlockKeywordInsertHandler)
           }
-          .addToResult(parameters, result)
+        }.addToResult(parameters, result)
       }
     }
 

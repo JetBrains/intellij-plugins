@@ -96,10 +96,8 @@ class VuePolyTypesMergedSymbol(
     get() = listOf(this)
 
   override fun createDocumentation(location: PsiElement?): PolySymbolDocumentation =
-    PolySymbolDocumentation.create(this, location).let { doc ->
-      originalName
-        ?.let { doc.withDefinition(StringUtil.escapeXmlEntities(it) + " as " + doc.definition) }
-      ?: doc
+    PolySymbolDocumentation.create(this, location) {
+      originalName?.let { definition(StringUtil.escapeXmlEntities(it) + " as " + this.definition) }
     }
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =

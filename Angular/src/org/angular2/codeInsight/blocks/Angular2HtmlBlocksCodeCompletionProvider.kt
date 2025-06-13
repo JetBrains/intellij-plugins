@@ -4,6 +4,10 @@ package org.angular2.codeInsight.blocks
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.HtmlCompletionContributor
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
+import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
@@ -12,10 +16,6 @@ import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
@@ -27,7 +27,7 @@ class Angular2HtmlBlocksCodeCompletionProvider : PolySymbolsCompletionProviderBa
     position: Int,
     name: String,
     queryExecutor: PolySymbolsQueryExecutor,
-    context: PsiElement
+    context: PsiElement,
   ) {
     val blocksConfig = getAngular2HtmlBlocksConfig(context)
     val adjustedResult = result.withPrefixMatcher(name).applyIf(context !is Angular2HtmlBlock) {
@@ -66,9 +66,10 @@ class Angular2HtmlBlocksCodeCompletionProvider : PolySymbolsCompletionProviderBa
     availableBlocks
       .filter { def -> !def.isUnique || (prevBlocksCount[def.name] ?: 0) == 0 }
       .map { def ->
-        PolySymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def)
-          .withPriority(if (!def.isPrimary) PolySymbol.Priority.HIGH else PolySymbol.Priority.NORMAL)
-          .withInsertHandlerAdded(Angular2HtmlBlockInsertHandler)
+        PolySymbolCodeCompletionItem.create("@" + def.name, 0, symbol = def) {
+          priority(if (!def.isPrimary) PolySymbol.Priority.HIGH else PolySymbol.Priority.NORMAL)
+          insertHandler(Angular2HtmlBlockInsertHandler)
+        }
       }
       .forEach {
         it.addToResult(parameters, adjustedResult)
