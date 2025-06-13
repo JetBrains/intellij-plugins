@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
@@ -23,8 +24,11 @@ class VueInputPropSymbol(
   override val type: JSType?
     get() = item.jsType
 
-  override val required: Boolean
-    get() = item.required
+  override val modifiers: Set<PolySymbolModifier>
+    get() = when (item.required) {
+      true -> setOf(PolySymbolModifier.REQUIRED)
+      false -> setOf(PolySymbolModifier.OPTIONAL)
+    }
 
   override val attributeValue: PolySymbolHtmlAttributeValue =
     object : PolySymbolHtmlAttributeValue {

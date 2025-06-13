@@ -13,6 +13,7 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
@@ -36,7 +37,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSPolySym
 
   override val name: String
 
-  override val required: Boolean
+  val required: Boolean
 
   val fieldName: String?
 
@@ -46,6 +47,12 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSPolySym
 
   val isSignalProperty: Boolean
     get() = false
+
+  override val modifiers: Set<PolySymbolModifier>
+    get() = when (required) {
+      true -> setOf(PolySymbolModifier.REQUIRED)
+      false -> setOf(PolySymbolModifier.OPTIONAL)
+    }
 
   override val presentation: TargetPresentation
     get() = TargetPresentation

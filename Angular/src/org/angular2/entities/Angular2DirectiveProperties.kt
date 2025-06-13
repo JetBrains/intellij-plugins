@@ -10,6 +10,7 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
@@ -119,6 +120,9 @@ class Angular2DirectiveProperties(
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       super<Angular2DirectiveProperty>.get(property)
       ?: delegate[property]
+
+    override val modifiers: Set<PolySymbolModifier>
+      get() = super<Angular2SymbolDelegate>.modifiers + super<Angular2DirectiveProperty>.modifiers
 
     override val name: String
       get() = delegate.name

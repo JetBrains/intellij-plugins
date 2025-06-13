@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.EscapeCharacterIntentionFix
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.util.TextRange
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.childrenOfType
@@ -123,7 +124,7 @@ class AngularIncorrectBlockUsageInspection : LocalInspectionTool() {
         }
         else if (expectedParams.isNotEmpty()) {
           // Check required params
-          for (requiredParam in expectedParams.filter { it.required == true }) {
+          for (requiredParam in expectedParams.filter { it.modifiers.contains(PolySymbolModifier.REQUIRED) }) {
             if (requiredParam.isPrimaryExpression) {
               if (actualParams.isEmpty()) {
                 holder.registerProblem(block.nameElement,

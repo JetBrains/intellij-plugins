@@ -6,6 +6,7 @@ import com.intellij.javascript.polySymbols.symbols.JSPropertySymbol
 import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
@@ -38,7 +39,12 @@ class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
       else -> null
     }
 
-  override val required: Boolean
+  override val modifiers: Set<PolySymbolModifier>
+    get() = setOf(
+      if (required) PolySymbolModifier.REQUIRED else PolySymbolModifier.OPTIONAL,
+    )
+
+  private val required: Boolean
     get() = !(propertySymbol.psiContext.asSafely<PropertySignature>()?.isOptional ?: false)
 
   override fun createPointer(): Pointer<out PsiSourcedPolySymbol> {

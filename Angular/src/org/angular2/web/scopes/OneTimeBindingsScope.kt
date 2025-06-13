@@ -156,10 +156,13 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
         else -> super<PolySymbolDelegate>.get(property)
       }
 
-    // Even though an input property might be required,
-    // we need to do the check through AngularMissingRequiredDirectiveInputBindingInspection
-    override val required: Boolean
-      get() = false
+    override val modifiers: Set<PolySymbolModifier>
+      get() = super<PolySymbolDelegate>.modifiers.asSequence()
+        // Even though an input property might be required,
+        // we need to do the check through AngularMissingRequiredDirectiveInputBindingInspection
+        .filter { it != PolySymbolModifier.REQUIRED }
+        .plus(PolySymbolModifier.OPTIONAL)
+        .toSet()
 
     private val attributeValue: PolySymbolHtmlAttributeValue? by lazy(LazyThreadSafetyMode.PUBLICATION) {
       withTypeEvaluationLocation(typeEvaluationLocation) {

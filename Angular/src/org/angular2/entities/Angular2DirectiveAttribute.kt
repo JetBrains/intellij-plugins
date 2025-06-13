@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.angular2.web.Angular2Symbol
@@ -16,6 +17,15 @@ interface Angular2DirectiveAttribute : Angular2Symbol, Angular2Element {
   override val name: String
 
   val type: JSType?
+
+  val required: Boolean? get() = null
+
+  override val modifiers: Set<PolySymbolModifier>
+    get() = when (required) {
+      true -> setOf(PolySymbolModifier.REQUIRED)
+      false -> setOf(PolySymbolModifier.OPTIONAL)
+      null -> emptySet()
+    }
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {

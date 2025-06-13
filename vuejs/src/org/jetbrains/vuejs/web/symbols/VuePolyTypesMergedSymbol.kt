@@ -76,9 +76,6 @@ class VuePolyTypesMergedSymbol(
   override val apiStatus: PolySymbolApiStatus
     get() = coalesceApiStatus(symbols) { it.apiStatus }
 
-  override val required: Boolean?
-    get() = symbols.firstNotNullOfOrNull { it.required }
-
   override val defaultValue: String?
     get() = symbols.firstNotNullOfOrNull { it.asSafely<PolySymbolWithDocumentation>()?.defaultValue }
 
@@ -92,6 +89,8 @@ class VuePolyTypesMergedSymbol(
       else -> symbols.asSequence().mapNotNull { it[property] }.firstOrNull()
     }
 
+  override val modifiers: Set<PolySymbolModifier>
+    get() = symbols.asSequence().flatMap { it.modifiers }.toSet()
 
   override val queryScope: List<PolySymbolsScope>
     get() = listOf(this)

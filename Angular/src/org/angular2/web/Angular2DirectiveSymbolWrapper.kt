@@ -9,6 +9,7 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolApiStatus
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -45,8 +46,10 @@ open class Angular2DirectiveSymbolWrapper private constructor(
       }
   }
 
-  override val required: Boolean?
-    get() = isMatchedDirective && super.required == true
+  override val modifiers: Set<PolySymbolModifier>
+    get() = super.modifiers.asSequence()
+      .filter { it != PolySymbolModifier.REQUIRED || isMatchedDirective }
+      .toSet()
 
   override val priority: PolySymbol.Priority?
     get() = forcedPriority ?: super.priority

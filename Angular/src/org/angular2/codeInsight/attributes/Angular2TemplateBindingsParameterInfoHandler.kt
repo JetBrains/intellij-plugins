@@ -67,7 +67,9 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
       .associateTo(mutableMapOf()) { input ->
         val bindingName = directiveInputToTemplateBindingVar(input.name, templateName)
         val definition = input.createDocumentation(parameterOwner.bindings)?.definition
-          ?.replaceFirst("${input.name}:", bindingName.withColor(NG_INPUT, parameterOwner, false) + (if (input.required) "" else "?") + ":")
+          ?.replaceFirst("${input.name}:",
+                         bindingName.withColor(NG_INPUT, parameterOwner, false) +
+                         (if (input.required) "" else "?") + ":")
         Pair(input.name, definition)
       }
 

@@ -19,13 +19,14 @@ class Angular2PolySymbolDocumentationCustomizer : PolySymbolDocumentationCustomi
   override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: PolySymbolDocumentation): PolySymbolDocumentation {
     if (symbol is Angular2HtmlBlockSymbol && location != null) {
       val primaryBlock = symbol.primaryBlock?.let { SyntaxPrinter(location).append(NG_BLOCK_NAME, "@$it").toString() }
-      return documentation.with(
-        definition = SyntaxPrinter(location)
+      return documentation.withDefinition(
+        SyntaxPrinter(location)
           .append(TypeScriptHighlighter.TS_KEYWORD, "block")
           .appendRaw(" ")
           .append(DefaultLanguageHighlighterColors.IDENTIFIER, "@" + symbol.name)
-          .toString(),
-        additionalSections = if (symbol.isPrimary)
+          .toString()
+      ).withDescriptionSections(
+        if (symbol.isPrimary)
           mapOf("Primary block" to "")
         else if (primaryBlock != null)
           mapOf("Primary block" to primaryBlock)
@@ -40,23 +41,23 @@ class Angular2PolySymbolDocumentationCustomizer : PolySymbolDocumentationCustomi
         printer.append(DefaultLanguageHighlighterColors.IDENTIFIER, it)
           .appendRaw(" ")
       }
-      return documentation.with(
-        definition = printer
+      return documentation.withDefinition(
+        printer
           .append(DefaultLanguageHighlighterColors.IDENTIFIER, symbol.name)
           .toString()
       )
     }
     else if (symbol is Angular2BlockParameterPrefixSymbol && location != null) {
-      return documentation.with(
-        definition = SyntaxPrinter(location).append(TypeScriptHighlighter.TS_KEYWORD, "parameter prefix")
+      return documentation.withDefinition(
+        SyntaxPrinter(location).append(TypeScriptHighlighter.TS_KEYWORD, "parameter prefix")
           .appendRaw(" ")
           .append(DefaultLanguageHighlighterColors.IDENTIFIER, symbol.name)
           .toString()
       )
     }
     else if (symbol.qualifiedKind == NG_DEFER_ON_TRIGGERS && location != null) {
-      return documentation.with(
-        definition = SyntaxPrinter(location).append(TypeScriptHighlighter.TS_KEYWORD, "trigger")
+      return documentation.withDefinition(
+        SyntaxPrinter(location).append(TypeScriptHighlighter.TS_KEYWORD, "trigger")
           .appendRaw(" ")
           .append(TypeScriptHighlighter.TS_GLOBAL_FUNCTION, symbol.name)
           .toString()
