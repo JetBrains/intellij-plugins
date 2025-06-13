@@ -60,11 +60,15 @@ public final class CucumberJavaTestUtil {
     return createCucumberProjectDescriptor("5");
   }
 
+  public static DefaultLightProjectDescriptor createCucumber5_5ProjectDescriptor() {
+    return createCucumberProjectDescriptor("5.5");
+  }
+
   public static DefaultLightProjectDescriptor createCucumber7ProjectDescriptor() {
     return createCucumberProjectDescriptor("7");
   }
 
-  public static DefaultLightProjectDescriptor createCucumberProjectDescriptor(@NotNull String version) {
+  private static DefaultLightProjectDescriptor createCucumberProjectDescriptor(@NotNull String version) {
     return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk11) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {

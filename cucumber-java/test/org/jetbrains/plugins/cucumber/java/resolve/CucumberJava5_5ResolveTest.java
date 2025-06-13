@@ -22,6 +22,6 @@ public class CucumberJava5_5ResolveTest extends BaseCucumberJavaResolveTest {
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumberProjectDescriptor("5.5");
+    return CucumberJavaTestUtil.createCucumber5_5ProjectDescriptor();
   }
 }
