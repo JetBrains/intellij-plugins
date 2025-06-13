@@ -10,9 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterTypeReference;
 
+import java.text.SimpleDateFormat;
+
 public class CucumberJavaParameterTypeResolveTest extends BaseCucumberJavaResolveTest {
-  // TODO: Figure out why java.lang.math is unresolved
-  public void ignore_testHighlightingOK() {
+  public void testHighlightingOK() {
     init("stepResolve_ParameterType", "ParameterTypeSteps.java");
     myFixture.testHighlighting("ParameterTypeSteps.java");
   }
