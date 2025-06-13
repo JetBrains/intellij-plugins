@@ -1,4 +1,4 @@
-import {<symbolName descr="identifiers//exported function">Component</symbolName>, <symbolName descr="identifiers//exported function">Directive</symbolName>, <symbolName descr="identifiers//exported variable">EventEmitter</symbolName>, <symbolName descr="identifiers//exported function">Input</symbolName>, <symbolName descr="identifiers//exported function">Output</symbolName>} <info textAttributesKey="TS.KEYWORD">from</info> '@angular/core';
+import {<symbolName descr="identifiers//exported function">Component</symbolName>, <symbolName descr="identifiers//exported function">Directive</symbolName>, <symbolName descr="identifiers//exported function">EventEmitter</symbolName>, <symbolName descr="identifiers//exported function">Input</symbolName>, <symbolName descr="identifiers//exported function">Output</symbolName>} <info textAttributesKey="TS.KEYWORD">from</info> '@angular/core';
 
 <info descr="decorator">@</info><info descr="decorator">Directive</info>({
     <symbolName descr="instance field">selector</symbolName>: '[<symbolName textAttributesKey="HTML_ATTRIBUTE_NAME">appBold</symbolName>]',
@@ -6,7 +6,7 @@ import {<symbolName descr="identifiers//exported function">Component</symbolName
     <symbolName descr="instance field">exportAs</symbolName>: "boldDir"
 })
 export class <symbolName descr="classes//exported class">BoldDirective</symbolName> {
-    <info descr="decorator">@</info><info descr="decorator">Output</info>() <symbolName descr="instance field">hover</symbolName> = new <symbolName descr="identifiers//exported variable">EventEmitter</symbolName>()
+    <info descr="decorator">@</info><info descr="decorator">Output</info>() <symbolName descr="instance field">hover</symbolName> = new <symbolName descr="identifiers//exported function">EventEmitter</symbolName>()
 }
 
 <info descr="decorator">@</info><info descr="decorator">Directive</info>({

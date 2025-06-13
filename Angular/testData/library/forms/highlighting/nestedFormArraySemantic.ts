@@ -1,5 +1,5 @@
 import {<symbolName descr="identifiers//exported function">Component</symbolName>} <info descr="null">from</info> '@angular/core';
-import {<symbolName descr="identifiers//exported variable">FormControl</symbolName>, <symbolName descr="classes//exported class">FormGroup</symbolName>, <symbolName descr="classes//exported class">FormArray</symbolName>} <info descr="null">from</info> '@angular/forms';
+import {<symbolName descr="identifiers//exported function">FormControl</symbolName>, <symbolName descr="classes//exported class">FormGroup</symbolName>, <symbolName descr="classes//exported class">FormArray</symbolName>} <info descr="null">from</info> '@angular/forms';
 
 <info descr="decorator">@</info><info descr="decorator">Component</info>({
    <symbolName descr="instance field">selector</symbolName>: '<symbolName descr="HTML_TAG_NAME">nested-form-groups</symbolName>',
@@ -27,10 +27,10 @@ import {<symbolName descr="identifiers//exported variable">FormControl</symbolNa
 })
 export class <symbolName descr="classes//exported class">NestedFormGroupComp</symbolName> {
   <symbolName descr="instance field">form</symbolName> = new <symbolName descr="classes//exported class">FormGroup</symbolName>({
-     <symbolName descr="instance field">first</symbolName>: new <symbolName descr="classes//exported class">FormArray</symbolName>([new <symbolName descr="identifiers//exported variable">FormControl</symbolName>('Foo'), new <symbolName descr="identifiers//exported variable">FormControl</symbolName>('Foo')]),
+     <symbolName descr="instance field">first</symbolName>: new <symbolName descr="classes//exported class">FormArray</symbolName>([new <symbolName descr="identifiers//exported function">FormControl</symbolName>('Foo'), new <symbolName descr="identifiers//exported function">FormControl</symbolName>('Foo')]),
      <symbolName descr="instance field">group</symbolName>: new <symbolName descr="classes//exported class">FormGroup</symbolName>({
-       <symbolName descr="instance field">name</symbolName>: new <symbolName descr="identifiers//exported variable">FormControl</symbolName>(),
-       <symbolName descr="instance field">members</symbolName>: new <symbolName descr="classes//exported class">FormArray</symbolName>([new <symbolName descr="identifiers//exported variable">FormControl</symbolName>('Foo'), new <symbolName descr="identifiers//exported variable">FormControl</symbolName>('Foo')])
+       <symbolName descr="instance field">name</symbolName>: new <symbolName descr="identifiers//exported function">FormControl</symbolName>(),
+       <symbolName descr="instance field">members</symbolName>: new <symbolName descr="classes//exported class">FormArray</symbolName>([new <symbolName descr="identifiers//exported function">FormControl</symbolName>('Foo'), new <symbolName descr="identifiers//exported function">FormControl</symbolName>('Foo')])
      }),
   });
 
