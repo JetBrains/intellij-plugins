@@ -1,13 +1,18 @@
 package org.jetbrains.plugins.cucumber.java.inspections;
 
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspectionBase;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
+import org.jetbrains.plugins.cucumber.java.resolve.BaseCucumberJavaResolveTest;
 
-public class UnusedJavaMethodInspectionTest extends CucumberJavaBaseInspectionTest {
-  protected void doTest(final String file) {
+/// We extend [BaseCucumberJavaResolveTest] because we need to be able to resolve
+/// between Cucumber feature files and step definitions in Java to test the inspection.
+public class UnusedJavaMethodInspectionTest extends BaseCucumberJavaResolveTest {
+  protected void doTest(String file) {
     myFixture.enableInspections(new UnusedDeclarationInspectionBase(true));
-    myFixture.configureByFile(file);
-    myFixture.testHighlighting(true, false, true);
+    myFixture.copyDirectoryToProject(".", "");
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir(file));
+    myFixture.testHighlighting();
   }
 
   public void testStepDefinition() {
@@ -23,7 +28,12 @@ public class UnusedJavaMethodInspectionTest extends CucumberJavaBaseInspectionTe
   }
 
   @Override
-  protected String getBasePath() {
+  protected String getRelatedTestDataPath() {
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "inspections/unusedMethod";
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber7ProjectDescriptor();
   }
 }

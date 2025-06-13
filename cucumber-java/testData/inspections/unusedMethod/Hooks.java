@@ -1,12 +1,12 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.annotation.Before;
+import io.cucumber.java.Before;
 
 public class Hooks {
   @Before
   public void the_following_groceries() {
   }
 
-  public void <warning descr="Method 'my_change_should_be_()' is never used">my_change_should_be_</warning>() {
+  public void <warning descr="Method 'my_change_should_be_done()' is never used">my_change_should_be_done</warning>() {
   }
 }

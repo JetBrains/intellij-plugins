@@ -8,3 +8,5 @@ Feature: Shopping
       | soap  | 5     |
     When I pay 25
     Then my change should be 4
+    And I am happy
+    And I am double annotated happy

@@ -1,6 +1,6 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.api.java.en.Given;
+import io.cucumber.java.en.Given;
 
 public class <warning descr="Class 'PrivateMethod' is never used">PrivateMethod</warning> {
 @Given("^the following groceries:$")
