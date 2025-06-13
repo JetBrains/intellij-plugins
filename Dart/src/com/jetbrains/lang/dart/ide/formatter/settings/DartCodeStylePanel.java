@@ -24,6 +24,7 @@ public class DartCodeStylePanel extends CodeStyleAbstractPanel {
   public DartCodeStylePanel(@NotNull CodeStyleSettings currentSettings, @NotNull CodeStyleSettings settings) {
     super(DartLanguage.INSTANCE, currentSettings, settings);
     myDartfmtLabel.setCopyable(true); // This is needed to make the FAQ link clickable.
+    addPanelToWatch(myMainPanel);
   }
 
   @Override
