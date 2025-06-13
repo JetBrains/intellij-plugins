@@ -331,6 +331,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
         }
         HCL_EPHEMERAL_IDENTIFIER ->
           typeModel.allEphemeralResources().toPlow()
+            .filter { parameters.invocationCount > 1 || it.provider.tier in tiers || localProviders.containsValue(it.provider.fullName) }
             .map { buildResourceOrDataLookupElement(it, position) }
             .processWith(consumer)
         HCL_PROVIDER_IDENTIFIER -> {
