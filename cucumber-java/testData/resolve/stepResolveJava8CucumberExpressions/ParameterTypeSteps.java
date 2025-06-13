@@ -2,6 +2,8 @@ package cucumber.examples.java.calculator;
 
 import cucumber.api.java8.En;
 
+import cucumber.examples.java.calculator.TargetStatusSteps;
+
 public class ParameterTypeSteps implements En {
   public ParameterTypeSteps() {
     testFeature1();

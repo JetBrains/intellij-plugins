@@ -146,6 +146,24 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java8-3" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java8:3.0.0">
+          <verification>
+            <artifact url="file://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/3.0.0/cucumber-java8-3.0.0.jar">
+              <sha256sum>5e2c4890995554bc78381631e1bb9f8aa954940ca7e8427280665501b5f8e1d2</sha256sum>
+            </artifact>
+          </verification>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/3.0.0/cucumber-java8-3.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java8/3.0.0/cucumber-java8-3.0.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
       <library name="cucumber-java8-5" type="repository">
         <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java8:5.0.0-RC1">
           <verification>

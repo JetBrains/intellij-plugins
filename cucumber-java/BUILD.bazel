@@ -89,6 +89,7 @@ jvm_library(
     "@community//plugins/junit_rt:junit-rt",
     "@community//plugins/junit",
     "@ultimate_lib//:cucumber-java-cucumber-java-5",
+    "@ultimate_lib//:cucumber-java-cucumber-java8-3",
     "@ultimate_lib//:cucumber-java-cucumber-java8-5",
     "@ultimate_lib//:cucumber-java-cucumber-core-5",
     "@ultimate_lib//:cucumber-java-cucumber-core-5-5",

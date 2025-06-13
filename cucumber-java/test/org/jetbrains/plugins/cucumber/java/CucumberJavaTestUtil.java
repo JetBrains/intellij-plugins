@@ -106,7 +106,7 @@ public final class CucumberJavaTestUtil {
     };
   }
 
-  private static void attachStandardCucumberLibraries(@NotNull ModifiableRootModel model) {
+  public static void attachStandardCucumberLibraries(@NotNull ModifiableRootModel model) {
     IntelliJProjectConfiguration.LibraryRoots libraryRoots;
     libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java");
     PsiTestUtil.addProjectLibrary(model, "cucumber-java", libraryRoots.getClassesPaths());
@@ -125,7 +125,7 @@ public final class CucumberJavaTestUtil {
     PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryClassesRootPaths);
   }
 
-  private static void attachCucumberCore3(@NotNull ModifiableRootModel model) {
+  public static void attachCucumberCore3(@NotNull ModifiableRootModel model) {
     IntelliJProjectConfiguration.LibraryRoots libraryRoots;
     libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-core-3");
     PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
