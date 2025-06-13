@@ -4,9 +4,10 @@ import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInspection.ex.InspectionProfileImpl
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase
+import org.junit.Test
 
-class QodanaYamlTest : LightJavaCodeInsightFixtureTestCase() {
+class QodanaYamlTest : LightPlatformCodeInsightFixture4TestCase() {
   override fun setUp() {
     super.setUp()
     val initInspections = InspectionProfileImpl.INIT_INSPECTIONS
@@ -17,6 +18,7 @@ class QodanaYamlTest : LightJavaCodeInsightFixtureTestCase() {
     }
   }
 
+  @Test
   fun `test inspection completion offers All option`() {
     setupYamlSample("""
       include:
@@ -33,6 +35,7 @@ class QodanaYamlTest : LightJavaCodeInsightFixtureTestCase() {
     )
   }
 
+  @Test
   fun `test inspection completion lots of options for include`() {
     Registry.get("ide.completion.variant.limit").setValue("10000", testRootDisposable)
     setupYamlSample("""
@@ -99,6 +102,7 @@ class QodanaYamlTest : LightJavaCodeInsightFixtureTestCase() {
     }
   }
 
+  @Test
   fun `test profile completion`() {
     setupYamlSample("""
       profile:
@@ -108,6 +112,7 @@ class QodanaYamlTest : LightJavaCodeInsightFixtureTestCase() {
     checkCompletionVariantsContain("empty", "Default", "qodana.starter", "qodana.recommended")
   }
 
+  @Test
   fun `test path completion`() {
     myFixture.createFile("file1.kt", "")
     myFixture.createFile("file2.kt", "")
