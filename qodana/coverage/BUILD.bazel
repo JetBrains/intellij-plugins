@@ -15,6 +15,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
     "//contrib/qodana/sarif",
     "@community//platform/core-ui",
     "@community//platform/platform-api:ide",
@@ -37,6 +38,7 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "@lib//:assert_j",
     "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
     "//contrib/qodana/sarif",
     "@community//platform/core-ui",
     "@community//platform/platform-api:ide",

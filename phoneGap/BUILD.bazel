@@ -20,6 +20,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",
@@ -50,6 +51,7 @@ jvm_library(
   associates = [":phoneGap"],
   deps = [
     "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",

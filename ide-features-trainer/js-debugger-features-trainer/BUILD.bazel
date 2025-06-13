@@ -25,6 +25,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "//plugins/JavaScriptLanguage/javascript-parser",
+    "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/testRunner",
     "@community//platform/smRunner",

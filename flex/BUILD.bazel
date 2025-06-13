@@ -16,6 +16,7 @@ jvm_library(
     "//contrib/flex/flex-shared:shared",
     "@community//platform/analysis-api:analysis",
     "@community//platform/util/concurrency",
+    "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/ide-core-impl",
     "@community//java/compiler/openapi:java-compiler",

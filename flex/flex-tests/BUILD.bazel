@@ -23,6 +23,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//CSS:css",
     "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",

@@ -13,6 +13,7 @@
     <orderEntry type="module" module-name="intellij.apple.sdk" />
     <orderEntry type="module" module-name="intellij.appcode" />
     <orderEntry type="module" module-name="intellij.appcode.swiftDebugger" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.editor.ui" />
     <orderEntry type="module" module-name="intellij.platform.statistics" />
     <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />

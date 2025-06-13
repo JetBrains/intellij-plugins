@@ -60,6 +60,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
     "//contrib/qodana/coverage",
     ":ide_provided",
     ":ide-impl_provided",
@@ -82,6 +83,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
     "@community//platform/core-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",

@@ -13,6 +13,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
+    "@community//platform/core-api:core",
     "@community//platform/credential-store",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/util",
@@ -59,6 +60,7 @@ jvm_library(
   deps = [
     "@lib//:junit4",
     "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
     "@community//platform/core-impl",
     "@community//platform/core-ui",
     "@community//platform/editor-ui-api:editor-ui",

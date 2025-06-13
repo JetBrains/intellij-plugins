@@ -14,6 +14,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
     "@community//platform/inspect",
     "@lib//:gson",
     "//contrib/qodana/sarif",

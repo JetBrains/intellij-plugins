@@ -21,6 +21,7 @@ jvm_library(
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/util/concurrency",
+    "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/external-system-api:externalSystem",
     "@community//platform/external-system-impl:externalSystem-impl",
@@ -70,6 +71,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//platform/util/concurrency",
     "@community//platform/util/concurrency:concurrency_test_lib",
+    "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/external-system-api:externalSystem",
     "@community//platform/external-system-impl:externalSystem-impl",

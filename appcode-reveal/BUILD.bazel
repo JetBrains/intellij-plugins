@@ -22,6 +22,7 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "//CIDR-appcode/apple-sdk",
     "//CIDR-appcode/appcode",
+    "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/statistics",
     "@community//platform/ide-core-impl",

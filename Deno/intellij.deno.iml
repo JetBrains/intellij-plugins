@@ -16,6 +16,7 @@
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="library" name="eclipse.lsp4j" level="project" />
     <orderEntry type="module" module-name="intellij.platform.analysis" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.editor.ui" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
