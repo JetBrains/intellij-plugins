@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.project.IntelliJProjectConfiguration;
+import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import com.intellij.util.text.VersionComparatorUtil;
@@ -22,7 +23,7 @@ public final class CucumberJavaTestUtil {
   public static final String RELATED_TEST_DATA_PATH = "/contrib/cucumber-java/testData/";
 
   public static DefaultLightProjectDescriptor createCucumber1ProjectDescriptor() {
-    return new DefaultLightProjectDescriptor() {
+    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk17) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         attachCucumberCore1(model);
@@ -32,7 +33,7 @@ public final class CucumberJavaTestUtil {
   }
 
   public static DefaultLightProjectDescriptor createCucumber2ProjectDescriptor() {
-    return new DefaultLightProjectDescriptor() {
+    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk18) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         attachCucumberCore2(model);
@@ -42,7 +43,7 @@ public final class CucumberJavaTestUtil {
   }
 
   public static DefaultLightProjectDescriptor createCucumber3ProjectDescriptor() {
-    return new DefaultLightProjectDescriptor() {
+    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk18) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         attachCucumberCore3(model);
@@ -64,7 +65,7 @@ public final class CucumberJavaTestUtil {
   }
 
   public static DefaultLightProjectDescriptor createCucumberProjectDescriptor(@NotNull String version) {
-    return new DefaultLightProjectDescriptor() {
+    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk18) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         IntelliJProjectConfiguration.LibraryRoots libraryRoots;
@@ -85,7 +86,7 @@ public final class CucumberJavaTestUtil {
   }
 
   public static DefaultLightProjectDescriptor createCucumberJava8ProjectDescriptor() {
-    return new DefaultLightProjectDescriptor() {
+    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk18) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         attachCucumberCore2(model);
