@@ -172,6 +172,17 @@ public class GherkinLexerTest extends TestCase {
     );
   }
 
+  public void testAtSignInStepName() {
+    doTest(
+      """
+        Feature: test
+          Scenario: test
+            Given @Team is a child of the group @Class""",
+      "FEATURE_KEYWORD:0-7", "COLON:7-8", "WHITE_SPACE:8-9", "TEXT:9-13", "WHITE_SPACE:13-16", "SCENARIO_KEYWORD:16-24",
+      "COLON:24-25", "WHITE_SPACE:25-26", "TEXT:26-30", "WHITE_SPACE:30-35", "STEP_KEYWORD:35-40", "WHITE_SPACE:40-41", "TEXT:41-77"
+    );
+  }
+
   private static void doTest(String text, String... expectedTokens) {
     Lexer lexer = new GherkinLexer(new MockGherkinKeywordProvider());
     lexer.start(text);
