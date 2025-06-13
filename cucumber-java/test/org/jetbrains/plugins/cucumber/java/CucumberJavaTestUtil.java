@@ -33,7 +33,7 @@ public final class CucumberJavaTestUtil {
   }
 
   public static DefaultLightProjectDescriptor createCucumber2ProjectDescriptor() {
-    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk18) {
+    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk11) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         attachCucumberCore2(model);
@@ -43,7 +43,7 @@ public final class CucumberJavaTestUtil {
   }
 
   public static DefaultLightProjectDescriptor createCucumber3ProjectDescriptor() {
-    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk18) {
+    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk11) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         attachCucumberCore3(model);
@@ -65,7 +65,7 @@ public final class CucumberJavaTestUtil {
   }
 
   public static DefaultLightProjectDescriptor createCucumberProjectDescriptor(@NotNull String version) {
-    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk18) {
+    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk11) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         IntelliJProjectConfiguration.LibraryRoots libraryRoots;
@@ -86,7 +86,7 @@ public final class CucumberJavaTestUtil {
   }
 
   public static DefaultLightProjectDescriptor createCucumberJava8ProjectDescriptor() {
-    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk18) {
+    return new DefaultLightProjectDescriptor(IdeaTestUtil::getMockJdk11) {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         attachCucumberCore2(model);
@@ -94,7 +94,7 @@ public final class CucumberJavaTestUtil {
 
         LanguageLevelModuleExtension extension = model.getModuleExtension(LanguageLevelModuleExtension.class);
         if (extension != null) {
-          extension.setLanguageLevel(LanguageLevel.JDK_1_8);
+          extension.setLanguageLevel(LanguageLevel.JDK_11);
         }
 
         VirtualFile sourceRoot = VirtualFileManager.getInstance().refreshAndFindFileByUrl("temp:///src");
