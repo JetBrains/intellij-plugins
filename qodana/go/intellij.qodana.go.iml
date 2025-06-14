@@ -16,6 +16,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" />
     <orderEntry type="module" module-name="intellij.qodana" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.qodana.coverage" />
     <orderEntry type="module" module-name="intellij.go.plugin" scope="PROVIDED" />

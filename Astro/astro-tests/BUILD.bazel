@@ -15,6 +15,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/indexing-api:indexing",
+    "@community//platform/projectModel-api:projectModel",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/JavaScriptLanguage:javascript",

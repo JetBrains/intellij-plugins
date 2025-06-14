@@ -28,6 +28,7 @@ jvm_library(
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-ui",
+    "@community//platform/projectModel-api:projectModel",
   ],
   runtime_deps = [
     ":pp_resources",
@@ -50,6 +51,7 @@ jvm_library(
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-ui",
+    "@community//platform/projectModel-api:projectModel",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
   ],

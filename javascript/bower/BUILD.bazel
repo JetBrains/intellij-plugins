@@ -18,6 +18,7 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/platform-util-io:ide-util-io",
     "@lib//:gson",
+    "@community//platform/projectModel-api:projectModel",
     "//webcore/impl",
     "@lib//:guava",
     "@community//platform/ide-core",

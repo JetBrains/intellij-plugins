@@ -19,6 +19,7 @@ jvm_library(
     "@community//plugins/gradle:gradle-common",
     "@community//platform/external-system-api:externalSystem",
     "@community//platform/platform-impl:ide-impl",
+    "@community//platform/projectModel-api:projectModel",
     "//contrib/qodana",
     "@community//platform/backend/observation",
     "//contrib/qodana/jvm/java",

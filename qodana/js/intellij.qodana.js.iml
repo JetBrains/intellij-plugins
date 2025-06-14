@@ -20,6 +20,7 @@
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" />
     <orderEntry type="module" module-name="intellij.qodana" />
     <orderEntry type="module" module-name="intellij.qodana.coverage" />
     <orderEntry type="module" module-name="intellij.javascript" />

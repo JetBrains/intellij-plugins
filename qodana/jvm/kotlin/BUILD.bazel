@@ -44,6 +44,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//java/compiler/openapi:java-compiler",
+    "@community//platform/projectModel-api:projectModel",
     "//contrib/qodana/jvm/coverage",
     "//contrib/qodana/jvm/coverage:coverage_test_lib",
     "@community//platform/core-impl",

@@ -24,6 +24,7 @@ jvm_library(
     "@lib//:kotlinc-kotlin-scripting-jvm-provided",
     "@lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
     "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
+    "@community//platform/projectModel-api:projectModel",
     "//contrib/qodana",
     "@community//platform/platform-api:ide",
     "@community//platform/util:util-ui",

@@ -24,6 +24,7 @@ jvm_library(
     "//CIDR-appcode/appcode",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/projectModel-api:projectModel",
     "@community//platform/statistics",
     "@community//platform/ide-core-impl",
     "@community//platform/platform-util-io:ide-util-io",

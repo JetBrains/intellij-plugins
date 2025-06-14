@@ -80,6 +80,7 @@ jvm_library(
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/lang-impl",
     "@community//platform/indexing-impl",
+    "@community//platform/projectModel-api:projectModel",
     "@community//RegExpSupport:regexp",
     "@community//RegExpSupport:regexp_test_lib",
     "@community//xml/xml-parser:parser",

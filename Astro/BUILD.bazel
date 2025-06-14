@@ -20,6 +20,7 @@ jvm_library(
     "@community//platform/platform-api:ide",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/indexing-api:indexing",
+    "@community//platform/projectModel-api:projectModel",
     "@community//platform/refactoring",
     "@community//xml/xml-parser:parser",
     "@lib//:kotlin-stdlib",

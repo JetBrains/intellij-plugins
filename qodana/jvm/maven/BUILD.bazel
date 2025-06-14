@@ -19,6 +19,7 @@ jvm_library(
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
     "@community//plugins/maven",
+    "@community//platform/projectModel-api:projectModel",
     "//contrib/qodana",
     "@community//platform/backend/observation",
   ],
