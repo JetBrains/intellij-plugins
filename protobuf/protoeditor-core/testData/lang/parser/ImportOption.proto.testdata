@@ -1,0 +1,9 @@
+edition = "2024";
+
+import option "unittest_custom_options.proto";
+
+option (.proto2_unittest.file_opt1) = true;
+
+message TestImportOption {
+  option (.proto2_unittest.message_opt1) = true;
+}

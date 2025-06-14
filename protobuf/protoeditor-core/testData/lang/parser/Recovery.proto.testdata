@@ -1,4 +1,4 @@
-syntax = "proto2";
+edition = "2024";
 
 package Foo;
 
@@ -31,4 +31,11 @@ message Message2
 
 message Message3 {
 
+}
+
+// No message body
+message Message4
+
+local message LocalMessage {
+  optional int32 field = 1;
 }

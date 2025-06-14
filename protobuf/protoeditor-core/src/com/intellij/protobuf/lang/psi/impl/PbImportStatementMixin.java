@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 abstract class PbImportStatementMixin extends PbStatementBase implements PbImportStatement {
 
   private static final TokenSet IMPORT_LABELS =
-      TokenSet.create(ProtoTokenTypes.PUBLIC, ProtoTokenTypes.WEAK);
+      TokenSet.create(ProtoTokenTypes.PUBLIC, ProtoTokenTypes.WEAK, ProtoTokenTypes.OPTION);
 
   PbImportStatementMixin(ASTNode node) {
     super(node);
@@ -40,12 +40,18 @@ abstract class PbImportStatementMixin extends PbStatementBase implements PbImpor
   @Override
   public boolean isPublic() {
     PsiElement labelElement = getImportLabel();
-    return labelElement != null && "public".equals(labelElement.getText());
+    return labelElement != null && labelElement.getText().equals("public");
   }
 
   @Override
   public boolean isWeak() {
     PsiElement labelElement = getImportLabel();
-    return labelElement != null && "weak".equals(labelElement.getText());
+    return labelElement != null && labelElement.getText().equals("weak");
+  }
+
+  @Override
+  public boolean isOption() {
+    PsiElement labelElement = getImportLabel();
+    return labelElement != null && labelElement.getText().equals("option");
   }
 }

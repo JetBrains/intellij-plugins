@@ -29,4 +29,7 @@ interface PbImportStatementBase extends PbElement {
 
   /** Returns <code>true</code> if this is a weak import. */
   boolean isWeak();
+
+  /** Returns <code>true</code> if this is a option import. */
+  boolean isOption();
 }

@@ -94,6 +94,7 @@ public class PbAnnotatorErrorTest extends PbCodeInsightFixtureTestCase {
   }
 
   public void testProto2ErrorAnnotations() {
+    myFixture.configureByFile("lang/annotation/import1.proto");
     doTest("lang/annotation/Proto2Errors.proto.testdata");
   }
 
@@ -108,9 +109,15 @@ public class PbAnnotatorErrorTest extends PbCodeInsightFixtureTestCase {
   }
 
   public void testProtoEdition2023ErrorAnnotations() {
+    myFixture.configureByFile("lang/annotation/import1.proto");
     doTest("lang/annotation/Edition2023Errors.proto.testdata");
   }
 
+  public void testProtoEdition2024ErrorAnnotations() {
+    myFixture.configureByFile("lang/annotation/import1.proto");
+    doTest("lang/annotation/Edition2024Errors.proto.testdata");
+  }
+  
   public void testFieldErrorAnnotations() {
     doTest("lang/annotation/FieldErrors.proto.testdata");
   }

@@ -133,12 +133,14 @@ String = {SingleQuotedString} | {DoubleQuotedString}
 
   "default"                 { return keyword(ProtoTokenTypes.DEFAULT); }
   "enum"                    { return keyword(ProtoTokenTypes.ENUM); }
+  "export"                  { return keyword(ProtoTokenTypes.EXPORT); }
   "edition"                 { return keyword(ProtoTokenTypes.EDITION); }
   "extend"                  { return keyword(ProtoTokenTypes.EXTEND); }
   "extensions"              { return keyword(ProtoTokenTypes.EXTENSIONS); }
   "group"                   { return keyword(ProtoTokenTypes.GROUP); }
   "import"                  { return keyword(ProtoTokenTypes.IMPORT); }
   "json_name"               { return keyword(ProtoTokenTypes.JSON_NAME); }
+  "local"                   { return keyword(ProtoTokenTypes.LOCAL); }
   "map"                     { return keyword(ProtoTokenTypes.MAP); }
   "max"                     { return keyword(ProtoTokenTypes.MAX); }
   "message"                 { return keyword(ProtoTokenTypes.MESSAGE); }

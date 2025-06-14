@@ -6,6 +6,8 @@ import <error descr="Weak imports are not supported in proto3">weak</error> "lan
 import "lang/annotation/proto2enum.proto";
 import "google/protobuf/descriptor.proto";
 
+import <error descr="Option imports are not supported before edition 2024">option</error> "lang/annotation/import1.proto";
+
 option <error descr="Features are not allowed before edition 2023">features</error>.enum_type = CLOSED;
 
 message MessageSetTest {
@@ -73,4 +75,37 @@ message ExtensionTest {
   extend .google.protobuf.MessageOptions {
     int32 valid_2 = 1051;
   }
+}
+
+
+<error descr="Symbol visibility is not allowed before edition 2024">export</error> message BannedExportMessage {
+  int32 a = 1;
+
+  <error descr="Symbol visibility is not allowed before edition 2024">export</error> message BannedExportNestedMessage {
+    int32 a = 1;
+  }
+
+  <error descr="Symbol visibility is not allowed before edition 2024">local</error> message BannedLocalNestedMessage {
+    int32 a = 1;
+  }
+
+  <error descr="Symbol visibility is not allowed before edition 2024">export</error> enum BannedExportNestedEnum {
+    BANNED_EXPORT_NESTED_ENUM_UNKNOWN = 0;
+  }
+
+  <error descr="Symbol visibility is not allowed before edition 2024">local</error> enum BannedLocalNestedEnum {
+    BANNED_LOCAL_NESTED_ENUM_UNKNOWN = 0;
+  }
+}
+
+<error descr="Symbol visibility is not allowed before edition 2024">local</error> message BannedLocalMessage {
+  int32 a = 1;
+}
+
+<error descr="Symbol visibility is not allowed before edition 2024">export</error> enum BannedExportEnum {
+  BANNED_EXPORT_ENUM_UNKNOWN = 0;
+}
+
+<error descr="Symbol visibility is not allowed before edition 2024">local</error> enum BannedLocalEnum {
+  BANNED_LOCAL_ENUM_UNKNOWN = 0;
 }

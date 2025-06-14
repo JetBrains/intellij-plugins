@@ -72,6 +72,7 @@ public final class ProtoTokenTypes {
   public static final IElementType DEFAULT = put("default", new ProtoKeywordTokenType("default"));
   public static final IElementType EDITION = put("edition", new ProtoKeywordTokenType("edition"));
   public static final IElementType ENUM = put("enum", new ProtoKeywordTokenType("enum"));
+  public static final IElementType EXPORT = put("export", new ProtoKeywordTokenType("export"));
   public static final IElementType EXTEND = put("extend", new ProtoKeywordTokenType("extend"));
   public static final IElementType EXTENSIONS =
       put("extensions", new ProtoKeywordTokenType("extensions"));
@@ -80,6 +81,7 @@ public final class ProtoTokenTypes {
   public static final IElementType IMPORT = put("import", new ProtoKeywordTokenType("import"));
   public static final IElementType JSON_NAME =
       put("json_name", new ProtoKeywordTokenType("json_name"));
+  public static final IElementType LOCAL = put("local", new ProtoKeywordTokenType("local"));
   public static final IElementType MAP = put("map", new ProtoKeywordTokenType("map"));
   public static final IElementType MAX = put("max", new ProtoKeywordTokenType("max"));
   public static final IElementType MESSAGE = put("message", new ProtoKeywordTokenType("message"));

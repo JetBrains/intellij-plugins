@@ -289,8 +289,7 @@ SyntaxStatement ::= SyntaxType '=' StringValue ';'
  * Top level entries.
  */
 private TopLevelEntry ::=
-    MessageDefinition
-  | EnumDefinition
+  SymbolVisibility? (MessageDefinition | EnumDefinition )
   | ServiceDefinition
   | ExtendDefinition
   | ImportStatement
@@ -299,7 +298,7 @@ private TopLevelEntry ::=
   | ';'
   { recoverWhile = TopLevelRecovery }
 
-private TopLevelRecovery ::= !(message | enum | service | extend | import | package | option | ';')
+private TopLevelRecovery ::= !(export | local | message | enum | service | extend | import | package | option | ';')
 
 /*
  * Package statement.
@@ -316,7 +315,7 @@ PackageStatement ::= package PackageName ';'
 /*
  * Import statement.
  */
-ImportStatement ::= import (public | weak)? ImportName ';' {
+ImportStatement ::= import (public | weak | option)? ImportName ';' {
   pin = 1
   implements = [
     'com.intellij.protobuf.lang.psi.PbImportStatementBase'
@@ -328,6 +327,11 @@ ImportName ::= StringValue
 {
   mixin = 'com.intellij.protobuf.lang.psi.impl.PbImportNameMixin'
 }
+
+/*
+ * Symbol visibility.
+ */
+SymbolVisibility ::= export | local
 
 /*
  * Message definition.
@@ -360,8 +364,7 @@ MessageBody ::= <<Block <<BlockBodyOptional MessageEntry>> >> {
   ]
 }
 private MessageEntry ::=
-    MessageDefinition
-  | EnumDefinition
+  SymbolVisibility? ( MessageDefinition | EnumDefinition)
   | ExtensionsStatement
   | ReservedStatement
   | ExtendDefinition
@@ -373,7 +376,7 @@ private MessageEntry ::=
   | ';' { recoverWhile = MessageRecovery }
 
 private MessageRecovery ::=
-  !(message | enum | extensions | reserved | extend | option | oneof
+  !(export | local | message | enum | extensions | reserved | extend | option | oneof
   | FieldLabel | group | map | TypeName | '}' | ';')
 
 /*

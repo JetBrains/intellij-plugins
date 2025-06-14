@@ -23,7 +23,7 @@ import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-/** Annotations specific to editions >= 2023. */
+/** Annotations specific to editions files, effectively editions >= 2023 (the first edition). */
 public class EditionsAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
@@ -58,11 +58,11 @@ public class EditionsAnnotator implements Annotator {
   private static void annotateEdition(PbSyntaxStatement syntax, AnnotationHolder holder) {
     SyntaxLevel syntaxLevel = syntax.getSyntaxLevel();
     var effectiveSyntaxVersion = syntaxLevel == null ? "" : syntaxLevel.getVersion();
-    if (!"2023".equals(effectiveSyntaxVersion)) {
+    if (!effectiveSyntaxVersion.equals("2023") && !effectiveSyntaxVersion.equals("2024")) {
       holder
           .newAnnotation(
               HighlightSeverity.ERROR,
-              PbLangBundle.message("editions.unsupported", effectiveSyntaxVersion))
+              PbLangBundle.message("editions.unsupported", syntax.getEdition()))
           .range(syntax)
           .create();
     }

@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package foo.bar;
 
+import <error descr="Option imports are not supported before edition 2024">option</error> "lang/annotation/import1.proto";
+
 option <error descr="Features are not allowed before edition 2023">features</error>.enum_type = OPEN;
 
 message Test {
@@ -25,4 +27,37 @@ message GroupNotCapitalLetter {
   optional group Okay = 1 {}
   optional group <error descr="Group names must start with capital letter">notOkay</error> = 2 {}
   optional group <error descr="Group names must start with capital letter">_WithUnderscore</error> = 3 {}
+}
+
+
+<error descr="Symbol visibility is not allowed before edition 2024">export</error> message BannedExportMessage {
+  optional int32 a = 1;
+
+  <error descr="Symbol visibility is not allowed before edition 2024">export</error> message BannedExportNestedMessage {
+    optional int32 a = 1;
+  }
+
+  <error descr="Symbol visibility is not allowed before edition 2024">local</error> message BannedLocalNestedMessage {
+    optional int32 a = 1;
+  }
+
+  <error descr="Symbol visibility is not allowed before edition 2024">export</error> enum BannedExportNestedEnum {
+    BANNED_EXPORT_NESTED_ENUM_UNKNOWN = 0;
+  }
+
+  <error descr="Symbol visibility is not allowed before edition 2024">local</error> enum BannedLocalNestedEnum {
+    BANNED_LOCAL_NESTED_ENUM_UNKNOWN = 0;
+  }
+}
+
+<error descr="Symbol visibility is not allowed before edition 2024">local</error> message BannedLocalMessage {
+  optional int32 a = 1;
+}
+
+<error descr="Symbol visibility is not allowed before edition 2024">export</error> enum BannedExportEnum {
+  BANNED_EXPORT_ENUM_UNKNOWN = 0;
+}
+
+<error descr="Symbol visibility is not allowed before edition 2024">local</error> enum BannedLocalEnum {
+  BANNED_LOCAL_ENUM_UNKNOWN = 0;
 }
