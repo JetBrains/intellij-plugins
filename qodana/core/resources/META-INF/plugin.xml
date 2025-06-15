@@ -356,6 +356,7 @@
     <inspectionProfileProvider implementation="org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmptyProfileProvider"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.DefaultScriptFactory"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.scoped.ScopedScriptFactory"/>
+    <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedScriptFactory"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.TeamCityChangesScriptFactory"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.DuplicateCodeConsumer"/>
     <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.api.MainInspectionKtsDefaultImportProvider"/>

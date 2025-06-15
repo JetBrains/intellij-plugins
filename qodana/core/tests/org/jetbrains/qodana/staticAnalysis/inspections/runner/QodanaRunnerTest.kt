@@ -17,6 +17,7 @@ import com.intellij.util.application
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Result
 import com.jetbrains.qodana.sarif.model.Result.BaselineState
+import com.jetbrains.qodana.sarif.model.Run
 import kotlinx.coroutines.runBlocking
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.cloud.api.IjQDCloudClientProvider
@@ -31,9 +32,11 @@ import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
 import org.jetbrains.qodana.staticAnalysis.addQodanaEnvMock
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FailureConditions
+import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.SkipResultStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.markGenFolderAsGeneratedSources
 import org.jetbrains.qodana.staticAnalysis.profile.QODANA_PROMO_ANALYZE_EACH_N_FILE_KEY
@@ -43,8 +46,13 @@ import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.jetbrains.qodana.staticAnalysis.sarif.configProfile
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_SKIP_COMPUTATION_PROPERTY
+import org.jetbrains.qodana.staticAnalysis.script.scoped.RESULT_PRINTING_SKIPPED
+import org.jetbrains.qodana.staticAnalysis.script.scoped.REVERSE_SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
+import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPE_ARG
+import org.jetbrains.qodana.staticAnalysis.script.scoped.STAGE_ARG
+import org.jetbrains.qodana.staticAnalysis.script.scoped.Stage
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionDurationsAggregatorService
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionProblemsFoundAggregatorService
 import org.jetbrains.qodana.staticAnalysis.withSystemProperty
@@ -408,6 +416,237 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     } finally {
       System.clearProperty(SCOPED_BASELINE_PROPERTY)
       System.clearProperty(COVERAGE_SKIP_COMPUTATION_PROPERTY)
+    }
+  }
+
+  private fun Run.isResultOutputSkipped() = this.invocations?.first()?.properties?.get(RESULT_PRINTING_SKIPPED) == true
+
+  @Test
+  fun `testReverseScoped-script-new-stage`(): Unit = runBlocking {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.NEW.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.ANY,
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        },
+        {
+          "path" : "test-module/C.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    runAnalysis()
+    assertSarifResults()
+    // resulting report non empty - decision - continue
+    assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+  }
+
+  @Test
+  fun `testReverseScoped-script-new-stage-baseline`(): Unit = runBlocking {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.NEW.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.ANY,
+        baseline = "test-module/baseline.sarif.json",
+        includeAbsent = true
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        },
+        {
+          "path" : "test-module/C.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    runAnalysis()
+    assertSarifResults()
+    // resulting report non empty - decision - continue
+    assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+  }
+
+  // new stage had issue in A, old - in A and B, decision - stop
+  @Test
+  fun `testReverseScoped-script-old-stage`(): Unit = runBlocking {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.OLD.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.ANY,
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        },
+        {
+          "path" : "test-module/B.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    try {
+      System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
+      runAnalysis()
+      assertEmptySarifResults()
+      assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+    } finally {
+      System.clearProperty(SCOPED_BASELINE_PROPERTY)
+    }
+  }
+
+  // new stage had issue in A, old - in B, decision - continue
+  @Test
+  fun `testReverseScoped-script-old-stage-less-results`(): Unit = runBlocking {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.OLD.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.ANY,
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/B.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    try {
+      System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
+      runAnalysis()
+      assertSarifResults()
+      assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+    } finally {
+      System.clearProperty(SCOPED_BASELINE_PROPERTY)
+    }
+  }
+
+  // new stage had issue in A, old - in B, but A in baseline - decision - stop
+  @Test
+  fun `testReverseScoped-script-old-stage-less-results-baseline`(): Unit = runBlocking {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.OLD.name
+        )),
+        baseline = "test-module/baseline.sarif.json",
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.ANY,
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/B.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    try {
+      System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
+      runAnalysis()
+      assertSarifResults()
+      assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+    } finally {
+      System.clearProperty(SCOPED_BASELINE_PROPERTY)
+    }
+  }
+
+  @Test
+  fun `testReverseScoped-script-fixes-stage`(): Unit = runBlocking {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.FIXES.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.NEVER,
+        fixesStrategy = FixesStrategy.APPLY
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        },
+        {
+          "path" : "test-module/C.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    try {
+      System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
+      runAnalysis()
+      assertSarifResults()
+      assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+    } finally {
+      System.clearProperty(SCOPED_BASELINE_PROPERTY)
     }
   }
 
