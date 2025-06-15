@@ -18,8 +18,17 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val COV_FIELD_NAME = "coverage"
+private const val COVERAGE_FILES_PROVIDED = "qodana.coverage.files.provided"
 const val COVERAGE_DATA = "qodana.coverage.input"
 val precomputedCoverageFiles = Key.create<List<File>>("qodana.coverage.files")
+
+internal var Run.hasCoverageFiles: Boolean
+  set(value) {
+    properties = (properties ?: PropertyBag()).also {
+      it[COVERAGE_FILES_PROVIDED] = value
+    }
+  }
+  get() = properties?.get(COVERAGE_FILES_PROVIDED) as? Boolean ?: false
 
 @Suppress("UNCHECKED_CAST")
 var Run.coverageStats: Map<String, Int>
