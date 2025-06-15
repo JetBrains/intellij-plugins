@@ -16,6 +16,7 @@ import org.jetbrains.qodana.qodanaTracer
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStats
+import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.hasCoverageFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.CodeQualityMetrics
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.MetricAggregator
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.codeQualityMetrics
@@ -155,11 +156,11 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
 
   private fun printSanityResults(
     resultingRun: Run,
-    commandLineResultsPrinter: CommandLineResultsPrinter?,
+    commandLineResultsPrinter: CommandLineResultsPrinter,
   ) {
     resultingRun.properties?.get(SANITY_RESULTS_KEY)?.let {
       @Suppress("UNCHECKED_CAST")
-      commandLineResultsPrinter?.printSanityResults(it as List<Result>)
+      commandLineResultsPrinter.printSanityResults(it as List<Result>)
     }
   }
 
@@ -176,11 +177,11 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
 
   private fun printPromoResults(
     resultingRun: Run,
-    commandLineResultsPrinter: CommandLineResultsPrinter?,
+    commandLineResultsPrinter: CommandLineResultsPrinter,
   ) {
     resultingRun.properties?.get(PROMO_RESULTS_KEY)?.let {
       @Suppress("UNCHECKED_CAST")
-      commandLineResultsPrinter?.printResults(
+      commandLineResultsPrinter.printResults(
         it as List<Result>,
         sectionTitle = QodanaBundle.message("cli.promo.results.title"),
         message = QodanaBundle.message("cli.promo.results.grouping.message")
@@ -192,6 +193,7 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     sarifRun: Run,
     scriptResult: QodanaScriptResult,
   ) {
+    sarifRun.hasCoverageFiles = scriptResult.coverageFilesPresent
     val coverageStatistics = scriptResult.coverageStats
     if (coverageStatistics != null) {
       val stat = coverageStatistics.computeStat()
@@ -203,12 +205,16 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
 
   private fun printCoverageData(
     resultingRun: Run,
-    commandLineResultsPrinter: CommandLineResultsPrinter?,
+    commandLineResultsPrinter: CommandLineResultsPrinter,
   ) {
     resultingRun.coverageStats.let { stat ->
-      // todo: support checking if files were present to pass null in such a case
-      if (stat.isNotEmpty()) {
-        commandLineResultsPrinter?.printCoverage(stat, sectionTitle = QodanaBundle.message("cli.coverage.title"))
+      if (stat.isEmpty()) {
+        if (resultingRun.hasCoverageFiles) {
+          // printer will notify about coverage configuration error
+          commandLineResultsPrinter.printCoverage(null, sectionTitle = QodanaBundle.message("cli.coverage.title"))
+        }
+      } else {
+        commandLineResultsPrinter.printCoverage(stat, sectionTitle = QodanaBundle.message("cli.coverage.title"))
       }
     }
   }
@@ -231,11 +237,11 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
 
   private fun printMetricsData(
     resultingRun: Run,
-    commandLineResultsPrinter: CommandLineResultsPrinter?,
+    commandLineResultsPrinter: CommandLineResultsPrinter,
   ) {
     resultingRun.codeQualityMetrics.let { metrics ->
       if (metrics.isNotEmpty()) {
-        commandLineResultsPrinter?.printCodeQualityMetrics(metrics, sectionTitle = QodanaBundle.message("cli.metrics.title"))
+        commandLineResultsPrinter.printCodeQualityMetrics(metrics, sectionTitle = QodanaBundle.message("cli.metrics.title"))
       }
     }
   }
