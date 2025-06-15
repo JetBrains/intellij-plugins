@@ -46,6 +46,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.jetbrains.qodana.staticAnalysis.sarif.configProfile
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_SKIP_COMPUTATION_PROPERTY
+import org.jetbrains.qodana.staticAnalysis.script.scoped.DUMP_REDUCED_SCOPE_ARG
 import org.jetbrains.qodana.staticAnalysis.script.scoped.RESULT_PRINTING_SKIPPED
 import org.jetbrains.qodana.staticAnalysis.script.scoped.REVERSE_SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERTY
@@ -60,7 +61,9 @@ import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertLinesMatch
 import org.junit.jupiter.api.assertThrows
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 /**
@@ -422,10 +425,18 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       }
     """.trimIndent())
 
-    runAnalysis()
-    assertSarifResults()
-    // resulting report non empty - decision - continue
-    assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+    try {
+      val scopePath = qodanaConfig.outPath.resolve("scope")
+      System.setProperty(DUMP_REDUCED_SCOPE_ARG, scopePath.toString())
+      runAnalysis()
+      assertSarifResults()
+      // resulting report non empty - decision - continue
+      assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+      val expectedScope = getTestDataPath("scope.json").absolutePathString()
+      assertSameLinesWithFile(expectedScope, scopePath.readText())
+    } finally {
+      System.clearProperty(DUMP_REDUCED_SCOPE_ARG)
+    }
   }
 
   @Test
@@ -460,10 +471,64 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       }
     """.trimIndent())
 
-    runAnalysis()
-    assertSarifResults()
-    // resulting report non empty - decision - continue
-    assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+    try {
+      val scopePath = qodanaConfig.outPath.resolve("scope")
+      System.setProperty(DUMP_REDUCED_SCOPE_ARG, scopePath.toString())
+      runAnalysis()
+      assertSarifResults()
+      // resulting report non empty - decision - continue
+      assertEquals(manager.sarifRun.isResultOutputSkipped(), true)
+      val expectedScope = getTestDataPath("scope.json").absolutePathString()
+      assertSameLinesWithFile(expectedScope, scopePath.readText())
+    } finally {
+      System.clearProperty(DUMP_REDUCED_SCOPE_ARG)
+    }
+  }
+
+  @Test
+  fun `testReverseScoped-script-new-stage-baseline-matches`(): Unit = runBlocking {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.NEW.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.ANY,
+        baseline = "test-module/baseline.sarif.json",
+        includeAbsent = true
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        },
+        {
+          "path" : "test-module/C.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    try {
+      val scopePath = qodanaConfig.outPath.resolve("scope")
+      System.setProperty(DUMP_REDUCED_SCOPE_ARG, scopePath.toString())
+      runAnalysis()
+      assertSarifResults()
+      // resulting report empty from new results - decision - report
+      assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+      // analysis stopped, file doesn't get created
+      assertFalse(scopePath.exists())
+    } finally {
+      System.clearProperty(DUMP_REDUCED_SCOPE_ARG)
+    }
   }
 
   // new stage had issue in A, old - in A and B, decision - stop
