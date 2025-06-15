@@ -70,13 +70,15 @@ fun createSarifReport(runs: List<Run>): SarifReport {
   return SarifReport(SarifReport.Version._2_1_0, runs).`with$schema`(schema)
 }
 
+fun createInvocation(): Invocation = Invocation(true).withStartTimeUtc(Instant.now())
+
 fun createRun(): Run {
   val driver = createDriver()
   val tool = Tool(driver)
 
   return Run(tool)
     .withInvocations(
-      listOf(Invocation(true).withStartTimeUtc(Instant.now()))
+      listOf(createInvocation())
     )
     .withProperties(PropertyBag().apply {
       put("deviceId", EventLogConfiguration.getInstance().getOrCreate("FUS").deviceId)

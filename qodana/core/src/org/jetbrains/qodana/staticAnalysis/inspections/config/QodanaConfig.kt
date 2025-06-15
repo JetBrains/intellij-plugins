@@ -315,7 +315,10 @@ enum class SkipResultStrategy {
   }
 
   suspend fun shouldSkip(run: Run): Boolean {
-    val newByBaseline: (Result) -> Boolean = { result -> result.baselineState == null || result.baselineState != Result.BaselineState.ABSENT }
+    val newByBaseline: (Result) -> Boolean = { result ->
+      result.baselineState == null
+      || (result.baselineState != Result.BaselineState.ABSENT
+          && result.baselineState != Result.BaselineState.UNCHANGED) }
     return withContext(StaticAnalysisDispatchers.Default) {
       when (this@SkipResultStrategy) {
         ALWAYS -> true

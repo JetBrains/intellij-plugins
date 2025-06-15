@@ -153,6 +153,10 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
     assertEquals(expectedRulesIds.toSortedSet(), enabledRules.map { it.id }.toSortedSet())
   }
 
+  protected fun assertEmptySarifResults() {
+    assertEmpty(manager.sarifRun.results)
+  }
+
   protected fun assertNoSarifResults() {
     assertEquals(null, manager.sarifRun.results)
   }

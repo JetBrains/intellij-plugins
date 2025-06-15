@@ -16,7 +16,7 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.notExists
 
-private const val SCOPE_ARG = "scope-file"
+internal const val SCOPE_ARG = "scope-file"
 const val SCOPED_SCRIPT_NAME = "scoped"
 internal const val SCOPED_BASELINE_PROPERTY = "qodana.scoped.baseline.path"
 internal const val COVERAGE_SKIP_REPORTING_PROPERTY = "qodana.skip.coverage.issues.reporting"
