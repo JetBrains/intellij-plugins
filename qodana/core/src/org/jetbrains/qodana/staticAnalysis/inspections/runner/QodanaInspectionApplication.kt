@@ -37,6 +37,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.copyConfigToLog
 import org.jetbrains.qodana.staticAnalysis.inspections.config.removeQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.DefaultRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
+import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.QodanaActivityKind
 import java.io.IOException
@@ -159,7 +160,7 @@ class QodanaInspectionApplication(
       LOG.info("sessionId: " + EventLogConfiguration.getInstance().getOrCreate("FUS").sessionId)
     }
 
-    if (!config.skipResultOutput) {
+    if (!config.skipResultStrategy.shouldSkip(sarif.getOrCreateRun())) {
       val openInIdeCloudMetadata = publishResultsToCloudIfNeeded()
       if (openInIdeCloudMetadata != null) {
         val openInIdeMetadata = OpenInIdeMetadata(

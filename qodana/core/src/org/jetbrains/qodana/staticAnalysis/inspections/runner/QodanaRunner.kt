@@ -85,12 +85,14 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       }
 
       sarif.getOrCreateRun().run {
-        val commandLineResultsPrinter = createCommandLineResultsPrinter(getInspectionNamesFromRun(this, scriptResult))
-        printSanityResults(this, commandLineResultsPrinter)
-        printMainResults(this, commandLineResultsPrinter)
-        printPromoResults(this, commandLineResultsPrinter)
-        printCoverageData(this, commandLineResultsPrinter)
-        printMetricsData(this, commandLineResultsPrinter)
+        if (config.skipResultStrategy.shouldSkip(this)) return@run
+        createCommandLineResultsPrinter(getInspectionNamesFromRun(this, scriptResult))?.let { commandLineResultsPrinter ->
+          printSanityResults(this, commandLineResultsPrinter)
+          printMainResults(this, commandLineResultsPrinter)
+          printPromoResults(this, commandLineResultsPrinter)
+          printCoverageData(this, commandLineResultsPrinter)
+          printMetricsData(this, commandLineResultsPrinter)
+        }
       }
 
       return sarif
@@ -288,7 +290,6 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
   }
 
   private suspend fun createCommandLineResultsPrinter(inspectionNames: Map<String, String>): CommandLineResultsPrinter? {
-    if (config.skipResultOutput) return null
     return CommandLineResultsPrinter(
       inspectionIdToName = getInspectionIdToNameMap(inspectionNames, config),
       cliPrinter = { message -> messageReporter.reportMessage(1, message) }

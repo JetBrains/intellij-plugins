@@ -93,6 +93,11 @@ internal fun SarifReport.getOrCreateRun(): Run {
   }
 }
 
+internal fun Result.hasFixes(): Boolean {
+  val props = this.properties ?: return false
+  return props.get(PROBLEM_HAS_FIXES) == true || props.get(PROBLEM_HAS_CLEANUP) == true
+}
+
 internal fun automationDetails(project: Project, analysisKind: AnalysisKind) =
   RunAutomationDetails()
     .withGuid(System.getProperty(SARIF_AUTOMATION_GUID_PROPERTY) ?: UUID.randomUUID().toString())
