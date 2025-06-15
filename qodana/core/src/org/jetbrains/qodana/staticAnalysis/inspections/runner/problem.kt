@@ -13,6 +13,7 @@ import com.jetbrains.qodana.sarif.model.Result
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter
 import org.jetbrains.qodana.staticAnalysis.sarif.ElementToSarifConverter.toSarifLocation
+import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_HAS_CLEANUP
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_HAS_FIXES
 import org.jetbrains.qodana.staticAnalysis.sarif.PROBLEM_TYPE
 import org.jetbrains.qodana.staticAnalysis.sarif.RELATED_PROBLEMS_CHILD_HASH_PROP
@@ -30,6 +31,7 @@ interface Problem {
 }
 
 internal class XmlProblem(private val element: Element,
+                          private val hasCleanup: Boolean = false,
                           private val hasFixes: Boolean = false,
                           private val userData: UserDataHolderEx? = null): Problem {
   override suspend fun getSarif(macroManager: PathMacroManager, database: QodanaToolResultDatabase): Result {
@@ -37,7 +39,7 @@ internal class XmlProblem(private val element: Element,
     return ElementToSarifConverter.convertFromXmlFormat(element, macroManager) { result ->
       val props = result.properties ?: PropertyBag()
       addRelatedProblemsHashes(props)
-      addHasFixes(props, hasFixes)
+      addHasFixes(props, hasFixes, hasCleanup)
       result.properties = props
       props.tags.addAll(userData?.getUserData(PROBLEM_DESCRIPTOR_TAG) ?: emptyList())
       result.relatedLocations = userData?.getUserData(RELATED_LOCATIONS)
@@ -91,9 +93,12 @@ internal class XmlProblem(private val element: Element,
     }
   }
 
-  private fun addHasFixes(props: PropertyBag, hasFixes: Boolean) {
+  private fun addHasFixes(props: PropertyBag, hasFixes: Boolean, hasCleanup: Boolean) {
     if (hasFixes) {
       props += PROBLEM_HAS_FIXES to true
+    }
+    if (hasCleanup) {
+      props += PROBLEM_HAS_CLEANUP to true
     }
   }
 }
