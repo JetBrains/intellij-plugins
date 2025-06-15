@@ -23,6 +23,7 @@ import kotlin.io.path.notExists
 internal const val STAGE_ARG = "stage"
 internal const val RESULT_PRINTING_SKIPPED = "qodana.result.skipped"
 const val REVERSE_SCOPED_SCRIPT_NAME = "reverse-scoped"
+internal const val DUMP_REDUCED_SCOPE_ARG = "qodana.reduced.scope.path"
 
 internal enum class Stage {
   NEW,
@@ -79,7 +80,25 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
 
-    preserveShouldSkipState(run, runContext)
+    val state = runContext.config.skipResultStrategy.shouldSkip(run)
+    preserveShouldSkipState(run, state)
+    val dumpReducedScope = System.getProperty(DUMP_REDUCED_SCOPE_ARG)
+    if (state && dumpReducedScope != null) {
+      dumpScopeToPath(dumpReducedScope, runContext, report)
+    }
+  }
+
+  private suspend fun dumpScopeToPath(
+    dumpReducedScope: String,
+    runContext: QodanaRunContext,
+    report: SarifReport,
+  ) {
+    val path = run {
+      val p = Path(dumpReducedScope)
+      if (p.isAbsolute) p else runContext.config.projectPath.resolve(p)
+    }
+    val nextScope = computeNextScope(runContext.project, report)
+    writeNextScope(path, nextScope)
   }
 }
 
@@ -103,7 +122,7 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
 
     applyBaselineCalculation(report, runContext.config, runContext.scope, runContext.messageReporter)
 
-    preserveShouldSkipState(runNew, runContext)
+    preserveShouldSkipState(runNew, runContext.config.skipResultStrategy.shouldSkip(runNew))
   }
 }
 
@@ -120,7 +139,7 @@ internal class ReverseScopedScriptFixes(runContextFactory: ReverseScopedRunConte
     runNew.withInvocations(listOf(createInvocation()))
     // no need to apply baseline, was applied before
 
-    preserveShouldSkipState(runNew, runContext)
+    preserveShouldSkipState(runNew, runContext.config.skipResultStrategy.shouldSkip(runNew))
   }
 }
 
@@ -142,10 +161,10 @@ internal abstract class ReverseScopedScript(val skipCoverageComputation: Boolean
     return SarifUtil.readReport(absPath)
   }
 
-  protected suspend fun preserveShouldSkipState(run: Run, runContext: QodanaRunContext) {
+  protected fun preserveShouldSkipState(run: Run, state: Boolean) {
     val invocation = run.invocations.first()
     invocation.properties = invocation.properties ?: PropertyBag()
-    invocation.properties?.put(RESULT_PRINTING_SKIPPED, runContext.config.skipResultStrategy.shouldSkip(run))
+    invocation.properties?.put(RESULT_PRINTING_SKIPPED, state)
   }
 }
 
