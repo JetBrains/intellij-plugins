@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
+import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
@@ -27,11 +28,11 @@ abstract class QodanaSingleRunScript(
   protected open suspend fun createGlobalInspectionContext(runContext: QodanaRunContext) = runContext.createGlobalInspectionContext()
 
   final override suspend fun execute(report: SarifReport): QodanaScriptResult {
-    val run = report.getOrCreateRun()
+    val run: () -> Run = { report.getOrCreateRun() } // we may substitute the run on the fly
     val runContext = runContextFactory.openRunContext()
 
-    fillComponents(run.tool, runContext.qodanaProfile)
-    runContext.appendRunDetails(run, analysisKind)
+    fillComponents(run().tool, runContext.qodanaProfile)
+    runContext.appendRunDetails(run(), analysisKind)
     runContext.writeProfiles(runContext.qodanaProfile)
     runContext.writeProjectDescriptionBeforeWork()
 
@@ -46,8 +47,8 @@ abstract class QodanaSingleRunScript(
       }
     }
 
-    maybeApplyFixes(run, runContext)
-    SarifReportContributor.runContributors(run, runContext.project, runContext.config)
+    maybeApplyFixes(run(), runContext)
+    SarifReportContributor.runContributors(run(), runContext.project, runContext.config)
     val scriptResult = QodanaScriptResult.create(inspectionContext)
     CoverageFeatureEventsCollector.logCoverageStatistics(runContext, scriptResult.coverageStats)
     return scriptResult

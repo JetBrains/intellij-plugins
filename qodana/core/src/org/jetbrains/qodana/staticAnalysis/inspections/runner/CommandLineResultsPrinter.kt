@@ -59,33 +59,35 @@ class CommandLineResultsPrinter(
       Result.BaselineState.NEW -> 3
     }
 
-  fun printCoverage(coverage: Map<CoverageData, Int>?, sectionTitle: String) {
+  fun printCoverage(coverage: Map<String, Int>?, sectionTitle: String) {
     val result = StringBuilder()
     result.appendLine(sectionTitle)
     if (coverage == null) {
       result.appendLine(QodanaBundle.message("cli.coverage.no.coverage"))
     } else {
-      if (coverage.containsKey(CoverageData.TOTAL_COV)) {
+      if (coverage.containsKey(CoverageData.TOTAL_COV.prop)) {
         result.appendLine("${CoverageData.TOTAL_COV.title}:")
-        result.appendLine(generateProgressBar(coverage[CoverageData.TOTAL_COV]!!))
-        result.append("${coverage[CoverageData.TOTAL_LINES]} ${CoverageData.TOTAL_LINES.title}, ")
-        result.appendLine("${coverage[CoverageData.TOTAL_COV_LINES]} ${CoverageData.TOTAL_COV_LINES.title}")
+        result.appendLine(generateProgressBar(coverage[CoverageData.TOTAL_COV.prop]!!))
+        result.append("${coverage[CoverageData.TOTAL_LINES.prop]} ${CoverageData.TOTAL_LINES.title}, ")
+        result.appendLine("${coverage[CoverageData.TOTAL_COV_LINES.prop]} ${CoverageData.TOTAL_COV_LINES.title}")
       }
-      if (coverage.containsKey(CoverageData.FRESH_COV)) {
+      if (coverage.containsKey(CoverageData.FRESH_COV.prop)) {
         result.appendLine("${CoverageData.FRESH_COV.title}:")
-        result.appendLine(generateProgressBar(coverage[CoverageData.FRESH_COV]!!))
-        result.append("${coverage[CoverageData.FRESH_LINES]} ${CoverageData.FRESH_LINES.title}, ")
-        result.append("${coverage[CoverageData.FRESH_COV_LINES]} ${CoverageData.FRESH_COV_LINES.title}")
+        result.appendLine(generateProgressBar(coverage[CoverageData.FRESH_COV.prop]!!))
+        result.append("${coverage[CoverageData.FRESH_LINES.prop]} ${CoverageData.FRESH_LINES.title}, ")
+        result.append("${coverage[CoverageData.FRESH_COV_LINES.prop]} ${CoverageData.FRESH_COV_LINES.title}")
       }
     }
     cliPrinter.invoke(result.toString())
   }
 
-  fun printCodeQualityMetrics(metricsData: Map<CodeQualityMetrics, Any>?, sectionTitle: String) {
+  fun printCodeQualityMetrics(metricsData: Map<String, Any>?, sectionTitle: String) {
     val result = StringBuilder()
     result.appendLine(sectionTitle)
 
-    metricsData?.filter { it.key.printable }?.forEach { (key, value) ->
+    metricsData
+      ?.mapKeys { CodeQualityMetrics.entries.first { e -> e.prop == it.key } }
+      ?.filter { it.key.printable }?.forEach { (key, value) ->
       result.appendLine("${key.title}:")
       result.append("$value ${key.dim}")
     } ?: result.appendLine(QodanaBundle.message("cli.metrics.no.metrics"))
