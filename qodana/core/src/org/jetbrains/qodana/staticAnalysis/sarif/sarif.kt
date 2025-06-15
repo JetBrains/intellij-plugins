@@ -63,6 +63,7 @@ internal const val RELATED_PROBLEMS_ROOT_HASH_PROP = "relatedProblemsRootHash"
 
 internal const val PROBLEM_TYPE = "problemType"
 internal const val PROBLEM_HAS_FIXES = "hasFixes"
+internal const val PROBLEM_HAS_CLEANUP = "hasCleanup"
 
 fun createSarifReport(runs: List<Run>): SarifReport {
   val schema = URI("https://raw.githubusercontent.com/schemastore/schemastore/master/src/schemas/json/sarif-2.1.0-rtm.5.json")

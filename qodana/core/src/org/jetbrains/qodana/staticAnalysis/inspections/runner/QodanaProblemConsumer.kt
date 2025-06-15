@@ -44,6 +44,7 @@ class QodanaProblemConsumer(
 
     val problem = XmlProblem(
       element,
+      toolWrapper.isCleanupTool,
       descriptor.fixes?.any { it is ModCommandQuickFix } == true,
       descriptor as? UserDataHolderEx
     )
