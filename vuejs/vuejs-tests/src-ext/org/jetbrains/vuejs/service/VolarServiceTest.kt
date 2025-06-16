@@ -4,13 +4,12 @@ package org.jetbrains.vuejs.service
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightingByText
-import com.intellij.lang.typescript.service.TypeScriptServiceTestBase.Companion.assertHasServiceItems
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
+import com.intellij.lang.typescript.service.TypeScriptServiceTestBase.Companion.assertHasServiceItems
 import com.intellij.openapi.Disposable
 import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.platform.lsp.tests.waitForDiagnosticsFromLspServer
 import com.intellij.util.text.SemVer
-import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
@@ -175,7 +174,7 @@ class VolarServiceTest : VueLspServiceTestBase() {
 
     val presentationTexts = getPresentationTexts(elements)
     // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
-    TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("base??"))
+    assertTrue("Lookup element presentation must match expected", presentationTexts.contains("base??"))
     assertHasServiceItems(elements, true)
   }
 
@@ -203,7 +202,7 @@ class VolarServiceTest : VueLspServiceTestBase() {
 
     val presentationTexts = getPresentationTexts(elements)
     // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
-    TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
+    assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
     assertHasServiceItems(elements, true)
   }
 
@@ -233,7 +232,7 @@ class VolarServiceTest : VueLspServiceTestBase() {
 
     val presentationTexts = getPresentationTexts(elements)
     // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
-    TestCase.assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
+    assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
     assertHasServiceItems(elements, true)
   }
 
@@ -248,7 +247,7 @@ class VolarServiceTest : VueLspServiceTestBase() {
     val old = state.packageName
     disposeOnTearDown(Disposable { state.packageName = old })
     val path = myFixture.findFileInTempDir("node_modules/@vue/language-server").path
-    TestCase.assertNotNull(path)
+    assertNotNull(path)
     state.packageName = path
 
     myFixture.configureByText("Simple.vue", """
