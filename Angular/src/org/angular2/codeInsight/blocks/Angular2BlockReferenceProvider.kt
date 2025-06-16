@@ -5,7 +5,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.references.PsiPolySymbolReferenceProvider
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 
-class Angular2BlockReferencesProvider : PsiPolySymbolReferenceProvider<Angular2HtmlBlock> {
+class Angular2BlockReferenceProvider : PsiPolySymbolReferenceProvider<Angular2HtmlBlock> {
 
   override fun getReferencedSymbol(psiElement: Angular2HtmlBlock): PolySymbol? =
     psiElement.definition

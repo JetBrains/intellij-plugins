@@ -166,16 +166,16 @@
     <psi.referenceContributor language="HtmlCompatible" implementation="org.angular2.codeInsight.refs.Angular2HtmlReferencesContributor"/>
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
                                      hostLanguage="Angular2Html"
-                                     implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgContentSelectorProvider"/>
+                                     implementationClass="org.angular2.web.references.Angular2SelectorReferenceProvider$NgContentSelectorProvider"/>
     <polySymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
                                      hostLanguage="TypeScript"
-                                     implementationClass="org.angular2.web.references.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"/>
+                                     implementationClass="org.angular2.web.references.Angular2SelectorReferenceProvider$NgDecoratorSelectorProvider"/>
     <polySymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
                                      hostLanguage="TypeScript"
-                                     implementationClass="org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesProvider"/>
+                                     implementationClass="org.angular2.web.references.Angular2DirectivePropertyLiteralReferenceProvider"/>
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlBlock"
                                      hostLanguage="Angular2Html"
-                                     implementationClass="org.angular2.codeInsight.blocks.Angular2BlockReferencesProvider"/>
+                                     implementationClass="org.angular2.codeInsight.blocks.Angular2BlockReferenceProvider"/>
     <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2SelectorDeclarationProvider"/>
     <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveExportAsDeclarationProvider"/>
     <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectivePropertyDeclarationProvider"/>
@@ -396,7 +396,7 @@
     <highlightVisitor implementation="org.angular2.lang.expr.highlighting.Angular2RainbowVisitor"/>
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2BlockParameter"
                                      hostLanguage="Angular2"
-                                     implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterReferencesProvider"/>
+                                     implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterReferenceProvider"/>
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2TemplateBindingKey"
                                      hostLanguage="Angular2"
                                      implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"/>

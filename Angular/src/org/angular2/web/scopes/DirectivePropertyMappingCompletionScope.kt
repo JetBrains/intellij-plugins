@@ -44,12 +44,12 @@ import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
-import org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesProvider
+import org.angular2.web.references.Angular2DirectivePropertyLiteralReferenceProvider
 
 /**
  * Due to complicated nature of the Angular mapping syntax,
  * this scope is handling only code completion of Angular directive properties.
- * Reference resolution is being provided separately by [Angular2DirectivePropertyLiteralReferencesProvider]
+ * Reference resolution is being provided separately by [Angular2DirectivePropertyLiteralReferenceProvider]
  */
 class DirectivePropertyMappingCompletionScope(element: JSElement)
   : PolySymbolScopeWithCache<JSElement, Unit>(Angular2Framework.ID, element.project, element, Unit) {

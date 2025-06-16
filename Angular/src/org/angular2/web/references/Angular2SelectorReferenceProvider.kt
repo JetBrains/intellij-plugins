@@ -18,15 +18,15 @@ import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 
-abstract class Angular2SelectorReferencesProvider : PsiPolySymbolReferenceProvider<PsiExternalReferenceHost> {
+abstract class Angular2SelectorReferenceProvider : PsiPolySymbolReferenceProvider<PsiExternalReferenceHost> {
 
-  class NgContentSelectorProvider : Angular2SelectorReferencesProvider() {
+  class NgContentSelectorProvider : Angular2SelectorReferenceProvider() {
 
     override fun getDirectiveSelector(element: PsiExternalReferenceHost): Angular2DirectiveSelector? =
       element.asSafely<Angular2HtmlNgContentSelector>()?.selector
   }
 
-  class NgDecoratorSelectorProvider : Angular2SelectorReferencesProvider() {
+  class NgDecoratorSelectorProvider : Angular2SelectorReferenceProvider() {
 
     override fun getDirectiveSelector(element: PsiExternalReferenceHost): Angular2DirectiveSelector? =
       if (isLiteralInNgDecorator(element, SELECTOR_PROP, COMPONENT_DEC, DIRECTIVE_DEC))

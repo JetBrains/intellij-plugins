@@ -19,7 +19,7 @@ import org.angular2.entities.Angular2EntityUtils.getPropertyDeclarationOrReferen
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
-class Angular2DirectivePropertyLiteralReferencesProvider : PsiPolySymbolReferenceProvider<JSLiteralExpression> {
+class Angular2DirectivePropertyLiteralReferenceProvider : PsiPolySymbolReferenceProvider<JSLiteralExpression> {
 
   override fun getOffsetsToReferencedSymbols(psiElement: JSLiteralExpression, hints: PsiSymbolReferenceHints): Map<Int, PolySymbol> {
     val stringValue = psiElement.stubSafeStringValue ?: return emptyMap()

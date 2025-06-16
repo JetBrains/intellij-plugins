@@ -6,7 +6,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.references.PsiPolySymbolReferenceProvider
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 
-class Angular2BlockParameterReferencesProvider : PsiPolySymbolReferenceProvider<Angular2BlockParameter> {
+class Angular2BlockParameterReferenceProvider : PsiPolySymbolReferenceProvider<Angular2BlockParameter> {
 
   override fun getOffsetsToReferencedSymbols(psiElement: Angular2BlockParameter, hints: PsiSymbolReferenceHints): Map<Int, PolySymbol> {
     if (psiElement.isPrimaryExpression) {
