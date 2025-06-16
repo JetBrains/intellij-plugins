@@ -27,12 +27,15 @@
     ]]></description>
   <vendor>JetBrains</vendor>
 
-  <depends>JavaScript</depends>
-  <depends>com.intellij.modules.platform</depends>
-  <depends>HtmlTools</depends>
+  <dependencies>
+    <module name="intellij.xml.impl"/>
+    <plugin id="JavaScript"/>
+    <plugin id="HtmlTools"/>
+    <plugin id="intellij.webpack"/>
+  </dependencies>
+
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="tslint-support.xml">tslint</depends>
-  <depends>intellij.webpack</depends>
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.angular2.templateScopesProvider"
