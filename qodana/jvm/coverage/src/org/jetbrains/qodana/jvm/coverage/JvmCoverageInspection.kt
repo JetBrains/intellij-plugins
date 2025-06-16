@@ -22,6 +22,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.rt.coverage.data.ProjectData
 import com.intellij.rt.coverage.report.XMLProjectData
 import com.intellij.uast.UastHintedVisitorAdapter
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coverage.CoverageLanguage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
@@ -35,6 +38,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 
 internal val logger = logger<JvmCoverageInspection>()
+
+private enum class MethodType(val printName: String) {
+  CONSTRUCTOR("constructor"),
+  METHOD("method"),
+  PROPERTY("property")
+}
 
 class JvmCoverageInspection : CoverageInspectionBase() {
   private val languages = setOf("Java", "Kotlin")
@@ -205,15 +214,27 @@ class JvmCoverageInspection : CoverageInspectionBase() {
     }
 
     private fun reportMethodCoverage(node: UMethod, sourcePsi: PsiElement) {
-      val isConstructor = node.isConstructor
-      val signature = methodNameForReports(node, isConstructor)
-      if (isConstructor) {
-        reportElement(problemsHolder, highlightedElement(sourcePsi),
-                      QodanaBundle.message("constructor.coverage.below.threshold", signature, methodThreshold))
-      }
-      else {
-        reportElement(problemsHolder, highlightedElement(sourcePsi),
-                      QodanaBundle.message("method.coverage.below.threshold", signature, methodThreshold))
+      when {
+        node.isConstructor -> {
+          val signature = methodNameForReports(node, MethodType.CONSTRUCTOR)
+          reportElement(problemsHolder, highlightedElement(sourcePsi),
+                        QodanaBundle.message("constructor.coverage.below.threshold", signature, methodThreshold))
+        }
+        sourcePsi is KtPropertyAccessor || sourcePsi is KtProperty || sourcePsi is KtParameter -> {
+          val signature = methodNameForReports(node, MethodType.PROPERTY)
+          if (signature.startsWith("set")) {
+            reportElement(problemsHolder, highlightedElement(sourcePsi),
+                          QodanaBundle.message("property.setter.coverage.below.threshold", signature, methodThreshold))
+          } else {
+            reportElement(problemsHolder, highlightedElement(sourcePsi),
+                          QodanaBundle.message("property.getter.coverage.below.threshold", signature, methodThreshold))
+          }
+        }
+        else -> {
+          val signature = methodNameForReports(node, MethodType.METHOD)
+          reportElement(problemsHolder, highlightedElement(sourcePsi),
+                        QodanaBundle.message("method.coverage.below.threshold", signature, methodThreshold))
+        }
       }
     }
 
@@ -275,8 +296,8 @@ class JvmCoverageInspection : CoverageInspectionBase() {
       return name
     }
 
-    private fun methodNameForReports(node: UMethod, isConstructor: Boolean) =
-      computeName(node, if (isConstructor) "constructor" else "function", node.javaPsi.containingFile)
+    private fun methodNameForReports(node: UMethod, methodType: MethodType) =
+      computeName(node, methodType.printName, node.javaPsi.containingFile)
 
     private fun classNameForReports(node: UClass) =
       computeName(node, "class", node.javaPsi.containingFile)

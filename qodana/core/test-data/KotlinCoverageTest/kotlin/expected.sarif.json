@@ -122,8 +122,8 @@
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Method 'getA' coverage is below the threshold 50%",
-            "markdown": "Method `getA` coverage is below the threshold 50%"
+            "text": "Property getter 'getA' coverage is below the threshold 50%",
+            "markdown": "Property getter `getA` coverage is below the threshold 50%"
           },
           "locations": [
             {
@@ -163,7 +163,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "ca00b6f0148ad6ff",
-            "equalIndicator/v1": "96c8fecc9c633cd6907307114ed5f324ad1f2fd4d1323ae7dd13ad25a0b86c45"
+            "equalIndicator/v1": "7922d8962832bfe29ec84fbff244bf78d395a45e1cfab52ab589e323ffdc4727"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -293,8 +293,8 @@
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Method 'getA' coverage is below the threshold 50%",
-            "markdown": "Method `getA` coverage is below the threshold 50%"
+            "text": "Property getter 'getA' coverage is below the threshold 50%",
+            "markdown": "Property getter `getA` coverage is below the threshold 50%"
           },
           "locations": [
             {
@@ -334,7 +334,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "001d1db6d9a79eed",
-            "equalIndicator/v1": "2ee9c4568e5324c41b515d643dcf623b5ce81766ca8e9f61d96e68c0a25f4082"
+            "equalIndicator/v1": "e19798aac4d0b18a3ba2377b833c050d9d04f8669110d9df92c2443e6aa3e3a0"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -635,8 +635,8 @@
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Method 'getA' coverage is below the threshold 50%",
-            "markdown": "Method `getA` coverage is below the threshold 50%"
+            "text": "Property getter 'getA' coverage is below the threshold 50%",
+            "markdown": "Property getter `getA` coverage is below the threshold 50%"
           },
           "locations": [
             {
@@ -676,7 +676,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "99f3d50c67c430b8",
-            "equalIndicator/v1": "4eef8fa1ecbf24f65f7f6ce5ccbcf16bb1076a60d70909c1e727daad124872c5"
+            "equalIndicator/v1": "9a19a631d02de58298d870d585254c2fea1f0c18d81694b3b60f1bbb2517c423"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -692,8 +692,8 @@
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Method 'getB' coverage is below the threshold 50%",
-            "markdown": "Method `getB` coverage is below the threshold 50%"
+            "text": "Property getter 'getB' coverage is below the threshold 50%",
+            "markdown": "Property getter `getB` coverage is below the threshold 50%"
           },
           "locations": [
             {
@@ -733,7 +733,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "a7ab323b642294b1",
-            "equalIndicator/v1": "c4f88f7d3d7667a3b6150c7e57a662d6a3afcf3fd906040693e42ac2ce0537b0"
+            "equalIndicator/v1": "8e4a1132e15cfeb4d2f1584d6230691d8060f091ad1076e6206ce64b9aa3adee"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -863,8 +863,8 @@
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Method 'getA' coverage is below the threshold 50%",
-            "markdown": "Method `getA` coverage is below the threshold 50%"
+            "text": "Property getter 'getA' coverage is below the threshold 50%",
+            "markdown": "Property getter `getA` coverage is below the threshold 50%"
           },
           "locations": [
             {
@@ -904,7 +904,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "0795bfa60af1aad8",
-            "equalIndicator/v1": "1f3ed548f657eb0f771ce5ef5d05a297c6198f80d7166e62932e5cf6e5d38b1a"
+            "equalIndicator/v1": "20eb5d45a4028fd705b3d53eb32be1c1e574abd6ffd25d8b0cf16f1092fc1328"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -920,8 +920,8 @@
           "kind": "fail",
           "level": "warning",
           "message": {
-            "text": "Method 'getB' coverage is below the threshold 50%",
-            "markdown": "Method `getB` coverage is below the threshold 50%"
+            "text": "Property getter 'getB' coverage is below the threshold 50%",
+            "markdown": "Property getter `getB` coverage is below the threshold 50%"
           },
           "locations": [
             {
@@ -961,7 +961,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "3f840e332de0ef63",
-            "equalIndicator/v1": "394d8606df2c709fa155b074cbc88728861c8207c91e6a5bdff1c7861566be9a"
+            "equalIndicator/v1": "722be0ffa15ebe9f853f9e88ab37565177490e016c6f3fbdb5163543033ef73e"
           },
           "properties": {
             "ideaSeverity": "WARNING",

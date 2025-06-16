@@ -14,6 +14,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
+    "@lib//:kotlinc-kotlin-compiler-common-provided",
     "@community//java/openapi:java",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -41,6 +42,7 @@ jvm_library(
   associates = [":coverage"],
   deps = [
     "@lib//:kotlin-stdlib",
+    "@lib//:kotlinc-kotlin-compiler-common-provided",
     "@lib//:assert_j",
     "@community//java/openapi:java",
     "@community//platform/analysis-api:analysis",
