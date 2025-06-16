@@ -15,7 +15,7 @@ import org.angular2.codeInsight.documentation.Angular2ElementDocumentationTarget
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors.Companion.NG_BLOCK_NAME
 
-class Angular2PolySymbolDocumentationCustomizer : PolySymbolDocumentationCustomizer {
+class Angular2SymbolDocumentationCustomizer : PolySymbolDocumentationCustomizer {
   override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: PolySymbolDocumentation): PolySymbolDocumentation {
     if (symbol is Angular2HtmlBlockSymbol && location != null) {
       val primaryBlock = symbol.primaryBlock?.let { SyntaxPrinter(location).append(NG_BLOCK_NAME, "@$it").toString() }
