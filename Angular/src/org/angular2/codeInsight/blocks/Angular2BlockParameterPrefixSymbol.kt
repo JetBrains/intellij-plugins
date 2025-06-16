@@ -2,7 +2,7 @@
 package org.angular2.codeInsight.blocks
 
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.webTypes.WebTypesSymbolBase
 import com.intellij.polySymbols.webTypes.WebTypesSymbolFactory
 import org.angular2.web.NG_BLOCK_PARAMETERS
@@ -10,7 +10,7 @@ import org.angular2.web.NG_BLOCK_PARAMETERS
 class Angular2BlockParameterPrefixSymbol : WebTypesSymbolBase() {
 
   val parameters: List<Angular2BlockParameterSymbol>
-    get() = getSymbols(NG_BLOCK_PARAMETERS, PolySymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
+    get() = getSymbols(NG_BLOCK_PARAMETERS, PolySymbolListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
       .filterIsInstance<Angular2BlockParameterSymbol>()
 
   class Factory : WebTypesSymbolFactory {

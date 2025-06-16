@@ -10,9 +10,9 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.createSmartPointer
@@ -28,21 +28,21 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
   override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_STRING_LITERALS
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedKind == JS_STRING_LITERALS)
       listOf(formGroupGetPathRefSymbol)
     else
       findFormSymbol()?.getSymbols(qualifiedKind, params, scope)
       ?: emptyList()
 
-  override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolCodeCompletionItem> =
+  override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolCodeCompletionItem> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getCodeCompletions(qualifiedName, params, scope)
     else
       findFormSymbol()?.getCodeCompletions(qualifiedName, params, scope)
       ?: emptyList()
 
-  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName, params: PolySymbolsNameMatchQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName, params: PolySymbolNameMatchQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
       super.getMatchingSymbols(qualifiedName, params, scope)
     else

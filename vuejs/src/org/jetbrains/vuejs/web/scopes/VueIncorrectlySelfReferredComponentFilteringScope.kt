@@ -7,9 +7,9 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiFile
@@ -29,7 +29,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     delegate.getMatchingSymbols(qualifiedName, params, scope)
@@ -37,7 +37,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
-    params: PolySymbolsListSymbolsQueryParams,
+    params: PolySymbolListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     delegate.getSymbols(qualifiedKind, params, scope)
@@ -45,7 +45,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsCodeCompletionQueryParams,
+    params: PolySymbolCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolCodeCompletionItem> =
     delegate.getCodeCompletions(qualifiedName, params, scope)

@@ -7,7 +7,7 @@ import com.intellij.codeInsight.completion.HtmlCompletionContributor
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
@@ -26,7 +26,7 @@ class Angular2HtmlBlocksCompletionProvider : PolySymbolsCompletionProviderBase<P
     result: CompletionResultSet,
     position: Int,
     name: String,
-    queryExecutor: PolySymbolsQueryExecutor,
+    queryExecutor: PolySymbolQueryExecutor,
     context: PsiElement,
   ) {
     val blocksConfig = getAngular2HtmlBlocksConfig(context)

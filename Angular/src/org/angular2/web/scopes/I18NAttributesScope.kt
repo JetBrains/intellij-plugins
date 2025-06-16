@@ -5,8 +5,8 @@ import com.intellij.html.polySymbols.attributes.PolySymbolAttributeDescriptor
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.nameSegments
 import com.intellij.psi.PsiElement
@@ -24,7 +24,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(NG_I18N_ATTRIBUTES)) {
@@ -40,7 +40,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
-    params: PolySymbolsListSymbolsQueryParams,
+    params: PolySymbolListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedKind == NG_I18N_ATTRIBUTES) {

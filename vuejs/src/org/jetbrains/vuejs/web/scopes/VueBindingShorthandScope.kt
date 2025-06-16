@@ -12,7 +12,7 @@ import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
@@ -42,7 +42,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
       .asSafely<VueAttributeNameParser.VueDirectiveInfo>()
       ?.takeIf { it.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND } ?: return
 
-    val executor = PolySymbolsQueryExecutorFactory.create(dataHolder)
+    val executor = PolySymbolQueryExecutorFactory.create(dataHolder)
     val attributes = executor
       .listSymbolsQuery(HTML_ATTRIBUTES, expandPatterns = true)
       .exclude(PolySymbolModifier.ABSTRACT, PolySymbolModifier.VIRTUAL)

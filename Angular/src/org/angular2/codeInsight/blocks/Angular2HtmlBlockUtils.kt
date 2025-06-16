@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.*
@@ -91,7 +91,7 @@ fun isDeferOnTriggerParameterReference(ref: JSReferenceExpression): Boolean =
 fun getAngular2HtmlBlocksConfig(location: PsiElement): Angular2HtmlBlocksConfig {
   val file = location.containingFile.originalFile
   return CachedValuesManager.getCachedValue(file) {
-    val queryExecutor = PolySymbolsQueryExecutorFactory.create(file, false)
+    val queryExecutor = PolySymbolQueryExecutorFactory.create(file, false)
     CachedValueProvider.Result.create(Angular2HtmlBlocksConfig(
       queryExecutor
         .listSymbolsQuery(NG_BLOCKS, true)

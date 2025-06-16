@@ -16,9 +16,8 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.query.PolySymbolMatch
-import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
-import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
+import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
@@ -40,7 +39,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 
-class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val context: PsiElement) : PolySymbolsQueryResultsCustomizer {
+class Angular2SymbolQueryResultsCustomizer private constructor(private val context: PsiElement) : PolySymbolQueryResultsCustomizer {
 
   private val scope = Angular2DeclarationsScope(context.containingFile)
   private val svgContext = PsiTreeUtil.getParentOfType(context, XmlTag::class.java)?.namespace == HtmlUtil.SVG_NAMESPACE
@@ -209,16 +208,16 @@ class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val 
                               NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
   }
 
-  override fun createPointer(): Pointer<out PolySymbolsQueryResultsCustomizer> {
+  override fun createPointer(): Pointer<out PolySymbolQueryResultsCustomizer> {
     val contextPtr = context.createSmartPointer()
     return Pointer {
-      contextPtr.dereference()?.let { Angular2PolySymbolsQueryResultsCustomizer(it) }
+      contextPtr.dereference()?.let { Angular2SymbolQueryResultsCustomizer(it) }
     }
   }
 
   override fun equals(other: Any?): Boolean =
     other === this ||
-    other is Angular2PolySymbolsQueryResultsCustomizer
+    other is Angular2SymbolQueryResultsCustomizer
     && other.context == context
 
   override fun hashCode(): Int =
@@ -227,10 +226,10 @@ class Angular2PolySymbolsQueryResultsCustomizer private constructor(private val 
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(context.project).modificationCount
 
-  class Factory : PolySymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
+  class Factory : PolySymbolQueryResultsCustomizerFactory {
+    override fun create(location: PsiElement, context: PolyContext): PolySymbolQueryResultsCustomizer? =
       if (context.framework == Angular2Framework.ID && location.containingFile != null)
-        Angular2PolySymbolsQueryResultsCustomizer(location)
+        Angular2SymbolQueryResultsCustomizer(location)
       else null
 
   }

@@ -9,8 +9,8 @@ import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.js.JS_PROPERTIES
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueComponent
@@ -29,14 +29,14 @@ abstract class VuePropertySymbol<T : VueProperty>(
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
-    params: PolySymbolsListSymbolsQueryParams,
+    params: PolySymbolListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     getJSPropertySymbols(qualifiedKind)

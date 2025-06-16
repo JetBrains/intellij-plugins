@@ -15,7 +15,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
 import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.withoutPreRelease
@@ -68,7 +68,7 @@ fun isVue3(context: PsiElement): Boolean =
 
 fun supportsScriptSetup(context: PsiElement?): Boolean =
   context
-    ?.let { PolySymbolsQueryExecutorFactory.create(it, false) }
+    ?.let { PolySymbolQueryExecutorFactory.create(it, false) }
     ?.takeIf { it.framework == VueFramework.ID }
     ?.nameMatchQuery(listOf(VUE_TOP_LEVEL_ELEMENTS.withName(HtmlUtil.SCRIPT_TAG_NAME),
                                HTML_ATTRIBUTES.withName(SETUP_ATTRIBUTE_NAME)))

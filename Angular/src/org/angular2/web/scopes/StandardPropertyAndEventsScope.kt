@@ -17,7 +17,7 @@ import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.JS_PROPERTIES
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.PsiElement
@@ -40,7 +40,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ELEMENTS)) {

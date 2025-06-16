@@ -10,7 +10,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.createSmartPointer
@@ -50,7 +50,7 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsCodeCompletionQueryParams,
+    params: PolySymbolCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolCodeCompletionItem> {
     return emptyList()

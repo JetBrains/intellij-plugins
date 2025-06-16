@@ -14,9 +14,9 @@ import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
@@ -105,7 +105,7 @@ class VueWebTypesMergedSymbol(
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     symbols
@@ -125,7 +125,7 @@ class VueWebTypesMergedSymbol(
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
-    params: PolySymbolsListSymbolsQueryParams,
+    params: PolySymbolListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     symbols
@@ -161,7 +161,7 @@ class VueWebTypesMergedSymbol(
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsCodeCompletionQueryParams,
+    params: PolySymbolCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolCodeCompletionItem> =
     symbols.asSequence()

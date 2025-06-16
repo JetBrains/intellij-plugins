@@ -31,7 +31,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     when {
@@ -45,7 +45,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
-    params: PolySymbolsListSymbolsQueryParams,
+    params: PolySymbolListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     when {
@@ -59,7 +59,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsCodeCompletionQueryParams,
+    params: PolySymbolCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolCodeCompletionItem> =
     if (qualifiedName.matches(VUE_AVAILABLE_SLOTS) && params.queryExecutor.allowResolve)

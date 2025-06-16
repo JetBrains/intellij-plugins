@@ -10,7 +10,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ELEMENTS
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.psi.PsiElement
@@ -60,7 +60,7 @@ class VueI18NSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
     override fun getSymbols(
       qualifiedKind: PolySymbolQualifiedKind,
-      params: PolySymbolsListSymbolsQueryParams,
+      params: PolySymbolListSymbolsQueryParams,
       scope: Stack<PolySymbolsScope>,
     ): List<PolySymbol> {
       if (qualifiedKind == VUE_TOP_LEVEL_ELEMENTS) {

@@ -9,7 +9,7 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.util.containers.Stack
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
@@ -26,7 +26,7 @@ object Angular2UnknownFormGroup : PolySymbolWithPattern, PolySymbolsScope {
   override val pattern: PolySymbolsPattern =
     PolySymbolsPatternFactory.createRegExMatch(".*")
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     when (qualifiedKind) {
       NG_FORM_CONTROL_PROPS -> listOf(Angular2UnknownFormControl)
       NG_FORM_GROUP_FIELDS -> listOf(Angular2UnknownFormArray)

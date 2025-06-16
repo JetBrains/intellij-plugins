@@ -10,8 +10,8 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
-import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
+import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
+import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
 import com.intellij.psi.PsiElement
 import org.angular2.Angular2Framework
 import org.angular2.lang.html.Angular2HtmlFile
@@ -19,9 +19,9 @@ import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.Angular2SymbolDelegate
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
-object Angular2FormsPolySymbolQueryResultsCustomizer : PolySymbolsQueryResultsCustomizer {
+object Angular2FormsPolySymbolQueryResultsCustomizer : PolySymbolQueryResultsCustomizer {
 
-  override fun createPointer(): Pointer<out PolySymbolsQueryResultsCustomizer> =
+  override fun createPointer(): Pointer<out PolySymbolQueryResultsCustomizer> =
     Pointer.hardPointer(this)
 
   override fun apply(matches: List<PolySymbol>, strict: Boolean, qualifiedName: PolySymbolQualifiedName): List<PolySymbol> =
@@ -36,8 +36,8 @@ object Angular2FormsPolySymbolQueryResultsCustomizer : PolySymbolsQueryResultsCu
 
   override fun getModificationCount(): Long = 0
 
-  class Factory : PolySymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
+  class Factory : PolySymbolQueryResultsCustomizerFactory {
+    override fun create(location: PsiElement, context: PolyContext): PolySymbolQueryResultsCustomizer? =
       if (context.framework == Angular2Framework.ID && location.containingFile is Angular2HtmlFile)
         Angular2FormsPolySymbolQueryResultsCustomizer
       else

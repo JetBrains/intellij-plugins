@@ -7,7 +7,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
@@ -34,7 +34,7 @@ class AstroLocalComponent(
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))

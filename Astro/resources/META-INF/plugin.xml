@@ -81,7 +81,7 @@
     <polySymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
     <polySymbols.queryConfigurator implementation="org.jetbrains.astro.polySymbols.AstroSymbolQueryConfigurator"/>
-    <polySymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.polySymbols.AstroPolySymbolsQueryResultsCustomizer$Provider"/>
+    <polySymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.polySymbols.AstroSymbolQueryResultsCustomizer$Factory"/>
     <polySymbols.codeCompletionItemCustomizer implementation="org.jetbrains.astro.polySymbols.AstroCodeCompletionItemCustomizer" />
 
     <html.embeddedContentSupport implementation="org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport" />

@@ -18,7 +18,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolR
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.util.PsiModificationTracker
@@ -72,7 +72,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsCodeCompletionQueryParams,
+    params: PolySymbolCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolCodeCompletionItem> =
     super.getCodeCompletions(qualifiedName, params, scope)

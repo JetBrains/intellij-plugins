@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.html.polySymbols.attributes.PolySymbolAttributeDescriptor
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.utils.hideFromCompletion
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
@@ -47,7 +47,7 @@ class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
         else -> {
           val symbol = descriptor?.symbol
           if (symbol != null
-              && PolySymbolsQueryExecutorFactory.create(attr)
+              && PolySymbolQueryExecutorFactory.create(attr)
                 .listSymbolsQuery(VUE_DIRECTIVE_ARGUMENT, true)
                 .additionalScope(symbol.queryScope)
                 .run()

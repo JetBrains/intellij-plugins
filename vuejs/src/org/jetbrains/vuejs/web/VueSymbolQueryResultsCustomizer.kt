@@ -14,8 +14,8 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.html.NAMESPACE_HTML
-import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
-import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
+import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
+import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.nameSegments
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
@@ -26,16 +26,16 @@ import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 
-class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : PolySymbolsQueryResultsCustomizer {
+class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySymbolQueryResultsCustomizer {
 
   private val scriptLanguage by lazy(LazyThreadSafetyMode.PUBLICATION) {
     detectVueScriptLanguage(context.containingFile)
   }
 
-  override fun createPointer(): Pointer<out PolySymbolsQueryResultsCustomizer> {
+  override fun createPointer(): Pointer<out PolySymbolQueryResultsCustomizer> {
     val contextPtr = context.createSmartPointer()
     return Pointer {
-      contextPtr.dereference()?.let { VuePolySymbolsQueryResultsCustomizer(it) }
+      contextPtr.dereference()?.let { VueSymbolQueryResultsCustomizer(it) }
     }
   }
 
@@ -116,16 +116,16 @@ class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : Po
   override fun getModificationCount(): Long = 0
 
   override fun equals(other: Any?): Boolean =
-    other is VuePolySymbolsQueryResultsCustomizer
+    other is VueSymbolQueryResultsCustomizer
     && other.context == context
 
   override fun hashCode(): Int =
     context.hashCode()
 
-  class Provider : PolySymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
+  class Factory : PolySymbolQueryResultsCustomizerFactory {
+    override fun create(location: PsiElement, context: PolyContext): PolySymbolQueryResultsCustomizer? =
       if (context.framework == VueFramework.ID)
-        VuePolySymbolsQueryResultsCustomizer(location)
+        VueSymbolQueryResultsCustomizer(location)
       else null
 
   }

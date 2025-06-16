@@ -10,8 +10,8 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ELEMENTS
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.MappedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
@@ -37,7 +37,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ELEMENTS)) {
@@ -85,7 +85,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
       }
     }
 
-    override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolsCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolCodeCompletionItem> =
+    override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolCodeCompletionItem> =
       withTypeEvaluationLocation(dataHolder) {
         super<PolySymbolsScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
           .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }

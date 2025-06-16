@@ -10,8 +10,8 @@ import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.JS_SYMBOLS
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
@@ -35,7 +35,7 @@ class ViewChildrenScope(
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
     true
 
-  override val subScopeBuilder: (PolySymbolsQueryExecutor, ES6Decorator) -> List<PolySymbolsScope>
+  override val subScopeBuilder: (PolySymbolQueryExecutor, ES6Decorator) -> List<PolySymbolsScope>
     get() = if (resolveToMultipleSymbols) { executor, decorator ->
       listOfNotNull(
         Angular2EntitiesProvider.getComponent(decorator)
@@ -65,7 +65,7 @@ class ViewChildrenScope(
 
     override fun getCodeCompletions(
       qualifiedName: PolySymbolQualifiedName,
-      params: PolySymbolsCodeCompletionQueryParams,
+      params: PolySymbolCodeCompletionQueryParams,
       scope: Stack<PolySymbolsScope>,
     ): List<PolySymbolCodeCompletionItem> =
       super.getCodeCompletions(qualifiedName, params, scope)

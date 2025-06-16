@@ -6,7 +6,7 @@ import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
+import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
@@ -44,7 +44,7 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsCodeCompletionQueryParams,
+    params: PolySymbolCodeCompletionQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbolCodeCompletionItem> {
     return super.getCodeCompletions(qualifiedName, params, scope).filter {

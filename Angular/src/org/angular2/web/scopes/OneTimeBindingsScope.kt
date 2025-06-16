@@ -28,7 +28,7 @@ import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.html.htmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
@@ -56,7 +56,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
     qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    val queryExecutor = PolySymbolsQueryExecutorFactory.create(dataHolder)
+    val queryExecutor = PolySymbolQueryExecutorFactory.create(dataHolder)
     val scope = dataHolder.descriptor?.asSafely<PolySymbolElementDescriptor>()
                   ?.symbol?.queryScope
                 ?: emptyList()

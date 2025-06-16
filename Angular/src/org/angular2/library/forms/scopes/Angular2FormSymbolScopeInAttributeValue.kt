@@ -4,8 +4,8 @@ import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.utils.PolySymbolStructuredScope
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -46,7 +46,7 @@ class Angular2FormSymbolScopeInAttributeValue(attributeValue: XmlAttribute) : Po
     get() = provider@{ file, holder ->
       val formsComponent = Angular2FormsComponent.getFor(file)
                            ?: return@provider null
-      val queryExecutor = PolySymbolsQueryExecutorFactory.createCustom {
+      val queryExecutor = PolySymbolQueryExecutorFactory.createCustom {
         setFramework(Angular2Framework.ID)
       }
       return@provider Angular2FormSymbolsScopesBuilder(
@@ -70,7 +70,7 @@ class Angular2FormSymbolScopeInAttributeValue(attributeValue: XmlAttribute) : Po
     }
 
   private class Angular2FormSymbolsScopesBuilder(
-    private val queryExecutor: PolySymbolsQueryExecutor,
+    private val queryExecutor: PolySymbolQueryExecutor,
     private val formsComponent: Angular2FormsComponent,
     private val holder: PolySymbolsPsiScopesHolder,
   ) : Angular2HtmlRecursiveElementVisitor() {

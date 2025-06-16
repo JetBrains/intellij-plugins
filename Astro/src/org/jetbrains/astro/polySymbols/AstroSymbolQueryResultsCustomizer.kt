@@ -7,8 +7,8 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizer
-import com.intellij.polySymbols.query.PolySymbolsQueryResultsCustomizerFactory
+import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
+import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -19,7 +19,7 @@ import org.jetbrains.astro.codeInsight.completion.AstroImportInsertHandler
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.polySymbols.symbols.AstroComponent
 
-class AstroPolySymbolsQueryResultsCustomizer(private val context: PsiElement) : PolySymbolsQueryResultsCustomizer {
+class AstroSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySymbolQueryResultsCustomizer {
 
   override fun apply(
     matches: List<PolySymbol>,
@@ -52,17 +52,17 @@ class AstroPolySymbolsQueryResultsCustomizer(private val context: PsiElement) : 
     return item
   }
 
-  override fun createPointer(): Pointer<out PolySymbolsQueryResultsCustomizer> {
+  override fun createPointer(): Pointer<out PolySymbolQueryResultsCustomizer> {
     val contextPtr = context.createSmartPointer()
     return Pointer {
-      contextPtr.dereference()?.let { AstroPolySymbolsQueryResultsCustomizer(it) }
+      contextPtr.dereference()?.let { AstroSymbolQueryResultsCustomizer(it) }
     }
   }
 
   override fun getModificationCount(): Long = 0
 
   override fun equals(other: Any?): Boolean =
-    other is AstroPolySymbolsQueryResultsCustomizer
+    other is AstroSymbolQueryResultsCustomizer
     && other.context == context
 
   override fun hashCode(): Int =
@@ -72,10 +72,10 @@ class AstroPolySymbolsQueryResultsCustomizer(private val context: PsiElement) : 
     name?.getOrNull(0)?.isLowerCase() == true
     && Html5TagAndAttributeNamesProvider.getTags(Html5TagAndAttributeNamesProvider.Namespace.HTML, false).contains(name)
 
-  class Provider : PolySymbolsQueryResultsCustomizerFactory {
-    override fun create(location: PsiElement, context: PolyContext): PolySymbolsQueryResultsCustomizer? =
+  class Factory : PolySymbolQueryResultsCustomizerFactory {
+    override fun create(location: PsiElement, context: PolyContext): PolySymbolQueryResultsCustomizer? =
       if (context.framework == AstroFramework.ID)
-        AstroPolySymbolsQueryResultsCustomizer(location)
+        AstroSymbolQueryResultsCustomizer(location)
       else null
 
   }

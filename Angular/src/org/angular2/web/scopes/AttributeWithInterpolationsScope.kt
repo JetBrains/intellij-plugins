@@ -11,8 +11,8 @@ import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolsPatternSymbolsResolver
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.match
 import com.intellij.util.containers.Stack
@@ -29,7 +29,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES)) {
@@ -79,13 +79,13 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
       name: String,
       position: Int,
       scopeStack: Stack<PolySymbolsScope>,
-      queryExecutor: PolySymbolsQueryExecutor,
+      queryExecutor: PolySymbolQueryExecutor,
     ): List<PolySymbolCodeCompletionItem> =
       emptyList()
 
     override fun listSymbols(
       scopeStack: Stack<PolySymbolsScope>,
-      queryExecutor: PolySymbolsQueryExecutor,
+      queryExecutor: PolySymbolQueryExecutor,
       expandPatterns: Boolean,
     ): List<PolySymbol> =
       emptyList()
@@ -93,7 +93,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
     override fun matchName(
       name: String,
       scopeStack: Stack<PolySymbolsScope>,
-      queryExecutor: PolySymbolsQueryExecutor,
+      queryExecutor: PolySymbolQueryExecutor,
     ): List<PolySymbol> =
       queryExecutor.nameMatchQuery(JS_PROPERTIES, name).additionalScope(scopeStack).run() +
       queryExecutor.nameMatchQuery(NG_DIRECTIVE_INPUTS, name).additionalScope(scopeStack).run()

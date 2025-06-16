@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -28,7 +28,7 @@ class Angular2FormGroupImpl(
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
-    params: PolySymbolsListSymbolsQueryParams,
+    params: PolySymbolListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     members.filter { it.qualifiedKind == qualifiedKind }

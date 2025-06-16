@@ -17,8 +17,8 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolMatch
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
@@ -109,7 +109,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolsNameMatchQueryParams,
+    params: PolySymbolNameMatchQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     /* Do not support reference resolution */
@@ -121,7 +121,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
-    params: PolySymbolsListSymbolsQueryParams,
+    params: PolySymbolListSymbolsQueryParams,
     scope: Stack<PolySymbolsScope>,
   ): List<PolySymbol> =
     /* Do not support reference resolution */

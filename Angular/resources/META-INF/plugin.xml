@@ -354,7 +354,7 @@
     <polySymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
 
     <polySymbols.queryConfigurator implementation="org.angular2.web.Angular2SymbolQueryConfigurator"/>
-    <polySymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2PolySymbolsQueryResultsCustomizer$Factory"/>
+    <polySymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2SymbolQueryResultsCustomizer$Factory"/>
     <polySymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CodeCompletionItemCustomizer"/>
     <polySymbols.context kind="framework" name="angular" implementation="org.angular2.cli.AngularCliContextProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.editor.Angular2Annotator"/>

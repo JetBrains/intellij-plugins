@@ -297,7 +297,7 @@
     <polySymbols.queryConfigurator implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NSymbolQueryConfigurator"
                                   id="vue-i18n"/>
 
-    <polySymbols.queryResultsCustomizerFactory implementation="org.jetbrains.vuejs.web.VuePolySymbolsQueryResultsCustomizer$Provider"/>
+    <polySymbols.queryResultsCustomizerFactory implementation="org.jetbrains.vuejs.web.VueSymbolQueryResultsCustomizer$Factory"/>
     <polySymbols.webTypes.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
     <polySymbols.codeCompletionItemCustomizer
       implementation="org.jetbrains.vuejs.web.VueCodeCompletionItemCustomizer"/>
