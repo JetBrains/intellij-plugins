@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlight
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.service.TypeScriptServiceTestBase.Companion.assertHasServiceItems
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.lsp.tests.checkLspHighlighting
 import com.intellij.platform.lsp.tests.waitForDiagnosticsFromLspServer
 import com.intellij.util.text.SemVer
@@ -273,6 +274,7 @@ class VolarServiceTest : VueLspServiceTestBase() {
   fun testMultilineCompletionItem() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
     myFixture.addFileToProject("tsconfig.json", tsconfig)
+    Registry.get("typescript.service.completion.ownContributorsEnabled").setValue(false, testRootDisposable)
     myFixture.configureByText("main.vue", """
       <script lang="ts">
       import {defineComponent} from "vue"
