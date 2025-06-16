@@ -19,8 +19,8 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.polySymbols.utils.kind
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
@@ -34,7 +34,7 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.*
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol
-import org.jetbrains.vuejs.web.symbols.VuePolyTypesMergedSymbol
+import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
 
 class VueCodeModelSymbolsScope<K>
@@ -194,10 +194,10 @@ private constructor(
       if (source is ES6ExportDefaultAssignment || source is HtmlFileImpl) {
         // Merge with the source component - we need to merge both ways
         val names = toMerge.asSequence().map { it.name }.plus(this.name).toSet()
-        names.map { VuePolyTypesMergedSymbol(it, this, toMerge) }
+        names.map { VueWebTypesMergedSymbol(it, this, toMerge) }
       }
       else
-        listOf(VuePolyTypesMergedSymbol(this.name, this, toMerge))
+        listOf(VueWebTypesMergedSymbol(this.name, this, toMerge))
     else
       listOf(this)
   }

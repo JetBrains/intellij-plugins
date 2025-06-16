@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
 
-class VuePolyTypesMergedSymbol(
+class VueWebTypesMergedSymbol(
   override val name: String,
   override val delegate: PsiSourcedPolySymbol,
   val webTypesSymbols: Collection<PolySymbol>,
@@ -116,7 +116,7 @@ class VuePolyTypesMergedSymbol(
       .let { list ->
         val psiSourcedPolySymbol = list.firstNotNullOfOrNull { it as? PsiSourcedPolySymbol }
         if (psiSourcedPolySymbol != null) {
-          listOf(VuePolyTypesMergedSymbol(psiSourcedPolySymbol.name, psiSourcedPolySymbol, list))
+          listOf(VueWebTypesMergedSymbol(psiSourcedPolySymbol.name, psiSourcedPolySymbol, list))
         }
         else {
           list
@@ -150,7 +150,7 @@ class VuePolyTypesMergedSymbol(
           }
         }
         if (psiSourcedPolySymbol != null) {
-          containers.add(VuePolyTypesMergedSymbol(psiSourcedPolySymbol.name, psiSourcedPolySymbol, polySymbols))
+          containers.add(VueWebTypesMergedSymbol(psiSourcedPolySymbol.name, psiSourcedPolySymbol, polySymbols))
         }
         else {
           containers.addAll(polySymbols)
@@ -181,24 +181,24 @@ class VuePolyTypesMergedSymbol(
             else symbols.add(it)
           }
           psiSourcedPolySymbol?.let {
-            items[0].withSymbol(VuePolyTypesMergedSymbol(it.name, it, symbols))
+            items[0].withSymbol(VueWebTypesMergedSymbol(it.name, it, symbols))
           } ?: items[0]
         }
       }
 
-  override fun createPointer(): Pointer<out VuePolyTypesMergedSymbol> {
+  override fun createPointer(): Pointer<out VueWebTypesMergedSymbol> {
     val pointers = symbols.map { it.createPointer() }
     val matchedName = name
     return Pointer {
       val symbols = pointers.map { it.dereference() ?: return@Pointer null }
-      VuePolyTypesMergedSymbol(matchedName,
-                               symbols[0] as? PsiSourcedPolySymbol ?: return@Pointer null,
-                               symbols.subList(1, symbols.size))
+      VueWebTypesMergedSymbol(matchedName,
+                              symbols[0] as? PsiSourcedPolySymbol ?: return@Pointer null,
+                              symbols.subList(1, symbols.size))
     }
   }
 
   class VueMergedSymbolDocumentationTarget(
-    override val symbol: VuePolyTypesMergedSymbol,
+    override val symbol: VueWebTypesMergedSymbol,
     override val location: PsiElement?,
     @Nls val displayName: String,
   ) : PolySymbolDocumentationTarget {

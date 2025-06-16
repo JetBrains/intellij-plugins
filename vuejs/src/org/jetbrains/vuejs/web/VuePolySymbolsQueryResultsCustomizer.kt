@@ -24,7 +24,7 @@ import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.symbols.VuePolyTypesMergedSymbol
+import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 
 class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : PolySymbolsQueryResultsCustomizer {
 
@@ -49,7 +49,7 @@ class VuePolySymbolsQueryResultsCustomizer(private val context: PsiElement) : Po
     var result = matches
     if (qualifiedName.matches(VUE_COMPONENTS)) {
       if (result.size > 1) {
-        val mergedSymbol = result.find { it is VuePolyTypesMergedSymbol } as? VuePolyTypesMergedSymbol
+        val mergedSymbol = result.find { it is VueWebTypesMergedSymbol } as? VueWebTypesMergedSymbol
         if (mergedSymbol != null) {
           val mergedWebTypes = mergedSymbol.webTypesSymbols
           // The check can get very expensive with more web-types merged
