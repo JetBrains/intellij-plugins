@@ -44,8 +44,6 @@ class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementType
   }
 
   override fun calculateType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind): JSType? {
-    waitUntilFileOpenedByLspServer(project, file.virtualFile)
-
     return super.calculateType(element, typeRequestKind).also {
       assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VueLspTypeScriptService::class.java)
     }
