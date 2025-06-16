@@ -14,7 +14,7 @@ import org.angular2.lang.expr.psi.Angular2TemplateBindingKey
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.web.NG_TEMPLATE_BINDINGS
 
-class Angular2TemplateBindingKeyCompletionProvider : PolySymbolsCompletionProviderBase<Angular2TemplateBindingKey>() {
+class Angular2TemplateBindingKeysCompletionProvider : PolySymbolsCompletionProviderBase<Angular2TemplateBindingKey>() {
 
   override fun getContext(position: PsiElement): Angular2TemplateBindingKey? =
     position as? Angular2TemplateBindingKey

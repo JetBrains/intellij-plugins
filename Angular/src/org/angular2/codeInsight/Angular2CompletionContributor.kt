@@ -41,7 +41,7 @@ import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
-import org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyCompletionProvider
+import org.angular2.codeInsight.attributes.Angular2TemplateBindingKeysCompletionProvider
 import org.angular2.codeInsight.blocks.Angular2BlockParameterNameCompletionProvider
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
 import org.angular2.codeInsight.blocks.isLetReferenceBeforeDeclaration
@@ -71,7 +71,7 @@ class Angular2CompletionContributor : CompletionContributor() {
     extend(CompletionType.BASIC,
            psiElement(JSTokenTypes.IDENTIFIER)
              .withParents(Angular2TemplateBindingKey::class.java, Angular2TemplateBinding::class.java),
-           Angular2TemplateBindingKeyCompletionProvider()
+           Angular2TemplateBindingKeysCompletionProvider()
     )
 
     extend(CompletionType.BASIC,

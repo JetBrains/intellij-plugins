@@ -20,7 +20,7 @@ import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 
-class Angular2HtmlBlocksCodeCompletionProvider : PolySymbolsCompletionProviderBase<PsiElement>() {
+class Angular2HtmlBlocksCompletionProvider : PolySymbolsCompletionProviderBase<PsiElement>() {
   override fun addCompletions(
     parameters: CompletionParameters,
     result: CompletionResultSet,
