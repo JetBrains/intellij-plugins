@@ -300,7 +300,7 @@
     <polySymbols.queryResultsCustomizerFactory implementation="org.jetbrains.vuejs.web.VuePolySymbolsQueryResultsCustomizer$Provider"/>
     <polySymbols.webTypes.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
     <polySymbols.codeCompletionItemCustomizer
-      implementation="org.jetbrains.vuejs.web.VueSymbolsCodeCompletionItemCustomizer"/>
+      implementation="org.jetbrains.vuejs.web.VueCodeCompletionItemCustomizer"/>
 
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"

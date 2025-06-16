@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.isVueFileName
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 
-class VueSymbolsCodeCompletionItemCustomizer :
+class VueCodeCompletionItemCustomizer :
   PolySymbolCodeCompletionItemCustomizer {
 
   override fun customize(

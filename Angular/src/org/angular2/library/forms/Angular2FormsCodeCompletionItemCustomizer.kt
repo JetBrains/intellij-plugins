@@ -7,7 +7,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
 import com.intellij.psi.PsiElement
 
-class Angular2FormsPolySymbolsCodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {
+class Angular2FormsCodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {
 
   override fun customize(
     item: PolySymbolCodeCompletionItem,

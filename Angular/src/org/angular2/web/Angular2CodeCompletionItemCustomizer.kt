@@ -31,7 +31,7 @@ private val typedKinds = setOf(JS_EVENTS,
 private val selectorKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS,
                                   NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
 
-class Angular2CompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {
+class Angular2CodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {
 
   override fun customize(
     item: PolySymbolCodeCompletionItem,
