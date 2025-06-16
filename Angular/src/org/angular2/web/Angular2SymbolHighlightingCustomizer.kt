@@ -23,7 +23,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding
 import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 
-class Angular2PolySymbolHighlightingCustomizer : PolySymbolHighlightingCustomizer {
+class Angular2SymbolHighlightingCustomizer : PolySymbolHighlightingCustomizer {
 
   override fun getSymbolKindTextAttributes(qualifiedKind: PolySymbolQualifiedKind): TextAttributesKey? =
     when (qualifiedKind) {

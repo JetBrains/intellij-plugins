@@ -190,7 +190,7 @@
     <polySymbols.psiSourcedSymbolProvider implementation="org.angular2.web.findUsages.Angular2PsiSourcedPolySymbolProvider"/>
     <polySymbols.documentationCustomizer implementation="org.angular2.web.Angular2SymbolDocumentationCustomizer"/>
     <polySymbols.highlightingCustomizer id="angular2"
-                                       implementation="org.angular2.web.Angular2PolySymbolHighlightingCustomizer"
+                                       implementation="org.angular2.web.Angular2SymbolHighlightingCustomizer"
                                        order="before js, before html"/>
     <elementDescriptionProvider
       order="first"
