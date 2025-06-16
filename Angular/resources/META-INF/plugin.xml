@@ -353,7 +353,7 @@
     <polySymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
 
-    <polySymbols.queryConfigurator implementation="org.angular2.web.Angular2PolySymbolsQueryConfigurator"/>
+    <polySymbols.queryConfigurator implementation="org.angular2.web.Angular2SymbolQueryConfigurator"/>
     <polySymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2PolySymbolsQueryResultsCustomizer$Factory"/>
     <polySymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CodeCompletionItemCustomizer"/>
     <polySymbols.context kind="framework" name="angular" implementation="org.angular2.cli.AngularCliContextProvider"/>
@@ -431,7 +431,7 @@
     <!-- ReactiveForms support contributions -->
     <polySymbols.queryResultsCustomizerFactory
       implementation="org.angular2.library.forms.Angular2FormsPolySymbolQueryResultsCustomizer$Factory"/>
-    <polySymbols.queryConfigurator implementation="org.angular2.library.forms.Angular2FormsPolySymbolQueryConfigurator"/>
+    <polySymbols.queryConfigurator implementation="org.angular2.library.forms.Angular2FormsSymbolQueryConfigurator"/>
     <polySymbols.codeCompletionItemCustomizer
       implementation="org.angular2.library.forms.Angular2FormsCodeCompletionItemCustomizer"/>
     <polySymbols.problemQuickFixProvider

@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.html.polySymbols.PolySymbolsHtmlQueryConfigurator
+import com.intellij.html.polySymbols.HtmlSymbolQueryConfigurator
 import com.intellij.html.polySymbols.PolySymbolsXmlExtension
 import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
 import com.intellij.psi.PsiFile
@@ -21,7 +21,7 @@ class AstroHtmlExtension : PolySymbolsXmlExtension() {
     if (descriptor is PolySymbolElementDescriptor) {
       val hasStandardSymbol = descriptor.symbol
         .unwrapMatchedSymbols()
-        .any { it is PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
+        .any { it is HtmlSymbolQueryConfigurator.StandardHtmlSymbol }
       if (!hasStandardSymbol) return true
     }
     return super.isSelfClosingTagAllowed(tag)

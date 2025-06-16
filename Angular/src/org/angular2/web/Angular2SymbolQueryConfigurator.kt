@@ -20,7 +20,7 @@ import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
 import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
-import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
+import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
@@ -61,7 +61,7 @@ import org.angular2.signals.Angular2SignalUtils.isViewChildSignalCall
 import org.angular2.signals.Angular2SignalUtils.isViewChildrenSignalCall
 import org.angular2.web.scopes.*
 
-class Angular2PolySymbolsQueryConfigurator : PolySymbolsQueryConfigurator {
+class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
   override fun getScope(
     project: Project,

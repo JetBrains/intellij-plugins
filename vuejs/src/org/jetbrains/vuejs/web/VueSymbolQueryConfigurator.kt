@@ -53,8 +53,7 @@ val PROP_VUE_MODEL_EVENT: PolySymbolProperty<String> = PolySymbolProperty["event
 val PROP_VUE_PROXIMITY: PolySymbolProperty<VueModelVisitor.Proximity> = PolySymbolProperty["x-vue-proximity"]
 val PROP_VUE_COMPOSITION_COMPONENT: PolySymbolProperty<Boolean> = PolySymbolProperty["x-vue-composition-component"]
 
-class VuePolySymbolsQueryConfigurator :
-  PolySymbolsQueryConfigurator {
+class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
   override fun getScope(
     project: Project,

@@ -20,7 +20,7 @@ import java.util.List;
 import static com.intellij.lang.javascript.completion.JSLookupPriority.*;
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
 import static junit.framework.TestCase.assertEquals;
-import static org.angular2.web.Angular2PolySymbolsQueryConfiguratorKt.PROP_ERROR_SYMBOL;
+import static org.angular2.web.Angular2SymbolQueryConfiguratorKt.PROP_ERROR_SYMBOL;
 
 public final class Angular2TestUtil {
 

@@ -11,7 +11,7 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsQueryConfigurator
+import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -24,7 +24,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 import org.jetbrains.vuejs.web.VueFramework
 
-class VueI18NQueryConfigurator : PolySymbolsQueryConfigurator {
+class VueI18NSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
   override fun getScope(
     project: Project,
