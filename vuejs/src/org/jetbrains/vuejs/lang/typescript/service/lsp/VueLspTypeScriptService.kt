@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.lsp
 
 import com.google.gson.JsonElement
@@ -7,7 +7,6 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer
 import com.intellij.lang.typescript.lsp.JSFrameworkLsp4jServer.LspCustomTypeScriptCommandRequest
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
-import com.intellij.lang.typescript.lsp.LspAnnotationErrorFilter
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -17,7 +16,6 @@ import com.intellij.platform.lsp.impl.LspServerImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import kotlinx.coroutines.delay
-import org.eclipse.lsp4j.Diagnostic
 import org.eclipse.lsp4j.MarkupContent
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -55,8 +53,6 @@ class VueLspTypeScriptService(project: Project)
     return super.createQuickInfoResponse(markupContent)
   }
 
-  override fun createAnnotationErrorFilter() = VueLspAnnotationErrorFilter(project)
-
   override suspend fun handleCustomTsServerCommand(commandName: String, args: JSLanguageServiceObject, requiresNewEval: Boolean): JsonElement? {
     val server = getServer() ?: return null
     if (requiresNewEval && !isNewEvalModeServer(server)) return null
@@ -90,12 +86,5 @@ class VueLspTypeScriptService(project: Project)
         else -> return
       }
     }
-  }
-}
-
-class VueLspAnnotationErrorFilter(project: Project) : LspAnnotationErrorFilter(project) {
-  override fun isProblemEnabled(diagnostic: Diagnostic): Boolean {
-    if (diagnostic.message == "Unknown at rule @apply") return false
-    return super.isProblemEnabled(diagnostic)
   }
 }

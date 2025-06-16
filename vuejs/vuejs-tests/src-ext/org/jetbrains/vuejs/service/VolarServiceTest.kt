@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.service
 
 import com.intellij.codeInsight.lookup.LookupElement
@@ -356,9 +356,11 @@ class VolarServiceTest : VueLspServiceTestBase() {
     // @apply is not part of CSS spec,
     myFixture.configureByText("Simple.vue", """
       <style scoped>
-      button {
-        @apply bg-red-500;
-      }
+        @reference "";
+        button {
+          @apply bg-red-500;
+          <warning descr="Vue: Unknown at rule @apply1">@apply1</warning> bg-red-500;
+        }
       </style>
     """)
     myFixture.checkLspHighlighting()
