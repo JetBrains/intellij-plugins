@@ -18,6 +18,7 @@ import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
@@ -115,7 +116,7 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
         DeclarationProximity.IN_SCOPE
     }
     return DeclarationProximity.entries.firstNotNullOfOrNull { proximity ->
-      proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol.create(it, proximity) }
+      proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.mapNotNull { Angular2ScopedSymbol.create(it, proximity) }
     } ?: emptyList()
   }
 
@@ -245,8 +246,9 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
       fun create(
         symbol: PolySymbol,
         scopeProximity: DeclarationProximity,
-      ): Angular2ScopedSymbol =
+      ): Angular2ScopedSymbol? =
         when (symbol) {
+          is PolySymbolWithPattern -> null
           is PsiSourcedPolySymbol -> Angular2PsiSourcedScopedSymbol(symbol, scopeProximity)
           else -> Angular2ScopedSymbol(symbol, scopeProximity)
         }
