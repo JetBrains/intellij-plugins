@@ -22,6 +22,7 @@ jvm_library(
     "@community//java/compiler/openapi:java-compiler",
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",
+    "@community//jps/model-serialization",
     "@community//platform/lang-api:lang",
     "//CSS/frontback/css-api:css-frontback",
     "@community//platform/projectModel-api:projectModel",
