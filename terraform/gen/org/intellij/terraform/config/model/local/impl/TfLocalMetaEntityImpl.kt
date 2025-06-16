@@ -19,7 +19,7 @@ import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import org.intellij.terraform.config.model.local.TfLocalMetaEntity
 
 @GeneratedCodeApiVersion(3)
-@GeneratedCodeImplVersion(6)
+@GeneratedCodeImplVersion(7)
 @OptIn(WorkspaceEntityInternalApi::class)
 internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityData) : TfLocalMetaEntity, WorkspaceEntityBase(dataSource) {
 
