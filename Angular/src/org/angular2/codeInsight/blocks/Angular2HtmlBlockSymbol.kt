@@ -40,8 +40,6 @@ class Angular2HtmlBlockSymbol : WebTypesSymbolBase() {
 
   val implicitVariables: List<PolySymbol>
     get() = getSymbols(JS_SYMBOLS, PolySymbolsListSymbolsQueryParams.create(queryExecutor, true), Stack(this))
-      .filterIsInstance<PolySymbol>()
-
 
   class Factory : WebTypesSymbolFactory {
     override fun create(): WebTypesSymbolBase =

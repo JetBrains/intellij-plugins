@@ -8,15 +8,17 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.web.Angular2SymbolOrigin
 
-object Angular2UnknownFormControl : PolySymbol {
+object Angular2UnknownFormControl : PolySymbolWithPattern {
 
   override val name: @NlsSafe String
     get() = "Unknown form control"
 
-  override val pattern: PolySymbolsPattern? = PolySymbolsPatternFactory.createRegExMatch(".*")
+  override val pattern: PolySymbolsPattern =
+    PolySymbolsPatternFactory.createRegExMatch(".*")
 
   override val qualifiedKind: PolySymbolQualifiedKind
     get() = NG_FORM_CONTROL_PROPS

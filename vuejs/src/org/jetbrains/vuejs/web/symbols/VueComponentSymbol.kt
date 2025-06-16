@@ -118,7 +118,7 @@ class VueComponentSymbol(
       HTML_SLOTS -> {
         (item as? VueContainer)
           ?.slots
-          ?.map { VueSlotSymbol(it, item, this.origin) }
+          ?.map { VueSlotSymbol.create(it, item, this.origin) }
         ?: emptyList()
       }
       VUE_MODEL -> {

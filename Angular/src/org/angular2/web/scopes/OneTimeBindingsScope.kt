@@ -27,6 +27,7 @@ import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.html.htmlAttributeValue
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
@@ -79,7 +80,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
       .additionalScope(scope)
       .run()
     ) {
-      if (input.pattern != null) continue
+      if (input is PolySymbolWithPattern) continue
       val isOneTimeBinding = withTypeEvaluationLocation(dataHolder) {
         isOneTimeBindingProperty(input)
       }

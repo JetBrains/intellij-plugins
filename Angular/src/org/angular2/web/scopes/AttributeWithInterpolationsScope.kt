@@ -10,6 +10,7 @@ import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolsPatternSymbolsResolver
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolsScope
@@ -36,7 +37,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
     }
     else emptyList()
 
-  private object AttributeWithInterpolationsSymbol : PolySymbol {
+  private object AttributeWithInterpolationsSymbol : PolySymbolWithPattern {
 
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty

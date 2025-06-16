@@ -16,10 +16,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createStringMatch
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.util.containers.Stack
 import com.intellij.util.containers.map2Array
@@ -69,7 +66,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
   override fun getModificationCount(): Long = 0
 
   companion object {
-    object FormGroupGetPathSymbol : PolySymbol, PolySymbolsScope {
+    object FormGroupGetPathSymbol : PolySymbolWithPattern, PolySymbolsScope {
 
       override val name: @NlsSafe String
         get() = "FormGroup.get() path"
@@ -85,7 +82,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
 
       override fun getModificationCount(): Long = 0
 
-      override val pattern: PolySymbolsPattern?
+      override val pattern: PolySymbolsPattern
         get() = createComplexPattern(
           ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
             *NG_FORM_ANY_CONTROL_PROPS.map2Array {

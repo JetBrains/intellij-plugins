@@ -12,6 +12,7 @@ import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
@@ -20,7 +21,7 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueSlot
 
-class VueSlotSymbol(
+open class VueSlotSymbol private constructor(
   slot: VueSlot,
   owner: VueComponent,
   origin: PolySymbolOrigin,
@@ -30,8 +31,11 @@ class VueSlotSymbol(
   owner = owner,
 ) {
 
-  override val pattern: PolySymbolsPattern?
-    get() = item.pattern?.let { PolySymbolsPatternFactory.createRegExMatch(it, true) }
+  companion object {
+    fun create(slot: VueSlot, owner: VueComponent, origin: PolySymbolOrigin): VueSlotSymbol =
+      slot.pattern?.let { VueSlotSymbolWithPattern(slot, owner, origin, PolySymbolsPatternFactory.createRegExMatch(it, true)) }
+      ?: VueSlotSymbol(slot, owner, origin)
+  }
 
   override val qualifiedKind: PolySymbolQualifiedKind
     get() = HTML_SLOTS
@@ -62,8 +66,15 @@ class VueSlotSymbol(
         (owner as? VueContainer)?.slots?.find { it.name == name }
 
       override fun createWrapper(owner: VueComponent, symbol: VueSlot): VueSlotSymbol =
-        VueSlotSymbol(symbol, owner, origin)
+        create(symbol, owner, origin)
 
     }
+
+  private class VueSlotSymbolWithPattern(
+    slot: VueSlot,
+    owner: VueComponent,
+    origin: PolySymbolOrigin,
+    override val pattern: PolySymbolsPattern,
+  ) : VueSlotSymbol(slot, owner, origin), PolySymbolWithPattern
 
 }

@@ -10,13 +10,14 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 
 class VueAnySymbol(
   override val origin: PolySymbolOrigin,
   override val qualifiedKind: PolySymbolQualifiedKind,
   override val name: String,
   val type: JSType? = null,
-) : PolySymbol {
+) : PolySymbolWithPattern {
 
   override val pattern: PolySymbolsPattern
     get() = PolySymbolsPatternFactory.createRegExMatch(".*", false)

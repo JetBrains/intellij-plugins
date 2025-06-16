@@ -21,6 +21,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolR
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -86,7 +87,7 @@ class VueSlotElementScope(tag: XmlTag)
     }
   }
 
-  private class VueSlotPropertiesSymbol(slotName: String?) : PolySymbol {
+  private class VueSlotPropertiesSymbol(slotName: String?) : PolySymbolWithPattern {
 
     override val qualifiedKind: PolySymbolQualifiedKind
       get() = HTML_ATTRIBUTES
@@ -97,7 +98,7 @@ class VueSlotElementScope(tag: XmlTag)
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       when (property) {
         PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(PolySymbolHtmlAttributeValue.create(kind = EXPRESSION, type = OF_MATCH))
-        else -> super<PolySymbol>.get(property)
+        else -> super<PolySymbolWithPattern>.get(property)
       }
 
     override val pattern: PolySymbolsPattern =

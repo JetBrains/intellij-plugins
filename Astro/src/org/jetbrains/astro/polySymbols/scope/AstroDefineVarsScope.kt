@@ -6,7 +6,10 @@ import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.FrameworkId
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.css.CSS_PROPERTIES
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
@@ -14,6 +17,7 @@ import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -53,7 +57,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
     return Pointer { ptr.dereference()?.let(::AstroScriptDefineVarsScope) }
   }
 
-  override val providedSymbol: PolySymbol = object : PolySymbol {
+  override val providedSymbol: PolySymbol = object : PolySymbolWithPattern {
 
     override val qualifiedKind: PolySymbolQualifiedKind
       get() = JS_SYMBOLS
@@ -87,7 +91,7 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
     return Pointer { ptr.dereference()?.let(::AstroStyleDefineVarsScope) }
   }
 
-  override val providedSymbol: PolySymbol = object : PolySymbol {
+  override val providedSymbol: PolySymbol = object : PolySymbolWithPattern {
 
     override val qualifiedKind: PolySymbolQualifiedKind
       get() = CSS_PROPERTIES

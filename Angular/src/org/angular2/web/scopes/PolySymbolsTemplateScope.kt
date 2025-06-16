@@ -2,13 +2,14 @@
 package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.js.JS_SYMBOLS
+import com.intellij.polySymbols.query.PolySymbolWithPattern
+import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.js.JS_SYMBOLS
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateScope
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
@@ -29,7 +30,7 @@ class PolySymbolsTemplateScope(context: PsiElement) :
         scopeSymbols.clear()
         for (symbol in currentScope.symbols) {
           val name = symbol.name
-          if (symbol.pattern == null && !providedSymbols.contains(name)) {
+          if (symbol !is PolySymbolWithPattern && !providedSymbols.contains(name)) {
             consumer(symbol)
             scopeSymbols.add(name)
           }

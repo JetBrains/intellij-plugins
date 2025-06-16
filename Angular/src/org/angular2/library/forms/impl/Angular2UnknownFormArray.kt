@@ -8,6 +8,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.util.containers.Stack
@@ -15,12 +16,13 @@ import org.angular2.library.forms.NG_FORM_ARRAY_PROPS
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.web.Angular2SymbolOrigin
 
-object Angular2UnknownFormArray : PolySymbol, PolySymbolsScope {
+object Angular2UnknownFormArray : PolySymbolWithPattern, PolySymbolsScope {
 
   override val name: @NlsSafe String
     get() = "Unknown form array"
 
-  override val pattern: PolySymbolsPattern? = PolySymbolsPatternFactory.createRegExMatch(".*")
+  override val pattern: PolySymbolsPattern =
+    PolySymbolsPatternFactory.createRegExMatch(".*")
 
   override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolsListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
     if (qualifiedKind == NG_FORM_CONTROL_PROPS)

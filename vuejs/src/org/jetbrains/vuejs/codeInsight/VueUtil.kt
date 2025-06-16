@@ -35,6 +35,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.html.NAMESPACE_HTML
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.namespace
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.*
@@ -469,7 +470,7 @@ fun PolySymbol.extractComponentSymbol(): PolySymbol? =
   this.takeIf { it.namespace == NAMESPACE_HTML }
     ?.unwrapMatchedSymbols()
     ?.toList()
-    ?.takeIf { it.size == 2 && it[0].pattern != null }
+    ?.takeIf { it.size == 2 && it[0] is PolySymbolWithPattern }
     ?.get(1)
     ?.takeIf { it.qualifiedKind == VUE_COMPONENTS }
 

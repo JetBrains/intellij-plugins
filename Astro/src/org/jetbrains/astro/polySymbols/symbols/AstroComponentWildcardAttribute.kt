@@ -10,9 +10,10 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
-object AstroComponentWildcardAttribute : PolySymbol {
+object AstroComponentWildcardAttribute : PolySymbolWithPattern {
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 

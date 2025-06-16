@@ -7,10 +7,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
-import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.match
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlTag
@@ -76,7 +73,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
     }
   }
 
-  object DefaultSlotSymbol : PolySymbol {
+  object DefaultSlotSymbol : PolySymbolWithPattern {
     override val qualifiedKind: PolySymbolQualifiedKind
       get() = HTML_ATTRIBUTES
 

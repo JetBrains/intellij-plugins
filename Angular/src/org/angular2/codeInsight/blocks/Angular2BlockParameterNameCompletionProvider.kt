@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.siblings
@@ -50,7 +51,10 @@ class Angular2BlockParameterNameCompletionProvider : CompletionProvider<Completi
     candidates.addAll(definition.parameters)
 
     for (param in candidates) {
-      if (param.pattern == null && (param !is Angular2BlockParameterSymbol || !param.isPrimaryExpression) && providedParams.add(param.name)) {
+      if (param !is PolySymbolWithPattern
+          && (param !is Angular2BlockParameterSymbol || !param.isPrimaryExpression)
+          && providedParams.add(param.name)
+      ) {
         PolySymbolCodeCompletionItem.create(param.name, 0, symbol = param) {
           if (param !is Angular2BlockParameterSymbol || param.hasContent) {
             insertHandler(Angular2BlockKeywordInsertHandler)

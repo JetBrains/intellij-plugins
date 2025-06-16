@@ -17,6 +17,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createStringM
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolsCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolsScope
 import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
@@ -97,7 +98,7 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
 
   }
 
-  object VueWatchablePropertySymbol : PolySymbol {
+  object VueWatchablePropertySymbol : PolySymbolWithPattern {
 
     override val qualifiedKind: PolySymbolQualifiedKind
       get() = JS_PROPERTIES
