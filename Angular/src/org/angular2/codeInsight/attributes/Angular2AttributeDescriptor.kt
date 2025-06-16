@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes
 
-import com.intellij.html.polySymbols.attributes.PolySymbolAttributeDescriptor
-import com.intellij.html.polySymbols.attributes.PolySymbolHtmlAttributeInfo
+import com.intellij.html.polySymbols.attributes.HtmlAttributeSymbolDescriptor
+import com.intellij.html.polySymbols.attributes.HtmlAttributeSymbolInfo
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.PolySymbol
@@ -17,8 +17,8 @@ import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 import org.angular2.web.Angular2DescriptorSymbolsProvider
 import org.angular2.web.Angular2SymbolOrigin
 
-class Angular2AttributeDescriptor(info: PolySymbolHtmlAttributeInfo, tag: XmlTag?)
-  : PolySymbolAttributeDescriptor(info, tag) {
+class Angular2AttributeDescriptor(info: HtmlAttributeSymbolInfo, tag: XmlTag?)
+  : HtmlAttributeSymbolDescriptor(info, tag) {
 
   /**
    * Represents most of the matched directives, even these out-of-scopes. Some directives
@@ -67,7 +67,7 @@ class Angular2AttributeDescriptor(info: PolySymbolHtmlAttributeInfo, tag: XmlTag
           Pointer.hardPointer(this)
       }
 
-      return Angular2AttributeDescriptor(PolySymbolHtmlAttributeInfo.create(attributeName, symbol), tag)
+      return Angular2AttributeDescriptor(HtmlAttributeSymbolInfo.create(attributeName, symbol), tag)
     }
   }
 

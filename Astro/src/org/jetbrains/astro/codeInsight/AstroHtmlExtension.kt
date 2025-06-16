@@ -2,14 +2,14 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.html.polySymbols.HtmlSymbolQueryConfigurator
-import com.intellij.html.polySymbols.PolySymbolsXmlExtension
-import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.HtmlSymbolsXmlExtension
+import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.jetbrains.astro.lang.AstroFileType
 
-class AstroHtmlExtension : PolySymbolsXmlExtension() {
+class AstroHtmlExtension : HtmlSymbolsXmlExtension() {
 
   override fun isAvailable(file: PsiFile?): Boolean {
     return file != null
@@ -18,7 +18,7 @@ class AstroHtmlExtension : PolySymbolsXmlExtension() {
 
   override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean {
     val descriptor = tag.descriptor
-    if (descriptor is PolySymbolElementDescriptor) {
+    if (descriptor is HtmlElementSymbolDescriptor) {
       val hasStandardSymbol = descriptor.symbol
         .unwrapMatchedSymbols()
         .any { it is HtmlSymbolQueryConfigurator.StandardHtmlSymbol }

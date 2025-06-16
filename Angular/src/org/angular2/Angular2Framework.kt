@@ -1,10 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
-import com.intellij.html.polySymbols.attributes.PolySymbolAttributeDescriptor
-import com.intellij.html.polySymbols.attributes.PolySymbolHtmlAttributeInfo
-import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
-import com.intellij.html.polySymbols.elements.PolySymbolHtmlElementInfo
+import com.intellij.html.polySymbols.attributes.HtmlAttributeSymbolDescriptor
+import com.intellij.html.polySymbols.attributes.HtmlAttributeSymbolInfo
+import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
+import com.intellij.html.polySymbols.elements.HtmlElementSymbolInfo
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.lang.Language
@@ -54,15 +54,15 @@ class Angular2Framework : WebFramework() {
     language is Angular2HtmlDialect
 
   override fun createHtmlAttributeDescriptor(
-    info: PolySymbolHtmlAttributeInfo,
+    info: HtmlAttributeSymbolInfo,
     tag: XmlTag?,
-  ): PolySymbolAttributeDescriptor =
+  ): HtmlAttributeSymbolDescriptor =
     Angular2AttributeDescriptor(info, tag)
 
   override fun createHtmlElementDescriptor(
-    info: PolySymbolHtmlElementInfo,
+    info: HtmlElementSymbolInfo,
     tag: XmlTag,
-  ): PolySymbolElementDescriptor =
+  ): HtmlElementSymbolDescriptor =
     Angular2ElementDescriptor(info, tag)
 
   override fun getAttributeNameCodeCompletionFilter(tag: XmlTag): Angular2AttributeNameCodeCompletionFilter =

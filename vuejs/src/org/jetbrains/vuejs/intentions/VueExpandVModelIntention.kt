@@ -1,7 +1,7 @@
 package org.jetbrains.vuejs.intentions
 
 import com.intellij.codeInsight.intention.FileModifier.SafeFieldForPreview
-import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.lang.javascript.intentions.JavaScriptIntention
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -30,7 +30,7 @@ class VueExpandVModelIntention : JavaScriptIntention() {
       ?.let {
         it.node.elementType == XmlElementType.XML_ATTRIBUTE
         && it.isValid && it is XmlAttribute
-        && it.parent?.descriptor is PolySymbolElementDescriptor
+        && it.parent?.descriptor is HtmlElementSymbolDescriptor
         && isValidVModel(it)
       } == true
     && isVueContext(element)
@@ -46,7 +46,7 @@ class VueExpandVModelIntention : JavaScriptIntention() {
     val parent: PsiElement = psiElement.parent
     val modelAttribute = parent as XmlAttribute
     val componentTag = modelAttribute.parent
-    val componentDescriptor = componentTag.descriptor as? PolySymbolElementDescriptor ?: return
+    val componentDescriptor = componentTag.descriptor as? HtmlElementSymbolDescriptor ?: return
 
     val model = componentDescriptor.getModel()
     val defaultModel = VueModelDirectiveProperties.getDefault(psiElement)

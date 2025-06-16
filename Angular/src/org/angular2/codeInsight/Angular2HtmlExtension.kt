@@ -2,8 +2,8 @@
 package org.angular2.codeInsight
 
 import com.intellij.html.polySymbols.HtmlSymbolQueryConfigurator
-import com.intellij.html.polySymbols.PolySymbolsXmlExtension
-import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.HtmlSymbolsXmlExtension
+import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.javascript.web.WebFramework
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -22,7 +22,7 @@ import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.lang.svg.Angular2SvgLanguage
 
-class Angular2HtmlExtension : PolySymbolsXmlExtension() {
+class Angular2HtmlExtension : HtmlSymbolsXmlExtension() {
 
   override fun isAvailable(file: PsiFile?): Boolean {
     return (file != null
@@ -33,7 +33,7 @@ class Angular2HtmlExtension : PolySymbolsXmlExtension() {
   override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean {
     if (tag.language.`is`(Angular2SvgLanguage)) return true
     val descriptor = tag.descriptor
-    if (descriptor is PolySymbolElementDescriptor) {
+    if (descriptor is HtmlElementSymbolDescriptor) {
       val hasStandardSymbol = descriptor.symbol
         .unwrapMatchedSymbols()
         .any { it is HtmlSymbolQueryConfigurator.StandardHtmlSymbol }

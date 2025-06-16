@@ -1,8 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.html.polySymbols.attributes.PolySymbolAttributeDescriptor
-import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.attributes.HtmlAttributeSymbolDescriptor
+import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.javascript.polySymbols.jsType
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
@@ -62,10 +62,10 @@ private fun <T> processSlots(
   tag: XmlTag,
   newApi: Boolean,
   anyMatch: () -> List<T>,
-  process: PolySymbolElementDescriptor.() -> List<T>,
+  process: HtmlElementSymbolDescriptor.() -> List<T>,
 ): List<T> =
   when (val descriptor = if (!newApi || tag.name == TEMPLATE_TAG_NAME) tag.parentTag?.descriptor else tag.descriptor) {
-    is PolySymbolElementDescriptor -> descriptor.process()
+    is HtmlElementSymbolDescriptor -> descriptor.process()
     is AnyXmlElementDescriptor -> anyMatch()
     else -> emptyList()
   }
@@ -80,7 +80,7 @@ fun getSlotTypeFromContext(context: PsiElement): JSType? =
       }
     }
     ?.descriptor
-    ?.asSafely<PolySymbolAttributeDescriptor>()
+    ?.asSafely<HtmlAttributeSymbolDescriptor>()
     ?.symbol
     ?.jsType
     ?.asCompleteType()

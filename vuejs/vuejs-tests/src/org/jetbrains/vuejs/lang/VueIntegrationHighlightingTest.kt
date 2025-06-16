@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
-import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.javascript.debugger.NodeJsAppRule
 import com.intellij.javascript.nodejs.npm.NpmUtil
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest
@@ -28,7 +28,7 @@ class VueIntegrationHighlightingTest: JSExternalToolIntegrationTest() {
     val tagAtCaret = myFixture.elementAtCaret.asSafely<XmlTag>()
     assertNotNull(tagAtCaret)
 
-    val polySymbolDescriptor = tagAtCaret?.descriptor.asSafely<PolySymbolElementDescriptor>()
+    val polySymbolDescriptor = tagAtCaret?.descriptor.asSafely<HtmlElementSymbolDescriptor>()
     assertNotNull(polySymbolDescriptor)
 
     val polySymbol = polySymbolDescriptor?.symbol.asSafely<PsiSourcedPolySymbol>()

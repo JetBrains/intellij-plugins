@@ -5,7 +5,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
@@ -22,7 +22,7 @@ class AstroMissingComponentImportInspection : LocalInspectionTool() {
     return object : XmlElementVisitor() {
       override fun visitXmlTag(tag: XmlTag) {
         val descriptor = tag.descriptor
-        if (descriptor !is PolySymbolElementDescriptor)
+        if (descriptor !is HtmlElementSymbolDescriptor)
           return
 
         val symbol = descriptor.symbol

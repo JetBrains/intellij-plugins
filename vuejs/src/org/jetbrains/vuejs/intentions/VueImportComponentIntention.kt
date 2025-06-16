@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.intentions
 
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
-import com.intellij.html.polySymbols.elements.PolySymbolElementDescriptor
+import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.lang.javascript.intentions.JavaScriptIntention
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.openapi.editor.Editor
@@ -29,7 +29,7 @@ class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean =
     element.node.elementType == XmlTokenType.XML_NAME
     && element.parent.asSafely<XmlTag>()
-      ?.descriptor.asSafely<PolySymbolElementDescriptor>()
+      ?.descriptor.asSafely<HtmlElementSymbolDescriptor>()
       ?.symbol
       ?.extractComponentSymbol()
       ?.takeIf { it.getElementToImport() != null }
@@ -48,7 +48,7 @@ class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
 
   override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
     val tag = element.parent as? XmlTag ?: return
-    val elementToImport = tag.descriptor.asSafely<PolySymbolElementDescriptor>()
+    val elementToImport = tag.descriptor.asSafely<HtmlElementSymbolDescriptor>()
                             ?.symbol
                             ?.extractComponentSymbol()
                             ?.getElementToImport()
