@@ -26,7 +26,7 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : PolySymbolStruct
   override val rootPsiElement: PsiFile?
     get() = location.containingFile
 
-  override val scopesBuilderProvider: (PsiFile, PolySymbolsPsiScopesHolder) -> PsiElementVisitor?
+  override val scopesBuilderProvider: (PsiFile, PolySymbolPsiScopesHolder) -> PsiElementVisitor?
     get() = { _, holder -> ReferenceVariablesStructuredScopeVisitor(holder) }
 
   override val providedSymbolKinds: Set<PolySymbolQualifiedKind> = PROVIDED_SYMBOL_KINDS
@@ -68,7 +68,7 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : PolySymbolStruct
     }
   }
 
-  private class ReferenceVariablesStructuredScopeVisitor(private val holder: PolySymbolsPsiScopesHolder) : Angular2HtmlRecursiveElementVisitor() {
+  private class ReferenceVariablesStructuredScopeVisitor(private val holder: PolySymbolPsiScopesHolder) : Angular2HtmlRecursiveElementVisitor() {
 
     override fun visitXmlTag(tag: XmlTag) {
       val isTemplateTag = tag.children.any { it is XmlAttribute && it.name.startsWith("*") }

@@ -12,7 +12,7 @@ import com.intellij.polySymbols.css.getPolySymbolsCssScopeForTagClasses
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolScope
-import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
+import com.intellij.polySymbols.utils.PolySymbolIsolatedMappingScope
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.css.StylesheetFile
 import org.angular2.Angular2Framework
@@ -21,7 +21,7 @@ import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.PROP_HOST_BINDING
 
 class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifiedKind>, decorator: ES6Decorator)
-  : PolySymbolsIsolatedMappingScope<ES6Decorator>(mappings, Angular2Framework.ID, decorator) {
+  : PolySymbolIsolatedMappingScope<ES6Decorator>(mappings, Angular2Framework.ID, decorator) {
 
   override fun createPointer(): Pointer<HostBindingsScope> {
     val decoratorPtr = location.createSmartPointer()

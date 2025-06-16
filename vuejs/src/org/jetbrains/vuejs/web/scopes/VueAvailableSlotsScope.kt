@@ -5,8 +5,8 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
-import com.intellij.polySymbols.patterns.PolySymbolsPattern
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
+import com.intellij.polySymbols.patterns.PolySymbolPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.match
 import com.intellij.psi.createSmartPointer
@@ -85,8 +85,8 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
         get() = VueFramework.ID
     }
 
-    override val pattern: PolySymbolsPattern =
-      PolySymbolsPatternFactory.createSingleSymbolReferencePattern(
+    override val pattern: PolySymbolPattern =
+      PolySymbolPatternFactory.createSingleSymbolReferencePattern(
         listOf(VUE_AVAILABLE_SLOTS.withName(DEFAULT_SLOT_NAME))
       )
 

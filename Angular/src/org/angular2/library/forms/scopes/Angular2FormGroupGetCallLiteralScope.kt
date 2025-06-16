@@ -9,13 +9,13 @@ import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
-import com.intellij.polySymbols.patterns.PolySymbolsPattern
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createComplexPattern
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createPatternSequence
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createStringMatch
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
+import com.intellij.polySymbols.patterns.PolySymbolPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createComplexPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createPatternSequence
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createStringMatch
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createSymbolReferencePlaceholder
+import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.util.containers.Stack
@@ -82,11 +82,11 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
 
       override fun getModificationCount(): Long = 0
 
-      override val pattern: PolySymbolsPattern
+      override val pattern: PolySymbolPattern
         get() = createComplexPattern(
-          ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
+          ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
             *NG_FORM_ANY_CONTROL_PROPS.map2Array {
-              PolySymbolsPatternReferenceResolver.Reference(qualifiedKind = it)
+              PolySymbolPatternReferenceResolver.Reference(qualifiedKind = it)
             }
           )),
           false,
@@ -94,9 +94,9 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
             createSymbolReferencePlaceholder(),
             createComplexPattern(
               ComplexPatternOptions(
-                symbolsResolver = PolySymbolsPatternReferenceResolver(
+                symbolsResolver = PolySymbolPatternReferenceResolver(
                   *NG_FORM_ANY_CONTROL_PROPS.map2Array {
-                    PolySymbolsPatternReferenceResolver.Reference(qualifiedKind = it)
+                    PolySymbolPatternReferenceResolver.Reference(qualifiedKind = it)
                   }
                 ),
                 repeats = true,
@@ -105,7 +105,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
               false,
               createPatternSequence(
                 createStringMatch("."),
-                PolySymbolsPatternFactory.createCompletionAutoPopup(false),
+                PolySymbolPatternFactory.createCompletionAutoPopup(false),
                 createSymbolReferencePlaceholder(),
               )
             )

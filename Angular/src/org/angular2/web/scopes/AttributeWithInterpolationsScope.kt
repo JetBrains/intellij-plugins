@@ -7,9 +7,9 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
-import com.intellij.polySymbols.patterns.PolySymbolsPattern
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
-import com.intellij.polySymbols.patterns.PolySymbolsPatternSymbolsResolver
+import com.intellij.polySymbols.patterns.PolySymbolPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.PolySymbolPatternSymbolsResolver
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
@@ -58,17 +58,17 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
 
-    override val pattern: PolySymbolsPattern = PolySymbolsPatternFactory.createComplexPattern(
+    override val pattern: PolySymbolPattern = PolySymbolPatternFactory.createComplexPattern(
       ComplexPatternOptions(
         null, null, true,
         PolySymbol.Priority.HIGHEST, false, false,
         PropertiesResolver),
       false,
-      PolySymbolsPatternFactory.createSymbolReferencePlaceholder(null))
+      PolySymbolPatternFactory.createSymbolReferencePlaceholder(null))
 
   }
 
-  private object PropertiesResolver : PolySymbolsPatternSymbolsResolver {
+  private object PropertiesResolver : PolySymbolPatternSymbolsResolver {
     override fun getSymbolKinds(context: PolySymbol?): Set<PolySymbolQualifiedKind> = setOf(
       JS_PROPERTIES, NG_DIRECTIVE_INPUTS
     )

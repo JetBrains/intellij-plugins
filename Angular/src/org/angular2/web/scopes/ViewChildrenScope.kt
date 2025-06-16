@@ -13,7 +13,7 @@ import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolScope
-import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
+import com.intellij.polySymbols.utils.PolySymbolIsolatedMappingScope
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -25,7 +25,7 @@ import org.angular2.entities.Angular2EntitiesProvider
 class ViewChildrenScope(
   decorator: ES6Decorator,
   private val resolveToMultipleSymbols: Boolean,
-) : PolySymbolsIsolatedMappingScope<ES6Decorator>(
+) : PolySymbolIsolatedMappingScope<ES6Decorator>(
   mapOf(JS_STRING_LITERALS to JS_SYMBOLS), Angular2Framework.ID, decorator
 ) {
 

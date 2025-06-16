@@ -15,11 +15,11 @@ import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Kind.EXPRESSIO
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Type.OF_MATCH
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
-import com.intellij.polySymbols.patterns.PolySymbolsPattern
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createComplexPattern
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
-import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
+import com.intellij.polySymbols.patterns.PolySymbolPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createComplexPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createSymbolReferencePlaceholder
+import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
+import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -101,9 +101,9 @@ class VueSlotElementScope(tag: XmlTag)
         else -> super<PolySymbolWithPattern>.get(property)
       }
 
-    override val pattern: PolySymbolsPattern =
+    override val pattern: PolySymbolPattern =
       createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
+        ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
           if (slotName != null)
             Reference(
               location = listOf(

@@ -14,9 +14,9 @@ import com.intellij.polySymbols.css.CSS_PROPERTIES
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
-import com.intellij.polySymbols.patterns.PolySymbolsPattern
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
-import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
+import com.intellij.polySymbols.patterns.PolySymbolPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
@@ -65,14 +65,14 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
     override val name: String
       get() = "Astro Defined Script Variable"
 
-    override val pattern: PolySymbolsPattern =
-      PolySymbolsPatternFactory.createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
-          PolySymbolsPatternReferenceResolver.Reference(qualifiedKind = JS_PROPERTIES),
+    override val pattern: PolySymbolPattern =
+      PolySymbolPatternFactory.createComplexPattern(
+        ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
+          PolySymbolPatternReferenceResolver.Reference(qualifiedKind = JS_PROPERTIES),
         )
         ),
         false,
-        PolySymbolsPatternFactory.createPatternSequence(PolySymbolsPatternFactory.createSymbolReferencePlaceholder())
+        PolySymbolPatternFactory.createPatternSequence(PolySymbolPatternFactory.createSymbolReferencePlaceholder())
       )
 
     override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
@@ -99,15 +99,15 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
     override val name: String
       get() = "Astro Defined CSS Variable"
 
-    override val pattern: PolySymbolsPattern =
-      PolySymbolsPatternFactory.createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
-          PolySymbolsPatternReferenceResolver.Reference(qualifiedKind = JS_PROPERTIES),
+    override val pattern: PolySymbolPattern =
+      PolySymbolPatternFactory.createComplexPattern(
+        ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
+          PolySymbolPatternReferenceResolver.Reference(qualifiedKind = JS_PROPERTIES),
         )),
         false,
-        PolySymbolsPatternFactory.createPatternSequence(
-          PolySymbolsPatternFactory.createStringMatch("--"),
-          PolySymbolsPatternFactory.createSymbolReferencePlaceholder()
+        PolySymbolPatternFactory.createPatternSequence(
+          PolySymbolPatternFactory.createStringMatch("--"),
+          PolySymbolPatternFactory.createSymbolReferencePlaceholder()
         )
       )
 

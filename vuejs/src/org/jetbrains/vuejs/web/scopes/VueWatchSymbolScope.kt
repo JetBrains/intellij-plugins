@@ -9,14 +9,14 @@ import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
-import com.intellij.polySymbols.patterns.PolySymbolsPattern
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createCompletionAutoPopup
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createComplexPattern
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createPatternSequence
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createStringMatch
-import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory.createSymbolReferencePlaceholder
-import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
-import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
+import com.intellij.polySymbols.patterns.PolySymbolPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createCompletionAutoPopup
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createComplexPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createPatternSequence
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createStringMatch
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createSymbolReferencePlaceholder
+import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
+import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolScope
@@ -105,16 +105,16 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent)
 
     override val name: String get() = "Vue Watchable Property"
 
-    override val pattern: PolySymbolsPattern =
+    override val pattern: PolySymbolPattern =
       createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = PolySymbolsPatternReferenceResolver(
+        ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
           Reference(qualifiedKind = VUE_COMPONENT_DATA_PROPERTIES),
           Reference(qualifiedKind = VUE_COMPONENT_COMPUTED_PROPERTIES))
         ), false,
         createPatternSequence(
           createSymbolReferencePlaceholder(),
           createComplexPattern(
-            ComplexPatternOptions(repeats = true, isRequired = false, symbolsResolver = PolySymbolsPatternReferenceResolver(
+            ComplexPatternOptions(repeats = true, isRequired = false, symbolsResolver = PolySymbolPatternReferenceResolver(
               Reference(qualifiedKind = JS_PROPERTIES)
             )), false,
             createPatternSequence(
