@@ -15,8 +15,8 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -36,7 +36,7 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_TEMPLATE_BINDINGS
 
 class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
-  : PolySymbolsScopeWithCache<Angular2TemplateBindingKey, Unit>(Angular2Framework.ID, binding.project, binding, Unit) {
+  : PolySymbolScopeWithCache<Angular2TemplateBindingKey, Unit>(Angular2Framework.ID, binding.project, binding, Unit) {
 
   @OptIn(IntellijInternalApi::class)
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
@@ -66,7 +66,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbolCodeCompletionItem> =
     super.getCodeCompletions(qualifiedName, params, scope).map {
       it.withPriority(Priority.HIGHEST)

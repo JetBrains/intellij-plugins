@@ -9,7 +9,7 @@ import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -21,7 +21,7 @@ import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class AstroComponent(file: PsiFile)
-  : PsiSourcedPolySymbol, PolySymbolsScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
+  : PsiSourcedPolySymbol, PolySymbolScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
 
   override val source: PsiElement
     get() = dataHolder

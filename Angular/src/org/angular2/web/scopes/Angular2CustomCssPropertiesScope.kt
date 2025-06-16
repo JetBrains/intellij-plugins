@@ -25,7 +25,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.css.CSS_PROPERTIES
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.css.properties.AbstractCssCustomPropertySymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
 import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
@@ -41,7 +41,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 import org.jetbrains.annotations.Nls
 
 class Angular2CustomCssPropertiesScope(file: PsiFile) :
-  PolySymbolsScopeWithCache<PsiFile, Unit>(Angular2Framework.ID, file.project, file, Unit) {
+  PolySymbolScopeWithCache<PsiFile, Unit>(Angular2Framework.ID, file.project, file, Unit) {
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(StubIndex.getInstance().getStubIndexModificationTracker(project))

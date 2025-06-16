@@ -12,7 +12,7 @@ import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
 import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
@@ -34,7 +34,7 @@ class Angular2FormsSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     location: PsiElement?,
     context: PolyContext,
     allowResolve: Boolean,
-  ): List<PolySymbolsScope> {
+  ): List<PolySymbolScope> {
     if (context.framework == Angular2Framework.ID && location != null) {
       val file = location.containingFile ?: return emptyList()
       if (file is Angular2HtmlFile) {
@@ -84,9 +84,9 @@ class Angular2FormsSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     NG_FORM_GROUP_PROPS,
   )
 
-  private class SingleSymbolExclusiveScope(private val symbol: PolySymbol) : PolySymbolsScope {
+  private class SingleSymbolExclusiveScope(private val symbol: PolySymbol) : PolySymbolScope {
 
-    override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+    override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolScope>): List<PolySymbol> =
       if (symbol.qualifiedKind == qualifiedKind)
         listOf(symbol)
       else
@@ -95,7 +95,7 @@ class Angular2FormsSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
       symbol.qualifiedKind == qualifiedKind
 
-    override fun createPointer(): Pointer<out PolySymbolsScope> {
+    override fun createPointer(): Pointer<out PolySymbolScope> {
       val symbolPtr = symbol.createPointer()
       return Pointer {
         symbolPtr.dereference()?.let { SingleSymbolExclusiveScope(it) }

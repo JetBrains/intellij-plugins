@@ -11,8 +11,8 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
@@ -21,8 +21,8 @@ import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueComponentNamespaceSymbol
 
 class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
-  : PolySymbolsScopeWithCache<JSExecutionScope, Unit>(VueFramework.ID, module.project, module, Unit) {
-  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<JSExecutionScope, Unit>> {
+  : PolySymbolScopeWithCache<JSExecutionScope, Unit>(VueFramework.ID, module.project, module, Unit) {
+  override fun createPointer(): Pointer<out PolySymbolScopeWithCache<JSExecutionScope, Unit>> {
     val modulePtr = dataHolder.createSmartPointer()
     return Pointer {
       modulePtr.dereference()?.let { VueScriptSetupNamespacedComponentsScope(it) }
@@ -51,7 +51,7 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbolCodeCompletionItem> {
     return emptyList()
   }

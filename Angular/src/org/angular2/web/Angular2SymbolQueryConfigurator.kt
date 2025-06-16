@@ -21,7 +21,7 @@ import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
 import com.intellij.polySymbols.query.PolySymbolNameConversionRulesProvider
 import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.css.CssElement
@@ -68,7 +68,7 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
     location: PsiElement?,
     context: PolyContext,
     allowResolve: Boolean,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbolScope> =
     if (context.framework == Angular2Framework.ID && location != null) {
       when (location) {
         is JSElement -> calculateJavaScriptScopes(location)
@@ -148,7 +148,7 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
   }
 
 
-  private fun calculateHtmlScopes(element: XmlElement): MutableList<PolySymbolsScope> {
+  private fun calculateHtmlScopes(element: XmlElement): MutableList<PolySymbolScope> {
     val result = mutableListOf(DirectiveElementSelectorsScope(element.containingFile),
                                DirectiveAttributeSelectorsScope(element.containingFile))
 
@@ -171,12 +171,12 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
     return result
   }
 
-  private fun calculateCssScopes(element: CssElement): List<PolySymbolsScope> =
+  private fun calculateCssScopes(element: CssElement): List<PolySymbolScope> =
     listOf(DirectiveElementSelectorsScope(element.containingFile),
            DirectiveAttributeSelectorsScope(element.containingFile),
            HtmlAttributesCustomCssPropertiesScope(element))
 
-  private fun calculateJavaScriptScopes(element: JSElement): List<PolySymbolsScope> =
+  private fun calculateJavaScriptScopes(element: JSElement): List<PolySymbolScope> =
     when (element) {
       is JSReferenceExpression -> {
         when {
@@ -198,7 +198,7 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
           else ->
             listOfNotNull(DirectivePropertyMappingCompletionScope(element),
                           getCssClassesInJSLiteralInHtmlAttributeScope(element),
-                          element.parentOfType<Angular2EmbeddedExpression>()?.let { PolySymbolsTemplateScope(it) })
+                          element.parentOfType<Angular2EmbeddedExpression>()?.let { Angular2TemplateScope(it) })
         }
       }
       is JSLiteralExpression -> {
@@ -207,7 +207,7 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
           getHostBindingsScopeForLiteral(element),
           getCssClassesInJSLiteralInHtmlAttributeScope(element),
           getViewChildrenScopeForLiteral(element),
-          element.parentOfType<Angular2EmbeddedExpression>()?.let { PolySymbolsTemplateScope(it) },
+          element.parentOfType<Angular2EmbeddedExpression>()?.let { Angular2TemplateScope(it) },
         ) + getCreateComponentBindingsScopeForLiteral(element)
       }
       is JSObjectLiteralExpression -> {
@@ -228,7 +228,7 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
       else -> emptyList()
     }
 
-  private fun getHostBindingsScopeForLiteral(element: JSLiteralExpression): PolySymbolsScope? {
+  private fun getHostBindingsScopeForLiteral(element: JSLiteralExpression): PolySymbolScope? {
     val mapping = when {
       getDecoratorForLiteralParameter(element)?.decoratorName == HOST_BINDING_DEC -> NG_PROPERTY_BINDINGS
       isHostListenerDecoratorEventLiteral(element) -> NG_EVENT_BINDINGS
@@ -242,7 +242,7 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
       ?.let { HostBindingsScope(mapOf(JS_STRING_LITERALS to mapping), it) }
   }
 
-  private fun getViewChildrenScopeForLiteral(element: JSLiteralExpression): PolySymbolsScope? {
+  private fun getViewChildrenScopeForLiteral(element: JSLiteralExpression): PolySymbolScope? {
     val signalCallInfo = getPossibleSignalFunNameForLiteralParameter(element)
     val decorator = getDecoratorForLiteralParameter(element)
     val isChildViewCall = decorator?.decoratorName == VIEW_CHILD_DEC || isViewChildSignalCall(signalCallInfo)
@@ -255,7 +255,7 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
       ?.let { ViewChildrenScope(it, isChildrenViewCall) }
   }
 
-  private fun getCreateComponentBindingsScopeForLiteral(element: JSLiteralExpression): List<PolySymbolsScope> {
+  private fun getCreateComponentBindingsScopeForLiteral(element: JSLiteralExpression): List<PolySymbolScope> {
     val callExpr =
       element.context
         ?.let { if (it is JSArgumentList) it.parent else it }
@@ -282,7 +282,7 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
     )
   }
 
-  private fun getCssClassesInJSLiteralInHtmlAttributeScope(element: PsiElement): PolySymbolsScope? =
+  private fun getCssClassesInJSLiteralInHtmlAttributeScope(element: PsiElement): PolySymbolScope? =
     element.takeIf { isNgClassLiteralContext(it) }
       ?.parentOfType<XmlAttribute>()
       ?.let { CssClassListInJSLiteralInHtmlAttributeScope(it) }

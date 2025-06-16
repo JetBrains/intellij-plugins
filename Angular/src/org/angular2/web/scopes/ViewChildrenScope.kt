@@ -12,9 +12,9 @@ import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -35,7 +35,7 @@ class ViewChildrenScope(
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
     true
 
-  override val subScopeBuilder: (PolySymbolQueryExecutor, ES6Decorator) -> List<PolySymbolsScope>
+  override val subScopeBuilder: (PolySymbolQueryExecutor, ES6Decorator) -> List<PolySymbolScope>
     get() = if (resolveToMultipleSymbols) { executor, decorator ->
       listOfNotNull(
         Angular2EntitiesProvider.getComponent(decorator)
@@ -51,7 +51,7 @@ class ViewChildrenScope(
       )
     }
 
-  override fun createPointer(): Pointer<out PolySymbolsScope> {
+  override fun createPointer(): Pointer<out PolySymbolScope> {
     val locationPtr = location.createSmartPointer()
     val resolveToMultipleSymbols = this.resolveToMultipleSymbols
     return Pointer {
@@ -61,12 +61,12 @@ class ViewChildrenScope(
   }
 
   private class ReferenceVariablesFlattenedScope(file: PsiFile, private val resolveToMultipleSymbols: Boolean)
-    : PolySymbolsScopeWithCache<PsiFile, Boolean>(null, file.project, file, resolveToMultipleSymbols) {
+    : PolySymbolScopeWithCache<PsiFile, Boolean>(null, file.project, file, resolveToMultipleSymbols) {
 
     override fun getCodeCompletions(
       qualifiedName: PolySymbolQualifiedName,
       params: PolySymbolCodeCompletionQueryParams,
-      scope: Stack<PolySymbolsScope>,
+      scope: Stack<PolySymbolScope>,
     ): List<PolySymbolCodeCompletionItem> =
       super.getCodeCompletions(qualifiedName, params, scope)
         .map { it.decorateWithSymbolType(dataHolder, it.symbol).decorateWithJsKindIcon() }

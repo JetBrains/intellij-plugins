@@ -7,7 +7,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.js.JS_KEYWORDS
 import com.intellij.polySymbols.js.JS_SYMBOLS
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
@@ -18,7 +18,7 @@ import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 
 class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
-  PolySymbolsScopeWithCache<Angular2BlockParameter, Unit>(null, parameter.project, parameter, Unit) {
+  PolySymbolScopeWithCache<Angular2BlockParameter, Unit>(null, parameter.project, parameter, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_SYMBOLS

@@ -60,13 +60,13 @@ class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     location: PsiElement?,
     context: PolyContext,
     allowResolve: Boolean,
-  ): List<PolySymbolsScope> {
+  ): List<PolySymbolScope> {
     if (context.framework != VueFramework.ID || location == null) return emptyList()
 
     if (location is JSElement && location !is XmlElement)
       return getScopeForJSElement(location, allowResolve)
 
-    val result = SmartList<PolySymbolsScope>()
+    val result = SmartList<PolySymbolScope>()
     val attribute = (location as? XmlAttributeValue)?.parent as? XmlAttribute ?: location as? XmlAttribute
     val tag = attribute?.parent ?: location as? XmlTag
     val fileContext = location.containingFile?.originalFile ?: return emptyList()
@@ -99,13 +99,13 @@ class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     else
       super.getNameConversionRulesProviders(project, element, context)
 
-  private fun getScopeForJSElement(element: JSElement, allowResolve: Boolean): List<PolySymbolsScope> {
+  private fun getScopeForJSElement(element: JSElement, allowResolve: Boolean): List<PolySymbolScope> {
     if (element is JSObjectLiteralExpression
         && allowResolve
         && element.context?.asSafely<JSProperty>()?.name == WATCH_PROP) {
       val enclosingComponent = VueModelManager.findEnclosingComponent(element) as? VueSourceComponent
                                ?: return emptyList()
-      return listOf(VueWatchSymbolsScope(enclosingComponent))
+      return listOf(VueWatchSymbolScope(enclosingComponent))
     }
 
     if (allowResolve && (
@@ -115,7 +115,7 @@ class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
         isInjectedAsMacroCall(element))) {
       val enclosingComponent = VueModelManager.findEnclosingComponent(element) as? VueSourceComponent
                                ?: return emptyList()
-      return listOf(VueInjectSymbolsScope(enclosingComponent))
+      return listOf(VueInjectSymbolScope(enclosingComponent))
     }
 
     return emptyList()
@@ -146,7 +146,7 @@ class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
   private fun addEntityContainers(
     element: PsiElement,
     fileContext: PsiFile,
-    result: SmartList<PolySymbolsScope>,
+    result: SmartList<PolySymbolScope>,
   ) {
     VueModelManager.findEnclosingContainer(element).let { enclosingContainer ->
       val containerToProximity = mutableMapOf<VueEntitiesContainer, VueModelVisitor.Proximity>()
@@ -182,7 +182,7 @@ class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
         .forEach { containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE }
 
       containerToProximity.forEach { (container, proximity) ->
-        VueCodeModelSymbolsScope.create(container, proximity)
+        VueCodeModelSymbolScope.create(container, proximity)
           ?.let {
             if (container == enclosingContainer || container is VueGlobal) {
               VueIncorrectlySelfReferredComponentFilteringScope(it, fileContext)

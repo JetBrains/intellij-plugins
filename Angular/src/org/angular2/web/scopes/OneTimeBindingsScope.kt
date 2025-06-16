@@ -31,7 +31,7 @@ import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -50,7 +50,7 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
 import java.util.concurrent.ConcurrentHashMap
 
-internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
+internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS
@@ -95,7 +95,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolsScopeWithCache<Xml
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
-  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<XmlTag, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolScopeWithCache<XmlTag, Unit>> {
     val tagPtr = dataHolder.createSmartPointer()
     return Pointer {
       tagPtr.dereference()?.let { OneTimeBindingsScope(it) }

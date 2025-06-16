@@ -12,7 +12,7 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.html.HtmlTag
@@ -31,7 +31,7 @@ class VueI18NSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     location: PsiElement?,
     context: PolyContext,
     allowResolve: Boolean,
-  ): List<PolySymbolsScope> =
+  ): List<PolySymbolScope> =
     if (context.framework == VueFramework.ID
         && location is HtmlTag
         && location.name == "i18n"
@@ -41,7 +41,7 @@ class VueI18NSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     }
     else emptyList()
 
-  private class I18nTagInjectionKind(private val tag: HtmlTag) : PolySymbolsScope {
+  private class I18nTagInjectionKind(private val tag: HtmlTag) : PolySymbolScope {
     override fun equals(other: Any?): Boolean =
       other is I18nTagInjectionKind
       && other.tag == tag
@@ -61,7 +61,7 @@ class VueI18NSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     override fun getSymbols(
       qualifiedKind: PolySymbolQualifiedKind,
       params: PolySymbolListSymbolsQueryParams,
-      scope: Stack<PolySymbolsScope>,
+      scope: Stack<PolySymbolScope>,
     ): List<PolySymbol> {
       if (qualifiedKind == VUE_TOP_LEVEL_ELEMENTS) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)

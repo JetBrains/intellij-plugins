@@ -15,7 +15,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueContainer
@@ -46,7 +46,7 @@ open class VueSlotSymbol private constructor(
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> {
     return getJSPropertySymbols(qualifiedKind)
   }
@@ -54,7 +54,7 @@ open class VueSlotSymbol private constructor(
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> {
     return getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
   }

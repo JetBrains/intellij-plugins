@@ -6,7 +6,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -14,8 +14,8 @@ import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateScope
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 
-class PolySymbolsTemplateScope(context: PsiElement) :
-  PolySymbolsScopeWithCache<PsiElement, Unit>(Angular2Framework.ID, context.project, context, Unit) {
+class Angular2TemplateScope(context: PsiElement) :
+  PolySymbolScopeWithCache<PsiElement, Unit>(Angular2Framework.ID, context.project, context, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_SYMBOLS
@@ -41,10 +41,10 @@ class PolySymbolsTemplateScope(context: PsiElement) :
     }
   }
 
-  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<PsiElement, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolScopeWithCache<PsiElement, Unit>> {
     val context = dataHolder.createSmartPointer()
     return Pointer {
-      context.dereference()?.let { PolySymbolsTemplateScope(it) }
+      context.dereference()?.let { Angular2TemplateScope(it) }
     }
   }
 }

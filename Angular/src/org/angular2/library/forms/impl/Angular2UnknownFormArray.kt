@@ -10,13 +10,13 @@ import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.util.containers.Stack
 import org.angular2.library.forms.NG_FORM_ARRAY_PROPS
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.web.Angular2SymbolOrigin
 
-object Angular2UnknownFormArray : PolySymbolWithPattern, PolySymbolsScope {
+object Angular2UnknownFormArray : PolySymbolWithPattern, PolySymbolScope {
 
   override val name: @NlsSafe String
     get() = "Unknown form array"
@@ -24,7 +24,7 @@ object Angular2UnknownFormArray : PolySymbolWithPattern, PolySymbolsScope {
   override val pattern: PolySymbolsPattern =
     PolySymbolsPatternFactory.createRegExMatch(".*")
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolScope>): List<PolySymbol> =
     if (qualifiedKind == NG_FORM_CONTROL_PROPS)
       listOf(Angular2FormArrayControl)
     else

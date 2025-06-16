@@ -11,7 +11,7 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.css.getPolySymbolsCssScopeForTagClasses
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolsIsolatedMappingScope
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.css.StylesheetFile
@@ -37,11 +37,11 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
     (symbol[PROP_HOST_BINDING] != false && (!symbol.name.startsWith("on") || !symbol.hasOnlyStandardHtmlSymbolsOrExtensions()))
 
-  override val subScopeBuilder: (PolySymbolQueryExecutor, ES6Decorator) -> List<PolySymbolsScope>
+  override val subScopeBuilder: (PolySymbolQueryExecutor, ES6Decorator) -> List<PolySymbolScope>
     get() = ::buildSubScope
 
   companion object {
-    internal fun buildSubScope(executor: PolySymbolQueryExecutor, location: ES6Decorator): List<PolySymbolsScope> {
+    internal fun buildSubScope(executor: PolySymbolQueryExecutor, location: ES6Decorator): List<PolySymbolScope> {
       val file = location.containingFile
       val directive = Angular2EntitiesProvider.getDirective(location)
       val relatedStylesheets = (directive as? Angular2Component)?.cssFiles?.filterIsInstance<StylesheetFile>()

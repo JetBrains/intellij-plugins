@@ -9,7 +9,7 @@ import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
@@ -50,7 +50,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
         }
           ?.let { VueModelManager.findEnclosingComponent(it) }
           ?.asPolySymbol("", VueModelVisitor.Proximity.LOCAL)
-          ?.asSafely<PolySymbolsScope>()
+          ?.asSafely<PolySymbolScope>()
           ?.getMatchingSymbols(JS_EVENTS.withName(name),
                                PolySymbolNameMatchQueryParams.create(PolySymbolQueryExecutorFactory.create(parent, false)),
                                Stack())

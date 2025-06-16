@@ -20,7 +20,7 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.kind
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
@@ -37,24 +37,24 @@ import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
 
-class VueCodeModelSymbolsScope<K>
+class VueCodeModelSymbolScope<K>
 private constructor(
   private val container: VueEntitiesContainer,
   project: Project,
   dataHolder: UserDataHolder,
   private val proximity: VueModelVisitor.Proximity,
   key: K,
-) : PolySymbolsScopeWithCache<UserDataHolder, K>(VueFramework.ID, project, dataHolder, key) {
+) : PolySymbolScopeWithCache<UserDataHolder, K>(VueFramework.ID, project, dataHolder, key) {
 
   companion object {
 
-    fun create(container: VueEntitiesContainer, proximity: VueModelVisitor.Proximity): VueCodeModelSymbolsScope<*>? {
+    fun create(container: VueEntitiesContainer, proximity: VueModelVisitor.Proximity): VueCodeModelSymbolScope<*>? {
       container.source
         ?.let {
-          return VueCodeModelSymbolsScope(container, it.project, it, proximity, proximity)
+          return VueCodeModelSymbolScope(container, it.project, it, proximity, proximity)
         }
       return if (container is VueGlobal)
-        VueCodeModelSymbolsScope(container, container.project, container.project, proximity, container.packageJsonUrl ?: "")
+        VueCodeModelSymbolScope(container, container.project, container.project, proximity, container.packageJsonUrl ?: "")
       else null
     }
 
@@ -64,7 +64,7 @@ private constructor(
     return "EntityContainerWrapper($container)"
   }
 
-  override fun createPointer(): Pointer<VueCodeModelSymbolsScope<K>> {
+  override fun createPointer(): Pointer<VueCodeModelSymbolScope<K>> {
     val containerPtr = container.createPointer()
     val dataHolderPtr = dataHolder.let { if (it is Project) Pointer.hardPointer(it) else (it as PsiElement).createSmartPointer() }
     val project = this.project
@@ -73,7 +73,7 @@ private constructor(
     return Pointer {
       val container = containerPtr.dereference() ?: return@Pointer null
       val dataHolder = dataHolderPtr.dereference() ?: return@Pointer null
-      VueCodeModelSymbolsScope(container, project, dataHolder, proximity, key)
+      VueCodeModelSymbolScope(container, project, dataHolder, proximity, key)
     }
   }
 

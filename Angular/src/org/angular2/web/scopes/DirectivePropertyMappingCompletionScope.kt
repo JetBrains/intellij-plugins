@@ -19,9 +19,9 @@ import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolDelegate
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -52,7 +52,7 @@ import org.angular2.web.references.Angular2DirectivePropertyLiteralReferencesPro
  * Reference resolution is being provided separately by [Angular2DirectivePropertyLiteralReferencesProvider]
  */
 class DirectivePropertyMappingCompletionScope(element: JSElement)
-  : PolySymbolsScopeWithCache<JSElement, Unit>(Angular2Framework.ID, element.project, element, Unit) {
+  : PolySymbolScopeWithCache<JSElement, Unit>(Angular2Framework.ID, element.project, element, Unit) {
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -110,7 +110,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     /* Do not support reference resolution */
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
@@ -122,12 +122,12 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     /* Do not support reference resolution */
     emptyList()
 
-  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<JSElement, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolScopeWithCache<JSElement, Unit>> {
     val elementPtr = dataHolder.createSmartPointer()
     return Pointer {
       elementPtr.dereference()?.let { DirectivePropertyMappingCompletionScope(it) }

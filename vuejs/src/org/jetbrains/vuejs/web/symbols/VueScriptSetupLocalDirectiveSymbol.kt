@@ -9,7 +9,7 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
@@ -39,7 +39,7 @@ class VueScriptSetupLocalDirectiveSymbol(
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
       listOf(VueAnySymbol(this.origin, qualifiedName.qualifiedKind, qualifiedName.name))
@@ -49,7 +49,7 @@ class VueScriptSetupLocalDirectiveSymbol(
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     if (qualifiedKind == VUE_DIRECTIVE_ARGUMENT
         && !params.expandPatterns) {

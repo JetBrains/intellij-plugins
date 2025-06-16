@@ -14,7 +14,7 @@ import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -29,7 +29,7 @@ import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.web.VUE_BINDING_SHORTHANDS
 
 class VueBindingShorthandScope(attribute: XmlAttribute)
-  : PolySymbolsScopeWithCache<XmlAttribute, Unit>(null, attribute.project, attribute, Unit) {
+  : PolySymbolScopeWithCache<XmlAttribute, Unit>(null, attribute.project, attribute, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == VUE_BINDING_SHORTHANDS

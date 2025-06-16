@@ -13,16 +13,16 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternSymbolsResolver
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.match
 import com.intellij.util.containers.Stack
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.PROP_BINDING_PATTERN
 
-object AttributeWithInterpolationsScope : PolySymbolsScope {
+object AttributeWithInterpolationsScope : PolySymbolScope {
 
-  override fun createPointer(): Pointer<out PolySymbolsScope> =
+  override fun createPointer(): Pointer<out PolySymbolScope> =
     Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0
@@ -30,7 +30,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES)) {
       AttributeWithInterpolationsSymbol.match(qualifiedName.name, params, scope)
@@ -78,13 +78,13 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
     override fun codeCompletion(
       name: String,
       position: Int,
-      scopeStack: Stack<PolySymbolsScope>,
+      scopeStack: Stack<PolySymbolScope>,
       queryExecutor: PolySymbolQueryExecutor,
     ): List<PolySymbolCodeCompletionItem> =
       emptyList()
 
     override fun listSymbols(
-      scopeStack: Stack<PolySymbolsScope>,
+      scopeStack: Stack<PolySymbolScope>,
       queryExecutor: PolySymbolQueryExecutor,
       expandPatterns: Boolean,
     ): List<PolySymbol> =
@@ -92,7 +92,7 @@ object AttributeWithInterpolationsScope : PolySymbolsScope {
 
     override fun matchName(
       name: String,
-      scopeStack: Stack<PolySymbolsScope>,
+      scopeStack: Stack<PolySymbolScope>,
       queryExecutor: PolySymbolQueryExecutor,
     ): List<PolySymbol> =
       queryExecutor.nameMatchQuery(JS_PROPERTIES, name).additionalScope(scopeStack).run() +

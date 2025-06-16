@@ -18,8 +18,8 @@ import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -33,7 +33,7 @@ import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.EVENT_ATTR_PREFIX
 
-class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySymbolsScope {
+class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySymbolScope {
 
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(templateFile.project).modificationCount
@@ -41,7 +41,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ELEMENTS)) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", qualifiedName.name))
@@ -64,8 +64,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
   private class HtmlElementStandardPropertyAndEventsExtension(
     templateFile: PsiFile, tagNamespace: String, tagName: String,
-  ) : PolySymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
-                                                               templateFile, Pair(tagNamespace, tagName)), PolySymbol {
+  ) : PolySymbolScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
+                                                              templateFile, Pair(tagNamespace, tagName)), PolySymbol {
 
     override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
       qualifiedKind == JS_PROPERTIES

@@ -5,9 +5,9 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
@@ -26,16 +26,16 @@ class UiFrameworkComponent(
   override val name: String,
   override val source: PsiElement,
   override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH,
-) : PsiSourcedPolySymbol, PolySymbolsScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit) {
+) : PsiSourcedPolySymbol, PolySymbolScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit) {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
       emptyList()
     else
-      super<PolySymbolsScopeWithCache>.getMatchingSymbols(qualifiedName, params, scope)
+      super<PolySymbolScopeWithCache>.getMatchingSymbols(qualifiedName, params, scope)
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == UI_FRAMEWORK_COMPONENT_PROPS
@@ -65,5 +65,5 @@ class UiFrameworkComponent(
     }
   }
 
-  override fun getModificationCount() = super<PolySymbolsScopeWithCache>.getModificationCount()
+  override fun getModificationCount() = super<PolySymbolScopeWithCache>.getModificationCount()
 }

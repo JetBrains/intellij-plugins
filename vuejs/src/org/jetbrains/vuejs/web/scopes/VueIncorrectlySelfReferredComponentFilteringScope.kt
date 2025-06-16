@@ -10,7 +10,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -23,14 +23,14 @@ import org.jetbrains.vuejs.index.findScriptTag
  * This container ensures that components from other container are not self referred without export declaration with component name or script setup
  */
 class VueIncorrectlySelfReferredComponentFilteringScope(
-  private val delegate: PolySymbolsScope,
+  private val delegate: PolySymbolScope,
   private val file: PsiFile,
-) : PolySymbolsScope {
+) : PolySymbolScope {
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     delegate.getMatchingSymbols(qualifiedName, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
@@ -38,7 +38,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     delegate.getSymbols(qualifiedKind, params, scope)
       .filter { isNotIncorrectlySelfReferred(it) }
@@ -46,12 +46,12 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbolCodeCompletionItem> =
     delegate.getCodeCompletions(qualifiedName, params, scope)
       .filter { isNotIncorrectlySelfReferred(it.symbol) }
 
-  override fun createPointer(): Pointer<out PolySymbolsScope> {
+  override fun createPointer(): Pointer<out PolySymbolScope> {
     val delegatePtr = delegate.createPointer()
     val filePtr = file.createSmartPointer()
     return Pointer {

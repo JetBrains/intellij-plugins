@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.model.getMatchingAvailableSlots
 import org.jetbrains.vuejs.web.VUE_AVAILABLE_SLOTS
 import org.jetbrains.vuejs.web.VueFramework
 
-class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
+class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
 
   override fun hashCode(): Int = tag.hashCode()
 
@@ -32,7 +32,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
@@ -46,7 +46,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
@@ -60,7 +60,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolsScope {
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbolCodeCompletionItem> =
     if (qualifiedName.matches(VUE_AVAILABLE_SLOTS) && params.queryExecutor.allowResolve)
       getAvailableSlotsCompletions(tag, qualifiedName.name, params.position, true)

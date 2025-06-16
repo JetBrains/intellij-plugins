@@ -18,7 +18,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPattern
 import com.intellij.polySymbols.patterns.PolySymbolsPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.childrenOfType
@@ -26,7 +26,7 @@ import com.intellij.psi.xml.XmlTag
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 
 abstract class AstroDefineVarsScope(tag: XmlTag)
-  : PolySymbolsScopeWithCache<XmlTag, Unit>(null, tag.project, tag, Unit) {
+  : PolySymbolScopeWithCache<XmlTag, Unit>(null, tag.project, tag, Unit) {
 
   protected abstract val providedSymbol: PolySymbol
 
@@ -52,7 +52,7 @@ abstract class AstroDefineVarsScope(tag: XmlTag)
 }
 
 class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scriptTag) {
-  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<XmlTag, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolScopeWithCache<XmlTag, Unit>> {
     val ptr = dataHolder.createSmartPointer()
     return Pointer { ptr.dereference()?.let(::AstroScriptDefineVarsScope) }
   }
@@ -86,7 +86,7 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
 }
 
 class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTag) {
-  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<XmlTag, Unit>> {
+  override fun createPointer(): Pointer<out PolySymbolScopeWithCache<XmlTag, Unit>> {
     val ptr = dataHolder.createSmartPointer()
     return Pointer { ptr.dereference()?.let(::AstroStyleDefineVarsScope) }
   }

@@ -12,9 +12,9 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.MappedPolySymbol
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.qualifiedName
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
@@ -28,9 +28,9 @@ import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates
 import org.angular2.web.*
 
-class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
+class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
 
-  override fun createPointer(): Pointer<out PolySymbolsScope> =
+  override fun createPointer(): Pointer<out PolySymbolScope> =
     Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0
@@ -38,7 +38,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ELEMENTS)) {
       listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(file, qualifiedName.name))
@@ -55,7 +55,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
   class HtmlAttributeDirectiveAttributeSelectorsExtension(
     file: PsiFile,
     tagName: String,
-  ) : PolySymbolsScopeWithCache<PsiFile, String>(Angular2Framework.ID, file.project, file, tagName), PolySymbol {
+  ) : PolySymbolScopeWithCache<PsiFile, String>(Angular2Framework.ID, file.project, file, tagName), PolySymbol {
 
     override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
       qualifiedKind in providedKinds
@@ -85,9 +85,9 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolsScope {
       }
     }
 
-    override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolCodeCompletionQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbolCodeCompletionItem> =
+    override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolCodeCompletionQueryParams, scope: Stack<PolySymbolScope>): List<PolySymbolCodeCompletionItem> =
       withTypeEvaluationLocation(dataHolder) {
-        super<PolySymbolsScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
+        super<PolySymbolScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
           .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }
       }
 

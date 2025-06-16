@@ -6,7 +6,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.util.containers.Stack
 
@@ -16,7 +16,7 @@ class PolySymbolReferencingScope(
   private val isExclusive: Boolean,
   origin: PolySymbolOrigin,
   vararg qualifiedKinds: PolySymbolQualifiedKind,
-) : PolySymbolsScope {
+) : PolySymbolScope {
 
   private val symbol = ReferencingPolySymbol.create(
     qualifiedKind, name, origin, *qualifiedKinds
@@ -25,13 +25,13 @@ class PolySymbolReferencingScope(
   override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     isExclusive && qualifiedKind == symbol.qualifiedKind
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolsScope>): List<PolySymbol> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolScope>): List<PolySymbol> =
     if (qualifiedKind == symbol.qualifiedKind)
       listOf(symbol)
     else
       emptyList()
 
-  override fun createPointer(): Pointer<out PolySymbolsScope> =
+  override fun createPointer(): Pointer<out PolySymbolScope> =
     hardPointer(this)
 
   override fun getModificationCount(): Long = 0

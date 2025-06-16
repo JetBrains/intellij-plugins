@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolNamespace
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 
-abstract class VuePolySymbolBase : PolySymbolsScope {
+abstract class VuePolySymbolBase : PolySymbolScope {
 
   val namespace: PolySymbolNamespace
     get() = qualifiedKind.namespace

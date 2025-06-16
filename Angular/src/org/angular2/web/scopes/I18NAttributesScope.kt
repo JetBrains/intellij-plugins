@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.nameSegments
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -20,12 +20,12 @@ import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.NG_I18N_ATTRIBUTES
 import org.jetbrains.annotations.NonNls
 
-class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
+class I18NAttributesScope(private val tag: XmlTag) : PolySymbolScope {
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     if (qualifiedName.matches(NG_I18N_ATTRIBUTES)) {
       tag.attributes
@@ -41,7 +41,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     if (qualifiedKind == NG_I18N_ATTRIBUTES) {
       tag.attributes
@@ -55,7 +55,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolsScope {
     else emptyList()
 
 
-  override fun createPointer(): Pointer<out PolySymbolsScope> {
+  override fun createPointer(): Pointer<out PolySymbolScope> {
     val tag = this.tag.createSmartPointer()
     return Pointer {
       tag.dereference()?.let { I18NAttributesScope(it) }

@@ -13,13 +13,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndexEx
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.polySymbols.symbols.AstroComponent
 
-internal class AstroAvailableComponentsScope(project: Project) : PolySymbolsScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
+internal class AstroAvailableComponentsScope(project: Project) : PolySymbolScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == ASTRO_COMPONENTS
@@ -44,7 +44,7 @@ internal class AstroAvailableComponentsScope(project: Project) : PolySymbolsScop
            DumbService.getInstance(project).modificationTracker.modificationCount
   }
 
-  override fun createPointer(): Pointer<out PolySymbolsScopeWithCache<Project, Unit>> =
+  override fun createPointer(): Pointer<out PolySymbolScopeWithCache<Project, Unit>> =
     Pointer.hardPointer(this)
 
 }

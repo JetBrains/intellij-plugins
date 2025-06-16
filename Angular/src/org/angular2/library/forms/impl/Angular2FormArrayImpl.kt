@@ -5,7 +5,7 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.containers.Stack
 import org.angular2.library.forms.Angular2FormArray
@@ -22,7 +22,7 @@ class Angular2FormArrayImpl(
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbol> =
     if (qualifiedKind == NG_FORM_CONTROL_PROPS)
       listOf(Angular2FormArrayControl)

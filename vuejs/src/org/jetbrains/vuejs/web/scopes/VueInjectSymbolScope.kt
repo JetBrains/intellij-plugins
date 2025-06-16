@@ -7,8 +7,8 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
@@ -20,8 +20,8 @@ import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
-class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
-  : PolySymbolsScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
+class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent)
+  : PolySymbolScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == VUE_PROVIDES
@@ -45,17 +45,17 @@ class VueInjectSymbolsScope(private val enclosingComponent: VueSourceComponent)
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbolCodeCompletionItem> {
     return super.getCodeCompletions(qualifiedName, params, scope).filter {
       it.symbol.asSafely<VueProvideSymbol>()?.injectionKey == null
     }
   }
 
-  override fun createPointer(): Pointer<VueInjectSymbolsScope> {
+  override fun createPointer(): Pointer<VueInjectSymbolScope> {
     val componentPointer = enclosingComponent.createPointer()
     return Pointer {
-      componentPointer.dereference()?.let { VueInjectSymbolsScope(it) }
+      componentPointer.dereference()?.let { VueInjectSymbolScope(it) }
     }
   }
 

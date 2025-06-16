@@ -7,14 +7,14 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
 class NgContentSelectorsScope(tag: XmlTag)
-  : PolySymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
+  : PolySymbolScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS

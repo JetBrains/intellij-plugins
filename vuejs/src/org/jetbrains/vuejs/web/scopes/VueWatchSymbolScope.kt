@@ -19,8 +19,8 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolsScope
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueComputedProperty
@@ -35,8 +35,8 @@ import org.jetbrains.vuejs.web.symbols.VueComputedPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueDataPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
-class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
-  : PolySymbolsScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
+class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent)
+  : PolySymbolScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_PROPERTIES
@@ -63,17 +63,17 @@ class VueWatchSymbolsScope(private val enclosingComponent: VueSourceComponent)
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
   }
 
-  override fun createPointer(): Pointer<VueWatchSymbolsScope> {
+  override fun createPointer(): Pointer<VueWatchSymbolScope> {
     val componentPointer = enclosingComponent.createPointer()
     return Pointer {
-      componentPointer.dereference()?.let { VueWatchSymbolsScope(it) }
+      componentPointer.dereference()?.let { VueWatchSymbolScope(it) }
     }
   }
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolsScope>,
+    scope: Stack<PolySymbolScope>,
   ): List<PolySymbolCodeCompletionItem> =
     super.getCodeCompletions(qualifiedName, params, scope)
       .let { codeCompletions ->

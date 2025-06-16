@@ -10,8 +10,8 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
-import com.intellij.polySymbols.query.PolySymbolsScope
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.AstLoadingFilter
@@ -32,15 +32,15 @@ const val BINDINGS_PROP: String = "bindings"
 const val TYPE_PROP: String = "type"
 
 class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpression)
-  : PolySymbolsScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
+  : PolySymbolScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
 
   companion object {
-    val INPUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive input",
-                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_INPUTS)
-    val OUTPUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive output",
-                                                                     true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_OUTPUTS)
-    val IN_OUTS_SCOPE: PolySymbolsScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive two-way binding",
-                                                                     true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_IN_OUTS)
+    val INPUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive input",
+                                                                   true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_INPUTS)
+    val OUTPUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive output",
+                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_OUTPUTS)
+    val IN_OUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive two-way binding",
+                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_IN_OUTS)
   }
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

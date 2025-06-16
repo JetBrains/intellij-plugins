@@ -9,7 +9,7 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
-import com.intellij.polySymbols.query.PolySymbolsScope
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.css.CssElement
 import com.intellij.psi.util.parentOfType
@@ -37,7 +37,7 @@ val PROP_ASTRO_PROXIMITY: PolySymbolProperty<AstroProximity> = PolySymbolPropert
 
 class AstroSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
-  override fun getScope(project: Project, location: PsiElement?, context: PolyContext, allowResolve: Boolean): List<PolySymbolsScope> {
+  override fun getScope(project: Project, location: PsiElement?, context: PolyContext, allowResolve: Boolean): List<PolySymbolScope> {
     if (context.framework != AstroFramework.ID || location?.containingFile !is AstroFileImpl) return emptyList()
     return when (location) {
       is CssElement -> calculateCssScopes(location)
@@ -46,7 +46,7 @@ class AstroSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     }
   }
 
-  private fun calculateCssScopes(location: CssElement): MutableList<PolySymbolsScope> {
+  private fun calculateCssScopes(location: CssElement): MutableList<PolySymbolScope> {
     val result = calculateDefaultScopes(location)
     location.parentOfType<XmlTag>()
       ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.STYLE_TAG_NAME) }
@@ -54,7 +54,7 @@ class AstroSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     return result
   }
 
-  private fun calculateJsScopes(location: JSElement): MutableList<PolySymbolsScope> {
+  private fun calculateJsScopes(location: JSElement): MutableList<PolySymbolScope> {
     val result = calculateDefaultScopes(location)
     location.parentOfType<XmlTag>()
       ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.SCRIPT_TAG_NAME) }
@@ -62,7 +62,7 @@ class AstroSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     return result
   }
 
-  private fun calculateDefaultScopes(location: PsiElement): MutableList<PolySymbolsScope> =
+  private fun calculateDefaultScopes(location: PsiElement): MutableList<PolySymbolScope> =
     mutableListOf(AstroFrontmatterScope(location.containingFile as AstroFileImpl),
                   AstroAvailableComponentsScope(location.project))
 }

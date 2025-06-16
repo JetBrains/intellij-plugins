@@ -22,7 +22,7 @@ import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolsPatternReferenceResolver.Reference
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.utils.PolySymbolsScopeWithCache
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
@@ -44,7 +44,7 @@ import org.jetbrains.vuejs.web.asPolySymbol
 private const val SLOT_LOCAL_COMPONENT = "\$local"
 
 class VueSlotElementScope(tag: XmlTag)
-  : PolySymbolsScopeWithCache<XmlTag, Unit>(VueFramework.ID, tag.project, tag, Unit) {
+  : PolySymbolScopeWithCache<XmlTag, Unit>(VueFramework.ID, tag.project, tag, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == HTML_ATTRIBUTES
