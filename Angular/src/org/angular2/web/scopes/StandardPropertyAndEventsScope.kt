@@ -255,7 +255,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
           Angular2TypeUtils.extractEventVariableType(mainSource?.getJSType(templateFile))
           ?: mapSource?.getJSType(templateFile)
         )
-        else -> super<PolySymbolsHtmlQueryConfigurator.StandardHtmlSymbol>.get(property)
+        else -> super<HtmlSymbolQueryConfigurator.StandardHtmlSymbol>.get(property)
       }
 
     override val priority: PolySymbol.Priority
