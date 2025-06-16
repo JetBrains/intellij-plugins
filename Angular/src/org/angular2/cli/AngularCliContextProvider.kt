@@ -7,7 +7,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.polySymbols.context.PolyContextProvider
 import org.angular2.cli.config.AngularConfigProvider
 
-class AngularCliPolyContextProvider : PolyContextProvider {
+class AngularCliContextProvider : PolyContextProvider {
 
   override fun isEnabled(project: Project, directory: VirtualFile): CachedValueProvider.Result<Int?> {
     val config = AngularConfigProvider.findAngularConfig(project, directory)
