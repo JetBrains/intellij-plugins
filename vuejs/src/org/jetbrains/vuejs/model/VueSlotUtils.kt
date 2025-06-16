@@ -10,30 +10,29 @@ import com.intellij.lang.javascript.psi.StubSafe
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
 import com.intellij.lang.javascript.psi.types.JSNamedType
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_SLOTS
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.polySymbols.utils.match
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
-import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.utils.match
 import com.intellij.xml.impl.schema.AnyXmlElementDescriptor
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.types.asCompleteType
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
 
-const val DEFAULT_SLOT_NAME = "default"
-const val SLOT_NAME_ATTRIBUTE = "name"
+const val DEFAULT_SLOT_NAME: String = "default"
+const val SLOT_NAME_ATTRIBUTE: String = "name"
 
-const val DEPRECATED_SLOT_ATTRIBUTE = "slot"
+const val DEPRECATED_SLOT_ATTRIBUTE: String = "slot"
 
 fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<PolySymbol> =
   processSlots(

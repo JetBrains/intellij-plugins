@@ -14,7 +14,6 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.VueModelManager

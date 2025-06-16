@@ -82,5 +82,5 @@ class AstroLocalComponent(
     }
   }
 
-  override fun getModificationCount() = super<PolySymbolScopeWithCache>.getModificationCount()
+  override fun getModificationCount(): Long = super<PolySymbolScopeWithCache>.getModificationCount()
 }

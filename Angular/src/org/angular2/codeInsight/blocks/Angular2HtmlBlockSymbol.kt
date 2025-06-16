@@ -7,7 +7,6 @@ import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.webTypes.WebTypesSymbolBase
 import com.intellij.polySymbols.webTypes.WebTypesSymbolFactory
-import com.intellij.util.containers.Stack
 import org.angular2.web.NG_BLOCK_PARAMETERS
 import org.angular2.web.NG_BLOCK_PARAMETER_PREFIXES
 
