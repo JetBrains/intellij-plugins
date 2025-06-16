@@ -7,16 +7,12 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.index.findScriptTag
 
 /**
@@ -30,25 +26,25 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    delegate.getMatchingSymbols(qualifiedName, params, scope)
+    delegate.getMatchingSymbols(qualifiedName, params, stack)
       .filter { isNotIncorrectlySelfReferred(it) }
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    delegate.getSymbols(qualifiedKind, params, scope)
+    delegate.getSymbols(qualifiedKind, params, stack)
       .filter { isNotIncorrectlySelfReferred(it) }
 
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbolCodeCompletionItem> =
-    delegate.getCodeCompletions(qualifiedName, params, scope)
+    delegate.getCodeCompletions(qualifiedName, params, stack)
       .filter { isNotIncorrectlySelfReferred(it.symbol) }
 
   override fun createPointer(): Pointer<out PolySymbolScope> {

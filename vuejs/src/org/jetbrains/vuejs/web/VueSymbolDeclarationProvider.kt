@@ -9,6 +9,7 @@ import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
@@ -53,7 +54,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
           ?.asSafely<PolySymbolScope>()
           ?.getMatchingSymbols(JS_EVENTS.withName(name),
                                PolySymbolNameMatchQueryParams.create(PolySymbolQueryExecutorFactory.create(parent, false)),
-                               Stack())
+                               PolySymbolQueryStack())
           ?.getOrNull(0)
           ?.asSafely<PolySymbol>()
       }

@@ -4,33 +4,33 @@ package org.jetbrains.vuejs.web
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.webTypes.filters.PolySymbolFilter
 
 class VueBindFilter : PolySymbolFilter {
   override fun filterCodeCompletions(
     codeCompletions: List<PolySymbolCodeCompletionItem>,
     queryExecutor: PolySymbolQueryExecutor,
-    scope: List<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
     properties: Map<String, Any>,
   ): List<PolySymbolCodeCompletionItem> =
-    codeCompletions.filterHtmlEventAttributes(queryExecutor, scope) { name }
+    codeCompletions.filterHtmlEventAttributes(queryExecutor, stack) { name }
 
   override fun filterNameMatches(
     matches: List<PolySymbol>,
     queryExecutor: PolySymbolQueryExecutor,
-    scope: List<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
     properties: Map<String, Any>,
   ): List<PolySymbol> =
-    matches.filterHtmlEventAttributes(queryExecutor, scope) { name }
+    matches.filterHtmlEventAttributes(queryExecutor, stack) { name }
 
   private fun <T> List<T>.filterHtmlEventAttributes(
     queryExecutor: PolySymbolQueryExecutor,
-    scope: List<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
     getName: T.() -> String,
   ): List<T> {
     val props = queryExecutor.listSymbolsQuery(VUE_COMPONENT_PROPS, true)
-      .additionalScope(scope)
+      .additionalScope(stack)
       .run()
       .mapTo(HashSet()) { it.name }
     return filter {

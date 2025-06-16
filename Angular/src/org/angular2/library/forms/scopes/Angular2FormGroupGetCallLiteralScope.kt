@@ -18,7 +18,6 @@ import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createSymbolRe
 import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
-import com.intellij.util.containers.Stack
 import com.intellij.util.containers.map2Array
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
@@ -30,24 +29,24 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
   override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == JS_STRING_LITERALS
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolScope>): List<PolySymbol> =
+  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
     if (qualifiedKind == JS_STRING_LITERALS)
       listOf(FormGroupGetPathSymbol)
     else
-      formGroup.getSymbols(qualifiedKind, params, scope)
+      formGroup.getSymbols(qualifiedKind, params, stack)
 
-  override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolCodeCompletionQueryParams, scope: Stack<PolySymbolScope>): List<PolySymbolCodeCompletionItem> =
+  override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolCodeCompletionQueryParams, stack: PolySymbolQueryStack): List<PolySymbolCodeCompletionItem> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
-      super.getCodeCompletions(qualifiedName, params, scope)
+      super.getCodeCompletions(qualifiedName, params, stack)
         .filter { it.name != "." && (!it.name.endsWith(".") || it.symbol?.unwrapMatchedSymbols()?.lastOrNull()?.qualifiedKind == NG_FORM_GROUP_PROPS) }
     else
-      formGroup.getCodeCompletions(qualifiedName, params, scope)
+      formGroup.getCodeCompletions(qualifiedName, params, stack)
 
-  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName, params: PolySymbolNameMatchQueryParams, scope: Stack<PolySymbolScope>): List<PolySymbol> =
+  override fun getMatchingSymbols(qualifiedName: PolySymbolQualifiedName, params: PolySymbolNameMatchQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
     if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
-      super.getMatchingSymbols(qualifiedName, params, scope)
+      super.getMatchingSymbols(qualifiedName, params, stack)
     else
-      formGroup.getMatchingSymbols(qualifiedName, params, scope)
+      formGroup.getMatchingSymbols(qualifiedName, params, stack)
 
   override fun createPointer(): Pointer<out PolySymbolScope> {
     val formGroupPtr = formGroup.createPointer()

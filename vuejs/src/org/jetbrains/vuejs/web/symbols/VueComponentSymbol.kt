@@ -9,12 +9,11 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.js.JS_EVENTS
-import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.psi.PsiElement
-import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp
 import org.jetbrains.vuejs.model.source.VueSourceContainer
@@ -71,18 +70,18 @@ class VueComponentSymbol(
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_SLOTS) && item is VueUnresolvedComponent)
       listOf(PolySymbolMatch.create(qualifiedName.name, HTML_SLOTS, this.origin,
                                     PolySymbolNameSegment.create(0, qualifiedName.name.length)))
     else
-      super.getMatchingSymbols(qualifiedName, params, scope)
+      super.getMatchingSymbols(qualifiedName, params, stack)
 
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     when (qualifiedKind) {
       VUE_COMPONENT_PROPS -> {

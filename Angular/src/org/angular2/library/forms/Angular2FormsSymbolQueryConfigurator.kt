@@ -12,6 +12,7 @@ import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
 import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.PsiElement
@@ -19,7 +20,6 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import org.angular2.Angular2Framework
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlFile
@@ -86,7 +86,7 @@ class Angular2FormsSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
   private class SingleSymbolExclusiveScope(private val symbol: PolySymbol) : PolySymbolScope {
 
-    override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, scope: Stack<PolySymbolScope>): List<PolySymbol> =
+    override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
       if (symbol.qualifiedKind == qualifiedKind)
         listOf(symbol)
       else

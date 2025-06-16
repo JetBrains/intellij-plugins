@@ -11,7 +11,6 @@ import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.match
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.DEFAULT_SLOT_NAME
 import org.jetbrains.vuejs.model.getAvailableSlots
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
@@ -32,12 +31,12 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
       qualifiedName.matches(HTML_ATTRIBUTES) ->
-        DefaultSlotSymbol.match(qualifiedName.name, params, scope)
+        DefaultSlotSymbol.match(qualifiedName.name, params, stack)
       qualifiedName.matches(VUE_AVAILABLE_SLOTS) ->
         getMatchingAvailableSlots(tag, qualifiedName.name, true)
       else -> emptyList()
@@ -46,7 +45,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
@@ -60,7 +59,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbolCodeCompletionItem> =
     if (qualifiedName.matches(VUE_AVAILABLE_SLOTS) && params.queryExecutor.allowResolve)
       getAvailableSlotsCompletions(tag, qualifiedName.name, params.position, true)

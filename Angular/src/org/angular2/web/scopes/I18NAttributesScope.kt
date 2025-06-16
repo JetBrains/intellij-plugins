@@ -7,13 +7,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.nameSegments
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.containers.Stack
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.web.Angular2PsiSourcedSymbol
@@ -25,7 +25,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolScope {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(NG_I18N_ATTRIBUTES)) {
       tag.attributes
@@ -41,7 +41,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolScope {
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedKind == NG_I18N_ATTRIBUTES) {
       tag.attributes

@@ -18,13 +18,13 @@ import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.containers.Stack
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -41,7 +41,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ELEMENTS)) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", qualifiedName.name))

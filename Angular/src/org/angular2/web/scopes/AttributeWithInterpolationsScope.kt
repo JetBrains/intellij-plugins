@@ -10,12 +10,8 @@ import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolPatternSymbolsResolver
-import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolQueryExecutor
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.match
-import com.intellij.util.containers.Stack
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.PROP_BINDING_PATTERN
@@ -30,10 +26,10 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES)) {
-      AttributeWithInterpolationsSymbol.match(qualifiedName.name, params, scope)
+      AttributeWithInterpolationsSymbol.match(qualifiedName.name, params, stack)
     }
     else emptyList()
 
@@ -78,13 +74,13 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
     override fun codeCompletion(
       name: String,
       position: Int,
-      scopeStack: Stack<PolySymbolScope>,
+      stack: PolySymbolQueryStack,
       queryExecutor: PolySymbolQueryExecutor,
     ): List<PolySymbolCodeCompletionItem> =
       emptyList()
 
     override fun listSymbols(
-      scopeStack: Stack<PolySymbolScope>,
+      stack: PolySymbolQueryStack,
       queryExecutor: PolySymbolQueryExecutor,
       expandPatterns: Boolean,
     ): List<PolySymbol> =
@@ -92,11 +88,11 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
 
     override fun matchName(
       name: String,
-      scopeStack: Stack<PolySymbolScope>,
+      stack: PolySymbolQueryStack,
       queryExecutor: PolySymbolQueryExecutor,
     ): List<PolySymbol> =
-      queryExecutor.nameMatchQuery(JS_PROPERTIES, name).additionalScope(scopeStack).run() +
-      queryExecutor.nameMatchQuery(NG_DIRECTIVE_INPUTS, name).additionalScope(scopeStack).run()
+      queryExecutor.nameMatchQuery(JS_PROPERTIES, name).additionalScope(stack).run() +
+      queryExecutor.nameMatchQuery(NG_DIRECTIVE_INPUTS, name).additionalScope(stack).run()
 
   }
 }

@@ -15,14 +15,13 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.entities.Angular2DirectiveProperty
@@ -66,9 +65,9 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbolCodeCompletionItem> =
-    super.getCodeCompletions(qualifiedName, params, scope).map {
+    super.getCodeCompletions(qualifiedName, params, stack).map {
       it.withPriority(Priority.HIGHEST)
     }
 

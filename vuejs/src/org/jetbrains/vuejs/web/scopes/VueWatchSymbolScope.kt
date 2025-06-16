@@ -17,12 +17,11 @@ import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createStringMa
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory.createSymbolReferencePlaceholder
 import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver
 import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver.Reference
-import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueDataProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -73,9 +72,9 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent)
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbolCodeCompletionItem> =
-    super.getCodeCompletions(qualifiedName, params, scope)
+    super.getCodeCompletions(qualifiedName, params, stack)
       .let { codeCompletions ->
         if (qualifiedName.matches(VUE_COMPONENT_COMPUTED_PROPERTIES, VUE_COMPONENT_DATA_PROPERTIES))
           codeCompletions.filter { !it.name.startsWith("$") && it.name.length > 1 }

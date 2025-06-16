@@ -12,13 +12,13 @@ import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolIsolatedMappingScope
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.containers.Stack
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 
@@ -66,9 +66,9 @@ class ViewChildrenScope(
     override fun getCodeCompletions(
       qualifiedName: PolySymbolQualifiedName,
       params: PolySymbolCodeCompletionQueryParams,
-      scope: Stack<PolySymbolScope>,
+      stack: PolySymbolQueryStack,
     ): List<PolySymbolCodeCompletionItem> =
-      super.getCodeCompletions(qualifiedName, params, scope)
+      super.getCodeCompletions(qualifiedName, params, stack)
         .map { it.decorateWithSymbolType(dataHolder, it.symbol).decorateWithJsKindIcon() }
 
     override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

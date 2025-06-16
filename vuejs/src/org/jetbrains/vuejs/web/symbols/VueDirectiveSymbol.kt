@@ -7,8 +7,7 @@ import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolScope
-import com.intellij.util.containers.Stack
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -32,7 +31,7 @@ open class VueDirectiveSymbol(
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
       listOf(VueAnySymbol(this.origin, qualifiedName.qualifiedKind, qualifiedName.name))
@@ -42,7 +41,7 @@ open class VueDirectiveSymbol(
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedKind == VUE_DIRECTIVE_ARGUMENT) {
       listOf(VueAnySymbol(this.origin, qualifiedKind, "Vue directive argument"))

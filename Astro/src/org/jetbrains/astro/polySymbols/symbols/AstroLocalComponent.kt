@@ -8,14 +8,13 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.astroContentRoot
 import org.jetbrains.astro.codeInsight.frontmatterScript
@@ -35,12 +34,12 @@ class AstroLocalComponent(
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
       emptyList()
     else
-      super<PolySymbolScopeWithCache>.getMatchingSymbols(qualifiedName, params, scope)
+      super<PolySymbolScopeWithCache>.getMatchingSymbols(qualifiedName, params, stack)
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == ASTRO_COMPONENT_PROPS

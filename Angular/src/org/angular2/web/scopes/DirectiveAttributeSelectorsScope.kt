@@ -12,6 +12,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.MappedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -19,7 +20,6 @@ import com.intellij.polySymbols.utils.qualifiedName
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
@@ -38,7 +38,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_ELEMENTS)) {
       listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(file, qualifiedName.name))
@@ -85,9 +85,9 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
       }
     }
 
-    override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolCodeCompletionQueryParams, scope: Stack<PolySymbolScope>): List<PolySymbolCodeCompletionItem> =
+    override fun getCodeCompletions(qualifiedName: PolySymbolQualifiedName, params: PolySymbolCodeCompletionQueryParams, stack: PolySymbolQueryStack): List<PolySymbolCodeCompletionItem> =
       withTypeEvaluationLocation(dataHolder) {
-        super<PolySymbolScopeWithCache>.getCodeCompletions(qualifiedName, params, scope)
+        super<PolySymbolScopeWithCache>.getCodeCompletions(qualifiedName, params, stack)
           .filter { it.symbol.asSafely<Angular2StructuralDirectiveSymbol>()?.directive?.directiveKind?.isStructural != false }
       }
 

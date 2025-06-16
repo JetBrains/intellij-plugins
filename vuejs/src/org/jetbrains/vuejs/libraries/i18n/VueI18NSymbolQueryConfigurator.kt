@@ -12,13 +12,13 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.containers.Stack
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
@@ -61,7 +61,7 @@ class VueI18NSymbolQueryConfigurator : PolySymbolQueryConfigurator {
     override fun getSymbols(
       qualifiedKind: PolySymbolQualifiedKind,
       params: PolySymbolListSymbolsQueryParams,
-      scope: Stack<PolySymbolScope>,
+      stack: PolySymbolQueryStack,
     ): List<PolySymbol> {
       if (qualifiedKind == VUE_TOP_LEVEL_ELEMENTS) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)

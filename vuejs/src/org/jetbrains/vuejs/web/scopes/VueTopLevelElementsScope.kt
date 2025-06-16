@@ -7,9 +7,9 @@ import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
-import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 
 object VueTopLevelElementsScope : PolySymbolScope {
@@ -24,7 +24,7 @@ object VueTopLevelElementsScope : PolySymbolScope {
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedKind == HTML_ELEMENTS)
       listOf(referencingSymbol)

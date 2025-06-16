@@ -14,10 +14,7 @@ import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
-import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
@@ -25,7 +22,6 @@ import com.intellij.polySymbols.utils.merge
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
@@ -106,12 +102,12 @@ class VueWebTypesMergedSymbol(
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     symbols
       .asSequence()
       .flatMap { it.queryScope }
-      .flatMap { it.getMatchingSymbols(qualifiedName, params, scope) }
+      .flatMap { it.getMatchingSymbols(qualifiedName, params, stack) }
       .toList()
       .let { list ->
         val psiSourcedPolySymbol = list.firstNotNullOfOrNull { it as? PsiSourcedPolySymbol }
@@ -126,12 +122,12 @@ class VueWebTypesMergedSymbol(
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     symbols
       .asSequence()
       .flatMap { it.queryScope }
-      .flatMap { it.getSymbols(qualifiedKind, params, scope) }
+      .flatMap { it.getSymbols(qualifiedKind, params, stack) }
       .toList()
       .takeIf { it.isNotEmpty() }
       ?.let { list ->
@@ -162,11 +158,11 @@ class VueWebTypesMergedSymbol(
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbolCodeCompletionItem> =
     symbols.asSequence()
       .flatMap { it.queryScope }
-      .flatMap { it.getCodeCompletions(qualifiedName, params, scope) }
+      .flatMap { it.getCodeCompletions(qualifiedName, params, stack) }
       .groupBy { it.name }
       .values
       .map { items ->

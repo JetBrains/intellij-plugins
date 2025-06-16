@@ -12,15 +12,11 @@ import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.VueLocallyDefinedRegularComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -44,7 +40,7 @@ class VueComponentNamespaceSymbol(
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(source.project).modificationCount
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_JS_TYPE -> property.tryCast(type)
       else -> super.get(property)
@@ -77,7 +73,7 @@ class VueComponentNamespaceSymbol(
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (isNamespacedKind(qualifiedName.qualifiedKind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false)
       getMatchingJSPropertySymbols(qualifiedName.name, params.queryExecutor.namesProvider).adaptToNamespaceComponents(qualifiedName.kind)
@@ -87,7 +83,7 @@ class VueComponentNamespaceSymbol(
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (isNamespacedKind(qualifiedKind))
       getJSPropertySymbols().adaptToNamespaceComponents(qualifiedKind.kind)
@@ -137,26 +133,26 @@ class VueComponentNamespaceSymbol(
     override fun getMatchingSymbols(
       qualifiedName: PolySymbolQualifiedName,
       params: PolySymbolNameMatchQueryParams,
-      scope: Stack<PolySymbolScope>,
+      stack: PolySymbolQueryStack,
     ): List<PolySymbol> =
-      namespaceSymbol.getMatchingSymbols(qualifiedName, params, scope) +
-      super.getMatchingSymbols(qualifiedName, params, scope)
+      namespaceSymbol.getMatchingSymbols(qualifiedName, params, stack) +
+      super.getMatchingSymbols(qualifiedName, params, stack)
 
     override fun getSymbols(
       qualifiedKind: PolySymbolQualifiedKind,
       params: PolySymbolListSymbolsQueryParams,
-      scope: Stack<PolySymbolScope>,
+      stack: PolySymbolQueryStack,
     ): List<PolySymbol> =
-      namespaceSymbol.getSymbols(qualifiedKind, params, scope) +
-      super.getSymbols(qualifiedKind, params, scope)
+      namespaceSymbol.getSymbols(qualifiedKind, params, stack) +
+      super.getSymbols(qualifiedKind, params, stack)
 
     override fun getCodeCompletions(
       qualifiedName: PolySymbolQualifiedName,
       params: PolySymbolCodeCompletionQueryParams,
-      scope: Stack<PolySymbolScope>,
+      stack: PolySymbolQueryStack,
     ): List<PolySymbolCodeCompletionItem> =
-      namespaceSymbol.getCodeCompletions(qualifiedName, params, scope) +
-      super.getCodeCompletions(qualifiedName, params, scope)
+      namespaceSymbol.getCodeCompletions(qualifiedName, params, stack) +
+      super.getCodeCompletions(qualifiedName, params, stack)
 
     override fun equals(other: Any?): Boolean =
       other is VueNamespacedComponent && other.delegate == delegate

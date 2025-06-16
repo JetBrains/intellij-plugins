@@ -7,12 +7,11 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
-import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_PROVIDES
@@ -45,9 +44,9 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent)
   override fun getCodeCompletions(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
-    scope: Stack<PolySymbolScope>,
+    stack: PolySymbolQueryStack,
   ): List<PolySymbolCodeCompletionItem> {
-    return super.getCodeCompletions(qualifiedName, params, scope).filter {
+    return super.getCodeCompletions(qualifiedName, params, stack).filter {
       it.symbol.asSafely<VueProvideSymbol>()?.injectionKey == null
     }
   }
