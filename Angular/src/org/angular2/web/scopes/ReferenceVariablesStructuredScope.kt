@@ -13,7 +13,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolsStructuredScope
+import com.intellij.polySymbols.utils.PolySymbolStructuredScope
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType.REFERENCE
@@ -21,7 +21,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBlock
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
 import org.angular2.lang.html.psi.Angular2HtmlReference
 
-class ReferenceVariablesStructuredScope(location: PsiElement) : PolySymbolsStructuredScope<PsiElement, PsiFile>(location) {
+class ReferenceVariablesStructuredScope(location: PsiElement) : PolySymbolStructuredScope<PsiElement, PsiFile>(location) {
 
   override val rootPsiElement: PsiFile?
     get() = location.containingFile

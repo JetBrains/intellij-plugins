@@ -15,7 +15,7 @@ import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.FORM_ANY_CONTROL_NAME_ATTRIBUTES
 import org.angular2.library.forms.findFormGroupForGetCallParameter
 import org.angular2.library.forms.findFormGroupForGetCallParameterArray
-import org.angular2.library.forms.scopes.Angular2FormSymbolsScopeInAttributeValue
+import org.angular2.library.forms.scopes.Angular2FormSymbolScopeInAttributeValue
 import org.angular2.library.forms.scopes.resolveFormSymbolForGetCallArrayLiteral
 
 class Angular2FormsPolySymbolProblemQuickFixProvider : PolySymbolsProblemQuickFixProvider {
@@ -32,7 +32,7 @@ class Angular2FormsPolySymbolProblemQuickFixProvider : PolySymbolsProblemQuickFi
     if (element is XmlAttributeValue
         && element.parent.asSafely<XmlAttribute>()?.name in FORM_ANY_CONTROL_NAME_ATTRIBUTES
     ) {
-      val formGroup = Angular2FormSymbolsScopeInAttributeValue(element.parent as XmlAttribute)
+      val formGroup = Angular2FormSymbolScopeInAttributeValue(element.parent as XmlAttribute)
         .getNearestFormGroup()
       if (formGroup != null) {
         return listOf(CreateFormGroupPropertyQuickFix(

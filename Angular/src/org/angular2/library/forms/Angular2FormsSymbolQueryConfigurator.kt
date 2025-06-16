@@ -25,7 +25,7 @@ import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlFile
 import org.angular2.library.forms.scopes.Angular2FormGroupGetCallArrayLiteralScope
 import org.angular2.library.forms.scopes.Angular2FormGroupGetCallLiteralScope
-import org.angular2.library.forms.scopes.Angular2FormSymbolsScopeInAttributeValue
+import org.angular2.library.forms.scopes.Angular2FormSymbolScopeInAttributeValue
 
 class Angular2FormsSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
@@ -43,15 +43,15 @@ class Angular2FormsSymbolQueryConfigurator : PolySymbolQueryConfigurator {
           val name = attribute!!.name
           when (name) {
             FORM_CONTROL_NAME_ATTRIBUTE -> return listOf(
-              Angular2FormSymbolsScopeInAttributeValue(attribute),
+              Angular2FormSymbolScopeInAttributeValue(attribute),
               SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL),
             )
             FORM_ARRAY_NAME_ATTRIBUTE -> return listOf(
-              Angular2FormSymbolsScopeInAttributeValue(attribute),
+              Angular2FormSymbolScopeInAttributeValue(attribute),
               SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL),
             )
             FORM_GROUP_NAME_ATTRIBUTE -> return listOf(
-              Angular2FormSymbolsScopeInAttributeValue(attribute),
+              Angular2FormSymbolScopeInAttributeValue(attribute),
               SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL),
             )
           }

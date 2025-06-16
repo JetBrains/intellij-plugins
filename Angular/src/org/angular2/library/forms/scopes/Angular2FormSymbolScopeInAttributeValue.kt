@@ -6,7 +6,7 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolsQueryExecutorFactory
-import com.intellij.polySymbols.utils.PolySymbolsStructuredScope
+import com.intellij.polySymbols.utils.PolySymbolStructuredScope
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -25,7 +25,7 @@ import org.angular2.library.forms.impl.Angular2UnknownFormArray
 import org.angular2.library.forms.impl.Angular2UnknownFormControl
 import org.angular2.library.forms.impl.Angular2UnknownFormGroup
 
-class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : PolySymbolsStructuredScope<XmlAttribute, PsiFile>(attributeValue) {
+class Angular2FormSymbolScopeInAttributeValue(attributeValue: XmlAttribute) : PolySymbolStructuredScope<XmlAttribute, PsiFile>(attributeValue) {
 
   companion object {
     private const val PROP_SOURCE_SYMBOL = "source-symbol"
@@ -54,10 +54,10 @@ class Angular2FormSymbolsScopeInAttributeValue(attributeValue: XmlAttribute) : P
       )
     }
 
-  override fun createPointer(): Pointer<Angular2FormSymbolsScopeInAttributeValue> {
+  override fun createPointer(): Pointer<Angular2FormSymbolScopeInAttributeValue> {
     val locationPtr = location.createSmartPointer()
     return Pointer {
-      locationPtr.element?.let { Angular2FormSymbolsScopeInAttributeValue(it) }
+      locationPtr.element?.let { Angular2FormSymbolScopeInAttributeValue(it) }
     }
   }
 
