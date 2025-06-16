@@ -17,7 +17,7 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.isVueFile
 
-class VueFileContext : PolyContextProvider {
+class VueFileContextProvider : PolyContextProvider {
 
   override fun isEnabled(file: VirtualFile, project: Project): Boolean {
     return file.isVueFile

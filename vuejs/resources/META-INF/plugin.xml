@@ -271,7 +271,7 @@
                              implementationClass="org.jetbrains.vuejs.model.VueFakeScrAttributeValueManipulator"/>
 
     <polySymbols.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
-    <polySymbols.context kind="framework" name="vue" implementation="org.jetbrains.vuejs.context.VueFileContext"
+    <polySymbols.context kind="framework" name="vue" implementation="org.jetbrains.vuejs.context.VueFileContextProvider"
                         id="vue.file"/>
 
     <polySymbols.webTypes source="web-types/vue@1.0.0.web-types.json"/>
