@@ -60,9 +60,9 @@ internal class OpenReportAction : DumbAwareAction() {
     }
     FileChooser.chooseFile(descriptor, project, null) { file ->
       project.qodanaProjectScope.launch(QodanaDispatchers.Ui) {
-        if (openReportFromFileAndHighlight(project, file.toNioPath()) == null) return@launch
-
-        logHighlightStats(project)
+        if (openReportFromFileAndHighlight(project, file.toNioPath()) != null) {
+          logHighlightStats(project)
+        }
       }
     }
   }
