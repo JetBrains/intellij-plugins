@@ -1,3 +1,6 @@
 - name: lib/makefile.jar
   modules:
   - name: intellij.makefile
+- name: lib/modules/intellij.makefile.terminal.jar
+  contentModules:
+  - name: intellij.makefile.terminal

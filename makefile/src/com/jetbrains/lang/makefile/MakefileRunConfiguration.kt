@@ -22,7 +22,6 @@ import com.intellij.util.EnvironmentUtil
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import org.jdom.Element
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.plugins.terminal.LocalTerminalCustomizer
 import java.nio.file.Paths
 
 class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurationFactory, name: String) : LocatableConfigurationBase<RunProfileState>(project, factory, name) {
@@ -292,30 +291,12 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
   @RequiresEdt
   private fun customizeCommandAndEnvironment(command: Array<@NlsSafe String>,
                                              environment: MutableMap<@NlsSafe String, @NlsSafe String>): Array<@NlsSafe String> {
-    /*
-     * The result of last successful invocation, needed for the fail-safe scenario.
-     */
-    var lastCommand = command
+    val extensions = MakefileRunConfigurationCustomizer.EP_NAME.extensionList
+    if (extensions.size > 1) {
+      LOGGER.warn("Multiple ${MakefileRunConfigurationCustomizer::class.simpleName} extensions registered.")
+    }
 
-    return try {
-      LocalTerminalCustomizer.EP_NAME.extensionList.fold(command) { acc, customizer ->
-        try {
-          customizer.customizeCommandAndEnvironment(project, null, acc, environment)
-        }
-        catch (_: Throwable) {
-          acc
-        }.also {
-          /*
-           * Remember the result of last successful invocation.
-           */
-          lastCommand = it
-        }
-      }
-    }
-    catch (_: Throwable) {
-      // optional dependency
-      lastCommand
-    }
+    return extensions.firstOrNull()?.customizeCommandAndEnvironment(project, command, environment) ?: command
   }
 
   @RequiresEdt

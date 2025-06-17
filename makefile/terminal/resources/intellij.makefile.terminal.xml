@@ -1,0 +1,9 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="org.jetbrains.plugins.terminal"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij.makefile">
+    <runConfigurationCustomizer implementation="com.intellij.makefile.terminal.TerminalRunConfigurationCustomizer"/>
+  </extensions>
+</idea-plugin>
