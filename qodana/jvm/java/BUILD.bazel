@@ -1,4 +1,5 @@
 ### auto-generated section `build intellij.qodana.jvm.java` start
+load("@community//build:tests-options.bzl", "jps_test")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
 
 jvm_resources(
@@ -86,7 +87,7 @@ jvm_library(
   runtime_deps = [":java_resources"]
 )
 
-jvm_test(
+jps_test(
   name = "java_test",
   runtime_deps = [":java_test_lib"]
 )
