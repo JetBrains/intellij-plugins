@@ -61,6 +61,7 @@ jvm_library(
     "@community//jps/model-api:model",
     "@community//platform/lang-api:lang",
     "@community//platform/core-impl",
+    "@community//platform/lang-core",
     "@community//platform/lang-impl",
     "@lib//:guava",
     "@community//platform/code-style-impl:codeStyle-impl",

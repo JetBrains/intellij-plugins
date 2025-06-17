@@ -23,6 +23,7 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//jps/model-api:model",
+    "@community//platform/lang-core",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/refactoring",
     "@community//platform/usageView-impl",

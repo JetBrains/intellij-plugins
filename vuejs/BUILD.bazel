@@ -34,6 +34,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",
+    "@community//platform/lang-core",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/refactoring",
     "@community//platform/workspace/storage",
