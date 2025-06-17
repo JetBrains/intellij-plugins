@@ -3,6 +3,7 @@ package org.angular2.lang.expr.service
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.highlighter.HtmlFileType
+import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
@@ -37,6 +38,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
+import com.intellij.polySymbols.context.PolyContext
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -47,7 +49,6 @@ import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.ui.EDT
-import com.intellij.polySymbols.context.PolyContext
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
@@ -316,6 +317,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeToJSType(
         transpiledFile.originalFile, null, Angular2GetGeneratedElementTypeCommand(args))
     }
+
+    override fun isEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): Boolean = true
   }
 
   private fun commitDocuments(virtualFile: VirtualFile) {
