@@ -31,6 +31,11 @@ jvm_library(
     "//contrib/qodana/sarif",
     "@community//java/java-psi-impl:psi-impl",
     "@community//platform/backend/observation",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/vcs-impl",
+    "@community//platform/util/coroutines",
+    "@community//platform/backend/workspace",
+    "@community//platform/workspace/storage",
   ],
   runtime_deps = [":java_resources"]
 )
@@ -69,6 +74,12 @@ jvm_library(
     "@community//java/java-psi-impl:psi-impl",
     "@community//platform/backend/observation",
     "@community//platform/backend/observation:observation_test_lib",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/vcs-impl",
+    "@community//platform/vcs-impl:vcs-impl_test_lib",
+    "@community//platform/util/coroutines",
+    "@community//platform/backend/workspace",
+    "@community//platform/workspace/storage",
   ],
   runtime_deps = [":java_resources"]
 )
