@@ -31,7 +31,7 @@ class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
 
   fun `test jenkins file with qodana`() = runDispatchingOnUi {
     val checker = JenkinsCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isNotNull
     assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
@@ -39,7 +39,7 @@ class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
 
   fun `test jenkins file without qodana`() = runDispatchingOnUi {
     val checker = JenkinsCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isNotNull
     assertThat(presentFile).isInstanceOf(CIFile.ExistingSingleInstance::class.java)

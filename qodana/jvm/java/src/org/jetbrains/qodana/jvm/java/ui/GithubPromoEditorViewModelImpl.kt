@@ -17,7 +17,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.util.coroutines.childScope
-import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.intellij.vcsUtil.VcsFileUtil.addFilesToVcsWithConfirmation
 import kotlinx.coroutines.CoroutineScope
@@ -49,13 +48,14 @@ internal val GITHUB_PROMO_EDITOR_VIEW_MODEL_KEY = Key.create<Lazy<GithubPromoEdi
 
 class GithubPromoEditorViewModelImpl(
   private val project: Project,
-  private val fileEditor: FileEditor,
-  private val provider: QodanaGithubCIPromoNotificationProvider
+  private val fileEditor: FileEditor
 ): GithubPromoEditorViewModel {
 
-  private val banner: MutableStateFlow<EditorNotificationPanel?> = MutableStateFlow(null)
+  private val scope: CoroutineScope = project.qodanaProjectScope.childScope("GithubPromoEditorViewModel")
+
+  private val bannerViewModel: MutableStateFlow<GithubPromoBannerViewModelImpl?> = MutableStateFlow(null)
   @OptIn(FlowPreview::class)
-  private val isProjectAJavaProjectFlow = flow {
+  private val isProjectAJavaProjectFlow: Flow<Boolean> = flow {
     project.serviceAsync<WorkspaceModel>()
       .eventLog
       .debounce(JAVA_CHECK_DEBOUNCE)
@@ -64,10 +64,10 @@ class GithubPromoEditorViewModelImpl(
       }
   }
 
-  private val isNotificationEnabledFlow = project.service<QodanaGithubPromoNotificationProjectDismissalState>().dismissedState
+  private val isNotificationEnabledFlow: Flow<Boolean> = project.service<QodanaGithubPromoNotificationProjectDismissalState>().dismissedState
       .combine(service<QodanaGithubPromoNotificationApplicationDismissalState>().dismissedState) { p, a -> !p && !a }
 
-  private val isGithubWorkflowExistsAndWithoutQodana = GitHubCIFileChecker(project).ciFileFlow.map {
+  private val isGithubWorkflowExistsAndWithoutQodana: Flow<Boolean> = GitHubCIFileChecker(project).ciFileFlow.map {
     it is CIFile.ExistingMultipleInstances
   }
 
@@ -76,12 +76,12 @@ class GithubPromoEditorViewModelImpl(
     val isDisposableRegistered = Disposer.tryRegister(fileEditor, disposable)
     if (!isDisposableRegistered) {
       Disposer.dispose(disposable)
+      scope.cancel()
     } else {
-      val scope = project.qodanaProjectScope.childScope("GithubPromoEditorViewModel")
       disposable.whenDisposed {
         scope.cancel()
       }
-      init(scope)
+      init()
     }
   }
 
@@ -107,7 +107,7 @@ class GithubPromoEditorViewModelImpl(
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
-  private fun init(scope: CoroutineScope) {
+  private fun init() {
     scope.launch {
       val conditionFlows = listOf(
         isNotificationEnabledFlow,
@@ -116,36 +116,40 @@ class GithubPromoEditorViewModelImpl(
       )
       constructControlFlow(conditionFlows).collect { check ->
         if (check) {
-          banner.value = createNotificationPanel()
-          EditorNotifications.getInstance(project).updateNotifications(fileEditor.file)
+          bannerViewModel.value = GithubPromoBannerViewModelImpl(project, this@GithubPromoEditorViewModelImpl, scope)
         } else {
-          banner.value = null
-          EditorNotifications.getInstance(project).removeNotificationsForProvider(provider)
+          bannerViewModel.value = null
         }
+      }
+    }
+    scope.launch {
+      bannerViewModel.collect {
+        EditorNotifications.getInstance(project).updateNotifications(fileEditor.file)
       }
     }
   }
 
-  private fun createNotificationPanel(): EditorNotificationPanel =
-    GithubPromoNotificationBanner(project, fileEditor, this)
+  override fun getNotificationBannerViewModel(): GithubPromoBannerViewModelImpl? = bannerViewModel.value
 
-  override fun getNotificationBanner(): EditorNotificationPanel? = banner.value
-
-  override suspend fun notifySuccessfulWorkflowAddition(files: GithubPromoEditorViewModel.CreatedFiles) {
-    withContext(Dispatchers.EDT) {
-      FileEditorManager.getInstance(project).openFile(files.workflowFile, true)
+  override fun notifySuccessfulWorkflowAddition(files: GithubPromoEditorViewModel.CreatedFiles) {
+    scope.launch {
+      withContext(Dispatchers.EDT) {
+        FileEditorManager.getInstance(project).openFile(files.workflowFile, true)
+      }
+      addFilesToVcsWithConfirmation(project, listOfNotNull(files.workflowFile, files.qodanaYamlFile))
     }
-    addFilesToVcsWithConfirmation(project, listOfNotNull(files.workflowFile, files.qodanaYamlFile))
   }
 
   override fun notifyFailedWorkflowAddition() {
-    val notification = QodanaNotifications.General.notification(
-      QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.title"),
-    QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.text"),
-    NotificationType.ERROR,
-    withQodanaIcon = false
-    )
-    notification.notify(project)
+    scope.launch {
+      val notification = QodanaNotifications.General.notification(
+        QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.title"),
+        QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.text"),
+        NotificationType.ERROR,
+        withQodanaIcon = false
+      )
+      notification.notify(project)
+    }
   }
 
   private fun isJavaProject(): Boolean {

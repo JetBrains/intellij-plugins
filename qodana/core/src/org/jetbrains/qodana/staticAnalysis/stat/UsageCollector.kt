@@ -256,16 +256,15 @@ object UsageCollector : CounterUsagesCollector() {
   }
 
   suspend fun logPromoGithubConfigPresent(project: Project) {
-    GitHubCIFileChecker(project).ciFileFlow.filter { it !is CIFile.InitRequest }.firstOrNull().let { ciFile ->
-      if (ciFile is CIFile.ExistingWithQodana) {
-        try {
-          val ciFileText = withContext(QodanaDispatchers.IO) { ciFile.virtualFile?.readText() }
-          if (ciFileText?.contains(DefaultQodanaGithubWorkflowBuilder.PROMO_HEADER_TEXT) == true) {
-            qodanaGithubPromoWorkflowUsed.log()
-          }
-        } catch (e: IOException) {
-          Logger.getInstance(UsageCollector::class.java).warn("Couldn't read the contents of CI file", e)
+    GitHubCIFileChecker(project).ciFileFlow.filter { it !is CIFile.NotInitialized }.firstOrNull().let { ciFile ->
+      if (ciFile !is CIFile.ExistingWithQodana) return@let
+      try {
+        val ciFileText = withContext(QodanaDispatchers.IO) { ciFile.virtualFile?.readText() }
+        if (ciFileText?.contains(DefaultQodanaGithubWorkflowBuilder.PROMO_HEADER_TEXT) == true) {
+          qodanaGithubPromoWorkflowUsed.log()
         }
+      } catch (e: IOException) {
+        Logger.getInstance(UsageCollector::class.java).warn("Couldn't read the contents of CI file", e)
       }
     }
   }
