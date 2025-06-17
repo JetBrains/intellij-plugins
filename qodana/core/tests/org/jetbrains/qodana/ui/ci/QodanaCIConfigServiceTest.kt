@@ -88,42 +88,42 @@ class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
 
   fun `test gitlab file with qodana`() = runDispatchingOnUi {
     val checker = GitLabCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
   }
 
   fun `test gitlab file without qodana`() = runDispatchingOnUi {
     val checker = GitLabCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingSingleInstance::class.java)
   }
 
   fun `test gitlab no file`() = runDispatchingOnUi {
     val checker = GitLabCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.NotExisting::class.java)
   }
 
   fun `test github file with qodana`() = runDispatchingOnUi {
     val checker = GitHubCIFileChecker(project)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
   }
 
   fun `test github file without qodana`() = runDispatchingOnUi {
     val checker = GitHubCIFileChecker(project)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingMultipleInstances::class.java)
   }
 
   fun `test github no file`() = runDispatchingOnUi {
     val checker = GitHubCIFileChecker(project)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.NotExisting::class.java)
   }
@@ -132,98 +132,98 @@ class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
     ExtensionTestUtil.maskExtensions(JenkinsConfigHandler.EP_NAME, listOf(), testRootDisposable)
 
     val checker = JenkinsCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingSingleInstance::class.java)
   }
 
   fun `test jenkins no file`() = runDispatchingOnUi {
     val checker = JenkinsCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.NotExisting::class.java)
   }
 
   fun `test azure file with qodana`() = runDispatchingOnUi {
     val checker = AzurePipelinesCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
   }
 
   fun `test azure file without qodana`() = runDispatchingOnUi {
     val checker = AzurePipelinesCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingSingleInstance::class.java)
   }
 
   fun `test azure no file`() = runDispatchingOnUi {
     val checker = AzurePipelinesCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.NotExisting::class.java)
   }
 
   fun `test circleci file with qodana`() = runDispatchingOnUi {
     val checker = CircleCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
   }
 
   fun `test circleci file without qodana`() = runDispatchingOnUi {
     val checker = CircleCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingSingleInstance::class.java)
   }
 
   fun `test circleci no file`() = runDispatchingOnUi {
     val checker = CircleCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.NotExisting::class.java)
   }
 
   fun `test bitbucket file with qodana`() = runDispatchingOnUi {
     val checker = BitbucketCIFIleChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
   }
 
   fun `test bitbucket file without qodana`() = runDispatchingOnUi {
     val checker = BitbucketCIFIleChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingSingleInstance::class.java)
   }
 
   fun `test bitbucket no file`() = runDispatchingOnUi {
     val checker = BitbucketCIFIleChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.NotExisting::class.java)
   }
 
   fun `test space file with qodana`() = runDispatchingOnUi {
     val checker = SpaceAutomationCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
   }
 
   fun `test space file without qodana`() = runDispatchingOnUi {
     val checker = SpaceAutomationCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.ExistingSingleInstance::class.java)
   }
 
   fun `test space no file`() = runDispatchingOnUi {
     val checker = SpaceAutomationCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.InitRequest }.first()
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
 
     assertThat(presentFile).isInstanceOf(CIFile.NotExisting::class.java)
   }

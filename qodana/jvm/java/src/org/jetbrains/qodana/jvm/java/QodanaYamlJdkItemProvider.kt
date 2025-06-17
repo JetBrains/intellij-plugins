@@ -6,9 +6,8 @@ import com.intellij.openapi.projectRoots.JavaSdkVersionUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.settings.APPLIED_IN_CI_COMMENT
-import org.jetbrains.qodana.settings.DefaultQodanaItemContext
+import org.jetbrains.qodana.settings.DefaultQodanaYamlContext
 import org.jetbrains.qodana.settings.QodanaYamlItem
-import org.jetbrains.qodana.settings.QodanaYamlItemContext
 import org.jetbrains.qodana.settings.QodanaYamlItemProvider
 
 class QodanaYamlJdkItemProvider : QodanaYamlItemProvider {
@@ -16,8 +15,7 @@ class QodanaYamlJdkItemProvider : QodanaYamlItemProvider {
     private const val ID = "jdk"
   }
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     val projectJdk = ProjectRootManager.getInstance(project).projectSdk
     if (projectJdk?.sdkType !is JavaSdkType) return null
 

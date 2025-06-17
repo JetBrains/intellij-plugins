@@ -6,11 +6,14 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
-/**
- * Used to determine which QodanaYamlItems should be provided in [QodanaYamlItemProvider.provideAll]
- * Should be used in [QodanaYamlItemProvider.provide]
- */
-sealed interface QodanaYamlItemContext
+enum class LinterUsed {
+  GITHUB_PROMO,
+  DEFAULT
+}
+
+class DefaultQodanaYamlContext(
+  val linterUsed: LinterUsed = LinterUsed.DEFAULT
+)
 class QodanaYamlItem(
   val id: String,
   val weight: Int,
@@ -21,7 +24,7 @@ interface QodanaYamlItemProvider {
   companion object {
     private val EP = ExtensionPointName<QodanaYamlItemProvider>("org.intellij.qodana.qodanaYamlItemProvider")
 
-    suspend fun provideAll(project: Project, context: QodanaYamlItemContext): List<QodanaYamlItem> {
+    suspend fun provideAll(project: Project, context: DefaultQodanaYamlContext): List<QodanaYamlItem> {
       return coroutineScope {
         EP.extensionList.map {
           async { it.provide(project, context) }
@@ -30,5 +33,5 @@ interface QodanaYamlItemProvider {
     }
   }
 
-  suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem?
+  suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem?
 }

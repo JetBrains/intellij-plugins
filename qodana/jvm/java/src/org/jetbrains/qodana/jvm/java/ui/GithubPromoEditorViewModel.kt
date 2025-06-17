@@ -1,7 +1,6 @@
 package org.jetbrains.qodana.jvm.java.ui
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.EditorNotificationPanel
 
 interface GithubPromoEditorViewModel {
 
@@ -20,9 +19,9 @@ interface GithubPromoEditorViewModel {
     val qodanaYamlFile: VirtualFile?,
   )
 
-  fun getNotificationBanner(): EditorNotificationPanel?
+  fun getNotificationBannerViewModel(): GithubPromoBannerViewModelImpl?
 
-  suspend fun notifySuccessfulWorkflowAddition(files: CreatedFiles)
+  fun notifySuccessfulWorkflowAddition(files: CreatedFiles)
 
   fun notifyFailedWorkflowAddition()
 }

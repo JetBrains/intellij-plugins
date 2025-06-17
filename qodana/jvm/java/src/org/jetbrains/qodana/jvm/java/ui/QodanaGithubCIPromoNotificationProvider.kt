@@ -20,9 +20,11 @@ class QodanaGithubCIPromoNotificationProvider: EditorNotificationProvider, DumbA
         fileEditor !is UserDataHolderEx -> null
         !isGithubActionsFile(file) -> null
         else -> {
-          val newViewModel = lazy { GithubPromoEditorViewModelImpl(project, fileEditor, this) }
+          val newViewModel = lazy { GithubPromoEditorViewModelImpl(project, fileEditor) }
           val viewModel = fileEditor.putUserDataIfAbsent(GITHUB_PROMO_EDITOR_VIEW_MODEL_KEY, newViewModel).value
-          viewModel.getNotificationBanner()?.also { logGithubPromoNotificationShown(project) }
+          viewModel.getNotificationBannerViewModel()
+            ?.let { GithubPromoNotificationBanner(it) }
+            ?.also { logGithubPromoNotificationShown(project) }
         }
       }
     }

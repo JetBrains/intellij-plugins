@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 internal class QodanaGithubPromoNotificationApplicationDismissalState(): BaseQodanaGithubPromoNotificationDismissalState()
 
 @Service(Service.Level.PROJECT)
-@State(name = "QodanaGithubNotificationPromoProjectDismissalState", storages = [Storage(value = "qodana.xml")])
+@State(name = "QodanaGithubNotificationPromoProjectDismissalState", storages = [Storage(value = "workspace.xml")])
 internal class QodanaGithubPromoNotificationProjectDismissalState(): BaseQodanaGithubPromoNotificationDismissalState()
 
 

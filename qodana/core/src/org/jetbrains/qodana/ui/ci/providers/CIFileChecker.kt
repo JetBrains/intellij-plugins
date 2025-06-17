@@ -48,7 +48,7 @@ internal fun createRefreshSingleCIFile(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal fun createCIFileFlow(scope: CoroutineScope, refreshCIFile: suspend () -> CIFile): Flow<CIFile> {
-  val flow = MutableStateFlow<CIFile>(CIFile.InitRequest)
+  val flow = MutableStateFlow<CIFile>(CIFile.NotInitialized)
   scope.launch(QodanaDispatchers.Default) {
     flow
       .flatMapLatest { it.refreshRequestFlow }

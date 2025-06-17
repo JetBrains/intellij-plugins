@@ -90,7 +90,7 @@ sealed interface CIFile {
   /**
    * Mock CIFile for initialisation of flow
    */
-  object InitRequest : CIFile {
+  object NotInitialized : CIFile {
     override val path: String = ""
     override val refreshRequestFlow: Flow<RefreshRequest> = flowOf(RefreshRequest)
   }

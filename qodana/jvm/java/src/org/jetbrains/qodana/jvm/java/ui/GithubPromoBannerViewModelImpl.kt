@@ -17,8 +17,8 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.findQodanaConfigVirtualFile
 import org.jetbrains.qodana.jvm.java.QodanaGithubPromoNotificationApplicationDismissalState
 import org.jetbrains.qodana.jvm.java.QodanaGithubPromoNotificationProjectDismissalState
-import org.jetbrains.qodana.settings.DefaultQodanaItemContext
 import org.jetbrains.qodana.settings.DefaultQodanaYamlBuilder
+import org.jetbrains.qodana.settings.DefaultQodanaYamlContext
 import org.jetbrains.qodana.settings.LinterUsed
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
 import org.jetbrains.qodana.stats.logGithubPromoAddQodanaWorkflowEvent
@@ -84,7 +84,7 @@ class GithubPromoBannerViewModelImpl(
   }
   private suspend fun addQodanaYaml(): VirtualFile? {
     return try {
-      val yamlFileContents = DefaultQodanaYamlBuilder(project).build(DefaultQodanaItemContext(linterUsed = LinterUsed.GITHUB_PROMO))
+      val yamlFileContents = DefaultQodanaYamlBuilder(project).build(DefaultQodanaYamlContext(linterUsed = LinterUsed.GITHUB_PROMO))
       val projectPath = project.guessProjectDir()?.toNioPath()
       if (projectPath == null) {
         LOG.warn("Failed to create Qodana YAML file because project path is null")

@@ -27,22 +27,12 @@ import kotlin.io.path.Path
 
 const val APPLIED_IN_CI_COMMENT = "(Applied in CI/CD pipeline)"
 
-enum class LinterUsed {
-  GITHUB_PROMO,
-  DEFAULT
-}
-
-class DefaultQodanaItemContext(
-  val linterUsed: LinterUsed = LinterUsed.DEFAULT
-): QodanaYamlItemContext
-
 class QodanaYamlHeaderItemProvider : QodanaYamlItemProvider {
   companion object {
     const val ID = "header"
   }
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     @Language("YAML")
     val content = """
       #-------------------------------------------------------------------------------#
@@ -59,8 +49,7 @@ class QodanaYamlVersionItemProvider : QodanaYamlItemProvider {
     const val ID = "version"
   }
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     @Language("YAML")
     val content = "version: \"1.0\""
     return QodanaYamlItem(ID, 0, content)
@@ -72,8 +61,7 @@ class QodanaYamlProfileItemProvider : QodanaYamlItemProvider {
     const val ID: String = "profile"
   }
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     val profileName = getProjectCustomProfileName(project) ?: QodanaEmbeddedProfile.QODANA_STARTER.profileName
     @Language("YAML")
     val content = """
@@ -140,8 +128,7 @@ class QodanaYamlIncludeItemProvider : QodanaYamlItemProvider {
     const val ID = "include"
   }
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     @Language("YAML")
     val content = """
       
@@ -158,8 +145,7 @@ class QodanaYamlExcludeItemProvider : QodanaYamlItemProvider {
     const val ID = "exclude"
   }
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     @Language("YAML")
     val content = """
       
@@ -178,8 +164,7 @@ class QodanaYamlBootstrapItemProvider : QodanaYamlItemProvider {
     const val ID = "bootstrap"
   }
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     @Language("YAML")
     val content = """
       
@@ -195,8 +180,7 @@ class QodanaYamlPluginItemProvider : QodanaYamlItemProvider {
     const val ID = "plugins"
   }
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     @Language("YAML")
     val content = """
       
@@ -213,8 +197,7 @@ class QodanaYamlFailureConditionsItemProvider : QodanaYamlItemProvider {
     const val ID = "failureConditions"
   }
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     @Language("YAML")
     val content = """
       
@@ -261,8 +244,7 @@ class QodanaYamlLinterItemProvider : QodanaYamlItemProvider {
     linter: ${getQodanaImageNameMatchingIDE(useVersionPostfix = true)}
   """.trimIndent()
 
-  override suspend fun provide(project: Project, context: QodanaYamlItemContext): QodanaYamlItem? {
-    if (context !is DefaultQodanaItemContext) return null
+  override suspend fun provide(project: Project, context: DefaultQodanaYamlContext): QodanaYamlItem? {
     if (ApplicationInfo.getInstance().build.productCode == "RD") {
       return QodanaYamlItem(ID, 1, dotnetContent)
     }
