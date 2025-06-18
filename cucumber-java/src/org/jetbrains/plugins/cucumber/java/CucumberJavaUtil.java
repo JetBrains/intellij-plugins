@@ -328,6 +328,9 @@ public final class CucumberJavaUtil {
     return null;
   }
 
+  /// Adds `glue` to the `glues` set if it isn't already covered by one of `glues`.
+  ///
+  /// Returns if the `glue` was added to the `glues` set.
   public static boolean addGlue(String glue, Set<String> glues) {
     boolean covered = false;
     final Set<String> toRemove = new HashSet<>();
