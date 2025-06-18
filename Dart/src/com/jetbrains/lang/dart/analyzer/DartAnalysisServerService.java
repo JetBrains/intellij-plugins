@@ -592,8 +592,6 @@ public final class DartAnalysisServerService implements Disposable {
     myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
     myShowServerProgressAlarm = new Alarm(this);
     myServerErrorHandler = new DartAnalysisServerErrorHandler(project);
-
-    DartClosingLabelManager.getInstance().addListener(this::handleClosingLabelPreferenceChanged, this);
   }
 
   public @NotNull CoroutineScope getServiceScope() {
@@ -821,10 +819,6 @@ public final class DartAnalysisServerService implements Disposable {
     return myDisposedCondition;
   }
 
-  private void handleClosingLabelPreferenceChanged() {
-    analysis_setSubscriptions();
-  }
-
   public @Nullable AvailableSuggestionSet getAvailableSuggestionSet(int id) {
     return myServerData.getAvailableSuggestionSet(id);
   }
@@ -859,6 +853,10 @@ public final class DartAnalysisServerService implements Disposable {
 
   public @NotNull List<DartServerData.DartRegion> getImplementedMembers(final @NotNull VirtualFile file) {
     return myServerData.getImplementedMembers(file);
+  }
+
+  public @NotNull List<DartServerData.DartClosingLabel> getClosingLabels(final @NotNull VirtualFile file) {
+    return myServerData.getClosingLabels(file);
   }
 
   @Contract("null -> null")
@@ -1943,8 +1941,7 @@ public final class DartAnalysisServerService implements Disposable {
       if (StringUtil.compareVersionNumbers(mySdkVersion, "1.13") >= 0) {
         subscriptions.put(AnalysisService.IMPLEMENTED, myVisibleFileUris);
       }
-      if (DartClosingLabelManager.getInstance().getShowClosingLabels()
-          && StringUtil.compareVersionNumbers(mySdkVersion, "1.25.0") >= 0) {
+      if (StringUtil.compareVersionNumbers(mySdkVersion, "1.25.0") >= 0) {
         subscriptions.put(AnalysisService.CLOSING_LABELS, myVisibleFileUris);
       }
 

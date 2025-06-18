@@ -161,6 +161,16 @@
     <codeInsight.template.postfixTemplateProvider language="Dart"
        implementationClass="com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider"/>
 
+    <codeInsight.declarativeInlayProvider language="Dart"
+                                          implementationClass="com.jetbrains.lang.dart.hints.DartInlayHintsProvider"
+                                          isEnabledByDefault="true"
+                                          group="OTHER_GROUP"
+                                          providerId="dart.closing.labels"
+                                          bundle="messages.DartBundle"
+                                          nameKey="dart.inlay.hints.closing.labels.name"
+                                          descriptionKey="dart.inlay.hints.closing.labels.description">
+    </codeInsight.declarativeInlayProvider>
+
     <lang.surroundDescriptor language="Dart"
                              implementationClass="com.jetbrains.lang.dart.ide.surroundWith.DartExpressionSurroundDescriptor"/>
     <lang.surroundDescriptor language="Dart"
@@ -242,7 +252,6 @@
     <backgroundPostStartupActivity implementation="com.jetbrains.lang.dart.DartStartupActivity"/>
     <vfs.asyncListener implementation="com.jetbrains.lang.dart.DartFileListener"/>
 
-    <editorAppearanceConfigurable instance="com.jetbrains.lang.dart.analyzer.DartEditorAppearanceConfigurable"/>
     <search.optionContributor implementation="com.jetbrains.lang.dart.DartSearchableOptionContributor"/>
 
     <lang.syntaxHighlighter language="Dart in Html" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighter"/>
