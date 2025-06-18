@@ -60,7 +60,6 @@ class Angular2FormsAnnotator : Annotator {
     val isNumber = text.toIntOrNull() != null
     holder.newSilentAnnotationWithDebugInfo(HighlightInfoType.SYMBOL_TYPE_SEVERITY, if (isNumber) "form array control" else "form control")
       .range(textRange)
-      .needsUpdateOnTyping()
       .textAttributes(if (isNumber) TypeScriptHighlighter.TS_NUMBER else TypeScriptHighlighter.TS_INSTANCE_MEMBER_VARIABLE)
       .create()
   }

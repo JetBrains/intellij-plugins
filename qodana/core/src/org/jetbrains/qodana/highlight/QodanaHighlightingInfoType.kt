@@ -6,11 +6,4 @@ import org.jetbrains.qodana.problem.SarifProblem
 class QodanaHighlightingInfoType(
   val sarifProblem: SarifProblem,
   private val originalType: HighlightInfoType
-) : HighlightInfoType by originalType, HighlightInfoType.UpdateOnTypingSuppressible {
-  override fun needsUpdateOnTyping() =
-    if (originalType is HighlightInfoType.UpdateOnTypingSuppressible) {
-      originalType.needsUpdateOnTyping()
-    } else {
-      false
-    }
-}
+) : HighlightInfoType by originalType

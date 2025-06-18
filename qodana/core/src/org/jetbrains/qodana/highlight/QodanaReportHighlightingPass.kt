@@ -202,7 +202,6 @@ internal class QodanaReportHighlightingPass(
 
     val highlight = builder
       .range(textRange)
-      .needsUpdateOnTyping(true)
       .description(description)
       .escapedToolTip(tooltip)
       .create()
