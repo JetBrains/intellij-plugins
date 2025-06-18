@@ -2,15 +2,12 @@
 package org.jetbrains.astro.polySymbols
 
 import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.NAMESPACE_HTML
-import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
-import com.intellij.polySymbols.query.PolySymbolScope
-import com.intellij.psi.PsiElement
+import com.intellij.polySymbols.query.PolySymbolQueryScopeContributor
+import com.intellij.polySymbols.query.PolySymbolQueryScopeProviderRegistrar
 import com.intellij.psi.css.CssElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
@@ -35,34 +32,36 @@ val ASTRO_SCRIPT_STYLE_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualified
 
 val PROP_ASTRO_PROXIMITY: PolySymbolProperty<AstroProximity> = PolySymbolProperty["x-astro-proximity"]
 
-class AstroSymbolQueryConfigurator : PolySymbolQueryConfigurator {
+class AstroSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
+  override fun registerProviders(registrar: PolySymbolQueryScopeProviderRegistrar) {
+    registrar
+      .inFile(AstroFileImpl::class.java)
+      .inContext { it.framework == AstroFramework.ID }
+      .apply {
+        // Default scopes
+        forAnyPsiLocation()
+          .contributeScopeProvider {
+            mutableListOf(AstroFrontmatterScope(it.containingFile as AstroFileImpl),
+                          AstroAvailableComponentsScope(it.project))
+          }
 
-  override fun getScope(project: Project, location: PsiElement?, context: PolyContext, allowResolve: Boolean): List<PolySymbolScope> {
-    if (context.framework != AstroFramework.ID || location?.containingFile !is AstroFileImpl) return emptyList()
-    return when (location) {
-      is CssElement -> calculateCssScopes(location)
-      is JSElement -> calculateJsScopes(location)
-      else -> calculateDefaultScopes(location)
-    }
+        // AstroStyleDefineVarsScope
+        forPsiLocation(CssElement::class.java)
+          .contributeScopeProvider { location ->
+            location.parentOfType<XmlTag>()
+              ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.STYLE_TAG_NAME) }
+              ?.let { listOf(AstroStyleDefineVarsScope(it)) }
+            ?: emptyList()
+          }
+
+        // AstroScriptDefineVarsScope
+        forPsiLocation(JSElement::class.java)
+          .contributeScopeProvider { location ->
+            location.parentOfType<XmlTag>()
+              ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.SCRIPT_TAG_NAME) }
+              ?.let { listOf(AstroScriptDefineVarsScope(it)) }
+            ?: emptyList()
+          }
+      }
   }
-
-  private fun calculateCssScopes(location: CssElement): MutableList<PolySymbolScope> {
-    val result = calculateDefaultScopes(location)
-    location.parentOfType<XmlTag>()
-      ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.STYLE_TAG_NAME) }
-      ?.let { result.add(AstroStyleDefineVarsScope(it)) }
-    return result
-  }
-
-  private fun calculateJsScopes(location: JSElement): MutableList<PolySymbolScope> {
-    val result = calculateDefaultScopes(location)
-    location.parentOfType<XmlTag>()
-      ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.SCRIPT_TAG_NAME) }
-      ?.let { result.add(AstroScriptDefineVarsScope(it)) }
-    return result
-  }
-
-  private fun calculateDefaultScopes(location: PsiElement): MutableList<PolySymbolScope> =
-    mutableListOf(AstroFrontmatterScope(location.containingFile as AstroFileImpl),
-                  AstroAvailableComponentsScope(location.project))
 }
