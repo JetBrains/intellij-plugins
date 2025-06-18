@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ex.InspectionMetaInformationService
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.components.service
+import com.intellij.util.PlatformUtils
 import com.jetbrains.qodana.sarif.model.*
 import org.jdom.Element
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV2
@@ -140,6 +141,10 @@ object ElementToSarifConverter {
       ?.takeUnless { it.isEmpty() }
 
   private fun getLogicalLocation(problem: Element): Set<LogicalLocation>? {
+    if (PlatformUtils.isCLion()) {
+      return null  // module name is meaningless in CLion
+    }
+
     val module = problem.getChildText(MODULE)
     if (module != null) {
       return setOf(LogicalLocation().withFullyQualifiedName(module).withKind("module"))
