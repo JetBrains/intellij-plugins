@@ -1,10 +1,9 @@
 package org.angular2.library.forms
 
+import com.intellij.javascript.polySymbols.JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS
 import com.intellij.lang.javascript.JSLanguageDialect
-import com.intellij.lang.javascript.patterns.JSPatterns
 import com.intellij.lang.javascript.psi.*
 import com.intellij.model.Pointer
-import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
@@ -16,7 +15,6 @@ import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.psi.xml.XmlElement
 import com.intellij.util.asSafely
 import org.angular2.Angular2Framework
 import org.angular2.lang.expr.Angular2Language
@@ -29,48 +27,41 @@ class Angular2FormsSymbolQueryScopeContributor : PolySymbolQueryScopeContributor
 
   override fun registerProviders(registrar: PolySymbolQueryScopeProviderRegistrar) {
     registrar
-      .forPsiLocation(
-        psiElement(XmlElement::class.java)
-          .andOr(psiElement(XmlAttribute::class.java), psiElement(XmlAttributeValue::class.java))
-          .inFile(psiFile(Angular2HtmlFile::class.java))
-      )
       .inContext { it.framework == Angular2Framework.ID }
-      .contributeScopeProvider { location ->
-        val attribute = location.parentOfType<XmlAttribute>(true)
-        val name = attribute!!.name
-        when (name) {
-          FORM_CONTROL_NAME_ATTRIBUTE -> listOf(
-            Angular2FormSymbolScopeInAttributeValue(attribute),
-            SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL),
-          )
-          FORM_ARRAY_NAME_ATTRIBUTE -> listOf(
-            Angular2FormSymbolScopeInAttributeValue(attribute),
-            SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL),
-          )
-          FORM_GROUP_NAME_ATTRIBUTE -> listOf(
-            Angular2FormSymbolScopeInAttributeValue(attribute),
-            SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL),
-          )
-          else -> emptyList()
-        }
-      }
+      .apply {
+        forPsiLocations(XmlAttribute::class.java, XmlAttributeValue::class.java)
+          .inFile(Angular2HtmlFile::class.java)
+          .contributeScopeProvider { location ->
+            val attribute = location.parentOfType<XmlAttribute>(true)
+            val name = attribute!!.name
+            when (name) {
+              FORM_CONTROL_NAME_ATTRIBUTE -> listOf(
+                Angular2FormSymbolScopeInAttributeValue(attribute),
+                SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL),
+              )
+              FORM_ARRAY_NAME_ATTRIBUTE -> listOf(
+                Angular2FormSymbolScopeInAttributeValue(attribute),
+                SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL),
+              )
+              FORM_GROUP_NAME_ATTRIBUTE -> listOf(
+                Angular2FormSymbolScopeInAttributeValue(attribute),
+                SingleSymbolExclusiveScope(ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL),
+              )
+              else -> emptyList()
+            }
+          }
 
-    registrar
-      .forPsiLocation(
-        psiElement(JSExpression::class.java)
-          .andOr(JSPatterns.jsLiteral().isQuotedLiteral(),
-                 JSPatterns.jsReferenceExpression().unqualified())
+        forPsiLocations(JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS)
           .inFile(psiFile().withLanguage {
             it !is Angular2Language && it is JSLanguageDialect && it.optionHolder.isTypeScript
           })
-      )
-      .inContext { it.framework == Angular2Framework.ID }
-      .contributeScopeProvider { location ->
-        findFormGroupForGetCallParameter(location)
-          ?.let { listOf(Angular2FormGroupGetCallLiteralScope(it)) }
-        ?: findFormGroupForGetCallParameterArray(location)
-          ?.let { listOf(Angular2FormGroupGetCallArrayLiteralScope(it, location)) }
-        ?: emptyList()
+          .contributeScopeProvider { location ->
+            findFormGroupForGetCallParameter(location)
+              ?.let { listOf(Angular2FormGroupGetCallLiteralScope(it)) }
+            ?: findFormGroupForGetCallParameterArray(location)
+              ?.let { listOf(Angular2FormGroupGetCallArrayLiteralScope(it, location)) }
+            ?: emptyList()
+          }
       }
   }
 
