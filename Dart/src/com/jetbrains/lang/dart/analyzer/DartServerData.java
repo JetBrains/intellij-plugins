@@ -3,9 +3,11 @@ package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.hints.declarative.impl.DeclarativeInlayHintsPassFactory;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -37,6 +39,7 @@ public final class DartServerData {
   private final Map<DartFileInfo, List<DartOverrideMember>> myOverrideData = Collections.synchronizedMap(new HashMap<>());
   private final Map<DartFileInfo, List<DartRegion>> myImplementedClassData = Collections.synchronizedMap(new HashMap<>());
   private final Map<DartFileInfo, List<DartRegion>> myImplementedMemberData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<DartFileInfo, List<DartClosingLabel>> myClosingLabelData = Collections.synchronizedMap(new HashMap<>());
   private final Map<DartFileInfo, Outline> myOutlineData = Collections.synchronizedMap(new HashMap<>());
 
   private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new HashMap<>());
@@ -85,10 +88,26 @@ public final class DartServerData {
     return true;
   }
 
-  void computedClosingLabels(@NotNull DartFileInfo fileInfo, @NotNull List<ClosingLabel> labels) {
+  void computedClosingLabels(@NotNull DartFileInfo fileInfo, @NotNull List<ClosingLabel> closingLabels) {
     if (myLocalFilesWithUnsentChanges.contains(fileInfo)) return;
+    List<DartClosingLabel> newClosingLabels = new ArrayList<>(closingLabels.size());
 
-    DartClosingLabelManager.getInstance().computedClosingLabels(myService.getProject(), fileInfo, labels);
+    VirtualFile file = fileInfo.findFile();
+
+    for (var closingLabel : closingLabels) {
+      if (closingLabel.getLength() > 0) {
+        final int offset = myService.getConvertedOffset(file, closingLabel.getOffset());
+        final int length = myService.getConvertedOffset(file, closingLabel.getOffset() + closingLabel.getLength()) - offset;
+        newClosingLabels.add(new DartClosingLabel(offset, length, closingLabel.getLabel()));
+      }
+    }
+
+    myClosingLabelData.put(fileInfo, newClosingLabels);
+    if (file != null) {
+      Arrays.stream(EditorFactory.getInstance().getAllEditors())
+        .filter(editor -> file.equals(editor.getVirtualFile()))
+        .forEach(editor -> DeclarativeInlayHintsPassFactory.Companion.scheduleRecompute(editor, myService.getProject()));
+    }
   }
 
   void computedHighlights(@NotNull DartFileInfo fileInfo, @NotNull List<? extends HighlightRegion> regions) {
@@ -327,6 +346,13 @@ public final class DartServerData {
     return classes != null ? classes : Collections.emptyList();
   }
 
+  @NotNull
+  List<DartClosingLabel> getClosingLabels(@NotNull VirtualFile file) {
+    DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myService.getProject(), file);
+    List<DartClosingLabel> closingLabels = myClosingLabelData.get(fileInfo);
+    return closingLabels != null ? closingLabels : Collections.emptyList();
+  }
+
   @Nullable
   Outline getOutline(@NotNull VirtualFile file) {
     DartFileInfo fileInfo = DartFileInfoKt.getDartFileInfo(myService.getProject(), file);
@@ -349,14 +375,16 @@ public final class DartServerData {
   boolean hasAllData_TESTS_ONLY(@NotNull VirtualFile file) {
     assert ApplicationManager.getApplication().isUnitTestMode();
 
-    DartLocalFileInfo fileInfo = (DartLocalFileInfo)DartFileInfoKt.getDartFileInfo(myService.getProject(), file);
+    DartLocalFileInfo fileInfo = (DartLocalFileInfo) DartFileInfoKt.getDartFileInfo(myService.getProject(), file);
+
     return isErrorInfoUpToDate(fileInfo) &&
            myHighlightData.get(fileInfo) != null &&
            myNavigationData.get(fileInfo) != null &&
            myOverrideData.get(fileInfo) != null &&
            myImplementedClassData.get(fileInfo) != null &&
            myImplementedMemberData.get(fileInfo) != null &&
-           myOutlineData.get(fileInfo) != null;
+           myOutlineData.get(fileInfo) != null &&
+           myClosingLabelData.get(fileInfo) != null;
   }
 
   @Nullable
@@ -399,6 +427,7 @@ public final class DartServerData {
     myImplementedClassData.remove(localFileInfo);
     myImplementedMemberData.remove(localFileInfo);
     myOutlineData.remove(localFileInfo);
+    myClosingLabelData.remove(localFileInfo);
   }
 
   void onFlushedResults(@NotNull List<DartFileInfo> fileInfos) {
@@ -409,6 +438,7 @@ public final class DartServerData {
     removeAllFromMap(myImplementedClassData, fileInfos);
     removeAllFromMap(myImplementedMemberData, fileInfos);
     removeAllFromMap(myOutlineData, fileInfos);
+    removeAllFromMap(myClosingLabelData, fileInfos);
   }
 
   private static <T> void removeAllFromMap(@NotNull Map<T, ?> map, @NotNull List<? extends T> keys) {
@@ -428,6 +458,7 @@ public final class DartServerData {
     myImplementedMemberData.clear();
     myOutlineData.clear();
     myAvailableSuggestionSetMap.clear();
+    myClosingLabelData.clear();
   }
 
   void onDocumentChanged(@NotNull DocumentEvent e) {
@@ -444,6 +475,7 @@ public final class DartServerData {
       myLocalFilesWithOutdatedErrorInfo.add(localFileInfo);
     }
     updateRegionsUpdatingTouched(myHighlightData.get(localFileInfo), e);
+    updateRegionsUpdatingTouched(myClosingLabelData.get(localFileInfo), e);
     updateRegionsDeletingTouched(localFileInfo, myNavigationData.get(localFileInfo), e);
     updateRegionsDeletingTouched(localFileInfo, myOverrideData.get(localFileInfo), e);
     updateRegionsDeletingTouched(localFileInfo, myImplementedClassData.get(localFileInfo), e);
@@ -519,26 +551,34 @@ public final class DartServerData {
       final DartRegion region = iterator.next();
 
       if (deltaLength > 0) {
-        // Something was typed. Shift untouched regions, update touched.
-        if (eventOffset <= region.myOffset) {
+        // Something was inserted. Shift untouched regions, update touched.
+        final var insertedBeforeRegion = eventOffset <= region.myOffset;
+        final var insertedInsideRegion = eventOffset < region.myOffset + region.myLength;
+        if (insertedBeforeRegion) {
           region.myOffset += deltaLength;
         }
-        else if (eventOffset < region.myOffset + region.myLength) {
+        else if (insertedInsideRegion) {
           region.myLength += deltaLength;
         }
       }
       else if (deltaLength < 0) {
         // Some text was deleted. Shift untouched regions, delete or update touched.
-        final int eventRightOffset = eventOffset - deltaLength;
+        final int deletionRightOffset = eventOffset - deltaLength;
         final int regionRightOffset = region.myOffset + region.myLength;
 
-        if (eventRightOffset <= region.myOffset) {
+        final var deletedBeforeRegion = deletionRightOffset <= region.myOffset;
+        final var deletedInsideRegion = region.myOffset <= eventOffset &&
+          deletionRightOffset <= regionRightOffset &&
+          region.myLength != -deltaLength;
+        final var deletedRegionEnd = eventOffset < regionRightOffset;
+
+        if (deletedBeforeRegion) {
           region.myOffset += deltaLength;
         }
-        else if (region.myOffset <= eventOffset && eventRightOffset <= regionRightOffset && region.myLength != -deltaLength) {
+        else if (deletedInsideRegion) {
           region.myLength += deltaLength;
         }
-        else if (eventOffset < regionRightOffset) {
+        else if (deletedRegionEnd) {
           iterator.remove();
         }
       }
@@ -564,7 +604,7 @@ public final class DartServerData {
 
     @Override
     public boolean equals(Object o) {
-      return o instanceof DartRegion && myOffset == ((DartRegion)o).myOffset && myLength == ((DartRegion)o).myLength;
+      return o instanceof DartRegion && myOffset == ((DartRegion) o).myOffset && myLength == ((DartRegion) o).myLength;
     }
 
     @Override
@@ -723,6 +763,19 @@ public final class DartServerData {
 
     public @Nullable List<OverriddenMember> getInterfaceMembers() {
       return myInterfaceMembers;
+    }
+  }
+
+  public static final class DartClosingLabel extends DartRegion {
+    private final String label;
+
+    private DartClosingLabel(final int offset, final int length, final @NotNull String label) {
+      super(offset, length);
+      this.label = label;
+    }
+
+    public String getLabel() {
+      return label;
     }
   }
 }
