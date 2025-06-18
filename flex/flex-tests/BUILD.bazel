@@ -26,6 +26,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/execution-impl",
     "@community//platform/indexing-api:indexing",
     "@community//jps/model-api:model",
     "@community//platform/lang-core",

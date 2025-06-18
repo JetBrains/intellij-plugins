@@ -18,6 +18,7 @@ jvm_library(
     "@community//platform/util/concurrency",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
+    "@community//platform/execution-impl",
     "@community//platform/ide-core-impl",
     "@community//java/compiler/openapi:java-compiler",
     "@community//platform/indexing-api:indexing",
