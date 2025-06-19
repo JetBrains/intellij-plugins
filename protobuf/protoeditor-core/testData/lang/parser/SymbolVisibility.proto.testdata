@@ -1,0 +1,41 @@
+edition = "2024";
+
+enum TestEnum {
+  TEST_ENUM_VAL = 0;
+}
+
+export enum TestExportEnum {
+  TEST_EXPORT_ENUM_VAL = 0;
+}
+
+local enum TestLocalEnum {
+  TEST_LOCAL_ENUM_VAL = 0;
+}
+
+message TestMessage {
+}
+
+export message TestExportMessage {}
+
+local message TestLocalMessage {
+  export enum NestedExportEnum {
+    NESTED_EXPORT_ENUM_VAL = 0;
+  }
+
+  local enum NestedLocalEnum {
+    NESTED_LOCAL_ENUM_VAL = 0;
+  }
+
+  enum NestedEnum {
+    NESTED_ENUM_VAL = 0;
+  }
+
+  export message NestedExportMessage {
+  }
+
+  local message NestedLocalMessage {
+  }
+
+  message NestedMessage {
+  }
+}

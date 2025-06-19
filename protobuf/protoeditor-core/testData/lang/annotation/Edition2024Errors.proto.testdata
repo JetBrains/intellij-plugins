@@ -1,10 +1,10 @@
-edition = "2023";
+edition = "2024";
 
-import <error descr="Option imports are not supported before edition 2024">option</error> "lang/annotation/import1.proto";
+import <error descr="Weak imports are not allowed since edition 2024">weak</error> "lang/annotation/import1.proto";
 
 message RegularMessage {
-  int32 a = 1;
-  repeated string b = 2;
+  int32 a = 1 [<error descr="weak option is not allowed since edition 2024">weak</error> = true];
+  repeated string b = 2 [<error descr="ctype option is not allowed since edition 2024">ctype</error> = CORD];
   int32 required_field = 3 [features.field_presence = LEGACY_REQUIRED];
 
   message SubMessage {
@@ -33,6 +33,38 @@ enum RegularEnum {
   REGULAR_ENUM_1 = 1;
 }
 
+export message ExportMessage {
+  int32 a = 1;
+
+  export message ExportNestedMessage {
+    int32 a = 1;
+  }
+
+  local message LocalNestedMessage {
+    int32 a = 1;
+  }
+
+  export enum ExportNestedEnum {
+    EXPORT_NESTED_ENUM_UNKNOWN = 0;
+  }
+
+  export enum LocalNestedEnum {
+    LOCAL_NESTED_ENUM_UNKNOWN = 0;
+  }
+}
+
+local message LocalMessage {
+  int32 a = 1;
+}
+
+export enum ExportEnum {
+  EXPORT_ENUM_UNKNOWN = 0;
+}
+
+local enum LocalEnum {
+  LOCAL_ENUM_UNKNOWN = 0;
+}
+
 message BannedMessage {
   <error descr="The optional label is not allowed since edition 2023">optional</error> string optional_field = 2;
   <error descr="The required label is not allowed since edition 2023">required</error> string required_field = 3;
@@ -57,36 +89,4 @@ enum BannedEnum {
   reserved <error descr="String literal reserved enum values are not allowed since edition 2023">"VALUEA"</error>,
     <error descr="String literal reserved enum values are not allowed since edition 2023">"VALUEB"</error>,
     VALUEC;
-}
-
-<error descr="Symbol visibility is not allowed before edition 2024">export</error> message BannedExportMessage {
-  int32 a = 1;
-
-  <error descr="Symbol visibility is not allowed before edition 2024">export</error> message BannedExportNestedMessage {
-    int32 a = 1;
-  }
-
-  <error descr="Symbol visibility is not allowed before edition 2024">local</error> message BannedLocalNestedMessage {
-    int32 a = 1;
-  }
-
-  <error descr="Symbol visibility is not allowed before edition 2024">export</error> enum BannedExportNestedEnum {
-    BANNED_EXPORT_NESTED_ENUM_UNKNOWN = 0;
-  }
-
-  <error descr="Symbol visibility is not allowed before edition 2024">local</error> enum BannedLocalNestedEnum {
-    BANNED_LOCAL_NESTED_ENUM_UNKNOWN = 0;
-  }
-}
-
-<error descr="Symbol visibility is not allowed before edition 2024">local</error> message BannedLocalMessage {
-  int32 a = 1;
-}
-
-<error descr="Symbol visibility is not allowed before edition 2024">export</error> enum BannedExportEnum {
-  BANNED_EXPORT_ENUM_UNKNOWN = 0;
-}
-
-<error descr="Symbol visibility is not allowed before edition 2024">local</error> enum BannedLocalEnum {
-  BANNED_LOCAL_ENUM_UNKNOWN = 0;
 }
