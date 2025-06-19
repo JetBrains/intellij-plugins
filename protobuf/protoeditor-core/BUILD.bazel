@@ -16,6 +16,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
+    "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/ide-core-impl",
@@ -53,6 +54,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
+    "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/ide-core-impl",

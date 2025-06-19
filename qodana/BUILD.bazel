@@ -32,6 +32,7 @@ jvm_library(
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-impl",
+    "@community//platform/code-style-api:codeStyle",
     "@community//platform/util/concurrency",
     "@community//platform/core-api:core",
     "@community//platform/credential-store",
@@ -122,6 +123,7 @@ jvm_library(
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-impl",
+    "@community//platform/code-style-api:codeStyle",
     "@community//platform/util/concurrency",
     "@community//platform/util/concurrency:concurrency_test_lib",
     "@community//platform/core-api:core",
