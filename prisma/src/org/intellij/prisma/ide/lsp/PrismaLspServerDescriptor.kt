@@ -27,8 +27,13 @@ class PrismaLspServerDescriptor(project: Project)
     }
   }
 
-  override fun getWorkspaceConfiguration(item: ConfigurationItem): Any = object {
-    @Suppress("unused")
-    val enableDiagnostics: Boolean = true
+  override fun getWorkspaceConfiguration(item: ConfigurationItem): Any? {
+    if (item.section == "prisma") {
+      return object {
+        @Suppress("unused")
+        val enableDiagnostics: Boolean = true
+      }
+    }
+    return super.getWorkspaceConfiguration(item)
   }
 }
