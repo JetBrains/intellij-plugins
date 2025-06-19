@@ -84,6 +84,12 @@ public class PbMessageBodyImpl extends PbMessageBodyMixin implements PbMessageBo
 
   @Override
   @NotNull
+  public List<PbSymbolVisibility> getSymbolVisibilityList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PbSymbolVisibility.class);
+  }
+
+  @Override
+  @NotNull
   public List<PbOptionStatement> getOptionStatements() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, PbOptionStatement.class);
   }

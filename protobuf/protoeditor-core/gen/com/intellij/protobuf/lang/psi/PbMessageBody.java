@@ -35,6 +35,9 @@ public interface PbMessageBody extends PbBlockBody, PbOptionStatementOwner {
   List<PbSimpleField> getSimpleFieldList();
 
   @NotNull
+  List<PbSymbolVisibility> getSymbolVisibilityList();
+
+  @NotNull
   List<PbOptionStatement> getOptionStatements();
 
   @NotNull

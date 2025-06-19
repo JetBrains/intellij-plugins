@@ -52,6 +52,7 @@ public interface PbTypes {
   IElementType STRING_PART = new PbElementType("STRING_PART");
   IElementType STRING_VALUE = new PbElementType("STRING_VALUE");
   IElementType SYMBOL_PATH = new PbElementType("SYMBOL_PATH");
+  IElementType SYMBOL_VISIBILITY = new PbElementType("SYMBOL_VISIBILITY");
   IElementType SYNTAX_STATEMENT = new PbElementType("SYNTAX_STATEMENT");
   IElementType TYPE_NAME = new PbElementType("TYPE_NAME");
 
@@ -183,6 +184,9 @@ public interface PbTypes {
       }
       else if (type == SYMBOL_PATH) {
         return new PbSymbolPathImpl(node);
+      }
+      else if (type == SYMBOL_VISIBILITY) {
+        return new PbSymbolVisibilityImpl(node);
       }
       else if (type == SYNTAX_STATEMENT) {
         return new PbSyntaxStatementImpl(node);
