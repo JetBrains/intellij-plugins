@@ -12,7 +12,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorKind
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
-import com.intellij.openapi.editor.toolbar.floating.*
+import com.intellij.openapi.editor.toolbar.floating.FloatingToolbarComponent
+import com.intellij.openapi.editor.toolbar.floating.FloatingToolbarProvider
+import com.intellij.openapi.editor.toolbar.floating.isInsideMainEditor
 import com.intellij.openapi.keymap.KeymapUtil.getShortcutText
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
@@ -36,7 +38,13 @@ internal class Angular2GotoRelatedToolbarProvider : FloatingToolbarProvider {
   }
 
   override fun isApplicable(dataContext: DataContext): Boolean {
-    return angular2GTRToolbarCanBeShown(dataContext)
+    val editor = dataContext.getData(CommonDataKeys.EDITOR)
+                 ?: return false
+    val file = CommonDataKeys.PSI_FILE.getData(dataContext)
+               ?: return false
+    return isInsideMainEditor(dataContext)
+           && editor.editorKind == EditorKind.MAIN_EDITOR
+           && isAngular2Context(file)
   }
 
   override fun register(
@@ -55,29 +63,6 @@ internal class Angular2GotoRelatedToolbarProvider : FloatingToolbarProvider {
 
     editor.caretModel.addCaretListener(caretListener, parentDisposable)
   }
-}
-
-/**
- * Should suppress [com.intellij.ide.browsers.actions.OpenInBrowserBaseGroupAction.OpenInBrowserEditorContextBarGroupAction]
- */
-internal class BrowsersToolbarSuppressor : EditorFloatingToolbarSuppressor {
-  override fun isSuppressed(
-    provider: FloatingToolbarProvider,
-    dataContext: DataContext,
-  ): Boolean {
-    return provider is DefaultFloatingToolbarProvider // this one is used for browsers
-           && angular2GTRToolbarCanBeShown(dataContext)
-  }
-}
-
-private fun angular2GTRToolbarCanBeShown(dataContext: DataContext): Boolean {
-  val editor = dataContext.getData(CommonDataKeys.EDITOR)
-               ?: return false
-  val file = CommonDataKeys.PSI_FILE.getData(dataContext)
-             ?: return false
-  return isInsideMainEditor(dataContext)
-         && editor.editorKind == EditorKind.MAIN_EDITOR
-         && isAngular2Context(file)
 }
 
 private class Angular2GotoRelatedItemActionGroup : ActionGroup() {
