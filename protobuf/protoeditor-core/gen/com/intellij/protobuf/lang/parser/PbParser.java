@@ -161,6 +161,9 @@ public class PbParser implements PsiParser, LightPsiParser {
     else if (type == SYMBOL_PATH) {
       result = SymbolPath(builder, level + 1, -1);
     }
+    else if (type == SYMBOL_VISIBILITY) {
+      result = SymbolVisibility(builder, level + 1);
+    }
     else if (type == SYNTAX_STATEMENT) {
       result = SyntaxStatement(builder, level + 1);
     }
@@ -844,7 +847,7 @@ public class PbParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // import (public | weak)? ImportName ';'
+  // import (public | weak | option)? ImportName ';'
   public static boolean ImportStatement(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "ImportStatement")) return false;
     if (!nextTokenIs(builder, IMPORT)) return false;
@@ -859,19 +862,20 @@ public class PbParser implements PsiParser, LightPsiParser {
     return result || pinned;
   }
 
-  // (public | weak)?
+  // (public | weak | option)?
   private static boolean ImportStatement_1(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "ImportStatement_1")) return false;
     ImportStatement_1_0(builder, level + 1);
     return true;
   }
 
-  // public | weak
+  // public | weak | option
   private static boolean ImportStatement_1_0(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "ImportStatement_1_0")) return false;
     boolean result;
     result = consumeToken(builder, PUBLIC);
     if (!result) result = consumeToken(builder, WEAK);
+    if (!result) result = consumeToken(builder, OPTION);
     return result;
   }
 
@@ -959,8 +963,7 @@ public class PbParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // MessageDefinition
-  //   | EnumDefinition
+  // SymbolVisibility? ( MessageDefinition | EnumDefinition)
   //   | ExtensionsStatement
   //   | ReservedStatement
   //   | ExtendDefinition
@@ -974,8 +977,7 @@ public class PbParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(builder, level, "MessageEntry")) return false;
     boolean result;
     Marker marker = enter_section_(builder, level, _NONE_);
-    result = MessageDefinition(builder, level + 1);
-    if (!result) result = EnumDefinition(builder, level + 1);
+    result = MessageEntry_0(builder, level + 1);
     if (!result) result = ExtensionsStatement(builder, level + 1);
     if (!result) result = ReservedStatement(builder, level + 1);
     if (!result) result = ExtendDefinition(builder, level + 1);
@@ -989,8 +991,35 @@ public class PbParser implements PsiParser, LightPsiParser {
     return result;
   }
 
+  // SymbolVisibility? ( MessageDefinition | EnumDefinition)
+  private static boolean MessageEntry_0(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "MessageEntry_0")) return false;
+    boolean result;
+    Marker marker = enter_section_(builder);
+    result = MessageEntry_0_0(builder, level + 1);
+    result = result && MessageEntry_0_1(builder, level + 1);
+    exit_section_(builder, marker, null, result);
+    return result;
+  }
+
+  // SymbolVisibility?
+  private static boolean MessageEntry_0_0(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "MessageEntry_0_0")) return false;
+    SymbolVisibility(builder, level + 1);
+    return true;
+  }
+
+  // MessageDefinition | EnumDefinition
+  private static boolean MessageEntry_0_1(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "MessageEntry_0_1")) return false;
+    boolean result;
+    result = MessageDefinition(builder, level + 1);
+    if (!result) result = EnumDefinition(builder, level + 1);
+    return result;
+  }
+
   /* ********************************************************** */
-  // !(message | enum | extensions | reserved | extend | option | oneof
+  // !(export | local | message | enum | extensions | reserved | extend | option | oneof
   //   | FieldLabel | group | map | TypeName | '}' | ';')
   static boolean MessageRecovery(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "MessageRecovery")) return false;
@@ -1001,12 +1030,14 @@ public class PbParser implements PsiParser, LightPsiParser {
     return result;
   }
 
-  // message | enum | extensions | reserved | extend | option | oneof
+  // export | local | message | enum | extensions | reserved | extend | option | oneof
   //   | FieldLabel | group | map | TypeName | '}' | ';'
   private static boolean MessageRecovery_0(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "MessageRecovery_0")) return false;
     boolean result;
-    result = consumeToken(builder, MESSAGE);
+    result = consumeToken(builder, EXPORT);
+    if (!result) result = consumeToken(builder, LOCAL);
+    if (!result) result = consumeToken(builder, MESSAGE);
     if (!result) result = consumeToken(builder, ENUM);
     if (!result) result = consumeToken(builder, EXTENSIONS);
     if (!result) result = consumeToken(builder, RESERVED);
@@ -1748,6 +1779,19 @@ public class PbParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // export | local
+  public static boolean SymbolVisibility(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "SymbolVisibility")) return false;
+    if (!nextTokenIs(builder, "<symbol visibility>", EXPORT, LOCAL)) return false;
+    boolean result;
+    Marker marker = enter_section_(builder, level, _NONE_, SYMBOL_VISIBILITY, "<symbol visibility>");
+    result = consumeToken(builder, EXPORT);
+    if (!result) result = consumeToken(builder, LOCAL);
+    exit_section_(builder, level, marker, result, false, null);
+    return result;
+  }
+
+  /* ********************************************************** */
   // SyntaxType '=' StringValue ';'
   public static boolean SyntaxStatement(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "SyntaxStatement")) return false;
@@ -1775,8 +1819,7 @@ public class PbParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // MessageDefinition
-  //   | EnumDefinition
+  // SymbolVisibility? (MessageDefinition | EnumDefinition )
   //   | ServiceDefinition
   //   | ExtendDefinition
   //   | ImportStatement
@@ -1787,8 +1830,7 @@ public class PbParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(builder, level, "TopLevelEntry")) return false;
     boolean result;
     Marker marker = enter_section_(builder, level, _NONE_);
-    result = MessageDefinition(builder, level + 1);
-    if (!result) result = EnumDefinition(builder, level + 1);
+    result = TopLevelEntry_0(builder, level + 1);
     if (!result) result = ServiceDefinition(builder, level + 1);
     if (!result) result = ExtendDefinition(builder, level + 1);
     if (!result) result = ImportStatement(builder, level + 1);
@@ -1799,8 +1841,35 @@ public class PbParser implements PsiParser, LightPsiParser {
     return result;
   }
 
+  // SymbolVisibility? (MessageDefinition | EnumDefinition )
+  private static boolean TopLevelEntry_0(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "TopLevelEntry_0")) return false;
+    boolean result;
+    Marker marker = enter_section_(builder);
+    result = TopLevelEntry_0_0(builder, level + 1);
+    result = result && TopLevelEntry_0_1(builder, level + 1);
+    exit_section_(builder, marker, null, result);
+    return result;
+  }
+
+  // SymbolVisibility?
+  private static boolean TopLevelEntry_0_0(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "TopLevelEntry_0_0")) return false;
+    SymbolVisibility(builder, level + 1);
+    return true;
+  }
+
+  // MessageDefinition | EnumDefinition
+  private static boolean TopLevelEntry_0_1(PsiBuilder builder, int level) {
+    if (!recursion_guard_(builder, level, "TopLevelEntry_0_1")) return false;
+    boolean result;
+    result = MessageDefinition(builder, level + 1);
+    if (!result) result = EnumDefinition(builder, level + 1);
+    return result;
+  }
+
   /* ********************************************************** */
-  // !(message | enum | service | extend | import | package | option | ';')
+  // !(export | local | message | enum | service | extend | import | package | option | ';')
   static boolean TopLevelRecovery(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "TopLevelRecovery")) return false;
     boolean result;
@@ -1810,11 +1879,13 @@ public class PbParser implements PsiParser, LightPsiParser {
     return result;
   }
 
-  // message | enum | service | extend | import | package | option | ';'
+  // export | local | message | enum | service | extend | import | package | option | ';'
   private static boolean TopLevelRecovery_0(PsiBuilder builder, int level) {
     if (!recursion_guard_(builder, level, "TopLevelRecovery_0")) return false;
     boolean result;
-    result = consumeToken(builder, MESSAGE);
+    result = consumeToken(builder, EXPORT);
+    if (!result) result = consumeToken(builder, LOCAL);
+    if (!result) result = consumeToken(builder, MESSAGE);
     if (!result) result = consumeToken(builder, ENUM);
     if (!result) result = consumeToken(builder, SERVICE);
     if (!result) result = consumeToken(builder, EXTEND);
