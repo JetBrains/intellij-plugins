@@ -20,6 +20,7 @@ public class PbVisitor extends PsiElementVisitor {
   public void visitEnumDefinition(@NotNull PbEnumDefinition o) {
     visitDefinition(o);
     // visitNamedTypeElement(o);
+    // visitEnumDefinitionBase(o);
   }
 
   public void visitEnumReservedRange(@NotNull PbEnumReservedRange o) {
@@ -66,6 +67,7 @@ public class PbVisitor extends PsiElementVisitor {
     visitDefinition(o);
     // visitMessageType(o);
     // visitSymbolContributor(o);
+    // visitGroupDefinitionBase(o);
   }
 
   public void visitGroupOptionContainer(@NotNull PbGroupOptionContainer o) {
@@ -125,7 +127,7 @@ public class PbVisitor extends PsiElementVisitor {
   }
 
   public void visitOptionExpression(@NotNull PbOptionExpression o) {
-    visitElement(o);
+    visitOptionExpressionBase(o);
   }
 
   public void visitOptionList(@NotNull PbOptionList o) {
@@ -133,7 +135,7 @@ public class PbVisitor extends PsiElementVisitor {
   }
 
   public void visitOptionName(@NotNull PbOptionName o) {
-    visitElement(o);
+    visitOptionNameBase(o);
     // visitEffectiveReferenceOwner(o);
   }
 
@@ -142,7 +144,7 @@ public class PbVisitor extends PsiElementVisitor {
   }
 
   public void visitPackageName(@NotNull PbPackageName o) {
-    visitElement(o);
+    visitPackageNameBase(o);
     // visitSymbol(o);
     // visitSymbolOwner(o);
   }
@@ -176,7 +178,7 @@ public class PbVisitor extends PsiElementVisitor {
   }
 
   public void visitServiceMethodType(@NotNull PbServiceMethodType o) {
-    visitElement(o);
+    visitServiceMethodTypeBase(o);
   }
 
   public void visitServiceStream(@NotNull PbServiceStream o) {
@@ -202,13 +204,17 @@ public class PbVisitor extends PsiElementVisitor {
     visitProtoSymbolPath(o);
   }
 
-  public void visitSyntaxStatement(@NotNull PbSyntaxStatement o) {
+  public void visitSymbolVisibility(@NotNull PbSymbolVisibility o) {
     visitElement(o);
+  }
+
+  public void visitSyntaxStatement(@NotNull PbSyntaxStatement o) {
+    visitSyntaxStatementBase(o);
     // visitStatement(o);
   }
 
   public void visitTypeName(@NotNull PbTypeName o) {
-    visitElement(o);
+    visitTypeNameBase(o);
     // visitQualifiedReference(o);
     // visitEffectiveReferenceOwner(o);
     // visitProtoSymbolPathContainer(o);
@@ -234,11 +240,35 @@ public class PbVisitor extends PsiElementVisitor {
     visitElement(o);
   }
 
+  public void visitOptionExpressionBase(@NotNull PbOptionExpressionBase o) {
+    visitElement(o);
+  }
+
+  public void visitOptionNameBase(@NotNull PbOptionNameBase o) {
+    visitElement(o);
+  }
+
+  public void visitPackageNameBase(@NotNull PbPackageNameBase o) {
+    visitElement(o);
+  }
+
   public void visitQualifiedReference(@NotNull PbQualifiedReference o) {
     visitElement(o);
   }
 
+  public void visitServiceMethodTypeBase(@NotNull PbServiceMethodTypeBase o) {
+    visitElement(o);
+  }
+
   public void visitStatement(@NotNull PbStatement o) {
+    visitElement(o);
+  }
+
+  public void visitSyntaxStatementBase(@NotNull PbSyntaxStatementBase o) {
+    visitElement(o);
+  }
+
+  public void visitTypeNameBase(@NotNull PbTypeNameBase o) {
     visitElement(o);
   }
 
