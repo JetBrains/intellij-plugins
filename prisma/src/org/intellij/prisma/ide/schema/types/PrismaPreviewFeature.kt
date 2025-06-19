@@ -4,7 +4,6 @@ package org.intellij.prisma.ide.schema.types
 import com.intellij.openapi.util.text.StringUtil
 
 enum class PrismaPreviewFeature(val datasources: Set<PrismaDatasourceType> = PrismaDatasourceType.ALL) {
-  Deno,
   DriverAdapters,
   Metrics,
   MultiSchema,
