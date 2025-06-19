@@ -22,9 +22,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.rt.coverage.data.ProjectData
 import com.intellij.rt.coverage.report.XMLProjectData
 import com.intellij.uast.UastHintedVisitorAdapter
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.isGetter
+import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coverage.CoverageLanguage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
@@ -220,15 +220,15 @@ class JvmCoverageInspection : CoverageInspectionBase() {
           reportElement(problemsHolder, highlightedElement(sourcePsi),
                         QodanaBundle.message("constructor.coverage.below.threshold", signature, methodThreshold))
         }
-        sourcePsi is KtPropertyAccessor || sourcePsi is KtProperty || sourcePsi is KtParameter -> {
+        (node.javaPsi as? KtLightMethod)?.isSetter == true -> {
           val signature = methodNameForReports(node, MethodType.PROPERTY)
-          if (signature.startsWith("set")) {
-            reportElement(problemsHolder, highlightedElement(sourcePsi),
-                          QodanaBundle.message("property.setter.coverage.below.threshold", signature, methodThreshold))
-          } else {
-            reportElement(problemsHolder, highlightedElement(sourcePsi),
-                          QodanaBundle.message("property.getter.coverage.below.threshold", signature, methodThreshold))
-          }
+          reportElement(problemsHolder, highlightedElement(sourcePsi),
+                        QodanaBundle.message("property.setter.coverage.below.threshold", signature, methodThreshold))
+        }
+        (node.javaPsi as? KtLightMethod)?.isGetter == true -> {
+          val signature = methodNameForReports(node, MethodType.PROPERTY)
+          reportElement(problemsHolder, highlightedElement(sourcePsi),
+                        QodanaBundle.message("property.getter.coverage.below.threshold", signature, methodThreshold))
         }
         else -> {
           val signature = methodNameForReports(node, MethodType.METHOD)
