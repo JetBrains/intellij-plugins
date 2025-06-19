@@ -19,13 +19,15 @@ import com.intellij.lang.ASTNode;
 import com.intellij.protobuf.lang.psi.PbImportStatement;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbImportStatementMixin extends PbStatementBase implements PbImportStatement {
 
   private static final TokenSet IMPORT_LABELS =
-      TokenSet.create(ProtoTokenTypes.PUBLIC, ProtoTokenTypes.WEAK, ProtoTokenTypes.OPTION);
+    TokenSet.create(ProtoTokenTypes.PUBLIC, ProtoTokenTypes.WEAK, ProtoTokenTypes.OPTION);
 
   PbImportStatementMixin(ASTNode node) {
     super(node);
@@ -37,21 +39,23 @@ abstract class PbImportStatementMixin extends PbStatementBase implements PbImpor
     return node == null ? null : node.getPsi();
   }
 
+  private @Nullable PsiElement getImportLabelByType(@NotNull IElementType type) {
+    ASTNode node = getNode().findChildByType(type);
+    return node == null ? null : node.getPsi();
+  }
+
   @Override
   public boolean isPublic() {
-    PsiElement labelElement = getImportLabel();
-    return labelElement != null && labelElement.getText().equals("public");
+    return getImportLabelByType(ProtoTokenTypes.PUBLIC) != null;
   }
 
   @Override
   public boolean isWeak() {
-    PsiElement labelElement = getImportLabel();
-    return labelElement != null && labelElement.getText().equals("weak");
+    return getImportLabelByType(ProtoTokenTypes.WEAK) != null;
   }
 
   @Override
   public boolean isOption() {
-    PsiElement labelElement = getImportLabel();
-    return labelElement != null && labelElement.getText().equals("option");
+    return getImportLabelByType(ProtoTokenTypes.OPTION) != null;
   }
 }
