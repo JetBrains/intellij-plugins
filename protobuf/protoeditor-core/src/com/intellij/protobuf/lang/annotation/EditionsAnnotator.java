@@ -34,22 +34,22 @@ public class EditionsAnnotator implements Annotator {
     }
 
     element.accept(
-        new PbVisitor() {
-          @Override
-          public void visitSyntaxStatement(@NotNull PbSyntaxStatement syntax) {
-            annotateEdition(syntax, holder);
-          }
+      new PbVisitor() {
+        @Override
+        public void visitSyntaxStatement(@NotNull PbSyntaxStatement syntax) {
+          annotateEdition(syntax, holder);
+        }
 
-          @Override
-          public void visitField(@NotNull PbField field) {
-            annotateField(field, holder);
-          }
+        @Override
+        public void visitField(@NotNull PbField field) {
+          annotateField(field, holder);
+        }
 
-          @Override
-          public void visitGroupDefinition(@NotNull PbGroupDefinition group) {
-            annotateGroupDefinition(group, holder);
-          }
-        });
+        @Override
+        public void visitGroupDefinition(@NotNull PbGroupDefinition group) {
+          annotateGroupDefinition(group, holder);
+        }
+      });
   }
 
   /*
@@ -59,12 +59,11 @@ public class EditionsAnnotator implements Annotator {
     SyntaxLevel syntaxLevel = syntax.getSyntaxLevel();
     var effectiveSyntaxVersion = syntaxLevel == null ? "" : syntaxLevel.getVersion();
     if (!effectiveSyntaxVersion.equals("2023") && !effectiveSyntaxVersion.equals("2024")) {
-      holder
-          .newAnnotation(
-              HighlightSeverity.ERROR,
-              PbLangBundle.message("editions.unsupported", syntax.getEdition()))
-          .range(syntax)
-          .create();
+      holder.newAnnotation(
+          HighlightSeverity.ERROR,
+          PbLangBundle.message("editions.unsupported", effectiveSyntaxVersion))
+        .range(syntax)
+        .create();
     }
   }
 
@@ -77,12 +76,11 @@ public class EditionsAnnotator implements Annotator {
     }
     PbFieldLabel label = field.getDeclaredLabel();
     if (label != null && !label.getText().equals("repeated")) {
-      holder
-          .newAnnotation(
-              HighlightSeverity.ERROR,
-              PbLangBundle.message("editions.field.label." + label.getText()))
-          .range(label)
-          .create();
+      holder.newAnnotation(
+          HighlightSeverity.ERROR,
+          PbLangBundle.message("editions.field.label." + label.getText()))
+        .range(label)
+        .create();
     }
   }
 
@@ -90,9 +88,8 @@ public class EditionsAnnotator implements Annotator {
    * Group syntax is not allowed
    */
   private static void annotateGroupDefinition(PbGroupDefinition group, AnnotationHolder holder) {
-    holder
-        .newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("editions.group.invalid"))
-        .range(group)
-        .create();
+    holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("editions.group.invalid"))
+      .range(group)
+      .create();
   }
 }
