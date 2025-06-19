@@ -85,4 +85,12 @@ public class PbParserTest extends ParsingTestCase {
   public void testEnumReservedRangeEditions() {
     doTest(true);
   }
+
+  public void testSymbolVisibility() {
+    doTest(true);
+  }
+
+  public void testImportOption() {
+    doTest(true);
+  }
 }
