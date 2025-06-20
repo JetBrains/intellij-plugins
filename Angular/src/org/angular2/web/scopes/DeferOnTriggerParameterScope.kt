@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.scopes
 
-import com.intellij.javascript.polySymbols.symbols.asPolySymbol
+import com.intellij.javascript.polySymbols.symbols.asJSSymbol
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
@@ -32,7 +32,7 @@ class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
         resolve.element?.takeIf { resolve.isValidResult }
           ?.asSafely<Angular2HtmlAttrVariable>()
           ?.takeIf { it.kind == Angular2HtmlAttrVariable.Kind.REFERENCE && it.name.let { name -> name != null && names.add(name) } }
-          ?.asPolySymbol()
+          ?.asJSSymbol()
           ?.let(consumer)
         true
       }

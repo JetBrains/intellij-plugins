@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.scopes
 
-import com.intellij.javascript.polySymbols.symbols.asPolySymbol
+import com.intellij.javascript.polySymbols.symbols.asJSSymbol
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -56,7 +56,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute)
       .associateBy { it.name }
 
     VueTemplateScopesResolver.resolve(tag, Processor { resolveResult ->
-      val jsSymbol = resolveResult.element.asSafely<JSElement>()?.asPolySymbol() as? PsiSourcedPolySymbol
+      val jsSymbol = resolveResult.element.asSafely<JSElement>()?.asJSSymbol() as? PsiSourcedPolySymbol
       if (jsSymbol != null) {
         attributes[fromAsset(jsSymbol.name)]?.let {
           consumer(VueBindingShorthandSymbol(dataHolder, jsSymbol, it))

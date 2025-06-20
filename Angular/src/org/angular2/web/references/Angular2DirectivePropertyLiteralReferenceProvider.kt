@@ -2,7 +2,7 @@
 package org.angular2.web.references
 
 import com.intellij.javascript.JSBuiltInTypeEngineEvaluation
-import com.intellij.javascript.polySymbols.symbols.asPolySymbol
+import com.intellij.javascript.polySymbols.symbols.asJSSymbol
 import com.intellij.javascript.polySymbols.symbols.getMatchingJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
@@ -52,7 +52,7 @@ class Angular2DirectivePropertyLiteralReferenceProvider : PsiPolySymbolReference
       val symbol = directive
                      .asSafely<Angular2ClassBasedDirective>()
                      ?.typeScriptClass
-                     ?.asPolySymbol()
+                     ?.asJSSymbol()
                      ?.getMatchingJSPropertySymbols(name, null)
                      ?.find { it.source is JSAttributeListOwner }
                    ?: return emptyMap()
