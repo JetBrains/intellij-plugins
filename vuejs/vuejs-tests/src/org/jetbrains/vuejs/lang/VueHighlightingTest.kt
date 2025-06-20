@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
@@ -22,7 +22,6 @@ import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.util.ThrowableRunnable
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import junit.framework.TestCase
@@ -91,12 +90,6 @@ class VueHighlightingTest : BasePlatformTestCase() {
   fun testArrowFunctionsAndExpressionsInTemplate() = doTest()
 
   fun testShorthandArrowFunctionInTemplate() = doTest()
-
-  fun testShorthandArrowFunctionInTemplateES5() {
-    testWithinLanguageLevel(JSLanguageLevel.ES5, myFixture.project, ThrowableRunnable {
-      doTest()
-    })
-  }
 
   fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() = doTest()
 
@@ -187,12 +180,6 @@ const props = {seeMe: {}}
   }
 
   fun testTypeScriptTypesAreResolved() = doTest()
-
-  fun testTypeScriptTypesAreNotResolvedIfECMA5Script() {
-    testWithinLanguageLevel(JSLanguageLevel.ES5, myFixture.project, ThrowableRunnable {
-      doTest()
-    })
-  }
 
   fun testVBindVOnHighlighting() = doTest()
 
