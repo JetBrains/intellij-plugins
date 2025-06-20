@@ -6,7 +6,7 @@ import com.intellij.patterns.ElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.ProcessingContext
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 
 class PrismaCompoundSchema(
   private val groups: List<PrismaSchemaElementGroup>,
@@ -142,12 +142,12 @@ sealed class PrismaSchemaElement(
   val documentation: String? = null,
   val insertHandler: InsertHandler<LookupElement>? = null,
   val pattern: ElementPattern<out PsiElement>? = null,
-  val datasources: Set<PrismaDatasourceType>? = null,
+  val datasources: Set<PrismaDatasourceProviderType>? = null,
   val variants: List<PrismaSchemaVariant> = emptyList(),
   val type: String? = null,
   val ref: PrismaSchemaRef? = null,
 ) {
-  fun isAvailableForDatasources(usedDatasources: Set<PrismaDatasourceType>): Boolean {
+  fun isAvailableForDatasources(usedDatasources: Set<PrismaDatasourceProviderType>): Boolean {
     // filter only when a datasource provider is specified
     return datasources == null ||
            usedDatasources.isEmpty() ||
@@ -167,13 +167,13 @@ open class PrismaSchemaDeclaration(
   insertHandler: InsertHandler<LookupElement>? = null,
   val params: List<PrismaSchemaParameter> = emptyList(),
   pattern: ElementPattern<out PsiElement>? = null,
-  datasources: Set<PrismaDatasourceType>? = null,
+  datasources: Set<PrismaDatasourceProviderType>? = null,
   variants: List<PrismaSchemaVariant> = emptyList(),
   type: String? = null,
 ) : PrismaSchemaElement(label, documentation, insertHandler, pattern, datasources, variants, type = type) {
 
   fun getAvailableParams(
-    usedDatasources: Set<PrismaDatasourceType>,
+    usedDatasources: Set<PrismaDatasourceProviderType>,
     isOnFieldLevel: Boolean,
   ): List<PrismaSchemaParameter> {
     return params.filter { it.isAvailableForDatasources(usedDatasources) && it.isOnFieldLevel == isOnFieldLevel }
@@ -185,7 +185,7 @@ open class PrismaSchemaDeclaration(
     var signature: String? = null
     var insertHandler: InsertHandler<LookupElement>? = null
     var pattern: ElementPattern<out PsiElement>? = null
-    var datasources: Set<PrismaDatasourceType>? = null
+    var datasources: Set<PrismaDatasourceProviderType>? = null
     var type: String? = null
 
     private var params: MutableList<PrismaSchemaParameter> = mutableListOf()
@@ -221,7 +221,7 @@ class PrismaSchemaParameter(
   label: String,
   documentation: String?,
   insertHandler: InsertHandler<LookupElement>? = null,
-  datasources: Set<PrismaDatasourceType>? = null,
+  datasources: Set<PrismaDatasourceProviderType>? = null,
   variants: List<PrismaSchemaVariant> = emptyList(),
   type: String? = null,
   val isOnFieldLevel: Boolean = false,
@@ -239,7 +239,7 @@ class PrismaSchemaParameter(
     var documentation: String? = null
     var type: String? = null
     var insertHandler: InsertHandler<LookupElement>? = null
-    var datasources: Set<PrismaDatasourceType>? = null
+    var datasources: Set<PrismaDatasourceProviderType>? = null
     var isOnFieldLevel: Boolean = false
     var skipInCompletion: Boolean = false
 
@@ -271,7 +271,7 @@ class PrismaSchemaVariant(
   insertHandler: InsertHandler<LookupElement>? = null,
   type: String? = null,
   ref: PrismaSchemaRef? = null,
-  datasources: Set<PrismaDatasourceType>? = null,
+  datasources: Set<PrismaDatasourceProviderType>? = null,
   pattern: ElementPattern<out PsiElement>? = null,
 ) : PrismaSchemaElement(
   label,
@@ -288,7 +288,7 @@ class PrismaSchemaVariant(
     private var insertHandler: InsertHandler<LookupElement>? = null
     var type: String? = null
     var ref: PrismaSchemaRef? = null
-    var datasources: Set<PrismaDatasourceType>? = null
+    var datasources: Set<PrismaDatasourceProviderType>? = null
     var pattern: ElementPattern<out PsiElement>? = null
 
     override fun build(): PrismaSchemaVariant {

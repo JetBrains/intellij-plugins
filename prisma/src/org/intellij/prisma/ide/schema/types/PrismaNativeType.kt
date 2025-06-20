@@ -6,14 +6,14 @@ import org.intellij.prisma.ide.schema.types.PrismaNativeTypeConstructor.Companio
 import org.intellij.prisma.lang.types.*
 
 object PrismaNativeType {
-  fun findConstructorsByType(datasourceType: PrismaDatasourceType): List<PrismaNativeTypeConstructor> {
+  fun findConstructorsByType(datasourceType: PrismaDatasourceProviderType): List<PrismaNativeTypeConstructor> {
     return when (datasourceType) {
-      PrismaDatasourceType.SQLITE -> emptyList()
-      PrismaDatasourceType.MYSQL -> MySQL.CONSTRUCTORS
-      PrismaDatasourceType.POSTGRESQL -> PostgreSQL.CONSTRUCTORS
-      PrismaDatasourceType.SQLSERVER -> SQLServer.CONSTRUCTORS
-      PrismaDatasourceType.MONGODB -> MongoDB.CONSTRUCTORS
-      PrismaDatasourceType.COCKROACHDB -> CockroachDB.CONSTRUCTORS
+      PrismaDatasourceProviderType.SQLITE -> emptyList()
+      PrismaDatasourceProviderType.MYSQL -> MySQL.CONSTRUCTORS
+      PrismaDatasourceProviderType.POSTGRESQL -> PostgreSQL.CONSTRUCTORS
+      PrismaDatasourceProviderType.SQLSERVER -> SQLServer.CONSTRUCTORS
+      PrismaDatasourceProviderType.MONGODB -> MongoDB.CONSTRUCTORS
+      PrismaDatasourceProviderType.COCKROACHDB -> CockroachDB.CONSTRUCTORS
     }
   }
 

@@ -6,18 +6,24 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.psi.PrismaDatasourceDeclaration
+import org.intellij.prisma.lang.psi.PrismaGeneratorDeclaration
 import org.intellij.prisma.lang.psi.PrismaKeyValue
 import org.intellij.prisma.lang.psi.PrismaLiteralExpression
 import java.util.concurrent.ConcurrentHashMap
 
-data class PrismaSchemaMetadata(val datasources: Map<String, PrismaSchemaDatasource> = emptyMap()) {
-  val datasourceTypes: Set<PrismaDatasourceType> = datasources.values.map { it.type }.toSet()
+data class PrismaSchemaMetadata(
+  val datasources: Map<String, PrismaDatasourceMetadata>,
+  val generators: Map<String, PrismaGeneratorMetadata>,
+) {
+  val datasourceTypes: Set<PrismaDatasourceProviderType> = datasources.values.mapNotNullTo(mutableSetOf()) { it.providerType }
+  val generatorProviderTypes: Set<String> = generators.values.mapNotNullTo(mutableSetOf()) { it.providerType }
 }
 
-data class PrismaSchemaDatasource(val name: String, val type: PrismaDatasourceType)
+data class PrismaDatasourceMetadata(val name: String, val providerType: PrismaDatasourceProviderType?)
+data class PrismaGeneratorMetadata(val name: String, val providerType: String?)
 
 fun resolveSchemaMetadata(context: PsiElement): PrismaSchemaMetadata {
   val cache = CachedValuesManager.getManager(context.project).getCachedValue(context.project) {
@@ -37,19 +43,30 @@ private fun buildMetadata(
   val processor = PrismaProcessor()
   processKeyValueDeclarations(context.project, processor, scope)
 
-  val datasources = mutableListOf<PrismaSchemaDatasource>()
+  val datasources = mutableListOf<PrismaDatasourceMetadata>()
+  val generators = mutableListOf<PrismaGeneratorMetadata>()
 
   for (declaration in processor.getResults()) {
-    if (declaration is PrismaDatasourceDeclaration) {
-      val datasourceName = declaration.name
-      val provider = declaration.findMemberByName(PrismaConstants.DatasourceFields.PROVIDER) as? PrismaKeyValue
-      val providerValue = (provider?.expression as? PrismaLiteralExpression)?.value as? String
-      val datasourceType = PrismaDatasourceType.fromString(providerValue)
-      if (datasourceName != null && datasourceType != null) {
-        datasources.add(PrismaSchemaDatasource(datasourceName, datasourceType))
+    when (declaration) {
+      is PrismaDatasourceDeclaration -> {
+        val datasourceName = declaration.name
+        val provider = declaration.findMemberByName(PrismaConstants.DatasourceFields.PROVIDER) as? PrismaKeyValue
+        val providerValue = (provider?.expression as? PrismaLiteralExpression)?.value as? String
+        val datasourceType = PrismaDatasourceProviderType.fromString(providerValue)
+        if (datasourceName != null && datasourceType != null) {
+          datasources.add(PrismaDatasourceMetadata(datasourceName, datasourceType))
+        }
+      }
+      is PrismaGeneratorDeclaration -> {
+        val generatorName = declaration.name
+        val provider = declaration.findMemberByName(PrismaConstants.GeneratorFields.PROVIDER) as? PrismaKeyValue
+        val providerType = (provider?.expression as? PrismaLiteralExpression)?.value as? String
+        if (generatorName != null) {
+          generators.add(PrismaGeneratorMetadata(generatorName, providerType))
+        }
       }
     }
   }
 
-  return PrismaSchemaMetadata(datasources.associateBy { it.name })
+  return PrismaSchemaMetadata(datasources.associateBy { it.name }, generators.associateBy { it.name })
 }

@@ -43,7 +43,7 @@ object PrismaNativeTypeProvider : PrismaCompletionProvider() {
     val file = parameters.originalFile as? PrismaFile ?: return
     val pathExpression = parameters.position.parent.asSafely<PrismaPathExpression>() ?: return
     val datasourceName = pathExpression.qualifier?.text ?: return
-    val datasourceType = file.metadata.datasources[datasourceName]?.type ?: return
+    val datasourceType = file.metadata.datasources[datasourceName]?.providerType ?: return
     val constructors = PrismaNativeType.findConstructorsByType(datasourceType)
     val fieldType = parameters.position.parentOfType<PrismaFieldDeclaration>()?.type?.unwrapType() ?: return
 

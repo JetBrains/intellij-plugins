@@ -3,7 +3,8 @@ package org.intellij.prisma.ide.schema.definitions
 import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.schema
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
 
 val PRISMA_SCHEMA_PRIMITIVE_TYPES = schema {
@@ -38,7 +39,7 @@ val PRISMA_SCHEMA_PRIMITIVE_TYPES = schema {
     element {
       label = PrimitiveTypes.DECIMAL
       documentation = "Decimal value"
-      datasources = PrismaDatasourceType.except(PrismaDatasourceType.MONGODB)
+      datasources = PrismaDatasourceProviderType.except(MONGODB)
     }
     element {
       label = PrimitiveTypes.BIGINT

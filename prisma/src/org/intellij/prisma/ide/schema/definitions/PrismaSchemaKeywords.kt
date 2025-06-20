@@ -2,7 +2,8 @@ package org.intellij.prisma.ide.schema.definitions
 
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.schema
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.SQLITE
 
 val PRISMA_SCHEMA_KEYWORDS = schema {
   group(PrismaSchemaKind.KEYWORD) {
@@ -24,11 +25,11 @@ val PRISMA_SCHEMA_KEYWORDS = schema {
       label = "enum"
       documentation =
         "Enums are defined via the enum block. You can define enums in your data model if they're supported by the datasource you use (e.g SQLite: not supported)."
-      datasources = PrismaDatasourceType.except(PrismaDatasourceType.SQLITE)
+      datasources = PrismaDatasourceProviderType.except(SQLITE)
     }
     element {
       label = "type"
-      documentation = "Composite types are available for MongoDB only."
+      documentation = "Composite types (known as [embedded documents](https://www.mongodb.com/docs/manual/core/data-model-design/#std-label-data-modeling-embedding) in MongoDB) provide support for embedding records inside other records. [Learn more](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types)"
     }
   }
 }

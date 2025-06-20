@@ -14,7 +14,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
       """.trimIndent(),
       "url"
     )
-    assertSameElements(lookupElements.strings, "directUrl", "provider", "url", "shadowDatabaseUrl", "relationMode", "extensions")
+    assertSameElements(lookupElements.strings, "directUrl", "provider", "url", "shadowDatabaseUrl", "relationMode", "extensions", "schemas")
     checkLookupDocumentation(lookupElements, "url")
   }
 
@@ -68,7 +68,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
       "output",
       "binaryTargets",
       "previewFeatures",
-      "engineType"
+      "engineType",
     )
     checkLookupDocumentation(lookupElements, "provider")
   }
@@ -105,6 +105,42 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase("completion/keyVal
           }
       """.trimIndent(),
       "binaryTargets"
+    )
+  }
+
+  fun testGeneratorWithPrismaClientProvider() {
+    val lookupElements = getLookupElements(
+      """
+          generator client {
+            provider = "prisma-client"
+            <caret>
+          }
+      """.trimIndent()
+    )
+    assertContainsElements(
+      lookupElements.strings,
+      "runtime",
+      "moduleFormat",
+      "generatedFileExtension",
+      "importFileExtension"
+    )
+  }
+
+  fun testGeneratorWithDefaultProvider() {
+    val lookupElements = getLookupElements(
+      """
+          generator client {
+            provider = "prisma-client-js"
+            <caret>
+          }
+      """.trimIndent()
+    )
+    assertDoesntContain(
+      lookupElements.strings,
+      "runtime",
+      "moduleFormat",
+      "generatedFileExtension",
+      "importFileExtension"
     )
   }
 }

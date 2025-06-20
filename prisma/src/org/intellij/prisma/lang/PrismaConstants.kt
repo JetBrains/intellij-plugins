@@ -58,8 +58,9 @@ object PrismaConstants {
     const val INDEX = "@@index"
     const val FULLTEXT = "@@fulltext"
     const val IGNORE = "@@ignore"
+    const val SCHEMA = "@@schema"
 
-    val ALL = setOf(ID, MAP, UNIQUE, INDEX, FULLTEXT, IGNORE)
+    val ALL = setOf(ID, MAP, UNIQUE, INDEX, FULLTEXT, IGNORE, SCHEMA)
   }
 
   object FieldAttributes {
@@ -77,6 +78,28 @@ object PrismaConstants {
   object DatasourceFields {
     const val PROVIDER = "provider"
     const val URL = "url"
+    const val SHADOW_DATABASE_URL = "shadowDatabaseUrl"
+    const val DIRECT_URL = "directUrl"
+    const val RELATION_MODE = "relationMode"
+    const val EXTENSIONS = "extensions"
+    const val SCHEMAS = "schemas"
+  }
+
+  object GeneratorFields {
+    const val PROVIDER = "provider"
+    const val OUTPUT = "output"
+    const val PREVIEW_FEATURES = "previewFeatures"
+    const val ENGINE_TYPE = "engineType"
+    const val BINARY_TARGETS = "binaryTargets"
+    const val MODULE_FORMAT = "moduleFormat"
+    const val RUNTIME = "runtime"
+    const val GENERATED_FILE_EXTENSION = "generatedFileExtension"
+    const val IMPORT_FILE_EXTENSION = "importFileExtension"
+  }
+
+  object GeneratorProviderTypes {
+    const val PRISMA_CLIENT_JS = "prisma-client-js"
+    const val PRISMA_CLIENT = "prisma-client"
   }
 
   object ParameterNames {

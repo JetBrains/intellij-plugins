@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 
 fun PrismaPathExpression.findTopmostPathParent(): PsiElement? {
   return PsiTreeUtil.skipParentsOfType(this, PrismaPathExpression::class.java)
@@ -29,7 +29,7 @@ val PrismaQualifiedReferenceElement.leftmostQualifier: PsiElement
 val PsiElement.isKeyword: Boolean
   get() = elementType in PRISMA_KEYWORDS
 
-fun PsiElement.resolveDatasourceTypes(): Set<PrismaDatasourceType> =
+fun PsiElement.resolveDatasourceTypes(): Set<PrismaDatasourceProviderType> =
   (containingFile as? PrismaFile)?.metadata?.datasourceTypes ?: emptySet()
 
 fun PsiElement?.skipWhitespacesForwardWithoutNewLines(): PsiElement? =

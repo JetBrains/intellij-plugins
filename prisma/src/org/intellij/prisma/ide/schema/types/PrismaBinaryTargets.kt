@@ -12,6 +12,9 @@ val PRISMA_BINARY_TARGETS = setOf(
   "linux-musl",
   "linux-musl-openssl-3.0.x",
 
+  "linux-musl-arm64-openssl-1.1.x",
+  "linux-musl-arm64-openssl-3.0.x",
+
   "debian-openssl-1.0.x",
   "debian-openssl-1.1.x",
   "debian-openssl-3.0.x",
