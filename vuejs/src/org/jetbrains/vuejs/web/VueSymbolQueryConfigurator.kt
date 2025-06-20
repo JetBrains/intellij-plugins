@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.findPsiFile
+import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.context.PolyContext
@@ -16,10 +17,12 @@ import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlText
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
@@ -55,40 +58,6 @@ val PROP_VUE_COMPOSITION_COMPONENT: PolySymbolProperty<Boolean> = PolySymbolProp
 
 class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
-  override fun getScope(
-    project: Project,
-    location: PsiElement?,
-    context: PolyContext,
-    allowResolve: Boolean,
-  ): List<PolySymbolScope> {
-    if (context.framework != VueFramework.ID || location == null) return emptyList()
-
-    if (location is JSElement && location !is XmlElement)
-      return getScopeForJSElement(location, allowResolve)
-
-    val result = SmartList<PolySymbolScope>()
-    val attribute = (location as? XmlAttributeValue)?.parent as? XmlAttribute ?: location as? XmlAttribute
-    val tag = attribute?.parent ?: location as? XmlTag
-    val fileContext = location.containingFile?.originalFile ?: return emptyList()
-
-    if (allowResolve) {
-      withTypeEvaluationLocation(fileContext) { addEntityContainers(location, fileContext, result) }
-      tag?.let { result.add(VueAvailableSlotsScope(it)) }
-      tag?.takeIf { it.name == SLOT_TAG_NAME }?.let { result.add(VueSlotElementScope(it)) }
-      attribute?.takeIf { it.valueElement == null }?.let { result.add(VueBindingShorthandScope(it)) }
-      findModule(tag, true)?.let {
-        result.add(VueScriptSetupNamespacedComponentsScope(it))
-      }
-    }
-
-    // Top level tags
-    if (tag != null && tag.parentTag == null && fileContext.isVueFile) {
-      result.add(VueTopLevelElementsScope)
-    }
-
-    return result
-  }
-
   override fun getNameConversionRulesProviders(
     project: Project,
     element: PsiElement?,
@@ -98,103 +67,6 @@ class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
       listOf(VueScriptSetupLocalDirectiveNameConversionRulesProvider)
     else
       super.getNameConversionRulesProviders(project, element, context)
-
-  private fun getScopeForJSElement(element: JSElement, allowResolve: Boolean): List<PolySymbolScope> {
-    if (element is JSObjectLiteralExpression
-        && allowResolve
-        && element.context?.asSafely<JSProperty>()?.name == WATCH_PROP) {
-      val enclosingComponent = VueModelManager.findEnclosingComponent(element) as? VueSourceComponent
-                               ?: return emptyList()
-      return listOf(VueWatchSymbolScope(enclosingComponent))
-    }
-
-    if (allowResolve && (
-        isInjectedAsArrayLiteral(element) ||
-        isInjectedAsAlias(element) ||
-        isInjectedAsProperty(element) ||
-        isInjectedAsMacroCall(element))) {
-      val enclosingComponent = VueModelManager.findEnclosingComponent(element) as? VueSourceComponent
-                               ?: return emptyList()
-      return listOf(VueInjectSymbolScope(enclosingComponent))
-    }
-
-    return emptyList()
-  }
-
-  private fun isInjectedAsArrayLiteral(element: JSElement) =
-    (element is JSLiteralExpression || element is JSReferenceExpression && !element.hasQualifier()) &&
-    element.context is JSArrayLiteralExpression &&
-    element.context?.context?.asSafely<JSProperty>()?.name == INJECT_PROP
-
-  private fun isInjectedAsProperty(element: JSElement) =
-    element is JSObjectLiteralExpression &&
-    element.context?.asSafely<JSProperty>()?.name == INJECT_PROP
-
-  private fun isInjectedAsAlias(element: JSElement): Boolean {
-    if (element !is JSLiteralExpression) return false
-    val alias = element.context?.asSafely<JSProperty>()?.takeIf { it.name == INJECT_FROM } ?: return false
-    val inject = alias.context?.context?.asSafely<JSProperty>() ?: return false
-    return inject.context?.context?.asSafely<JSProperty>()?.name == INJECT_PROP
-  }
-
-  private fun isInjectedAsMacroCall(element: JSElement): Boolean =
-    element.asSafely<JSExpression>()
-      ?.takeIf { it is JSLiteralExpression || it is JSReferenceExpression && !it.hasQualifier() }
-      ?.let { JSPsiImplUtils.isArgumentOfCallWithName(it, 0, INJECT_PROP) }
-    ?: false
-
-  private fun addEntityContainers(
-    element: PsiElement,
-    fileContext: PsiFile,
-    result: SmartList<PolySymbolScope>,
-  ) {
-    VueModelManager.findEnclosingContainer(element).let { enclosingContainer ->
-      val containerToProximity = mutableMapOf<VueEntitiesContainer, VueModelVisitor.Proximity>()
-
-      containerToProximity[enclosingContainer] = VueModelVisitor.Proximity.LOCAL
-
-      enclosingContainer.parents.forEach { parent ->
-        when (parent) {
-          is VueApp -> containerToProximity[parent] = VueModelVisitor.Proximity.APP
-          is VuePlugin -> containerToProximity[parent] = VueModelVisitor.Proximity.PLUGIN
-        }
-      }
-
-      enclosingContainer.global?.let { global ->
-        val apps = containerToProximity.keys.filterIsInstance<VueApp>()
-        global.plugins.forEach { plugin ->
-          containerToProximity.computeIfAbsent(plugin) {
-            apps.maxOfOrNull { it.getProximity(plugin) } ?: plugin.defaultProximity
-          }
-        }
-        containerToProximity[global] = VueModelVisitor.Proximity.GLOBAL
-      }
-
-      if (enclosingContainer is VueSourceComponent && containerToProximity.keys.none { it is VueApp }) {
-        enclosingContainer.global?.apps?.filterIsInstance<VueCompositionApp>()?.forEach {
-          containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE
-        }
-      }
-
-      JSMonorepoManager.getInstance(element.project).getRelatedProjects(element).asSequence()
-        .mapNotNull { it.findPsiFile(element.project) }
-        .mapNotNull { VueModule.get(it) }
-        .forEach { containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE }
-
-      containerToProximity.forEach { (container, proximity) ->
-        VueCodeModelSymbolScope.create(container, proximity)
-          ?.let {
-            if (container == enclosingContainer || container is VueGlobal) {
-              VueIncorrectlySelfReferredComponentFilteringScope(it, fileContext)
-            }
-            else it
-          }
-          ?.let {
-            result.add(it)
-          }
-      }
-    }
-  }
 
   object VueScriptSetupLocalDirectiveNameConversionRulesProvider : PolySymbolNameConversionRulesProvider, PolySymbolNameConversionRules {
     override fun getNameConversionRules(): PolySymbolNameConversionRules = this
@@ -226,4 +98,162 @@ class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
   }
 
+}
+
+class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
+  override fun registerProviders(registrar: PolySymbolQueryScopeProviderRegistrar) {
+    registrar
+      .inContext { it.framework == VueFramework.ID }
+      .withResolveRequired()
+      .apply {
+        forPsiLocation(
+          psiElement(JSElement::class.java)
+            .andNot(psiElement(XmlElement::class.java))
+        ).contributeScopeProvider(VueInjectScopeContributor)
+
+        forPsiLocation(JSObjectLiteralExpression::class.java)
+          .contributeScopeProvider(VueWatchSymbolScopeContributor)
+
+        forPsiLocations(XmlAttributeValue::class.java, XmlAttribute::class.java, XmlTag::class.java, XmlText::class.java)
+          .contributeScopeProvider(VueTemplateSymbolScopeContributor)
+      }
+
+
+    registrar
+      .inContext { it.framework == VueFramework.ID }
+      .forPsiLocation(HtmlTag::class.java)
+      .contributeScopeProvider(VueTopLevelElementsScopeContributor)
+  }
+
+  private object VueTopLevelElementsScopeContributor : PolySymbolLocationQueryScopeProvider<HtmlTag> {
+    override fun getScopes(location: HtmlTag): List<PolySymbolScope> {
+      if (location.parentTag == null && location.containingFile?.originalFile?.isVueFile == true) {
+        return listOf(VueTopLevelElementsScope)
+      }
+      return emptyList()
+    }
+
+  }
+
+  private object VueWatchSymbolScopeContributor : PolySymbolLocationQueryScopeProvider<JSObjectLiteralExpression> {
+    override fun getScopes(location: JSObjectLiteralExpression): List<PolySymbolScope> {
+      if (location.context?.asSafely<JSProperty>()?.name == WATCH_PROP) {
+        val enclosingComponent = VueModelManager.findEnclosingComponent(location) as? VueSourceComponent
+                                 ?: return emptyList()
+        return listOf(VueWatchSymbolScope(enclosingComponent))
+      }
+      else {
+        return emptyList()
+      }
+    }
+  }
+
+  private object VueInjectScopeContributor : PolySymbolLocationQueryScopeProvider<JSElement> {
+    override fun getScopes(location: JSElement): List<PolySymbolScope> {
+      if (isInjectedAsArrayLiteral(location) ||
+          isInjectedAsAlias(location) ||
+          isInjectedAsProperty(location) ||
+          isInjectedAsMacroCall(location)) {
+        val enclosingComponent = VueModelManager.findEnclosingComponent(location) as? VueSourceComponent
+                                 ?: return emptyList()
+        return listOf(VueInjectSymbolScope(enclosingComponent))
+      }
+      else {
+        return emptyList()
+      }
+    }
+
+    private fun isInjectedAsArrayLiteral(element: JSElement) =
+      (element is JSLiteralExpression || element is JSReferenceExpression && !element.hasQualifier()) &&
+      element.context is JSArrayLiteralExpression &&
+      element.context?.context?.asSafely<JSProperty>()?.name == INJECT_PROP
+
+    private fun isInjectedAsProperty(element: JSElement) =
+      element is JSObjectLiteralExpression &&
+      element.context?.asSafely<JSProperty>()?.name == INJECT_PROP
+
+    private fun isInjectedAsAlias(element: JSElement): Boolean {
+      if (element !is JSLiteralExpression) return false
+      val alias = element.context?.asSafely<JSProperty>()?.takeIf { it.name == INJECT_FROM } ?: return false
+      val inject = alias.context?.context?.asSafely<JSProperty>() ?: return false
+      return inject.context?.context?.asSafely<JSProperty>()?.name == INJECT_PROP
+    }
+
+    private fun isInjectedAsMacroCall(element: JSElement): Boolean =
+      element.asSafely<JSExpression>()
+        ?.takeIf { it is JSLiteralExpression || it is JSReferenceExpression && !it.hasQualifier() }
+        ?.let { JSPsiImplUtils.isArgumentOfCallWithName(it, 0, INJECT_PROP) }
+      ?: false
+  }
+
+  private object VueTemplateSymbolScopeContributor : PolySymbolLocationQueryScopeProvider<XmlElement> {
+    override fun getScopes(location: XmlElement): List<PolySymbolScope> {
+      val result = SmartList<PolySymbolScope>()
+      val attribute = (location as? XmlAttributeValue)?.parent as? XmlAttribute ?: location as? XmlAttribute
+      val tag = attribute?.parent ?: location as? XmlTag
+      val fileContext = location.containingFile?.originalFile ?: return emptyList()
+
+      withTypeEvaluationLocation(fileContext) { addEntityContainers(location, fileContext, result) }
+      tag?.let { result.add(VueAvailableSlotsScope(it)) }
+      tag?.takeIf { it.name == SLOT_TAG_NAME }?.let { result.add(VueSlotElementScope(it)) }
+      attribute?.takeIf { it.valueElement == null }?.let { result.add(VueBindingShorthandScope(it)) }
+      findModule(tag, true)?.let {
+        result.add(VueScriptSetupNamespacedComponentsScope(it))
+      }
+      return result
+    }
+
+    private fun addEntityContainers(
+      element: PsiElement,
+      fileContext: PsiFile,
+      result: SmartList<PolySymbolScope>,
+    ) {
+      VueModelManager.findEnclosingContainer(element).let { enclosingContainer ->
+        val containerToProximity = mutableMapOf<VueEntitiesContainer, VueModelVisitor.Proximity>()
+
+        containerToProximity[enclosingContainer] = VueModelVisitor.Proximity.LOCAL
+
+        enclosingContainer.parents.forEach { parent ->
+          when (parent) {
+            is VueApp -> containerToProximity[parent] = VueModelVisitor.Proximity.APP
+            is VuePlugin -> containerToProximity[parent] = VueModelVisitor.Proximity.PLUGIN
+          }
+        }
+
+        enclosingContainer.global?.let { global ->
+          val apps = containerToProximity.keys.filterIsInstance<VueApp>()
+          global.plugins.forEach { plugin ->
+            containerToProximity.computeIfAbsent(plugin) {
+              apps.maxOfOrNull { it.getProximity(plugin) } ?: plugin.defaultProximity
+            }
+          }
+          containerToProximity[global] = VueModelVisitor.Proximity.GLOBAL
+        }
+
+        if (enclosingContainer is VueSourceComponent && containerToProximity.keys.none { it is VueApp }) {
+          enclosingContainer.global?.apps?.filterIsInstance<VueCompositionApp>()?.forEach {
+            containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE
+          }
+        }
+
+        JSMonorepoManager.getInstance(element.project).getRelatedProjects(element).asSequence()
+          .mapNotNull { it.findPsiFile(element.project) }
+          .mapNotNull { VueModule.get(it) }
+          .forEach { containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE }
+
+        containerToProximity.forEach { (container, proximity) ->
+          VueCodeModelSymbolScope.create(container, proximity)
+            ?.let {
+              if (container == enclosingContainer || container is VueGlobal) {
+                VueIncorrectlySelfReferredComponentFilteringScope(it, fileContext)
+              }
+              else it
+            }
+            ?.let {
+              result.add(it)
+            }
+        }
+      }
+    }
+  }
 }

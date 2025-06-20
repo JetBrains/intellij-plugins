@@ -294,8 +294,9 @@
     <polySymbols.webTypes source="web-types/nuxt@0.0.0.web-types.json"/>
 
     <polySymbols.queryConfigurator implementation="org.jetbrains.vuejs.web.VueSymbolQueryConfigurator" id="vue"/>
-    <polySymbols.queryConfigurator implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NSymbolQueryConfigurator"
-                                  id="vue-i18n"/>
+    <polySymbols.queryScopeContributor implementation="org.jetbrains.vuejs.web.VueSymbolQueryScopeContributor" id="vue"/>
+    <polySymbols.queryScopeContributor implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NSymbolQueryScopeContributor"
+                                       id="vue-i18n"/>
 
     <polySymbols.queryResultsCustomizerFactory implementation="org.jetbrains.vuejs.web.VueSymbolQueryResultsCustomizer$Factory"/>
     <polySymbols.webTypes.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>

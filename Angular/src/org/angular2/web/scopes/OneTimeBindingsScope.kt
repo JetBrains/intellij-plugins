@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.scopes
 
-import com.intellij.html.polySymbols.HtmlSymbolQueryConfigurator
+import com.intellij.html.polySymbols.StandardHtmlSymbol
 import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.javascript.polySymbols.jsType
 import com.intellij.javascript.polySymbols.types.TypeScriptSymbolTypeSupport
@@ -27,8 +27,8 @@ import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.html.htmlAttributeValue
-import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -69,7 +69,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
               .additionalScope(scope)
               .exclude(PolySymbolModifier.VIRTUAL, PolySymbolModifier.ABSTRACT)
               .run()
-              .filterIsInstance<HtmlSymbolQueryConfigurator.StandardHtmlSymbol>()
+              .filterIsInstance<StandardHtmlSymbol>()
       )
       .filter { it.htmlAttributeValue?.required == false }
       .mapSmartSet { it.name }

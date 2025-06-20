@@ -353,6 +353,7 @@
     <polySymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
 
+    <polySymbols.queryScopeContributor implementation="org.angular2.web.Angular2SymbolQueryScopeContributor"/>
     <polySymbols.queryConfigurator implementation="org.angular2.web.Angular2SymbolQueryConfigurator"/>
     <polySymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2SymbolQueryResultsCustomizer$Factory"/>
     <polySymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CodeCompletionItemCustomizer"/>

@@ -1,18 +1,18 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight
 
-import com.intellij.html.polySymbols.HtmlSymbolQueryConfigurator
 import com.intellij.html.polySymbols.HtmlSymbolsXmlExtension
+import com.intellij.html.polySymbols.StandardHtmlSymbol
 import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.javascript.web.WebFramework
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.io.URLUtil
-import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.XmlUtil
 import org.angular2.angular2Framework
 import org.angular2.lang.Angular2LangUtil
@@ -36,7 +36,7 @@ class Angular2HtmlExtension : HtmlSymbolsXmlExtension() {
     if (descriptor is HtmlElementSymbolDescriptor) {
       val hasStandardSymbol = descriptor.symbol
         .unwrapMatchedSymbols()
-        .any { it is HtmlSymbolQueryConfigurator.StandardHtmlSymbol }
+        .any { it is StandardHtmlSymbol }
       if (!hasStandardSymbol) return true
     }
     return super.isSelfClosingTagAllowed(tag)
@@ -54,8 +54,10 @@ class Angular2HtmlExtension : HtmlSymbolsXmlExtension() {
         checkBinding(bananaBoxBinding.bindingType, bananaBoxBinding.propertyName)
       }
 
-      private fun checkBinding(type: PropertyBindingType,
-                               name: String) {
+      private fun checkBinding(
+        type: PropertyBindingType,
+        name: String,
+      ) {
         if ((type == PropertyBindingType.PROPERTY || type == PropertyBindingType.ATTRIBUTE) && attrName == name) {
           result = true
         }
