@@ -3,18 +3,15 @@ package org.jetbrains.vuejs.libraries.i18n
 
 import com.intellij.lang.Language
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.Project
+import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.PlatformPatterns.psiFile
+import com.intellij.patterns.StandardPatterns.instanceOf
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ELEMENTS
-import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolQueryConfigurator
-import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.query.PolySymbolScope
-import com.intellij.psi.PsiElement
+import com.intellij.polySymbols.query.*
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.xml.XmlTextImpl
@@ -24,22 +21,20 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 import org.jetbrains.vuejs.web.VueFramework
 
-class VueI18NSymbolQueryConfigurator : PolySymbolQueryConfigurator {
+class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
 
-  override fun getScope(
-    project: Project,
-    location: PsiElement?,
-    context: PolyContext,
-    allowResolve: Boolean,
-  ): List<PolySymbolScope> =
-    if (context.framework == VueFramework.ID
-        && location is HtmlTag
-        && location.name == "i18n"
-        && location.parentTag == null
-        && location.containingFile?.virtualFile?.fileType == VueFileType) {
-      listOf(I18nTagInjectionKind(location))
-    }
-    else emptyList()
+  override fun registerProviders(registrar: PolySymbolQueryScopeProviderRegistrar) {
+    registrar
+      .inContext { it.framework == VueFramework.ID }
+      .inFile(psiFile().withFileType(instanceOf(VueFileType::class.java)))
+      .forPsiLocation(PlatformPatterns.psiElement(HtmlTag::class.java))
+      .contributeScopeProvider { location ->
+        if (location.name == "i18n" && location.parentTag == null)
+          listOf(I18nTagInjectionKind(location))
+        else
+          emptyList()
+      }
+  }
 
   private class I18nTagInjectionKind(private val tag: HtmlTag) : PolySymbolScope {
     override fun equals(other: Any?): Boolean =

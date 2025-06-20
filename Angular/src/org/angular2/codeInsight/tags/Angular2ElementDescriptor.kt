@@ -1,11 +1,11 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.tags
 
-import com.intellij.html.polySymbols.HtmlSymbolQueryConfigurator
+import com.intellij.html.polySymbols.StandardHtmlSymbol
 import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
 import com.intellij.html.polySymbols.elements.HtmlElementSymbolInfo
-import com.intellij.psi.xml.XmlTag
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
+import com.intellij.psi.xml.XmlTag
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.entities.Angular2Directive
 import org.angular2.web.Angular2DescriptorSymbolsProvider
@@ -28,6 +28,6 @@ class Angular2ElementDescriptor(info: HtmlElementSymbolInfo, tag: XmlTag) : Html
 
   override fun isCustomElement(): Boolean =
     symbol.unwrapMatchedSymbols()
-      .none { it is HtmlSymbolQueryConfigurator.StandardHtmlSymbol }
+      .none { it is StandardHtmlSymbol }
 
 }

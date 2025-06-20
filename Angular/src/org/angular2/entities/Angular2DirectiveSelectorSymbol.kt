@@ -2,7 +2,8 @@
 package org.angular2.entities
 
 import com.intellij.html.polySymbols.HtmlDescriptorUtils.getHtmlNSDescriptor
-import com.intellij.html.polySymbols.HtmlSymbolQueryConfigurator
+import com.intellij.html.polySymbols.HtmlSymbolQueryScopeContributor
+import com.intellij.html.polySymbols.StandardHtmlSymbol
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
@@ -127,7 +128,7 @@ class Angular2DirectiveSelectorSymbol(
   }
 
   private fun getReferencedHtmlSymbol(name: String, sourceElement: PsiElement, isElementSelector: Boolean, elementSelector: String?):
-    HtmlSymbolQueryConfigurator.StandardHtmlSymbol? {
+    StandardHtmlSymbol? {
 
     val psiElement = sourceElement
     val nsDescriptor = getHtmlNSDescriptor(psiElement.project)
@@ -135,7 +136,7 @@ class Angular2DirectiveSelectorSymbol(
       if (isElementSelector) {
         val elementDescriptor = nsDescriptor.getElementDescriptorByName(name)
         if (elementDescriptor != null) {
-          return HtmlSymbolQueryConfigurator.HtmlElementDescriptorBasedSymbol(elementDescriptor, null)
+          return HtmlSymbolQueryScopeContributor.HtmlElementDescriptorBasedSymbol(elementDescriptor, null)
         }
       }
       else {
@@ -151,7 +152,7 @@ class Angular2DirectiveSelectorSymbol(
         if (elementDescriptor != null) {
           val attributeDescriptor = elementDescriptor.getAttributeDescriptor(name, null)
           if (attributeDescriptor != null) {
-            return HtmlSymbolQueryConfigurator.HtmlAttributeDescriptorBasedSymbol(attributeDescriptor, tagName!!)
+            return HtmlSymbolQueryScopeContributor.HtmlAttributeDescriptorBasedSymbol(attributeDescriptor, tagName!!)
           }
         }
       }

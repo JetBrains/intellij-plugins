@@ -39,7 +39,7 @@ class AstroSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
       .inContext { it.framework == AstroFramework.ID }
       .apply {
         // Default scopes
-        forAnyPsiLocation()
+        forAnyPsiLocationInFile()
           .contributeScopeProvider {
             mutableListOf(AstroFrontmatterScope(it.containingFile as AstroFileImpl),
                           AstroAvailableComponentsScope(it.project))
