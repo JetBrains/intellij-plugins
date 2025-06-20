@@ -5,7 +5,7 @@ import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.PrismaSchemaRef
 import org.intellij.prisma.ide.schema.schema
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames
@@ -57,7 +57,7 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
         type = "String?"
       }
       length(true)
-      sort(true, datasourceTypes = EnumSet.of(PrismaDatasourceType.SQLSERVER))
+      sort(true, datasourceTypes = EnumSet.of(SQLSERVER))
       clustered()
     }
 
@@ -112,7 +112,7 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
         label = ParameterNames.TYPE
         documentation = "Defines the access type of indexes: BTree (default) or Hash."
         type = Types.INDEX_TYPE.optional()
-        datasources = EnumSet.of(PrismaDatasourceType.POSTGRESQL)
+        datasources = EnumSet.of(POSTGRESQL)
 
         variantsForType(Types.INDEX_TYPE)
       }
@@ -120,7 +120,7 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
         label = ParameterNames.OPS
         documentation = "Specify the operator class for an indexed field."
         type = Types.OPERATOR_CLASS.optional()
-        datasources = EnumSet.of(PrismaDatasourceType.POSTGRESQL)
+        datasources = EnumSet.of(POSTGRESQL)
         isOnFieldLevel = true
 
         variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.RAW) }
@@ -134,7 +134,7 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
       label = BlockAttributes.FULLTEXT
       insertHandler = PrismaInsertHandler.PARENS_LIST_ARGUMENT
       documentation = "Defines a full-text index on the model."
-      datasources = EnumSet.of(PrismaDatasourceType.MYSQL, PrismaDatasourceType.MONGODB)
+      datasources = EnumSet.of(MYSQL, MONGODB)
       pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
 
       param {
@@ -156,6 +156,21 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
       documentation =
         "A model with an `@@ignore` attribute can be kept in sync with the database schema using Prisma Migrate and Introspection, but won't be exposed in Prisma Client."
       pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
+    }
+
+    element {
+      label = BlockAttributes.SCHEMA
+      insertHandler = PrismaInsertHandler.PARENS_QUOTED_ARGUMENT
+      documentation = "Designate which schema this belongs to. [Learn more](https://pris.ly/d/multi-schema-configuration)"
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
+      datasources = EnumSet.of(POSTGRESQL, COCKROACHDB, SQLSERVER)
+
+      param {
+        label = ParameterNames.NAME
+        documentation = "The name of the schema."
+        type = "String"
+        skipInCompletion = true
+      }
     }
   }
 }

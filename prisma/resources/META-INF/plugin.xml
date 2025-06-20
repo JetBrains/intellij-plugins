@@ -118,5 +118,8 @@
 
         <!-- Find Usages -->
        <lang.findUsagesProvider language="Prisma" implementationClass="org.intellij.prisma.lang.findUsages.PrismaFindUsagesProvider"/>
+
+       <registryKey defaultValue="false" description="Include Prisma schemas located in node_modules into resolve and completion"
+                    key="prisma.scope.include.node.modules" restartRequired="true"/>
     </extensions>
 </idea-plugin>

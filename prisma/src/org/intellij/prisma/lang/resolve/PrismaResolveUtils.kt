@@ -1,13 +1,16 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma.lang.resolve
 
+import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.isFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopes
 import com.intellij.psi.stubs.StubIndex
@@ -95,7 +98,15 @@ fun getSchemaScopeWithoutCurrentFile(context: PsiElement): GlobalSearchScope =
     .intersectWith(getSchemaScope(context))
 
 private fun buildSchemaScope(project: Project, file: VirtualFile): GlobalSearchScope? {
-  return findSchemaRoot(project, file)?.let { GlobalSearchScopes.directoryScope(project, it, true) }
+  val rootDirectory = findSchemaRoot(project, file) ?: return null
+  val directoryScope = GlobalSearchScopes.directoryScope(project, rootDirectory, true)
+  val includeNodeModules = Registry.`is`("prisma.scope.include.node.modules")
+
+  return object : DelegatingGlobalSearchScope(project, directoryScope) {
+    override fun contains(file: VirtualFile): Boolean {
+      return super.contains(file) && (includeNodeModules || !NodeModuleUtil.hasNodeModulesDirInPath(file, rootDirectory))
+    }
+  }
 }
 
 private fun findSchemaRoot(project: Project, file: VirtualFile): VirtualFile? {

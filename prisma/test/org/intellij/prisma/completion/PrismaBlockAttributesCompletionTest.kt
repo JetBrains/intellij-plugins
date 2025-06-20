@@ -22,7 +22,7 @@ class PrismaBlockAttributesCompletionTest : PrismaCompletionTestBase("completion
       """.trimIndent(),
       "@@id"
     )
-    assertSameElements(lookupElements.strings, BlockAttributes.ALL)
+    assertSameElements(lookupElements.strings, BlockAttributes.ALL - BlockAttributes.SCHEMA)
     checkLookupDocumentation(lookupElements, "@@id")
   }
 

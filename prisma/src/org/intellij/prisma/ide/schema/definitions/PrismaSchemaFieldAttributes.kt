@@ -6,7 +6,8 @@ import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.PrismaSchemaRef
 import org.intellij.prisma.ide.schema.schema
-import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
 import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames
@@ -32,7 +33,7 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
         type = "String?"
       }
       length()
-      sort(datasourceTypes = EnumSet.of(PrismaDatasourceType.SQLSERVER))
+      sort(datasourceTypes = EnumSet.of(SQLSERVER))
       clustered()
     }
 
@@ -109,7 +110,7 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
         insertHandler = PrismaInsertHandler.COLON_QUOTED_ARGUMENT
         documentation = "Defines a custom name for the foreign key in the database."
         type = "String?"
-        datasources = PrismaDatasourceType.except(PrismaDatasourceType.MONGODB)
+        datasources = PrismaDatasourceProviderType.except(MONGODB)
       }
       param {
         label = ParameterNames.FIELDS
@@ -128,7 +129,7 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
         documentation =
           "Specifies the action to perform when a referenced entry in the referenced model is being deleted. [Learn more](https://pris.ly/d/referential-actions)."
         type = Types.REFERENTIAL_ACTION.optional()
-        datasources = PrismaDatasourceType.except(PrismaDatasourceType.MONGODB)
+        datasources = PrismaDatasourceProviderType.except(MONGODB)
 
         variantsForType(Types.REFERENTIAL_ACTION)
       }
@@ -137,7 +138,7 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
         documentation =
           "Specifies the action to perform when a referenced field in the referenced model is being updated to a new value. [Learn more](https://pris.ly/d/referential-actions)."
         type = Types.REFERENTIAL_ACTION.optional()
-        datasources = PrismaDatasourceType.except(PrismaDatasourceType.MONGODB)
+        datasources = PrismaDatasourceProviderType.except(MONGODB)
 
         variantsForType(Types.REFERENTIAL_ACTION)
       }
@@ -164,7 +165,7 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
         documentation =
           "Defines a native database type that should be used for this field. See https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#native-types-mapping."
         insertHandler = PrismaInsertHandler.QUALIFIED_NAME
-        datasources = PrismaDatasourceType.except(PrismaDatasourceType.SQLITE)
+        datasources = PrismaDatasourceProviderType.except(SQLITE)
         pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
       }
     }

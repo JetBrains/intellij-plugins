@@ -1,5 +1,6 @@
 package org.intellij.prisma.lang.psi
 
+import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.patterns.ObjectPattern
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
@@ -33,6 +34,12 @@ object PrismaPsiPatterns {
     psiElement()
       .withParent(PrismaKeyValue::class.java)
       .withSuperParent(3, PrismaGeneratorDeclaration::class.java)
+
+  fun withGeneratorProvider(expectedProviderType: String): PsiElementPattern.Capture<PsiElement> =
+    psiElement().with("withGeneratorProvider") { element ->
+      val file = CompletionUtil.getOriginalOrSelf(element).containingFile as? PrismaFile ?: return@with false
+      expectedProviderType in file.metadata.generatorProviderTypes
+    }
 
   val newLine: PsiElementPattern.Capture<PsiElement> = psiElement().with("newLine") { element ->
     element.elementType == TokenType.WHITE_SPACE && element.textContains('\n')

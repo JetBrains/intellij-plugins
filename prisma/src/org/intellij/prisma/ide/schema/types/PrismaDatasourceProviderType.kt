@@ -3,7 +3,7 @@ package org.intellij.prisma.ide.schema.types
 import org.intellij.prisma.lang.PrismaConstants.DatasourceTypes
 import java.util.*
 
-enum class PrismaDatasourceType(val presentation: String) {
+enum class PrismaDatasourceProviderType(val presentation: String) {
   MYSQL(DatasourceTypes.MYSQL),
   POSTGRESQL(DatasourceTypes.POSTGRESQL),
   SQLITE(DatasourceTypes.SQLITE),
@@ -12,12 +12,12 @@ enum class PrismaDatasourceType(val presentation: String) {
   COCKROACHDB(DatasourceTypes.COCKROACHDB);
 
   companion object {
-    val ALL: Set<PrismaDatasourceType> = EnumSet.allOf(PrismaDatasourceType::class.java)
+    val ALL: Set<PrismaDatasourceProviderType> = EnumSet.allOf(PrismaDatasourceProviderType::class.java)
 
-    fun fromString(s: String?): PrismaDatasourceType? =
-      PrismaDatasourceType.entries.find { it.presentation == s }
+    fun fromString(s: String?): PrismaDatasourceProviderType? =
+      PrismaDatasourceProviderType.entries.find { it.presentation == s }
 
-    fun except(vararg types: PrismaDatasourceType): Set<PrismaDatasourceType> {
+    fun except(vararg types: PrismaDatasourceProviderType): Set<PrismaDatasourceProviderType> {
       return ALL - types.toSet()
     }
   }
