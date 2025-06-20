@@ -2,8 +2,9 @@
 package org.angular2.entities
 
 import com.intellij.html.polySymbols.HtmlDescriptorUtils.getHtmlNSDescriptor
-import com.intellij.html.polySymbols.HtmlSymbolQueryScopeContributor
 import com.intellij.html.polySymbols.StandardHtmlSymbol
+import com.intellij.html.polySymbols.attributes.asHtmlSymbol
+import com.intellij.html.polySymbols.elements.asHtmlSymbol
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
@@ -136,7 +137,7 @@ class Angular2DirectiveSelectorSymbol(
       if (isElementSelector) {
         val elementDescriptor = nsDescriptor.getElementDescriptorByName(name)
         if (elementDescriptor != null) {
-          return HtmlSymbolQueryScopeContributor.HtmlElementDescriptorBasedSymbol(elementDescriptor, null)
+          return elementDescriptor.asHtmlSymbol(null)
         }
       }
       else {
@@ -152,7 +153,7 @@ class Angular2DirectiveSelectorSymbol(
         if (elementDescriptor != null) {
           val attributeDescriptor = elementDescriptor.getAttributeDescriptor(name, null)
           if (attributeDescriptor != null) {
-            return HtmlSymbolQueryScopeContributor.HtmlAttributeDescriptorBasedSymbol(attributeDescriptor, tagName!!)
+            return attributeDescriptor.asHtmlSymbol(tagName!!)
           }
         }
       }

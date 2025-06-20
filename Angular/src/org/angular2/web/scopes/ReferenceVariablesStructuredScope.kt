@@ -1,6 +1,6 @@
 package org.angular2.web.scopes
 
-import com.intellij.javascript.polySymbols.symbols.asPolySymbol
+import com.intellij.javascript.polySymbols.symbols.asJSSymbol
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.model.Pointer
@@ -113,14 +113,14 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : PolySymbolStruct
       isTemplateTag: Boolean,
     ) {
       val `var` = if (attribute is Angular2HtmlReference) {
-        attribute.variable?.asPolySymbol() ?: return
+        attribute.variable?.asJSSymbol() ?: return
       }
       else {
         JSImplicitElementImpl.Builder(info.name, attribute)
           .setType(JSImplicitElement.Type.Variable)
           .setProperties(JSImplicitElement.Property.Constant)
           .toImplicitElement()
-          .asPolySymbol()
+          .asJSSymbol()
       }
       if (isTemplateTag) {
         // References on ng-template are visible within parent scope

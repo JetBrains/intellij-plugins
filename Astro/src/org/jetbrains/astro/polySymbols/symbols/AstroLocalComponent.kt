@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.polySymbols.symbols
 
-import com.intellij.javascript.polySymbols.symbols.asPolySymbol
+import com.intellij.javascript.polySymbols.symbols.asJSSymbol
 import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.model.Pointer
@@ -56,7 +56,7 @@ class AstroLocalComponent(
       ?.astroContentRoot()
       ?.frontmatterScript()
       ?.propsInterface()
-      ?.asPolySymbol()
+      ?.asJSSymbol()
       ?.getJSPropertySymbols()
       ?.map(::AstroComponentPropSymbol)
       ?.forEach(consumer)
