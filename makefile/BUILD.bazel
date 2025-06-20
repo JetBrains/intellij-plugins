@@ -51,7 +51,6 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/indexing-api:indexing",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",

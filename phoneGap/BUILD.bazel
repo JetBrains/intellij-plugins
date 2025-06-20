@@ -71,7 +71,6 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-ui",

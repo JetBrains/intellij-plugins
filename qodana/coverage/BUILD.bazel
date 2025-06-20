@@ -46,7 +46,6 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-impl",
     "@community//plugins/coverage-common:coverage",
     "@community//plugins/coverage-common:coverage_test_lib",

@@ -67,7 +67,6 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/execution-impl",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/ide-core-impl",
     "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-impl",

@@ -77,7 +77,6 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "//CSS/frontback/css-api:css-frontback",
     "@community//platform/indexing-api:indexing",
     "@community//platform/lang-api:lang",

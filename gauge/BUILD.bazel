@@ -82,7 +82,6 @@ jvm_library(
     "@community//platform/ide-core-impl",
     "@community//json/backend",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-core",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/refactoring",

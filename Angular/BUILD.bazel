@@ -121,7 +121,6 @@ jvm_library(
     "@community//platform/usageView",
     "@community//xml/xml-parser:parser",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/editor-ui-ex:editor-ex",
     "//CSS/frontback/css-api:css-frontback",
     "@community//xml/xml-psi-api:psi",

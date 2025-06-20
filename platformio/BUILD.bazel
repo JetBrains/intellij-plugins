@@ -82,7 +82,6 @@ jvm_library(
     "//CIDR/clion-embedded",
     "//CIDR/clion-embedded:clion-embedded_test_lib",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/xdebugger-impl:debugger-impl",
     "@community//platform/xdebugger-impl:debugger-impl_test_lib",

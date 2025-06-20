@@ -72,7 +72,6 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
     "@lib//:gson",

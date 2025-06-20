@@ -63,7 +63,6 @@ jvm_library(
     "@community//plugins/ide-features-trainer:featuresTrainer",
     "@community//plugins/ide-features-trainer:featuresTrainer_test_lib",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/analysis-impl",
     "@community//platform/refactoring",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",

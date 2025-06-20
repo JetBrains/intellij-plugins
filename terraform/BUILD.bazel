@@ -86,7 +86,6 @@ jvm_library(
     "@community//platform/indexing-impl",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/ide-core-impl",
     "@community//platform/refactoring",
     "@community//platform/usageView",

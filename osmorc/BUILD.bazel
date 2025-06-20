@@ -76,7 +76,6 @@ jvm_library(
     "@community//xml/dom-openapi:dom",
     "@community//plugins/maven",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//java/java-impl:impl",
     "@community//java/compiler/openapi:java-compiler",
     "@community//java/execution/openapi:java-execution",

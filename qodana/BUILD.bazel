@@ -219,7 +219,6 @@ jvm_library(
     "@community//platform/backend/observation:observation_test_lib",
     "@lib//:jetbrains-annotations",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@ultimate_lib//:jetbrains-qodana-cloud-kotlin-client",
     "@lib//:kotlinx-serialization-core",
     "@lib//:kotlinx-serialization-json",

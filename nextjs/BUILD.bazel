@@ -59,7 +59,6 @@ jvm_library(
     "@community//platform/core-impl",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/projectModel-api:projectModel",
     "@community//xml/impl",
     "@community//platform/testFramework",

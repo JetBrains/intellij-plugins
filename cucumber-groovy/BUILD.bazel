@@ -50,7 +50,6 @@ jvm_library(
     "@community//platform/indexing-api:indexing",
     "@community//platform/lang-api:lang",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-impl",
     "@community//plugins/groovy",
     "@community//plugins/groovy:groovy_test_lib",

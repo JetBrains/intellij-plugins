@@ -50,7 +50,6 @@ jvm_library(
     "@community//plugins/yaml:yaml_test_lib",
     "@community//json/backend",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-impl",
     "@lib//:guava",
     "@lib//:x_stream",

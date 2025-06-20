@@ -62,7 +62,6 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//platform/util/progress",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
     "@community//platform/lang-api:lang",

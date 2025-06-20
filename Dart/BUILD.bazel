@@ -140,7 +140,6 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/util/jdom",
     "@community//platform/markdown-utils",
     "@community//platform/markdown-utils:markdown-utils_test_lib",

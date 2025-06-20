@@ -84,7 +84,6 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//xml/xml-psi-impl:psi-impl",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
     "@community//platform/testFramework",

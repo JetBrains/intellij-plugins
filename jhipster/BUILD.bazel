@@ -47,7 +47,6 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/platform-util-io:ide-util-io",
     "@lib//:fastutil-min",
     "@community//platform/core-ui",

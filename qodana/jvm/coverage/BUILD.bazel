@@ -49,7 +49,6 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//jps/model-api:model",
     "@community//platform/lang-impl",
     "@community//platform/projectModel-api:projectModel",

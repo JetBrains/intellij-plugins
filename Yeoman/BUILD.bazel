@@ -58,7 +58,6 @@ jvm_library(
     "@lib//:gson",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "//plugins/JavaScriptLanguage:javascript-plugin",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/testFramework",

@@ -76,7 +76,6 @@ jvm_library(
     "@community//xml/xml-parser:parser",
     "@community//platform/execution-impl",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/lang-api:lang",
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",

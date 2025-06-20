@@ -68,7 +68,6 @@ jvm_library(
     "//dbe/sql/impl",
     "//dbe/sql/backend-core:database-sql-backend-core",
     "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
     "@community//platform/indexing-api:indexing",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/structure-view-impl:structureView-impl",
