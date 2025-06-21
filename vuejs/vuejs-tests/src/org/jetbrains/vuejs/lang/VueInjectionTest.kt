@@ -2,22 +2,28 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.codeInsight.completion.CompletionContributor
+import com.intellij.codeInsight.completion.CompletionContributorEP
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.context.PolyContext.Companion.KIND_FRAMEWORK
+import com.intellij.polySymbols.context.PolyContextProvider
+import com.intellij.polySymbols.context.impl.PolyContextProviderExtensionPoint
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.ParsingTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
-import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.context.PolyContext.Companion.KIND_FRAMEWORK
-import com.intellij.polySymbols.context.PolyContextProvider
-import com.intellij.polySymbols.context.impl.PolyContextProviderExtensionPoint
 import com.intellij.webcore.libraries.ScriptingLibraryModel
 import junit.framework.TestCase
 import org.jetbrains.vuejs.context.isVueContext
@@ -296,8 +302,10 @@ Vue.options.delimiters = ['<%', '%>']
           KIND_FRAMEWORK,
           "vue",
           object : PolyContextProvider {
-            override fun isForbidden(contextFile: VirtualFile,
-                                     project: Project): Boolean = forbid
+            override fun isForbidden(
+              contextFile: VirtualFile,
+              project: Project,
+            ): Boolean = forbid
           }), disposable)
     try {
       // Force reload of roots
@@ -318,7 +326,25 @@ Vue.options.delimiters = ['<%', '%>']
     }
   }
 
+  class InjectedYamlCompletionContributor : CompletionContributor() {
+    override fun fillCompletionVariants(parameters: com.intellij.codeInsight.completion.CompletionParameters, result: com.intellij.codeInsight.completion.CompletionResultSet) {
+      if (parameters.originalFile.language == Language.findLanguageByID("yaml")) {
+        result.consume(LookupElementBuilder.create("keep-alive"))
+      }
+    }
+  }
+
   fun testCompletionInsideInjectedI18NContents() {
+    ApplicationManager.getApplication().extensionArea
+      .getExtensionPoint(CompletionContributor.EP)
+      .registerExtension(
+        CompletionContributorEP(
+          "yaml",
+          InjectedYamlCompletionContributor::class.java.name,
+          DefaultPluginDescriptor("testVuePluginDescriptor")),
+        testRootDisposable
+      )
+
     myFixture.configureVueDependencies("vue-i18n" to "*")
     myFixture.configureByText("Test.vue", """
       <i18n lang="yaml">
@@ -326,8 +352,9 @@ Vue.options.delimiters = ['<%', '%>']
       </i18n>
     """.trimIndent())
     myFixture.completeBasic()
-    // non-ideal - here we test that completion actually works without throwing exceptions, but it shouldn't suggest any tags here
-    assertContainsElements(myFixture.lookupElementStrings!!, "<keep-alive")
+    // Check that completion actually works without throwing exceptions.
+    // It should suggest the element from the test YAML contributor
+    assertContainsElements(myFixture.lookupElementStrings!!, "keep-alive")
   }
 
   fun testTypingInI18NTag() {
