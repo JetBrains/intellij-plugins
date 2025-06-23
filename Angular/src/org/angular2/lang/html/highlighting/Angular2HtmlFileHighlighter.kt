@@ -46,7 +46,7 @@ class Angular2HtmlFileHighlighter(
 
   companion object {
     private val keys: MutableMap<IElementType, Array<out TextAttributesKey>> = HashMap()
-    private val ourJsHighlighter = JSHighlighter(DialectOptionHolder.JS_1_5)
+    private val ourJsHighlighter = JSHighlighter(DialectOptionHolder.JS_WITHOUT_JSX)
     private val ourTsHighlighter = TypeScriptHighlighter()
     private val ourTsKeyMap: MutableMap<Pair<TextAttributesKey, IElementType>, TextAttributesKey> = ConcurrentHashMap()
     private fun put(token: IElementType, vararg keysArr: TextAttributesKey) {

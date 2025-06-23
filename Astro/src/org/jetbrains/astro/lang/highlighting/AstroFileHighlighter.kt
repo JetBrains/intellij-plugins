@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.lang.highlighting
 
 import com.intellij.ide.highlighter.HtmlFileHighlighter
@@ -15,7 +15,6 @@ import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.lexer.AstroLexer
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.set
 
 internal class AstroFileHighlighter : JSHighlighter(AstroLanguage.INSTANCE.optionHolder) {
 
@@ -31,7 +30,7 @@ internal class AstroFileHighlighter : JSHighlighter(AstroLanguage.INSTANCE.optio
 
   companion object {
     private val keys: MutableMap<IElementType, Array<TextAttributesKey>> = HashMap()
-    private val ourJsHighlighter = JSHighlighter(DialectOptionHolder.JS_1_5)
+    private val ourJsHighlighter = JSHighlighter(DialectOptionHolder.JS_WITHOUT_JSX)
     private val ourTsHighlighter = TypeScriptHighlighter()
     private val ourTsKeyMap: MutableMap<Pair<TextAttributesKey, IElementType>, TextAttributesKey> = ConcurrentHashMap()
 
