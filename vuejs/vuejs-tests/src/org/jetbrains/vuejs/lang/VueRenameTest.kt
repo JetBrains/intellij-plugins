@@ -91,6 +91,9 @@ class VueRenameTest : VueTestCase("rename") {
   fun testModelDeclaration() =
     checkSymbolRename("alignment", VueTestModule.VUE_3_3_4, dir = false)
 
+  fun testPropsBindings() =
+    checkSymbolRename("PropsBindings.vue","aCoolMessage", VueTestModule.VUE_3_3_4)
+
   fun testModelDeclarationWithVar() =
     checkSymbolRename("alignment", VueTestModule.VUE_3_3_4, dir = false)
 
@@ -123,6 +126,21 @@ class VueRenameTest : VueTestCase("rename") {
     withRenameUsages(true) {
       checkFileRename("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
+
+  fun testPropsOptionsFromDefinition() =
+    checkSymbolRename("newName", dir = false)
+
+  fun testPropsOptionsFromUsage1() =
+    checkSymbolRename("newName23", dir = false)
+
+  fun testPropsOptionsFromUsage2() =
+    checkSymbolRename("newName23", dir = false)
+
+  fun testPropsOptionsUpperCaseFromDefinition() =
+    checkSymbolRename("NewName", dir = false)
+
+  fun testPropsOptionsNumberFromDefinition() =
+    checkSymbolRename("newName23", dir = false)
 
   fun testComponentFromFunctionPlugin_renameFromDeclaration() {
     checkSymbolRename(

@@ -4,6 +4,7 @@ on-scroll (typeText='(args_0: {scrollTop: number, fixed: boolean}) => any'; prio
 position (typeText='"top" | "bottom"'; priority=100.0; bold; typeGreyed)
 target (typeText='string'; priority=100.0; bold; typeGreyed)
 z-index (typeText='any'; priority=100.0; bold; typeGreyed)
+zIndex (typeText='any'; priority=100.0; bold; typeGreyed)
 is (typeText=null; priority=2.0; typeGreyed)
 key (typeText=null; priority=2.0; typeGreyed)
 ref (typeText=null; priority=2.0; typeGreyed)

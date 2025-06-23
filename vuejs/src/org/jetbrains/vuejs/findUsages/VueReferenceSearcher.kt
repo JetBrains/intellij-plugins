@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.openapi.application.QueryExecutorBase
+import com.intellij.polySymbols.search.PsiSourcedPolySymbolRequestResultProcessor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
@@ -22,10 +23,10 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.search.PsiSourcedPolySymbolRequestResultProcessor
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.isScriptSetupTag
@@ -33,6 +34,8 @@ import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
+import org.jetbrains.vuejs.model.source.DATA_PROP
+import org.jetbrains.vuejs.model.source.PROPS_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
 import java.util.*
 
@@ -91,6 +94,13 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
       // Components (will also mistakenly find directives)
       val component = if (element is JSImplicitElement && element.context is JSLiteralExpression)
         VueModelManager.findEnclosingComponent(element)?.takeIf { (it as? VueRegularComponent)?.nameElement == element.context }
+      else if (
+        (element.asSafely<JSImplicitElement>()?.context ?: element).asSafely<JSProperty>()
+          ?.context?.asSafely<JSObjectLiteralExpression>()
+          ?.context?.asSafely<JSProperty>()
+          ?.name.let { it == PROPS_PROP }
+      )
+        VueModelManager.findEnclosingComponent(element)
       else
         VueComponents.getComponentDescriptor(element)?.let { VueModelManager.getComponent(it) }
 
@@ -230,7 +240,13 @@ private fun getFullComponentScopeIfInsideScriptSetup(element: PsiElement): Local
 }
 
 private fun alternateNames(elementName: String): List<String> {
-  return sequenceOf(elementName, fromAsset(elementName), fromAsset(elementName.removePrefix("v")))
+  return sequenceOf(
+    elementName,
+    toAsset(elementName),
+    fromAsset(elementName),
+    fromAsset(elementName.removePrefix("v")),
+    fromAsset(elementName, true),
+  )
     .map { it.lowercase(Locale.US) }
     .distinct()
     .toList()

@@ -992,6 +992,9 @@ class VueCompletionTest : VueTestCase("completion") {
   fun testDefineExpose() =
     doLookupTest(VueTestModule.VUE_3_3_4, dir = true)
 
+  fun testPropsBindings() =
+    doLookupTest(VueTestModule.VUE_3_3_4, dir = true, renderPriority = false)
+
   fun testCompleteComponentWithDefineOptions() =
     doLookupTest(VueTestModule.VUE_3_3_4, configureFileName = "Component.vue", dir = true, typeToFinishLookup = "\n")
 }
