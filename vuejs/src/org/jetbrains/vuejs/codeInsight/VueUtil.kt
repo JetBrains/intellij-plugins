@@ -100,7 +100,7 @@ fun fromAsset(name: String, hyphenBeforeDigit: Boolean = false): String {
       ch in '0'..'9' -> {
         if (hyphenBeforeDigit
             && result.isNotEmpty()
-            && result.last() != '-') {
+            && result.last().let { it != '-' && !it.isDigit() }) {
           result.append('-')
         }
         result.append(ch)

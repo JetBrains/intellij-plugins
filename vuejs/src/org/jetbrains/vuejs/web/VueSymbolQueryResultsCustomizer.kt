@@ -21,6 +21,7 @@ import com.intellij.polySymbols.utils.nameSegments
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
+import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -66,7 +67,7 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
         symbol.nameSegments.flatMap { it.symbols }.any { it is StandardHtmlSymbol }
       }
       if (standardHtmlSymbols.isEmpty()) return result
-      if (isVueComponentQuery(qualifiedName)) {
+      if (isVueComponentQuery(qualifiedName.name)) {
         return result.filter { it !in standardHtmlSymbols }
       }
     }
@@ -80,9 +81,15 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
   override fun apply(
     item: PolySymbolCodeCompletionItem,
     qualifiedKind: PolySymbolQualifiedKind,
-  ): PolySymbolCodeCompletionItem {
+  ): PolySymbolCodeCompletionItem? {
     when (qualifiedKind) {
       VUE_COMPONENTS -> {
+        if (
+          !isVueComponentQuery(item.name) &&
+          Html5TagAndAttributeNamesProvider
+            .getTags(Html5TagAndAttributeNamesProvider.Namespace.HTML, true)
+            .contains(item.name)
+        ) return null
         val proximity = item.symbol?.get(PROP_VUE_PROXIMITY)
         val element = (item.symbol as? PsiSourcedPolySymbol)?.source
         if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {

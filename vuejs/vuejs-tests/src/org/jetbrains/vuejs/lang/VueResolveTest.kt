@@ -99,7 +99,7 @@ class VueResolveTest : BasePlatformTestCase() {
   fun testResolveAttributeInPascalCaseUsageInPropsArray() {
     myFixture.configureByText("ResolveAttributeInPascalCaseUsageInPropsArray.vue", """
 <template>
-  <list25620 <caret>PascalCase">
+  <list25620 <caret>pascalCase">
   Text
   </list25620>
 </template>
@@ -1139,14 +1139,14 @@ const props = {seeMe: {}}
     myFixture.configureByText("FirstMixin.vue", """
 <script>
   export default {
-    props: ['FirstMixinProp']
+    props: ['firstMixinProp']
   }
 </script>
 """)
     myFixture.configureByText("SecondMixin.vue", """
 <script>
   export default {
-    props: ['SecondMixinProp']
+    props: ['secondMixinProp']
   }
 </script>
 """)
@@ -1174,12 +1174,12 @@ const props = {seeMe: {}}
       TestCase.assertEquals("props", (literal.parent.parent as JSProperty).name)
       TestCase.assertEquals(file, literal.containingFile.name)
     }
-    checkResolve("FirstMixinProp", "FirstMixin.vue")
+    checkResolve("firstMixinProp", "FirstMixin.vue")
 
     val attribute = myFixture.findElementByText("second-mixin-prop", XmlAttribute::class.java)
     TestCase.assertNotNull(attribute)
     myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
-    checkResolve("SecondMixinProp", "SecondMixin.vue")
+    checkResolve("secondMixinProp", "SecondMixin.vue")
   }
 
   fun testResolveIntoLocalMixin() {

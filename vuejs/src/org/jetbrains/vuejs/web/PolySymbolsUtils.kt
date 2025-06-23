@@ -2,8 +2,10 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
+import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedName
+import com.intellij.polySymbols.PolySymbolOrigin
+import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
@@ -38,6 +40,12 @@ fun VueModelVisitor.Proximity.asPolySymbolPriority(): PolySymbol.Priority =
     VueModelVisitor.Proximity.OUT_OF_SCOPE -> PolySymbol.Priority.LOW
   }
 
-internal fun isVueComponentQuery(qualifiedName: PolySymbolQualifiedName): Boolean {
-  return qualifiedName.name.getOrNull(0)?.isUpperCase() == true || qualifiedName.name.contains('-')
+val vueEmptyOrigin: PolySymbolOrigin = PolySymbolOrigin.create(
+  VueFramework.ID,
+  library = "vue",
+  defaultIcon = VuejsIcons.Vue,
+  typeSupport = TypeScriptSymbolTypeSupport())
+
+internal fun isVueComponentQuery(name: String): Boolean {
+  return name.getOrNull(0)?.isUpperCase() == true || name.contains('-') || name == "slot"
 }
