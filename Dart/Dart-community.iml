@@ -55,11 +55,11 @@
     <orderEntry type="module" module-name="intellij.platform.analysis" />
     <orderEntry type="module" module-name="intellij.xml.psi" />
     <orderEntry type="module" module-name="intellij.platform.workspace.storage" />
-    <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
-    <orderEntry type="library" name="Guava" level="project" />
-    <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="library" name="snakeyaml" level="project" />
-    <orderEntry type="library" name="netty-buffer" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.lang.core" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" />
+    <orderEntry type="module" module-name="intellij.platform.codeStyle" />
     <orderEntry type="library" name="netty-codec-http" level="project" />
     <orderEntry type="library" name="caffeine" level="project" />
     <orderEntry type="library" name="fastutil-min" level="project" />
@@ -95,5 +95,10 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" name="snakeyaml" level="project" />
+    <orderEntry type="library" name="netty-buffer" level="project" />
   </component>
 </module>
