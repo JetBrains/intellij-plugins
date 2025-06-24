@@ -222,7 +222,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
 
     private val IS_COMPOSITION_APP_COMPONENT_KEY = Key.create<Boolean>("vue.composition.app.component")
 
-    fun isCompositionAppComponent(component: VueComponent) =
+    fun isCompositionAppComponent(component: VueComponent): Boolean =
       component is UserDataHolder && component.getUserData(IS_COMPOSITION_APP_COMPONENT_KEY) == true
   }
 
