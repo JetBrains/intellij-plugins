@@ -11,6 +11,7 @@ import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.Par
 import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithColoredSyntax.SignatureHtmlPresentation
 import com.intellij.lang.parameterInfo.ParameterInfoHandlerWithTabActionSupport
 import com.intellij.openapi.util.TextRange
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
@@ -66,10 +67,13 @@ class Angular2TemplateBindingsParameterInfoHandler : ParameterInfoHandlerWithCol
     val inputDefinitions = getDirectiveInputsFor(parameterOwner.bindings)
       .associateTo(mutableMapOf()) { input ->
         val bindingName = directiveInputToTemplateBindingVar(input.name, templateName)
-        val definition = input.createDocumentation(parameterOwner.bindings)?.definition
-          ?.replaceFirst("${input.name}:",
-                         bindingName.withColor(NG_INPUT, parameterOwner, false) +
-                         (if (input.required) "" else "?") + ":")
+        val definition = PolySymbolDocumentationTarget
+          .create(input, parameterOwner.bindings) { _, _ -> }
+          .documentation
+          .definition
+          .replaceFirst("${input.name}:",
+                        bindingName.withColor(NG_INPUT, parameterOwner, false) +
+                        (if (input.required) "" else "?") + ":")
         Pair(input.name, definition)
       }
 
