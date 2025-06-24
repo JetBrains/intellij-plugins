@@ -3,11 +3,13 @@ package org.angular2.web
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
+import com.intellij.psi.PsiElement
 
-interface Angular2Symbol : PolySymbolWithDocumentation {
+interface Angular2Symbol : PolySymbol {
 
   val project: Project
 

@@ -5,9 +5,10 @@ import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
+import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -20,7 +21,7 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   override val name: String,
   protected val item: T,
-) : VuePolySymbolBase(), PsiSourcedPolySymbol, PolySymbolWithDocumentation {
+) : VuePolySymbolBase(), PsiSourcedPolySymbol {
 
   open val type: JSType? get() = null
 
@@ -35,8 +36,10 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   val rawSource: PsiElement?
     get() = item.rawSource
 
-  override val description: String?
-    get() = item.description
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
+    PolySymbolDocumentationTarget.create(this, location) {symbol, location ->
+      description = symbol.item.description
+    }
 
   override val presentation: TargetPresentation
     get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(item), name))
@@ -47,7 +50,7 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
     when (property) {
       PROP_JS_TYPE -> property.tryCast(type)
       PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
-      else -> super<PolySymbolWithDocumentation>.get(property)
+      else -> super.get(property)
     }
 
   abstract override fun createPointer(): Pointer<out VueDocumentedItemSymbol<T>>

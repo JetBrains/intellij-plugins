@@ -5,14 +5,13 @@ import com.intellij.javascript.polySymbols.jsType
 import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.platform.backend.documentation.DocumentationResult
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
-import com.intellij.polySymbols.documentation.PolySymbolWithDocumentation
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -20,9 +19,6 @@ import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.merge
 import com.intellij.psi.PsiElement
-import com.intellij.psi.createSmartPointer
-import com.intellij.util.asSafely
-import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
 
@@ -31,7 +27,7 @@ class VueWebTypesMergedSymbol(
   override val delegate: PsiSourcedPolySymbol,
   val webTypesSymbols: Collection<PolySymbol>,
 ) : PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol>,
-    CompositePolySymbol, PolySymbolWithDocumentation, PolySymbolScope {
+    CompositePolySymbol, PolySymbolScope {
 
   private val symbols: List<PolySymbol> = sequenceOf(delegate)
     .plus(webTypesSymbols).toList()
@@ -52,19 +48,8 @@ class VueWebTypesMergedSymbol(
       0, name.length, symbols
     ))
 
-  override val description: String?
-    get() = symbols.firstNotNullOfOrNull {
-      it.asSafely<PolySymbolWithDocumentation>()?.description
-    }
-
-  override val descriptionSections: Map<String, String>
-    get() = symbols.asSequence()
-      .flatMap { it.asSafely<PolySymbolWithDocumentation>()?.descriptionSections?.entries ?: emptySet() }
-      .distinctBy { it.key }
-      .associateBy({ it.key }, { it.value })
-
-  override val docUrl: String?
-    get() = symbols.firstNotNullOfOrNull { it.asSafely<PolySymbolWithDocumentation>()?.docUrl }
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+    PolySymbolDocumentationTarget.create(this, location, VueMergedSymbolDocumentationProvider)
 
   override val icon: Icon?
     get() = symbols.firstNotNullOfOrNull { it.icon }
@@ -72,8 +57,6 @@ class VueWebTypesMergedSymbol(
   override val apiStatus: PolySymbolApiStatus
     get() = coalesceApiStatus(symbols) { it.apiStatus }
 
-  override val defaultValue: String?
-    get() = symbols.firstNotNullOfOrNull { it.asSafely<PolySymbolWithDocumentation>()?.defaultValue }
 
   override val priority: PolySymbol.Priority?
     get() = symbols.asSequence().mapNotNull { it.priority }.maxOrNull()
@@ -90,14 +73,6 @@ class VueWebTypesMergedSymbol(
 
   override val queryScope: List<PolySymbolScope>
     get() = listOf(this)
-
-  override fun createDocumentation(location: PsiElement?): PolySymbolDocumentation =
-    PolySymbolDocumentation.create(this, location) {
-      originalName?.let { definition(StringUtil.escapeXmlEntities(it) + " as " + this.definition) }
-    }
-
-  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
-    VueMergedSymbolDocumentationTarget(this, location, originalName ?: name)
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
@@ -193,31 +168,31 @@ class VueWebTypesMergedSymbol(
     }
   }
 
-  class VueMergedSymbolDocumentationTarget(
-    override val symbol: VueWebTypesMergedSymbol,
-    override val location: PsiElement?,
-    @Nls val displayName: String,
-  ) : PolySymbolDocumentationTarget {
+  object VueMergedSymbolDocumentationProvider : PolySymbolDocumentationProvider<VueWebTypesMergedSymbol> {
 
-    override fun computePresentation(): TargetPresentation {
-      return TargetPresentation.builder(displayName)
+    override fun computePresentation(symbol: VueWebTypesMergedSymbol): TargetPresentation? =
+      TargetPresentation.builder(symbol.originalName ?: symbol.name)
         .icon(symbol.icon)
         .presentation()
-    }
 
-    override fun computeDocumentation(): DocumentationResult? =
-      symbol.createDocumentation(location)
-        .takeIf { it.isNotEmpty() }
-        ?.build(symbol.origin)
+    override fun createDocumentation(symbol: VueWebTypesMergedSymbol, location: PsiElement?): PolySymbolDocumentation {
+      val symbolsDocs = symbol.symbols
+        .mapNotNull { (it.getDocumentationTarget(location) as? PolySymbolDocumentationTarget)?.documentation }
 
-
-    override fun createPointer(): Pointer<out DocumentationTarget> {
-      val pointer = symbol.createPointer()
-      val locationPtr = location?.createSmartPointer()
-      val displayName = this.displayName
-      return Pointer<DocumentationTarget> {
-        pointer.dereference()?.let { VueMergedSymbolDocumentationTarget(it, locationPtr?.dereference(), displayName) }
-      }
+      return PolySymbolDocumentation.builder(symbol, location)
+        .description(symbolsDocs.firstNotNullOfOrNull { it.description })
+        .descriptionSections(
+          symbolsDocs.asSequence()
+            .flatMap { it.descriptionSections.entries }
+            .distinctBy { it.key }
+            .associateBy({ it.key }, { it.value })
+        )
+        .docUrl(symbolsDocs.firstNotNullOfOrNull { it.docUrl })
+        .defaultValue(symbolsDocs.firstNotNullOfOrNull { it.defaultValue })
+        .also { builder ->
+          symbol.originalName?.let { builder.definition(StringUtil.escapeXmlEntities(it) + " as " + builder.definition) }
+        }
+        .build()
     }
   }
 }

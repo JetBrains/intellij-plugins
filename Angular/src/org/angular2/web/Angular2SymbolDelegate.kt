@@ -3,12 +3,10 @@ package org.angular2.web
 
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.utils.PolySymbolDelegateWithDocumentation
+import com.intellij.polySymbols.utils.PolySymbolDelegate
 
-abstract class Angular2SymbolDelegate<T : Angular2Symbol>(override val delegate: T) : PolySymbolDelegateWithDocumentation<T>, Angular2Symbol {
+abstract class Angular2SymbolDelegate<T : Angular2Symbol>(override val delegate: T) : PolySymbolDelegate<T>, Angular2Symbol {
 
   abstract override fun createPointer(): Pointer<out Angular2SymbolDelegate<T>>
 
@@ -17,8 +15,5 @@ abstract class Angular2SymbolDelegate<T : Angular2Symbol>(override val delegate:
 
   override val origin: PolySymbolOrigin
     get() = delegate.origin
-
-  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    super<PolySymbolDelegateWithDocumentation>.getNavigationTargets(project)
 
 }
