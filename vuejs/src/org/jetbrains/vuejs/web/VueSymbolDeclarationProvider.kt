@@ -20,7 +20,7 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.DEFINE_EMITS_FUN
 import org.jetbrains.vuejs.model.source.EMITS_PROP
-import org.jetbrains.vuejs.model.source.VueCompositionApp
+import org.jetbrains.vuejs.model.source.VueCompositionContainer
 
 class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
 
@@ -32,7 +32,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
       is JSArgumentList -> {
         // "createApp()" syntax support
         val callExpr = parent.parent as? JSCallExpression ?: return emptyList()
-        VueCompositionApp.getVueElement(callExpr)
+        VueCompositionContainer.getVueElement(callExpr)
           ?.asPolySymbol(name, VueModelVisitor.Proximity.APP)
       }
       is JSArrayLiteralExpression -> {
