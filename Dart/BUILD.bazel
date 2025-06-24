@@ -132,7 +132,6 @@ jvm_library(
     "@community//platform/ide-core-impl",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@lib//:fastutil-min",
-    "@community//java/testFramework",
     "@community//plugins/yaml",
     "@community//plugins/yaml:yaml_test_lib",
     "@community//platform/platform-util-io:ide-util-io",

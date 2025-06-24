@@ -1,23 +1,23 @@
 package com.jetbrains.lang.dart.injection;
 
-import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.DebugUtil;
+import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.intellij.testFramework.ParsingTestCase;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assume;
 
-public class DartInjectionTest extends LightQuickFixTestCase {
+public class DartInjectionTest extends LightPlatformCodeInsightTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH + "/injection/";
   }
 
-  private void doTest() throws Exception {
+  private void doTest() {
     configureByFile(getTestName(false) + ".dart");
     ParsingTestCase.doCheckResult(getTestDataPath(), getTestName(false) + "." + "txt", toParseTreeText(getFile()));
   }
