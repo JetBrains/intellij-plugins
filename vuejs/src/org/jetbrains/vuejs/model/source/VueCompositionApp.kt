@@ -28,7 +28,7 @@ import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 
-class VueCompositionApp(
+data class VueCompositionApp(
   override val source: JSCallExpression,
 ) : VueDelegatedContainer<VueContainer>(),
     VueApp {
@@ -81,13 +81,6 @@ class VueCompositionApp(
 
   override val parents: List<VueEntitiesContainer>
     get() = VueGlobalImpl.getParents(this)
-
-  override fun equals(other: Any?): Boolean =
-    other === this ||
-    (other is VueCompositionApp
-     && other.source == this.source)
-
-  override fun hashCode(): Int = source.hashCode()
 
   override fun toString(): String {
     return "VueCompositionApp($source)"
