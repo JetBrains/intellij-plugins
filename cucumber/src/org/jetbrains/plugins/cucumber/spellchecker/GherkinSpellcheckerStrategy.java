@@ -8,6 +8,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.spellchecker.quickfixes.SpellCheckerQuickFixFactory;
+import com.intellij.spellchecker.statistics.SpellcheckerRateTracker;
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +33,9 @@ public final class GherkinSpellcheckerStrategy extends SpellcheckingStrategy imp
                                          @NotNull TextRange textRange,
                                          boolean useRename,
                                          String typo) {
-    List<LocalQuickFix> result = SpellCheckerQuickFixFactory.changeToVariants(element, textRange, typo);
-    result.add(SpellCheckerQuickFixFactory.saveTo(element, textRange, typo));
+    SpellcheckerRateTracker tracker = new SpellcheckerRateTracker(element);
+    List<LocalQuickFix> result = SpellCheckerQuickFixFactory.changeToVariants(element, textRange, typo, tracker);
+    result.add(SpellCheckerQuickFixFactory.saveTo(element, textRange, typo, tracker));
     return result.toArray(LocalQuickFix.EMPTY_ARRAY);
   }
 }
