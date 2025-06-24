@@ -66,8 +66,8 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
           }
       }
 
-  override fun getProximity(plugin: VuePlugin): VueModelVisitor.Proximity =
-    plugin.defaultProximity
+  override fun getProximity(library: VueLibrary): VueModelVisitor.Proximity =
+    library.defaultProximity
 
   override fun createPointer(): Pointer<out VueEntitiesContainer> {
     val initializerPtr = source.createSmartPointer()

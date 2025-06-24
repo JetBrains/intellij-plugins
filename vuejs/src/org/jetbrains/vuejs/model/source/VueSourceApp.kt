@@ -8,13 +8,13 @@ import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.VueApp
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.VuePlugin
+import org.jetbrains.vuejs.model.VueLibrary
 
 class VueSourceApp(source: JSImplicitElement, declaration: JSObjectLiteralExpression)
   : VueSourceContainer(source, VueSourceEntityDescriptor(declaration)), VueApp {
 
-  override fun getProximity(plugin: VuePlugin): VueModelVisitor.Proximity =
-    plugin.defaultProximity
+  override fun getProximity(library: VueLibrary): VueModelVisitor.Proximity =
+    library.defaultProximity
 
   override fun createPointer(): Pointer<out VueEntitiesContainer> {
     val sourcePtr = (source as JSImplicitElement).createSmartPointer()

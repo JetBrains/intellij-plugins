@@ -216,15 +216,15 @@ class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
         enclosingContainer.parents.forEach { parent ->
           when (parent) {
             is VueApp -> containerToProximity[parent] = VueModelVisitor.Proximity.APP
-            is VuePlugin -> containerToProximity[parent] = VueModelVisitor.Proximity.PLUGIN
+            is VueLibrary -> containerToProximity[parent] = VueModelVisitor.Proximity.PLUGIN
           }
         }
 
         enclosingContainer.global?.let { global ->
           val apps = containerToProximity.keys.filterIsInstance<VueApp>()
-          global.plugins.forEach { plugin ->
-            containerToProximity.computeIfAbsent(plugin) {
-              apps.maxOfOrNull { it.getProximity(plugin) } ?: plugin.defaultProximity
+          global.libraries.forEach { library ->
+            containerToProximity.computeIfAbsent(library) {
+              apps.maxOfOrNull { it.getProximity(library) } ?: library.defaultProximity
             }
           }
           containerToProximity[global] = VueModelVisitor.Proximity.GLOBAL

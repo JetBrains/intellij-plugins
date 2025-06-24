@@ -26,7 +26,7 @@ interface VueScopeElement : VueDocumentedItem {
     if (minimumProximity <= VueModelVisitor.Proximity.GLOBAL) {
       global?.let {
         containersStack.add(Pair(it, VueModelVisitor.Proximity.GLOBAL))
-        it.plugins.forEach { plugin -> containersStack.add(Pair(plugin, plugin.defaultProximity)) }
+        it.libraries.forEach { plugin -> containersStack.add(Pair(plugin, plugin.defaultProximity)) }
         if (minimumProximity <= VueModelVisitor.Proximity.OUT_OF_SCOPE) {
           containersStack.add(Pair(it.unregistered, VueModelVisitor.Proximity.OUT_OF_SCOPE))
         }
@@ -38,7 +38,7 @@ interface VueScopeElement : VueDocumentedItem {
         when (parent) {
           is VueApp -> if (minimumProximity <= VueModelVisitor.Proximity.APP)
             containersStack.add(Pair(parent, VueModelVisitor.Proximity.APP))
-          is VuePlugin -> if (minimumProximity <= VueModelVisitor.Proximity.PLUGIN)
+          is VueLibrary -> if (minimumProximity <= VueModelVisitor.Proximity.PLUGIN)
             containersStack.add(Pair(parent, VueModelVisitor.Proximity.PLUGIN))
         }
       }

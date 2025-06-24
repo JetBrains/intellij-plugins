@@ -33,8 +33,8 @@ data class VueTypedGlobal(
   override val apps: List<VueApp>
     get() = delegate.apps
 
-  override val plugins: List<VuePlugin>
-    get() = delegate.plugins
+  override val libraries: List<VueLibrary>
+    get() = delegate.libraries
 
   override val unregistered: VueEntitiesContainer
     get() = delegate.unregistered

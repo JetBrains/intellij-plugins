@@ -27,7 +27,7 @@ import java.util.*
 class VueSourceGlobal(override val project: Project, override val packageJsonUrl: String?) : VueGlobal {
 
   override val global: VueGlobal = this
-  override val plugins: List<VuePlugin>
+  override val libraries: List<VueLibrary>
     get() = emptyList()
   override val source: PsiElement? = null
   override val parents: List<VueEntitiesContainer> = emptyList()

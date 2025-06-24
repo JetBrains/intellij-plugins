@@ -19,7 +19,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.source.VueSourceGlobal
-import org.jetbrains.vuejs.model.source.VueSourcePlugin
+import org.jetbrains.vuejs.model.source.VueLibraryImpl
 import java.util.concurrent.ConcurrentHashMap
 
 internal class VueGlobalImpl(override val project: Project, override val packageJsonUrl: String)
@@ -29,8 +29,8 @@ internal class VueGlobalImpl(override val project: Project, override val package
   override val parents: List<VueEntitiesContainer> = emptyList()
   override val global: VueGlobal get() = this
 
-  override val plugins: List<VuePlugin>
-    get() = CachedValuesManager.getManager(project).getCachedValue(this, this::buildPluginsList)
+  override val libraries: List<VueLibrary>
+    get() = CachedValuesManager.getManager(project).getCachedValue(this, this::buildLibrariesList)
 
   override val apps: List<VueApp> get() = delegate.apps
   override val unregistered: VueEntitiesContainer get() = delegate.unregistered
@@ -56,15 +56,15 @@ internal class VueGlobalImpl(override val project: Project, override val package
    * we don't support scenarios in which you modify the `Vue.use` calls in main.js file
    * and go back to editing an already existing Vue component
    */
-  private fun buildPluginsList(): Result<List<VuePlugin>> {
-    val result = mutableListOf<VuePlugin>()
+  private fun buildLibrariesList(): Result<List<VueLibrary>> {
+    val result = mutableListOf<VueLibrary>()
     val dependencies = mutableListOf<Any>(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     packageJson?.let { file ->
       dependencies.add(PackageJsonPolySymbolsRegistryManager.getModificationTracker(project, file))
       PackageJsonPolySymbolsRegistryManager.getNodeModulesWithoutWebTypes(project, file)
         .asSequence()
         .filter { isVueLibrary(it) }
-        .map { VueSourcePlugin(project, it.name, it.version?.toString(), it.packageJsonFile) }
+        .map { VueLibraryImpl(project, it.name, it.version?.toString(), it.packageJsonFile) }
         // Make order of plugin symbol containers predictable
         .sortedBy { it.moduleName ?: "" }
         .toCollection(result)
@@ -75,7 +75,7 @@ internal class VueGlobalImpl(override val project: Project, override val package
   private fun buildElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> {
     val result = MultiMap<VueScopeElement, VueEntitiesContainer>()
     sequenceOf(this)
-      .plus(plugins)
+      .plus(libraries)
       .plus(apps)
       .forEach { container ->
         sequenceOf(container.components.values,
