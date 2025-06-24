@@ -15,7 +15,7 @@ import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueCompositionApp
+import org.jetbrains.vuejs.model.source.VueCompositionContainer
 import org.jetbrains.vuejs.model.source.VueSourceContainer
 import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
@@ -27,7 +27,8 @@ class VueComponentSymbol(
   private val vueProximity: VueModelVisitor.Proximity,
 ) : VueScopeElementSymbol<VueComponent>(name, component) {
 
-  private val isCompositionComponent: Boolean = VueCompositionApp.isCompositionAppComponent(component)
+  private val isCompositionComponent: Boolean =
+    VueCompositionContainer.isCompositionAppComponent(component)
 
   val sourceDescriptor: VueSourceEntityDescriptor?
     get() = (item as? VueSourceContainer)?.descriptor

@@ -6,13 +6,11 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
-import com.intellij.model.Pointer
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.createSmartPointer
 import com.intellij.psi.search.GlobalSearchScopeUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.util.CachedValueProvider
@@ -28,13 +26,10 @@ import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 
-data class VueCompositionApp(
-  override val source: JSCallExpression,
-) : VueDelegatedContainer<VueContainer>(),
-    VueApp {
+abstract class VueCompositionContainer() :
+  VueDelegatedContainer<VueContainer>() {
 
-  override val rootComponent: VueComponent?
-    get() = delegate.asSafely<VueComponent>()
+  abstract override val source: JSCallExpression
 
   override val components: Map<String, VueComponent>
     get() = (delegate?.takeUnless { it is VueComponent }?.components ?: emptyMap()) + getEntitiesAnalysis().components
@@ -54,37 +49,8 @@ data class VueCompositionApp(
   override val element: String?
     get() = getEntitiesAnalysis().element
 
-  override val delegate: VueContainer?
-    get() = getImplicitElement(source)
-      ?.let { getParam(it, source, 0) }
-      ?.let { initializer ->
-        if (initializer is JSObjectLiteralExpression)
-          VueModelManager.getApp(initializer)
-        else
-          CachedValuesManager.getCachedValue(initializer) {
-            val container = getComponentDescriptor(initializer)?.let {
-              VueModelManager.getComponent(it)
-            } as? VueContainer
-            CachedValueProvider.Result.create(container, PsiModificationTracker.MODIFICATION_COUNT)
-          }
-      }
-
-  override fun getProximity(library: VueLibrary): VueModelVisitor.Proximity =
-    library.defaultProximity
-
-  override fun createPointer(): Pointer<out VueEntitiesContainer> {
-    val initializerPtr = source.createSmartPointer()
-    return Pointer {
-      initializerPtr.dereference()?.let { VueCompositionApp(it) }
-    }
-  }
-
   override val parents: List<VueEntitiesContainer>
-    get() = VueGlobalImpl.getParents(this)
-
-  override fun toString(): String {
-    return "VueCompositionApp($source)"
-  }
+    get() = emptyList()
 
   private fun getEntitiesAnalysis(): EntitiesAnalysis =
     CachedValuesManager.getCachedValue(source) {
@@ -135,12 +101,14 @@ data class VueCompositionApp(
     private fun getFilteredArgs(call: JSCallExpression) =
       call.stubSafeCallArguments.dropWhile { it is JSCallExpression }
 
-    private fun getImplicitElement(call: JSCallExpression): JSImplicitElement? =
+    @JvmStatic
+    protected fun getImplicitElement(call: JSCallExpression): JSImplicitElement? =
       call.indexingData
         ?.implicitElements
         ?.find { it.userString == VUE_COMPOSITION_APP_INDEX_JS_KEY }
 
-    private fun getParam(
+    @JvmStatic
+    protected fun getParam(
       element: JSImplicitElement,
       call: JSCallExpression,
       nr: Int,
