@@ -19,7 +19,7 @@ import java.io.IOException
 class PerforceWorkspaceConfigurator(private val project: Project) {
 
   @RequiresBackgroundThread
-  fun configure(projectRoots: Collection<VirtualFile>): Collection<P4Config> {
+  fun configure(projectRoots: Collection<VirtualFile>, forceCreateConfig: Boolean): Collection<P4Config> {
     if (projectRoots.isEmpty()) return emptyList()
 
     val p4ClientParser = project.service<P4ClientParser>()
@@ -32,7 +32,7 @@ class PerforceWorkspaceConfigurator(private val project: Project) {
     val configs = mutableListOf<P4Config>()
     for ((projectRoot, client) in clients) {
       val workspaceRoot = client.workspaceRootPath.let(::File)
-      findOrGenerateP4Config(workspaceRoot, client)?.also { config ->
+      findOrGenerateP4Config(workspaceRoot, client, forceCreateConfig)?.also { config ->
         configs.add(P4Config(config, projectRoot))
       }
     }
@@ -40,13 +40,13 @@ class PerforceWorkspaceConfigurator(private val project: Project) {
     return configs
   }
 
-  private fun findOrGenerateP4Config(workspaceRoot: File, client: PerforceClient): File? {
+  private fun findOrGenerateP4Config(workspaceRoot: File, client: PerforceClient, forceCreateConfig: Boolean): File? {
     if (!workspaceRoot.exists()) {
       LOG.info("Workspace root doesn't exist: $workspaceRoot")
       return null
     }
     val configFile = workspaceRoot.resolve(getP4ConfigFileName())
-    if (configFile.exists()) return configFile
+    if (configFile.exists() || !forceCreateConfig) return configFile
 
     val parameters = client.parameters
     val configContent = mutableListOf<String>().apply {
@@ -76,12 +76,12 @@ class PerforceWorkspaceConfigurator(private val project: Project) {
   companion object {
     private val LOG = logger<PerforceWorkspaceConfigurator>()
 
-    const val P4CONFIG_NAME = "p4config.txt"
-    const val P4IGNORE_NAME = ".p4ignore.txt"
+    const val P4CONFIG_NAME: String = "p4config.txt"
+    const val P4IGNORE_NAME: String = ".p4ignore.txt"
 
     /**
      *.gitignore exist by default in all .idea directory and already contains project configuration files which should be ignored
      */
-    const val GITIGNORE_NAME = ".gitignore"
+    const val GITIGNORE_NAME: String = ".gitignore"
   }
 }

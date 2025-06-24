@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.idea.perforce.perforce
 
-import com.intellij.openapi.components.service
 import com.intellij.execution.process.ProcessNotCreatedException
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -33,15 +33,34 @@ internal class P4RootChecker : VcsRootChecker() {
   override fun detectProjectMappings(project: Project,
                                      projectRoots: Collection<VirtualFile>,
                                      mappedDirs: Set<VirtualFile>): Collection<VirtualFile> {
-    val configs = project.service<PerforceWorkspaceConfigurator>()
-      .configure(projectRoots)
-    if (configs.isNotEmpty()) {
-      val configTracker = project.service<PerforceExternalConfigTracker>()
-      configTracker.startTracking()
-      configTracker.addConfigsToTrack(configs.map { it.configFile.path }.toSet())
+    var configs = project.service<PerforceWorkspaceConfigurator>()
+      .configure(projectRoots, forceCreateConfig = false)
+    trackConfigs(project, configs)
+
+    var mappedRoots = doDetectMappings(project, projectRoots, mappedDirs)
+
+    if (mappedRoots.isEmpty()) {
+      configs = project.service<PerforceWorkspaceConfigurator>()
+        .configure(projectRoots, forceCreateConfig = true)
+      if (configs.isNotEmpty()) {
+        trackConfigs(project, configs)
+        mappedRoots = doDetectMappings(project, projectRoots, mappedDirs)
+      }
     }
 
-    val mappedRoots = try {
+    if (PerforceManager.getInstance(project).isActive) {
+      PerforceConnectionManager.getInstance(project).updateConnections()
+    }
+
+    return mappedRoots
+  }
+
+  private fun doDetectMappings(
+    project: Project,
+    projectRoots: Collection<VirtualFile>,
+    mappedDirs: Set<VirtualFile>,
+  ): Collection<VirtualFile> {
+    return try {
       val connectionManager = PerforceConnectionManager.getInstance(project)
       if (connectionManager.isSingletonConnectionUsed) {
         LOG.debug("detecting for singleton connection")
@@ -55,11 +74,17 @@ internal class P4RootChecker : VcsRootChecker() {
     catch (e: VcsException) {
       throw e
     }
+  }
 
-    if (PerforceManager.getInstance(project).isActive) {
-      PerforceConnectionManager.getInstance(project).updateConnections()
-    }
-    return mappedRoots
+  private fun trackConfigs(
+    project: Project,
+    configs: Collection<PerforceWorkspaceConfigurator.P4Config>
+  ) {
+    if (configs.isEmpty()) return
+
+    val configTracker = project.service<PerforceExternalConfigTracker>()
+    configTracker.startTracking()
+    configTracker.addConfigsToTrack(configs.map { it.configFile.path }.toSet())
   }
 
   private fun detectSingletonConnectionMappings(project: Project,
