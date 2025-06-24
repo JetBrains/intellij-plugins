@@ -23,7 +23,7 @@ class VueModule(
   override val apps: List<VueApp>
     get() = emptyList()
 
-  override val plugins: List<VuePlugin>
+  override val libraries: List<VueLibrary>
     get() = emptyList()
 
   override val unregistered: VueEntitiesContainer

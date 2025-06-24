@@ -23,13 +23,13 @@ import org.jetbrains.vuejs.index.VUETIFY_MODULE
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
-class VueSourcePlugin(
+class VueLibraryImpl(
   private val project: Project,
   override val moduleName: String?,
   override val moduleVersion: String?,
   private val packageJsonFile: VirtualFile,
 ) : UserDataHolderBase(),
-    VuePlugin {
+    VueLibrary {
 
   override val parents: List<VueEntitiesContainer> = emptyList()
 
@@ -91,7 +91,7 @@ class VueSourcePlugin(
   }
 
   override fun equals(other: Any?): Boolean {
-    return (other as? VueSourcePlugin)?.packageJsonFile == packageJsonFile
+    return (other as? VueLibraryImpl)?.packageJsonFile == packageJsonFile
            && other.project == project
   }
 
@@ -102,7 +102,7 @@ class VueSourcePlugin(
   }
 
   override fun toString(): String {
-    return "VueSourcePlugin($moduleName)"
+    return "VueLibraryImpl($moduleName)"
   }
 
   override fun createPointer(): Pointer<out VueEntitiesContainer> {
@@ -112,7 +112,7 @@ class VueSourcePlugin(
     val packageJsonFilePtr = LightFilePointer(packageJsonFile.url)
     return Pointer {
       packageJsonFilePtr.file?.let {
-        VueSourcePlugin(project, moduleName, moduleVersion, it)
+        VueLibraryImpl(project, moduleName, moduleVersion, it)
       }
     }
   }

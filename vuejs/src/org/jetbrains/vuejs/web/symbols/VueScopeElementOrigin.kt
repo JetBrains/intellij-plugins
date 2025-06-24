@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.util.asSafely
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbolOrigin
-import org.jetbrains.vuejs.model.VuePlugin
+import org.jetbrains.vuejs.model.VueLibrary
 import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.web.VueFramework
 
@@ -17,7 +17,7 @@ class VueScopeElementOrigin(private val item: VueScopeElement) : PolySymbolOrigi
     item.parents
       .takeIf { it.size == 1 }
       ?.get(0)
-      ?.asSafely<VuePlugin>()
+      ?.asSafely<VueLibrary>()
       ?.let { Pair(it.moduleName, it.moduleVersion) }
     ?: item.source
       ?.containingFile

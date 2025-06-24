@@ -5,6 +5,6 @@ interface VueApp : VueContainer {
 
   val rootComponent: VueComponent? get() = null
 
-  fun getProximity(plugin: VuePlugin): VueModelVisitor.Proximity
+  fun getProximity(library: VueLibrary): VueModelVisitor.Proximity
 
 }

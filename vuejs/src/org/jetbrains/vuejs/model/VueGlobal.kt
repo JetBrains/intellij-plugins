@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project
 
 interface VueGlobal : VueEntitiesContainer {
   val apps: List<VueApp>
-  val plugins: List<VuePlugin>
+  val libraries: List<VueLibrary>
   val unregistered: VueEntitiesContainer
   val project: Project
   val packageJsonUrl: String?
