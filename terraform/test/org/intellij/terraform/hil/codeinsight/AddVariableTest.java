@@ -1,13 +1,13 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.codeinsight;
 
-import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
+import com.intellij.testFramework.InspectionsKt;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.intellij.terraform.TfTestUtils;
 import org.intellij.terraform.hil.inspection.HILUnresolvedReferenceInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class AddVariableTest extends LightQuickFixTestCase {
-
+public class AddVariableTest extends BasePlatformTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
@@ -17,14 +17,17 @@ public class AddVariableTest extends LightQuickFixTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    enableInspectionTools(new HILUnresolvedReferenceInspection());
+    InspectionsKt.enableInspectionTools(getProject(), getTestRootDisposable(), new HILUnresolvedReferenceInspection());
   }
 
-  public void testSimpleVariable() throws Exception {
+  public void testSimpleVariable() {
     doSingleTest();
   }
 
   private void doSingleTest() {
-    doSingleTest(getTestName(false) + ".tf");
+    myFixture.configureByFile("before" + getTestName(false) + ".tf");
+    var intention = myFixture.findSingleIntention("Add variable 'foobar'");
+    myFixture.launchAction(intention);
+    myFixture.checkResultByFile("after" + getTestName(false) + ".tf");
   }
 }

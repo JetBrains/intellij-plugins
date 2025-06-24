@@ -101,7 +101,6 @@ jvm_library(
     "@lib//:assert_j",
     "@community//platform/usageView-impl",
     "@community//platform/vcs-api:vcs",
-    "@community//java/testFramework",
     "@lib//:guava",
     "@community//platform/workspace/storage",
     "@community//spellchecker",

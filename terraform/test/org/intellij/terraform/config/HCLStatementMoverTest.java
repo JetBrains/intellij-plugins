@@ -1,16 +1,16 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config;
 
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.intellij.terraform.TfTestUtils;
 
 import java.io.File;
 import java.io.IOException;
 
-public class HCLStatementMoverTest extends LightJavaCodeInsightFixtureTestCase {
+public class HCLStatementMoverTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return TfTestUtils.getTestDataPath() + "/terraform/mover";

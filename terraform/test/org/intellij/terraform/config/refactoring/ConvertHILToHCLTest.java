@@ -1,16 +1,16 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.refactoring;
 
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import org.intellij.terraform.config.TerraformFileType;
 import org.intellij.terraform.hcl.psi.HCLExpression;
 import org.intellij.terraform.hcl.psi.HCLObject;
 import org.intellij.terraform.hcl.psi.HCLProperty;
 import org.intellij.terraform.hcl.psi.HCLStringLiteral;
-import org.intellij.terraform.config.TerraformFileType;
 import org.intellij.terraform.hil.inspection.HILConvertToHCLInspection;
 
-public class ConvertHILToHCLTest extends LightJavaCodeInsightFixtureTestCase {
+public class ConvertHILToHCLTest extends BasePlatformTestCase {
 
   protected void doTest(String input, String expected) {
     PsiFile file = myFixture.configureByText(TerraformFileType.INSTANCE, "a=\"" + input + "\"");
