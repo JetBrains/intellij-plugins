@@ -28,7 +28,10 @@ import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 
-class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedContainer<VueContainer>(), VueApp {
+class VueCompositionApp(
+  override val source: JSCallExpression,
+) : VueDelegatedContainer<VueContainer>(),
+    VueApp {
 
   override val rootComponent: VueComponent?
     get() = delegate.asSafely<VueComponent>()
@@ -103,7 +106,10 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
 
     @StubSafe
     fun getVueElement(call: JSCallExpression): VueScopeElement? {
-      val implicitElement = getImplicitElement(call)?.takeIf { isVueContext(it) } ?: return null
+      val implicitElement = getImplicitElement(call)
+                              ?.takeIf { isVueContext(it) }
+                            ?: return null
+
       return when (implicitElement.name) {
         COMPONENT_FUN -> {
           val args = getFilteredArgs(call)
@@ -112,7 +118,11 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
             if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, literal) else it
           }
         }
-        DIRECTIVE_FUN, FILTER_FUN -> getFilteredArgs(call).getOrNull(0)
+
+        DIRECTIVE_FUN,
+        FILTER_FUN,
+          -> getFilteredArgs(call)
+          .getOrNull(0)
           ?.asSafely<JSLiteralExpression>()
           ?.let { literal ->
             getTextIfLiteral(literal)?.let { name ->
@@ -122,7 +132,9 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
                 VueSourceFilter(name, literal)
             }
           }
+
         MIXIN_FUN -> VueModelManager.getMixin(getComponentDescriptor(getParam(implicitElement, call, 0)) as? VueSourceEntityDescriptor)
+
         else -> null
       }
     }
