@@ -19,6 +19,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
@@ -61,9 +62,32 @@ public final class CucumberUtil {
   public static final String PREFIX_CHAR = "^";
   public static final String SUFFIX_CHAR = "$";
 
+  /// This regex matches any single character that has special meaning in regular expressions and needs to be escaped.
+  ///
+  /// Specifically, it matches any one of these characters:
+  /// - `\\` (backslash)
+  /// - `^` (caret/start anchor)
+  /// - `[` (opening square bracket)
+  /// - `$` (dollar sign/end anchor)
+  /// - `.` (dot/any character)
+  /// - `|` (pipe/alternation)
+  /// - `?` (question mark/optional)
+  /// - `*` (asterisk/zero or more)
+  /// - `+` (plus/one or more)
+  /// - `]` (closing square bracket)
   private static final Pattern ESCAPE_PATTERN = Pattern.compile("([\\\\^\\[$.|?*+\\]])");
+
+  /// This regex matches optional patterns in Cucumber expressions.
+  ///
+  /// It distinguishes between `(text)` (to be converted to regex optional groups) and `\\\\(text)` (to be treated as literal characters).
   private static final Pattern OPTIONAL_PATTERN = Pattern.compile("(\\\\\\\\)?\\(([^)]+)\\)");
+
+  /// This regex is designed to match _parameter placeholders_ in Cucumber scenario outlines.
+  ///
+  /// @see <a href="https://cucumber.io/docs/gherkin/reference#scenario-outline">Gherkin Reference | Scenario Outline</a>
   private static final Pattern PARAMETER_SUBSTITUTION_PATTERN = Pattern.compile("<(?!<)([^>\n\r]+)>");
+
+  private static final Pattern SCRIPT_STYLE_REGEXP = Pattern.compile("^/(.*)/$");
 
   public static final Map<String, String> STANDARD_PARAMETER_TYPES;
 
@@ -187,23 +211,186 @@ public final class CucumberUtil {
     return result;
   }
 
+  /// Finds the ranges of parameter parts (e.g., `{int}`) in a Cucumber expression.
+  ///
+  /// This method correctly handles escaped brace `\\{`, which means that what follows is not a parameter.
+  ///
+  /// @see <a href="https://docs.cucumber.io/cucumber/cucumber-expressions/">Cucumber Expressions</a>
+  public static @NotNull List<TextRange> getCukexHighlightRanges(@NotNull String expression) {
+    List<TextRange> ranges = new ArrayList<>();
+
+    int parameterStartIndex = -1; // -1 indicates we are not currently inside a parameter.
+    boolean isEscaped = false;
+    for (int i = 0; i < expression.length(); i++) {
+      final char currentChar = expression.charAt(i);
+
+      if (isEscaped) {
+        // If the previous character was a backslash, this character is escaped.
+        // We do nothing with it and reset the escape flag.
+        isEscaped = false;
+        continue;
+      }
+
+      if (currentChar == '\\') {
+        // This is an escape character. Set the flag for the next iteration.
+        isEscaped = true;
+        continue;
+      }
+
+      if (currentChar == '{') {
+        // An unescaped opening brace marks the start of a new parameter,
+        // but only if we're not already inside another one. This handles
+        // malformed input like "a {{b} c" gracefully.
+        if (parameterStartIndex == -1) {
+          parameterStartIndex = i;
+        }
+      }
+      else if (currentChar == '}') {
+        // An unescaped closing brace marks the end of a parameter,
+        // but only if a corresponding opening brace was found.
+        if (parameterStartIndex != -1) {
+          ranges.add(new TextRange(parameterStartIndex, i + 1));
+          // Reset the start index to indicate we are no longer inside a parameter.
+          parameterStartIndex = -1;
+        }
+      }
+    }
+
+    return ranges;
+  }
+
+  /// Finds the ranges of parameter parts (e.g., `{int}`), optional texts (e.g. `(int)`), and alternative texts (e.g., `(int|float)`)
+  /// in a Cucumber expression.
+  public static @NotNull List<TextRange> getCukexRanges(@NotNull String expression) {
+    List<TextRange> ranges = new ArrayList<>();
+    int parameterStartIndex = -1; // -1 indicates we are not currently inside a parameter.
+    boolean isEscaped = false;
+    boolean inAlternativeGroup = false;
+    int alternativeGroupStartIndex = -1;
+
+    for (int i = 0; i < expression.length(); i++) {
+      final char currentChar = expression.charAt(i);
+
+      if (isEscaped) {
+        // If the previous character was a backslash, this character is escaped.
+        // We do nothing with it and reset the escape flag.
+        isEscaped = false;
+      }
+      else if (currentChar == '\\') {
+        // This is an escape character. Set the flag for the next iteration.
+        isEscaped = true;
+      }
+      else if (currentChar == '{' || currentChar == '(') {
+        // An unescaped opening brace marks the start of a new parameter,
+        // but only if we're not already inside another one. This handles
+        // malformed input like "a {{b} c" gracefully.
+        if (parameterStartIndex == -1) {
+          parameterStartIndex = i;
+        }
+      }
+      else if (currentChar == '}' || currentChar == ')') {
+        // An unescaped closing brace marks the end of a parameter,
+        // but only if a corresponding opening brace was found.
+        if (parameterStartIndex != -1) {
+          ranges.add(new TextRange(parameterStartIndex, i + 1));
+          // Reset the start index to indicate we are no longer inside a parameter.
+          parameterStartIndex = -1;
+        }
+      }
+      else if (currentChar == '/') {
+        // Handle alternative text (e.g., "one/few/many")
+        if (!inAlternativeGroup) {
+          // Find the start of the word before the slash
+          int j = i - 1;
+          while (j >= 0 && !Character.isWhitespace(expression.charAt(j))) {
+            j--;
+          }
+          alternativeGroupStartIndex = j + 1;
+          inAlternativeGroup = true;
+        }
+      }
+      else if (inAlternativeGroup && Character.isWhitespace(currentChar)) {
+        // End the alternative group when we hit whitespace
+        ranges.add(new TextRange(alternativeGroupStartIndex, i));
+        inAlternativeGroup = false;
+        alternativeGroupStartIndex = -1;
+      }
+    }
+
+    // Handle case where an alternative group extends to the end of the string
+    if (inAlternativeGroup && alternativeGroupStartIndex != -1) {
+      ranges.add(new TextRange(alternativeGroupStartIndex, expression.length()));
+    }
+
+    return ranges;
+  }
+
+  public static @NotNull List<String> textRangesOutsideToSubstrings(String cukex, @NotNull List<TextRange> ranges) {
+    List<String> result = new ArrayList<>();
+    int lastStart = 0;
+    for (TextRange range : ranges) {
+      String part = cukex.substring(lastStart, range.getStartOffset());
+      result.add(part);
+      lastStart = range.getEndOffset();
+    }
+    if (lastStart != 0) {
+      String lastPart = cukex.substring(lastStart);
+      result.add(lastPart);
+    }
+    else {
+      // If no parameters and alternative/optional texts were found, return the original text
+      result.add(cukex);
+    }
+
+    return result;
+  }
+
   /**
-   * Processes unescaped slashes "/" (Alternative text) and pipes "|"
-   * and not-necessary groups "(s)"in Cucumber Expressions.
-   * From Cucumber's point of view the following code:
-   * <pre>
-   *   {@code Then 'I print a word(s) red/blue using slash'...}
-   * </pre>
-   * converted into regexp:
-   * <pre>
-   *   {@code       I print a word(?:s)? (red|blue) using slash}
-   * </pre>
-   * <p>
-   * All pipes should be escaped.
+   * Checks if the expression should be considered as a CucumberExpression or as a RegEx
    *
-   * @see <a href="https://docs.cucumber.io/cucumber/cucumber-expressions/">Cucumber Expressions</a>
+   * @see <a href="https://github.com/cucumber/cucumber-expressions/blob/v18.0.0/java/heuristics.adoc">heuristic from cucumber library</a>
+   * @see <a href="https://github.com/cucumber/cucumber-expressions/blob/v18.0.0/java/src/main/java/io/cucumber/cucumberexpressions/ExpressionFactory.java">implementation in cucumber library</a>
    */
-  public static String processExpressionOrOperator(@NotNull String cucumberExpression) {
+  public static boolean isCucumberExpression(@NotNull String expression) {
+    return !expression.startsWith("^") && !expression.endsWith("$") && !SCRIPT_STYLE_REGEXP.matcher(expression).find();
+  }
+
+  /// Replaces optional texts inside a Cucumber expression with corresponding regex non-capturing groups.
+  ///
+  /// ### Example
+  ///
+  /// See tests of this method for sample inputs and outputs.
+  ///
+  /// The cukex `I have {int} cucumber(s) in my belly` is equal to the regex `I have \d+ cucumber(?:s)? in my belly`.
+  ///
+  /// @see <a href="https://github.com/cucumber/cucumber-expressions#optional-text">Cucumber Expressions | Optional text (GitHub repo)</a>
+  public static @NotNull String replaceOptionalTextWithRegex(@NotNull String cucumberExpression) {
+    Matcher matcher = OPTIONAL_PATTERN.matcher(cucumberExpression);
+    StringBuilder result = new StringBuilder();
+
+    while (matcher.find()) {
+      String parameterPart = matcher.group(2);
+      if ("\\\\".equals(matcher.group(1))) {
+        matcher.appendReplacement(result, "\\\\(" + parameterPart + "\\\\)");
+      }
+      else {
+        // Non-capturing group
+        matcher.appendReplacement(result, "(" + parameterPart + ")?");
+      }
+    }
+
+    matcher.appendTail(result);
+    return result.toString();
+  }
+
+  /// This helper method:
+  /// - processes unescaped slashes `/` (alternative text), and wraps converts them into non-capturing groups, and
+  /// - escapes unescaped pipes `|`
+  ///
+  /// See tests of this method for sample inputs and outputs.
+  ///
+  /// @see <a href="https://docs.cucumber.io/cucumber/cucumber-expressions">Cucumber Expressions</a>
+  public static @NotNull String replaceAlternativeTextWithRegex(@NotNull String cucumberExpression) {
     StringBuilder result = new StringBuilder();
     int i = 0;
     boolean inGroup = false;
@@ -215,7 +402,7 @@ public final class CucumberUtil {
           while (j >= 0 && !Character.isWhitespace(result.charAt(j))) {
             j--;
           }
-          result.insert(j + 1, "(?:");
+          result.insert(j + 1, "(");
           inGroup = true;
         }
         result.append('|');
@@ -240,6 +427,11 @@ public final class CucumberUtil {
     return result.toString();
   }
 
+  @TestOnly
+  public static @NotNull String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression) {
+    return buildRegexpFromCucumberExpression(cucumberExpression, MapParameterTypeManager.DEFAULT);
+  }
+
   //@formatter:off Temporarily disable formatter because of bug IDEA-371809
   /// Builds a regexp from the `cucumberExpression` containing `ParameterType`s.
   /// ### Example
@@ -259,22 +451,21 @@ public final class CucumberUtil {
   //@formatter:on
   public static @NotNull String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
                                                                   @NotNull ParameterTypeManager parameterTypeManager) {
-    cucumberExpression = escapeCucumberExpression(cucumberExpression);
-    cucumberExpression = replaceNotNecessaryTextTemplateByRegexp(cucumberExpression);
-    cucumberExpression = processExpressionOrOperator(cucumberExpression);
-    String escapedCucumberExpression = cucumberExpression;
+    String cucumberExpression1 = escapeCucumberExpression(cucumberExpression);
+    String cucumberExpression2 = replaceOptionalTextWithRegex(cucumberExpression1);
+    String escapedCucumberExpression = replaceAlternativeTextWithRegex(cucumberExpression2);
 
-    List<Pair<TextRange, String>> parameterTypeValues = new ArrayList<>();
+    List<Pair<TextRange, String>> rangesAndParameterTypeValues = new ArrayList<>();
     processParameterTypesInCucumberExpression(escapedCucumberExpression, range -> {
       String parameterTypeName = escapedCucumberExpression.substring(range.getStartOffset() + 1, range.getEndOffset() - 1);
       String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
-      parameterTypeValues.add(Pair.create(range, parameterTypeValue));
+      rangesAndParameterTypeValues.add(Pair.create(range, parameterTypeValue));
       return true;
     });
 
     StringBuilder result = new StringBuilder(escapedCucumberExpression);
-    Collections.reverse(parameterTypeValues);
-    for (Pair<TextRange, String> rangeAndValue : parameterTypeValues) {
+    Collections.reverse(rangesAndParameterTypeValues);
+    for (Pair<TextRange, String> rangeAndValue : rangesAndParameterTypeValues) {
       String value = rangeAndValue.getSecond();
       if (value == null) {
         return escapedCucumberExpression;
@@ -289,37 +480,21 @@ public final class CucumberUtil {
   }
 
   /**
-   * Replaces pattern (text) with regexp {@code (text)?}
-   * For example Cucumber Expression:
-   * {@code I have {int} cucumber(s) in my belly} is equal to regexp
-   * {@code I have \d+ cucumber(?:s)? in my belly}
-   */
-  public static String replaceNotNecessaryTextTemplateByRegexp(@NotNull String cucumberExpression) {
-    Matcher matcher = OPTIONAL_PATTERN.matcher(cucumberExpression);
-    StringBuilder result = new StringBuilder();
-
-    while (matcher.find()) {
-      String parameterPart = matcher.group(2);
-      if ("\\\\".equals(matcher.group(1))) {
-        matcher.appendReplacement(result, "\\\\(" + parameterPart + "\\\\)");
-      }
-      else {
-        matcher.appendReplacement(result, "(?:" + parameterPart + ")?");
-      }
-    }
-
-    matcher.appendTail(result);
-    return result.toString();
-  }
-
-  /**
    * Processes text ranges of every Parameter Type in Cucumber Expression
    */
   public static void processParameterTypesInCucumberExpression(@NotNull String cucumberExpression,
                                                                @NotNull Processor<? super TextRange> processor) {
     int i = 0;
+    boolean isEscaped = false;
     while (i < cucumberExpression.length()) {
       char c = cucumberExpression.charAt(i);
+
+      if (isEscaped) {
+        isEscaped = false;
+        i++;
+        continue;
+      }
+
       if (c == '{') {
         int j = i;
         while (j < cucumberExpression.length()) {
@@ -348,7 +523,9 @@ public final class CucumberUtil {
           // escape without following symbol;
           return;
         }
+        isEscaped = true;
         i++;
+        continue;
       }
       i++;
     }
@@ -471,6 +648,12 @@ public final class CucumberUtil {
     while (result);
   }
 
+  /// Escapes a cucumber expression.
+  ///
+  /// For example, in a Cucumber expression like `I have $5`, the `$` will be escaped to `I have \\$5` so it matches a literal dollar
+  /// sign rather than being interpreted as an end-of-line anchor in the resulting regex.
+  ///
+  /// @see #ESCAPE_PATTERN
   public static String escapeCucumberExpression(@NotNull String stepPattern) {
     return ESCAPE_PATTERN.matcher(stepPattern).replaceAll("\\\\$1");
   }
@@ -480,7 +663,7 @@ public final class CucumberUtil {
     return reference != null ? reference.resolve() : null;
   }
 
-  public static Integer getLineNumber(@NotNull PsiElement element) {
+  public static @Nullable Integer getLineNumber(@NotNull PsiElement element) {
     PsiFile containingFile = element.getContainingFile();
     Project project = containingFile.getProject();
     PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
@@ -492,10 +675,8 @@ public final class CucumberUtil {
     return document.getLineNumber(textOffset) + 1;
   }
 
-  public static CucumberStepReference getCucumberStepReference(@Nullable PsiElement element) {
-    if (element == null) {
-      return null;
-    }
+  public static @Nullable CucumberStepReference getCucumberStepReference(@Nullable PsiElement element) {
+    if (element == null) return null;
     for (PsiReference ref : element.getReferences()) {
       if (ref instanceof CucumberStepReference stepReference) {
         return stepReference;

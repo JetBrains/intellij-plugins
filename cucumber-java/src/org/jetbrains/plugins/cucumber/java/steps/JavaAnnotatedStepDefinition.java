@@ -17,17 +17,37 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
 
   @Override
   protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
-    if (element == null) {
-      return null;
-    }
-
-    if (!(element instanceof PsiMethod)) {
-      return null;
-    }
+    // NOTE(bartekpacia): Name of this method is invalid because it can return either a regex or a cukex.
+    if (!(element instanceof PsiMethod)) return null;
     if (myAnnotationValue.length() > 1) {
       return CucumberJavaUtil.escapeCucumberRegex(myAnnotationValue);
     }
     return null;
+  }
+
+  private static final String[] CUCUMBER_ANNOTATION_NAMES = {
+    "io.cucumber.java.en.Given",
+    "io.cucumber.java.en.When",
+    "io.cucumber.java.en.Then"
+  };
+
+  @Override
+  public void setCucumberRegex(@NotNull String newValue) {
+    if (!(getElement() instanceof PsiMethod method)) return;
+    final PsiAnnotation[] annotations = method.getAnnotations();
+
+    for (PsiAnnotation annotation : annotations) {
+      String qualifiedName = annotation.getQualifiedName();
+      if (qualifiedName != null) {
+        for (String cucumberAnnotation : CUCUMBER_ANNOTATION_NAMES) {
+          if (qualifiedName.equals(cucumberAnnotation)) {
+            PsiElementFactory factory = JavaPsiFacade.getElementFactory(getElement().getProject());
+            String newValueEscaped = CucumberJavaUtil.unescapeCucumberRegex(newValue);
+            annotation.setDeclaredAttributeValue("value", factory.createExpressionFromText("\"" + newValueEscaped + "\"", null));
+          }
+        }
+      }
+    }
   }
 
   @Override

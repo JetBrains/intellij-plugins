@@ -114,6 +114,7 @@ jvm_library(
     "@lib//:cucumber-core-1",
     "@community//platform/testFramework/junit5",
     "@community//platform/testFramework/junit5:junit5_test_lib",
+    "@community//platform/usageView",
   ],
   runtime_deps = [":cucumber-java_resources"]
 )

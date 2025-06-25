@@ -3,19 +3,9 @@ package org.jetbrains.plugins.cucumber.java;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class CucumberJavaUtilTest {
-  @Test
-  public void testIsCucumberExpression() {
-    assertTrue(CucumberJavaUtil.isCucumberExpression("strings are cukexp by default"));
-    assertFalse(CucumberJavaUtil.isCucumberExpression("^definitely a regexp$"));
-    assertFalse(CucumberJavaUtil.isCucumberExpression("^definitely a regexp"));
-    assertFalse(CucumberJavaUtil.isCucumberExpression("definitely a regexp$"));
-    assertFalse(CucumberJavaUtil.isCucumberExpression("/surely a regexp/"));
-    assertTrue(CucumberJavaUtil.isCucumberExpression("this look(s) like a cukexp"));
-    assertTrue(CucumberJavaUtil.isCucumberExpression("\\(text)"));
-  }
 
   @Test
   public void testGetCucumberMainClass() {

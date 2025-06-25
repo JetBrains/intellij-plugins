@@ -78,7 +78,7 @@ public class CucumberJava2ResolveTest extends BaseCucumberJavaResolveTest {
    */
   public void testNotExactStepMatching() {
     init("stepResolve_01");
-    checkReference("test sho<caret>uld pass", "test_should_pass");
+    checkReference("test sho<caret>uld pass", null);
   }
 
   @Override

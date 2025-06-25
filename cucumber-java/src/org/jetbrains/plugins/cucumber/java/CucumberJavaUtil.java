@@ -36,7 +36,6 @@ import org.jetbrains.plugins.cucumber.psi.*;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
@@ -56,8 +55,6 @@ public final class CucumberJavaUtil {
 
   private static final Map<String, String> JAVA_PARAMETER_TYPES;
   public static final String CUCUMBER_EXPRESSIONS_CLASS_MARKER = "io.cucumber.cucumberexpressions.CucumberExpressionGenerator";
-
-  private static final Pattern SCRIPT_STYLE_REGEXP = Pattern.compile("^/(.*)/$");
 
   public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
@@ -82,16 +79,6 @@ public final class CucumberJavaUtil {
     javaParameterTypes.put("long", STANDARD_PARAMETER_TYPES.get("int"));
 
     JAVA_PARAMETER_TYPES = Collections.unmodifiableMap(javaParameterTypes);
-  }
-
-  /**
-   * Checks if the expression should be considered as a CucumberExpression or as a RegEx
-   *
-   * @see <a href="https://github.com/cucumber/cucumber-expressions/blob/v18.0.0/java/heuristics.adoc">heuristic from cucumber library</a>
-   * @see <a href="https://github.com/cucumber/cucumber-expressions/blob/v18.0.0/java/src/main/java/io/cucumber/cucumberexpressions/ExpressionFactory.java">implementation in cucumber library</a>
-   */
-  public static boolean isCucumberExpression(@NotNull String expression) {
-    return !expression.startsWith("^") && !expression.endsWith("$") && !SCRIPT_STYLE_REGEXP.matcher(expression).find();
   }
 
   /// - Backslashes become `\\\\`

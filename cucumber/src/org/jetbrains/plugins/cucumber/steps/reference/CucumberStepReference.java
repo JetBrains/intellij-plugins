@@ -111,7 +111,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
       }
       return CachedValueProvider.Result.create(allStepDefinition, PsiModificationTracker.MODIFICATION_COUNT);
     });
-    
+
     List<PsiElement> resolvedElements = new ArrayList<>();
     for (final AbstractStepDefinition stepDefinition : stepDefinitions) {
       if (stepDefinition.supportsStep(myStep)) {

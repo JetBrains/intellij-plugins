@@ -180,11 +180,11 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   public boolean isRenameAllowed(final @Nullable String newName) {
     final Collection<AbstractStepDefinition> definitions = findDefinitions();
     if (definitions.isEmpty()) {
-      return false; // No sense to rename step with out of definitions
+      return false; // Cannot rename a step without definitions
     }
     for (final AbstractStepDefinition definition : definitions) {
       if (!definition.supportsRename(newName)) {
-        return false; //At least one definition does not support renaming
+        return false; // Cannot rename a step if at least one of its definitions does not support renaming
       }
     }
     return true; // Nothing prevents us from renaming

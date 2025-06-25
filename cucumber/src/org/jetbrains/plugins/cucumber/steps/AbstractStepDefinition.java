@@ -88,13 +88,17 @@ public abstract class AbstractStepDefinition {
     }
   }
 
+  /// Returns the step definition string as a regex.
+  ///
+  /// If the step definition string is a regex, it is returned as-is.
+  /// If the step definition is a cukex, it will be converted to a regex.
   public @Nullable String getCucumberRegex() {
     return getExpression();
   }
 
   @Contract("null -> null")
   protected abstract @Nullable String getCucumberRegexFromElement(PsiElement element);
-  
+
   protected boolean isCaseSensitive() {
     return true;
   }
@@ -120,6 +124,9 @@ public abstract class AbstractStepDefinition {
    * Set new value for step definitions (most likely provided by refactor->rename)
    */
   public void setCucumberRegex(final @NotNull String newValue) {
+    // TODO: Name of this method is misleading, because it can also be used to set a Cucumber Expression, not only a Cucumber Regex.
+    //  Action item: Maybe instead of retrofitting it, add a new method 'setCucumberExpression(String newValue)'.
+    //  Or simply 'setExpression(String newValue), to match the existing 'getExpression()' method.
   }
 
   /**
@@ -134,6 +141,7 @@ public abstract class AbstractStepDefinition {
 
   /**
    * Checks if step definition supports rename.
+   *
    * @param newName if null -- check if definition supports renaming at all (regardless new name).
    *                If not null -- check if it can be renamed to the new (provided) name.
    * @return true if rename is supported
@@ -142,34 +150,29 @@ public abstract class AbstractStepDefinition {
     return true;
   }
 
-  /**
-   * Finds all steps points to this definition in some scope
-   *
-   * @param searchScope scope to find steps
-   * @return steps
-   */
-  public @NotNull Collection<GherkinStep> findSteps(final @NotNull SearchScope searchScope) {
+  /// Finds all steps that refer to this definition in some [SearchScope] (kind of like "find usages").
+  public @NotNull Collection<GherkinStep> findSteps(@NotNull SearchScope searchScope) {
     final String regex = getCucumberRegex();
     final PsiElement element = getElement();
-    if ((regex == null) || (element == null)) {
+    if (regex == null || element == null) {
       return Collections.emptyList();
     }
 
     final CollectProcessor<PsiReference> consumer = new CollectProcessor<>();
     CucumberUtil.findGherkinReferencesToElement(element, regex, consumer, searchScope);
 
-    // We use hash to get rid of duplicates
+    // We use a hash set to get rid of duplicates
     final Collection<GherkinStep> results = new HashSet<>(consumer.getResults().size());
     for (final PsiReference reference : consumer.getResults()) {
-      final PsiElement step = reference.getElement();
-      if (step instanceof GherkinStep) {
-        results.add((GherkinStep)step);
+      if (reference.getElement() instanceof GherkinStep gherkinStep) {
+        results.add(gherkinStep);
       }
     }
     return results;
   }
 
-  public String getExpression() {
+  /// Returns either a regex or cukex associated with this step.
+  public @Nullable String getExpression() {
     return getCucumberRegexFromElement(getElement());
   }
 }

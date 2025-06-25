@@ -1,3 +1,3 @@
 Feature: test
   Scenario: test
-    Given a <info descr="null">something</info> is good
+    Given <info descr="null">a</info> <info descr="null">something</info> is good

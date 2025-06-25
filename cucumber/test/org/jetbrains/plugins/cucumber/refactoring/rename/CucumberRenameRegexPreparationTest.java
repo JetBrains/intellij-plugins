@@ -1,12 +1,13 @@
 package org.jetbrains.plugins.cucumber.refactoring.rename;
 
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
 
-public class CucumberRenameRegexpPreparationTest {
+public class CucumberRenameRegexPreparationTest {
   @Test
   public void testClass() {
     doTest("test[abc]test", "test([abc])test", "test", "test");
@@ -42,16 +43,11 @@ public class CucumberRenameRegexpPreparationTest {
 
   private static void doTest(String source, String expected, String... sentences) {
     List<String> result = GherkinStepRenameProcessor.prepareRegexAndGetStaticTexts(source);
-    Assert.assertEquals(expected, result.get(0));
+    Assert.assertEquals(sentences.length, result.size() - 1);
 
-    if (sentences.length > result.size() - 1) {
-      Assert.fail();
-    }
+    String preparedRegex = result.remove(0);
+    Assert.assertEquals(expected, preparedRegex);
 
-    for (int i = 0; i < sentences.length; i++) {
-      String expectedSentence = sentences[i];
-      String actualSentence = result.get(i + 1);
-      Assert.assertEquals(expectedSentence, actualSentence);
-    }
+    Assert.assertArrayEquals(sentences, ArrayUtil.toStringArray(result));
   }
 }

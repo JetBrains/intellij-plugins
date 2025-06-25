@@ -254,4 +254,3 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     return factory.createMethodFromText(text, step);
   }
 }
-

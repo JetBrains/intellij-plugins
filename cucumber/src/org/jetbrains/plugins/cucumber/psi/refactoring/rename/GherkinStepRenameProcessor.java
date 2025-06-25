@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.refactoring.rename;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.SearchScope;
@@ -18,6 +19,7 @@ import org.intellij.lang.regexp.RegExpTT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
+import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
@@ -29,7 +31,8 @@ import java.util.regex.Pattern;
 public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
-    return element instanceof GherkinStep || PsiTreeUtil.getParentOfType(element, GherkinStep.class) != null;
+    boolean isGherkinStep = element instanceof GherkinStep || PsiTreeUtil.getParentOfType(element, GherkinStep.class) != null;
+    return isGherkinStep;
   }
 
   /**
@@ -101,24 +104,49 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     return result;
   }
 
-  private static @NotNull String getNewStepName(@NotNull String oldStepName,
-                                                @NotNull Pattern oldStepDefPattern,
-                                                @NotNull List<String> newStaticTexts) {
+  public static @NotNull String prepareRegexFromCukex(@NotNull String cukex) {
+    String preparedRegex = CucumberUtil.buildRegexpFromCucumberExpression(cukex, MapParameterTypeManager.DEFAULT);
+    return preparedRegex.substring(1).substring(0, preparedRegex.length() - 2);
+  }
+
+  /// Wraps all special cukex special symbols with regex groups and cuts out static text.
+  ///
+  /// @return List of strings. Each string is a static part of the cukex.
+  public static @NotNull List<String> getStaticTextsFromCukex(@NotNull String cukex) {
+    List<TextRange> ranges = CucumberUtil.getCukexRanges(cukex);
+    return CucumberUtil.textRangesOutsideToSubstrings(cukex, ranges);
+  }
+
+  /// Returns a _concrete_ new name of a specific renamed step usage.
+  public static @NotNull String getNewStepName(@NotNull String oldStepName,
+                                               @NotNull Pattern oldStepDefPattern,
+                                               @NotNull List<String> newStaticTexts) {
+    newStaticTexts = new ArrayList<>(newStaticTexts);
     final Matcher matcher = oldStepDefPattern.matcher(oldStepName);
     if (matcher.find()) {
-      final ArrayList<String> values = new ArrayList<>();
+      // List to hold the concrete values of parameters, optional texts, and alternative texts.
+      final List<@Nullable String> concreteValues = new ArrayList<>();
       for (int i = 0; i < matcher.groupCount(); i++) {
-        values.add(matcher.group(i + 1));
+        final String concreteValue = matcher.group(i + 1);
+        concreteValues.add(concreteValue);
       }
 
-      final StringBuilder result = new StringBuilder();
-      for (int i = 0; i < values.size(); i++) {
-        result.append(newStaticTexts.get(i + 1));
-        result.append(values.get(i));
+      final StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < concreteValues.size(); i++) {
+        String staticText = newStaticTexts.remove(0);
+        sb.append(staticText);
+        String concreteValue = concreteValues.get(i);
+        if (concreteValue != null) {
+          sb.append(concreteValue);
+        }
       }
 
-      result.append(newStaticTexts.get(newStaticTexts.size() - 1));
-      return result.toString();
+      // Append the remaining static text, if any.
+      for (String staticText : newStaticTexts) {
+        sb.append(staticText);
+      }
+
+      return sb.toString();
     }
     else {
       return oldStepName;
@@ -132,31 +160,38 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
                             @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     final CucumberStepReference reference = CucumberUtil.getCucumberStepReference(element);
     if (reference != null) {
-      final AbstractStepDefinition stepDefinition = reference.resolveToDefinition();
-      if (stepDefinition != null) {
-        final PsiElement elementToRename = stepDefinition.getElement();
+      List<AbstractStepDefinition> stepDefinitions = reference.resolveToDefinitions().stream().toList();
+      if (stepDefinitions.size() != 1) return; // TODO: signal this to the user in some way
+      final AbstractStepDefinition stepDefinition = stepDefinitions.get(0);
+      if (stepDefinition == null) throw new IllegalStateException("step definition must not be null");
+      final PsiElement elementToRename = stepDefinition.getElement();
+      final String regexp = stepDefinition.getCucumberRegex();
+      final String expression = stepDefinition.getExpression();
+      if (expression != null && regexp != null) {
+        final boolean expressionIsRegex = expression.equals(regexp);
+        final Pattern oldStepDefPattern = Pattern.compile(
+          (expressionIsRegex ? prepareRegexAndGetStaticTexts(regexp).get(0) : prepareRegexFromCukex(expression))
+        );
+        final List<String> newStaticTexts = expressionIsRegex ? prepareRegexAndGetStaticTexts(newName) : getStaticTextsFromCukex(newName);
+        if (expressionIsRegex) {
+          newStaticTexts.remove(0);
+        }
 
-        final List<String> newStaticTexts = prepareRegexAndGetStaticTexts(newName);
-        final String oldStepDefPatternText = stepDefinition.getCucumberRegex();
-        if (oldStepDefPatternText != null) {
-          final Pattern oldStepDefPattern = Pattern.compile(prepareRegexAndGetStaticTexts(oldStepDefPatternText).get(0));
-
-          for (UsageInfo usage : usages) {
-            final PsiElement possibleStep = usage.getElement();
-            if (possibleStep instanceof GherkinStep) {
-              final String oldStepName = ((GherkinStep)possibleStep).getName();
-              final String newStepName = getNewStepName(oldStepName, oldStepDefPattern, newStaticTexts);
-              ((GherkinStep)possibleStep).setName(newStepName);
-            }
+        for (UsageInfo usage : usages) {
+          final PsiElement possibleStep = usage.getElement();
+          if (possibleStep instanceof GherkinStep gherkinStep) {
+            final String oldStepName = gherkinStep.getName();
+            final String newStepName = getNewStepName(oldStepName, oldStepDefPattern, newStaticTexts);
+            gherkinStep.setName(newStepName);
           }
+        }
 
-          final String prefix = oldStepDefPatternText.startsWith("^") ? "^" : "";
-          final String suffix = oldStepDefPatternText.endsWith("$") ? "$" : "";
-          stepDefinition.setCucumberRegex(prefix + newName + suffix);
+        final String prefix = expression.startsWith("^") ? "^" : "";
+        final String suffix = expression.endsWith("$") ? "$" : "";
+        stepDefinition.setCucumberRegex(prefix + newName + suffix);
 
-          if (listener != null && elementToRename != null) {
-            listener.elementRenamed(elementToRename);
-          }
+        if (listener != null && elementToRename != null) {
+          listener.elementRenamed(elementToRename);
         }
       }
     }
@@ -166,6 +201,23 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
   public @NotNull Collection<PsiReference> findReferences(@NotNull PsiElement element,
                                                           @NotNull SearchScope searchScope,
                                                           boolean searchInCommentsAndStrings) {
-    return Arrays.asList(element.getReferences());
+    if (!(element instanceof GherkinStep)) throw new IllegalStateException("element must be a GherkinStep, but is: " + element);
+    final CucumberStepReference cucumberStepReference = CucumberUtil.getCucumberStepReference(element);
+    if (cucumberStepReference != null) {
+      final AbstractStepDefinition abstractStepDef = cucumberStepReference.resolveToDefinition();
+      if (abstractStepDef != null) {
+        final PsiElement stepDefElement = abstractStepDef.getElement();
+        if (stepDefElement != null) {
+          final String cucumberRegex = abstractStepDef.getCucumberRegex();
+          if (cucumberRegex != null) {
+            final List<PsiReference> result = new ArrayList<>();
+            CucumberUtil.findGherkinReferencesToElement(stepDefElement, cucumberRegex, reference -> result.add(reference), searchScope);
+            return result;
+          }
+        }
+      }
+    }
+
+    return List.of();
   }
 }
