@@ -190,7 +190,14 @@ abstract class VueCompositionContainer() :
             ?.let { arg -> getTextIfLiteral(arg) }
         }
 
-      return EntitiesAnalysis(components, directives, mixins, filters, element, provides)
+      return EntitiesAnalysis(
+        components = components,
+        directives = directives,
+        mixins = mixins,
+        filters = filters,
+        element = element,
+        provides = provides,
+      )
     }
 
     private val IS_COMPOSITION_APP_COMPONENT_KEY = Key.create<Boolean>("vue.composition.app.component")
