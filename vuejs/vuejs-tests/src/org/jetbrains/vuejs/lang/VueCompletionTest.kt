@@ -6,6 +6,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.javascript.testFramework.web.filterOutStandardHtmlSymbols
 import com.intellij.javascript.testFramework.web.forceReloadProjectRoots
+import com.intellij.lang.ecmascript6.psi.impl.JSImportsCoroutineScope
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
@@ -14,6 +15,7 @@ import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
+import com.intellij.lang.javascript.typeWithWaitCoroutinesBlocking
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.RecursionManager
@@ -31,6 +33,7 @@ import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCach
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.noAutoComplete
 import com.intellij.polySymbols.testFramework.renderLookupItems
+import com.intellij.testFramework.utils.coroutines.waitCoroutinesBlocking
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
@@ -2050,17 +2053,17 @@ export default {
     fun doTest() {
       myFixture.moveToOffsetBySignature(":style=\"<caret>\"")
       myFixture.completeBasic()
-      myFixture.type("Col\n.r")
+      myFixture.typeWithWaitCoroutinesBlocking("Col\n.r")
       myFixture.completeBasic()
-      myFixture.type("\n")
+      myFixture.typeWithWaitCoroutinesBlocking("\n")
 
       myFixture.moveToOffsetBySignature(" {{ <caret> }}")
       myFixture.completeBasic()
-      myFixture.type("getTe\n")
+      myFixture.typeWithWaitCoroutinesBlocking("getTe\n")
 
       myFixture.moveToOffsetBySignature("key) in i<caret>")
       myFixture.completeBasic()
-      myFixture.type("tems\n")
+      myFixture.typeWithWaitCoroutinesBlocking("tems\n")
     }
 
     myFixture.configureFromTempProjectFile("HelloWorld.vue")
