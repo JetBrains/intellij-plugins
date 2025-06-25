@@ -725,12 +725,13 @@ setOrMapLiteralExpression ::= 'const'? typeArguments? '{' elements? '}'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 private elements ::= element (','? element)* ','? ;
-element ::= spreadElement | ifElement | forElement | mapEntry | expression
+element ::= spreadElement | ifElement | forElement | mapEntry | nullAwareElement | expression
 
-mapEntry ::= expression ':' expression {pin=2};
+mapEntry ::= '?'? expression ':' '?'? expression {pin=3};
 spreadElement ::= ('...' | '...?') expression {pin=1};
 ifElement ::= 'if' '(' ifExpressionWithRecoverUntilParen ')' element ('else' element)? {pin = 1};
 forElement ::= 'await'? 'for' '(' forLoopParts ')' element {pin=2};
+nullAwareElement ::= '?' expression {pin=1};
 
 functionExpression ::= typeParameters? formalParameterList functionExpressionBody
 {mixin="com.jetbrains.lang.dart.psi.impl.DartFunctionExpressionBase"}

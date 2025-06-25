@@ -104,6 +104,7 @@ public interface DartTokenTypes {
   IElementType NEW_EXPRESSION = new DartElementType("NEW_EXPRESSION");
   IElementType NORMAL_FORMAL_PARAMETER = new DartElementType("NORMAL_FORMAL_PARAMETER");
   IElementType NORMAL_PARAMETER_TYPE = new DartElementType("NORMAL_PARAMETER_TYPE");
+  IElementType NULL_AWARE_ELEMENT = new DartElementType("NULL_AWARE_ELEMENT");
   IElementType OBJECT_PATTERN = new DartElementType("OBJECT_PATTERN");
   IElementType ON_MIXINS = new DartElementType("ON_MIXINS");
   IElementType ON_PART = new DartElementType("ON_PART");
@@ -612,6 +613,9 @@ public interface DartTokenTypes {
       }
       else if (type == NORMAL_PARAMETER_TYPE) {
         return new DartNormalParameterTypeImpl(node);
+      }
+      else if (type == NULL_AWARE_ELEMENT) {
+        return new DartNullAwareElementImpl(node);
       }
       else if (type == OBJECT_PATTERN) {
         return new DartObjectPatternImpl(node);
