@@ -20,6 +20,9 @@ public interface DartElement extends DartPsiCompositeElement {
   DartMapEntry getMapEntry();
 
   @Nullable
+  DartNullAwareElement getNullAwareElement();
+
+  @Nullable
   DartSpreadElement getSpreadElement();
 
 }
