@@ -409,6 +409,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitNullAwareElement(@NotNull DartNullAwareElement o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitObjectPattern(@NotNull DartObjectPattern o) {
     visitPsiCompositeElement(o);
   }

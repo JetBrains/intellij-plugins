@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartElementImpl extends DartPsiCompositeElementImpl implements DartElement {
+public class DartNullAwareElementImpl extends DartPsiCompositeElementImpl implements DartNullAwareElement {
 
-  public DartElementImpl(@NotNull ASTNode node) {
+  public DartNullAwareElementImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitElement(this);
+    visitor.visitNullAwareElement(this);
   }
 
   @Override
@@ -31,36 +31,6 @@ public class DartElementImpl extends DartPsiCompositeElementImpl implements Dart
   @Nullable
   public DartExpression getExpression() {
     return findChildByClass(DartExpression.class);
-  }
-
-  @Override
-  @Nullable
-  public DartForElement getForElement() {
-    return findChildByClass(DartForElement.class);
-  }
-
-  @Override
-  @Nullable
-  public DartIfElement getIfElement() {
-    return findChildByClass(DartIfElement.class);
-  }
-
-  @Override
-  @Nullable
-  public DartMapEntry getMapEntry() {
-    return findChildByClass(DartMapEntry.class);
-  }
-
-  @Override
-  @Nullable
-  public DartNullAwareElement getNullAwareElement() {
-    return findChildByClass(DartNullAwareElement.class);
-  }
-
-  @Override
-  @Nullable
-  public DartSpreadElement getSpreadElement() {
-    return findChildByClass(DartSpreadElement.class);
   }
 
 }
