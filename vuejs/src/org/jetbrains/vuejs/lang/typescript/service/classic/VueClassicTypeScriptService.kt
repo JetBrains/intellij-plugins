@@ -6,13 +6,13 @@ import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.service.JSLanguageServiceAnnotationResult
 import com.intellij.lang.javascript.service.JSLanguageServiceFileCommandCache
-import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFixSet
+import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptServiceStandardOutputProtocol
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
@@ -63,7 +63,7 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
     return service.getDirectIncludePreferableConfig(virtualFile) != null
   }
 
-  override fun createProtocol(tsServicePath: String): JSLanguageServiceProtocol {
+  override fun createProtocol(tsServicePath: String): TypeScriptServiceStandardOutputProtocol {
     return VueTypeScriptServiceProtocol(myProject, mySettings, createEventConsumer(), serviceName, tsServicePath)
   }
 
