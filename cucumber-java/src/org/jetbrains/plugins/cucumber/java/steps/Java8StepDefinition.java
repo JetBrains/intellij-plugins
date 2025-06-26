@@ -13,22 +13,17 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition {
 
   @Override
   protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
-    if (!(element instanceof PsiMethodCallExpression)) {
-      return null;
-    }
-    PsiExpressionList argumentList = ((PsiMethodCallExpression)element).getArgumentList();
-    if (argumentList.getExpressions().length <= 1) {
-      return null;
-    }
-    PsiExpression stepExpression = argumentList.getExpressions()[0];
+    if (!(element instanceof PsiMethodCallExpression methodCallExpression)) return null;
+    final PsiExpressionList argumentList = methodCallExpression.getArgumentList();
+    if (argumentList.getExpressions().length <= 1) return null;
+    final PsiExpression stepExpression = argumentList.getExpressions()[0];
     final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();
     final Object constantValue = evaluationHelper.computeConstantExpression(stepExpression, false);
 
-    if (constantValue != null) {
-      if (constantValue instanceof String) {
-        return (String)constantValue;
-      }
+    if (constantValue instanceof String string) {
+      return string;
     }
+
     return null;
   }
 }
