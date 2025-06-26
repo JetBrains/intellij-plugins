@@ -1,9 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.javascript.polySymbols.documentation.JSSymbolWithSubstitutor
-import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
-import com.intellij.javascript.polySymbols.types.TypeScriptSymbolTypeSupport
+import com.intellij.polySymbols.js.documentation.JSSymbolWithSubstitutor
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor

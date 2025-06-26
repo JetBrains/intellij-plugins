@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.html.polySymbols.HtmlDescriptorUtils
+import com.intellij.polySymbols.html.HtmlDescriptorUtils
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.lang.html.parser.Angular2AttributeNameParser

@@ -1,6 +1,6 @@
 package org.angular2.entities
 
-import com.intellij.javascript.polySymbols.apiStatus
+import com.intellij.polySymbols.js.apiStatus
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.JSExoticStringLiteralType
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl

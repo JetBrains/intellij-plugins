@@ -1,9 +1,9 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.html.polySymbols.HtmlSymbolsXmlExtension
-import com.intellij.html.polySymbols.StandardHtmlSymbol
-import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
+import com.intellij.polySymbols.html.HtmlSymbolsXmlExtension
+import com.intellij.polySymbols.html.StandardHtmlSymbol
+import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag

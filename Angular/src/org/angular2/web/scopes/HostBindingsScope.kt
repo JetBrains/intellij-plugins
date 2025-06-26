@@ -1,8 +1,8 @@
 package org.angular2.web.scopes
 
-import com.intellij.html.polySymbols.HtmlSymbolQueryHelper
-import com.intellij.html.polySymbols.HtmlSymbolQueryHelper.getStandardHtmlElementSymbolsScope
-import com.intellij.html.polySymbols.hasOnlyStandardHtmlSymbolsOrExtensions
+import com.intellij.polySymbols.html.HtmlSymbolQueryHelper
+import com.intellij.polySymbols.html.HtmlSymbolQueryHelper.getStandardHtmlElementSymbolsScope
+import com.intellij.polySymbols.html.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol

@@ -1,7 +1,7 @@
 package org.jetbrains.vuejs.intentions
 
 import com.intellij.codeInsight.intention.FileModifier.SafeFieldForPreview
-import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
+import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.lang.javascript.intentions.JavaScriptIntention
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project

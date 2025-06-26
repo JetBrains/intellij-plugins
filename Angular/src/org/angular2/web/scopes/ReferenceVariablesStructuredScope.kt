@@ -1,6 +1,6 @@
 package org.angular2.web.scopes
 
-import com.intellij.javascript.polySymbols.symbols.asJSSymbol
+import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.model.Pointer

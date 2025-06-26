@@ -3,8 +3,8 @@ package org.angular2.web.scopes
 
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
-import com.intellij.html.polySymbols.StandardHtmlSymbol
-import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
+import com.intellij.polySymbols.html.StandardHtmlSymbol
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSFile

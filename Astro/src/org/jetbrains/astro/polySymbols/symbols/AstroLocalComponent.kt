@@ -1,8 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.polySymbols.symbols
 
-import com.intellij.javascript.polySymbols.symbols.asJSSymbol
-import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
+import com.intellij.polySymbols.js.symbols.asJSSymbol
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*

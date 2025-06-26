@@ -2,10 +2,10 @@
 package org.angular2.web.scopes
 
 import com.intellij.codeInsight.completion.CompletionUtil
-import com.intellij.javascript.polySymbols.symbols.JSPropertySymbol
-import com.intellij.javascript.polySymbols.symbols.asJSSymbol
-import com.intellij.javascript.polySymbols.symbols.getJSPropertySymbols
-import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.symbols.JSPropertySymbol
+import com.intellij.polySymbols.js.symbols.asJSSymbol
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression

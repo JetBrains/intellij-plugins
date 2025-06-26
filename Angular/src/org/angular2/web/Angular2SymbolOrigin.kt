@@ -2,7 +2,7 @@
 package org.angular2.web
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.javascript.polySymbols.types.TypeScriptSymbolTypeSupport
+import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.util.Pair
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol

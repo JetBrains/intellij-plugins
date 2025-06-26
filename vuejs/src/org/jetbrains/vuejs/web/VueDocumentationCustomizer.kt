@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
-import com.intellij.javascript.polySymbols.renderJsTypeForDocs
+import com.intellij.polySymbols.js.renderJsTypeForDocs
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor
 import com.intellij.openapi.util.text.Strings
 import com.intellij.polySymbols.html.HTML_SLOTS
