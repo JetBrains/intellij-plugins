@@ -11,6 +11,7 @@ import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import org.angular2.lang.metadata.stubs.MetadataElementStub
 
 abstract class MetadataElement<Stub : MetadataElementStub<*>>(private val myStub: Stub) : FakePsiElement(), StubBasedPsiElement<Stub> {
@@ -39,8 +40,12 @@ abstract class MetadataElement<Stub : MetadataElementStub<*>>(private val myStub
     return TextRange.EMPTY_RANGE
   }
 
-  override fun getElementType(): IStubElementType<*, *> {
+  override fun getElementType(): IStubElementType<*, *>? {
     return myStub.stubType
+  }
+
+  override fun getIElementType(): IElementType? {
+    return myStub.elementType
   }
 
   override fun getStub(): Stub {
