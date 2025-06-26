@@ -46,7 +46,7 @@ import org.jetbrains.vuejs.options.VueConfigurable
  *
  * Doesn't work properly with TypeScript 5+ and is known to have some bugs.
  */
-class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
+class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console", "VueService") {
 
   override fun getProcessName(): String = "Vue TypeScript"
 
@@ -64,7 +64,7 @@ class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImp
   }
 
   override fun createProtocol(tsServicePath: String): JSLanguageServiceProtocol {
-    return VueTypeScriptServiceProtocol(myProject, mySettings, createEventConsumer(), tsServicePath)
+    return VueTypeScriptServiceProtocol(myProject, mySettings, createEventConsumer(), serviceName, tsServicePath)
   }
 
   override fun getInitialOpenCommands(): List<JSLanguageServiceSimpleCommand> {
