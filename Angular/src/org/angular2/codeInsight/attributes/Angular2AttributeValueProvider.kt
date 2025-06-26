@@ -2,7 +2,7 @@
 package org.angular2.codeInsight.attributes
 
 import com.intellij.html.impl.providers.HtmlAttributeValueProvider
-import com.intellij.javascript.polySymbols.css.CssClassListInJSLiteralInHtmlAttributeScope.Companion.getClassesFromEmbeddedContent
+import com.intellij.polySymbols.js.css.CssClassListInJSLiteralInHtmlAttributeScope.Companion.getClassesFromEmbeddedContent
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute

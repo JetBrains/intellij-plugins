@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
-import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
+import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.javascript.debugger.NodeJsAppRule
 import com.intellij.javascript.nodejs.npm.NpmUtil
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest

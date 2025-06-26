@@ -3,7 +3,7 @@ package org.angular2.codeInsight.documentation
 
 import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
-import com.intellij.javascript.polySymbols.jsType
+import com.intellij.polySymbols.js.jsType
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.documentation.DocumentationMarkup.*

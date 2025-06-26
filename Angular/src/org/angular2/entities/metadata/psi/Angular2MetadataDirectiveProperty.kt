@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi
 
-import com.intellij.javascript.polySymbols.apiStatus
+import com.intellij.polySymbols.js.apiStatus
 import com.intellij.javascript.web.js.WebJSTypesUtil.wrapWithUndefinedIfOptional
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSElementBase

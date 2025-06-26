@@ -1,6 +1,6 @@
 package org.angular2.library.forms
 
-import com.intellij.javascript.polySymbols.JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS
+import com.intellij.polySymbols.js.JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.psi.*
 import com.intellij.model.Pointer

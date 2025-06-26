@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.javascript.polySymbols.css.CssClassListInJSLiteralInHtmlAttributeScope
-import com.intellij.javascript.polySymbols.css.CssClassListInJSLiteralInHtmlAttributeScope.Companion.isJSLiteralContextFromEmbeddedContent
+import com.intellij.polySymbols.js.css.CssClassListInJSLiteralInHtmlAttributeScope
+import com.intellij.polySymbols.js.css.CssClassListInJSLiteralInHtmlAttributeScope.Companion.isJSLiteralContextFromEmbeddedContent
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass

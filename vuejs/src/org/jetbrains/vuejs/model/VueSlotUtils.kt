@@ -1,9 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.html.polySymbols.attributes.HtmlAttributeSymbolDescriptor
-import com.intellij.html.polySymbols.elements.HtmlElementSymbolDescriptor
-import com.intellij.javascript.polySymbols.jsType
+import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
+import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
+import com.intellij.polySymbols.js.jsType
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.StubSafe

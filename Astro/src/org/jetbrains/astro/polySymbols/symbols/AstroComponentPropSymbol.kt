@@ -1,9 +1,9 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.polySymbols.symbols
 
-import com.intellij.javascript.polySymbols.jsType
-import com.intellij.javascript.polySymbols.symbols.JSPropertySymbol
-import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.jsType
+import com.intellij.polySymbols.js.symbols.JSPropertySymbol
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolModifier

@@ -1,8 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.javascript.polySymbols.jsType
-import com.intellij.javascript.polySymbols.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.jsType
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.backend.documentation.DocumentationTarget

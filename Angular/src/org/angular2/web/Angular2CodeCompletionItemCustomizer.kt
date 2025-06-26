@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.javascript.polySymbols.decorateWithJsType
-import com.intellij.javascript.polySymbols.decorateWithSymbolType
+import com.intellij.polySymbols.js.decorateWithJsType
+import com.intellij.polySymbols.js.decorateWithSymbolType
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
