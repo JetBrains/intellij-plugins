@@ -42,10 +42,9 @@ class TsLintLanguageService(
     content: String?,
     state: TsLintState
   ): CompletableFuture<MutableList<TsLinterError?>?>? {
-    return createHighlightFuture(virtualFile, config, state,
-                                 BiFunction { filePath: LocalFilePath?, configPath: LocalFilePath? ->
-                                   GetErrorsCommand(filePath, configPath, content ?: "")
-                                 })
+    return createHighlightFuture(virtualFile, config, state) { filePath: LocalFilePath?, configPath: LocalFilePath? ->
+      GetErrorsCommand(filePath, configPath, content ?: "")
+    }
   }
 
   fun highlightAndFix(virtualFile: VirtualFile, state: TsLintState): CompletableFuture<MutableList<TsLinterError?>?>? {
@@ -77,7 +76,7 @@ class TsLintLanguageService(
 
     val process = process
     if (process == null) {
-      return CompletableFuture.completedFuture<MutableList<TsLinterError?>?>(mutableListOf<TsLinterError?>(
+      return CompletableFuture.completedFuture(mutableListOf(
         TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))))
     }
 
