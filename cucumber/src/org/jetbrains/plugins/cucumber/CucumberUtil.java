@@ -325,6 +325,15 @@ public final class CucumberUtil {
     return ranges;
   }
 
+  /// Given a string and a list of text ranges, this method extracts the portions of the string
+  /// that lie outside the provided ranges and returns them as a list.
+  ///
+  /// Example input:
+  /// - cukex: `"I have {int} cucumbers"`
+  /// - ranges: `[TextRange(7,12)]` (the range covering `{int}`)
+  /// 
+  ///
+  /// Example output: `["I have ", " cucumbers"]`
   public static @NotNull List<String> textRangesOutsideToSubstrings(String cukex, @NotNull List<TextRange> ranges) {
     List<String> result = new ArrayList<>();
     int lastStart = 0;
