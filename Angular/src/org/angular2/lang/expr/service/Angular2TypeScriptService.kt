@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
-import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.withScopedServiceTraceSpan
 import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptService
@@ -19,6 +18,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
+import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptServiceStandardOutputProtocol
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.Position
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.Range
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptTypeRequestKind
@@ -155,7 +155,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   private fun isAngularServiceAvailableByContext(context: VirtualFile): Boolean =
     isAngularTypeScriptServiceEnabled(myProject, context)
 
-  override fun createProtocol(tsServicePath: String): JSLanguageServiceProtocol =
+  override fun createProtocol(tsServicePath: String): TypeScriptServiceStandardOutputProtocol =
     Angular2TypeScriptServiceProtocol(myProject, mySettings, createEventConsumer(), serviceName, tsServicePath)
 
   override fun createWidgetItem(currentFile: VirtualFile?): LanguageServiceWidgetItem =
