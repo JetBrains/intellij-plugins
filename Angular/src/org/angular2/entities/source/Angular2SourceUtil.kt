@@ -58,7 +58,7 @@ object Angular2SourceUtil {
       template.withGreenStubOrAst(
         { stub ->
           for (el in stub.childrenStubs) {
-            if (el.stubType === Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR) {
+            if (el.elementType === Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR) {
               result.add((el.psi as Angular2HtmlNgContentSelector).selector)
             }
           }
