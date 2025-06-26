@@ -384,7 +384,7 @@ public final class CucumberUtil {
   }
 
   /// This helper method:
-  /// - processes unescaped slashes `/` (alternative text), and wraps converts them into non-capturing groups, and
+  /// - processes unescaped slashes `/` (alternative text), and wraps converts them into capturing groups, and
   /// - escapes unescaped pipes `|`
   ///
   /// See tests of this method for sample inputs and outputs.
