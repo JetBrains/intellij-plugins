@@ -36,7 +36,7 @@ public abstract class AbstractStepDefinition {
 
   private volatile Pattern myRegex;
 
-  public AbstractStepDefinition(final @NotNull PsiElement element) {
+  public AbstractStepDefinition(@NotNull PsiElement element) {
     myElementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
   }
 
@@ -61,9 +61,7 @@ public abstract class AbstractStepDefinition {
     return myElementPointer.getElement();
   }
 
-  /**
-   * @return regexp pattern for step or null if regexp is malformed
-   */
+  /// @return regexp pattern for step or null if regexp is malformed
   public @Nullable Pattern getPattern() {
     try {
       final String cucumberRegex = getCucumberRegex();
@@ -83,7 +81,7 @@ public abstract class AbstractStepDefinition {
       }
       return myRegex;
     }
-    catch (final PatternSyntaxException ignored) {
+    catch (PatternSyntaxException ignored) {
       return null; // Bad regex?
     }
   }
@@ -126,24 +124,15 @@ public abstract class AbstractStepDefinition {
   /// For example, it could be a string inside the annotation `@When` or a method name. 
   public void setValue(@NotNull String newValue) { }
 
-  /**
-   * Checks if step definitions point supports certain step (i.e. some step definitions does not support some keywords)
-   *
-   * @param step Step to check
-   * @return true if supports.
-   */
-  public boolean supportsStep(final @NotNull PsiElement step) {
+  /// @return True if this step definition supports some certain `step` (e.g., some step definitions do not support some keywords).
+  public boolean supportsStep(@NotNull PsiElement step) {
     return true;
   }
-
-  /**
-   * Checks if step definition supports rename.
-   *
-   * @param newName if null -- check if definition supports renaming at all (regardless new name).
-   *                If not null -- check if it can be renamed to the new (provided) name.
-   * @return true if rename is supported
-   */
-  public boolean supportsRename(final @Nullable String newName) {
+  
+  /// If `newName` is not null, it returns true if this step definition can be renamed to this specific new name.
+  /// 
+  /// If `newName` is null, it returns true if this step definition can be renamed at all.
+  public boolean supportsRename(@Nullable String newName) {
     return true;
   }
 
