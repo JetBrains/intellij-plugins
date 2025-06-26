@@ -70,7 +70,7 @@ import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.concurrent.Future
 
-class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Angular Console") {
+class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Angular Console", "AngularService") {
 
   override fun getProcessName(): String = "Angular TypeScript"
 
@@ -156,7 +156,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     isAngularTypeScriptServiceEnabled(myProject, context)
 
   override fun createProtocol(tsServicePath: String): JSLanguageServiceProtocol =
-    Angular2TypeScriptServiceProtocol(myProject, mySettings, createEventConsumer(), tsServicePath)
+    Angular2TypeScriptServiceProtocol(myProject, mySettings, createEventConsumer(), serviceName, tsServicePath)
 
   override fun createWidgetItem(currentFile: VirtualFile?): LanguageServiceWidgetItem =
     TypeScriptServiceWidgetItem(this, currentFile, AngularIcons.Angular2, AngularIcons.Angular2, AngularConfigurable::class.java)

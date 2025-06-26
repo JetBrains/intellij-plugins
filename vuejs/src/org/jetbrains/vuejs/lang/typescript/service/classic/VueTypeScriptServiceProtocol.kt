@@ -14,8 +14,9 @@ internal class VueTypeScriptServiceProtocol(
   project: Project,
   settings: TypeScriptCompilerSettings,
   eventConsumer: Consumer<in JSLanguageServiceAnswer>,
+  serviceName: String,
   tsServicePath: String,
-) : TypeScriptServiceStandardOutputProtocol(project, settings, eventConsumer, "VueService", tsServicePath) {
+) : TypeScriptServiceStandardOutputProtocol(project, settings, eventConsumer, serviceName, tsServicePath) {
 
   override fun createState(): TypeScriptServiceInitialStateObject {
     val state = super.createState()

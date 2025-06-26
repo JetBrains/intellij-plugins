@@ -16,8 +16,9 @@ import java.util.function.Consumer
 class Angular2TypeScriptServiceProtocol(project: Project,
                                         settings: TypeScriptCompilerSettings,
                                         eventConsumer: Consumer<in JSLanguageServiceAnswer>,
+                                        serviceName: String,
                                         tsServicePath: String) :
-  TypeScriptServiceStandardOutputProtocol(project, settings, eventConsumer, "AngularService", tsServicePath) {
+  TypeScriptServiceStandardOutputProtocol(project, settings, eventConsumer, serviceName, tsServicePath) {
 
   override fun createState(): TypeScriptServiceInitialStateObject {
     val state = super.createState()
