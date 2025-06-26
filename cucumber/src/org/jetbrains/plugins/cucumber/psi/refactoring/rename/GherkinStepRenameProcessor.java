@@ -188,7 +188,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
 
         final String prefix = expression.startsWith("^") ? "^" : "";
         final String suffix = expression.endsWith("$") ? "$" : "";
-        stepDefinition.setCucumberRegex(prefix + newName + suffix);
+        stepDefinition.setValue(prefix + newName + suffix);
 
         if (listener != null && elementToRename != null) {
           listener.elementRenamed(elementToRename);

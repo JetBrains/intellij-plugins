@@ -120,14 +120,11 @@ public abstract class AbstractStepDefinition {
     return myElementPointer.hashCode();
   }
 
-  /**
-   * Set new value for step definitions (most likely provided by refactor->rename)
-   */
-  public void setCucumberRegex(final @NotNull String newValue) {
-    // TODO: Name of this method is misleading, because it can also be used to set a Cucumber Expression, not only a Cucumber Regex.
-    //  Action item: Maybe instead of retrofitting it, add a new method 'setCucumberExpression(String newValue)'.
-    //  Or simply 'setExpression(String newValue), to match the existing 'getExpression()' method.
-  }
+  /// Sets the new value for this step definition (either a regex or a cukex).
+  ///
+  /// What the value exactly is depends on the particular Cucumber implementation in some programming language.
+  /// For example, it could be a string inside the annotation `@When` or a method name. 
+  public void setValue(@NotNull String newValue) { }
 
   /**
    * Checks if step definitions point supports certain step (i.e. some step definitions does not support some keywords)

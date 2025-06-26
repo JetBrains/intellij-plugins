@@ -32,7 +32,7 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   };
 
   @Override
-  public void setCucumberRegex(@NotNull String newValue) {
+  public void setValue(@NotNull String newValue) {
     if (!(getElement() instanceof PsiMethod method)) return;
     final PsiAnnotation[] annotations = method.getAnnotations();
 
