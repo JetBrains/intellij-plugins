@@ -16,7 +16,7 @@ class AstroCodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer
     framework: FrameworkId?,
     qualifiedKind: PolySymbolQualifiedKind,
     location: PsiElement,
-  ) =
+  ): PolySymbolCodeCompletionItem =
     item.symbol
       ?.takeIf {
         framework == AstroFramework.ID &&

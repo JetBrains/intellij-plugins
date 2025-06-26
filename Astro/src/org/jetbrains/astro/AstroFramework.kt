@@ -14,7 +14,7 @@ import javax.swing.Icon
 
 class AstroFramework : WebFramework() {
   companion object {
-    const val ID = "astro"
+    const val ID: String = "astro"
   }
 
   override fun isOwnTemplateLanguage(language: Language): Boolean = false
