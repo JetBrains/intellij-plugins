@@ -174,8 +174,7 @@ class VolarServiceTest : VueLspServiceTestBase() {
     """.trimIndent(), true)
 
     val presentationTexts = getPresentationTexts(elements)
-    // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
-    assertTrue("Lookup element presentation must match expected", presentationTexts.contains("base??"))
+    assertTrue("Lookup element presentation must match expected", presentationTexts.contains("base?"))
     assertHasServiceItems(elements, true)
   }
 
@@ -202,8 +201,7 @@ class VolarServiceTest : VueLspServiceTestBase() {
     """.trimIndent(), true)
 
     val presentationTexts = getPresentationTexts(elements)
-    // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
-    assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
+    assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar?"))
     assertHasServiceItems(elements, true)
   }
 
@@ -232,8 +230,7 @@ class VolarServiceTest : VueLspServiceTestBase() {
     """.trimIndent(), true)
 
     val presentationTexts = getPresentationTexts(elements)
-    // duplicated question mark is definitely unwanted, but for now, this is what we get from Volar, so let's encode it in test
-    assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar??"))
+    assertTrue("Lookup element presentation must match expected", presentationTexts.contains("bar?"))
     assertHasServiceItems(elements, true)
   }
 
