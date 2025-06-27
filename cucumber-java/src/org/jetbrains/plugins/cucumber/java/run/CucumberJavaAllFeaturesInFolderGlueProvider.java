@@ -24,6 +24,7 @@ public class CucumberJavaAllFeaturesInFolderGlueProvider implements CucumberGlue
       @Override
       public void visitFile(final @NotNull PsiFile psiFile) {
         if (psiFile instanceof GherkinFile) {
+          ProgressManager.checkCanceled();
           CucumberJavaUtil.calculateGlueFromGherkinFile((GherkinFile)psiFile, consumer);
         }
       }

@@ -513,6 +513,7 @@ public final class CucumberJavaUtil {
     gherkinFile.accept(new GherkinRecursiveElementVisitor() {
       @Override
       public void visitStep(GherkinStep step) {
+        ProgressManager.checkCanceled();
         String glue = getPackageOfStep(step);
         if (glue != null) {
           consumer.accept(glue);
