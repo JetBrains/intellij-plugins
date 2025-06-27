@@ -73,7 +73,7 @@ public final class StreamGobbler implements CancellableRunnable {
 
   private boolean switchToTemporaryFileContent() {
     try {
-      myTempFile = FileUtil.createTempFile("idea_p4", "command.output");
+      myTempFile = FileUtil.createTempFile("idea_p4", "command.output", true);
     }
     catch (IOException e) {
       LOG.info(e);
