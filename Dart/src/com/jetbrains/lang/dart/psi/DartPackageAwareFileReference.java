@@ -9,11 +9,10 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
-import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
+import com.jetbrains.lang.dart.util.PackageConfigFileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,12 +48,7 @@ class DartPackageAwareFileReference extends FileReference {
       DartSdk sdk = DartSdk.getDartSdk(project);
       VirtualFile packagesFile;
       if (sdk != null && pubspecYamlFile != null) {
-        if (DartAnalysisServerService.isDartSdkVersionSufficientForPackageConfigJson(sdk)) {
-          packagesFile = DotPackagesFileUtil.getPackageConfigJsonFile(project, pubspecYamlFile);
-        }
-        else {
-          packagesFile = pubspecYamlFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
-        }
+        packagesFile = PackageConfigFileUtil.getPackageConfigJsonFile(project, pubspecYamlFile);
       }
       else {
         packagesFile = null;
