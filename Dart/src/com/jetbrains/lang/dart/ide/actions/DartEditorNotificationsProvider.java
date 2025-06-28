@@ -14,7 +14,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -53,7 +52,7 @@ public final class DartEditorNotificationsProvider implements EditorNotification
 
       final DartSdk sdk = DartSdk.getDartSdk(project);
       if (sdk != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
-        return fileEditor -> new PubActionsPanel(fileEditor, sdk);
+        return fileEditor -> new PubActionsPanel(fileEditor);
       }
     }
 
@@ -116,14 +115,11 @@ public final class DartEditorNotificationsProvider implements EditorNotification
   }
 
   private static final class PubActionsPanel extends EditorNotificationPanel {
-    private PubActionsPanel(@NotNull FileEditor fileEditor, @NotNull DartSdk sdk) {
+    private PubActionsPanel(@NotNull FileEditor fileEditor) {
       super(fileEditor, null, EditorColors.GUTTER_BACKGROUND, Status.Info);
       createActionLabel(DartBundle.message("pub.get"), "Dart.pub.get");
       createActionLabel(DartBundle.message("pub.upgrade"), "Dart.pub.upgrade");
-
-      if (StringUtil.compareVersionNumbers(sdk.getVersion(), DartPubOutdatedAction.MIN_SDK_VERSION) >= 0) {
-        createActionLabel(DartBundle.message("pub.outdated"), "Dart.pub.outdated");
-      }
+      createActionLabel(DartBundle.message("pub.outdated"), "Dart.pub.outdated");
 
       myLinksPanel.add(new JSeparator(SwingConstants.VERTICAL));
       createActionLabel(DartBundle.message("webdev.build"), "Dart.build");
