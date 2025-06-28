@@ -2,21 +2,17 @@
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartLanguage;
-import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.DartImportStatement;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class DartUriElementBase extends DartPsiCompositeElementImpl implements DartUriElement {
-
-  private static final Condition<PsiFileSystemItem> DART_FILE_OR_DIR_FILTER = item -> item.isDirectory() || item instanceof DartFile;
 
   public DartUriElementBase(final @NotNull ASTNode node) {
     super(node);

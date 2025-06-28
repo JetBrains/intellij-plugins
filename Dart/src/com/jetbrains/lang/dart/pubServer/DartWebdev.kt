@@ -8,7 +8,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.concurrency.ThreadingAssertions
 import com.jetbrains.lang.dart.DartBundle
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase
@@ -19,12 +18,6 @@ private val LOG = logger<DartWebdev>()
 
 object DartWebdev {
   var activated: Boolean = false
-
-  fun useWebdev(sdk: DartSdk?): Boolean {
-    if (sdk == null) return false
-    val sdkVersion = sdk.version
-    return StringUtil.compareVersionNumbers(sdkVersion, "2") >= 0
-  }
 
   /**
    * @return `false` only if explicitly cancelled by user

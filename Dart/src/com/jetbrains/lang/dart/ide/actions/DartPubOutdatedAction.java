@@ -4,7 +4,6 @@ package com.jetbrains.lang.dart.ide.actions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -13,15 +12,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartPubOutdatedAction extends DartPubActionBase {
-  public static final String MIN_SDK_VERSION = "2.8";
-
   @Override
   public void update(@NotNull AnActionEvent e) {
     super.update(e);
 
     final Project project = e.getProject();
     DartSdk sdk = project != null ? DartSdk.getDartSdk(project) : null;
-    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) < 0) {
+    if (sdk == null) {
       e.getPresentation().setEnabledAndVisible(false);
     }
   }

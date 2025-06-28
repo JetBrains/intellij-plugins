@@ -19,7 +19,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.ex.temp.TempFileSystem;
 import com.intellij.util.PairConsumer;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
@@ -203,15 +202,9 @@ public final class DartUrlResolverImpl extends DartUrlResolver {
     final VirtualFile baseDir = myPubspecYamlFile == null ? null : myPubspecYamlFile.getParent();
     if (myPubspecYamlFile == null || baseDir == null) return;
 
-    Map<String, String> packagesMap;
-    if (myDartSdk == null || DartAnalysisServerService.isDartSdkVersionSufficientForPackageConfigJson(myDartSdk)) {
-      VirtualFile packagesFile = DotPackagesFileUtil.getPackageConfigJsonFile(myProject, myPubspecYamlFile);
-      packagesMap = packagesFile != null ? DotPackagesFileUtil.getPackagesMapFromPackageConfigJsonFile(packagesFile) : null;
-    }
-    else {
-      VirtualFile packagesFile = baseDir.findChild(DotPackagesFileUtil.DOT_PACKAGES);
-      packagesMap = packagesFile != null ? DotPackagesFileUtil.getPackagesMap(packagesFile) : null;
-    }
+    VirtualFile packagesFile = PackageConfigFileUtil.getPackageConfigJsonFile(myProject, myPubspecYamlFile);
+    Map<String, String> packagesMap =
+      packagesFile != null ? PackageConfigFileUtil.getPackagesMapFromPackageConfigJsonFile(packagesFile) : null;
 
     if (packagesMap != null) {
       for (Map.Entry<String, String> entry : packagesMap.entrySet()) {

@@ -55,9 +55,7 @@ public class DartGeneratorPeer implements ProjectGeneratorPeer<DartProjectWizard
   private boolean myIntellijLiveValidationEnabled = false;
 
   private boolean myDartCreateCalcStarted;
-  private boolean myStagehandCalcStarted;
   private List<DartProjectTemplate> myDartCreateTemplates;// not-null means that it's been already calculated
-  private List<DartProjectTemplate> myStagehandTemplates;// not-null means that it's been already calculated
 
   public DartGeneratorPeer() {
     // set initial values before initDartSdkControls() because listeners should not be triggered on initialization
@@ -117,42 +115,23 @@ public class DartGeneratorPeer implements ProjectGeneratorPeer<DartProjectWizard
       return;
     }
 
-    boolean useDartCreate = Stagehand.isUseDartCreate(sdkPath);
-    if (useDartCreate) {
-      if (myDartCreateCalcStarted) {
-        if (myDartCreateTemplates != null) {
-          showTemplates(myDartCreateTemplates);
-        }
-        else {
-          // Calculation in progress, just wait.
-          myLoadingTemplatesPanel.setVisible(true);
-          myLoadedTemplatesPanel.setVisible(false);
-        }
+    if (myDartCreateCalcStarted) {
+      if (myDartCreateTemplates != null) {
+        showTemplates(myDartCreateTemplates);
       }
       else {
-        myDartCreateCalcStarted = true;
-        startLoadingTemplates(useDartCreate);
+        // Calculation in progress, just wait.
+        myLoadingTemplatesPanel.setVisible(true);
+        myLoadedTemplatesPanel.setVisible(false);
       }
     }
     else {
-      if (myStagehandCalcStarted) {
-        if (myStagehandTemplates != null) {
-          showTemplates(myStagehandTemplates);
-        }
-        else {
-          // Calculation in progress, just wait.
-          myLoadingTemplatesPanel.setVisible(true);
-          myLoadedTemplatesPanel.setVisible(false);
-        }
-      }
-      else {
-        myStagehandCalcStarted = true;
-        startLoadingTemplates(useDartCreate);
-      }
+      myDartCreateCalcStarted = true;
+      startLoadingTemplates();
     }
   }
 
-  private void startLoadingTemplates(boolean useDartCreate) {
+  private void startLoadingTemplates() {
     myLoadingTemplatesPanel.setVisible(true);
     myLoadingTemplatesPanel.setPreferredSize(myLoadedTemplatesPanel.getPreferredSize());
 
@@ -170,12 +149,7 @@ public class DartGeneratorPeer implements ProjectGeneratorPeer<DartProjectWizard
         myLoadingTemplatesPanel.remove(asyncProcessIcon);
         Disposer.dispose(asyncProcessIcon);
 
-        if (useDartCreate) {
-          myDartCreateTemplates = templates;
-        }
-        else {
-          myStagehandTemplates = templates;
-        }
+        myDartCreateTemplates = templates;
 
         // it's better to call onSdkPathChanged() but not showTemplates() directly as sdk path could have been changed during this long calculation
         onSdkPathChanged();

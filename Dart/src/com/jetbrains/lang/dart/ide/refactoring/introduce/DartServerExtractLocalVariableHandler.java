@@ -46,7 +46,7 @@ public class DartServerExtractLocalVariableHandler implements RefactoringActionH
   @Override
   public void invoke(final @NotNull Project project, final Editor editor, PsiFile file, DataContext dataContext) {
     final DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0) {
+    if (sdk == null) {
       return;
     }
 

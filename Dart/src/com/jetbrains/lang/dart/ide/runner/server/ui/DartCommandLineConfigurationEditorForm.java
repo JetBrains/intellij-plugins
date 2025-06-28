@@ -20,7 +20,6 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -30,7 +29,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   private JLabel myDartFileLabel;
   private TextFieldWithBrowseButton myFileField;
   private RawCommandLineEditor myVMOptions;
-  private JBCheckBox myCheckedModeOrEnableAssertsCheckBox;
+  private JBCheckBox myEnableAssertsCheckBox;
   private RawCommandLineEditor myArguments;
   private TextFieldWithBrowseButton myWorkingDirectory;
   private EnvironmentVariablesComponent myEnvironmentVariables;
@@ -38,17 +37,11 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   public DartCommandLineConfigurationEditorForm(final Project project) {
     initDartFileTextWithBrowse(project, myFileField);
 
-    myWorkingDirectory.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(DartBundle.message("dialog.title.select.working.directory")));
+    myWorkingDirectory.addBrowseFolderListener(project, FileChooserDescriptorFactory.createSingleFolderDescriptor()
+      .withTitle(DartBundle.message("dialog.title.select.working.directory")));
 
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
-      myCheckedModeOrEnableAssertsCheckBox.setText(DartBundle.message("command.line.run.config.checkbox.checked.mode"));
-      myCheckedModeOrEnableAssertsCheckBox.setMnemonic('c');
-    }
-    else {
-      myCheckedModeOrEnableAssertsCheckBox.setText(DartBundle.message("command.line.run.config.checkbox.enable.asserts"));
-      myCheckedModeOrEnableAssertsCheckBox.setMnemonic('l');
-    }
+    myEnableAssertsCheckBox.setText(DartBundle.message("command.line.run.config.checkbox.enable.asserts"));
+    myEnableAssertsCheckBox.setMnemonic('l');
 
     // 'Environment variables' is the widest label, anchored by myDartFileLabel
     myDartFileLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
@@ -83,7 +76,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
-    myCheckedModeOrEnableAssertsCheckBox.setSelected(parameters.isCheckedModeOrEnableAsserts());
+    myEnableAssertsCheckBox.setSelected(parameters.areAssertsEnabled());
     myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
     myEnvironmentVariables.setEnvs(parameters.getEnvs());
     myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
@@ -96,7 +89,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
     parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
-    parameters.setCheckedModeOrEnableAsserts(myCheckedModeOrEnableAssertsCheckBox.isSelected());
+    parameters.setAssertsEnabled(myEnableAssertsCheckBox.isSelected());
     parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
     parameters.setEnvs(myEnvironmentVariables.getEnvs());
     parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());

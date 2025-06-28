@@ -25,7 +25,7 @@ import java.util.Map;
 public class DartCommandLineRunnerParameters implements Cloneable {
   private @Nullable @NlsSafe String myFilePath = null;
   private @Nullable @NlsSafe String myVMOptions = null;
-  private boolean myCheckedModeOrEnableAsserts = true;
+  private boolean myAssertsEnabled = true;
   private @Nullable @NlsSafe String myArguments = null;
   private @Nullable @NlsSafe String myWorkingDirectory = null;
   private @NotNull Map<String, String> myEnvs = new LinkedHashMap<>();
@@ -67,19 +67,13 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     myVMOptions = vmOptions;
   }
 
-  /**
-   * For Dart 2 it means 'enable asserts' flag; for Dart 1 - 'checked mode' flag
-   */
   @OptionTag("checkedMode") // compatibility
-  public boolean isCheckedModeOrEnableAsserts() {
-    return myCheckedModeOrEnableAsserts;
+  public boolean areAssertsEnabled() {
+    return myAssertsEnabled;
   }
 
-  /**
-   * For Dart 2 it means 'enable asserts' flag; for Dart 1 - 'checked mode' flag
-   */
-  public void setCheckedModeOrEnableAsserts(final boolean checkedModeOrEnableAsserts) {
-    myCheckedModeOrEnableAsserts = checkedModeOrEnableAsserts;
+  public void setAssertsEnabled(final boolean assertsEnabled) {
+    myAssertsEnabled = assertsEnabled;
   }
 
   public @Nullable @NlsSafe String getArguments() {
