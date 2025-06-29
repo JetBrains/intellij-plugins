@@ -55,7 +55,7 @@ public final class GherkinStepRenameDialog extends RenameDialog {
     if (newName.isEmpty()) return false;
 
     // Cucumber steps are natural language, so in theory – any text should be fine
-    // TODO: Block rename if a new parameter is introduced
+    // TODO: IDEA-375196 Warn about renaming a Cucumber Expression if a new parameter is introduced
     return true;
   }
 
