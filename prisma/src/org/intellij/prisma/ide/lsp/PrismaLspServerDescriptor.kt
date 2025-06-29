@@ -20,6 +20,7 @@ class PrismaLspServerDescriptor(project: Project)
     override val goToTypeDefinitionCustomizer = LspGoToTypeDefinitionDisabled
     override val completionCustomizer = LspCompletionDisabled
     override val hoverCustomizer = LspHoverDisabled
+    override val findReferencesCustomizer = LspFindReferencesDisabled
 
     override val formattingCustomizer = object : LspFormattingSupport() {
       override fun shouldFormatThisFileExclusivelyByServer(file: VirtualFile, ideCanFormatThisFileItself: Boolean, serverExplicitlyWantsToFormatThisFile: Boolean): Boolean {

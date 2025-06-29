@@ -1,0 +1,22 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = ""
+  schemas  = ["<caret>base-schema", "login"]
+}
+
+model User {
+  id Int @id
+
+  @@schema("base-schema")
+}
+
+model Account {
+  id Int @id
+
+  @@schema("base-schema")
+}

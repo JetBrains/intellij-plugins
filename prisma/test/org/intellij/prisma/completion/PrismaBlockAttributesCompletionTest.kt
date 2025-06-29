@@ -254,4 +254,90 @@ class PrismaBlockAttributesCompletionTest : PrismaCompletionTestBase("completion
     )
     assertSameElements(lookupElements.strings, BlockAttributes.MAP)
   }
+
+  fun testSchemaAttribute() {
+    val lookupElements = completeSelected(
+      """
+        generator client {
+          provider        = "prisma-client-js"
+          previewFeatures = ["multiSchema"]
+        }
+
+        datasource db {
+          provider = "postgresql"
+          url      = ""
+          schemas  = ["base-schema", "login"]
+        }
+
+        model User {
+          id Int @id
+
+          @@schema("<caret>")
+        }
+      """.trimIndent(),
+      """
+        generator client {
+          provider        = "prisma-client-js"
+          previewFeatures = ["multiSchema"]
+        }
+
+        datasource db {
+          provider = "postgresql"
+          url      = ""
+          schemas  = ["base-schema", "login"]
+        }
+
+        model User {
+          id Int @id
+
+          @@schema("base-schema")
+        }
+      """.trimIndent(),
+      "base-schema",
+    )
+    assertSameElements(lookupElements.strings, "base-schema", "login")
+  }
+
+  fun testSchemaAttributeQuoteHandler() {
+    val lookupElements = completeSelected(
+      """
+        generator client {
+          provider        = "prisma-client-js"
+          previewFeatures = ["multiSchema"]
+        }
+
+        datasource db {
+          provider = "postgresql"
+          url      = ""
+          schemas  = ["base-schema", "login"]
+        }
+
+        model User {
+          id Int @id
+
+          @@schema(<caret>)
+        }
+      """.trimIndent(),
+      """
+        generator client {
+          provider        = "prisma-client-js"
+          previewFeatures = ["multiSchema"]
+        }
+
+        datasource db {
+          provider = "postgresql"
+          url      = ""
+          schemas  = ["base-schema", "login"]
+        }
+
+        model User {
+          id Int @id
+
+          @@schema("base-schema")
+        }
+      """.trimIndent(),
+      "\"base-schema\"",
+    )
+    assertSameElements(lookupElements.strings, "\"base-schema\"", "\"login\"")
+  }
 }

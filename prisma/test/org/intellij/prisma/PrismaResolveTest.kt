@@ -1,7 +1,7 @@
 package org.intellij.prisma
 
+import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.psi.util.PsiTreeUtil
-import junit.framework.TestCase
 import org.intellij.prisma.lang.psi.PrismaNamedElement
 
 private const val CARET = "<caret>"
@@ -156,6 +156,42 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
     checkGotoDeclaration("model <caret>Address", dir = true, expectedFileName = "address.prisma")
   }
 
+  fun testSchemaNameReference() {
+    checkGotoDeclarationFromText(
+      """
+        generator client {
+          provider        = "prisma-client-js"
+          previewFeatures = ["multiSchema"]
+        }
+
+        datasource db {
+          provider = "postgresql"
+          url      = ""
+          schemas  = ["base-schema", "login"]
+        }
+
+        model User {
+          id Int @id
+
+          @@schema("base-schema")
+        }
+
+        model Account {
+          id Int @id
+
+          @@schema("base-schema")
+        }
+      """.trimIndent(),
+      """@@schema("ba<caret>se-schema")""",
+      """schemas  = ["<caret>base-schema", "login"]"""
+    )
+  }
+
+  private fun checkGotoDeclarationFromText(source: String, fromSignature: String, declarationSignature: String) {
+    myFixture.configureByText("schema.prisma", source)
+    myFixture.checkGotoDeclaration(fromSignature, declarationSignature)
+  }
+
   private fun checkLocalResolve(source: String): PrismaNamedElement {
     val targetOffset = findExpectedTargetOffset(source)
     val text = source.replace(TARGET, "")
@@ -164,9 +200,9 @@ class PrismaResolveTest : PrismaTestCase("resolve") {
     val resolve = reference?.resolve()
     val expectedTarget =
       PsiTreeUtil.getParentOfType(file.findElementAt(targetOffset), PrismaNamedElement::class.java)
-    TestCase.assertNotNull(resolve)
-    TestCase.assertNotNull(expectedTarget)
-    TestCase.assertEquals(expectedTarget, resolve)
+    assertNotNull(resolve)
+    assertNotNull(expectedTarget)
+    assertEquals(expectedTarget, resolve)
     return resolve as PrismaNamedElement
   }
 

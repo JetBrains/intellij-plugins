@@ -11,6 +11,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.util.prevLeafs
 import com.intellij.psi.util.skipTokens
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.lang.presentation.icon
 import org.intellij.prisma.lang.psi.PrismaArgumentsOwner
 import org.intellij.prisma.lang.psi.PrismaDeclaration
@@ -19,6 +20,7 @@ import org.intellij.prisma.lang.psi.PrismaNamedElement
 import javax.swing.Icon
 
 class PrismaSchemaFakeElement(
+  private val label: String,
   private val parent: PsiElement,
   val schemaElement: PrismaSchemaElement,
 ) : FakePsiElement(), PrismaNamedElement {
@@ -28,17 +30,17 @@ class PrismaSchemaFakeElement(
 
   override fun getContainingFile(): PsiFile = parent.containingFile
 
-  override fun getName(): String = schemaElement.label
+  override fun getName(): String = label
 
   override fun getText(): String = name
 
-  override fun getIcon(open: Boolean): Icon? = this.schemaElement.icon
+  override fun getIcon(open: Boolean): Icon? = schemaElement.icon
 
   companion object {
     fun createForCompletion(
       parameters: CompletionParameters,
       schemaElement: PrismaSchemaElement,
-    ): PrismaSchemaFakeElement {
+    ): PrismaSchemaFakeElement? {
       val parent = findSuitableParent(parameters) ?: parameters.originalFile
       return createForCompletion(parent, schemaElement)
     }
@@ -46,8 +48,8 @@ class PrismaSchemaFakeElement(
     fun createForCompletion(
       parent: PsiElement,
       schemaElement: PrismaSchemaElement,
-    ): PrismaSchemaFakeElement {
-      return PrismaSchemaFakeElement(parent, schemaElement)
+    ): PrismaSchemaFakeElement? {
+      return schemaElement.label?.let { PrismaSchemaFakeElement(it, parent, schemaElement) }
     }
 
     private fun findSuitableParent(parameters: CompletionParameters): PsiElement? {

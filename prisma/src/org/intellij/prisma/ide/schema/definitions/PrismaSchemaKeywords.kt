@@ -1,7 +1,7 @@
 package org.intellij.prisma.ide.schema.definitions
 
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
-import org.intellij.prisma.ide.schema.schema
+import org.intellij.prisma.ide.schema.builder.schema
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.SQLITE
 

@@ -6,6 +6,8 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.PrismaCompletionProvider
 import org.intellij.prisma.ide.schema.*
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
 import org.intellij.prisma.lang.psi.PrismaFile
 
 abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
@@ -14,12 +16,12 @@ abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
   final override fun addCompletions(
     parameters: CompletionParameters,
     context: ProcessingContext,
-    result: CompletionResultSet
+    result: CompletionResultSet,
   ) {
     populateProcessingContext(parameters, context)
 
     collectSchemaElements(parameters, context).forEach { schemaElement ->
-      createLookupElement(schemaElement, parameters, context).let { builder ->
+      createLookupElement(schemaElement, parameters, context)?.let { builder ->
         result.addElement(builder)
       }
     }
@@ -27,7 +29,7 @@ abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
 
   protected open fun collectSchemaElements(
     parameters: CompletionParameters,
-    context: ProcessingContext
+    context: ProcessingContext,
   ): Collection<PrismaSchemaElement> {
     val file = parameters.originalFile as? PrismaFile ?: return emptyList()
     val datasourceTypes = file.metadata.datasourceTypes
@@ -35,7 +37,7 @@ abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
 
     return PrismaSchemaProvider
       .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(position))
-      .getElementsByKind(kind)
+      .getElements(kind)
       .asSequence()
       .filter { it.isAvailableForDatasources(datasourceTypes) }
       .filter { it.isAcceptedByPattern(position, context) }
@@ -46,9 +48,9 @@ abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
     schemaElement: PrismaSchemaElement,
     parameters: CompletionParameters,
     context: ProcessingContext,
-  ): LookupElementBuilder {
+  ): LookupElementBuilder? {
     return createLookupElement(
-      schemaElement.label,
+      schemaElement.label ?: return null,
       schemaElement,
       PrismaSchemaFakeElement.createForCompletion(parameters, schemaElement),
     )

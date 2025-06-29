@@ -66,7 +66,8 @@
   implements('FieldDeclaration|EnumValueDeclaration|KeyValue')='org.intellij.prisma.lang.psi.PrismaMemberDeclaration'
   implements('(Field|Block)Attribute')='org.intellij.prisma.lang.psi.PrismaArgumentsOwner'
 
-  extends('NamedArgument|ValueArgument')=Argument
+  extends('(Named|Value)Argument')=Argument
+  extends('(Numeric|String)LiteralExpression')=LiteralExpression
 
   extends('UnsupportedOptionalListType|ListType|OptionalType|LegacyRequiredType|LegacyListType|SingleType')=FieldType
 
@@ -242,10 +243,16 @@ FunctionCall ::= PathExpression ArgumentsList {
 ArrayExpression ::= '[' [Expression (',' Expression)* ','?] ']' {
     pin=1
 }
-LiteralExpression ::= NUMERIC_LITERAL | STRING_LITERAL {
-    mixin="org.intellij.prisma.lang.psi.impl.PrismaLiteralExpressionMixin"
-    methods=[getValue]
+LiteralExpression ::= StringLiteralExpression | NumericLiteralExpression {
+    implements="com.intellij.psi.PsiLiteralValue"
 }
+StringLiteralExpression ::= STRING_LITERAL {
+    mixin="org.intellij.prisma.lang.psi.impl.PrismaStringLiteralExpressionMixin"
+}
+NumericLiteralExpression ::= NUMERIC_LITERAL {
+    mixin="PrismaNumericLiteralExpressionMixin"
+}
+
 PathExpression ::= !<<isNewLine>> Path PathMemberAccess* {
     mixin="org.intellij.prisma.lang.psi.impl.PrismaPathExpressionMixin"
     implements="org.intellij.prisma.lang.psi.PrismaQualifiedReferenceElement"

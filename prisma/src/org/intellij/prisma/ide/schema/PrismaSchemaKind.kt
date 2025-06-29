@@ -8,4 +8,5 @@ enum class PrismaSchemaKind {
   BLOCK_ATTRIBUTE,
   FIELD_ATTRIBUTE,
   FUNCTION,
+  SCHEMA_NAME,
 }

@@ -13,12 +13,17 @@ import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.util.ProcessingContext
+import com.intellij.util.asSafely
 import org.intellij.prisma.ide.completion.PrismaCompletionProvider
-import org.intellij.prisma.ide.schema.*
+import org.intellij.prisma.ide.schema.PrismaSchemaFakeElement
+import org.intellij.prisma.ide.schema.PrismaSchemaPath
+import org.intellij.prisma.ide.schema.PrismaSchemaProvider
+import org.intellij.prisma.ide.schema.builder.*
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
 import org.intellij.prisma.lang.psi.*
 import org.intellij.prisma.lang.psi.PrismaElementTypes.*
 import org.intellij.prisma.lang.types.isListType
+import org.intellij.prisma.lang.types.isNamedType
 
 
 object PrismaValuesProvider : PrismaCompletionProvider() {
@@ -60,17 +65,19 @@ object PrismaValuesProvider : PrismaCompletionProvider() {
     val usedValues = mutableSetOf<String>()
     listExpression?.expressionList?.mapNotNullTo(usedValues) { PrismaSchemaPath.getSchemaLabel(it) }
 
-    schema.expandRefs(schemaElement.variants)
+    val queryPosition = parameters.originalPosition ?: parameters.position
+    schema.substituteRefs(schemaElement.asSafely<PrismaSchemaVariantsCapability>()?.variants ?: emptyList())
       .asSequence()
       .filter { it.label !in usedValues }
-      .filterNot { isInString && it is PrismaSchemaDeclaration }
+      .filterNot { isInString && it is PrismaSchemaDeclaration && !isNamedType(it.type, PrimitiveTypes.STRING) }
       .filter { it.isAvailableForDatasources(datasourceTypes) }
-      .filter { it.isAcceptedByPattern(parameters.originalPosition ?: parameters.position, context) }
-      .map {
-        val label = computeLabel(it, parameters)
-        createLookupElement(label, it, PrismaSchemaFakeElement.createForCompletion(parameters, it))
-          .withPresentableText(it.label)
-          .withLookupString(it.label)
+      .filter { it.isAcceptedByPattern(queryPosition, context) }
+      .mapNotNull {
+        val defaultLabel = it.label ?: return@mapNotNull null
+        val contextLabel = computeContextAwareLabel(it, parameters) ?: return@mapNotNull null
+        createLookupElement(contextLabel, it, PrismaSchemaFakeElement.createForCompletion(parameters, it))
+          .withPresentableText(defaultLabel)
+          .withLookupString(defaultLabel)
       }
       .forEach { result.addElement(it) }
   }
@@ -83,15 +90,8 @@ object PrismaValuesProvider : PrismaCompletionProvider() {
     return position?.parentOfType()
   }
 
-  private fun computeLabel(schemaElement: PrismaSchemaElement, parameters: CompletionParameters): String {
-    return when (schemaElement) {
-      is PrismaSchemaVariant -> {
-        val wrapInQuotes =
-          schemaElement.type == PrimitiveTypes.STRING && parameters.position.elementType != STRING_LITERAL
-        return if (wrapInQuotes) StringUtil.wrapWithDoubleQuote(schemaElement.label) else schemaElement.label
-      }
-
-      else -> schemaElement.label
-    }
+  private fun computeContextAwareLabel(schemaElement: PrismaSchemaElement, parameters: CompletionParameters): String? {
+    val wrapInQuotes = schemaElement.type == PrimitiveTypes.STRING && parameters.position.elementType != STRING_LITERAL
+    return if (wrapInQuotes) schemaElement.label?.let { StringUtil.wrapWithDoubleQuote(it) } else schemaElement.label
   }
 }

@@ -3,10 +3,21 @@ package org.intellij.prisma
 
 class PrismaFindUsagesTest : PrismaTestCase("findUsages") {
   fun testTypeUsages() {
-    val usages = myFixture.testFindUsagesUsingAction(getTestFileName())
-    assertSameElements(usages.map { it.toString() }, setOf(
+    doTest(
       "14|posts| |Post|[]",
       "21|posts| |Post|[]",
-    ))
+    )
+  }
+
+  fun testSchemaUsages() {
+    doTest(
+      """15|@@|schema|(|"|base-schema|"|)""",
+      """21|@@|schema|(|"|base-schema|"|)"""
+    )
+  }
+
+  private fun doTest(vararg expectedUsages: String) {
+    val usages = myFixture.testFindUsagesUsingAction(getTestFileName())
+    assertSameElements(usages.map { it.toString() }, expectedUsages.toSet())
   }
 }

@@ -4,15 +4,13 @@ import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.patterns.PlatformPatterns.psiElement
 import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
-import org.intellij.prisma.ide.schema.PrismaSchemaRef
-import org.intellij.prisma.ide.schema.schema
+import org.intellij.prisma.ide.schema.builder.schema
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
 import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames
 import org.intellij.prisma.lang.PrismaConstants.Types
-import org.intellij.prisma.lang.psi.PrismaFile
 import org.intellij.prisma.lang.psi.PrismaModelDeclaration
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 import org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration
@@ -77,15 +75,60 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
         type = "Expression"
         skipInCompletion = true
 
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.DBGENERATED) }
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.AUTO) }
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.SEQUENCE) }
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.AUTOINCREMENT) }
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.NOW) }
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.CUID) }
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.UUID) }
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.ULID) }
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.NANOID) }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.DBGENERATED
+          }
+        }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.AUTO
+          }
+        }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.SEQUENCE
+          }
+        }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.AUTOINCREMENT
+          }
+        }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.NOW
+          }
+        }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.CUID
+          }
+        }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.UUID
+          }
+        }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.ULID
+          }
+        }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.NANOID
+          }
+        }
 
         booleanTypeValues(PrismaPsiPatterns.withFieldType(true) { type, _ -> type is PrismaBooleanType })
       }
@@ -158,8 +201,8 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
     }
   }
 
-  dynamic(PrismaSchemaKind.FIELD_ATTRIBUTE) { ctx ->
-    (ctx.file as? PrismaFile)?.metadata?.datasources?.forEach { (name) ->
+  deferred(PrismaSchemaKind.FIELD_ATTRIBUTE) { ctx ->
+    ctx.metadata?.datasources?.forEach { (name) ->
       element {
         label = "@$name"
         documentation =

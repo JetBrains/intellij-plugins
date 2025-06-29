@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma.ide.schema.definitions
 
-import org.intellij.prisma.ide.schema.PrismaSchemaDeclaration
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.MYSQL
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.SQLSERVER
