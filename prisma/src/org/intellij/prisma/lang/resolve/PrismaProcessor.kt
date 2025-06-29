@@ -9,7 +9,7 @@ import org.intellij.prisma.lang.psi.PrismaNamedElement
 open class PrismaProcessor : PsiScopeProcessor {
   private val variants = SmartList<PrismaNamedElement>()
 
-  var multiple = true
+  var multiple: Boolean = true
   var filter: ((PsiElement) -> Boolean)? = null
 
   override fun execute(element: PsiElement, state: ResolveState): Boolean {

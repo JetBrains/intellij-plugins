@@ -37,10 +37,10 @@ public class PrismaParser implements PsiParser, LightPsiParser {
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(ARGUMENT, NAMED_ARGUMENT, VALUE_ARGUMENT),
-    create_token_set_(ARRAY_EXPRESSION, EXPRESSION, FUNCTION_CALL, LITERAL_EXPRESSION,
-      PATH_EXPRESSION),
     create_token_set_(FIELD_TYPE, LEGACY_LIST_TYPE, LEGACY_REQUIRED_TYPE, LIST_TYPE,
       OPTIONAL_TYPE, SINGLE_TYPE, UNSUPPORTED_OPTIONAL_LIST_TYPE),
+    create_token_set_(ARRAY_EXPRESSION, EXPRESSION, FUNCTION_CALL, LITERAL_EXPRESSION,
+      NUMERIC_LITERAL_EXPRESSION, PATH_EXPRESSION, STRING_LITERAL_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -611,14 +611,14 @@ public class PrismaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // NUMERIC_LITERAL | STRING_LITERAL
+  // StringLiteralExpression | NumericLiteralExpression
   public static boolean LiteralExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "LiteralExpression")) return false;
     if (!nextTokenIs(b, "<literal expression>", NUMERIC_LITERAL, STRING_LITERAL)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, LITERAL_EXPRESSION, "<literal expression>");
-    r = consumeToken(b, NUMERIC_LITERAL);
-    if (!r) r = consumeToken(b, STRING_LITERAL);
+    Marker m = enter_section_(b, l, _COLLAPSE_, LITERAL_EXPRESSION, "<literal expression>");
+    r = StringLiteralExpression(b, l + 1);
+    if (!r) r = NumericLiteralExpression(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -651,6 +651,18 @@ public class PrismaParser implements PsiParser, LightPsiParser {
     r = r && Expression(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // NUMERIC_LITERAL
+  public static boolean NumericLiteralExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "NumericLiteralExpression")) return false;
+    if (!nextTokenIs(b, NUMERIC_LITERAL)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, NUMERIC_LITERAL);
+    exit_section_(b, m, NUMERIC_LITERAL_EXPRESSION, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -753,6 +765,18 @@ public class PrismaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, SINGLE_TYPE, "<single type>");
     r = TypeReference(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // STRING_LITERAL
+  public static boolean StringLiteralExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StringLiteralExpression")) return false;
+    if (!nextTokenIs(b, STRING_LITERAL)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, STRING_LITERAL);
+    exit_section_(b, m, STRING_LITERAL_EXPRESSION, r);
     return r;
   }
 

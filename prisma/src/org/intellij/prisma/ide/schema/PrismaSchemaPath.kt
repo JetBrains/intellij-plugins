@@ -49,11 +49,9 @@ sealed class PrismaSchemaPath(
           PrismaSchemaParameterPath(it, element, parentPath)
         }
 
-        is PrismaValueArgument -> if (element.isDefault && !isFieldExpression) {
-          PrismaSchemaDefaultParameterPath(element, parentPath)
-        }
-        else {
-          null
+        is PrismaValueArgument -> when {
+          element.isDefault && !isFieldExpression -> PrismaSchemaDefaultParameterPath(element, parentPath)
+          else -> null
         }
 
         else -> null
@@ -74,6 +72,14 @@ sealed class PrismaSchemaPath(
       return PrismaSchemaDeclarationPath(label, element, kind)
     }
 
+    /**
+     * Adjusts the given path element based on its type and retrieves the appropriate parent or adjusted element.
+     * Usually, that means using the closest meaningful PSI element instead of a raw token.
+     * This adjusted element is then used to retrieve the schema element with a matching path.
+     *
+     * @param element the [PsiElement] to be adjusted or inspected
+     * @return the adjusted element based on its type or `null` if no valid parent is found
+     */
     fun adjustPathElement(element: PsiElement): PsiElement? {
       return when (element.elementType) {
         IDENTIFIER -> findIdentifierParent(element)

@@ -7,6 +7,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import org.intellij.prisma.PrismaBundle
 import org.intellij.prisma.ide.schema.*
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameter
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaVariant
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.presentation.PrismaPsiRenderer
 import org.intellij.prisma.lang.psi.*

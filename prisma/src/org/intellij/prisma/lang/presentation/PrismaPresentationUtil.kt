@@ -3,6 +3,10 @@ package org.intellij.prisma.lang.presentation
 import com.intellij.navigation.ItemPresentation
 import org.intellij.prisma.PrismaIcons
 import org.intellij.prisma.ide.schema.*
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameter
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaVariant
 import org.intellij.prisma.lang.psi.*
 import org.intellij.prisma.lang.types.typeText
 import javax.swing.Icon

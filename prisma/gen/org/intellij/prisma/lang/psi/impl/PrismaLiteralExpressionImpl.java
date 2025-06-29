@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
 import org.intellij.prisma.lang.psi.*;
 
-public class PrismaLiteralExpressionImpl extends PrismaLiteralExpressionMixin implements PrismaLiteralExpression {
+public abstract class PrismaLiteralExpressionImpl extends PrismaExpressionImpl implements PrismaLiteralExpression {
 
   public PrismaLiteralExpressionImpl(@NotNull ASTNode node) {
     super(node);
@@ -25,18 +25,6 @@ public class PrismaLiteralExpressionImpl extends PrismaLiteralExpressionMixin im
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof PrismaVisitor) accept((PrismaVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getNumericLiteral() {
-    return findChildByType(NUMERIC_LITERAL);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getStringLiteral() {
-    return findChildByType(STRING_LITERAL);
   }
 
 }

@@ -10,6 +10,7 @@ import org.intellij.prisma.lang.psi.stubs.PrismaEnumValueDeclarationStub;
 import org.intellij.prisma.lang.psi.stubs.PrismaFieldDeclarationStub;
 import org.intellij.prisma.lang.psi.stubs.PrismaGeneratorDeclarationStub;
 import org.intellij.prisma.lang.psi.stubs.PrismaDatasourceDeclarationStub;
+import com.intellij.psi.PsiLiteralValue;
 import org.intellij.prisma.lang.psi.stubs.PrismaTypeAliasStub;
 import org.intellij.prisma.lang.psi.stubs.PrismaEnumDeclarationStub;
 import org.intellij.prisma.lang.psi.stubs.PrismaModelDeclarationStub;
@@ -112,6 +113,7 @@ public class PrismaVisitor extends PsiElementVisitor {
 
   public void visitLiteralExpression(@NotNull PrismaLiteralExpression o) {
     visitExpression(o);
+    // visitPsiLiteralValue(o);
   }
 
   public void visitModelDeclaration(@NotNull PrismaModelDeclaration o) {
@@ -126,6 +128,10 @@ public class PrismaVisitor extends PsiElementVisitor {
     // visitReferenceElement(o);
   }
 
+  public void visitNumericLiteralExpression(@NotNull PrismaNumericLiteralExpression o) {
+    visitLiteralExpression(o);
+  }
+
   public void visitOptionalType(@NotNull PrismaOptionalType o) {
     visitFieldType(o);
   }
@@ -137,6 +143,10 @@ public class PrismaVisitor extends PsiElementVisitor {
 
   public void visitSingleType(@NotNull PrismaSingleType o) {
     visitFieldType(o);
+  }
+
+  public void visitStringLiteralExpression(@NotNull PrismaStringLiteralExpression o) {
+    visitLiteralExpression(o);
   }
 
   public void visitTypeAlias(@NotNull PrismaTypeAlias o) {

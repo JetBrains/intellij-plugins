@@ -4,6 +4,7 @@ package org.intellij.prisma.lang.resolve
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -14,13 +15,60 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopes
 import com.intellij.psi.stubs.StubIndex
+import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.asSafely
+import com.intellij.util.text.nullize
 import org.intellij.prisma.ide.indexing.PRISMA_ENTITIES_INDEX_KEY
 import org.intellij.prisma.ide.indexing.PRISMA_KEY_VALUE_DECL_INDEX_KEY
+import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.PrismaFileType
-import org.intellij.prisma.lang.psi.PrismaEntityDeclaration
-import org.intellij.prisma.lang.psi.PrismaKeyValueDeclaration
+import org.intellij.prisma.lang.psi.*
+import java.util.concurrent.ConcurrentHashMap
+
+fun <T : Any> computeWithSchemaScopedCache(
+  context: PsiElement,
+  key: Key<CachedValue<ConcurrentHashMap<GlobalSearchScope, T>>>,
+  provider: (context: PsiElement, scope: GlobalSearchScope) -> T,
+): T {
+  val project = context.project
+  val cachedValuesManager = CachedValuesManager.getManager(project)
+  val cache = cachedValuesManager.getCachedValue(project, key, {
+    create(ConcurrentHashMap<GlobalSearchScope, T>(), PsiModificationTracker.MODIFICATION_COUNT)
+  }, false)
+
+  val scope = getSchemaScope(context)
+  cache[scope]?.let { return it }
+
+  val data = provider(context, scope)
+  return cache.getOrPut(scope) { data }
+}
+
+fun <T : Any> createSchemaScopedCacheKey(name: String): Key<CachedValue<ConcurrentHashMap<GlobalSearchScope, T>>> =
+  Key.create("prisma.schema.scoped.cache.$name")
+
+private val schemaNamesCacheKey = createSchemaScopedCacheKey<Map<String, PsiElement>>("schemaNames")
+
+internal fun gatherSchemaNames(context: PsiElement): Map<String, PsiElement> {
+  return computeWithSchemaScopedCache(context, schemaNamesCacheKey) { _, _ ->
+    val processor = PrismaProcessor()
+    processKeyValueDeclarations(context.project, processor, getSchemaScope(context))
+    val schemaNames = mutableMapOf<String, PsiElement>()
+    for (declaration in processor.getResults()) {
+      if (declaration is PrismaDatasourceDeclaration) {
+        declaration.findMemberByName(PrismaConstants.DatasourceFields.SCHEMAS).asSafely<PrismaKeyValue>()
+          ?.expression?.asSafely<PrismaArrayExpression>()?.expressionList?.asSequence()
+          ?.filterIsInstance<PrismaLiteralExpression>()
+          ?.map { it.value?.asSafely<String>()?.nullize(true) to it }
+          ?.filter { it.first != null }
+          ?.forEach { schemaNames[it.first!!] = it.second }
+      }
+    }
+    schemaNames
+  }
+}
 
 fun processEntityDeclarations(processor: PrismaProcessor, state: ResolveState, element: PsiElement) {
   if (!processLocalFileDeclarations(processor, state, element)) return

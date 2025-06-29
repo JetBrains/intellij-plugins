@@ -2,7 +2,7 @@ package org.intellij.prisma.ide.schema.definitions
 
 import com.intellij.patterns.ElementPattern
 import com.intellij.psi.PsiElement
-import org.intellij.prisma.ide.schema.PrismaSchemaParameter
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameter
 import org.intellij.prisma.ide.schema.types.PrismaIndexAlgorithm
 import org.intellij.prisma.ide.schema.types.PrismaReferentialAction
 import org.intellij.prisma.ide.schema.types.PrismaSortOrder

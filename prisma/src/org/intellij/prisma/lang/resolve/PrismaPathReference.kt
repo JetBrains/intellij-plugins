@@ -5,8 +5,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
-import org.intellij.prisma.ide.schema.PrismaSchemaEvaluationContext
-import org.intellij.prisma.ide.schema.PrismaSchemaParameter
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameter
 import org.intellij.prisma.ide.schema.PrismaSchemaProvider
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.presentation.PrismaPsiRenderer

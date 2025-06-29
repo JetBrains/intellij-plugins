@@ -3,10 +3,9 @@ package org.intellij.prisma.completion
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.noAutoComplete
+import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import org.intellij.prisma.PrismaTestCase
 import org.intellij.prisma.ide.documentation.PrismaDocumentationProvider
 import org.intellij.prisma.lang.PrismaConstants
@@ -58,7 +57,7 @@ abstract class PrismaCompletionTestBase(testCasePath: String) : PrismaTestCase(t
   }
 
   protected fun noCompletion(source: String) {
-    UsefulTestCase.assertSize(0, completeAndGetLookupElements(source, source))
+    assertSize(0, completeAndGetLookupElements(source, source))
   }
 
   protected fun checkLookupDocumentation(lookupElements: Array<LookupElement>, lookupString: String) {

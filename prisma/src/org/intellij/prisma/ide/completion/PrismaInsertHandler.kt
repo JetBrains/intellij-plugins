@@ -8,10 +8,10 @@ import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.editor.EditorModificationUtil
-import org.intellij.prisma.ide.schema.PrismaSchemaDeclaration
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
 import org.intellij.prisma.ide.schema.PrismaSchemaFakeElement
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
-import org.intellij.prisma.ide.schema.PrismaSchemaParameter
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameter
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
 import org.intellij.prisma.lang.types.isListType
 import org.intellij.prisma.lang.types.isNamedType

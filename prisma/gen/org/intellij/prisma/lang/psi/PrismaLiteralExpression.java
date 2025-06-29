@@ -4,15 +4,8 @@ package org.intellij.prisma.lang.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLiteralValue;
 
-public interface PrismaLiteralExpression extends PrismaExpression {
-
-  @Nullable
-  PsiElement getNumericLiteral();
-
-  @Nullable
-  PsiElement getStringLiteral();
-
-  @Nullable Object getValue();
+public interface PrismaLiteralExpression extends PrismaExpression, PsiLiteralValue {
 
 }

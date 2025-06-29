@@ -3,7 +3,7 @@ package org.intellij.prisma.ide.completion.schema
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
-import org.intellij.prisma.ide.schema.PrismaSchemaElement
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 
@@ -16,8 +16,8 @@ object PrismaKeywordProvider : PrismaSchemaCompletionProvider() {
     schemaElement: PrismaSchemaElement,
     parameters: CompletionParameters,
     context: ProcessingContext
-  ): LookupElementBuilder {
-    return super.createLookupElement(schemaElement, parameters, context).bold()
+  ): LookupElementBuilder? {
+    return super.createLookupElement(schemaElement, parameters, context)?.bold()
   }
 }
 

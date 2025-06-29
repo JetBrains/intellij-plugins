@@ -2,8 +2,7 @@ package org.intellij.prisma.ide.schema.definitions
 
 import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
-import org.intellij.prisma.ide.schema.PrismaSchemaRef
-import org.intellij.prisma.ide.schema.schema
+import org.intellij.prisma.ide.schema.builder.schema
 import org.intellij.prisma.ide.schema.types.PRISMA_BINARY_TARGETS
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
@@ -69,7 +68,10 @@ val PRISMA_SCHEMA_FIELDS = schema {
       insertHandler = PrismaInsertHandler.EQUALS
 
       variant {
-        ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.ENV)
+        ref {
+          kind = PrismaSchemaKind.FUNCTION
+          label = Functions.ENV
+        }
       }
     }
     element {
@@ -80,7 +82,10 @@ val PRISMA_SCHEMA_FIELDS = schema {
       insertHandler = PrismaInsertHandler.EQUALS
 
       variant {
-        ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.ENV)
+        ref {
+          kind = PrismaSchemaKind.FUNCTION
+          label = Functions.ENV
+        }
       }
     }
     element {
@@ -108,7 +113,10 @@ val PRISMA_SCHEMA_FIELDS = schema {
       insertHandler = PrismaInsertHandler.EQUALS
 
       variant {
-        ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.ENV)
+        ref {
+          kind = PrismaSchemaKind.FUNCTION
+          label = Functions.ENV
+        }
       }
     }
     element {

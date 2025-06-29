@@ -3,16 +3,16 @@ package org.intellij.prisma.lang.resolve
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValueProvider.Result.create
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.asSafely
+import com.intellij.util.text.nullize
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 import org.intellij.prisma.lang.PrismaConstants
-import org.intellij.prisma.lang.psi.PrismaDatasourceDeclaration
-import org.intellij.prisma.lang.psi.PrismaGeneratorDeclaration
-import org.intellij.prisma.lang.psi.PrismaKeyValue
-import org.intellij.prisma.lang.psi.PrismaLiteralExpression
-import java.util.concurrent.ConcurrentHashMap
+import org.intellij.prisma.lang.psi.*
+
+private val schemaMetadataCacheKey = createSchemaScopedCacheKey<PrismaSchemaMetadata>("schemaMetadata")
+
+fun resolveSchemaMetadata(context: PsiElement): PrismaSchemaMetadata =
+  computeWithSchemaScopedCache(context, schemaMetadataCacheKey, ::buildMetadata)
 
 data class PrismaSchemaMetadata(
   val datasources: Map<String, PrismaDatasourceMetadata>,
@@ -20,21 +20,11 @@ data class PrismaSchemaMetadata(
 ) {
   val datasourceTypes: Set<PrismaDatasourceProviderType> = datasources.values.mapNotNullTo(mutableSetOf()) { it.providerType }
   val generatorProviderTypes: Set<String> = generators.values.mapNotNullTo(mutableSetOf()) { it.providerType }
+  val schemas: Set<String> = datasources.values.flatMapTo(mutableSetOf()) { it.schemas }
 }
 
-data class PrismaDatasourceMetadata(val name: String, val providerType: PrismaDatasourceProviderType?)
+data class PrismaDatasourceMetadata(val name: String, val providerType: PrismaDatasourceProviderType?, val schemas: Set<String>)
 data class PrismaGeneratorMetadata(val name: String, val providerType: String?)
-
-fun resolveSchemaMetadata(context: PsiElement): PrismaSchemaMetadata {
-  val cache = CachedValuesManager.getManager(context.project).getCachedValue(context.project) {
-    create(ConcurrentHashMap<GlobalSearchScope, PrismaSchemaMetadata>(), PsiModificationTracker.MODIFICATION_COUNT)
-  }
-  val scope = getSchemaScope(context)
-  cache[scope]?.let { return it }
-
-  val metadata = buildMetadata(context, scope)
-  return cache.getOrPut(scope) { metadata }
-}
 
 private fun buildMetadata(
   context: PsiElement,
@@ -50,17 +40,27 @@ private fun buildMetadata(
     when (declaration) {
       is PrismaDatasourceDeclaration -> {
         val datasourceName = declaration.name
-        val provider = declaration.findMemberByName(PrismaConstants.DatasourceFields.PROVIDER) as? PrismaKeyValue
-        val providerValue = (provider?.expression as? PrismaLiteralExpression)?.value as? String
+
+        val providerKeyValue = declaration.findMemberByName(PrismaConstants.DatasourceFields.PROVIDER) as? PrismaKeyValue
+        val providerValue = (providerKeyValue?.expression as? PrismaLiteralExpression)?.value as? String
         val datasourceType = PrismaDatasourceProviderType.fromString(providerValue)
+
+        val schemasKeyValue = declaration.findMemberByName(PrismaConstants.DatasourceFields.SCHEMAS) as? PrismaKeyValue
+        val schemas = schemasKeyValue?.expression?.asSafely<PrismaArrayExpression>()?.expressionList
+                        ?.mapNotNull {
+                          it.asSafely<PrismaLiteralExpression>()?.value?.asSafely<String>()?.nullize(true)
+                        }
+                        ?.toSet()
+                      ?: emptySet()
+
         if (datasourceName != null && datasourceType != null) {
-          datasources.add(PrismaDatasourceMetadata(datasourceName, datasourceType))
+          datasources.add(PrismaDatasourceMetadata(datasourceName, datasourceType, schemas))
         }
       }
       is PrismaGeneratorDeclaration -> {
         val generatorName = declaration.name
-        val provider = declaration.findMemberByName(PrismaConstants.GeneratorFields.PROVIDER) as? PrismaKeyValue
-        val providerType = (provider?.expression as? PrismaLiteralExpression)?.value as? String
+        val providerKeyValue = declaration.findMemberByName(PrismaConstants.GeneratorFields.PROVIDER) as? PrismaKeyValue
+        val providerType = (providerKeyValue?.expression as? PrismaLiteralExpression)?.value as? String
         if (generatorName != null) {
           generators.add(PrismaGeneratorMetadata(generatorName, providerType))
         }

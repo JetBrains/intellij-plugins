@@ -3,8 +3,7 @@ package org.intellij.prisma.ide.schema.definitions
 import com.intellij.patterns.PlatformPatterns.psiElement
 import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
-import org.intellij.prisma.ide.schema.PrismaSchemaRef
-import org.intellij.prisma.ide.schema.schema
+import org.intellij.prisma.ide.schema.builder.schema
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
 import org.intellij.prisma.lang.PrismaConstants.Functions
@@ -123,7 +122,12 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
         datasources = EnumSet.of(POSTGRESQL)
         isOnFieldLevel = true
 
-        variant { ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.RAW) }
+        variant {
+          ref {
+            kind = PrismaSchemaKind.FUNCTION
+            label = Functions.RAW
+          }
+        }
       }
       length(true)
       sort(true)
@@ -170,6 +174,10 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
         documentation = "The name of the schema."
         type = "String"
         skipInCompletion = true
+
+        variant {
+          ref { kind = PrismaSchemaKind.SCHEMA_NAME }
+        }
       }
     }
   }

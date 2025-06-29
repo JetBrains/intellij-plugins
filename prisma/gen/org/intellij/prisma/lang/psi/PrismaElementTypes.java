@@ -32,9 +32,11 @@ public interface PrismaElementTypes {
   IElementType LITERAL_EXPRESSION = new PrismaElementType("LITERAL_EXPRESSION");
   IElementType MODEL_DECLARATION = PrismaStubElementTypeFactory.create("MODEL_DECLARATION");
   IElementType NAMED_ARGUMENT = new PrismaElementType("NAMED_ARGUMENT");
+  IElementType NUMERIC_LITERAL_EXPRESSION = new PrismaElementType("NUMERIC_LITERAL_EXPRESSION");
   IElementType OPTIONAL_TYPE = new PrismaElementType("OPTIONAL_TYPE");
   IElementType PATH_EXPRESSION = new PrismaElementType("PATH_EXPRESSION");
   IElementType SINGLE_TYPE = new PrismaElementType("SINGLE_TYPE");
+  IElementType STRING_LITERAL_EXPRESSION = new PrismaElementType("STRING_LITERAL_EXPRESSION");
   IElementType TYPE_ALIAS = PrismaStubElementTypeFactory.create("TYPE_ALIAS");
   IElementType TYPE_DECLARATION = PrismaStubElementTypeFactory.create("TYPE_DECLARATION");
   IElementType TYPE_REFERENCE = new PrismaElementType("TYPE_REFERENCE");
@@ -125,14 +127,14 @@ public interface PrismaElementTypes {
       else if (type == LIST_TYPE) {
         return new PrismaListTypeImpl(node);
       }
-      else if (type == LITERAL_EXPRESSION) {
-        return new PrismaLiteralExpressionImpl(node);
-      }
       else if (type == MODEL_DECLARATION) {
         return new PrismaModelDeclarationImpl(node);
       }
       else if (type == NAMED_ARGUMENT) {
         return new PrismaNamedArgumentImpl(node);
+      }
+      else if (type == NUMERIC_LITERAL_EXPRESSION) {
+        return new PrismaNumericLiteralExpressionImpl(node);
       }
       else if (type == OPTIONAL_TYPE) {
         return new PrismaOptionalTypeImpl(node);
@@ -142,6 +144,9 @@ public interface PrismaElementTypes {
       }
       else if (type == SINGLE_TYPE) {
         return new PrismaSingleTypeImpl(node);
+      }
+      else if (type == STRING_LITERAL_EXPRESSION) {
+        return new PrismaStringLiteralExpressionImpl(node);
       }
       else if (type == TYPE_ALIAS) {
         return new PrismaTypeAliasImpl(node);

@@ -27,7 +27,7 @@ PRISMA_FILE
         PsiWhiteSpace(' ')
         PsiElement(=)('=')
         PsiWhiteSpace(' ')
-        PrismaLiteralExpressionImpl(LITERAL_EXPRESSION)
+        PrismaStringLiteralExpressionImpl(STRING_LITERAL_EXPRESSION)
           PsiElement(STRING_LITERAL)('"prisma-client-js"')
       PsiWhiteSpace('\n')
       PsiElement(})('}')

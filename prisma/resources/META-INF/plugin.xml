@@ -78,6 +78,16 @@
                                 implementationClass="org.intellij.prisma.ide.completion.PrismaCompletionContributor"/>
         <lookup.charFilter implementation="org.intellij.prisma.ide.completion.PrismaCharFilter"/>
 
+        <!-- Resolve -->
+        <psi.symbolReferenceProvider hostElementClass="org.intellij.prisma.lang.psi.PrismaStringLiteralExpression" hostLanguage="Prisma"
+                                     implementationClass="org.intellij.prisma.lang.symbols.references.PrismaSchemaSymbolReferenceProvider"
+                                     targetClass="org.intellij.prisma.lang.symbols.PrismaSchemaSymbol"/>
+        <psi.declarationProvider implementation="org.intellij.prisma.lang.symbols.declarations.PrismaSchemaSymbolDeclarationProvider"/>
+
+        <!-- Manipulators -->
+        <lang.elementManipulator forClass="org.intellij.prisma.lang.psi.PrismaStringLiteralExpression"
+                                 implementationClass="org.intellij.prisma.lang.psi.impl.manipulators.PrismaStringLiteralExpressionManipulator"/>
+
         <!-- Indexing -->
         <additionalLibraryRootsProvider
                 implementation="org.intellij.prisma.ide.indexing.PrismaAdditionalLibraryRootsProvider"/>
@@ -117,7 +127,12 @@
         <dependencySupport kind="javascript" coordinate="npm:prisma" displayName="Prisma"/>
 
         <!-- Find Usages -->
-       <lang.findUsagesProvider language="Prisma" implementationClass="org.intellij.prisma.lang.findUsages.PrismaFindUsagesProvider"/>
+       <lang.findUsagesProvider language="Prisma" implementationClass="org.intellij.prisma.ide.findUsages.PrismaFindUsagesProvider"/>
+
+       <searcher forClass="com.intellij.find.usages.api.UsageSearchParameters"
+                 implementationClass="org.intellij.prisma.ide.findUsages.search.PrismaSchemaUsageSearcher"/>
+       <searcher forClass="com.intellij.refactoring.rename.api.RenameUsageSearchParameters"
+                 implementationClass="org.intellij.prisma.ide.findUsages.search.PrismaSchemaRenameUsageSearcher"/>
 
        <registryKey defaultValue="false" description="Include Prisma schemas located in node_modules into resolve and completion"
                     key="prisma.scope.include.node.modules" restartRequired="true"/>

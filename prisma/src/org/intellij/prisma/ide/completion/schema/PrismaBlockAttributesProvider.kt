@@ -8,7 +8,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.collectExistingAttributeNames
-import org.intellij.prisma.ide.schema.PrismaSchemaElement
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
 import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
