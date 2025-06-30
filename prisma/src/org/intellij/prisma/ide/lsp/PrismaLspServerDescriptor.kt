@@ -2,10 +2,13 @@ package org.intellij.prisma.ide.lsp
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.lang.typescript.lsp.JSNodeLspServerDescriptor
+import com.intellij.markdown.utils.convertMarkdownToHtml
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.customization.*
 import org.eclipse.lsp4j.ConfigurationItem
+import org.eclipse.lsp4j.Diagnostic
 import org.intellij.prisma.PrismaBundle
 import org.intellij.prisma.ide.formatter.settings.PrismaCodeStyleSettings
 import org.intellij.prisma.lang.PrismaFileType
@@ -21,6 +24,9 @@ class PrismaLspServerDescriptor(project: Project)
     override val completionCustomizer = LspCompletionDisabled
     override val hoverCustomizer = LspHoverDisabled
     override val findReferencesCustomizer = LspFindReferencesDisabled
+    override val diagnosticsCustomizer: LspDiagnosticsCustomizer = object : LspDiagnosticsSupport() {
+      override fun getTooltip(diagnostic: Diagnostic): @NlsSafe String = convertMarkdownToHtml(diagnostic.message)
+    }
 
     override val formattingCustomizer = object : LspFormattingSupport() {
       override fun shouldFormatThisFileExclusivelyByServer(file: VirtualFile, ideCanFormatThisFileItself: Boolean, serverExplicitlyWantsToFormatThisFile: Boolean): Boolean {
