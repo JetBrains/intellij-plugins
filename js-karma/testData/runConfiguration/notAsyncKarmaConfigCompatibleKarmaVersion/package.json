@@ -1,0 +1,11 @@
+{
+  "name": "karma-basic",
+  "scripts": {
+    "test": "karma start"
+  },
+  "devDependencies": {
+    "karma": "6.2.0",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-jasmine": "^5.1.0"
+  }
+}
