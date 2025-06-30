@@ -1,9 +1,9 @@
 package org.intellij.prisma.completion
 
 import junit.framework.TestCase
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.PrismaSchemaProvider
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
 import org.intellij.prisma.lang.PrismaConstants.FieldAttributes
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames

@@ -340,4 +340,67 @@ class PrismaBlockAttributesCompletionTest : PrismaCompletionTestBase("completion
     )
     assertSameElements(lookupElements.strings, "\"base-schema\"", "\"login\"")
   }
+
+  fun testBlockAttributesShardKey() {
+    completeSelected("""
+      generator client {
+        provider        = "prisma-client-js"
+        previewFeatures = ["shardKeys"]
+      }
+
+      datasource db {
+        provider = "mysql"
+        url      = "file:./dev.db"
+      }
+
+      model User {
+        id    Int     @id @default(autoincrement())
+        email String  @unique
+        name  String?
+        
+        @@<caret>
+      }
+    """.trimIndent(), """
+      generator client {
+        provider        = "prisma-client-js"
+        previewFeatures = ["shardKeys"]
+      }
+
+      datasource db {
+        provider = "mysql"
+        url      = "file:./dev.db"
+      }
+
+      model User {
+        id    Int     @id @default(autoincrement())
+        email String  @unique
+        name  String?
+        
+        @@shardKey([<caret>])
+      }
+    """.trimIndent(), "@@shardKey")
+  }
+
+  fun testBlockAttributeShardKeyOnlyMysql() {
+    val lookupElements = getLookupElements("""
+      generator client {
+        provider        = "prisma-client-js"
+        previewFeatures = ["shardKeys"]
+      }
+
+      datasource db {
+        provider = "postgresql"
+        url      = "file:./dev.db"
+      }
+
+      model User {
+        id    Int     @id @default(autoincrement())
+        email String  @unique
+        name  String?
+        
+        @@<caret>
+      }
+    """.trimIndent())
+    assertDoesntContain(lookupElements.strings, BlockAttributes.SHARD_KEY)
+  }
 }

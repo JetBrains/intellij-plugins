@@ -3,7 +3,7 @@ package org.intellij.prisma.lang.resolve
 import com.intellij.psi.PsiElement
 import org.intellij.prisma.lang.psi.PrismaNamedElement
 
-class PrismaResolveProcessor(val name: String, val place: PsiElement) : PrismaProcessor() {
+open class PrismaResolveProcessor(val name: String, val place: PsiElement) : PrismaProcessor() {
 
   init {
     multiple = false

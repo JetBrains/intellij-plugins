@@ -6,12 +6,9 @@ import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import org.intellij.prisma.PrismaBundle
-import org.intellij.prisma.ide.schema.*
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameter
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaVariant
+import org.intellij.prisma.ide.schema.PrismaSchemaKind
+import org.intellij.prisma.ide.schema.PrismaSchemaProvider
+import org.intellij.prisma.ide.schema.builder.*
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.presentation.PrismaPsiRenderer
 import org.intellij.prisma.lang.psi.*
@@ -51,7 +48,7 @@ class PrismaDocumentationBuilder(private val element: PsiElement) {
     val declaration = schemaElement as? PrismaSchemaDeclaration
     val file = element.containingFile as? PrismaFile ?: return null
     val datasourceTypes = file.metadata.datasourceTypes
-    val params = declaration?.getAvailableParams(datasourceTypes, false) ?: emptyList()
+    val params = declaration?.getAvailableParams(datasourceTypes, PrismaSchemaParameterLocation.DEFAULT) ?: emptyList()
     val definition = declaration?.signature ?: buildDefinitionFromSchema(schemaElement, params)
 
     return buildString {

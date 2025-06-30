@@ -14,6 +14,7 @@ enum class PrismaPreviewFeature(val datasources: Set<PrismaDatasourceProviderTyp
   RelationJoins,
   StrictUndefinedChecks,
   Views,
+  ShardKeys,
   FullTextSearchPostgres(setOf(POSTGRESQL));
 
   val presentation: String = StringUtil.decapitalize(name)

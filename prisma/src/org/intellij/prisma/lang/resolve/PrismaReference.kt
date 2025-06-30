@@ -33,7 +33,7 @@ abstract class PrismaReference(
   }
 
   protected open fun createCompletionProcessor(element: PsiElement): PrismaProcessor {
-    return PrismaProcessor()
+    return PrismaCompletionProcessor()
   }
 
   override fun getVariants(): Array<Any> {

@@ -22,7 +22,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
     )
     assertSameElements(
       lookupElements.strings,
-      FieldAttributes.ALL - FieldAttributes.ID - FieldAttributes.UPDATED_AT,
+      FieldAttributes.ALL - FieldAttributes.ID - FieldAttributes.UPDATED_AT - FieldAttributes.SHARD_KEY,
     )
 
     checkLookupDocumentation(lookupElements, FieldAttributes.RELATION)
@@ -90,7 +90,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
     )
     assertSameElements(
       lookupElements.strings,
-      FieldAttributes.ALL - FieldAttributes.ID - FieldAttributes.UPDATED_AT - FieldAttributes.UNIQUE
+      FieldAttributes.ALL - FieldAttributes.ID - FieldAttributes.UPDATED_AT - FieldAttributes.UNIQUE - FieldAttributes.SHARD_KEY,
     )
     checkLookupDocumentation(lookupElements, FieldAttributes.MAP)
   }
@@ -110,7 +110,7 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
     )
     assertSameElements(
       lookupElements.strings,
-      FieldAttributes.ALL - FieldAttributes.ID - FieldAttributes.UPDATED_AT - FieldAttributes.MAP
+      FieldAttributes.ALL - FieldAttributes.ID - FieldAttributes.UPDATED_AT - FieldAttributes.MAP - FieldAttributes.SHARD_KEY
     )
   }
 
@@ -239,5 +239,102 @@ class PrismaFieldAttributesCompletionTest : PrismaCompletionTestBase("completion
       """.trimIndent()
     )
     assertSameElements(lookupElements.strings, FieldAttributes.DEFAULT, FieldAttributes.MAP)
+  }
+
+  fun testFieldAttributeShardKey() {
+    val lookupElements = getLookupElements("""
+      generator client {
+        provider        = "prisma-client-js"
+        previewFeatures = ["shardKeys"]
+      }
+
+      datasource db {
+        provider = "mysql"
+        url      = "file:./dev.db"
+      }
+
+      model User {
+        id    Int     @id @default(autoincrement())
+        email String  @unique <caret>
+        name  String?
+      }
+    """.trimIndent())
+    assertContainsElements(lookupElements.strings, FieldAttributes.SHARD_KEY)
+  }
+
+  fun testFieldAttributeShardKeySkipRelations() {
+    val lookupElements = getLookupElements("""
+      generator client {
+        provider        = "prisma-client-js"
+        previewFeatures = ["shardKeys"]
+      }
+
+      datasource db {
+        provider = "mysql"
+        url      = "file:./dev.db"
+      }
+
+      model User {
+        id    Int     @id @default(autoincrement())
+        email String  @unique
+        name  String?
+        posts Post[] <caret>
+      }
+
+      model Post {
+        id        Int      @id @default(autoincrement())
+        createdAt DateTime @default(now())
+        updatedAt DateTime @updatedAt
+        title     String
+        content   String?
+        published Boolean  @default(false)
+        viewCount Int      @default(0)
+        author    User?    @relation(fields: [authorId], references: [id])
+        authorId  Int?
+      }
+    """.trimIndent())
+    assertDoesntContain(lookupElements.strings, FieldAttributes.SHARD_KEY)
+  }
+
+  fun testFieldAttributeShardKeySkipOptional() {
+    val lookupElements = getLookupElements("""
+      generator client {
+        provider        = "prisma-client-js"
+        previewFeatures = ["shardKeys"]
+      }
+
+      datasource db {
+        provider = "mysql"
+        url      = "file:./dev.db"
+      }
+
+      model User {
+        id    Int     @id @default(autoincrement())
+        email String  @unique
+        name  String? <caret>
+      }
+    """.trimIndent())
+    assertDoesntContain(lookupElements.strings, FieldAttributes.SHARD_KEY)
+  }
+
+  fun testFieldAttributeShardKeyOnlyMysql() {
+    val lookupElements = getLookupElements("""
+      generator client {
+        provider        = "prisma-client-js"
+        previewFeatures = ["shardKeys"]
+      }
+
+      datasource db {
+        provider = "postgresql"
+        url      = "file:./dev.db"
+      }
+
+      model User {
+        id    Int     @id @default(autoincrement())
+        email String  @unique <caret>
+        name  String?
+      }
+    """.trimIndent())
+    assertDoesntContain(lookupElements.strings, FieldAttributes.SHARD_KEY)
   }
 }

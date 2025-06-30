@@ -5,7 +5,9 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.PrismaCompletionProvider
-import org.intellij.prisma.ide.schema.*
+import org.intellij.prisma.ide.schema.PrismaSchemaFakeElement
+import org.intellij.prisma.ide.schema.PrismaSchemaKind
+import org.intellij.prisma.ide.schema.PrismaSchemaProvider
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaElement
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
 import org.intellij.prisma.lang.psi.PrismaFile
@@ -40,7 +42,10 @@ abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
       .getElements(kind)
       .asSequence()
       .filter { it.isAvailableForDatasources(datasourceTypes) }
-      .filter { it.isAcceptedByPattern(position, context) }
+      .filter {
+        it.isAcceptedByPattern(parameters.position, context)
+        || it.isAcceptedByPattern(parameters.originalPosition, context)
+      }
       .toList()
   }
 

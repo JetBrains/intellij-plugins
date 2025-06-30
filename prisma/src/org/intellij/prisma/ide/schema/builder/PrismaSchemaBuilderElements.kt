@@ -28,8 +28,12 @@ class PrismaSchemaDeclaration(
   override val type: String? = null,
   override val resolver: PrismaSchemaResolver? = null,
 ) : PrismaSchemaElement, PrismaSchemaPatternCapability, PrismaSchemaVariantsCapability, PrismaSchemaDatasourcesCapability, PrismaSchemaDeclarationResolverCapability {
-  fun getAvailableParams(usedDatasources: Set<PrismaDatasourceProviderType>, isOnFieldLevel: Boolean): List<PrismaSchemaParameter> =
-    params.filter { it.isAvailableForDatasources(usedDatasources) && it.isOnFieldLevel == isOnFieldLevel }
+  fun getAvailableParams(
+    usedDatasources: Set<PrismaDatasourceProviderType>,
+    location: PrismaSchemaParameterLocation,
+  ): List<PrismaSchemaParameter> {
+    return params.filter { it.isAvailableForDatasources(usedDatasources) && it.location == location }
+  }
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -95,7 +99,7 @@ class PrismaSchemaParameter(
   override val datasources: Set<PrismaDatasourceProviderType>? = null,
   override val variants: List<PrismaSchemaVariant> = emptyList(),
   override val type: String? = null,
-  val isOnFieldLevel: Boolean = false,
+  val location: PrismaSchemaParameterLocation = PrismaSchemaParameterLocation.DEFAULT,
   val skipInCompletion: Boolean = false,
   override val resolver: PrismaSchemaResolver? = null,
 ) : PrismaSchemaElement, PrismaSchemaVariantsCapability, PrismaSchemaDatasourcesCapability, PrismaSchemaDeclarationResolverCapability {
@@ -118,7 +122,7 @@ class PrismaSchemaParameter(
     var type: String? = null
     var insertHandler: InsertHandler<LookupElement>? = null
     var datasources: Set<PrismaDatasourceProviderType>? = null
-    var isOnFieldLevel: Boolean = false
+    var location: PrismaSchemaParameterLocation = PrismaSchemaParameterLocation.DEFAULT
     var skipInCompletion: Boolean = false
     var resolver: PrismaSchemaResolver? = null
 
@@ -136,7 +140,7 @@ class PrismaSchemaParameter(
                ?.let {
                  PrismaSchemaParameter(
                    it, documentation, insertHandler, datasources,
-                   variants, type, isOnFieldLevel, skipInCompletion, resolver
+                   variants, type, location, skipInCompletion, resolver
                  )
                }
              ?: error("label is not specified")

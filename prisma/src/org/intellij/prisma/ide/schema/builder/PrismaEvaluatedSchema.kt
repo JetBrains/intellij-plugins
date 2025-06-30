@@ -19,37 +19,35 @@ class PrismaEvaluatedSchema(private val groups: Map<PrismaSchemaKind, PrismaSche
       else -> listOfNotNull(getElement(ref.kind, ref.label))
     }
 
-  fun match(element: PsiElement?): PrismaSchemaElement? {
-    if (element is PrismaSchemaFakeElement) {
-      return element.schemaElement
-    }
+  fun match(element: PsiElement?): PrismaSchemaElement? =
+    match(PrismaSchemaPath.forElement(element))
 
-    return match(PrismaSchemaPath.forElement(element) ?: return null)
-  }
+  fun match(path: PrismaSchemaPath?): PrismaSchemaElement? = when (path) {
+    is PrismaSchemaFakeElementPath -> path.element.schemaElement
 
-  private fun match(path: PrismaSchemaPath): PrismaSchemaElement? {
-    return when (path) {
-      is PrismaSchemaDeclarationPath -> getElement(path.kind, path.label)
+    is PrismaSchemaDeclarationPath -> getElement(path.kind, path.label)
 
-      is PrismaSchemaParameterPath ->
-        match(path.parent).asSafely<PrismaSchemaDeclaration>()
-          ?.params
-          ?.let { parameters ->
-            when (path) {
-              is PrismaSchemaDefaultParameterPath -> parameters.firstOrNull()
-              else -> parameters.find { it.label == path.label }
-            }
+    is PrismaSchemaParameterPath ->
+      match(path.parent).asSafely<PrismaSchemaDeclaration>()
+        ?.params
+        ?.let { parameters ->
+          when (path) {
+            is PrismaSchemaDefaultParameterPath -> parameters.firstOrNull()
+            else -> parameters.find { it.label == path.label }
           }
+        }
 
-      is PrismaSchemaVariantPath ->
-        match(path.parent).asSafely<PrismaSchemaVariantsCapability>()
-          ?.variants
-          ?.let { substituteRefs(it) }
-          ?.find { it.label == path.label }
-    }
+    is PrismaSchemaVariantPath ->
+      match(path.parent).asSafely<PrismaSchemaVariantsCapability>()
+        ?.variants
+        ?.let { substituteRefs(it) }
+        ?.find { it.label == path.label }
+
+    null -> null
   }
 
   fun substituteRefs(elements: List<PrismaSchemaElement>): List<PrismaSchemaElement> = elements.flatMap {
     if (it is PrismaSchemaRefCapability && it.ref != null) getElements(it.ref) else listOf(it)
   }
 }
+

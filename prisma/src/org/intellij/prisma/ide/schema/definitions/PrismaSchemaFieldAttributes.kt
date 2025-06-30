@@ -2,6 +2,7 @@ package org.intellij.prisma.ide.schema.definitions
 
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.patterns.StandardPatterns
 import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.builder.schema
@@ -15,6 +16,7 @@ import org.intellij.prisma.lang.psi.PrismaModelDeclaration
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 import org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration
 import org.intellij.prisma.lang.types.PrismaBooleanType
+import org.intellij.prisma.lang.types.PrismaPrimitiveType
 import java.util.*
 
 val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
@@ -198,6 +200,16 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
       documentation =
         "A field with an `@ignore` attribute can be kept in sync with the database schema using Prisma Migrate and Introspection, but won't be exposed in Prisma Client."
       pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
+    }
+
+    element {
+      label = FieldAttributes.SHARD_KEY
+      documentation = "The `@shardKey` attribute is only compatible with [PlanetScale](https://planetscale.com/) databases. It enables you to define a [shard key](https://planetscale.com/docs/vitess/sharding) on multiple fields of your model."
+      pattern = StandardPatterns.and(
+        PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java)),
+        PrismaPsiPatterns.withFieldType { type, _ -> type is PrismaPrimitiveType },
+      )
+      datasources = EnumSet.of(MYSQL)
     }
   }
 
