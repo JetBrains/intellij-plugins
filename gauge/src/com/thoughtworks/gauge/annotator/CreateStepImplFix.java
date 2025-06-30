@@ -41,7 +41,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -136,18 +135,10 @@ public final class CreateStepImplFix extends BaseIntentionAction {
 
             @Override
             public @NotNull String getTextFor(PsiFile value) {
-              return value == null ? GaugeBundle.message("create.new.file") : getJavaFileName(value);
+              return value == null ? GaugeBundle.message("create.new.file") : FileManager.getJavaFileName(value);
             }
           });
         stepImplChooser.showCenteredInCurrentWindow(step.getProject());
-      }
-
-      private @NlsSafe String getJavaFileName(PsiFile value) {
-        PsiJavaFile javaFile = (PsiJavaFile)value;
-        if (!javaFile.getPackageName().isEmpty()) {
-          return javaFile.getPackageName() + "." + javaFile.getName();
-        }
-        return javaFile.getName();
       }
     });
   }
