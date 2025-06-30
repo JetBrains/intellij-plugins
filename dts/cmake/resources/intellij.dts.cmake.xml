@@ -23,7 +23,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij.clion">
-    <dtsUtil implementation="com.intellij.dts.cmake.impl.DtsClionUtilImpl"/>
+    <dtsUtil implementation="com.intellij.dts.cmake.impl.DtsCMakeUtilImpl"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij.dts.cmake">

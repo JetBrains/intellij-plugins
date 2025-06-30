@@ -1,6 +1,6 @@
 package com.intellij.dts.util
 
-import com.intellij.dts.cmake.DtsCLionUtil
+import com.intellij.dts.cmake.DtsCMakeUtil
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.openapi.project.Project
@@ -20,7 +20,7 @@ import java.util.*
 
 object DtsUtil {
   fun isCMakeAvailable(project: Project): Boolean {
-    return DtsCLionUtil.isCMakeAvailable(project)
+    return DtsCMakeUtil.isCMakeAvailable(project)
   }
 
   /**

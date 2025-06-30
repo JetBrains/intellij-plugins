@@ -18,7 +18,7 @@
   <extensionPoints>
     <extensionPoint
       qualifiedName="com.intellij.clion.dtsUtil"
-      interface="com.intellij.dts.cmake.DtsCLionUtil"
+      interface="com.intellij.dts.cmake.DtsCMakeUtil"
       dynamic="true"/>
     <extensionPoint interface="com.intellij.dts.settings.DtsSettingsDisabler" dynamic="true" name="settings.disabler"/>
   </extensionPoints>
