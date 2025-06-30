@@ -81,6 +81,7 @@ function tryRequireFromProjectRoot(modulePath) {
 }
 
 module.exports = async function (config) {
+  var originalConfigModulePromise;
   if (originalConfigPath) {
     // support for karma.conf.ts when ts-node is available
     // https://github.com/karma-runner/karma/blob/v6.4.4/lib/config.js#L431-L434
@@ -95,12 +96,30 @@ module.exports = async function (config) {
     if (typeof originalConfigModule === 'object' && typeof originalConfigModule.default !== 'undefined') {
       originalConfigModule = originalConfigModule.default;
     }
-    await originalConfigModule(config);
+    var originalConfigModuleCallResult = originalConfigModule(config);
+    if (originalConfigModuleCallResult != null
+      && (originalConfigModuleCallResult instanceof Promise
+        // use thenable check for hadling promises polyfills or some thenable API usages
+        || typeof originalConfigModuleCallResult.then === 'function')
+    ) {
+      originalConfigModulePromise = originalConfigModuleCallResult;
+    }
   }
   else {
     require('./ng-template').getBuiltInKarmaConfig(config);
   }
 
+  // Unfortunately, we can't work only in async mode because old versions of Karma don't support it (see https://youtrack.jetbrains.com/issue/WEB-73699)
+  if (originalConfigModulePromise) {
+    return originalConfigModulePromise.then(() => {
+      continueIJConfigSetup(config);
+    })
+  } else {
+    continueIJConfigSetup(config);
+  }
+};
+
+function continueIJConfigSetup(config) {
   var reporters = config.reporters;
   if (intellijUtil.isString(reporters)) {
     // logic from 'normalizeConfig' in config.js
@@ -134,8 +153,8 @@ module.exports = async function (config) {
   // https://github.com/karma-runner/karma/issues/614 is ready
   var logLevel = config.logLevel;
   if (logLevel === config.LOG_DISABLE ||
-      logLevel === config.LOG_ERROR ||
-      logLevel === config.LOG_WARN) {
+    logLevel === config.LOG_ERROR ||
+    logLevel === config.LOG_WARN) {
     console.log("IntelliJ integration changed logLevel to LOG_INFO, because otherwise it doesn't work.");
     config.logLevel = config.LOG_INFO;
   }
@@ -159,4 +178,4 @@ module.exports = async function (config) {
       debugInfo: debugInfo
     }
   );
-};
+}
