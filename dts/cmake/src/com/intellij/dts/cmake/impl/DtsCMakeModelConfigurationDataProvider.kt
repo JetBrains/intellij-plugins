@@ -1,4 +1,4 @@
-package com.intellij.dts.clion.impl
+package com.intellij.dts.cmake.impl
 
 import com.intellij.execution.ExecutionTargetManager
 import com.intellij.openapi.extensions.ExtensionPointName

@@ -1,6 +1,6 @@
-package com.intellij.dts.clion.impl
+package com.intellij.dts.cmake.impl
 
-import com.intellij.dts.clion.DtsCLionUtil
+import com.intellij.dts.cmake.DtsCLionUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 

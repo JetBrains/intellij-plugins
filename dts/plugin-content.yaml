@@ -3,3 +3,6 @@
   - name: intellij.dts
   - name: intellij.dts.pp
     reason: <- intellij.dts
+- name: lib/modules/intellij.dts.cmake.jar
+  contentModules:
+  - name: intellij.dts.cmake

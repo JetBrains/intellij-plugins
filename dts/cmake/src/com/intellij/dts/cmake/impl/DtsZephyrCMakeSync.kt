@@ -1,6 +1,5 @@
-package com.intellij.dts.clion
+package com.intellij.dts.cmake.impl
 
-import com.intellij.dts.clion.impl.DtsCMakeModelConfigurationDataProvider
 import com.intellij.dts.settings.DtsSettings
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.ExecutionTargetListener

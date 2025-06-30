@@ -1,6 +1,6 @@
 package com.intellij.dts.util
 
-import com.intellij.dts.clion.DtsCLionUtil
+import com.intellij.dts.cmake.DtsCLionUtil
 import com.intellij.dts.lang.DtsTokenSets
 import com.intellij.dts.lang.psi.DtsTypes
 import com.intellij.openapi.project.Project
@@ -19,10 +19,9 @@ import java.nio.file.Path
 import java.util.*
 
 object DtsUtil {
-  private val clionUtil: DtsCLionUtil?
-    get() = DtsCLionUtil.EP_NAME.extensions.firstOrNull()
-
-  fun isCMakeAvailable(project: Project): Boolean = clionUtil?.isCMakeAvailable(project) ?: false
+  fun isCMakeAvailable(project: Project): Boolean {
+    return DtsCLionUtil.isCMakeAvailable(project)
+  }
 
   /**
    * Splits the name of a node into node and unit address part. If the name

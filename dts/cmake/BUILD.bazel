@@ -1,0 +1,28 @@
+### auto-generated section `build intellij.dts.cmake` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+
+jvm_resources(
+  name = "cmake_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "cmake",
+  module_name = "intellij.dts.cmake",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//CIDR/cidr-workspaceModel",
+    "//CIDR/clion-cmake",
+    "//contrib/dts",
+    "@community//platform/core-api:core",
+    "@community//platform/execution",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/util",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [":cmake_resources"]
+)
+### auto-generated section `build intellij.dts.cmake` end

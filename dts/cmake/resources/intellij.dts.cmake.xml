@@ -1,27 +1,32 @@
 <idea-plugin>
+  <dependencies>
+    <plugin id="com.intellij.clion.cmake"/>
+    <module name="intellij.cidr.workspaceModel"/>
+  </dependencies>
+
   <projectListeners>
     <listener
-      class="com.intellij.dts.clion.DtsZephyrCMakeSync"
+      class="com.intellij.dts.cmake.impl.DtsZephyrCMakeSync"
       topic="com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener"/>
     <listener
-      class="com.intellij.dts.clion.DtsZephyrCMakeSync"
+      class="com.intellij.dts.cmake.impl.DtsZephyrCMakeSync"
       topic="com.intellij.dts.settings.DtsSettings$ChangeListener"/>
     <listener
-      class="com.intellij.dts.clion.DtsZephyrCMakeSync"
+      class="com.intellij.dts.cmake.impl.DtsZephyrCMakeSync"
       topic="com.intellij.execution.ExecutionTargetListener"/>
   </projectListeners>
 
   <extensionPoints>
     <extensionPoint qualifiedName="com.intellij.dts.cmake.configurationDataProvider"
-                    interface="com.intellij.dts.clion.impl.DtsCMakeModelConfigurationDataProvider"
+                    interface="com.intellij.dts.cmake.impl.DtsCMakeModelConfigurationDataProvider"
                     dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij.clion">
-    <dtsUtil implementation="com.intellij.dts.clion.impl.DtsClionUtilImpl"/>
+    <dtsUtil implementation="com.intellij.dts.cmake.impl.DtsClionUtilImpl"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij.dts.cmake">
-    <configurationDataProvider implementation="com.intellij.dts.clion.impl.DefaultDtsCMakeProfileProvider"/>
+    <configurationDataProvider implementation="com.intellij.dts.cmake.impl.DefaultDtsCMakeProfileProvider"/>
   </extensions>
 </idea-plugin>

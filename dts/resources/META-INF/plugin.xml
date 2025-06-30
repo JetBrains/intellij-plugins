@@ -5,16 +5,20 @@
 
   <description>Provides support for Devicetree (*.dts) files and Devicetree Include (*.dtsi) files</description>
 
-  <depends>com.intellij.modules.platform</depends>
+  <dependencies>
+    <plugin id="com.intellij.modules.platform"/>
+  </dependencies>
 
-  <depends optional="true" config-file="dts-withCLion.xml">com.intellij.clion.cmake</depends>
+  <content>
+    <module name="intellij.dts.cmake"/>
+  </content>
 
   <resource-bundle>messages.DtsBundle</resource-bundle>
 
   <extensionPoints>
     <extensionPoint
       qualifiedName="com.intellij.clion.dtsUtil"
-      interface="com.intellij.dts.clion.DtsCLionUtil"
+      interface="com.intellij.dts.cmake.DtsCLionUtil"
       dynamic="true"/>
     <extensionPoint interface="com.intellij.dts.settings.DtsSettingsDisabler" dynamic="true" name="settings.disabler"/>
   </extensionPoints>

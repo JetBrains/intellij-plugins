@@ -39,8 +39,6 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//xml/dom-impl",
     "@lib//:snakeyaml",
-    "//CIDR/clion-cmake",
-    "//CIDR/cidr-workspaceModel",
   ],
   runtime_deps = [":dts_resources"]
 )
@@ -75,14 +73,12 @@ jvm_library(
     "@lib//:snakeyaml",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
-    "//CIDR/clion-cmake",
     "@lib//:json-schema-validator",
     "@lib//:jackson",
     "@lib//:jackson-databind",
     "@lib//:jackson-dataformat-yaml",
     "@community//platform/syntax/syntax-api:syntax",
     "@community//platform/syntax/syntax-api:syntax_test_lib",
-    "//CIDR/cidr-workspaceModel",
   ],
   runtime_deps = [
     ":dts_resources",
