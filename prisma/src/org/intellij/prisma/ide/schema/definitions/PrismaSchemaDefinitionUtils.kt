@@ -2,6 +2,7 @@
 package org.intellij.prisma.ide.schema.definitions
 
 import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameterLocation
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.MYSQL
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.SQLSERVER
@@ -11,7 +12,7 @@ import org.intellij.prisma.lang.PrismaConstants.Types
 import java.util.*
 
 fun PrismaSchemaDeclaration.Builder.sort(
-  isOnField: Boolean = false,
+  parameterLocation: PrismaSchemaParameterLocation = PrismaSchemaParameterLocation.DEFAULT,
   datasourceTypes: Set<PrismaDatasourceProviderType>? = null,
 ) {
   param {
@@ -20,20 +21,20 @@ fun PrismaSchemaDeclaration.Builder.sort(
       "Specify in which order the entries of the index are stored in the database. This can have an effect on whether the database is able to use an index for specific queries."
     type = Types.SORT_ORDER.optional()
     datasources = datasourceTypes
-    isOnFieldLevel = isOnField
+    location = parameterLocation
 
     variantsForType(Types.SORT_ORDER)
   }
 }
 
-fun PrismaSchemaDeclaration.Builder.length(isOnField: Boolean = false) {
+fun PrismaSchemaDeclaration.Builder.length(parameterLocation: PrismaSchemaParameterLocation = PrismaSchemaParameterLocation.DEFAULT) {
   param {
     label = ParameterNames.LENGTH
     documentation =
       "Defines a maximum length for the subpart of the value to be indexed in cases where the full value would exceed MySQL's limits for index sizes. See https://dev.mysql.com/doc/refman/8.0/en/innodb-limits.html"
     type = "Int?"
     datasources = EnumSet.of(MYSQL)
-    isOnFieldLevel = isOnField
+    location = parameterLocation
   }
 }
 

@@ -5,12 +5,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameter
+import org.intellij.prisma.ide.schema.PrismaSchemaKind
+import org.intellij.prisma.ide.schema.PrismaSchemaPath
 import org.intellij.prisma.ide.schema.PrismaSchemaProvider
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaDeclaration
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameter
+import org.intellij.prisma.ide.schema.parents
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.presentation.PrismaPsiRenderer
 import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.types.PrismaPrimitiveType
 import org.intellij.prisma.lang.types.PrismaResolvableType
 import org.intellij.prisma.lang.types.unwrapType
 
@@ -26,23 +30,32 @@ class PrismaPathReference(
     element: PsiElement,
   ) {
     val context = findContext(element) ?: return
-    val schema = PrismaSchemaProvider.getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(element))
-    val schemaElement = schema.match(context) ?: return
-    if (schemaElement is PrismaSchemaParameter) {
-      when (schemaElement.label) {
-        PrismaConstants.ParameterNames.FIELDS -> {
-          resolveField(processor, state, element)
-        }
+    val schema = PrismaSchemaProvider.getEvaluatedSchema(element)
+    val contextPath = PrismaSchemaPath.forElement(context) ?: return
+    val schemaParameter = schema.match(contextPath) as? PrismaSchemaParameter ?: return
 
-        PrismaConstants.ParameterNames.REFERENCES -> {
-          processor.filter = { it is PrismaFieldDeclaration }
-          resolveTypeField(processor, state, element)
+    // TODO: think about moving this filtering to schema
+    when (schemaParameter.label) {
+      PrismaConstants.ParameterNames.FIELDS -> {
+        if (processor is PrismaCompletionProcessor && context is PrismaValueArgument) {
+          val declarationElement = schema.match(contextPath.parents.lastOrNull())
+          if (declarationElement != null && declarationElement is PrismaSchemaDeclaration &&
+              declarationElement.kind == PrismaSchemaKind.BLOCK_ATTRIBUTE &&
+              declarationElement.label == PrismaConstants.BlockAttributes.SHARD_KEY) {
+            processor.filter = { it is PrismaFieldDeclaration && it.type is PrismaPrimitiveType }
+          }
         }
+        resolveField(processor, state, element)
+      }
 
-        PrismaConstants.ParameterNames.EXPRESSION -> {
-          processor.filter = { it is PrismaEnumValueDeclaration }
-          resolveTypeField(processor, state, element)
-        }
+      PrismaConstants.ParameterNames.REFERENCES -> {
+        processor.filter = { it is PrismaFieldDeclaration }
+        resolveTypeField(processor, state, element)
+      }
+
+      PrismaConstants.ParameterNames.EXPRESSION -> {
+        processor.filter = { it is PrismaEnumValueDeclaration }
+        resolveTypeField(processor, state, element)
       }
     }
   }
@@ -61,7 +74,7 @@ class PrismaPathReference(
   private fun resolveTypeField(
     processor: PrismaProcessor,
     state: ResolveState,
-    element: PsiElement
+    element: PsiElement,
   ) {
     val typeOwner = element.parentOfType<PrismaTypeOwner>() ?: return
     val type = typeOwner.type.unwrapType()
@@ -73,7 +86,7 @@ class PrismaPathReference(
   private fun resolveField(
     processor: PrismaProcessor,
     state: ResolveState,
-    element: PsiElement
+    element: PsiElement,
   ) {
     if (element is PrismaQualifiedReferenceElement && element.qualifier != null) {
       resolveQualifiedField(processor, state, element)

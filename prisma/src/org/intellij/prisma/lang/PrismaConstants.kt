@@ -59,8 +59,9 @@ object PrismaConstants {
     const val FULLTEXT = "@@fulltext"
     const val IGNORE = "@@ignore"
     const val SCHEMA = "@@schema"
+    const val SHARD_KEY = "@@shardKey"
 
-    val ALL = setOf(ID, MAP, UNIQUE, INDEX, FULLTEXT, IGNORE, SCHEMA)
+    val ALL = setOf(ID, MAP, UNIQUE, INDEX, FULLTEXT, IGNORE, SCHEMA, SHARD_KEY)
   }
 
   object FieldAttributes {
@@ -71,8 +72,9 @@ object PrismaConstants {
     const val RELATION = "@relation"
     const val UPDATED_AT = "@updatedAt"
     const val IGNORE = "@ignore"
+    const val SHARD_KEY = "@shardKey"
 
-    val ALL = setOf(ID, MAP, UNIQUE, DEFAULT, RELATION, UPDATED_AT, IGNORE)
+    val ALL = setOf(ID, MAP, UNIQUE, DEFAULT, RELATION, UPDATED_AT, IGNORE, SHARD_KEY)
   }
 
   object DatasourceFields {

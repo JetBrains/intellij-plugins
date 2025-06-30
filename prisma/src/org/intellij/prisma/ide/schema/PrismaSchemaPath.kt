@@ -13,13 +13,16 @@ import org.intellij.prisma.lang.psi.*
 import org.intellij.prisma.lang.psi.PrismaElementTypes.*
 
 sealed class PrismaSchemaPath(
-  val label: String,
-  val element: PsiElement,
+  open val label: String,
+  open val element: PsiElement,
 ) {
   companion object {
     fun forElement(element: PsiElement?): PrismaSchemaPath? {
-      if (element == null || element is PrismaSchemaFakeElement) {
+      if (element == null) {
         return null
+      }
+      if (element is PrismaSchemaFakeElement) {
+        return PrismaSchemaFakeElementPath(element.schemaElement.label ?: return null, element)
       }
 
       return CachedValuesManager.getCachedValue(element) {
@@ -165,6 +168,11 @@ class PrismaSchemaDeclarationPath(
   label: String,
   element: PsiElement,
   val kind: PrismaSchemaKind,
+) : PrismaSchemaPath(label, element)
+
+class PrismaSchemaFakeElementPath(
+  label: String,
+  override val element: PrismaSchemaFakeElement,
 ) : PrismaSchemaPath(label, element)
 
 open class PrismaSchemaParameterPath(

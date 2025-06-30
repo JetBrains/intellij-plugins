@@ -368,4 +368,40 @@ class PrismaAttributeParameterValuesCompletionTest : PrismaCompletionTestBase(""
     )
     assertSameElements(lookupElements.strings, "name", "size", "zip")
   }
+
+  fun testBlockAttributeShardKeys() {
+    val lookupElements = getLookupElements("""
+      generator client {
+        provider        = "prisma-client-js"
+        previewFeatures = ["shardKeys"]
+      }
+
+      datasource db {
+        provider = "mysql"
+        url      = "file:./dev.db"
+      }
+
+      model User {
+        id    Int     @id @default(autoincrement())
+        email String  @unique
+        name  String?
+        posts Post[] 
+        
+        @@shardKey([<caret>])
+      }
+
+      model Post {
+        id        Int      @id @default(autoincrement())
+        createdAt DateTime @default(now())
+        updatedAt DateTime @updatedAt
+        title     String
+        content   String?
+        published Boolean  @default(false)
+        viewCount Int      @default(0)
+        author    User?    @relation(fields: [authorId], references: [id])
+        authorId  Int?
+      }
+    """.trimIndent())
+    assertSameElements(lookupElements.strings, "id", "email")
+  }
 }

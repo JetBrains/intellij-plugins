@@ -3,6 +3,7 @@ package org.intellij.prisma.ide.schema.definitions
 import com.intellij.patterns.PlatformPatterns.psiElement
 import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaParameterLocation
 import org.intellij.prisma.ide.schema.builder.schema
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.*
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
@@ -55,8 +56,8 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
         documentation = "Defines a custom name for the primary key in the database."
         type = "String?"
       }
-      length(true)
-      sort(true, datasourceTypes = EnumSet.of(SQLSERVER))
+      length(PrismaSchemaParameterLocation.FIELD)
+      sort(PrismaSchemaParameterLocation.FIELD, datasourceTypes = EnumSet.of(SQLSERVER))
       clustered()
     }
 
@@ -84,8 +85,8 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
         documentation = "Defines a custom constraint name in the database."
         type = "String?"
       }
-      length(true)
-      sort(true)
+      length(PrismaSchemaParameterLocation.FIELD)
+      sort(PrismaSchemaParameterLocation.FIELD)
       clustered()
     }
 
@@ -120,7 +121,7 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
         documentation = "Specify the operator class for an indexed field."
         type = Types.OPERATOR_CLASS.optional()
         datasources = EnumSet.of(POSTGRESQL)
-        isOnFieldLevel = true
+        location = PrismaSchemaParameterLocation.FIELD
 
         variant {
           ref {
@@ -129,8 +130,8 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
           }
         }
       }
-      length(true)
-      sort(true)
+      length(PrismaSchemaParameterLocation.FIELD)
+      sort(PrismaSchemaParameterLocation.FIELD)
       clustered()
     }
 
@@ -178,6 +179,22 @@ val PRISMA_SCHEMA_BLOCK_ATTRIBUTES = schema {
         variant {
           ref { kind = PrismaSchemaKind.SCHEMA_NAME }
         }
+      }
+    }
+
+    element {
+      label = BlockAttributes.SHARD_KEY
+      documentation = "The `@@shardKey` attribute is only compatible with [PlanetScale](https://planetscale.com/) databases. It enables you to define a [shard key](https://planetscale.com/docs/vitess/sharding) on multiple fields of your model."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
+      insertHandler = PrismaInsertHandler.PARENS_LIST_ARGUMENT
+      datasources = EnumSet.of(MYSQL)
+
+      param {
+        label = ParameterNames.FIELDS
+        insertHandler = PrismaInsertHandler.COLON_LIST_ARGUMENT
+        documentation = "A list of references."
+        type = "FieldReference[]"
+        skipInCompletion = true
       }
     }
   }
