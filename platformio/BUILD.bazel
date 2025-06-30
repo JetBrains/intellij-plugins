@@ -103,7 +103,6 @@ jvm_library(
     "@community//platform/execution-impl",
     "//CIDR/clion-external-system:clion-externalSystem",
     "//CIDR/cidr-external-system:cidr-externalSystem",
-    "//CIDR/cidr-external-system:cidr-externalSystem_test_lib",
     "@community//platform/core-ui",
     "@community//platform/statistics",
     "@community//platform/statistics:statistics_test_lib",
