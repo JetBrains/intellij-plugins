@@ -29,7 +29,7 @@ import com.intellij.util.application
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.LOG
 import com.jetbrains.cidr.cpp.embedded.platformio.refreshProject
-import com.jetbrains.cidr.execution.CidrPathConsoleFilter
+import com.jetbrains.cidr.execution.CidrPathWithOffsetConsoleFilter
 import com.jetbrains.cidr.system.LocalHost.TerminalEmulatorOSProcessHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,7 +51,7 @@ fun doRun(service: PlatformioService,
     val processHandler = TerminalEmulatorOSProcessHandler(commandLine)
 
     val console = TerminalExecutionConsole(project, processHandler, settingsProvider())
-    console.addMessageFilter(CidrPathConsoleFilter(project, null, project.basePath?.let(Path::of)))
+    console.addMessageFilter(CidrPathWithOffsetConsoleFilter(project, null, project.basePath?.let(Path::of)))
 
     val executor = DefaultRunExecutor.getRunExecutorInstance()
     val actions = DefaultActionGroup()

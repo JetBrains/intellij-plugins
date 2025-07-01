@@ -29,7 +29,7 @@ import com.jetbrains.cidr.cpp.execution.debugger.peripheralview.SvdPanel.Compani
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain
-import com.jetbrains.cidr.execution.CidrPathConsoleFilter
+import com.jetbrains.cidr.execution.CidrPathWithOffsetConsoleFilter
 import com.jetbrains.cidr.execution.TrivialRunParameters
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver
@@ -123,7 +123,7 @@ class PlatformioLauncher(
           }
 
           override fun createConsole(): ConsoleView = super.createConsole().apply {
-            addMessageFilter(CidrPathConsoleFilter(project, null, Path(projectPath)))
+            addMessageFilter(CidrPathWithOffsetConsoleFilter(project, null, Path(projectPath)))
           }
 
           @Throws(ExecutionException::class)

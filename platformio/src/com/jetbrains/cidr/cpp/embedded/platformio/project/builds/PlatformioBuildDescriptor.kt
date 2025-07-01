@@ -20,7 +20,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
-import com.jetbrains.cidr.execution.CidrPathConsoleFilter
+import com.jetbrains.cidr.execution.CidrPathWithOffsetConsoleFilter
 import org.jetbrains.annotations.Nls
 import java.nio.file.Path
 
@@ -35,7 +35,7 @@ class PlatformioBuildDescriptor(project: Project,
   BuildProgressDescriptor {
 
   init {
-    withExecutionFilter(object : CidrPathConsoleFilter(project, null, Path.of(workingDir)) {
+    withExecutionFilter(object : CidrPathWithOffsetConsoleFilter(project, null, Path.of(workingDir)) {
       override fun applyFilter(line: String, entireLength: Int): Filter.Result? {
         val result = super.applyFilter(line, entireLength)
         result?.resultItems?.forEach {
