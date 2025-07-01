@@ -11,14 +11,15 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartConstantPatternImpl extends DartPsiCompositeElementImpl implements DartConstantPattern {
+public class DartShorthandExpressionImpl extends DartExpressionImpl implements DartShorthandExpression {
 
-  public DartConstantPatternImpl(@NotNull ASTNode node) {
+  public DartShorthandExpressionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitConstantPattern(this);
+    visitor.visitShorthandExpression(this);
   }
 
   @Override
@@ -28,27 +29,9 @@ public class DartConstantPatternImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @Override
-  @Nullable
-  public DartArguments getArguments() {
-    return findChildByClass(DartArguments.class);
-  }
-
-  @Override
   @NotNull
-  public List<DartElement> getElementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartElement.class);
-  }
-
-  @Override
-  @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
-  }
-
-  @Override
-  @Nullable
-  public DartTypeArguments getTypeArguments() {
-    return findChildByClass(DartTypeArguments.class);
+  public DartReferenceExpression getReferenceExpression() {
+    return findNotNullChildByClass(DartReferenceExpression.class);
   }
 
 }

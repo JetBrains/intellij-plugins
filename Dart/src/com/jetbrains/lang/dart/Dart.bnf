@@ -654,6 +654,7 @@ left asExpression ::= 'as' type
 private primary ::=  functionExpression |
                      literalExpression |
                      newExpression | // constant object expression is also parsed as newExpression
+                     shorthandExpression |
                      refOrThisOrSuperOrParenExpression |
                      throwExpression |
                      switchExpressionWrapper
@@ -691,7 +692,7 @@ thisExpression ::= 'this'
 superExpression ::= 'super'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-newExpression ::= newExpressionWithKeyword | simpleQualifiedReferenceExpression typeArguments '.' (referenceExpression | 'new') <<argumentsWrapper>> {
+newExpression ::= shorthandNewExpression | newExpressionWithKeyword | simpleQualifiedReferenceExpression typeArguments '.' (referenceExpression | 'new') <<argumentsWrapper>> {
   mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl"
   implements="com.jetbrains.lang.dart.psi.DartReference"
   methods=[isConstantObjectExpression getArguments]
@@ -699,7 +700,12 @@ newExpression ::= newExpressionWithKeyword | simpleQualifiedReferenceExpression 
 
 private newExpressionWithKeyword ::= ('new' | 'const') type ('.' (referenceExpression | 'new'))? <<argumentsWrapper>> { pin=1 }
 
+private shorthandNewExpression ::= shorthandNewExpressionPrefix typeArguments? <<argumentsWrapper>>?
+private shorthandNewExpressionPrefix ::= '.' 'new' | 'const' '.' ('new' | referenceExpression)
+
 throwExpression ::= 'throw' expression
+
+shorthandExpression ::= '.' referenceExpression
 
 // todo get rid of all Wrappers and WITHOUT_CASCADE user data, implement expression parsing according to the spec and Grammar-Kit docs
 literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression |
@@ -770,6 +776,7 @@ left unaryPattern ::= 'as' type | '?' | '!'
 private primaryPattern  ::= listPattern | mapPattern | recordPattern | variablePattern | parenthesizedPattern | objectPattern | constantPattern | identifierPattern
 
 constantPattern ::= NULL | TRUE | FALSE | '-'? (NUMBER | HEX_NUMBER) | stringLiteralExpression | symbolLiteralExpression |
+                    staticMemberShorthandValue |
                     simpleQualifiedReferenceExpression |
                     constObjectExpression |
                     'const' typeArguments? '[' elements? ']' |
@@ -778,6 +785,7 @@ constantPattern ::= NULL | TRUE | FALSE | '-'? (NUMBER | HEX_NUMBER) | stringLit
 
 constObjectExpression ::= 'const' constructorDesignation arguments
 private constructorDesignation ::= simpleQualifiedReferenceExpression (typeArguments ('.' referenceExpression)?)?
+private staticMemberShorthandValue ::= shorthandExpression | 'const' '.' ('new' | referenceExpression) arguments
 variablePattern ::= 'final' type !('when' expression) referenceExpression | 'final' referenceExpression | 'var' referenceExpression | type !'as' referenceExpression
 identifierPattern ::= referenceExpression // unreachable because captured by simpleQualifiedReferenceExpression
 parenthesizedPattern ::= '(' pattern ')'
