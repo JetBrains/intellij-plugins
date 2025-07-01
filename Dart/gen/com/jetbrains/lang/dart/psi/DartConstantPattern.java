@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface DartConstantPattern extends DartPsiCompositeElement {
 
+  @Nullable
+  DartArguments getArguments();
+
   @NotNull
   List<DartElement> getElementList();
 
