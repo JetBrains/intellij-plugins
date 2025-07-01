@@ -27,6 +27,7 @@ import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.UIBundle;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.EnvironmentUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
@@ -337,7 +338,7 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
 
       Reveal.LOG.info("Injecting Reveal lib: " + toInject);
 
-      CidrExecUtil.appendSearchPath(cmdLine.getEnvironment(), EnvParameterNames.DYLD_INSERT_LIBRARIES, toInject.getPath());
+      EnvironmentUtil.appendSearchPath(cmdLine.getEnvironment(), EnvParameterNames.DYLD_INSERT_LIBRARIES, toInject.getPath());
     }
   }
 
