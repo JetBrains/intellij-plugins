@@ -28,7 +28,7 @@ private class Angular2UsageFilteringRuleProvider : UsageFilteringRuleProvider {
     arrayOf(Angular2ComponentUsageInTemplateFilteringRule(project))
 
   @Deprecated("Deprecated in Java")
-  override fun createFilteringActions(view: UsageView): Array<out AnAction?> {
+  override fun createFilteringActions(view: UsageView): Array<AnAction> {
     val dataContext = DataManager.getInstance().getDataContext()
     val psiFile = dataContext.getData(CommonDataKeys.PSI_FILE)
     if (psiFile !is JSFile || !Angular2LangUtil.isAngular2Context(psiFile)) return AnAction.EMPTY_ARRAY
@@ -51,7 +51,7 @@ private class Angular2UsageFilteringRuleProvider : UsageFilteringRuleProvider {
       })
     }
     return if (hasComponent) {
-      arrayOf<AnAction>(JSSearchForComponentUsageAction())
+      arrayOf(JSSearchForComponentUsageAction())
     }
     else {
       AnAction.EMPTY_ARRAY
