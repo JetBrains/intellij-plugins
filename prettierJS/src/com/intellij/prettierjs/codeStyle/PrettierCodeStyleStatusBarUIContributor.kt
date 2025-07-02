@@ -20,6 +20,7 @@ import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.prettierjs.PrettierUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.codeStyle.IndentStatusBarUIContributor
 import com.intellij.psi.codeStyle.modifier.CodeStyleStatusBarUIContributor
 import com.intellij.util.IconUtil
@@ -27,25 +28,32 @@ import com.intellij.util.ui.JBUI
 import javax.swing.Icon
 
 internal class PrettierCodeStyleStatusBarUIContributor : CodeStyleStatusBarUIContributor {
+  private var myIndentOptionsForFileInEditor: CommonCodeStyleSettings.IndentOptions? = null
+  
   override fun areActionsAvailable(file: VirtualFile): Boolean = true
 
-  override fun getActionGroupTitle(): @NlsContexts.PopupTitle String? = PrettierBundle.message("prettier.code.style.status.bar.action.group.title")
+  override fun getActionGroupTitle(): @NlsContexts.PopupTitle String = PrettierBundle.message("prettier.code.style.status.bar.action.group.title")
 
-  override fun getActions(file: PsiFile): Array<out AnAction?>? = createNavigationActions(file)
+  override fun getActions(file: PsiFile): Array<out AnAction?> = createNavigationActions(file)
 
-  override fun getTooltip(): String = PrettierBundle.message("prettier.code.style.status.bar.tooltip")
+  @Suppress("DialogTitleCapitalization")
+  override fun getTooltip(): String? {
+    val optionsForFileInEditor = myIndentOptionsForFileInEditor
+    if (optionsForFileInEditor == null) {
+      // not ready yet
+      return null
+    } 
+    return IndentStatusBarUIContributor.createTooltip(
+      IndentStatusBarUIContributor.getIndentInfo(optionsForFileInEditor),
+      getActionGroupTitle())
+  }
 
-  override fun createDisableAction(project: Project): AnAction? = createDisableCodeStyleModifierAction(project)
+  override fun createDisableAction(project: Project): AnAction = createDisableCodeStyleModifierAction(project)
 
   override fun getStatusText(psiFile: PsiFile): @NlsContexts.StatusBarText String {
-    val fileOptions = CodeStyle.getSettings(psiFile).getIndentOptions(psiFile.getFileType())
-    val projectOptions = CodeStyle.getSettings(psiFile.getProject()).getIndentOptions(psiFile.getFileType())
-    var indentInfo = IndentStatusBarUIContributor.getIndentInfo(fileOptions)
-
-    if (projectOptions.INDENT_SIZE != fileOptions.INDENT_SIZE || projectOptions.USE_TAB_CHARACTER != fileOptions.USE_TAB_CHARACTER) {
-      indentInfo += "*"
-    }
-    return indentInfo
+    val optionsForFileInEditor = CodeStyle.getSettings(psiFile).getIndentOptions(psiFile.getFileType())
+    myIndentOptionsForFileInEditor = optionsForFileInEditor
+    return IndentStatusBarUIContributor.getIndentInfo(optionsForFileInEditor)
   }
 
   override fun getIcon(): Icon? {
