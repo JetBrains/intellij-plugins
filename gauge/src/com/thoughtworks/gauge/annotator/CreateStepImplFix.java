@@ -97,49 +97,46 @@ public final class CreateStepImplFix extends BaseIntentionAction {
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(project);
+    ApplicationManager.getApplication().invokeLater(() -> {
+      GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(project);
 
-        List<PsiFile> javaFiles = bootstrapService.getSubModules(GaugeUtil.moduleForPsiElement(psiFile)).stream()
-          .map(FileManager::getAllJavaFiles)
-          .flatMap(List::stream)
-          .collect(Collectors.toList());
-        javaFiles.add(0, NEW_FILE_HOLDER);
-        ListPopup stepImplChooser =
-          JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<>(
-            GaugeBundle.message("popup.title.choose.implementation.class"), javaFiles) {
+      List<PsiFile> javaFiles = bootstrapService.getSubModules(GaugeUtil.moduleForPsiElement(psiFile)).stream()
+        .map(FileManager::getAllJavaFiles)
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+      javaFiles.add(0, NEW_FILE_HOLDER);
+      ListPopup stepImplChooser =
+        JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<>(
+          GaugeBundle.message("popup.title.choose.implementation.class"), javaFiles) {
 
-            @Override
-            public boolean isSpeedSearchEnabled() {
-              return true;
-            }
+          @Override
+          public boolean isSpeedSearchEnabled() {
+            return true;
+          }
 
-            @Override
-            public PopupStep<?> onChosen(final PsiFile selectedValue, boolean finalChoice) {
-              return doFinalStep(() -> {
-                if (selectedValue == NEW_FILE_HOLDER) {
-                  createFileAndAddImpl(project, editor);
-                }
-                else {
-                  addImpl(project, selectedValue.getVirtualFile());
-                }
-              });
-            }
+          @Override
+          public PopupStep<?> onChosen(final PsiFile selectedValue, boolean finalChoice) {
+            return doFinalStep(() -> {
+              if (selectedValue == NEW_FILE_HOLDER) {
+                createFileAndAddImpl(project, editor);
+              }
+              else {
+                addImpl(project, selectedValue.getVirtualFile());
+              }
+            });
+          }
 
-            @Override
-            public Icon getIconFor(PsiFile aValue) {
-              return aValue == null ? AllIcons.Actions.IntentionBulb : aValue.getIcon(0);
-            }
+          @Override
+          public Icon getIconFor(PsiFile aValue) {
+            return aValue == null ? AllIcons.Actions.IntentionBulb : aValue.getIcon(0);
+          }
 
-            @Override
-            public @NotNull String getTextFor(PsiFile value) {
-              return value == null ? GaugeBundle.message("create.new.file") : FileManager.getJavaFileName(value);
-            }
-          });
-        stepImplChooser.showCenteredInCurrentWindow(step.getProject());
-      }
+          @Override
+          public @NotNull String getTextFor(PsiFile value) {
+            return value == null ? GaugeBundle.message("create.new.file") : FileManager.getJavaFileName(value);
+          }
+        });
+      stepImplChooser.showCenteredInCurrentWindow(step.getProject());
     });
   }
 
