@@ -1,8 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.options
 
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil.isEffectiveUseTypesFromServer
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.ui.TypeScriptServiceRestartService
 import com.intellij.lang.typescript.lsp.defaultPackageKey
 import com.intellij.openapi.Disposable
@@ -58,7 +58,7 @@ class AngularSettings(val project: Project) : SimplePersistentStateComponent<Ang
 class AngularSettingsState : BaseState() {
   var innerServiceType: AngularServiceSettings by enum(AngularServiceSettings.AUTO)
   var packageName: String? by string(defaultPackageKey)
-  var useTypesFromServer: Boolean by property(true)
+  var useTypesFromServer: Boolean by property(false)
 }
 
 enum class AngularServiceSettings {
