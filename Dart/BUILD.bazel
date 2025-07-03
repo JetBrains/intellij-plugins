@@ -118,6 +118,8 @@ jvm_library(
     "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui",
     "//plugins/JavaScriptDebugger/sdk/debugger-ui:javascript-debugger-ui_test_lib",
     "@community//xml/testFramework",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
   ],
   runtime_deps = [":dart_resources"]
 )

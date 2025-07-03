@@ -194,13 +194,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   public static boolean arguments(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arguments")) return false;
     if (!nextTokenIs(b, LPAREN)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, ARGUMENTS, null);
     r = consumeToken(b, LPAREN);
-    r = r && arguments_1(b, l + 1);
-    r = r && consumeToken(b, RPAREN);
-    exit_section_(b, m, ARGUMENTS, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, arguments_1(b, l + 1));
+    r = p && consumeToken(b, RPAREN) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // argumentList?
@@ -1500,7 +1501,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // spreadElement | ifElement | forElement | mapEntry | nullAwareElement | expression
+  // spreadElement | ifElement | forElement | mapEntryOrExpression
   public static boolean element(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "element")) return false;
     boolean r;
@@ -1508,9 +1509,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = spreadElement(b, l + 1);
     if (!r) r = ifElement(b, l + 1);
     if (!r) r = forElement(b, l + 1);
-    if (!r) r = mapEntry(b, l + 1);
-    if (!r) r = nullAwareElement(b, l + 1);
-    if (!r) r = expression(b, l + 1);
+    if (!r) r = mapEntryOrExpression(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -5084,32 +5083,57 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '?'? expression ':' '?'? expression
+  // ':' (nullAwareElement | expression)
   public static boolean mapEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapEntry")) return false;
+    if (!nextTokenIs(b, COLON)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, MAP_ENTRY, "<map entry>");
-    r = mapEntry_0(b, l + 1);
-    r = r && expression(b, l + 1);
-    r = r && consumeToken(b, COLON);
-    p = r; // pin = 3
-    r = r && report_error_(b, mapEntry_3(b, l + 1));
-    r = p && expression(b, l + 1) && r;
+    Marker m = enter_section_(b, l, _LEFT_, MAP_ENTRY, null);
+    r = consumeToken(b, COLON);
+    p = r; // pin = 1
+    r = r && mapEntry_1(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // '?'?
-  private static boolean mapEntry_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapEntry_0")) return false;
-    consumeToken(b, QUEST);
-    return true;
+  // nullAwareElement | expression
+  private static boolean mapEntry_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapEntry_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = nullAwareElement(b, l + 1);
+    if (!r) r = expression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
-  // '?'?
-  private static boolean mapEntry_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapEntry_3")) return false;
-    consumeToken(b, QUEST);
+  /* ********************************************************** */
+  // (nullAwareElement | expression) mapEntry?
+  static boolean mapEntryOrExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapEntryOrExpression")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = mapEntryOrExpression_0(b, l + 1);
+    r = r && mapEntryOrExpression_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // nullAwareElement | expression
+  private static boolean mapEntryOrExpression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapEntryOrExpression_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = nullAwareElement(b, l + 1);
+    if (!r) r = expression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // mapEntry?
+  private static boolean mapEntryOrExpression_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapEntryOrExpression_1")) return false;
+    mapEntry(b, l + 1);
     return true;
   }
 
@@ -7457,15 +7481,16 @@ public class DartParser implements PsiParser, LightPsiParser {
   public static boolean setOrMapLiteralExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "setOrMapLiteralExpression")) return false;
     if (!nextTokenIs(b, "<set or map literal expression>", CONST, LBRACE, LT)) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, SET_OR_MAP_LITERAL_EXPRESSION, "<set or map literal expression>");
     r = setOrMapLiteralExpression_0(b, l + 1);
     r = r && setOrMapLiteralExpression_1(b, l + 1);
     r = r && consumeToken(b, LBRACE);
-    r = r && setOrMapLiteralExpression_3(b, l + 1);
-    r = r && consumeToken(b, RBRACE);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    p = r; // pin = 3
+    r = r && report_error_(b, setOrMapLiteralExpression_3(b, l + 1));
+    r = p && consumeToken(b, RBRACE) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // 'const'?
