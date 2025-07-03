@@ -1004,6 +1004,31 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       }
     """.trimIndent(), 2, "source", "version")
   }
+
+  fun testRequiredProvidersCompletionAfterProperty() {
+    doBasicCompletionTest("""
+      terraform {
+        required_providers {
+          aws = {
+            source = "hashicorp/aws"
+            <caret>
+          }
+        }
+      }
+    """.trimIndent(), 1, "version")
+
+    doBasicCompletionTest("""
+      terraform {
+        required_providers {
+          aws = {
+            source = "hashicorp/aws"
+            version = "~> 3.0"
+            <caret>
+          }
+        }
+      }
+    """.trimIndent(), 0)
+  }
 }
 
 private const val ENTRIES_LIST_SIZE = 900
