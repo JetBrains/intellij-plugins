@@ -18,6 +18,18 @@ public class ShoppingStepdefs implements En {
   public void my_another_step_definition(String param) {
   }
 
+  @Given("^I expect inspection warning on ([^>]+) with messages 1$")
+  public void iExpectInspection1(String type) {
+  }
+
+  @Given("^I expect inspection warning on <([^>]+)> with messages 2$")
+  public void iExpectInspection2(String type) {
+  }
+
+  @Given("^I expect inspection warning on <<([^>]+)>> with messages 3$")
+  public void iExpectInspection3(String type) {
+  }
+
   @Given("^step (red|black):$")
   public void my_step_with_colon(String param) {
   }

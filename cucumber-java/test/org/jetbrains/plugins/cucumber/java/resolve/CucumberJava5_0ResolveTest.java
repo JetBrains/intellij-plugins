@@ -34,6 +34,21 @@ public class CucumberJava5_0ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("my another <caret>step definition with param \"<<param>>\"", "my_another_step_definition");
   }
 
+  public void testResolveScenarioParameterNotSurroundedWithCaret() {
+    init("stepResolve_cucumber_5");
+    checkReference("I expect inspection <caret>warning on <type> with messages 1", "iExpectInspection1");
+  }
+
+  public void testResolveScenarioParameterSurroundedWithCaret() {
+    init("stepResolve_cucumber_5");
+    checkReference("I expect inspection <caret>warning on <<type>> with messages 2", "iExpectInspection2");
+  }
+
+  public void testResolveScenarioParameterSurroundedWithManyCarets() {
+    init("stepResolve_cucumber_5");
+    checkReference("I expect inspection <caret>warning on <<<type>>> with messages 3", "iExpectInspection3");
+  }
+
   public void testResolveWithSeveralStepDefinitionAnnotations() {
     init("stepResolve_cucumber_5");
     checkReference("first <caret>regex", "my_double_definition");

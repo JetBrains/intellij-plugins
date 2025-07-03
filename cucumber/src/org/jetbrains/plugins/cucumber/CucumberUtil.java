@@ -616,7 +616,24 @@ public final class CucumberUtil {
         break;
       }
 
-      int end = stepName.indexOf('>', start);
+      // Find the first closing angle bracket. If another opening angle bracket is found, use it as a start.
+      int i = start + 1;
+      int end = -1;
+      while (true) {
+        if (i >= stepName.length()) {
+          break;
+        }
+        char c = stepName.charAt(i);
+        if (c == '>') {
+          end = i;
+          break;
+        }
+        if (c == '<') {
+          start = i;
+        }
+        i++;
+      }
+
       if (end < 0) {
         break;
       }
