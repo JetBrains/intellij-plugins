@@ -564,7 +564,7 @@ finallyPart::= 'finally' block {pin=1}
 varInit ::= '=' expression {pin=1}
 
 expressionList ::= expression (','? expression)*
-arguments ::= '(' argumentList? ')'
+arguments ::= '(' argumentList? ')'{pin=1}
 
 argumentList ::= argumentListPart (',' argumentListPart)* ','? {recoverWhile="argument_list_recover"}
 private argument_list_recover ::= !(')')
@@ -728,12 +728,12 @@ longTemplateEntry ::= LONG_TEMPLATE_ENTRY_START expression LONG_TEMPLATE_ENTRY_E
 listLiteralExpression ::= 'const'? typeArguments? '[' elements? ']'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 setOrMapLiteralExpression ::= 'const'? typeArguments? '{' elements? '}'
-{mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+{pin=3 mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 private elements ::= element (','? element)* ','? ;
-element ::= spreadElement | ifElement | forElement | mapEntry | nullAwareElement | expression
-
-mapEntry ::= '?'? expression ':' '?'? expression {pin=3};
+element ::= spreadElement | ifElement | forElement | mapEntryOrExpression
+private mapEntryOrExpression ::= (nullAwareElement | expression) mapEntry?
+left mapEntry ::= ':' (nullAwareElement | expression) {pin=1}
 spreadElement ::= ('...' | '...?') expression {pin=1};
 ifElement ::= 'if' '(' ifExpressionWithRecoverUntilParen ')' element ('else' element)? {pin = 1};
 forElement ::= 'await'? 'for' '(' forLoopParts ')' element {pin=2};
