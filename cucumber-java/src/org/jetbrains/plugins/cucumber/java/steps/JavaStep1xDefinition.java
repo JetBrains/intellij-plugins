@@ -25,4 +25,9 @@ public class JavaStep1xDefinition extends JavaAnnotatedStepDefinition {
     }
     return result;
   }
+
+  @Override
+  public String toString() {
+    return "JavaStep1xDefinition{stepDef: " + getElement() + "}";
+  }
 }
