@@ -12,17 +12,13 @@ import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-import org.jetbrains.plugins.cucumber.java.resolve.CucumberJava2ResolveTest;
-
 
 public class CucumberJava3ResolveTest extends BaseCucumberJavaResolveTest {
-  // TODO: Figure out why java.lang.math is unresolved
   public void testHighlightingOK_1() {
     init("stepResolve_ParameterType");
     myFixture.testHighlighting("ParameterTypeSteps.java");
   }
 
-  // TODO: Figure out which artifact for Cucumber v3 contains Java8 steps
   public void testHighlightingOK_2() {
     init("stepResolveJava8CucumberExpressions");
     myFixture.testHighlighting(

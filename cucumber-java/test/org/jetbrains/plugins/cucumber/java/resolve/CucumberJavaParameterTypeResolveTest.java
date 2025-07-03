@@ -10,8 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterTypeReference;
 
-import java.text.SimpleDateFormat;
-
 public class CucumberJavaParameterTypeResolveTest extends BaseCucumberJavaResolveTest {
   public void testHighlightingOK() {
     init("stepResolve_ParameterType", "ParameterTypeSteps.java");

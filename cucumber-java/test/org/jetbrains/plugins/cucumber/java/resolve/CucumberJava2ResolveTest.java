@@ -8,6 +8,7 @@ public class CucumberJava2ResolveTest extends BaseCucumberJavaResolveTest {
     init("stepResolve_01");
     myFixture.testHighlighting("ShoppingStepdefs.java");
   }
+
   public void testNavigationFromStepToStepDef01() {
     doTest("stepResolve_01", "I p<caret>ay 25", "i_pay");
   }

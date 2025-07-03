@@ -9,6 +9,7 @@ public class CucumberJava5_0ResolveTest extends BaseCucumberJavaResolveTest {
     init("stepResolve_cucumber_5");
     myFixture.testHighlighting("ShoppingStepdefs.java");
   }
+
   public void testResolveToNewAnnotation() {
     init("stepResolve_cucumber_5");
     checkReference("my step<caret> definition", "my_step_definition");
