@@ -259,7 +259,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
 
   object RequiredProviderCompletion : TfCompletionProvider() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      val element = parameters.position
+      val element = parameters.originalPosition ?: return
       val superParent = element.parent?.parent
 
       // Completion of all types of providers
@@ -280,7 +280,11 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       }
       // Completion properties in the required provider type
       else {
-        val properties = listOf("source", "version").map { PropertyType(it, Types.String) }
+        val parent = element.parentOfType<HCLObject>() ?: return
+        if (!TfPsiPatterns.RequiredProvidersProperty.accepts(parent.parent))
+          return
+
+        val properties = listOf("source", "version").map { PropertyType(it, Types.String) }.filter { parent.findProperty(it.name) == null }
         result.addAllElements(properties.map { createPropertyOrBlockType(it) })
       }
     }

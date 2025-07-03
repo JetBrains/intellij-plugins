@@ -25,6 +25,7 @@ import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
+import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.patterns.HCLPatterns
 import org.intellij.terraform.hcl.psi.*
@@ -112,7 +113,7 @@ object TfPsiPatterns {
     .with(createBlockPattern(HCL_TERRAFORM_REQUIRED_PROVIDERS))
     .withSuperParent(2, TerraformRootBlock)
 
-  val RequiredProvidersData: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
+  val RequiredProvidersProperty: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
     .withSuperParent(2, RequiredProvidersBlock)
 
   val RequiredProviderIdentifier: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
@@ -120,13 +121,12 @@ object TfPsiPatterns {
     .withParent(HCLPatterns.Object)
     .withSuperParent(2, RequiredProvidersBlock)
 
-  val IdentifierOfRequiredProviderProperty: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
+  val IdentifierOfRequiredProviderProperty: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement().withElementType(HCLElementTypes.ID)
     .inFile(TerraformConfigFile)
-    .withParent(HCLPatterns.Object)
-    .withSuperParent(2, RequiredProvidersData)
+    .inside(HCLPatterns.Object.withParent(RequiredProvidersProperty))
 
   val RequiredProvidersSource: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
-    .withSuperParent(2, RequiredProvidersData)
+    .withSuperParent(2, RequiredProvidersProperty)
     .with(object : PatternCondition<HCLProperty?>("HCLProperty(source)") {
       override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
         return t.name == "source"
