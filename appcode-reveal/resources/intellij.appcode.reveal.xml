@@ -1,25 +1,11 @@
 <idea-plugin>
-
-  <name>AppCode Reveal Integration</name>
-  <id>org.jetbrains.appcode-reveal</id>
-  <description>
-    <![CDATA[
-      Provides run and debug actions with <b>Reveal.app</b>.<br>
-      Visit <a href="http://revealapp.com">revealapp.com</a> to learn more about the Reveal.<br>
-      <br>
-      The plugin is open-source and available on <a href="https://github.com/JetBrains/intellij-plugins/tree/master/appcode-reveal">GitHub</a>.<br>
-    ]]>
-  </description>
-  
-  <vendor>JetBrains</vendor>
-
   <dependencies>
-    <plugin id="com.intellij.modules.appcode"/>
     <module name="intellij.cidr.workspaceModel"/>
     <module name="intellij.cidr.projectModel"/>
     <module name="intellij.cidr.runner"/>
     <module name="intellij.cidr.util.execution"/>
     <module name="intellij.apple.sdk"/>
+    <module name="intellij.appcode"/>
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">

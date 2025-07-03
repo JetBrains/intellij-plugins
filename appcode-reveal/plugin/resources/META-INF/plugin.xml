@@ -1,0 +1,24 @@
+<idea-plugin>
+
+  <name>AppCode Reveal Integration</name>
+  <id>org.jetbrains.appcode-reveal</id>
+  <description>
+    <![CDATA[
+      Provides run and debug actions with <b>Reveal.app</b>.<br>
+      Visit <a href="http://revealapp.com">revealapp.com</a> to learn more about the Reveal.<br>
+      <br>
+      The plugin is open-source and available on <a href="https://github.com/JetBrains/intellij-plugins/tree/master/appcode-reveal">GitHub</a>.<br>
+    ]]>
+  </description>
+  
+  <vendor>JetBrains</vendor>
+
+  <dependencies>
+    <plugin id="com.intellij.modules.appcode"/>
+  </dependencies>
+
+  <content>
+    <module name="intellij.appcode.reveal"/>
+  </content>
+
+</idea-plugin>
