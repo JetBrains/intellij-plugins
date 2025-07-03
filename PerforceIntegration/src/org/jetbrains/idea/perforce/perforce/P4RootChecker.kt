@@ -30,6 +30,10 @@ internal class P4RootChecker : VcsRootChecker() {
     return true
   }
 
+  override fun shouldAlwaysRunInitialDetection(): Boolean {
+    return true
+  }
+
   override fun detectProjectMappings(project: Project,
                                      projectRoots: Collection<VirtualFile>,
                                      mappedDirs: Set<VirtualFile>): Collection<VirtualFile> {
