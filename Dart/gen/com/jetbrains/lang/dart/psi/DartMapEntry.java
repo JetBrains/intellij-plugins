@@ -10,4 +10,7 @@ public interface DartMapEntry extends DartPsiCompositeElement {
   @NotNull
   List<DartExpression> getExpressionList();
 
+  @NotNull
+  List<DartNullAwareElement> getNullAwareElementList();
+
 }

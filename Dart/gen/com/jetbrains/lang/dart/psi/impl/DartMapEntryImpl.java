@@ -33,4 +33,10 @@ public class DartMapEntryImpl extends DartPsiCompositeElementImpl implements Dar
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
   }
 
+  @Override
+  @NotNull
+  public List<DartNullAwareElement> getNullAwareElementList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartNullAwareElement.class);
+  }
+
 }

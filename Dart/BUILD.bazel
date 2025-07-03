@@ -146,6 +146,8 @@ jvm_library(
     "@community//platform/backend/workspace",
     "//plugins/JavaScriptDebugger/debugger-ui:javascript-debugger-ui",
     "@community//xml/testFramework",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
   ],
   runtime_deps = [":dart_resources"]
 )
