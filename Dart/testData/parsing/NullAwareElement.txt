@@ -172,10 +172,11 @@ Dart File
                       ID
                         PsiElement(IDENTIFIER)('presentKey')
                     PsiElement(:)(':')
-                    PsiElement(?)('?')
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('absentValue')
+                    NULL_AWARE_ELEMENT
+                      PsiElement(?)('?')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('absentValue')
                 PsiElement(})('}')
           PsiElement(;)(';')
           PsiComment(SINGLE_LINE_COMMENT)('// {}')
@@ -213,10 +214,11 @@ Dart File
                 PsiElement({)('{')
                 ELEMENT
                   MAP_ENTRY
-                    PsiElement(?)('?')
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('absentKey')
+                    NULL_AWARE_ELEMENT
+                      PsiElement(?)('?')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('absentKey')
                     PsiElement(:)(':')
                     REFERENCE_EXPRESSION
                       ID
@@ -258,15 +260,17 @@ Dart File
                 PsiElement({)('{')
                 ELEMENT
                   MAP_ENTRY
-                    PsiElement(?)('?')
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('absentKey')
+                    NULL_AWARE_ELEMENT
+                      PsiElement(?)('?')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('absentKey')
                     PsiElement(:)(':')
-                    PsiElement(?)('?')
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('absentValue')
+                    NULL_AWARE_ELEMENT
+                      PsiElement(?)('?')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('absentValue')
                 PsiElement(})('}')
           PsiElement(;)(';')
           PsiComment(SINGLE_LINE_COMMENT)('// {}')
@@ -282,24 +286,26 @@ Dart File
                 PsiElement({)('{')
                 ELEMENT
                   MAP_ENTRY
-                    PsiElement(?)('?')
-                    IF_NULL_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('absentValue2')
-                      PsiElement(??)('??')
-                      CALL_EXPRESSION
+                    NULL_AWARE_ELEMENT
+                      PsiElement(?)('?')
+                      IF_NULL_EXPRESSION
                         REFERENCE_EXPRESSION
                           ID
-                            PsiElement(IDENTIFIER)('foo')
-                        ARGUMENTS
-                          PsiElement(()('(')
-                          PsiElement())(')')
+                            PsiElement(IDENTIFIER)('absentValue2')
+                        PsiElement(??)('??')
+                        CALL_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('foo')
+                          ARGUMENTS
+                            PsiElement(()('(')
+                            PsiElement())(')')
                     PsiElement(:)(':')
-                    PsiElement(?)('?')
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('absentValue')
+                    NULL_AWARE_ELEMENT
+                      PsiElement(?)('?')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('absentValue')
                 PsiElement(})('}')
           PsiElement(;)(';')
         PsiComment(SINGLE_LINE_COMMENT)('// {}')
