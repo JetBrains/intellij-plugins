@@ -42,6 +42,7 @@ public abstract class AbstractStepDefinition {
 
   public abstract List<String> getVariableNames();
 
+  /// @return true if a concrete step named `stepName` is defined by this step definition.
   public boolean matches(@NotNull String stepName) {
     final Pattern pattern = getPattern();
     if (pattern == null) {
