@@ -93,30 +93,30 @@ public final class SwcCatalogXmlUtil {
     }
 
     @Override
-    public ProcessingOrder startTag(final CharSequence localName,
-                                    final String namespace,
-                                    final int start,
-                                    final int end,
-                                    final int headerEnd) {
+    public @NotNull ProcessingOrder startTag(final @NotNull CharSequence localName,
+                                             final @NotNull String namespace,
+                                             final int start,
+                                             final int end,
+                                             final int headerEnd) {
       myLocation.push(myLocation.peek() + "." + localName);
       return ProcessingOrder.TAGS_AND_ATTRIBUTES;
     }
 
     @Override
-    public void endTag(final CharSequence localName, final String namespace, final int start, final int end) {
+    public void endTag(final @NotNull CharSequence localName, final @NotNull String namespace, final int start, final int end) {
       myLocation.pop();
     }
 
     @Override
-    public void attribute(final CharSequence name, final CharSequence value, final int start, final int end) {
+    public void attribute(final @NotNull CharSequence name, final @NotNull CharSequence value, final int start, final int end) {
     }
 
     @Override
-    public void textElement(final CharSequence display, final CharSequence physical, final int start, final int end) {
+    public void textElement(final @NotNull CharSequence display, final @NotNull CharSequence physical, final int start, final int end) {
     }
 
     @Override
-    public void entityRef(final CharSequence ref, final int start, final int end) {
+    public void entityRef(final @NotNull CharSequence ref, final int start, final int end) {
     }
 
     @Override
@@ -249,7 +249,7 @@ public final class SwcCatalogXmlUtil {
       private String myIconAttr = null;
 
       @Override
-      public void attribute(CharSequence name, CharSequence value, int start, int end) {
+      public void attribute(@NotNull CharSequence name, @NotNull CharSequence value, int start, int end) {
         if (COMPONENT_LOCATION.equals(getLocation())) {
           if (NAME.contentEquals(name)) {
             myNameAttr = value.toString().trim();
@@ -269,7 +269,7 @@ public final class SwcCatalogXmlUtil {
       private final Interner<String> myStringInterner = Interner.createStringInterner();
 
       @Override
-      public void endTag(CharSequence localName, String namespace, int start, int end) {
+      public void endTag(@NotNull CharSequence localName, @NotNull String namespace, int start, int end) {
         if (COMPONENT_LOCATION.equals(getLocation())) {
           if (StringUtil.isNotEmpty(myNameAttr) && StringUtil.isNotEmpty(myClassNameAttr) && StringUtil.isNotEmpty(myUriAttr)) {
             result.add(
@@ -326,7 +326,7 @@ public final class SwcCatalogXmlUtil {
       private String classAttr = null;
 
       @Override
-      public void attribute(final CharSequence name, final CharSequence value, final int start, final int end) {
+      public void attribute(final @NotNull CharSequence name, final @NotNull CharSequence value, final int start, final int end) {
         if (ID.equals(name.toString())) {
           idAttr = value.toString().trim();
         }
@@ -336,7 +336,7 @@ public final class SwcCatalogXmlUtil {
       }
 
       @Override
-      public void endTag(final CharSequence localName, final String namespace, final int start, final int end) {
+      public void endTag(final @NotNull CharSequence localName, final @NotNull String namespace, final int start, final int end) {
         if (COMPONENT.contentEquals(localName)) {
           if (StringUtil.isNotEmpty(classAttr)) {
             final String classFqn = classAttr.replace(":", ".");
