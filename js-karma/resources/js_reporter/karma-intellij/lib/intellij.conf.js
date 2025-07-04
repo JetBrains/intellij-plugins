@@ -80,7 +80,7 @@ function tryRequireFromProjectRoot(modulePath) {
   }
 }
 
-module.exports = async function (config) {
+module.exports = function (config) {
   var originalConfigModulePromise;
   if (originalConfigPath) {
     // support for karma.conf.ts when ts-node is available

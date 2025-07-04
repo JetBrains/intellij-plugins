@@ -164,4 +164,25 @@ class KarmaRunConfigurationTreeTest: KarmaRunConfigurationTestsBase() {
     )
   }
 
+  // WEB-73868
+  fun `test karmaConfigV1_5_0`() {
+    doTreeTest(
+      {
+        it.setScopeKind(KarmaScopeKind.TEST_FILE)
+          .setTestFilePath(getAbsolutePathToProjectDirOrFile("/tests/person.test.js"))
+          .setConfigPath(getAbsolutePathToProjectDirOrFile("/karma.conf.js"))
+      },
+      PassedTest(
+        "karma.conf.js",
+        PassedTest(
+          "HeadlessChrome .*",
+          PassedTest(
+            "person",
+            PassedTest("should have name"),
+          )
+        ).withNameAsRegex()
+      )
+    )
+  }
+
 }
