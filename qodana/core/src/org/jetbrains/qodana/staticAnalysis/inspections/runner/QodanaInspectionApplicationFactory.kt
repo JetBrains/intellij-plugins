@@ -122,7 +122,7 @@ class QodanaInspectionApplicationFactory {
     }?.getOrThrow()?.withAbsoluteProfilePath(absoluteProjectPath, effectiveQodanaYamlPath) ?: QodanaYamlConfig.EMPTY_V1
     val runPromo = commandLine.getOptionValue("run-promo")?.toBoolean() ?: yamlConfig.runPromoInspections
     val disableSanity = commandLine.hasOption("disable-sanity") || yamlConfig.disableSanityInspections
-    val failThresholdArg = commandLine.getOptionValue("fail-threshold")?.toInt()
+    val failThresholdArg = commandLine.getOptionValue("fail-threshold")?.toInt() ?: yamlConfig.failThreshold
 
     val script = determineScript(commandLine, yamlConfig)
 

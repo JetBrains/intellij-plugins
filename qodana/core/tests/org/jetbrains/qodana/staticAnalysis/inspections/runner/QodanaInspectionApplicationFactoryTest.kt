@@ -255,6 +255,31 @@ class QodanaInspectionApplicationFactoryTest : HeavyPlatformTestCase() {
   }
 
   @Test
+  fun `deprecated failThreshold should propagate to severityThresholds any`(): Unit = runBlocking {
+    val testProjectPath = Paths.get(project.basePath!!).resolve("ftfc.qodana.yaml")
+    Paths.get(project.basePath!!).createDirectories()
+
+    testProjectPath.writeText("""
+      profile:
+        name: empty
+      failThreshold: 2
+      failureConditions:
+        testCoverageThresholds:
+          fresh: 80
+          total: 80
+    """.trimIndent(), Charsets.UTF_8, StandardOpenOption.CREATE)
+
+    val args = listOf(
+      "--config", "ftfc.qodana.yaml",
+      "${project.basePath}",
+      "/OUT_PATH",
+    )
+
+    val app = QodanaInspectionApplicationFactory().buildApplication(args)
+    assertEquals(2, app?.config?.failureConditions?.severityThresholds?.any)
+  }
+
+  @Test
   fun `effective qodana yaml is applied`(): Unit = runBlocking {
     val configDir = Paths.get(project.basePath!!).resolve(".qodana/config")
     configDir.createDirectories()
