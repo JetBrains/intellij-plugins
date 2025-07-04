@@ -18,7 +18,9 @@ import org.jetbrains.annotations.Nullable;
 public final class DartImportOptimizer implements ImportOptimizer {
   @Override
   public @NotNull Runnable processFile(final @NotNull PsiFile file) {
-    DartAnalysisServerService.getInstance(file.getProject()).serverReadyForRequest();
+    DartAnalysisServerService das = DartAnalysisServerService.getInstance(file.getProject());
+    das.serverReadyForRequest();
+    das.updateFilesContent();
     return new CollectingInfoRunnable() {
       private boolean myFileChanged = false;
 
