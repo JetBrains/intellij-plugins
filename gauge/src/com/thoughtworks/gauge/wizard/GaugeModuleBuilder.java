@@ -29,7 +29,6 @@ import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -119,7 +118,7 @@ final class GaugeModuleBuilder extends ModuleBuilder {
 
   @Override
   public ModuleType<?> getModuleType() {
-    return StdModuleTypes.JAVA;
+    return JavaModuleType.getModuleType();
   }
 
   @Override

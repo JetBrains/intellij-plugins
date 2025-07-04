@@ -62,9 +62,9 @@ import com.intellij.openapi.editor.XmlHighlighterColors;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
@@ -177,7 +177,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @NotNull
   @Override
   protected ModuleType getModuleType() {
-    return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();
+    return needsJavaModule() ? JavaModuleType.getModuleType() : FlexModuleType.getInstance();
   }
 
   @Override

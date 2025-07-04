@@ -14,10 +14,8 @@ import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModifiableModuleModel;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.projectRoots.JavaSdk;
@@ -111,7 +109,7 @@ public final class BndProjectImporter {
     String rootDir = myProject.getBasePath();
     assert rootDir != null : myProject;
     String imlPath = rootDir + File.separator + myProject.getName() + ModuleFileType.DOT_DEFAULT_EXTENSION;
-    Module module = model.newModule(imlPath, StdModuleTypes.JAVA.getId());
+    Module module = model.newModule(imlPath, JavaModuleType.getModuleType().getId());
     ModuleRootModificationUtil.addContentRoot(module, rootDir);
     ModuleRootModificationUtil.setSdkInherited(module);
     return module;
@@ -258,7 +256,7 @@ public final class BndProjectImporter {
     Module module = moduleModel.findModuleByName(name);
     if (module == null) {
       String path = project.getBase().getPath() + File.separator + name + ModuleFileType.DOT_DEFAULT_EXTENSION;
-      module = moduleModel.newModule(path, StdModuleTypes.JAVA.getId());
+      module = moduleModel.newModule(path, JavaModuleType.getModuleType().getId());
     }
 
     ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();

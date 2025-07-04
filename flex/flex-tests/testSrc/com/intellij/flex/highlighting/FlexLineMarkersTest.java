@@ -21,8 +21,8 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSFunctionsSearch;
 import com.intellij.openapi.editor.XmlHighlighterColors;
+import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -113,7 +113,7 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
   @NotNull
   @Override
   protected ModuleType getModuleType() {
-    return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();
+    return needsJavaModule() ? JavaModuleType.getModuleType() : FlexModuleType.getInstance();
   }
 
   @Override
