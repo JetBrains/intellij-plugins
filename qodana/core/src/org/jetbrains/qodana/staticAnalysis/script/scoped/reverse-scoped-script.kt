@@ -111,9 +111,7 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
     }
 
     val runOld = report.getOrCreateRun() // we retrieve original run created by QodanaRunner
-    val runNew = baselineReport.runs.singleOrNull() ?: throw QodanaException("Expected a single run in the scoped-baseline report.")
-    report.withRuns(listOf(runNew)) // we replace this run in the report with matching "new" stage run
-    runNew.withInvocations(listOf(createInvocation()))
+    val runNew = updateReportWithScopedRun(baselineReport, report)
 
     val reportOld = createSarifReport(listOf(runOld)) // we create "fake" report containing current (old) run for baseline purposes
     runContext.runAnalysis(context = inspectionContext)
@@ -126,6 +124,7 @@ internal class ReverseScopedScriptOld(runContextFactory: ReverseScopedRunContext
   }
 }
 
+
 internal class ReverseScopedScriptFixes(runContextFactory: ReverseScopedRunContextFactory) :
   ReverseScopedScript(true, runContextFactory) {
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
@@ -134,9 +133,7 @@ internal class ReverseScopedScriptFixes(runContextFactory: ReverseScopedRunConte
       throw QodanaException("Cannot find scoped-baseline report. It is required on the 'old' stage of the reverse-scoped script.")
     }
 
-    val runNew = baselineReport.runs.singleOrNull() ?: throw QodanaException("Expected a single run in the scoped-baseline report.")
-    report.withRuns(listOf(runNew)) // no analysis done at this stage
-    runNew.withInvocations(listOf(createInvocation()))
+    val runNew = updateReportWithScopedRun(baselineReport, report)
     // no need to apply baseline, was applied before
 
     preserveShouldSkipState(runNew, runContext.config.skipResultStrategy.shouldSkip(runNew))
@@ -165,6 +162,19 @@ internal abstract class ReverseScopedScript(val skipCoverageComputation: Boolean
     val invocation = run.invocations.first()
     invocation.properties = invocation.properties ?: PropertyBag()
     invocation.properties?.put(RESULT_PRINTING_SKIPPED, state)
+  }
+
+  protected fun updateReportWithScopedRun(
+    baselineReport: SarifReport,
+    report: SarifReport,
+  ): Run {
+    val runNew = baselineReport.runs.singleOrNull() ?: throw QodanaException("Expected a single run in the scoped-baseline report.")
+    val invocationNew = runNew.invocations?.firstOrNull()
+    report.withRuns(listOf(runNew)) // we replace this run in the report with matching "new" stage run
+    // we preserve execution notifications happened in previous run
+    runNew.withInvocations(listOf(createInvocation()
+                                    .withToolExecutionNotifications(invocationNew?.toolExecutionNotifications)))
+    return runNew
   }
 }
 
