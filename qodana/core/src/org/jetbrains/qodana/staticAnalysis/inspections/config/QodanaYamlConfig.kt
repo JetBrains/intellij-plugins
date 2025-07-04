@@ -25,7 +25,7 @@ data class QodanaYamlConfig(
   val maxRuntimeNotifications: Int = 100,
   val coverage: QodanaCoverageYamlConfig = QodanaCoverageYamlConfig(),
   // deprecated, but used as anySeverity
-  private val failThreshold: Int? = null,
+  val failThreshold: Int? = null,
   val failureConditions: FailureConditions = FailureConditions(FailureConditions.SeverityThresholds(any = failThreshold)),
   val hardcodedPasswords: HardcodedPasswordsConfig = HardcodedPasswordsConfig(),
 
