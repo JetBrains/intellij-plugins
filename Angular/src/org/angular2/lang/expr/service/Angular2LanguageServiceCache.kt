@@ -19,9 +19,15 @@ class Angular2LanguageServiceCache(project: Project) : TypeScriptLanguageService
 
   private val transpiledComponentCache: MutableMap<VirtualFile, TranspiledComponentInfo> = ConcurrentHashMap()
 
+  override fun tryGetServiceObjectWithoutStateUpdater(input: JSLanguageServiceCommand): JSLanguageServiceObjectWithStateUpdater? =
+    if (input is Angular2TranspiledTemplateCommand)
+      null
+    else
+      super.tryGetServiceObjectWithoutStateUpdater(input)
+
   override fun getServiceObjectWithStateUpdater(input: JSLanguageServiceCommand): JSLanguageServiceObjectWithStateUpdater? =
     if (input is Angular2TranspiledTemplateCommand)
-      computeInNonBlockingReadAction { getUpdateTemplateServiceObject(input) }
+      getUpdateTemplateServiceObject(input)
     else
       super.getServiceObjectWithStateUpdater(input)
 
