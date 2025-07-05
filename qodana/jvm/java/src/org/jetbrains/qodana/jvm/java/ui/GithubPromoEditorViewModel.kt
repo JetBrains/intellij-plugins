@@ -23,5 +23,5 @@ interface GithubPromoEditorViewModel {
 
   fun notifySuccessfulWorkflowAddition(files: CreatedFiles)
 
-  fun notifyFailedWorkflowAddition()
+  fun notifyFailedWorkflowAddition(message: String)
 }

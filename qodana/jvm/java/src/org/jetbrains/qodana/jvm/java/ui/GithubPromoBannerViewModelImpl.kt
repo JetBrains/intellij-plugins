@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.findQodanaConfigVirtualFile
 import org.jetbrains.qodana.jvm.java.QodanaGithubPromoNotificationApplicationDismissalState
 import org.jetbrains.qodana.jvm.java.QodanaGithubPromoNotificationProjectDismissalState
@@ -21,13 +22,16 @@ import org.jetbrains.qodana.settings.DefaultQodanaYamlBuilder
 import org.jetbrains.qodana.settings.DefaultQodanaYamlContext
 import org.jetbrains.qodana.settings.LinterUsed
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
-import org.jetbrains.qodana.stats.logGithubPromoAddQodanaWorkflowEvent
+import org.jetbrains.qodana.stats.logGithubPromoAddQodanaPressed
+import org.jetbrains.qodana.stats.logGithubPromoWorkflowCreatedEvent
 import org.jetbrains.qodana.stats.logGithubPromoDismissed
 import org.jetbrains.qodana.stats.logGithubPromoExploreQodanaPressed
 import org.jetbrains.qodana.ui.ProjectVcsDataProviderImpl
+import org.jetbrains.qodana.ui.ci.providers.github.DEFAULT_GITHUB_WORKFLOW_FILENAME
 import org.jetbrains.qodana.ui.ci.providers.github.DefaultQodanaGithubWorkflowBuilder
 import java.io.IOException
 import java.nio.file.Path
+import java.nio.file.FileAlreadyExistsException
 import kotlin.io.path.createFile
 
 private val LOG = Logger.getInstance(GithubPromoBannerViewModelImpl::class.java)
@@ -41,16 +45,34 @@ class GithubPromoBannerViewModelImpl(
 ): GithubPromoEditorViewModel.GithubPromoBannerViewModel {
 
   override fun addQodanaWorkflow() {
+    logGithubPromoAddQodanaPressed(project)
     disableNotificationForProject()
     scope.launch {
-      val qodanaYamlExists = project.findQodanaConfigVirtualFile() != null
-      val workflowFile = addQodanaWorkflowFile()
-      if (workflowFile != null) {
-        logGithubPromoAddQodanaWorkflowEvent(project, qodanaYamlExists)
-        val yamlFile = if (!qodanaYamlExists) addQodanaYaml() else null
-        fileEditorViewModel.notifySuccessfulWorkflowAddition(GithubPromoEditorViewModel.CreatedFiles(workflowFile, yamlFile))
-      } else {
-        fileEditorViewModel.notifyFailedWorkflowAddition()
+      try {
+        val qodanaYamlExists = project.findQodanaConfigVirtualFile() != null
+        val workflowFile = addQodanaWorkflowFile()
+        if (workflowFile != null) {
+          logGithubPromoWorkflowCreatedEvent(project, qodanaYamlExists)
+          val yamlFile = if (!qodanaYamlExists) addQodanaYaml() else null
+          fileEditorViewModel.notifySuccessfulWorkflowAddition(GithubPromoEditorViewModel.CreatedFiles(workflowFile, yamlFile))
+        }
+        else {
+          fileEditorViewModel.notifyFailedWorkflowAddition(
+            QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.default.text")
+          )
+        }
+      } catch (_: FileAlreadyExistsException) {
+        fileEditorViewModel.notifyFailedWorkflowAddition(
+          QodanaBundle.message(
+            "qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.file.exists.text",
+            DEFAULT_GITHUB_WORKFLOW_FILENAME
+          )
+        )
+      } catch (e: IOException) {
+        LOG.warn("Could not create qodana workflow", e)
+        fileEditorViewModel.notifyFailedWorkflowAddition(
+          QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.default.text")
+        )
       }
     }
   }
@@ -66,21 +88,15 @@ class GithubPromoBannerViewModelImpl(
   }
 
   private suspend fun addQodanaWorkflowFile(): VirtualFile? {
-    return try {
-      val projectVcsDataProvider = ProjectVcsDataProviderImpl(project, scope)
-      val defaultQodanaGithubWorkflowBuilder = DefaultQodanaGithubWorkflowBuilder(projectVcsDataProvider, project)
-      val location = defaultQodanaGithubWorkflowBuilder.getWorkflowFileLocation()
-      if (location == null) {
-        LOG.warn("Failed to create Qodana GitHub workflow file because location is not defined")
-        return null
-      }
-      val content = defaultQodanaGithubWorkflowBuilder.workflowFile(promo = true)
-      val file = createFile(location, content)
-      file
-    } catch (e: IOException) {
-      LOG.warn("Failed to create Qodana GitHub workflow file", e)
-      null
+    val projectVcsDataProvider = ProjectVcsDataProviderImpl(project, scope)
+    val defaultQodanaGithubWorkflowBuilder = DefaultQodanaGithubWorkflowBuilder(projectVcsDataProvider, project)
+    val location = defaultQodanaGithubWorkflowBuilder.getWorkflowFileLocation()
+    if (location == null) {
+      LOG.warn("Failed to create Qodana GitHub workflow file because location is not defined")
+      return null
     }
+    val content = defaultQodanaGithubWorkflowBuilder.workflowFile(promo = true)
+    return createFile(location, content)
   }
   private suspend fun addQodanaYaml(): VirtualFile? {
     return try {

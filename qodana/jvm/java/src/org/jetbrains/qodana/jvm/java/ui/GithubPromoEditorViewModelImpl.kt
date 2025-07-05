@@ -15,6 +15,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.util.coroutines.childScope
 import com.intellij.ui.EditorNotifications
@@ -140,11 +141,11 @@ class GithubPromoEditorViewModelImpl(
     }
   }
 
-  override fun notifyFailedWorkflowAddition() {
+  override fun notifyFailedWorkflowAddition(@NlsContexts.NotificationContent message: String) {
     scope.launch {
       val notification = QodanaNotifications.General.notification(
         QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.title"),
-        QodanaBundle.message("qodana.github.promo.notification.bubble.qodana.github.workflow.not.added.text"),
+        message,
         NotificationType.ERROR,
         withQodanaIcon = false
       )
