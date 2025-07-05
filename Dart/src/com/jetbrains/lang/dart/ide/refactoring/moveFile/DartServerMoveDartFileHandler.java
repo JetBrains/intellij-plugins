@@ -36,8 +36,7 @@ public final class DartServerMoveDartFileHandler extends MoveFileHandler {
       return false;
     }
     final Project project = psiFile.getProject();
-    final DartSdk dartSdk = DartSdk.getDartSdk(project);
-    if (dartSdk == null || !DartAnalysisServerService.isDartSdkVersionSufficientForMoveFileRefactoring(dartSdk)) {
+    if (DartSdk.getDartSdk(project) == null) {
       return false;
     }
     return DartAnalysisServerService.getInstance(project).isInIncludedRoots(psiFile.getVirtualFile());
@@ -88,12 +87,16 @@ public final class DartServerMoveDartFileHandler extends MoveFileHandler {
   }
 
   @Override
-  public @Nullable @Unmodifiable List<UsageInfo> findUsages(@NotNull PsiFile psiFile, @NotNull PsiDirectory newParent, boolean searchInComments, boolean searchInNonJavaFiles) {
+  public @Nullable @Unmodifiable List<UsageInfo> findUsages(@NotNull PsiFile psiFile,
+                                                            @NotNull PsiDirectory newParent,
+                                                            boolean searchInComments,
+                                                            boolean searchInNonJavaFiles) {
     return null;
   }
 
   @Override
-  public void retargetUsages(@Unmodifiable @NotNull List<? extends UsageInfo> usageInfos, @NotNull Map<PsiElement, PsiElement> oldToNewMap) {
+  public void retargetUsages(@Unmodifiable @NotNull List<? extends UsageInfo> usageInfos,
+                             @NotNull Map<PsiElement, PsiElement> oldToNewMap) {
   }
 
   @Override

@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.xml.util.HtmlUtil;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +59,7 @@ public final class DartWebdevConfigurationProducer extends LazyRunConfigurationP
   private static @Nullable VirtualFile getRunnableHtmlFileFromContext(@NotNull ConfigurationContext context) {
     final Project project = context.getProject();
     final DartSdk dartSdk = DartSdk.getDartSdk(project);
-    if (dartSdk == null || dartSdk.getVersion().isEmpty() || !DartAnalysisServerService.isDartSdkVersionSufficientForWebdev(dartSdk)) {
+    if (dartSdk == null || dartSdk.getVersion().isEmpty()) {
       return null;
     }
 

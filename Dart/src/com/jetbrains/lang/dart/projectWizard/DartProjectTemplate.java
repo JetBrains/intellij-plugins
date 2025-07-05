@@ -30,7 +30,6 @@ import java.util.List;
 public abstract class DartProjectTemplate {
 
   private static final Stagehand STAGEHAND = new Stagehand();
-  private static List<DartProjectTemplate> ourStagehandTemplateCache;
   private static List<DartProjectTemplate> ourDartCreateTemplateCache;
 
   private static final Logger LOG = Logger.getInstance(DartProjectTemplate.class.getName());
@@ -80,36 +79,17 @@ public abstract class DartProjectTemplate {
   }
 
   private static @NotNull List<DartProjectTemplate> getStagehandTemplates(@NotNull String sdkRoot) {
-    boolean useDartCreate = Stagehand.isUseDartCreate(sdkRoot);
-
-    if (useDartCreate) {
-      if (ourDartCreateTemplateCache != null) {
-        return ourDartCreateTemplateCache;
-      }
-    }
-    else {
-      if (ourStagehandTemplateCache != null) {
-        return ourStagehandTemplateCache;
-      }
-    }
-
-    STAGEHAND.install(sdkRoot);
-    final List<StagehandDescriptor> templates = STAGEHAND.getAvailableTemplates(sdkRoot);
-
-    if (useDartCreate) {
-      ourDartCreateTemplateCache = new ArrayList<>();
-      for (StagehandDescriptor template : templates) {
-        ourDartCreateTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
-      }
+    if (ourDartCreateTemplateCache != null) {
       return ourDartCreateTemplateCache;
     }
-    else {
-      ourStagehandTemplateCache = new ArrayList<>();
-      for (StagehandDescriptor template : templates) {
-        ourStagehandTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
-      }
-      return ourStagehandTemplateCache;
+
+    final List<StagehandDescriptor> templates = STAGEHAND.getAvailableTemplates(sdkRoot);
+
+    ourDartCreateTemplateCache = new ArrayList<>();
+    for (StagehandDescriptor template : templates) {
+      ourDartCreateTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
     }
+    return ourDartCreateTemplateCache;
   }
 
   static void createWebRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile htmlFile) {

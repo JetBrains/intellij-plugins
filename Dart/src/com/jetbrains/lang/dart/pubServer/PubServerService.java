@@ -185,27 +185,16 @@ final class PubServerService extends NetService {
     final DartSdk dartSdk = DartSdk.getDartSdk(project);
     if (dartSdk == null) return null;
 
-    if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject()))) {
-      if (!DartWebdev.INSTANCE.getActivated()) {
-        ApplicationManager.getApplication()
-          .invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
-      }
+    if (!DartWebdev.INSTANCE.getActivated()) {
+      ApplicationManager.getApplication()
+        .invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
     }
 
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(firstServedDir.getParent().getPath());
     DartPubActionBase.setupPubExePath(commandLine, dartSdk);
-    commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue());
-
-    if (DartWebdev.INSTANCE.useWebdev(dartSdk)) {
-      commandLine.addParameters("global", "run", "webdev", "serve");
-      commandLine.addParameter(firstServedDir.getName() + ":" + port);
-      commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".webdev");
-    }
-    else {
-      commandLine.addParameter("serve");
-      commandLine.addParameter(firstServedDir.getName());
-      commandLine.addParameter("--port=" + port);
-    }
+    commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".webdev");
+    commandLine.addParameters("global", "run", "webdev", "serve");
+    commandLine.addParameter(firstServedDir.getName() + ":" + port);
 
     final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
     processHandler.addProcessListener(new PubServeOutputListener(project, myServerReadyLock));
@@ -218,15 +207,13 @@ final class PubServerService extends NetService {
                                   final int port,
                                   final @NotNull OSProcessHandler processHandler,
                                   final @NotNull Consumer<String> errorOutputConsumer) {
-    if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject()))) {
-      synchronized (myServerReadyLock) {
-        try {
-          // wait for the Webdev server to start before redirecting, so that Chrome doesn't show error.
-          //noinspection WaitNotInLoop
-          myServerReadyLock.wait(15000);
-        }
-        catch (InterruptedException e) {/**/}
+    synchronized (myServerReadyLock) {
+      try {
+        // wait for the Webdev server to start before redirecting, so that Chrome doesn't show error.
+        //noinspection WaitNotInLoop
+        myServerReadyLock.wait(15000);
       }
+      catch (InterruptedException e) {/**/}
     }
 
     if (processHandler.isProcessTerminated()) {
@@ -416,13 +403,14 @@ final class PubServerService extends NetService {
       final String message = DartBundle.message(myNotificationAboutErrors ? "dart.webdev.server.output.contains.errors"
                                                                           : "dart.webdev.server.output.contains.warnings");
 
-      myNotification = NOTIFICATION_GROUP.createNotification(message, NotificationType.WARNING).setListener(new NotificationListener.Adapter() {
-        @Override
-        protected void hyperlinkActivated(final @NotNull Notification notification, final @NotNull HyperlinkEvent e) {
-          notification.expire();
-          ToolWindowManager.getInstance(myProject).getToolWindow(DART_WEBDEV).activate(null);
-        }
-      });
+      myNotification =
+        NOTIFICATION_GROUP.createNotification(message, NotificationType.WARNING).setListener(new NotificationListener.Adapter() {
+          @Override
+          protected void hyperlinkActivated(final @NotNull Notification notification, final @NotNull HyperlinkEvent e) {
+            notification.expire();
+            ToolWindowManager.getInstance(myProject).getToolWindow(DART_WEBDEV).activate(null);
+          }
+        });
 
       myNotification.notify(myProject);
     }
