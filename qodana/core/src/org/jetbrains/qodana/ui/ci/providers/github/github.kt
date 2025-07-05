@@ -17,7 +17,7 @@ import javax.swing.Icon
 import javax.swing.JComponent
 import kotlin.io.path.Path
 
-internal const val DEFAULT_GITHUB_WORKFLOW_FILENAME = "qodana_code_quality.yml"
+const val DEFAULT_GITHUB_WORKFLOW_FILENAME: String = "qodana_code_quality.yml"
 internal const val GITHUB_WORKFLOWS_DIR = ".github/workflows"
 internal val GITHUB_WORKFLOWS_EXTENSIONS = setOf("yml", "yaml")
 
