@@ -2,6 +2,7 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.codeInspection.ex.InspectionProfileImpl
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.qodana.registry.QodanaRegistry.SCOPE_EXTENDING_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
@@ -17,6 +18,11 @@ class QodanaScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegr
     InspectionProfileImpl.INIT_INSPECTIONS = true
     Disposer.register(testRootDisposable) {
       InspectionProfileImpl.INIT_INSPECTIONS = initInspections
+    }
+    val registryValue = Registry.get(SCOPE_EXTENDING_ENABLE_KEY)
+    registryValue.setValue(true)
+    Disposer.register(testRootDisposable) {
+      registryValue.resetToDefault()
     }
     reinstantiateInspectionRelatedServices(project, testRootDisposable)
     InspectionToolScopeExtender.EP_NAME.point.registerExtension(InspectionToolScopeExtenderMock, testRootDisposable)
@@ -163,14 +169,9 @@ class QodanaScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegr
       "$testProjectPath/out")
 
     val additionalFiles = mutableSetOf<String>()
-    try {
-      System.setProperty(SCOPE_EXTENDING_ENABLE_KEY, "true")
-      QodanaTestCase.runTest {
-        val script = buildScript(cliArgs, project, projectFiles, this)
-        additionalFiles.addAll(script.runContext.getAdditionalFiles())
-      }
-    } finally {
-      System.clearProperty(SCOPE_EXTENDING_ENABLE_KEY)
+    QodanaTestCase.runTest {
+      val script = buildScript(cliArgs, project, projectFiles, this)
+      additionalFiles.addAll(script.runContext.getAdditionalFiles())
     }
     return additionalFiles
   }

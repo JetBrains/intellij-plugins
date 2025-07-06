@@ -2,6 +2,8 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.registry.QodanaRegistry.SCOPE_EXTENDING_ENABLE_KEY
@@ -18,6 +20,11 @@ import kotlin.io.path.writeText
 class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
   override fun setUp() {
     super.setUp()
+    val registryValue = Registry.get(SCOPE_EXTENDING_ENABLE_KEY)
+    registryValue.setValue(true)
+    Disposer.register(testRootDisposable) {
+      registryValue.resetToDefault()
+    }
     InspectionToolScopeExtender.EP_NAME.point.registerExtension(InspectionToolScopeExtenderMock, testRootDisposable)
     QodanaScopeExtenderProvider.EP_NAME.point.registerExtension(QodanaScopeExtenderProviderMock, testRootDisposable)
   }
@@ -45,12 +52,10 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
 
     try {
       System.setProperty(COVERAGE_SKIP_COMPUTATION_PROPERTY, "true")
-      System.setProperty(SCOPE_EXTENDING_ENABLE_KEY, "true")
       runAnalysis()
       assertSarifResults()
     } finally {
       System.clearProperty(COVERAGE_SKIP_COMPUTATION_PROPERTY)
-      System.clearProperty(SCOPE_EXTENDING_ENABLE_KEY)
     }
   }
 }
