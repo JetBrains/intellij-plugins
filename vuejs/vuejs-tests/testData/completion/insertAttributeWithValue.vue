@@ -1,0 +1,1 @@
+<template v-tex<caret>></template>

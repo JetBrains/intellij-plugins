@@ -1,0 +1,2 @@
+open (typeText='Window'; priority=4.0; bold)
+opener (typeText='any'; priority=4.0; bold)
