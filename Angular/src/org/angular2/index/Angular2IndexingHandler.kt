@@ -151,7 +151,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     }
   }
 
-  override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingDataImpl?): JSElementIndexingDataImpl? {
+  override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingData?): JSElementIndexingData? {
     if (decorator.context.asSafely<JSAttributeList>()?.context is ES6FieldStatementImpl) {
       return when (decorator.decoratorName) {
         HOST_BINDING_DEC -> {
@@ -400,8 +400,8 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
   private fun createJSImplicitElementForCustomCssPropertyIfNeeded(
     info: Angular2AttributeNameParser.AttributeInfo,
-    provider: PsiElement, outData: JSElementIndexingDataImpl?,
-  ): JSElementIndexingDataImpl? =
+    provider: PsiElement, outData: JSElementIndexingData?,
+  ): JSElementIndexingData? =
     if (isCustomCssPropertyBinding(info))
       (outData ?: JSElementIndexingDataImpl())
         .apply {

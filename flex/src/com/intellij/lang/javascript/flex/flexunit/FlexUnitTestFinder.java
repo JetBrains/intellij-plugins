@@ -2,13 +2,13 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.stubs.JSNameIndex;
+import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -55,13 +55,13 @@ public final class FlexUnitTestFinder implements TestFinder {
       return Collections.emptyList();
     }
 
-    final Collection<String> allNames = StubIndex.getInstance().getAllKeys(JSNameIndex.KEY, element.getProject());
+    final Collection<String> allNames = StubIndex.getInstance().getAllKeys(JSIndexKeys.JS_NAME_INDEX_KEY, element.getProject());
     final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependentsScope(module);
     final List<Pair<? extends PsiNamedElement, Integer>> classesWithProximity = new ArrayList<>();
 
     for (final String possibleTestName : allNames) {
       if (possibleTestName.contains(className)) {
-        for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(possibleTestName, element.getProject(), scope)) {
+        for (final JSQualifiedNamedElement jsElement : BackendJSResolveUtil.findElementsByName(possibleTestName, element.getProject(), scope)) {
           final VirtualFile f = jsElement.getContainingFile().getVirtualFile();
           final boolean inTestSource = f != null && fileIndex.isInTestSourceContent(f);
 
@@ -95,7 +95,7 @@ public final class FlexUnitTestFinder implements TestFinder {
 
     final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<>();
     for (Pair<String, Integer> nameWithWeight : TestFinderHelper.collectPossibleClassNamesWithWeights(className)) {
-      for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
+      for (final JSQualifiedNamedElement jsElement : BackendJSResolveUtil.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
         if (jsElement instanceof JSClass && jsElement != jsClass && !((JSClass)jsElement).isInterface() &&
             !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
           classesWithWeights.add(Pair.create(jsElement, nameWithWeight.second));

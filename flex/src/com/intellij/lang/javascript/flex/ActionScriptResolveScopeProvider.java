@@ -3,7 +3,10 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.javascript.flex.FlexApplicationComponent;
-import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.ActionScriptFileType;
+import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.lang.javascript.TypeScriptFileType;
 import com.intellij.lang.javascript.flex.library.ActionScriptLibraryProvider;
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
@@ -45,7 +48,7 @@ final class ActionScriptResolveScopeProvider extends JSResolveScopeProvider impl
     if (!DialectDetector.isActionScript(element)) return null;
 
     Project project = element.getProject();
-    VirtualFile file = getFileForScopeEvaluation(element);
+    VirtualFile file = JSResolveUtil.getFileForScopeEvaluation(element);
     if (file == null) {
       return getProjectScopeIncludingPredefines(project);
     }

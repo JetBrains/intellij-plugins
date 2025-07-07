@@ -18,9 +18,9 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -842,7 +842,7 @@ public final class CompilerConfigGenerator {
              // we include file in compilation if it has (or intended to have) some public declaration (class, namespace, function) which is equivalent to having JSPackageStatement declaration.
              // But first we try to find it in JSQualifiedElementIndex because it is faster.
              final Collection<JSQualifiedNamedElement> elements = StubIndex
-               .getElements(JSQualifiedElementIndex.KEY, qName, module.getProject(), GlobalSearchScope.moduleScope(module),
+               .getElements(JSIndexKeys.JS_QUALIFIED_ELEMENT_INDEX_KEY, qName, module.getProject(), GlobalSearchScope.moduleScope(module),
                             JSQualifiedNamedElement.class);
              if (elements.isEmpty()) {
                // If SomeClass.as contains IncorrectClass definition - we want to include this class into compilation so that compilation fails.

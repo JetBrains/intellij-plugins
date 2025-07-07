@@ -5,12 +5,12 @@ import com.dmarcotte.handlebars.psi.impl.HbPsiElementImpl;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.stubs.JSNamespaceMembersIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
@@ -81,7 +81,7 @@ public final class MeteorSpacebarsCompletionContributor extends CompletionContri
         Project project = position.getProject();
         {
           String namespace = MeteorHelpersFrameworkIndexingHandler.NAMESPACE_GLOBAL_HELPERS;
-          Collection<JSElement> elements = StubIndex.getElements(JSNamespaceMembersIndex.KEY,
+          Collection<JSElement> elements = StubIndex.getElements(JSIndexKeys.JS_NAMESPACE_MEMBERS_INDEX_KEY,
                                                                  namespace,
                                                                  project,
                                                                  GlobalSearchScope.allScope(project),
@@ -98,7 +98,7 @@ public final class MeteorSpacebarsCompletionContributor extends CompletionContri
 
           String namespace = MeteorHelpersFrameworkIndexingHandler
             .getTemplateNamespace(templateName);
-          Collection<JSElement> elementsTemplate = StubIndex.getElements(JSNamespaceMembersIndex.KEY,
+          Collection<JSElement> elementsTemplate = StubIndex.getElements(JSIndexKeys.JS_NAMESPACE_MEMBERS_INDEX_KEY,
                                                                          namespace,
                                                                          project,
                                                                          GlobalSearchScope.allScope(project),

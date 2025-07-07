@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
@@ -175,7 +176,7 @@ public final class AddImportECMAScriptClassOrFunctionAction implements HintActio
       } else {
         searchScope = JSResolveUtil.getResolveScope(file);
       }
-      return JSResolveUtil.findElementsByName(name, file.getProject(), searchScope);
+      return BackendJSResolveUtil.findElementsByName(name, file.getProject(), searchScope);
     }
     else {
       return Collections.emptyList();

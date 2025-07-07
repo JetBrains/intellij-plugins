@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesConstants
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
 import com.intellij.psi.PsiFile
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
@@ -305,7 +306,7 @@ const props = {seeMe: {}}
 
   fun testFlowJSEmbeddedContent() {
     // Flow is not used unless there is associated .flowconfig. Instead of it to have 'console' resolved we may enable HTML library.
-    JSTestUtils.setDependencyOnPredefinedJsLibraries(project, testRootDisposable, JSCorePredefinedLibrariesProvider.LIB_HTML)
+    JSTestUtils.setDependencyOnPredefinedJsLibraries(project, testRootDisposable, JSCorePredefinedLibrariesConstants.LIB_HTML)
     testWithinLanguageLevel<Exception>(JSLanguageLevel.FLOW, project) {
       myFixture.configureByText("FlowJSEmbeddedContent.vue", """
 <script>

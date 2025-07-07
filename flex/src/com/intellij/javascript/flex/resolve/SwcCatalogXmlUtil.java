@@ -1,7 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
-import com.intellij.lang.javascript.index.JavaScriptIndex;
+import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesConstants;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Key;
@@ -140,7 +140,7 @@ public final class SwcCatalogXmlUtil {
     }
 
     final PsiFile psiFile = psiElement.getContainingFile();
-    if (JavaScriptIndex.ECMASCRIPT_JS2.equals(psiFile.getName())) return Integer.MIN_VALUE;
+    if (JSCorePredefinedLibrariesConstants.ECMASCRIPT_JS2.equals(psiFile.getName())) return Integer.MIN_VALUE;
 
     final VirtualFile swfFile = psiFile.getVirtualFile();
     final VirtualFile dir = swfFile != null && "swf".equalsIgnoreCase(swfFile.getExtension()) ? swfFile.getParent() : null;

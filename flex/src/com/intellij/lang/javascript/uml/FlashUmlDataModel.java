@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.actions.newfile.NewFlexComponentAction;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
+import com.intellij.lang.javascript.index.PackageElementsProcessor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -87,7 +88,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
 
   private static Collection<String> getSubPackages(final String packageName, final GlobalSearchScope searchScope) {
     final Collection<String> result = new HashSet<>();
-    JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
+    JSPackageIndex.processElementsInScope(packageName, null, new PackageElementsProcessor() {
       @Override
       public boolean process(VirtualFile file, @NotNull String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         if (kind == JSPackageIndexInfo.Kind.PACKAGE) {
@@ -101,7 +102,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
 
   private static Collection<JSClass> getClasses(final String packageName, final GlobalSearchScope searchScope) {
     final Collection<JSClass> result = new HashSet<>();
-    JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
+    JSPackageIndex.processElementsInScope(packageName, null, new PackageElementsProcessor() {
       @Override
       public boolean process(VirtualFile file, @NotNull String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         String qualifiedName = StringUtil.getQualifiedName(packageName, name);

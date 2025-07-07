@@ -4,8 +4,10 @@ package com.intellij.javascript.flex.resolve;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
+import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.index.JSIndexedRootProvider;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
+import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesConstants;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -13,7 +15,6 @@ import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -110,7 +111,7 @@ public final class ActionScriptClassResolver extends JSClassResolver {
       // object from swf do not contain necessary members!
       searchScope = new AdditionalIndexedRootsScope(searchScope, JSIndexedRootProvider.class);
     }
-    final Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSQualifiedElementIndex.KEY, link,
+    final Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSIndexKeys.JS_QUALIFIED_ELEMENT_INDEX_KEY, link,
                                                                                  project, searchScope,
                                                                                  JSQualifiedNamedElement.class);
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
@@ -126,7 +127,7 @@ public final class ActionScriptClassResolver extends JSClassResolver {
         if (!file.getLanguage().isKindOf(FlexSupportLoader.ECMA_SCRIPT_L4)) continue;
         VirtualFile vFile = file.getVirtualFile();
         if (clazzShouldBeTakenFromOurLibrary &&
-            !JavaScriptIndex.ECMASCRIPT_JS2.equals(vFile.getName()) // object from swf do not contain necessary members!
+            !JSCorePredefinedLibrariesConstants.ECMASCRIPT_JS2.equals(vFile.getName()) // object from swf do not contain necessary members!
           ) {
           continue;
         }

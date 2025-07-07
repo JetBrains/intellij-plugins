@@ -7,6 +7,7 @@ import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.documentation.DocumentationMarkup;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
@@ -14,7 +15,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
-import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -370,7 +370,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
     Set<JSClass> visited = new LinkedHashSet<>();
     for (String className : myClassNames) {
-      Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSQualifiedElementIndex.KEY, className, project,
+      Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSIndexKeys.JS_QUALIFIED_ELEMENT_INDEX_KEY, className, project,
                                                                              scope, JSQualifiedNamedElement.class);
       findStyleAttributes(candidates, visited, navElement2pairInfo);
       // search in MXML files

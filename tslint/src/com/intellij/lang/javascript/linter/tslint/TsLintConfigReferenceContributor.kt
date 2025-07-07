@@ -5,7 +5,7 @@ import com.intellij.json.psi.JsonArray
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
-import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil.getSimpleReferencesPathProvider
+import com.intellij.lang.ecmascript6.resolve.JSFileReferenceCache.getSimpleReferencesPathProvider
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.patterns.PsiElementPattern

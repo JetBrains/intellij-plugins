@@ -22,6 +22,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
+import com.intellij.lang.javascript.index.PackageElementsProcessor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
@@ -181,7 +182,7 @@ public final class CodeContext {
     final CodeContext codeContext = new CodeContext(namespace, module, scope);
     final String packageName = namespace.endsWith(".*") ? namespace.substring(0, namespace.length() - 2) : "";
 
-    JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
+    JSPackageIndex.processElementsInScope(packageName, null, new PackageElementsProcessor() {
       @Override
       public boolean process(VirtualFile file, @NotNull String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         if (kind != JSPackageIndexInfo.Kind.CLASS) return true;

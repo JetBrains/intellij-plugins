@@ -28,7 +28,7 @@ class TemplateLoaderFrameworkHandler : FrameworkIndexingHandler() {
     return WITH_RENDER.equals(referencedNameElement?.text, ignoreCase = true)
   }
 
-  override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingDataImpl?): JSElementIndexingDataImpl? {
+  override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingData?): JSElementIndexingData? {
     val decoratorName = decorator.decoratorName
     if (decoratorName?.equals(WITH_RENDER, true) == true) {
       return addImplicitElementForWithRender(decoratorName, decorator, data)
@@ -46,8 +46,8 @@ class TemplateLoaderFrameworkHandler : FrameworkIndexingHandler() {
   private fun addImplicitElementForWithRender(
     name: String,
     context: PsiElement,
-    outData: JSElementIndexingDataImpl?,
-  ): JSElementIndexingDataImpl? {
+    outData: JSElementIndexingData?,
+  ): JSElementIndexingData? {
     val out = outData ?: JSElementIndexingDataImpl()
     JSStubBasedPsiTreeUtil.resolveLocallyWithMergedResults(name, context)
       .asSequence()

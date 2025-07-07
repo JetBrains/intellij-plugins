@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.DumbAware;
@@ -113,7 +113,7 @@ public final class FlexSchemaHandler extends XmlSchemaProvider implements DumbAw
       final GlobalSearchScope scopeWithLibs = module != null
                                               ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
                                               : GlobalSearchScope.allScope(project);
-      for (JSQualifiedNamedElement element : JSResolveUtil.findElementsByName(tagName, project, scopeWithLibs, false)) {
+      for (JSQualifiedNamedElement element : BackendJSResolveUtil.findElementsByName(tagName, project, scopeWithLibs, false)) {
         if (element instanceof JSClass && CodeContext.hasDefaultConstructor((JSClass)element)) {
           final String packageName = StringUtil.getPackageName(element.getQualifiedName());
           if (!componentsThatHaveNotPackageBackedNamespace.contains(StringUtil.getQualifiedName(packageName, tagName))) {

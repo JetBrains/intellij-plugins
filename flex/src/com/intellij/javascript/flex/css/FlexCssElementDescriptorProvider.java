@@ -22,7 +22,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.BackendJSResolveUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
@@ -203,7 +203,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
         }
 
         final String selectorName = selector.getElementName();
-        Collection<JSQualifiedNamedElement> elements = JSResolveUtil.findElementsByName(selectorName, scope.getProject(), scope);
+        Collection<JSQualifiedNamedElement> elements = BackendJSResolveUtil.findElementsByName(selectorName, scope.getProject(), scope);
         for (PsiElement element : elements) {
           if (element instanceof JSClass) {
             String classOrFileName = findJsClassOrFile((JSClass)element, new LinkedHashSet<>(), allNames);
@@ -295,7 +295,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
     if (selector.equals("global")) return true;
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
-    Collection<JSQualifiedNamedElement> classes = JSResolveUtil.findElementsByName(selector, context.getProject(), scope);
+    Collection<JSQualifiedNamedElement> classes = BackendJSResolveUtil.findElementsByName(selector, context.getProject(), scope);
     for (JSQualifiedNamedElement c : classes) {
       if (c instanceof JSClass) {
         return true;
@@ -413,7 +413,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
       }
 
       final String shortClassName = selector.getElementName();
-      Collection<JSQualifiedNamedElement> candidates = JSResolveUtil.findElementsByName(shortClassName, project, scope);
+      Collection<JSQualifiedNamedElement> candidates = BackendJSResolveUtil.findElementsByName(shortClassName, project, scope);
       for (JSQualifiedNamedElement candidate : candidates) {
         if (candidate instanceof JSClass) {
           fillPropertyDescriptorsDynamically((JSClass)candidate, visited, result);
@@ -435,7 +435,7 @@ public final class FlexCssElementDescriptorProvider extends CssElementDescriptor
     if (context == null) return null;
     Module module = findModuleForPsiElement(context);
     GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : context.getResolveScope();
-    return JSResolveUtil.findElementsByName(className, context.getProject(), scope);
+    return BackendJSResolveUtil.findElementsByName(className, context.getProject(), scope);
   }
 
   public static @Nullable XmlElementDescriptor getTypeSelectorDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {

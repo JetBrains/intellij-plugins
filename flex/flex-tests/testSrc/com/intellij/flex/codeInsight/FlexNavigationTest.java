@@ -8,10 +8,10 @@ import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.module.ModuleType;
@@ -133,7 +133,7 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
         String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
         GlobalSearchScope searchScope = scope != null ? scope : JSResolveUtil.getResolveScope(element);
         final Collection<JSQualifiedNamedElement> candidates =
-          StubIndex.getElements(JSQualifiedElementIndex.KEY, qName, editor.getProject(), searchScope,
+          StubIndex.getElements(JSIndexKeys.JS_QUALIFIED_ELEMENT_INDEX_KEY, qName, editor.getProject(), searchScope,
                                 JSQualifiedNamedElement.class);
         for (JSQualifiedNamedElement candidate : candidates) {
           if (!qName.equals(candidate.getQualifiedName())) {

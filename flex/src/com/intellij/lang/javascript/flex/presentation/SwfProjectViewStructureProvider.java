@@ -8,12 +8,12 @@ import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.ActionScriptFileType;
+import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
@@ -159,7 +159,7 @@ public final class SwfProjectViewStructureProvider implements SelectableTreeStru
 
     GlobalSearchScope searchScope = JSResolveUtil.getResolveScope(mainElement);
     Collection<JSQualifiedNamedElement> candidates =
-      StubIndex.getElements(JSQualifiedElementIndex.KEY, qName, mainElement.getProject(), searchScope,
+      StubIndex.getElements(JSIndexKeys.JS_QUALIFIED_ELEMENT_INDEX_KEY, qName, mainElement.getProject(), searchScope,
                             JSQualifiedNamedElement.class);
     List<OrderEntry> sourceFileEntries = projectFileIndex.getOrderEntriesForFile(elementVFile);
 
