@@ -1,0 +1,8 @@
+:about (typeText=null; priority=1.0; typeGreyed)
+:accesskey (typeText=null; priority=1.0; typeGreyed)
+:aria-activedescendant (typeText=null; priority=1.0; typeGreyed)
+:aria-atomic (typeText=null; priority=1.0; typeGreyed)
+:aria-autocomplete (typeText=null; priority=1.0; typeGreyed)
+:autocapitalize (typeText=null; priority=1.0; typeGreyed)
+:autofocus (typeText=null; priority=1.0; typeGreyed)
+:align (typeText=null; priority=0.0; strikeout; typeGreyed)
