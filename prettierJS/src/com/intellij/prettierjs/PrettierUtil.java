@@ -125,6 +125,11 @@ public final class PrettierUtil {
     return virtualFile != null && CONFIG_FILE_NAMES.contains(virtualFile.getName());
   }
 
+  public static boolean isSafeToFormatWithCursor(@NotNull VirtualFile virtualFile) {
+    // Don't use cursorOffset for Svelte files WEB-73860
+    return !"svelte".equalsIgnoreCase(virtualFile.getExtension());
+  }
+
   public static @NotNull Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull List<VirtualFile> from, @NotNull Project project) {
     HashSet<VirtualFile> results = new HashSet<>();
     VirtualFile baseDir = project.getBaseDir();

@@ -402,6 +402,12 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     });
   }
 
+  public void testCaretPositionReformatSvelte() {
+    doReformatFile("toReformat", "svelte", () -> {
+      performNpmInstallForPackageJson("package.json");
+    });
+  }
+
   public void testCommentAfterImports() {
     configureRunOnReformat(() -> doTestEditorReformat(""));
   }

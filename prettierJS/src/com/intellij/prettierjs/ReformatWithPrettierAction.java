@@ -316,7 +316,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
       var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
       if (editor != null &&
           !editor.isDisposed() &&
-          editor.getVirtualFile().equals(virtualFile) &&
+          Objects.equals(editor.getVirtualFile(), virtualFile) &&
           formattingContext.getCursorOffset() >= 0) {
         editor.getCaretModel().moveToOffset(formattingContext.getCursorOffset());
       }
@@ -369,12 +369,12 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
       int[] offsetsToKeep = null;
 
       var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-      if (editor != null && !editor.isDisposed() && editor.getVirtualFile().equals(currentVFile)) {
+      if (editor != null && !editor.isDisposed() && Objects.equals(editor.getVirtualFile(), currentVFile)) {
         offsetsToKeep = new int[] { editor.getCaretModel().getOffset() };
       }
       var convertedText = JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile, offsetsToKeep);
 
-      if (offsetsToKeep != null) {
+      if (offsetsToKeep != null && PrettierUtil.isSafeToFormatWithCursor(currentVFile)) {
         cursorOffset.set(offsetsToKeep[0]);
       }
 
