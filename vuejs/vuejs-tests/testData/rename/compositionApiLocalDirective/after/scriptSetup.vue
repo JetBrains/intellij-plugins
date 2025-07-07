@@ -5,5 +5,5 @@ vNewName()
 
 </script>
 <template>
-  <div v-new<caret>-name>
+  <div v-new-name>
 </template>
