@@ -1,33 +1,45 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.testFramework.fixtures.CompletionAutoPopupTestCase
-import junit.framework.TestCase
+import org.jetbrains.vuejs.VueTestCase
 
-class VueAutoPopupTest : CompletionAutoPopupTestCase() {
-  fun testEventsAfterAt() {
-    myFixture.configureByText("a.vue", "<div <caret>>")
-    type("@")
-    assertContainsElements(myFixture.lookupElementStrings!!,"@abort", "@auxclick", "@blur", "@cancel", "@canplay")
-  }
+class VueAutoPopupTest : VueTestCase("autoPopup") {
 
-  fun testEventsAfterVOnColon() {
-    myFixture.configureByText("a.vue", "<div v-on<caret>>")
-    type(":")
-    assertContainsElements(myFixture.lookupElementStrings!!,"abort", "auxclick", "blur", "cancel", "canplay")
-  }
+  fun testEventsAfterAt() =
+    doCompletionAutoPopupTest(checkResult = false) {
+      type("@")
+      checkLookupItems { item ->
+        item.lookupString.let {
+          it.startsWith("@a") || it.startsWith("@b") || it.startsWith("@c")
+        }
+      }
+    }
 
-  fun testVBindShorthand() {
-    myFixture.configureByText("a.vue", "<div <caret>>")
-    type(":")
-    TestCase.assertNotNull(myFixture.lookup)
-    type("a")
-    assertContainsElements(myFixture.lookupElementStrings!!,":about", ":accesskey", ":align", ":aria-activedescendant")
-  }
+  fun testEventsAfterVOnColon() =
+    doCompletionAutoPopupTest(checkResult = false) {
+      type(":")
+      checkLookupItems { item ->
+        item.lookupString.let {
+          it.startsWith("a") || it.startsWith("b") || it.startsWith("c")
+        }
+      }
+    }
 
-  fun testNoAutopopupAfterMinus() {
-    myFixture.configureByText("a.vue", "<div <caret>>")
-    type("-")
-    TestCase.assertNull(myFixture.lookup)
-  }
+  fun testVBindShorthand() =
+    doCompletionAutoPopupTest(checkResult = false) {
+      type(":")
+      assertLookupShown()
+      type("a")
+      checkLookupItems{ item ->
+        item.lookupString.let {
+          !it.startsWith(":aria-") || it.startsWith(":aria-a")
+        }
+      }
+    }
+
+  fun testNoAutopopupAfterMinus() =
+    doCompletionAutoPopupTest(checkResult = false) {
+      type("-")
+      assertLookupNotShown()
+    }
 }
