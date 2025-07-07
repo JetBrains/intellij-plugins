@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Forms.FooBars.NewName :foos
+        <Forms.FooBars.In<caret>put></Forms.FooBars.Input>
     </div>
 </template>
 

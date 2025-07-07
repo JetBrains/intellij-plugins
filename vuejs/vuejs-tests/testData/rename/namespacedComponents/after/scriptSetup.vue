@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Forms.FooBars.NewName
+        <Forms.FooBars.NewName></Forms.FooBars.NewName>
     </div>
 </template>
 
