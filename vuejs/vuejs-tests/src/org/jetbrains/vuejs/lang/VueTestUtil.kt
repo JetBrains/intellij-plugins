@@ -18,6 +18,8 @@ fun getVueTestDataPath(): String =
 
 fun vueRelativeTestDataPath(): String = "/contrib$VUE_TEST_DATA_PATH"
 
+val filterOutAriaAttributes: (LookupElementInfo) -> Boolean = { !it.lookupString.contains("aria-") }
+
 val filterOutMostOfGlobalJSSymbolsInVue: (item: LookupElementInfo) -> Boolean = { info ->
   info.priority >= JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
   || info.lookupElement.getUserData(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR).let {

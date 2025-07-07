@@ -1,0 +1,2 @@
+component (typeText='vue'; priority=10.0; typeGreyed)
+comp-u-i (typeText=null; priority=1.0; typeGreyed)
