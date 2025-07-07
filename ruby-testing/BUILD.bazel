@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.ruby.testing` start
-load("@rules_java//java:defs.bzl", "java_library")
-load("@rules_jvm//:jvm.bzl", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "ruby-testing_resources",
@@ -8,9 +7,10 @@ jvm_resources(
   strip_prefix = "src"
 )
 
-java_library(
+jvm_library(
   name = "ruby-testing",
   visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True),
   runtime_deps = [":ruby-testing_resources"]
 )
 ### auto-generated section `build intellij.ruby.testing` end
