@@ -15,7 +15,7 @@ import com.intellij.lang.javascript.psi.stubs.*
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.tree.util.children
-import com.intellij.lang.typescript.TypeScriptStubElementTypes
+import com.intellij.lang.typescript.TypeScriptElementTypes
 import com.intellij.openapi.util.io.FileUtilRt.getNameWithoutExtension
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -110,7 +110,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
   override fun shouldCreateStubForArrayLiteral(node: ASTNode): Boolean {
     return node.treeParent?.treeParent
-      ?.takeIf { it.elementType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE }
+      ?.takeIf { it.elementType == TypeScriptElementTypes.TYPESCRIPT_VARIABLE }
       ?.psi?.asSafely<TypeScriptVariable>()
       ?.let { isStandalonePseudoModuleDeclaration(it) } == true
   }
@@ -376,7 +376,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
       ?.text
 
   private fun isDirectiveField(fieldNode: ASTNode?): Boolean {
-    if (fieldNode?.elementType !== TypeScriptStubElementTypes.TYPESCRIPT_FIELD) return false
+    if (fieldNode?.elementType !== TypeScriptElementTypes.TYPESCRIPT_FIELD) return false
     val classNode = fieldNode?.treeParent?.treeParent
                       ?.takeIf { it.elementType === JSStubElementTypes.TYPESCRIPT_CLASS }
                     ?: return false
@@ -459,12 +459,12 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     if (attributeList.hasModifier(JSAttributeList.ModifierType.DECLARE)) {
       // export declare const foo = readonly [typeof a, typeof b]
       // export declare const foo = [typeof a, typeof b]
-      val tuple = variable.node.children().find { it.elementType == TypeScriptStubElementTypes.TUPLE_TYPE }
+      val tuple = variable.node.children().find { it.elementType == TypeScriptElementTypes.TUPLE_TYPE }
       return tuple != null && tuple.children()
-        .filter { it.elementType == TypeScriptStubElementTypes.TUPLE_MEMBER_ELEMENT }
+        .filter { it.elementType == TypeScriptElementTypes.TUPLE_MEMBER_ELEMENT }
         .map { it.firstChildNode }
         .all {
-          it?.elementType == TypeScriptStubElementTypes.TYPEOF_TYPE
+          it?.elementType == TypeScriptElementTypes.TYPEOF_TYPE
           && it.lastChildNode?.elementType == JSElementTypes.REFERENCE_EXPRESSION
         }
     }
@@ -474,7 +474,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
       val arr = variable.node.children()
                   .find { it.elementType == JSStubElementTypes.TYPE_AS_EXPRESSION }
                   ?.takeIf {
-                    it.lastChildNode?.elementType == TypeScriptStubElementTypes.CONST_TYPE
+                    it.lastChildNode?.elementType == TypeScriptElementTypes.CONST_TYPE
                   }
                   ?.firstChildNode
                   ?.takeIf { it.elementType == JSElementTypes.ARRAY_LITERAL_EXPRESSION }

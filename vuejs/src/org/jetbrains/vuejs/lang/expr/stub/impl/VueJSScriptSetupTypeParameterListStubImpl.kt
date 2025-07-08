@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSElementType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameterList
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptTypeParameterListImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSStubBase
-import com.intellij.lang.typescript.TypeScriptStubElementTypes
+import com.intellij.lang.typescript.TypeScriptElementTypes
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import org.jetbrains.vuejs.lang.expr.stub.VueJSScriptSetupTypeParameterListStub
@@ -28,7 +28,7 @@ class VueJSScriptSetupTypeParameterListStubImpl :
   ) : super(dataStream!!, parent, elementType)
 
   override fun createPsi(): TypeScriptTypeParameterList {
-    return TypeScriptTypeParameterListImpl(this, TypeScriptStubElementTypes.TYPE_PARAMETER_LIST)
+    return TypeScriptTypeParameterListImpl(this, TypeScriptElementTypes.TYPE_PARAMETER_LIST)
   }
 }
 

@@ -18,7 +18,7 @@ import com.intellij.lang.javascript.psi.types.JSTupleType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeChildren
-import com.intellij.lang.typescript.TypeScriptStubElementTypes
+import com.intellij.lang.typescript.TypeScriptElementTypes
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -515,7 +515,7 @@ fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
           stub.childrenStubs.asSequence()
             .filter {
               it.elementType == JSStubElementTypes.VARIABLE ||
-              it.elementType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE ||
+              it.elementType == TypeScriptElementTypes.TYPESCRIPT_VARIABLE ||
               it.elementType == JSStubElementTypes.DESTRUCTURING_ELEMENT
             }
             .flatMap { it.childrenStubs.asSequence() }
