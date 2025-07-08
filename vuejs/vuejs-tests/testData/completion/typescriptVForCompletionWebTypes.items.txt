@@ -1,0 +1,1 @@
+fooBar1 (typeText=null; priority=101.0; bold)

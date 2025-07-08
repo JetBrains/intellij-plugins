@@ -1,0 +1,1 @@
+<template><div v-for="fooBar1 in goodTypes">{{<caret>}}</li></template>

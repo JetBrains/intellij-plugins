@@ -3,6 +3,6 @@
 
 <template>
   <div>
-    <Public<caret>
+    <PublicCo<caret>
   </div>
 </template>

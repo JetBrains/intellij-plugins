@@ -1,0 +1,3 @@
+<template>
+  <Sho<caret>
+</template>

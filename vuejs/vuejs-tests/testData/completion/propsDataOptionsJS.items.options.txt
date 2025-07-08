@@ -1,0 +1,7 @@
+computed (typeText=null; priority=101.0; bold)
+customOption (typeText='string'; priority=101.0; bold)
+customStuff (typeText='number'; priority=101.0; bold)
+data (typeText=null; priority=101.0; bold)
+mixins (typeText=null; priority=101.0; bold)
+name (typeText='string'; priority=101.0; bold)
+props (typeText=null; priority=101.0; bold)

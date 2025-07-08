@@ -1,0 +1,1 @@
+msg (typeText='string'; priority=100.0; bold; typeGreyed)

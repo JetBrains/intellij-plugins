@@ -1,0 +1,4 @@
+Dialog (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+DialogDescription (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+DialogOverlay (typeText='@headlessui/vue'; priority=1.0; typeGreyed)
+DialogTitle (typeText='@headlessui/vue'; priority=1.0; typeGreyed)

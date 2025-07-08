@@ -1,4 +1,3 @@
-<template><n-affix</template>
+<template><n-a<caret></template>
 <script setup>
-import {NAffix} from "naive-ui";
 </script>

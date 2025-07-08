@@ -1,0 +1,4 @@
+component-prop (typeText='any'; priority=100.0; bold; typeGreyed)
+decorated-mixin-prop (typeText='boolean'; priority=100.0; bold; typeGreyed)
+decorated-mixin-prop2 (typeText='any'; priority=100.0; bold; typeGreyed)
+mixin-prop (typeText='string'; priority=100.0; bold; typeGreyed)
