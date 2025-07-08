@@ -1,0 +1,3 @@
+default
+requireDecorators1
+requireDecorators2

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "vue-class-component" : "latest",
+    "vue": "*"
+  }
+}

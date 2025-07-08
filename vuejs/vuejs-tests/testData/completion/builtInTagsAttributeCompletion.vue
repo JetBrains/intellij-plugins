@@ -1,0 +1,3 @@
+<template>
+  <transition <caret>>
+</template>

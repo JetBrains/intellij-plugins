@@ -1,0 +1,3 @@
+<template>
+  <HiddenComponen<caret>
+</template>

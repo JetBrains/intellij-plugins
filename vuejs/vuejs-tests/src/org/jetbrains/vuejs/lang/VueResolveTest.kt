@@ -1883,7 +1883,6 @@ export default class UsageComponent extends Vue {
   }
 
   fun testSlotName() {
-    myFixture.configureVueDependencies("some_lib" to "0.0.0")
     myFixture.copyDirectoryToProject("../completion/slotNames", ".")
     myFixture.copyFileToProject("slotNames/test2.vue", "test2.vue")
     myFixture.configureFromTempProjectFile("test2.vue")

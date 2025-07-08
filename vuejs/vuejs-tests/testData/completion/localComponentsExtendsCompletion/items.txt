@@ -1,0 +1,1 @@
+prop-from-a (typeText='any'; priority=100.0; bold; typeGreyed)

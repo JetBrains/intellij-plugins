@@ -1,0 +1,2 @@
+VueTscComponentQualifiedComponentType (typeText=null; priority=100.0; bold; typeGreyed)
+Field (typeText='vee-validate'; priority=1.0; typeGreyed)

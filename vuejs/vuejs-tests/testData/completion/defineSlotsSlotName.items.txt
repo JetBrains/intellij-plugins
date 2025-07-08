@@ -1,0 +1,3 @@
+default (typeText=null; priority=0.0; typeGreyed)
+footer (typeText=null; priority=0.0; typeGreyed)
+header (typeText=null; priority=0.0; typeGreyed)

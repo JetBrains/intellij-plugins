@@ -1,0 +1,4 @@
+auxclick (typeText=null; priority=1.0; typeGreyed)
+click (typeText=null; priority=1.0; typeGreyed)
+close (typeText=null; priority=1.0; typeGreyed)
+dblclick (typeText=null; priority=1.0; typeGreyed)
