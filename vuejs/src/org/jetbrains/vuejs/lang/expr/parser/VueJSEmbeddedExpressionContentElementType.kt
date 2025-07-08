@@ -17,5 +17,5 @@ class VueJSEmbeddedExpressionContentElementType(debugName: String, private val l
     return VueJSEmbeddedExpressionContentImpl(node)
   }
 
-  override fun toString(): String = VueJSStubElementTypes.EXTERNAL_ID_PREFIX + debugName
+  override fun toString(): String = VueJSElementTypes.EXTERNAL_ID_PREFIX + debugName
 }

@@ -108,9 +108,6 @@
     <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueEmptyComponentInitializersIndex"/>
     <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueComponentStylesIndex"/>
 
-    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes" externalIdPrefix="VUE-JS:"/>
-    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes" externalIdPrefix="VUE:"/>
-
     <languageStubDefinition language="Vue" implementationClass="org.jetbrains.vuejs.lang.stubs.VueLanguageStubDefinition"/>
     <stubElementRegistryExtension implementation="org.jetbrains.vuejs.lang.stubs.VueStubRegistryExtension"/>
 

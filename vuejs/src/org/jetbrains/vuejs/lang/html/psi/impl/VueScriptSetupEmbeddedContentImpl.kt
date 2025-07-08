@@ -23,7 +23,7 @@ import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.findVueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.isScriptSetupTag
-import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
+import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes
 import org.jetbrains.vuejs.lang.expr.psi.VueJSScriptSetupExpression
 
 class VueScriptSetupEmbeddedContentImpl : JSEmbeddedContentImpl, TypeScriptTypeParameterListOwner, JSExportScopeProvider {
@@ -62,8 +62,8 @@ class VueScriptSetupEmbeddedContentImpl : JSEmbeddedContentImpl, TypeScriptTypeP
         ?.let {
           val stub = (it as? StubBasedPsiElement<*>)?.stub
           if (stub != null) {
-            stub.findChildStubByElementType(VueJSStubElementTypes.EMBEDDED_EXPR_CONTENT_TS)
-              ?.findChildStubByElementType(VueJSStubElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST)
+            stub.findChildStubByElementType(VueJSElementTypes.EMBEDDED_EXPR_CONTENT_TS)
+              ?.findChildStubByElementType(VueJSElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST)
               ?.psi as? TypeScriptTypeParameterList
           }
           else {

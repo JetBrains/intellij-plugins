@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.stubs.TypeScriptTypeParameterListStub
 import com.intellij.lang.javascript.stubs.serializers.JSStubSerializer
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
-import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST
+import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST
 import org.jetbrains.vuejs.lang.expr.stub.impl.VueJSScriptSetupTypeParameterListStubImpl
 
 class VueJSScriptSetupTypeParameterListStubSerializer : JSStubSerializer<TypeScriptTypeParameterListStub, TypeScriptTypeParameterList>(SCRIPT_SETUP_TYPE_PARAMETER_LIST) {

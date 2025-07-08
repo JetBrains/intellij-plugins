@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.stubs.TypeScriptTypeParameterListStub
 import com.intellij.lang.javascript.stubs.factories.JSStubFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST
+import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST
 import org.jetbrains.vuejs.lang.expr.stub.impl.VueJSScriptSetupTypeParameterListStubImpl
 
 class VueJSScriptSetupTypeParameterListStubFactory : JSStubFactory<TypeScriptTypeParameterListStub, TypeScriptTypeParameterList>(SCRIPT_SETUP_TYPE_PARAMETER_LIST) {

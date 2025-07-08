@@ -18,7 +18,7 @@ class VueTSParser(builder: PsiBuilder) : TypeScriptParser(builder), VueExprParse
     VueTSExpressionParser(this, extraParser)
 
   override fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
-    extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSStubElementTypes.EMBEDDED_EXPR_CONTENT_TS)
+    extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSElementTypes.EMBEDDED_EXPR_CONTENT_TS)
   }
 
   private fun parseExpressionOptional() = expressionParser.parseExpressionOptional()
@@ -42,7 +42,7 @@ class VueTSParser(builder: PsiBuilder) : TypeScriptParser(builder), VueExprParse
       }
       first = false
     }
-    typeArgumentList.done(VueJSStubElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST)
+    typeArgumentList.done(VueJSElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST)
   }
 
   class VueTSExpressionParser(parser: VueTSParser, private val extraParser: VueJSExtraParser) : TypeScriptExpressionParser(parser) {

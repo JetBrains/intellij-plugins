@@ -53,7 +53,7 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.libraries.componentDecorator.isVueComponentDecoratorName
 import org.jetbrains.vuejs.model.getSlotTypeFromContext
@@ -511,8 +511,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
 
   private fun isDescendantOfStubbedScriptTag(callNode: ASTNode): Boolean =
-    TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueStubElementTypes.STUBBED_TAG))
-      ?.takeIf { it.elementType == VueStubElementTypes.STUBBED_TAG }
+    TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueElementTypes.STUBBED_TAG))
+      ?.takeIf { it.elementType == VueElementTypes.STUBBED_TAG }
       .let { it?.psi?.let { it as? HtmlTag }?.name == SCRIPT_TAG_NAME }
 
   private fun recordVueFunctionName(

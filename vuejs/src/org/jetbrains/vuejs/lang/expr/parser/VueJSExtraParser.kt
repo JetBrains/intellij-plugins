@@ -89,7 +89,7 @@ class VueJSExtraParser(
     if (builder.tokenType == JSTokenTypes.LPAR) {
       parseVForVariables()
     }
-    else if (!parseVariableStatement(VueJSStubElementTypes.V_FOR_VARIABLE)) {
+    else if (!parseVariableStatement(VueJSElementTypes.V_FOR_VARIABLE)) {
       val marker = builder.mark()
       if (!builder.eof()
           && builder.tokenType !== JSTokenTypes.IN_KEYWORD
@@ -109,7 +109,7 @@ class VueJSExtraParser(
   }
 
   private fun parseSlotPropsExpression() {
-    parseParametersExpression(VueJSElementTypes.SLOT_PROPS_EXPRESSION, VueJSStubElementTypes.SLOT_PROPS_PARAMETER)
+    parseParametersExpression(VueJSElementTypes.SLOT_PROPS_EXPRESSION, VueJSElementTypes.SLOT_PROPS_PARAMETER)
   }
 
   private fun parseParametersExpression(exprType: IElementType, @Suppress("SameParameterValue") paramType: IElementType) {
@@ -199,7 +199,7 @@ class VueJSExtraParser(
       return true
     }
     else if (parser.functionParser.willParseDestructuringAssignment()) {
-      parser.expressionParser.parseDestructuringElement(VueJSStubElementTypes.V_FOR_VARIABLE, false, false)
+      parser.expressionParser.parseDestructuringElement(VueJSElementTypes.V_FOR_VARIABLE, false, false)
       return true
     }
     return false
@@ -210,12 +210,12 @@ class VueJSExtraParser(
     val parenthesis = builder.mark()
     builder.advanceLexer() //LPAR
     val varStatement = builder.mark()
-    if (parseVariable(VueJSStubElementTypes.V_FOR_VARIABLE)) {
+    if (parseVariable(VueJSElementTypes.V_FOR_VARIABLE)) {
       var i = 0
       while (builder.tokenType == JSTokenTypes.COMMA && i < EXTRA_VAR_COUNT) {
         builder.advanceLexer()
         if (isIdentifierToken(builder.tokenType)) {
-          parser.buildTokenElement(VueJSStubElementTypes.V_FOR_VARIABLE)
+          parser.buildTokenElement(VueJSElementTypes.V_FOR_VARIABLE)
         }
         i++
       }

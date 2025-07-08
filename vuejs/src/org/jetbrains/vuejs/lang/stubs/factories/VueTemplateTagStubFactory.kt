@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang.stubs.factories
 
 import com.intellij.psi.impl.source.xml.stub.XmlTagStubImpl
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.TEMPLATE_TAG
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.TEMPLATE_TAG
 import org.jetbrains.vuejs.lang.html.psi.impl.VueTemplateTagImpl
 
 class VueTemplateTagStubFactory : VueStubBasedTagStubFactory(TEMPLATE_TAG) {

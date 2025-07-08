@@ -5,7 +5,7 @@ import com.intellij.lang.stubs.XmlStubBasedStubSerializer
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.REF_ATTRIBUTE
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.REF_ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeStubImpl
 
 class VueRefAttributeStubSerializer : XmlStubBasedStubSerializer<VueRefAttributeStubImpl>(REF_ATTRIBUTE) {

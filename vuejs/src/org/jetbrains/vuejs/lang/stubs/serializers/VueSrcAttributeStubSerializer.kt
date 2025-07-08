@@ -6,7 +6,7 @@ import com.intellij.psi.impl.source.xml.stub.XmlAttributeStubImpl
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.util.PathUtil
 import org.jetbrains.vuejs.index.VUE_URL_INDEX_KEY
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SRC_ATTRIBUTE
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SRC_ATTRIBUTE
 
 class VueSrcAttributeStubSerializer : XmlStubBasedAttributeStubSerializer(SRC_ATTRIBUTE) {
   override fun indexStub(stub: XmlAttributeStubImpl, sink: IndexSink) {

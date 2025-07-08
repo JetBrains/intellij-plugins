@@ -22,8 +22,8 @@ import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SCRIPT_SETUP_JS_EMBEDDED_CONTENT
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SCRIPT_SETUP_TS_EMBEDDED_CONTENT
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_SETUP_JS_EMBEDDED_CONTENT
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_SETUP_TS_EMBEDDED_CONTENT
 import java.util.*
 
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
@@ -127,14 +127,14 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       parseAttributeValue()
     }
     if (tagName.lowercase(Locale.US) == SLOT_TAG_NAME) {
-      attr.done(VueStubElementTypes.STUBBED_ATTRIBUTE)
+      attr.done(VueElementTypes.STUBBED_ATTRIBUTE)
     }
     else
       when (attributeInfo.kind) {
-        TEMPLATE_SRC, SCRIPT_SRC, STYLE_SRC -> attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
-        SCRIPT_ID -> attr.done(VueStubElementTypes.SCRIPT_ID_ATTRIBUTE)
-        SCRIPT_SETUP, SCRIPT_GENERIC, STYLE_MODULE -> attr.done(VueStubElementTypes.STUBBED_ATTRIBUTE)
-        REF -> attr.done(VueStubElementTypes.REF_ATTRIBUTE)
+        TEMPLATE_SRC, SCRIPT_SRC, STYLE_SRC -> attr.done(VueElementTypes.SRC_ATTRIBUTE)
+        SCRIPT_ID -> attr.done(VueElementTypes.SCRIPT_ID_ATTRIBUTE)
+        SCRIPT_SETUP, SCRIPT_GENERIC, STYLE_MODULE -> attr.done(VueElementTypes.STUBBED_ATTRIBUTE)
+        REF -> attr.done(VueElementTypes.REF_ATTRIBUTE)
         else -> attr.done(XmlElementType.XML_ATTRIBUTE)
       }
   }
@@ -143,7 +143,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     val tagName = info.normalizedName.lowercase(Locale.US)
     if (tagName in ALWAYS_STUBBED_TAGS
         || (tagLevel == 1 && tagName in TOP_LEVEL_TAGS)) {
-      return if (tagName == TEMPLATE_TAG_NAME) VueStubElementTypes.TEMPLATE_TAG else VueStubElementTypes.STUBBED_TAG
+      return if (tagName == TEMPLATE_TAG_NAME) VueElementTypes.TEMPLATE_TAG else VueElementTypes.STUBBED_TAG
     }
     return super.getHtmlTagElementType(info, tagLevel)
   }
