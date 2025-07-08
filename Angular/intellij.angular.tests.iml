@@ -48,7 +48,6 @@
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.webpack" />
-    <orderEntry type="module" module-name="intellij.javascript" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
     <orderEntry type="module-library" scope="TEST">

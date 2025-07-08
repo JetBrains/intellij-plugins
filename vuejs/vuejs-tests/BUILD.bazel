@@ -28,7 +28,6 @@ jvm_library(
     "@community//platform/refactoring",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
-    "//plugins/JavaScriptLanguage:javascript",
     "//contrib/vuejs",
     "//CSS/frontback/css-api:css-frontback",
     "//CSS:css",

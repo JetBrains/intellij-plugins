@@ -20,7 +20,6 @@ jvm_library(
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
-    "//plugins/JavaScriptLanguage:javascript",
     "//contrib/Astro:astro",
     "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",

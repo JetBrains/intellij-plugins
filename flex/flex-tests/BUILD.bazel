@@ -42,7 +42,6 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "//CSS/css-psi-impl:css-psi",
     "//contrib/flex/flex-shared:shared",
-    "//plugins/JavaScriptLanguage:javascript",
     "@community//platform/util:util-tests_test_lib",
     "@community//platform/editor-ui-ex:editor-ex",
     "//plugins/JSIntentionPowerPack:javascript-intentions",

@@ -48,7 +48,6 @@ jvm_library(
     "@community//platform/ide-core-impl",
     "@community//platform/lang-impl",
     "@community//platform/indexing-impl",
-    "//plugins/JavaScriptLanguage:javascript",
     "@community//xml/xml-psi-impl:psi-impl",
     "@community//platform/core-impl",
     "@community//platform/core-api:core",
