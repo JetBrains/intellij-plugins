@@ -46,7 +46,7 @@ open class QodanaRunContext(
         outputPath,
         profile,
         runCoroutineScope,
-        CoverageStatisticsData(coverageComputationState, project, emptyMap())
+        CoverageStatisticsData(coverageComputationState, project, null)
       )
     }
   }
