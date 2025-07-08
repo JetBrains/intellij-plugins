@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>main.tf</file>
+    <line>20</line>
+    <module>0</module>
+    <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown resource type</problem_class>
+    <description>For the provider &quot;hashicorp/google-beta&quot;, resource &quot;google-beta_project_service_identity&quot; is not
+      defined
+    </description>
+    <highlighted_element>resource &quot;google-beta_project_service_identity&quot; &quot;default&quot; { service = &quot;compute.googleapis.com&quot;
+      }
+    </highlighted_element>
+    <language>HCL</language>
+    <offset>0</offset>
+    <length>98</length>
+  </problem>
+</problems>

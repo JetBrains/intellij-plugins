@@ -17,7 +17,8 @@
     <module>0</module>
     <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown type</problem_class>
     <description>Unknown resource: &quot;aci_cloud_ad&quot;</description>
-    <highlighted_element>resource &quot;aci_cloud_ad&quot; &quot;cloud_ad&quot; { active_directory_id = &quot;ad_id&quot; tenant_dn = &quot;id1&quot; }</highlighted_element>
+    <highlighted_element>resource &quot;aci_cloud_ad&quot; &quot;cloud_ad&quot; { active_directory_id = &quot;ad_id&quot; tenant_dn = &quot;id1&quot;}
+    </highlighted_element>
     <language>HCL</language>
     <offset>0</offset>
     <length>100</length>
@@ -28,7 +29,8 @@
     <module>0</module>
     <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown type</problem_class>
     <description>Unknown resource: &quot;abbey_demo&quot;</description>
-    <highlighted_element>resource &quot;abbey_demo&quot; &quot;demo&quot; { email = &quot;a@a.a&quot; permission = &quot;user&quot; }</highlighted_element>
+    <highlighted_element>resource &quot;abbey_demo&quot; &quot;demo&quot; { email = &quot;a@a.a&quot; permission = &quot;user&quot; }
+    </highlighted_element>
     <language>HCL</language>
     <offset>0</offset>
     <length>77</length>
@@ -43,6 +45,20 @@
     <language>HCL</language>
     <offset>0</offset>
     <length>77</length>
+  </problem>
+  <problem>
+    <file>test6.tf</file>
+    <line>10</line>
+    <module>15</module>
+    <problem_class id="TfUnknownResource" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown resource type</problem_class>
+    <description>For the provider &quot;BurdaForward/aws-sso-scim&quot;, resource &quot;aws-sso-scim2_user&quot; is not defined
+    </description>
+    <highlighted_element>resource &quot;aws-sso-scim2_user&quot; &quot;user&quot; { display_name = &quot;John Doe&quot; family_name = &quot;Doe&quot;
+      given_na...
+    </highlighted_element>
+    <language>HCL</language>
+    <offset>0</offset>
+    <length>139</length>
   </problem>
   <problem>
     <file>test7.tf</file>
@@ -67,4 +83,3 @@
     <length>49</length>
   </problem>
 </problems>
-

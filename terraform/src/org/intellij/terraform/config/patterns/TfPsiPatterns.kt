@@ -11,6 +11,7 @@ import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LIFECYCLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LOCALS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
@@ -82,6 +83,15 @@ object TfPsiPatterns {
   val ProviderRootBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
     .withParent(TerraformConfigFile)
     .with(createBlockPattern(HCL_PROVIDER_IDENTIFIER))
+
+  val ProviderDefinedHclBlocks: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+    .and(RootBlock)
+    .with(object : PatternCondition<HCLBlock>("ResourceRootBlock or DataSourceRootBlock or EphemeralRootBlock") {
+      override fun accepts(block: HCLBlock, context: ProcessingContext?): Boolean {
+        val name = block.getNameElementUnquoted(0)
+        return name in setOf(HCL_RESOURCE_IDENTIFIER, HCL_DATASOURCE_IDENTIFIER, HCL_EPHEMERAL_IDENTIFIER)
+      }
+    })
 
   val ProvisionerBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
     .withParent(or(ResourceRootBlock))

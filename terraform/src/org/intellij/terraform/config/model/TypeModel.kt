@@ -37,6 +37,7 @@ import org.intellij.terraform.config.Constants.HCL_WORKSPACES_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.isTerraformCompatiblePsiFile
 import org.intellij.terraform.opentofu.model.EncryptionBlockType
 
@@ -52,7 +53,7 @@ enum class ProviderTier(val label: String) {
     fun findByLabel(label: String): ProviderTier? {
       return entries.find { it.label == label }
     }
-    
+
     val PreferedProviders: Set<ProviderTier> = setOf(TIER_BUILTIN, TIER_LOCAL, TIER_OFFICIAL)
   }
 }
@@ -65,7 +66,7 @@ class TypeModel(
   backends: List<BackendType> = emptyList(),
   functions: List<TfFunction> = emptyList(),
   providerDefinedFunctions: List<TfFunction> = emptyList(),
-  ephemeralResources: List<EphemeralType> = emptyList()
+  ephemeralResources: List<EphemeralType> = emptyList(),
 ) {
 
   val provisioners: List<ProvisionerType> = provisioners.sortedBy { it.type }
@@ -73,32 +74,20 @@ class TypeModel(
   val functions: List<TfFunction> = functions.sortedBy { it.name }
   val providerDefinedFunctions: List<TfFunction> = providerDefinedFunctions.sortedBy { it.name }
 
-  val providersByFullName: Map<String, ProviderType>
+  val providersByFullName: Map<String, ProviderType> = providers
+    .groupBy { it.fullName.lowercase() }
+    .mapValues { (_, values) -> values.minBy { it.tier } }
+
   val resourcesByProvider: Map<String, List<ResourceType>>
   val dataSourcesByProvider: Map<String, List<DataSourceType>>
   val ephemeralByProvider: Map<String, List<EphemeralType>>
 
-  private val providerDefaultPrefixes: Map<String, String>
-
   init {
-    fun getDefaultPrefix(provider: List<ResourceOrDataSourceType>?): String? {
-      return provider?.firstNotNullOfOrNull { getResourcePrefix(it.type) }
-    }
-
-    providersByFullName = providers
-      .groupBy { it.fullName.lowercase() }
-      .mapValues { (_, values) -> values.minBy { it.tier } }
-
     val loadedProviders = providersByFullName.values.toSet()
 
     resourcesByProvider = resources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
     dataSourcesByProvider = dataSources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
     ephemeralByProvider = ephemeralResources.filter { it.provider in loadedProviders }.groupBy { it.provider.fullName.lowercase() }
-
-    providerDefaultPrefixes = providersByFullName.mapNotNull { (name, provider) ->
-      val prefix = getDefaultPrefix(resourcesByProvider[name]) ?: getDefaultPrefix(dataSourcesByProvider[name])
-      prefix?.let { name to it }
-    }.toMap()
   }
 
   companion object {
@@ -107,9 +96,11 @@ class TypeModel(
     val TerraformRequiredVersion: PropertyType = PropertyType("required_version", Types.String, hint = SimpleHint("VersionRange"),
                                                               injectionAllowed = false)
 
-    private val DependsOnProperty: PropertyType = PropertyType("depends_on", Types.Array,
-                                                       hint = ReferenceHint("resource.#name", "data_source.#name", "module.#name",
-                                                                            "variable.#name", "ephemeral.#name"))
+    private val DependsOnProperty: PropertyType = PropertyType(
+      "depends_on",
+      Types.Array,
+      ReferenceHint("resource.#name", "data_source.#name", "module.#name", "variable.#name", "ephemeral.#name")
+    )
     private val CountProperty = PropertyType("count", Types.Number, conflictsWith = listOf("for_each"))
     private val ForEachProperty = PropertyType("for_each", Types.Any, conflictsWith = listOf("count"))
     private val ProviderProperty = PropertyType("provider", Types.String, hint = ReferenceHint("provider.#type", "provider.#alias"))
@@ -360,28 +351,49 @@ class TypeModel(
 
   private fun getProviderNameForIdentifier(identifier: String, psiElement: PsiElement? = null): String {
     val localNames = psiElement?.let { collectProviderLocalNames(it) } ?: emptyMap()
-    val providerShortName = getResourcePrefix(identifier)
+    val providerShortName = isProviderTypeDefined(psiElement) ?: getResourcePrefix(identifier)
     val providerFullName = localNames[providerShortName]
                            ?: Constants.OFFICIAL_PROVIDERS_NAMESPACE.map { "$it/$providerShortName" }.firstOrNull { providersByFullName.containsKey(it) }
                            ?: "hashicorp/$providerShortName" //The last resort
     return providerFullName.lowercase()
   }
 
+  private fun isProviderTypeDefined(psiElement: PsiElement?): String? {
+    if (psiElement == null || !TfPsiPatterns.ProviderDefinedHclBlocks.accepts(psiElement))
+      return null
+
+    val hclObject = psiElement.childrenOfType<HCLObject>().firstOrNull() ?: return null
+    val providerProperty = hclObject.findProperty(HCL_PROVIDER_IDENTIFIER)?.value?.text ?: return null
+    return providerProperty.trim()
+      .split('.')
+      .firstOrNull()
+      ?.takeIf { it.isNotEmpty() }
+  }
+
   fun getResourceType(name: String, psiElement: PsiElement? = null): ResourceType? =
-    lookupType(name, psiElement, resourcesByProvider)
+    lookupType(name, psiElement, resourcesByProvider, allResources())
 
   fun getDataSourceType(name: String, psiElement: PsiElement? = null): DataSourceType? =
-    lookupType(name, psiElement, dataSourcesByProvider)
+    lookupType(name, psiElement, dataSourcesByProvider, allDataSources())
 
   fun getEphemeralType(name: String, psiElement: PsiElement? = null): EphemeralType? =
-    lookupType(name, psiElement, ephemeralByProvider)
+    lookupType(name, psiElement, ephemeralByProvider, allEphemeralResources())
 
-  private fun <T : ResourceOrDataSourceType> lookupType(name: String, psiElement: PsiElement?, typesMap: Map<String, List<T>>): T? {
+  private fun <T : ResourceOrDataSourceType> lookupType(
+    name: String,
+    psiElement: PsiElement?,
+    typesMap: Map<String, List<T>>,
+    allTypes: Sequence<T>,
+  ): T? {
     val providerName = getProviderNameForIdentifier(name, psiElement)
-    val resourceId = getResourceName(name)
-    val defaultPrefix = providerDefaultPrefixes[providerName]?.takeIf { it != resourceId }
+
+    // Try to find the type in the provider-specific map first
     val typesCollection = typesMap[providerName] ?: return null
-    return typesCollection.firstOrNull { it.type == (defaultPrefix?.let { defaultPrefix + "_" + resourceId } ?: resourceId) }
+
+    // Fallback: if not found, search across all types
+    // In most cases (approx. 95%), the type will be found via the provider-specific map,
+    // so the fallback search should have minimal performance impact.
+    return typesCollection.firstOrNull { it.type == name } ?: allTypes.find { it.type == name }
   }
 
   fun getProviderType(name: String, psiElement: PsiElement? = null): ProviderType? {

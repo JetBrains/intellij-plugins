@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.psi
 
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -79,4 +79,4 @@ fun <T : PsiElement> PsiElement?.getParent(aClass: Class<T>, strict: Boolean = t
   return PsiTreeUtil.getParentOfType(this, aClass, strict)
 }
 
-internal fun <T: PsiNamedElement> T.getNameOrText(): String = this.name ?: this.text
+internal fun <T : PsiNamedElement> T.getNameOrText(): String = this.name ?: this.text
