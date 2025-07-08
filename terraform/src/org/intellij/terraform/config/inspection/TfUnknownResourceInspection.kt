@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
@@ -21,7 +21,6 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.isTerraformCompatiblePsiFile
-import kotlin.collections.listOfNotNull
 
 internal class TfUnknownResourceInspection : LocalInspectionTool() {
 
@@ -69,7 +68,6 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
     HCL_PROVIDER_IDENTIFIER -> model.getProviderType(identifier, block)
     else -> null
   }
-
 
   private fun getBlockTypeString(block: HCLBlock, allowedIdentifiers: List<String>): String? =
     block.getNameElementUnquoted(0)?.lowercase()?.takeIf { it in allowedIdentifiers }

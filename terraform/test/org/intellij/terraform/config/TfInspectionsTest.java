@@ -169,6 +169,10 @@ public class TfInspectionsTest extends TfInspectionFixtureTestCase {
     doTest("unknown_resource", new TfUnknownResourceInspection());
   }
 
+  public void testGoogleAndGoogleBetaResources() {
+    doTest("google_beta_resource", new TfUnknownResourceInspection());
+  }
+
   public void testUnusedVariableAndLocals() {
     doTest("unused_elements", new TfUnusedElementsInspection());
   }
