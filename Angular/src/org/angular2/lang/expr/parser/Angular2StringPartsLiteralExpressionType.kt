@@ -10,7 +10,7 @@ class Angular2StringPartsLiteralExpressionType : JSLiteralExpressionElementTypeI
                                                  JSExpressionElementType {
 
   override fun toString(): String =
-    Angular2StubElementTypes.EXTERNAL_ID_PREFIX + debugName
+    Angular2ElementTypes.EXTERNAL_ID_PREFIX + debugName
 
   override fun construct(node: ASTNode): PsiElement =
     Angular2StringPartsLiteralExpressionImpl(node)

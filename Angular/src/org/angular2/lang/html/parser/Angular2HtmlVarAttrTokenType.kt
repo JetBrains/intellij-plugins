@@ -15,7 +15,6 @@ import com.intellij.lexer.Lexer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTokenType
 import org.angular2.lang.expr.Angular2Language
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import java.util.function.Supplier
 
 class Angular2HtmlVarAttrTokenType(debugName: String,
@@ -73,12 +72,12 @@ class Angular2HtmlVarAttrTokenType(debugName: String,
 
   companion object {
     @JvmField
-    val REFERENCE: Angular2HtmlVarAttrTokenType = Angular2HtmlVarAttrTokenType("NG:REFERENCE_TOKEN", Angular2HtmlStubElementTypes.REFERENCE_VARIABLE) {
+    val REFERENCE: Angular2HtmlVarAttrTokenType = Angular2HtmlVarAttrTokenType("NG:REFERENCE_TOKEN", Angular2HtmlElementTypes.REFERENCE_VARIABLE) {
       RefPrefixTokenParser()
     }
 
     @JvmField
-    val LET: Angular2HtmlVarAttrTokenType = Angular2HtmlVarAttrTokenType("NG:LET_TOKEN", Angular2HtmlStubElementTypes.LET_VARIABLE) {
+    val LET: Angular2HtmlVarAttrTokenType = Angular2HtmlVarAttrTokenType("NG:LET_TOKEN", Angular2HtmlElementTypes.LET_VARIABLE) {
       LetPrefixTokenParser()
     }
   }

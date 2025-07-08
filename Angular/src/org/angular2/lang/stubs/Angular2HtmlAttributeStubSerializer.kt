@@ -9,12 +9,12 @@ import com.intellij.psi.tree.IElementType
 import org.angular2.index.Angular2CustomCssPropertyInHtmlAttributeIndexKey
 import org.angular2.isCustomCssPropertyBinding
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
+import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.stub.impl.Angular2HtmlBoundAttributeStubImpl
 
 class Angular2HtmlAttributeStubSerializer(elementType: IElementType) : XmlStubBasedStubSerializer<Angular2HtmlBoundAttributeStubImpl>(elementType) {
   override fun getExternalId(): String {
-    return Angular2HtmlStubElementTypes.EXTERNAL_ID_PREFIX + super.externalId
+    return Angular2HtmlElementTypes.EXTERNAL_ID_PREFIX + super.externalId
   }
 
   override fun serialize(stub: Angular2HtmlBoundAttributeStubImpl, dataStream: StubOutputStream) {

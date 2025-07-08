@@ -15,7 +15,6 @@ import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.util.*
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
-import org.angular2.lang.expr.parser.Angular2StubElementTypes
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 

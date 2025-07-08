@@ -8,7 +8,7 @@ import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 
 internal class Angular2BlockParameterVariableElementType : JSVariableElementType("BLOCK_PARAMETER_VARIABLE") {
   override fun toString(): String {
-    return Angular2StubElementTypes.EXTERNAL_ID_PREFIX + debugName
+    return Angular2ElementTypes.EXTERNAL_ID_PREFIX + debugName
   }
 
   override fun construct(node: ASTNode): PsiElement {

@@ -6,19 +6,19 @@ import com.intellij.util.io.StringRef
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 import org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorImpl
 import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorStub
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
+import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import java.io.IOException
 
 class Angular2HtmlNgContentSelectorStubImpl : StubBase<Angular2HtmlNgContentSelector>, Angular2HtmlNgContentSelectorStub {
   private val mySelector: StringRef?
 
   constructor(parent: StubElement<*>?,
-              dataStream: StubInputStream) : super(parent, Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR) {
+              dataStream: StubInputStream) : super(parent, Angular2HtmlElementTypes.NG_CONTENT_SELECTOR) {
     mySelector = dataStream.readName()
   }
 
   constructor(psi: Angular2HtmlNgContentSelector,
-              parent: StubElement<*>?) : super(parent, Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR) {
+              parent: StubElement<*>?) : super(parent, Angular2HtmlElementTypes.NG_CONTENT_SELECTOR) {
     mySelector = StringRef.fromString(psi.text)
   }
 
@@ -29,7 +29,7 @@ class Angular2HtmlNgContentSelectorStubImpl : StubBase<Angular2HtmlNgContentSele
 
   fun index(sink: IndexSink) {}
   fun createPsi(): Angular2HtmlNgContentSelector {
-    return Angular2HtmlNgContentSelectorImpl(this, Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR)
+    return Angular2HtmlNgContentSelectorImpl(this, Angular2HtmlElementTypes.NG_CONTENT_SELECTOR)
   }
 
   override val selector: String?

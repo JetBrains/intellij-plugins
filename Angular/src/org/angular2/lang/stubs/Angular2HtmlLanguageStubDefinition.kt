@@ -1,11 +1,9 @@
 package org.angular2.lang.stubs
 
 import com.intellij.psi.StubBuilder
-import com.intellij.xml.HtmlLanguageStubVersionUtil
 import com.intellij.psi.stubs.DefaultStubBuilder
 import com.intellij.psi.stubs.LanguageStubDefinition
-import org.angular2.lang.expr.parser.Angular2StubElementTypes
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
+import com.intellij.xml.HtmlLanguageStubVersionUtil
 
 class Angular2HtmlLanguageStubDefinition : LanguageStubDefinition {
   override val stubVersion: Int
@@ -15,7 +13,10 @@ class Angular2HtmlLanguageStubDefinition : LanguageStubDefinition {
     get() = DefaultStubBuilder()
 
   companion object {
+    private const val STUB_VERSION: Int = 6
+    private const val HTML_STUB_VERSION: Int = 2
+
     val angular2HtmlStubVersion: Int
-      get() = HtmlLanguageStubVersionUtil.getHtmlStubVersion() + Angular2StubElementTypes.STUB_VERSION + Angular2HtmlStubElementTypes.STUB_VERSION
+      get() = HtmlLanguageStubVersionUtil.getHtmlStubVersion() + STUB_VERSION + HTML_STUB_VERSION
   }
 }

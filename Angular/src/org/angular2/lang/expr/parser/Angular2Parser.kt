@@ -18,8 +18,8 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
-import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingStatement
-import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingsStatement
+import org.angular2.lang.expr.parser.Angular2ElementTypes.createTemplateBindingStatement
+import org.angular2.lang.expr.parser.Angular2ElementTypes.createTemplateBindingsStatement
 import org.angular2.lang.expr.psi.Angular2TemplateBinding.KeyKind
 import org.angular2.templateBindingVarToDirectiveInput
 import org.jetbrains.annotations.NonNls
@@ -433,7 +433,7 @@ class Angular2Parser private constructor(
         currentToken = builder.tokenType
         text = getCurrentLiteralPartTokenText(currentToken)
       }
-      mark.done(Angular2StubElementTypes.STRING_PARTS_LITERAL_EXPRESSION)
+      mark.done(Angular2ElementTypes.STRING_PARTS_LITERAL_EXPRESSION)
       val errorMessage = validateLiteralText(literal.toString())
       if (errorMessage != null) {
         builder.error(errorMessage)
@@ -621,7 +621,7 @@ class Angular2Parser private constructor(
           parser.parseChain()
         }
       }
-      definition.done(Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE)
+      definition.done(Angular2ElementTypes.BLOCK_PARAMETER_VARIABLE)
       definition.precede().done(JSStubElementTypes.VAR_STATEMENT)
     }
 
@@ -699,7 +699,7 @@ class Angular2Parser private constructor(
           builder.advanceLexer()
         }
       }
-      timeLiteral.done(Angular2StubElementTypes.DEFERRED_TIME_LITERAL_EXPRESSION)
+      timeLiteral.done(Angular2ElementTypes.DEFERRED_TIME_LITERAL_EXPRESSION)
       if (!builder.eof() && builder.tokenType != endToken) {
         builder.error(JavaScriptParserBundle.message("javascript.parser.message.unexpected.token", builder.tokenText))
         while (!builder.eof() && builder.tokenType != endToken) {
@@ -729,7 +729,7 @@ class Angular2Parser private constructor(
 
     private fun finishTemplateBindingKey(key: Marker, isVariable: Boolean) {
       if (isVariable) {
-        completeVar(key, Angular2StubElementTypes.TEMPLATE_VARIABLE)
+        completeVar(key, Angular2ElementTypes.TEMPLATE_VARIABLE)
       }
       else {
         key.done(Angular2ElementTypes.TEMPLATE_BINDING_KEY)
@@ -804,7 +804,7 @@ class Angular2Parser private constructor(
             identifier.collapse(JSTokenTypes.IDENTIFIER)
             identifier.precede().done(JSElementTypes.REFERENCE_EXPRESSION)
           }
-          variable.done(Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE)
+          variable.done(Angular2ElementTypes.BLOCK_PARAMETER_VARIABLE)
           if (!builder.eof() && builder.tokenType != JSTokenTypes.COMMA) {
             builder.error(Angular2Bundle.message("angular.parse.expression.expected-comma"))
           }
@@ -838,7 +838,7 @@ class Angular2Parser private constructor(
       else {
         val start = builder.mark()
         builder.advanceLexer()
-        completeVar(start, Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE)
+        completeVar(start, Angular2ElementTypes.BLOCK_PARAMETER_VARIABLE)
         return true
       }
     }

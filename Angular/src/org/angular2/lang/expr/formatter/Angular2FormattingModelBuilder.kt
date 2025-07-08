@@ -29,7 +29,6 @@ import com.intellij.psi.xml.XmlTag
 import org.angular2.codeInsight.blocks.BLOCK_FOR
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.parser.Angular2ElementTypes
-import org.angular2.lang.expr.parser.Angular2StubElementTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
@@ -74,13 +73,13 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
 
     override fun indentEachBinaryOperandSeparately(child: ASTNode, parentBlock: JSBlock?): Boolean {
       return super.indentEachBinaryOperandSeparately(child, parentBlock)
-             || parentBlock?.node?.elementType == Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE
+             || parentBlock?.node?.elementType == Angular2ElementTypes.BLOCK_PARAMETER_VARIABLE
     }
 
     override fun createSubBlockVisitor(parentBlock: JSBlock, alignmentFactory: ASTNodeBasedAlignmentFactory?): SubBlockVisitor {
       return object : TypedJSSubBlockVisitor(parentBlock, alignmentFactory, this) {
         override fun getIndent(node: ASTNode, child: ASTNode, sharedSmartIndent: Indent?): Indent? {
-          if (node.elementType == Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE
+          if (node.elementType == Angular2ElementTypes.BLOCK_PARAMETER_VARIABLE
               && child.elementType === JSTokenTypes.IDENTIFIER
           ) {
             return Indent.getNoneIndent()
@@ -104,9 +103,9 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
       when (node.elementType) {
         Angular2ElementTypes.BLOCK_PARAMETER_STATEMENT ->
           visitBlockParameterStatement(node)
-        Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE ->
+        Angular2ElementTypes.BLOCK_PARAMETER_VARIABLE ->
           visitVariable(node)
-        Angular2StubElementTypes.DEFERRED_TIME_LITERAL_EXPRESSION ->
+        Angular2ElementTypes.DEFERRED_TIME_LITERAL_EXPRESSION ->
           visitDeferredTimeLiteralExpression()
         else -> super.visitElement(node)
       }
