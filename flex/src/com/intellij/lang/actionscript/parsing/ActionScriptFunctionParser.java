@@ -1,7 +1,7 @@
 package com.intellij.lang.actionscript.parsing;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.actionscript.ActionScriptStubElementTypes;
+import com.intellij.lang.actionscript.ActionScriptElementTypes;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.FunctionParser;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeNameValuePairImpl;
@@ -36,7 +36,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
   @Override
   public IElementType getFunctionDeclarationElementType() {
-    return ActionScriptStubElementTypes.ACTIONSCRIPT_FUNCTION;
+    return ActionScriptElementTypes.ACTIONSCRIPT_FUNCTION;
   }
 
   @Override
@@ -180,7 +180,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
   @Override
   public IElementType getAttributeListElementType() {
-    return ActionScriptStubElementTypes.ACTIONSCRIPT_ATTRIBUTE_LIST;
+    return ActionScriptElementTypes.ACTIONSCRIPT_ATTRIBUTE_LIST;
   }
 
   public void parseAttributeBody() {
@@ -266,11 +266,11 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
 
   @Override
   protected IElementType getFunctionExpressionElementType() {
-    return ActionScriptStubElementTypes.ACTIONSCRIPT_FUNCTION_EXPRESSION;
+    return ActionScriptElementTypes.ACTIONSCRIPT_FUNCTION_EXPRESSION;
   }
 
   @Override
   public IElementType getParameterType() {
-    return ActionScriptStubElementTypes.ACTIONSCRIPT_PARAMETER;
+    return ActionScriptElementTypes.ACTIONSCRIPT_PARAMETER;
   }
 }
