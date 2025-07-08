@@ -21,7 +21,6 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/Astro:astro",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "//plugins/JavaScriptLanguage:javascript-impl",

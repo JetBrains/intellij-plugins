@@ -67,7 +67,6 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//xml/xml-psi-api:psi",
     "@community//xml/tests:tests_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",

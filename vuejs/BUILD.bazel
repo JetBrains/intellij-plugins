@@ -44,7 +44,6 @@ jvm_library(
     "@community//platform/lang-api:lang",
     "@community//RegExpSupport:regexp",
     "@community//xml/xml-parser:parser",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/ide-core-impl",
     "@community//platform/lang-impl",
     "@community//platform/indexing-impl",

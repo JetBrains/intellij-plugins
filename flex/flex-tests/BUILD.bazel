@@ -19,7 +19,6 @@ jvm_library(
     "//plugins/uml/impl",
     "//contrib/flex",
     "//plugins/JavaScriptLanguage/javascript-parser",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//CSS/frontback/css-api:css-frontback",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//CSS:css",

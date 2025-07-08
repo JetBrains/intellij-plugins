@@ -21,7 +21,6 @@ jvm_library(
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:gson",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
@@ -70,7 +69,6 @@ jvm_library(
   associates = [":meteor"],
   deps = [
     "@lib//:gson",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",

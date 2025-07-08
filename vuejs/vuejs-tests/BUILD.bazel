@@ -32,7 +32,6 @@ jvm_library(
     "//CSS/frontback/css-api:css-frontback",
     "//CSS:css",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//CSS/impl",
     "@community//java/java-runtime:rt",
     "//plugins/JavaScriptLanguage/javascript-parser",

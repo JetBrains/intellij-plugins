@@ -21,7 +21,6 @@
     <orderEntry type="module" module-name="intellij.css.frontback" />
     <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.javascript.frontback.impl" />
     <orderEntry type="module" module-name="intellij.css.impl" />
     <orderEntry type="module" module-name="intellij.java.rt" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.parser" />
