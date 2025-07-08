@@ -84,7 +84,7 @@ class InspectionDurationsAggregatorService(val project: Project) {
   }
 
   @TestOnly
-  fun getSummary(inspectionId: String): String {
+  fun getSummaryFor(inspectionId: String): Pair<Int, Int> {
     var files = 0
     var problems = 0
     durations.forEach { (k, v) ->
@@ -93,7 +93,7 @@ class InspectionDurationsAggregatorService(val project: Project) {
         problems += v.problemsCount
       }
     }
-    return "files: $files, problems: $problems"
+    return files to problems
   }
 
   private fun toBucket(duration: Long): Pair<Long, Long> {

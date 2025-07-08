@@ -46,6 +46,7 @@ import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_SKIP_COMPUTATI
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERTY
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionDurationsAggregatorService
+import org.jetbrains.qodana.staticAnalysis.stat.InspectionProblemsFoundAggregatorService
 import org.jetbrains.qodana.staticAnalysis.withSystemProperty
 import org.junit.Ignore
 import org.junit.Test
@@ -264,12 +265,44 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
   /** Ensure that the duration of inspections is aggregated by inspection. */
   @Test
   fun testAggregation(): Unit = runBlocking {
+    val service = project.getService(InspectionProblemsFoundAggregatorService::class.java)
 
     runAnalysis()
 
     assertSarifResults()
-    val aggregator = project.getService(InspectionDurationsAggregatorService::class.java)
-    assertEquals("files: 1, problems: 2", aggregator.getSummary("CanBeFinal"))
+
+    val (canBeFinalFiles, canBeFinalProblems) = service.getSummaryFor("CanBeFinal")
+    assertEquals(1, canBeFinalFiles)
+    assertEquals(3, canBeFinalProblems)
+
+    val (constantValueFiles, constantValueProblems) = service.getSummaryFor("ConstantValue")
+    assertEquals(2, constantValueFiles)
+    assertEquals(3, constantValueProblems)
+
+    val (unusedAssignmentFiles, unusedAssignmentProblems) = service.getSummaryFor("UnusedAssignment")
+    assertEquals(2, unusedAssignmentFiles)
+    assertEquals(1, unusedAssignmentProblems)
+  }
+
+  @Test
+  fun `testAggregation with durations`(): Unit = runBlocking {
+    val service = project.getService(InspectionDurationsAggregatorService::class.java)
+
+    runAnalysis()
+
+    assertSarifResults()
+
+    val (canBeFinalFiles, canBeFinalProblems) = service.getSummaryFor("CanBeFinal")
+    assertEquals(1, canBeFinalFiles)
+    assertEquals(3, canBeFinalProblems)
+
+    val (constantValueFiles, constantValueProblems) = service.getSummaryFor("ConstantValue")
+    assertEquals(2, constantValueFiles)
+    assertEquals(3, constantValueProblems)
+
+    val (unusedAssignmentFiles, unusedAssignmentProblems) = service.getSummaryFor("UnusedAssignment")
+    assertEquals(2, unusedAssignmentFiles)
+    assertEquals(1, unusedAssignmentProblems)
   }
 
   @Test
