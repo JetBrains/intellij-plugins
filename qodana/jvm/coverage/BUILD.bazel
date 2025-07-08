@@ -33,7 +33,10 @@ jvm_library(
     "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     "@community//platform/statistics",
   ],
-  runtime_deps = [":coverage_resources"]
+  runtime_deps = [
+    ":coverage_resources",
+    "@community//plugins/kotlin:kotlin-plugin-community-main",
+  ]
 )
 
 jvm_library(
