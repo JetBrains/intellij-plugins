@@ -5,22 +5,9 @@ if ORIGINAL_SDK_TEST_UNIT_PATH
   require ORIGINAL_SDK_TEST_UNIT_PATH
 end
 
-module Test
-  module Unit
-    class AutoRunner
-      RUNNERS[:teamcity] = proc do |r|
-        require 'test/unit/ui/teamcity/testrunner'
-        Test::Unit::UI::TeamCity::TestRunner
-      end
-
-       alias original_initialize initialize
-       private :original_initialize
-
-       def initialize(*args)
-         original_initialize(*args)
-
-         @runner = RUNNERS[:teamcity]
-       end
-    end
-  end
+Test::Unit::AutoRunner.register_runner(:teamcity) do |auto_runner|
+  require_relative 'unit/ui/teamcity/testrunner'
+  Test::Unit::UI::TeamCity::TestRunner
 end
+
+Test::Unit::AutoRunner.default_runner = :teamcity
