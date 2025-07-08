@@ -11,6 +11,7 @@ class InspectionStatisticsLogger : QodanaWorkflowExtension {
 
   override suspend fun beforeProjectClose(project: Project): Unit = coroutineScope {
     InspectionDurationsAggregatorService.getInstance(project).logDurations()
+    InspectionProblemsFoundAggregatorService.getInstance(project).logProblemsFound()
     InspectionFingerprintAggregatorService.getInstance(project).logFingerprint()
 
     val inspectionInfoService = project.serviceAsync<InspectionInfoQodanaReporterService>()

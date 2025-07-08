@@ -41,15 +41,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "testAggregation",
+                  "fullyQualifiedName": "testAggregation with durations",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "578093c17d7f324a",
-            "equalIndicator/v1": "c671c03543257b4b141230165cdb01d97f879bbcae284d3b600a3b39c2859169"
+            "equalIndicator/v2": "f84076ecda0fbc00",
+            "equalIndicator/v1": "5b427e5fb07df85380876e8b73e4670d693ca319bcc74538dacec9e049d7fb28"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -98,15 +98,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "testAggregation",
+                  "fullyQualifiedName": "testAggregation with durations",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "6576e95bac4fb5d2",
-            "equalIndicator/v1": "44a4f1898ea7477849841e59d63489b50d4a69808d6a658f3342c24231340e0b"
+            "equalIndicator/v2": "430a334fbf67606e",
+            "equalIndicator/v1": "32cfe2c65d9a0f4a7baaed9b74ce2a3b0dc84f96f859ba1d0ff7a7ef5e0ad1b2"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -155,15 +155,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "testAggregation",
+                  "fullyQualifiedName": "testAggregation with durations",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "19bc18a59cdf2439",
-            "equalIndicator/v1": "9c5717ea8812a3414126de28f1a2627d462ed6648deb3474fc4ec74a7fb0d2f5"
+            "equalIndicator/v2": "ee2c7c3a3e48c825",
+            "equalIndicator/v1": "097c9a7d10d6cbf8e3923b9a9155084722b6ed6b9e7dfd3f468a758d09c10123"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -212,15 +212,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "testAggregation",
+                  "fullyQualifiedName": "testAggregation with durations",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "095e2194fb2b4da2",
-            "equalIndicator/v1": "9131438f44e50ef4f5f855fa142257cda37d211d0ea1881e5e266e4df3f63099"
+            "equalIndicator/v2": "622b48d2b67f4682",
+            "equalIndicator/v1": "36434ce8701c2f0cfcde17dab97e08ecf861c987eb1739390027ca35d73518e8"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -270,15 +270,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "testAggregation",
+                  "fullyQualifiedName": "testAggregation with durations",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "9745e894e4d573df",
-            "equalIndicator/v1": "bb88cb1c78bc31c0da964d7e23abc4ec9a8105f8a267d9f0568c2e70a166f6ac"
+            "equalIndicator/v2": "15040e7c14f56769",
+            "equalIndicator/v1": "df691425f38391e30af20f37f778fe7d320664e9ccf3e077c025fbc3a6ffc716"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -328,15 +328,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "testAggregation",
+                  "fullyQualifiedName": "testAggregation with durations",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "f7b3195f9eaa6715",
-            "equalIndicator/v1": "e259a99ff2388e5d12e043f602c22880584a7e2ceaba9802fb97b1521b4bee13"
+            "equalIndicator/v2": "306c3643e3db86a4",
+            "equalIndicator/v1": "d2742f899e0975716606e7d9fd9a0bbafec11fbbb69fa7e92a30f21a696e043c"
           },
           "properties": {
             "ideaSeverity": "WARNING",
@@ -386,15 +386,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "testAggregation",
+                  "fullyQualifiedName": "testAggregation with durations",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "120cb568218a3a70",
-            "equalIndicator/v1": "383f2fd6e8330ad815dd0777ef44bf45497def797e22cd813aca253e38856cf2"
+            "equalIndicator/v2": "37ca71273e9ceaff",
+            "equalIndicator/v1": "94edb5fe2c3fc1e3c2574f99eba5c261dbe7519e0fe20851b54319e70f1fc3b3"
           },
           "properties": {
             "ideaSeverity": "WARNING",
