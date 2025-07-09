@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.CommonBundle
@@ -94,11 +94,13 @@ internal abstract class TfToolsRunConfigurationBase(
       exception.setQuickFix(Runnable { workingDirectory = project.basePath })
       throw exception
     }
+
+    val expandedWorkingDir = ProgramParametersUtil.expandPathAndMacros(workingDirectory, null, project)
     //To avoid compilation error, it cannot detect isNullOrEmpty method and derive nullability
-    val workDirPath = workingDirectory?.let { Path(it) }
+    val workDirPath = expandedWorkingDir?.let { Path(it) }
                       ?: throw RuntimeConfigurationException(HCLBundle.message("run.configuration.no.working.directory.specified"))
     if (!workDirPath.exists() || !workDirPath.isDirectory()) {
-      val exception = RuntimeConfigurationException(HCLBundle.message("run.configuration.working.directory.doesnt.exist", workingDirectory))
+      val exception = RuntimeConfigurationException(HCLBundle.message("run.configuration.working.directory.doesnt.exist", expandedWorkingDir))
       exception.setQuickFix(Runnable { workingDirectory = project.basePath })
       throw exception
     }
