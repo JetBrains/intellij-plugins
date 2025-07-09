@@ -17,7 +17,7 @@ class PrettierCodeStyleTest : JSExternalToolIntegrationTest() {
 
   var originalSettings: CodeStyleSettings? = null
 
-  override fun getMainPackageName(): String? {
+  override fun getMainPackageName(): String {
     return PrettierUtil.PACKAGE_NAME
   }
 
@@ -42,7 +42,7 @@ class PrettierCodeStyleTest : JSExternalToolIntegrationTest() {
         .state
       state.configurationMode = PrettierConfiguration.ConfigurationMode.DISABLED
       state.codeStyleSettingsModifierEnabled = false
-      CodeStyle.getSettings(project).copyFrom(originalSettings)
+      CodeStyle.getSettings(project).copyFrom(originalSettings!!)
     }
     catch (e: Throwable) {
       addSuppressedException(e)
