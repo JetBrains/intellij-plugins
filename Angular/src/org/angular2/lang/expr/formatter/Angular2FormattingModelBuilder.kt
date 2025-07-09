@@ -6,7 +6,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.javascript.JSLanguageUtil
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSBlockContext
@@ -116,7 +116,7 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
           || myChild1.elementType == Angular2TokenTypes.BLOCK_PARAMETER_PREFIX) {
         setSingleSpace(myChild2 != null && myChild2.elementType != TokenType.ERROR_ELEMENT)
       }
-      else if (myChild1.elementType == JSStubElementTypes.VAR_STATEMENT
+      else if (myChild1.elementType == JSElementTypes.VAR_STATEMENT
                && myChild2.elementType == JSTokenTypes.IDENTIFIER
                && myChild2.text == "of"
                && (node.psi as Angular2BlockParameter).let { it.isPrimaryExpression && it.block?.getName() == BLOCK_FOR }) {

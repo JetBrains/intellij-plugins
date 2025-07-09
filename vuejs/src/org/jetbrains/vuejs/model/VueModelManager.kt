@@ -6,7 +6,7 @@ import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.ecmascript6.psi.ES6ClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -161,7 +161,7 @@ class VueModelManager {
       if (context is JSCallExpression) {
         val stub = (context as? StubBasedPsiElement<*>)?.stub
         val initializer = if (stub != null) {
-          stub.getChildrenByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION,
+          stub.getChildrenByType(JSElementTypes.OBJECT_LITERAL_EXPRESSION,
                                  JSObjectLiteralExpression.ARRAY_FACTORY)
             .firstOrNull()
         }
@@ -356,7 +356,7 @@ class VueModelManager {
           val stub = (call as? StubBasedPsiElement<*>)?.stub
           if (stub != null) {
             stub.childrenStubs.asSequence()
-              .filter { it.elementType !== JSStubElementTypes.LITERAL_EXPRESSION }
+              .filter { it.elementType !== JSElementTypes.LITERAL_EXPRESSION }
               .firstOrNull()
               ?.let { filterMethod = it.psi }
           }

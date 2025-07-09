@@ -97,7 +97,7 @@ class Angular2Parser private constructor(
             chain.done(JSElementTypes.EMPTY_STATEMENT)
           }
           else {
-            chain.done(JSStubElementTypes.EMPTY_EXPRESSION)
+            chain.done(JSElementTypes.EMPTY_EXPRESSION)
             if (!allowEmpty) {
               chain.precede().error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
             }
@@ -300,7 +300,7 @@ class Angular2Parser private constructor(
         if (!parsePipe()) {
           builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         }
-        expr.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION)
+        expr.done(JSElementTypes.ASSIGNMENT_EXPRESSION)
         return true
       }
       val definitionExpr = builder.mark()
@@ -310,7 +310,7 @@ class Angular2Parser private constructor(
         return false
       }
       if (builder.tokenType === JSTokenTypes.EQ) {
-        definitionExpr.done(JSStubElementTypes.DEFINITION_EXPRESSION)
+        definitionExpr.done(JSElementTypes.DEFINITION_EXPRESSION)
         if (!myIsAction && !myIsJavaScript) {
           builder.error(Angular2Bundle.message("angular.parse.expression.assignment-in-binding"))
         }
@@ -318,7 +318,7 @@ class Angular2Parser private constructor(
         if (!parsePipe()) {
           builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.expression"))
         }
-        expr.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION)
+        expr.done(JSElementTypes.ASSIGNMENT_EXPRESSION)
       }
       else {
         definitionExpr.drop()
@@ -391,7 +391,7 @@ class Angular2Parser private constructor(
         val ref = builder.mark()
         builder.advanceLexer()
         ref.done(JSElementTypes.REFERENCE_EXPRESSION)
-        property.done(JSStubElementTypes.PROPERTY)
+        property.done(JSElementTypes.PROPERTY)
         return true
       }
       if (Angular2ElementTypes.PROPERTY_NAMES.contains(firstToken)) {
@@ -406,7 +406,7 @@ class Angular2Parser private constructor(
         builder.advanceLexer()
       }
       parsePropertyInitializer(false)
-      property.done(JSStubElementTypes.PROPERTY)
+      property.done(JSElementTypes.PROPERTY)
       property.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER)
       return true
     }
@@ -622,7 +622,7 @@ class Angular2Parser private constructor(
         }
       }
       definition.done(Angular2ElementTypes.BLOCK_PARAMETER_VARIABLE)
-      definition.precede().done(JSStubElementTypes.VAR_STATEMENT)
+      definition.precede().done(JSElementTypes.VAR_STATEMENT)
     }
 
     private fun parseOnTrigger(builder: PsiBuilder) {
@@ -812,7 +812,7 @@ class Angular2Parser private constructor(
             builder.advanceLexer()
           }
         }
-        stmt.done(JSStubElementTypes.VAR_STATEMENT)
+        stmt.done(JSElementTypes.VAR_STATEMENT)
       }
       else if (isParameterName(builder, "track")) {
         builder.advanceLexer()
@@ -847,7 +847,7 @@ class Angular2Parser private constructor(
       marker.collapse(JSTokenTypes.IDENTIFIER)
       val preKey = marker.precede()
       preKey.done(variableType)
-      preKey.precede().done(JSStubElementTypes.VAR_STATEMENT)
+      preKey.precede().done(JSElementTypes.VAR_STATEMENT)
     }
 
     private fun skipContents(builder: PsiBuilder) {

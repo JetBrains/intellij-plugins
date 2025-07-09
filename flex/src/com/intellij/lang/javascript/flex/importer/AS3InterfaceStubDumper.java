@@ -4,7 +4,8 @@ package com.intellij.lang.javascript.flex.importer;
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptFunctionStubImpl;
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptParameterStubImpl;
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptVariableStubImpl;
-import com.intellij.lang.javascript.JSStubElementTypes;
+import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSElementTypesImpl;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -47,7 +48,7 @@ final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
 
   @Override
   protected void processArgumentList(MethodInfo methodInfo, String parentName) {
-    parents.add(new JSParameterListStubImpl(parents.getLast(), JSStubElementTypes.PARAMETER_LIST));
+    parents.add(new JSParameterListStubImpl(parents.getLast(), JSElementTypes.PARAMETER_LIST));
     super.processArgumentList(methodInfo, parentName);
     parents.removeLast();
   }
@@ -92,7 +93,7 @@ final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
 
   @Override
   public void processVariable(SlotInfo info, String indent, String attr) {
-    parents.add(new JSVarStatementStubImpl(parents.getLast(), JSStubElementTypes.VAR_STATEMENT));
+    parents.add(new JSVarStatementStubImpl(parents.getLast(), JSElementTypes.VAR_STATEMENT));
     super.processVariable(info, indent, attr);
     String parentName = info.getParentName();
     String qName = getMultinameAsPackageName(info.name, parentName);
@@ -187,7 +188,7 @@ final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     if (!it.base.isStarReference()) {
       String ref = getTypeRef(it.base, null, false);
       JSReferenceListStub<JSReferenceList> parent =
-        new JSReferenceListStubImpl(parents.getLast(), JSStubElementTypes.EXTENDS_LIST);
+        new JSReferenceListStubImpl(parents.getLast(), JSElementTypesImpl.EXTENDS_LIST);
 
       new JSReferenceListMemberStubImpl(parent, ref);
     }
@@ -197,8 +198,8 @@ final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   protected void dumpInterfacesList(String indent, Traits it, boolean anInterface) {
     if (it.interfaces.length > 0) {
       JSReferenceListStubImpl parent = new JSReferenceListStubImpl(parents.getLast(), anInterface
-                                                                                    ? JSStubElementTypes.EXTENDS_LIST
-                                                                                    : JSStubElementTypes.IMPLEMENTS_LIST);
+                                                                                    ? JSElementTypesImpl.EXTENDS_LIST
+                                                                                    : JSElementTypesImpl.IMPLEMENTS_LIST);
 
       for (Multiname name : it.interfaces) {
          new JSReferenceListMemberStubImpl(parent, getTypeRef(name, null, false));

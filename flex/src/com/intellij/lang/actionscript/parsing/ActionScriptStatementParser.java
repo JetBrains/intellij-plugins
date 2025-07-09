@@ -28,7 +28,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       return;
     }
     parser.getFunctionParser().parseAttributeBody();
-    attribute.done(JSStubElementTypes.ATTRIBUTE);
+    attribute.done(JSElementTypes.ATTRIBUTE);
   }
 
   /** advances lexer */
@@ -155,7 +155,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     else {
       builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.xml"));
     }
-    marker.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION);
+    marker.done(JSElementTypes.ASSIGNMENT_EXPRESSION);
     checkForSemicolon();
     statementMarker.done(JSElementTypes.EXPRESSION_STATEMENT);
   }
@@ -214,7 +214,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     else {
       parseBlockAndAttachStatementsDirectly();
     }
-    _package.done(JSStubElementTypes.PACKAGE_STATEMENT);
+    _package.done(JSElementTypes.PACKAGE_STATEMENT);
   }
 
   private void parseImportStatement() {
@@ -235,7 +235,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
           builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
         }
 
-        nsAssignment.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION);
+        nsAssignment.done(JSElementTypes.ASSIGNMENT_EXPRESSION);
       }
       else {
         nsAssignment.drop();
@@ -244,7 +244,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       checkForSemicolon();
     }
     finally {
-      importStatement.done(JSStubElementTypes.IMPORT_STATEMENT);
+      importStatement.done(JSElementTypes.IMPORT_STATEMENT);
     }
   }
 
@@ -269,11 +269,11 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       }
 
       if (builder.getTokenType() == JSTokenTypes.EXTENDS_KEYWORD) {
-        parseReferenceList(JSStubElementTypes.EXTENDS_LIST);
+        parseReferenceList(JSElementTypes.EXTENDS_LIST);
       }
 
       if (builder.getTokenType() == JSTokenTypes.IMPLEMENTS_KEYWORD) {
-        parseReferenceList(JSStubElementTypes.IMPLEMENTS_LIST);
+        parseReferenceList(JSElementTypes.IMPLEMENTS_LIST);
       }
 
       parseBlockAndAttachStatementsDirectly();
@@ -312,7 +312,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
   @Override
   protected IElementType getClassExtendListElementType() {
-    return JSStubElementTypes.EXTENDS_LIST;
+    return JSElementTypes.EXTENDS_LIST;
   }
 
   @Override

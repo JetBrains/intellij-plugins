@@ -8,7 +8,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.index.JSSymbolUtil
@@ -140,8 +140,8 @@ fun JSPsiNamedElementBase.resolveIfImportSpecifier(): JSPsiNamedElementBase =
 
 fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExpression> {
   return JSStubBasedPsiTreeUtil.findDescendants<JSLiteralExpression>(
-    holder, TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION,
-                            JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
+    holder, TokenSet.create(JSElementTypes.LITERAL_EXPRESSION,
+                            JSElementTypes.STRING_TEMPLATE_EXPRESSION))
     .filter { expr ->
       val context = expr.context
       expr.significantValue.let {

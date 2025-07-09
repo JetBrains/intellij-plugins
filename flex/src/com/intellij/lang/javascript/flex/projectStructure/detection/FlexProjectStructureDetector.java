@@ -12,8 +12,9 @@ import com.intellij.ide.util.projectWizard.importSources.ProjectStructureDetecto
 import com.intellij.ide.util.projectWizard.importSources.util.CommonSourceRootDetectionUtil;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
+import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.Pair;
@@ -116,7 +117,7 @@ public final class FlexProjectStructureDetector extends ProjectStructureDetector
   }
 
   private static final TokenSet WHITESPACE_AND_COMMENTS =
-    TokenSet.create(JSTokenTypes.WHITE_SPACE, JSTokenTypes.DOC_COMMENT, JSTokenTypes.C_STYLE_COMMENT, JSTokenTypes.END_OF_LINE_COMMENT);
+    TokenSet.create(JSTokenTypes.WHITE_SPACE, JSElementTypes.DOC_COMMENT, JSTokenTypes.C_STYLE_COMMENT, JSTokenTypes.END_OF_LINE_COMMENT);
 
   public static void skipWhiteSpaceAndComments(Lexer lexer) {
     while (WHITESPACE_AND_COMMENTS.contains(lexer.getTokenType())) {

@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.libraries.vuex.index
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
@@ -41,7 +40,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
   )
 
   override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
-    if (node.elementType === JSStubElementTypes.CALL_EXPRESSION) {
+    if (node.elementType === JSElementTypes.CALL_EXPRESSION) {
       val reference = node.let { JSCallExpressionImpl.getMethodExpression(it) }
                         ?.takeIf { it.elementType === JSElementTypes.REFERENCE_EXPRESSION }
                       ?: return false
@@ -57,8 +56,8 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
       // new Vuex.Store call
       return node
         .takeIf {
-          it.elementType === JSStubElementTypes.NEW_EXPRESSION
-          || it.elementType === JSStubElementTypes.TYPESCRIPT_NEW_EXPRESSION
+          it.elementType === JSElementTypes.NEW_EXPRESSION
+          || it.elementType === JSElementTypes.TYPESCRIPT_NEW_EXPRESSION
         }
         ?.let { JSCallExpressionImpl.getMethodExpression(it) }
         ?.takeIf { it.elementType === JSElementTypes.REFERENCE_EXPRESSION }

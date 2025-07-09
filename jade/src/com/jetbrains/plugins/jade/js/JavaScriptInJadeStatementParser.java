@@ -5,7 +5,6 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
 import com.intellij.lang.ecmascript6.parsing.ES6StatementParser;
 import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptParserBundle;
 import com.intellij.psi.tree.IElementType;
@@ -157,7 +156,7 @@ public class JavaScriptInJadeStatementParser extends ES6StatementParser<JavaScri
     varMarker.done(getVariableElementType());
     varMarker.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
 
-    varStatement.done(JSStubElementTypes.VAR_STATEMENT);
+    varStatement.done(JSElementTypes.VAR_STATEMENT);
 
     return true;
   }

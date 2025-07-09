@@ -80,14 +80,14 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
             parseAttributeBody();
 
             if (builder.eof()) {
-              attribute.done(JSStubElementTypes.ATTRIBUTE);
+              attribute.done(JSElementTypes.ATTRIBUTE);
               builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.rbracket"));
               return true;
             }
           }
 
           builder.advanceLexer();
-          attribute.done(JSStubElementTypes.ATTRIBUTE);
+          attribute.done(JSElementTypes.ATTRIBUTE);
           hasSomethingInAttrList = true;
         }
 
@@ -226,7 +226,7 @@ public final class ActionScriptFunctionParser extends FunctionParser<ActionScrip
         }
       }
 
-      attributeNameValuePair.done(JSStubElementTypes.ATTRIBUTE_NAME_VALUE_PAIR);
+      attributeNameValuePair.done(JSElementTypes.ATTRIBUTE_NAME_VALUE_PAIR);
       if (builder.getTokenType() != JSTokenTypes.COMMA) break;
       builder.advanceLexer();
 

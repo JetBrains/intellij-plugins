@@ -3,6 +3,7 @@ package org.angular2.lang.html.index
 
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSLexerUtil
 import com.intellij.lang.javascript.JSTokenTypes
@@ -83,7 +84,7 @@ class Angular2HtmlFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLe
       JSKeywordSets.IDENTIFIER_NAMES
     )
     private val COMMENTS = TokenSet.orSet(
-      JSTokenTypes.COMMENTS,
+      JSElementTypes.COMMENTS,
       TokenSet.create(XmlTokenType.XML_COMMENT_CHARACTERS)
     )
     private val LITERALS = TokenSet.orSet(

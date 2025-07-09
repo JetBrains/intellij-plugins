@@ -7,7 +7,7 @@ import com.intellij.ide.highlighter.custom.tokens.TokenParser
 import com.intellij.javascript.web.html.XmlASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.lang.PsiBuilder
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSElementType
 import com.intellij.lang.javascript.psi.JSVariable
@@ -32,7 +32,7 @@ class Angular2HtmlVarAttrTokenType(debugName: String,
     val `var` = builder.mark()
     builder.advanceLexer()
     `var`.done(myVarElementType)
-    `var`.precede().done(JSStubElementTypes.VAR_STATEMENT)
+    `var`.precede().done(JSElementTypes.VAR_STATEMENT)
     start.done(XmlTokenType.XML_NAME)
   }
 

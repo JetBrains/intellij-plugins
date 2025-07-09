@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.html.index
 
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSLexerUtil
 import com.intellij.lang.javascript.JSTokenTypes
@@ -91,7 +92,7 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
     )
 
     private val COMMENTS = orSet(
-      JSTokenTypes.COMMENTS,
+      JSElementTypes.COMMENTS,
       create(XmlTokenType.XML_COMMENT_CHARACTERS)
     )
 

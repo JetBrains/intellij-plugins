@@ -3,7 +3,6 @@ package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptParserBundle;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
@@ -74,7 +73,7 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
     if (isIdentifierToken(builder.getTokenType())) {
       final PsiBuilder.Marker def = builder.mark();
       myParser.buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
-      def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
+      def.done(JSElementTypes.DEFINITION_EXPRESSION);
     }
     else {
       builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
@@ -127,7 +126,7 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
       builder.advanceLexer();
       currentToken = builder.getTokenType();
     }
-    mark.done(JSStubElementTypes.LITERAL_EXPRESSION);
+    mark.done(JSElementTypes.LITERAL_EXPRESSION);
     final String errorMessage = validateLiteralText(literal.toString());
     if (errorMessage != null) {
       builder.error(errorMessage);
@@ -169,17 +168,17 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
       builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
     }
     else {
-      myParser.buildTokenElement(JSStubElementTypes.VARIABLE);
+      myParser.buildTokenElement(JSElementTypes.VARIABLE);
     }
-    def.done(JSStubElementTypes.VAR_STATEMENT);
+    def.done(JSElementTypes.VAR_STATEMENT);
   }
 
   public boolean parseInExpression() {
     final PsiBuilder.Marker expr = builder.mark();
     if (isIdentifierToken(builder.getTokenType())) {
       PsiBuilder.Marker statement = builder.mark();
-      myParser.buildTokenElement(JSStubElementTypes.VARIABLE);
-      statement.done(JSStubElementTypes.VAR_STATEMENT);
+      myParser.buildTokenElement(JSElementTypes.VARIABLE);
+      statement.done(JSElementTypes.VAR_STATEMENT);
     }
     else {
       final PsiBuilder.Marker keyValue = builder.mark();
@@ -206,7 +205,7 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
     builder.advanceLexer();
     final PsiBuilder.Marker comma = builder.mark();
     if (isIdentifierToken(builder.getTokenType())) {
-      myParser.buildTokenElement(JSStubElementTypes.VARIABLE);
+      myParser.buildTokenElement(JSElementTypes.VARIABLE);
     }
     else {
       builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
@@ -218,12 +217,12 @@ public class AngularJSExpressionParser extends ExpressionParser<AngularJSParser>
       builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.comma"));
     }
     if (isIdentifierToken(builder.getTokenType())) {
-      myParser.buildTokenElement(JSStubElementTypes.VARIABLE);
+      myParser.buildTokenElement(JSElementTypes.VARIABLE);
     }
     else {
       builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
     }
-    comma.done(JSStubElementTypes.VAR_STATEMENT);
+    comma.done(JSElementTypes.VAR_STATEMENT);
     if (builder.getTokenType() == JSTokenTypes.RPAR) {
       builder.advanceLexer();
     }

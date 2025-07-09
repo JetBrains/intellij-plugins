@@ -2,7 +2,7 @@
 package org.angular2.entities.ivy
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.ecma6.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.stubs.JSAttributeListStub
@@ -381,7 +381,7 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       allowAbstractClasses: Boolean,
       symbolFactory: (String, Any) -> T?,
     ): T? {
-      val clsAttrs = jsClassStub.findChildStubByElementType(JSStubElementTypes.ATTRIBUTE_LIST) as? JSAttributeListStub
+      val clsAttrs = jsClassStub.findChildStubByElementType(JSElementTypes.ATTRIBUTE_LIST) as? JSAttributeListStub
       if (clsAttrs == null || !allowAbstractClasses && clsAttrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) {
         return null
       }
@@ -389,7 +389,7 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
         if (classChild !is JSVarStatementStub) {
           continue
         }
-        val attrs = classChild.findChildStubByElementType(JSStubElementTypes.ATTRIBUTE_LIST) as? JSAttributeListStub
+        val attrs = classChild.findChildStubByElementType(JSElementTypes.ATTRIBUTE_LIST) as? JSAttributeListStub
         if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
           continue
         }

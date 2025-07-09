@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
-import com.intellij.lang.javascript.JSStubElementTypes;
+import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.lang.javascript.psi.*;
@@ -111,7 +111,7 @@ public class AngularUiRouterDiagramBuilder {
 
   public static @Nullable JSCallExpression findWrappingCallExpression(JSImplicitElement element) {
     if (element.getNavigationElement() instanceof JSCallExpression) return (JSCallExpression)element.getNavigationElement();
-    return ObjectUtils.tryCast(JSStubBasedPsiTreeUtil.getContextOfType(element, TokenSet.create(JSStubElementTypes.CALL_EXPRESSION), true),
+    return ObjectUtils.tryCast(JSStubBasedPsiTreeUtil.getContextOfType(element, TokenSet.create(JSElementTypes.CALL_EXPRESSION), true),
                                JSCallExpression.class);
   }
 

@@ -33,7 +33,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     currentToken === XmlTokenType.XML_START_TAG_START
 
   override fun parseDocument() {
-    builder.enforceCommentTokens(JSTokenTypes.COMMENTS)
+    builder.enforceCommentTokens(JSElementTypes.COMMENTS)
     val embeddedContent = builder.mark()
 
     while (token().let { it === XmlTokenType.XML_REAL_WHITE_SPACE || it === XmlTokenType.XML_COMMENT_CHARACTERS })
@@ -216,10 +216,10 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
           attributeName.collapse(XmlTokenType.XML_NAME)
           advance()
           parseAttributeValue()
-          attributeName.precede().done(JSStubElementTypes.XML_ATTRIBUTE)
+          attributeName.precede().done(JSElementTypes.XML_ATTRIBUTE)
         }
         else {
-          attributeName.done(JSStubElementTypes.XML_ATTRIBUTE)
+          attributeName.done(JSElementTypes.XML_ATTRIBUTE)
         }
       }
     }
@@ -270,10 +270,10 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
       incomplete: Boolean,
     ) {
       if (beforeMarker == null) {
-        expressionStart.done(JSStubElementTypes.EMBEDDED_EXPRESSION)
+        expressionStart.done(JSElementTypes.EMBEDDED_EXPRESSION)
       }
       else {
-        expressionStart.doneBefore(JSStubElementTypes.EMBEDDED_EXPRESSION, beforeMarker)
+        expressionStart.doneBefore(JSElementTypes.EMBEDDED_EXPRESSION, beforeMarker)
       }
     }
   }

@@ -4,7 +4,8 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.diagnostic.PluginException
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSElementTypesImpl
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.*
@@ -66,7 +67,7 @@ class VueComponents {
 
       val call = implicitElement.parent as? JSCallExpression
       if (call != null) {
-        return JSStubBasedPsiTreeUtil.findDescendants(call, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+        return JSStubBasedPsiTreeUtil.findDescendants(call, JSElementTypesImpl.OBJECT_LITERAL_EXPRESSION)
           .firstOrNull { (it.context as? JSArgumentList)?.context == call || (it.context == call) }
           ?.let { VueSourceEntityDescriptor.tryCreate(it) }
       }
@@ -149,8 +150,8 @@ class VueComponents {
 
       if (decorator is StubBasedPsiElementBase<*>) {
         decorator.stub?.let {
-          return (it.findChildStubByElementType(JSStubElementTypes.CALL_EXPRESSION) ?: it)
-            .findChildStubByElementType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+          return (it.findChildStubByElementType(JSElementTypes.CALL_EXPRESSION) ?: it)
+            .findChildStubByElementType(JSElementTypes.OBJECT_LITERAL_EXPRESSION)
             ?.psi as? JSObjectLiteralExpression
         }
       }

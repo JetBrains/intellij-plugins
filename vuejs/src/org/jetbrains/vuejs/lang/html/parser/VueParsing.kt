@@ -3,9 +3,9 @@ package org.jetbrains.vuejs.lang.html.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.html.HtmlParsing
-import com.intellij.lang.javascript.JSStubElementTypes.Companion.MOD_EMBEDDED_CONTENT
-import com.intellij.lang.javascript.JSStubElementTypes.Companion.MOD_ES6_EMBEDDED_CONTENT
-import com.intellij.lang.javascript.JSStubElementTypes.Companion.MOD_TS_EMBEDDED_CONTENT
+import com.intellij.lang.javascript.JSElementTypes.MOD_EMBEDDED_CONTENT
+import com.intellij.lang.javascript.JSElementTypes.MOD_ES6_EMBEDDED_CONTENT
+import com.intellij.lang.javascript.JSElementTypes.MOD_TS_EMBEDDED_CONTENT
 import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
