@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.execution.RunManager
@@ -78,17 +79,14 @@ internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
       return
     }
 
-    val actions = info.actions
-    val runnedAction = myFixture.testAction(actions.first())
-    assertEquals("Init src", runnedAction.text)
-
+    testRunConfigActions(info.actions)
     myFixture.type(" ")
     val updatedGutter = file.findElementAt(myFixture.caretOffset)?.let { TfRunLineMarkerContributor().getInfo(it) }
     if (updatedGutter == null) {
       fail("Info of RunLineMarker not should be empty")
       return
     }
-    assertEquals(actions.size, updatedGutter.actions.size)
+    assertEquals(info.actions.size, updatedGutter.actions.size)
   }
 
   private fun runActionsAndCheckNames(actions: Array<AnAction>?) {
