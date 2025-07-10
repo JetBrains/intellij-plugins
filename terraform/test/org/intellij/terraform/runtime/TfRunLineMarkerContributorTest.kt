@@ -9,24 +9,11 @@ import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.testFramework.TestModeFlags
 import com.intellij.ui.IconManager
 
-internal class TfRunLineMarkerContributorTest : BaseRunConfigurationTest() {
+internal class TfRunLineMarkerContributorTest : TfBaseRunConfigurationTest() {
 
   override fun setUp() {
     super.setUp()
     TestModeFlags.set(TF_RUN_MOCK, true, testRootDisposable)
-  }
-
-  override fun tearDown() {
-    try {
-      val runManager = RunManager.getInstance(project)
-      runManager.allSettings.forEach { runManager.removeConfiguration(it) }
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
   }
 
   fun testSimpleLineMarker() {
