@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.references
 
-import com.intellij.javascript.JSBuiltInTypeEngineEvaluation
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.model.psi.PsiSymbolReferenceHints
@@ -36,7 +36,7 @@ abstract class Angular2SelectorReferenceProvider : PsiPolySymbolReferenceProvide
 
   override fun getOffsetsToReferencedSymbols(psiElement: PsiExternalReferenceHost, hints: PsiSymbolReferenceHints): Map<Int, PolySymbol> {
     val directiveSelector = getDirectiveSelector(psiElement) ?: return emptyMap()
-    return JSBuiltInTypeEngineEvaluation.forceBuiltInTypeEngineIfNeeded(psiElement, hints) {
+    return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(psiElement) {
       getReferencedSymbolsInner(directiveSelector)
     }
   }
