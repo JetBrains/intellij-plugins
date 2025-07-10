@@ -4904,7 +4904,7 @@ public class DartParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression |
-  //                       <<setOrMapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>> | record
+  //                       <<setOrMapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
   public static boolean literalExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "literalExpression")) return false;
     boolean r;
@@ -4918,7 +4918,6 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = symbolLiteralExpression(b, l + 1);
     if (!r) r = setOrMapLiteralExpressionWrapper(b, l + 1);
     if (!r) r = listLiteralExpressionWrapper(b, l + 1);
-    if (!r) r = record(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -5829,6 +5828,20 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // <<nonStrictID>> ':' expression
+  public static boolean namedRecordField(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedRecordField")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, RECORD_FIELD, "<named record field>");
+    r = nonStrictID(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    p = r; // pin = 2
+    r = r && expression(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // shorthandNewExpression | newExpressionWithKeyword | simpleQualifiedReferenceExpression typeArguments '.' (referenceExpression | 'new') <<argumentsWrapper>>
   public static boolean newExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "newExpression")) return false;
@@ -6718,6 +6731,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // functionExpression |
   //                      literalExpression |
+  //                      recordOrParenthesizedExpressionWrapper |
   //                      newExpression | // constant object expression is also parsed as newExpression
   //                      shorthandExpression |
   //                      refOrThisOrSuperOrParenExpression |
@@ -6728,6 +6742,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     r = functionExpression(b, l + 1);
     if (!r) r = literalExpression(b, l + 1);
+    if (!r) r = recordOrParenthesizedExpressionWrapper(b, l + 1);
     if (!r) r = newExpression(b, l + 1);
     if (!r) r = shorthandExpression(b, l + 1);
     if (!r) r = refOrThisOrSuperOrParenExpression(b, l + 1);
@@ -6797,107 +6812,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'const'? '(' ')' |
-  //            'const'? '(' !(expression ')') recordField ( ',' recordField )* ','? ')'
   public static boolean record(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record")) return false;
-    if (!nextTokenIs(b, "<record>", CONST, LPAREN)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, RECORD, "<record>");
-    r = record_0(b, l + 1);
-    if (!r) r = record_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // 'const'? '(' ')'
-  private static boolean record_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record_0")) return false;
-    boolean r;
     Marker m = enter_section_(b);
-    r = record_0_0(b, l + 1);
-    r = r && consumeTokens(b, 0, LPAREN, RPAREN);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // 'const'?
-  private static boolean record_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record_0_0")) return false;
-    consumeToken(b, CONST);
-    return true;
-  }
-
-  // 'const'? '(' !(expression ')') recordField ( ',' recordField )* ','? ')'
-  private static boolean record_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = record_1_0(b, l + 1);
-    r = r && consumeToken(b, LPAREN);
-    r = r && record_1_2(b, l + 1);
-    r = r && recordField(b, l + 1);
-    r = r && record_1_4(b, l + 1);
-    r = r && record_1_5(b, l + 1);
-    r = r && consumeToken(b, RPAREN);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // 'const'?
-  private static boolean record_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record_1_0")) return false;
-    consumeToken(b, CONST);
-    return true;
-  }
-
-  // !(expression ')')
-  private static boolean record_1_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record_1_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_);
-    r = !record_1_2_0(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // expression ')'
-  private static boolean record_1_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record_1_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = expression(b, l + 1);
-    r = r && consumeToken(b, RPAREN);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ( ',' recordField )*
-  private static boolean record_1_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record_1_4")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!record_1_4_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "record_1_4", c)) break;
-    }
-    return true;
-  }
-
-  // ',' recordField
-  private static boolean record_1_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record_1_4_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, COMMA);
-    r = r && recordField(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean record_1_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "record_1_5")) return false;
-    consumeToken(b, COMMA);
+    exit_section_(b, m, RECORD, true);
     return true;
   }
 
@@ -6929,6 +6846,53 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, COLON);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // ( ',' recordField )* ','?
+  static boolean recordFieldsRest(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordFieldsRest")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = recordFieldsRest_0(b, l + 1);
+    r = r && recordFieldsRest_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ( ',' recordField )*
+  private static boolean recordFieldsRest_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordFieldsRest_0")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!recordFieldsRest_0_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "recordFieldsRest_0", c)) break;
+    }
+    return true;
+  }
+
+  // ',' recordField
+  private static boolean recordFieldsRest_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordFieldsRest_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COMMA);
+    r = r && recordField(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean recordFieldsRest_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordFieldsRest_1")) return false;
+    consumeToken(b, COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // <<parseRecordOrParenthesizedExpression>>
+  static boolean recordOrParenthesizedExpressionWrapper(PsiBuilder b, int l) {
+    return parseRecordOrParenthesizedExpression(b, l + 1);
   }
 
   /* ********************************************************** */

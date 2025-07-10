@@ -7,7 +7,4 @@ import com.intellij.psi.PsiElement;
 
 public interface DartRecord extends DartPsiCompositeElement {
 
-  @NotNull
-  List<DartRecordField> getRecordFieldList();
-
 }

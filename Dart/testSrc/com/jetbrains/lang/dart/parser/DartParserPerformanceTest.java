@@ -40,4 +40,10 @@ public class DartParserPerformanceTest extends ParsingTestCase {
       .attempts(20)
       .start();
   }
+
+  public void testLotsOfNestedParenthesesPerformance() {
+    Benchmark.newBenchmark(getTestName(true), () -> doTest(true))
+      .attempts(20)
+      .start();
+  }
 }
