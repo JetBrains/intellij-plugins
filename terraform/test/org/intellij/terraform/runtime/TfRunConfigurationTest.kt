@@ -7,7 +7,7 @@ import com.intellij.openapi.util.JDOMUtil
 import org.intellij.terraform.install.TfToolType
 import java.nio.file.Paths
 
-internal class TfRunConfigurationTest : BaseRunConfigurationTest() {
+internal class TfRunConfigurationTest : TfBaseRunConfigurationTest() {
 
   fun testMigratingRunConfigFrom242() {
     val runManager = RunManager.getInstance(project) as? RunManagerImpl
@@ -28,7 +28,6 @@ internal class TfRunConfigurationTest : BaseRunConfigurationTest() {
     assertNotNull(configurationType)
     assertEquals(TfConfigurationType.TF_RUN_CONFIGURATION_ID, configurationType?.id)
   }
-
 
   fun testGlobalOptionsEditor() {
     val toolType = TfToolType.TERRAFORM
