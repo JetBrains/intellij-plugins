@@ -7,7 +7,4 @@ import com.intellij.psi.PsiElement;
 
 public interface DartLiteralExpression extends DartExpression, DartReference {
 
-  @Nullable
-  DartRecord getRecord();
-
 }

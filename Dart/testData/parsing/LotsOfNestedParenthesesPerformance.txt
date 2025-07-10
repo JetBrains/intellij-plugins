@@ -1,0 +1,762 @@
+Dart File
+  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
+    RETURN_TYPE
+      TYPE
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Widget')
+    PsiWhiteSpace(' ')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('buildDeeplyNestedWidget')
+    FORMAL_PARAMETER_LIST
+      PsiElement(()('(')
+      NORMAL_FORMAL_PARAMETER
+        SIMPLE_FORMAL_PARAMETER
+          TYPE
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('BuildContext')
+          PsiWhiteSpace(' ')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('context')
+      PsiElement())(')')
+    PsiWhiteSpace(' ')
+    FUNCTION_BODY
+      LAZY_PARSEABLE_BLOCK
+        PsiElement({)('{')
+        PsiWhiteSpace('\n  ')
+        PsiComment(SINGLE_LINE_COMMENT)('// This structure is intentionally and excessively nested to 28 levels')
+        PsiWhiteSpace('\n  ')
+        STATEMENTS
+          RETURN_STATEMENT
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            PARENTHESIZED_EXPRESSION
+              PsiElement(()('(')
+              PsiWhiteSpace(' ')
+              PsiComment(SINGLE_LINE_COMMENT)('// Level 1')
+              PsiWhiteSpace('\n      ')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('Padding')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiWhiteSpace(' ')
+                  PsiComment(SINGLE_LINE_COMMENT)('// Level 2')
+                  PsiWhiteSpace('\n          ')
+                  ARGUMENT_LIST
+                    NAMED_ARGUMENT
+                      PARAMETER_NAME_REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('padding')
+                      PsiElement(:)(':')
+                      PsiWhiteSpace(' ')
+                      PARENTHESIZED_EXPRESSION
+                        PsiElement(()('(')
+                        LITERAL_EXPRESSION
+                          PsiElement(NUMBER)('1.0')
+                        PsiElement())(')')
+                    PsiElement(,)(',')
+                    PsiWhiteSpace('\n          ')
+                    NAMED_ARGUMENT
+                      PARAMETER_NAME_REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('child')
+                      PsiElement(:)(':')
+                      PsiWhiteSpace(' ')
+                      PARENTHESIZED_EXPRESSION
+                        PsiElement(()('(')
+                        CALL_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('Card')
+                          ARGUMENTS
+                            PsiElement(()('(')
+                            PsiWhiteSpace(' ')
+                            PsiComment(SINGLE_LINE_COMMENT)('// Level 3')
+                            PsiWhiteSpace('\n              ')
+                            ARGUMENT_LIST
+                              NAMED_ARGUMENT
+                                PARAMETER_NAME_REFERENCE_EXPRESSION
+                                  ID
+                                    PsiElement(IDENTIFIER)('elevation')
+                                PsiElement(:)(':')
+                                PsiWhiteSpace(' ')
+                                PARENTHESIZED_EXPRESSION
+                                  PsiElement(()('(')
+                                  LITERAL_EXPRESSION
+                                    PsiElement(NUMBER)('1.0')
+                                  PsiElement())(')')
+                              PsiElement(,)(',')
+                              PsiWhiteSpace('\n              ')
+                              NAMED_ARGUMENT
+                                PARAMETER_NAME_REFERENCE_EXPRESSION
+                                  ID
+                                    PsiElement(IDENTIFIER)('child')
+                                PsiElement(:)(':')
+                                PsiWhiteSpace(' ')
+                                PARENTHESIZED_EXPRESSION
+                                  PsiElement(()('(')
+                                  CALL_EXPRESSION
+                                    REFERENCE_EXPRESSION
+                                      ID
+                                        PsiElement(IDENTIFIER)('Container')
+                                    ARGUMENTS
+                                      PsiElement(()('(')
+                                      PsiWhiteSpace(' ')
+                                      PsiComment(SINGLE_LINE_COMMENT)('// Level 4')
+                                      PsiWhiteSpace('\n                  ')
+                                      ARGUMENT_LIST
+                                        NAMED_ARGUMENT
+                                          PARAMETER_NAME_REFERENCE_EXPRESSION
+                                            ID
+                                              PsiElement(IDENTIFIER)('decoration')
+                                          PsiElement(:)(':')
+                                          PsiWhiteSpace(' ')
+                                          PARENTHESIZED_EXPRESSION
+                                            PsiElement(()('(')
+                                            CALL_EXPRESSION
+                                              REFERENCE_EXPRESSION
+                                                ID
+                                                  PsiElement(IDENTIFIER)('MockDecoration')
+                                              ARGUMENTS
+                                                PsiElement(()('(')
+                                                ARGUMENT_LIST
+                                                  NAMED_ARGUMENT
+                                                    PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                      ID
+                                                        PsiElement(IDENTIFIER)('color')
+                                                    PsiElement(:)(':')
+                                                    PsiWhiteSpace(' ')
+                                                    PARENTHESIZED_EXPRESSION
+                                                      PsiElement(()('(')
+                                                      CALL_EXPRESSION
+                                                        REFERENCE_EXPRESSION
+                                                          ID
+                                                            PsiElement(IDENTIFIER)('MockColor')
+                                                        ARGUMENTS
+                                                          PsiElement(()('(')
+                                                          ARGUMENT_LIST
+                                                            LITERAL_EXPRESSION
+                                                              PsiElement(NUMBER)('1')
+                                                            PsiElement(,)(',')
+                                                            LITERAL_EXPRESSION
+                                                              PsiElement(NUMBER)('1')
+                                                            PsiElement(,)(',')
+                                                            LITERAL_EXPRESSION
+                                                              PsiElement(NUMBER)('1')
+                                                            PsiElement(,)(',')
+                                                            LITERAL_EXPRESSION
+                                                              PsiElement(NUMBER)('1')
+                                                          PsiElement())(')')
+                                                      PsiElement())(')')
+                                                PsiElement())(')')
+                                            PsiElement())(')')
+                                        PsiElement(,)(',')
+                                        PsiWhiteSpace('\n                  ')
+                                        NAMED_ARGUMENT
+                                          PARAMETER_NAME_REFERENCE_EXPRESSION
+                                            ID
+                                              PsiElement(IDENTIFIER)('child')
+                                          PsiElement(:)(':')
+                                          PsiWhiteSpace(' ')
+                                          PARENTHESIZED_EXPRESSION
+                                            PsiElement(()('(')
+                                            CALL_EXPRESSION
+                                              REFERENCE_EXPRESSION
+                                                ID
+                                                  PsiElement(IDENTIFIER)('Column')
+                                              ARGUMENTS
+                                                PsiElement(()('(')
+                                                PsiWhiteSpace(' ')
+                                                PsiComment(SINGLE_LINE_COMMENT)('// Level 5')
+                                                PsiWhiteSpace('\n                      ')
+                                                ARGUMENT_LIST
+                                                  NAMED_ARGUMENT
+                                                    PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                      ID
+                                                        PsiElement(IDENTIFIER)('children')
+                                                    PsiElement(:)(':')
+                                                    PsiWhiteSpace(' ')
+                                                    LIST_LITERAL_EXPRESSION
+                                                      PsiElement([)('[')
+                                                      PsiWhiteSpace('\n                        ')
+                                                      ELEMENT
+                                                        PARENTHESIZED_EXPRESSION
+                                                          PsiElement(()('(')
+                                                          CALL_EXPRESSION
+                                                            REFERENCE_EXPRESSION
+                                                              ID
+                                                                PsiElement(IDENTIFIER)('Padding')
+                                                            ARGUMENTS
+                                                              PsiElement(()('(')
+                                                              PsiWhiteSpace(' ')
+                                                              PsiComment(SINGLE_LINE_COMMENT)('// Level 6')
+                                                              PsiWhiteSpace('\n                            ')
+                                                              ARGUMENT_LIST
+                                                                NAMED_ARGUMENT
+                                                                  PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                    ID
+                                                                      PsiElement(IDENTIFIER)('padding')
+                                                                  PsiElement(:)(':')
+                                                                  PsiWhiteSpace(' ')
+                                                                  PARENTHESIZED_EXPRESSION
+                                                                    PsiElement(()('(')
+                                                                    LITERAL_EXPRESSION
+                                                                      PsiElement(NUMBER)('1.0')
+                                                                    PsiElement())(')')
+                                                                PsiElement(,)(',')
+                                                                PsiWhiteSpace('\n                            ')
+                                                                NAMED_ARGUMENT
+                                                                  PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                    ID
+                                                                      PsiElement(IDENTIFIER)('child')
+                                                                  PsiElement(:)(':')
+                                                                  PsiWhiteSpace(' ')
+                                                                  PARENTHESIZED_EXPRESSION
+                                                                    PsiElement(()('(')
+                                                                    CALL_EXPRESSION
+                                                                      REFERENCE_EXPRESSION
+                                                                        ID
+                                                                          PsiElement(IDENTIFIER)('Container')
+                                                                      ARGUMENTS
+                                                                        PsiElement(()('(')
+                                                                        PsiWhiteSpace(' ')
+                                                                        PsiComment(SINGLE_LINE_COMMENT)('// Level 7')
+                                                                        PsiWhiteSpace('\n                                ')
+                                                                        ARGUMENT_LIST
+                                                                          NAMED_ARGUMENT
+                                                                            PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                              ID
+                                                                                PsiElement(IDENTIFIER)('child')
+                                                                            PsiElement(:)(':')
+                                                                            PsiWhiteSpace(' ')
+                                                                            PARENTHESIZED_EXPRESSION
+                                                                              PsiElement(()('(')
+                                                                              CALL_EXPRESSION
+                                                                                REFERENCE_EXPRESSION
+                                                                                  ID
+                                                                                    PsiElement(IDENTIFIER)('Row')
+                                                                                ARGUMENTS
+                                                                                  PsiElement(()('(')
+                                                                                  PsiWhiteSpace(' ')
+                                                                                  PsiComment(SINGLE_LINE_COMMENT)('// Level 8')
+                                                                                  PsiWhiteSpace('\n                                    ')
+                                                                                  ARGUMENT_LIST
+                                                                                    NAMED_ARGUMENT
+                                                                                      PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                        ID
+                                                                                          PsiElement(IDENTIFIER)('children')
+                                                                                      PsiElement(:)(':')
+                                                                                      PsiWhiteSpace(' ')
+                                                                                      LIST_LITERAL_EXPRESSION
+                                                                                        PsiElement([)('[')
+                                                                                        PsiWhiteSpace('\n                                      ')
+                                                                                        ELEMENT
+                                                                                          PARENTHESIZED_EXPRESSION
+                                                                                            PsiElement(()('(')
+                                                                                            CALL_EXPRESSION
+                                                                                              REFERENCE_EXPRESSION
+                                                                                                ID
+                                                                                                  PsiElement(IDENTIFIER)('Flexible')
+                                                                                              ARGUMENTS
+                                                                                                PsiElement(()('(')
+                                                                                                PsiWhiteSpace(' ')
+                                                                                                PsiComment(SINGLE_LINE_COMMENT)('// Level 9')
+                                                                                                PsiWhiteSpace('\n                                          ')
+                                                                                                ARGUMENT_LIST
+                                                                                                  NAMED_ARGUMENT
+                                                                                                    PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                      ID
+                                                                                                        PsiElement(IDENTIFIER)('child')
+                                                                                                    PsiElement(:)(':')
+                                                                                                    PsiWhiteSpace(' ')
+                                                                                                    PARENTHESIZED_EXPRESSION
+                                                                                                      PsiElement(()('(')
+                                                                                                      CALL_EXPRESSION
+                                                                                                        REFERENCE_EXPRESSION
+                                                                                                          ID
+                                                                                                            PsiElement(IDENTIFIER)('Container')
+                                                                                                        ARGUMENTS
+                                                                                                          PsiElement(()('(')
+                                                                                                          PsiWhiteSpace(' ')
+                                                                                                          PsiComment(SINGLE_LINE_COMMENT)('// Level 10')
+                                                                                                          PsiWhiteSpace('\n                                              ')
+                                                                                                          ARGUMENT_LIST
+                                                                                                            NAMED_ARGUMENT
+                                                                                                              PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                ID
+                                                                                                                  PsiElement(IDENTIFIER)('child')
+                                                                                                              PsiElement(:)(':')
+                                                                                                              PsiWhiteSpace(' ')
+                                                                                                              PARENTHESIZED_EXPRESSION
+                                                                                                                PsiElement(()('(')
+                                                                                                                CALL_EXPRESSION
+                                                                                                                  REFERENCE_EXPRESSION
+                                                                                                                    ID
+                                                                                                                      PsiElement(IDENTIFIER)('Padding')
+                                                                                                                  ARGUMENTS
+                                                                                                                    PsiElement(()('(')
+                                                                                                                    PsiWhiteSpace(' ')
+                                                                                                                    PsiComment(SINGLE_LINE_COMMENT)('// Level 11')
+                                                                                                                    PsiWhiteSpace('\n                                                  ')
+                                                                                                                    ARGUMENT_LIST
+                                                                                                                      NAMED_ARGUMENT
+                                                                                                                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                          ID
+                                                                                                                            PsiElement(IDENTIFIER)('padding')
+                                                                                                                        PsiElement(:)(':')
+                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                        PARENTHESIZED_EXPRESSION
+                                                                                                                          PsiElement(()('(')
+                                                                                                                          LITERAL_EXPRESSION
+                                                                                                                            PsiElement(NUMBER)('1.0')
+                                                                                                                          PsiElement())(')')
+                                                                                                                      PsiElement(,)(',')
+                                                                                                                      PsiWhiteSpace('\n                                                  ')
+                                                                                                                      NAMED_ARGUMENT
+                                                                                                                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                          ID
+                                                                                                                            PsiElement(IDENTIFIER)('child')
+                                                                                                                        PsiElement(:)(':')
+                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                        PARENTHESIZED_EXPRESSION
+                                                                                                                          PsiElement(()('(')
+                                                                                                                          CALL_EXPRESSION
+                                                                                                                            REFERENCE_EXPRESSION
+                                                                                                                              ID
+                                                                                                                                PsiElement(IDENTIFIER)('Container')
+                                                                                                                            ARGUMENTS
+                                                                                                                              PsiElement(()('(')
+                                                                                                                              PsiWhiteSpace(' ')
+                                                                                                                              PsiComment(SINGLE_LINE_COMMENT)('// Level 12')
+                                                                                                                              PsiWhiteSpace('\n                                                      ')
+                                                                                                                              ARGUMENT_LIST
+                                                                                                                                NAMED_ARGUMENT
+                                                                                                                                  PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                                    ID
+                                                                                                                                      PsiElement(IDENTIFIER)('child')
+                                                                                                                                  PsiElement(:)(':')
+                                                                                                                                  PsiWhiteSpace(' ')
+                                                                                                                                  PARENTHESIZED_EXPRESSION
+                                                                                                                                    PsiElement(()('(')
+                                                                                                                                    CALL_EXPRESSION
+                                                                                                                                      REFERENCE_EXPRESSION
+                                                                                                                                        ID
+                                                                                                                                          PsiElement(IDENTIFIER)('Padding')
+                                                                                                                                      ARGUMENTS
+                                                                                                                                        PsiElement(()('(')
+                                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                                        PsiComment(SINGLE_LINE_COMMENT)('// Level 13')
+                                                                                                                                        PsiWhiteSpace('\n                                                          ')
+                                                                                                                                        ARGUMENT_LIST
+                                                                                                                                          NAMED_ARGUMENT
+                                                                                                                                            PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                                              ID
+                                                                                                                                                PsiElement(IDENTIFIER)('padding')
+                                                                                                                                            PsiElement(:)(':')
+                                                                                                                                            PsiWhiteSpace(' ')
+                                                                                                                                            PARENTHESIZED_EXPRESSION
+                                                                                                                                              PsiElement(()('(')
+                                                                                                                                              LITERAL_EXPRESSION
+                                                                                                                                                PsiElement(NUMBER)('1.0')
+                                                                                                                                              PsiElement())(')')
+                                                                                                                                          PsiElement(,)(',')
+                                                                                                                                          PsiWhiteSpace('\n                                                          ')
+                                                                                                                                          NAMED_ARGUMENT
+                                                                                                                                            PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                                              ID
+                                                                                                                                                PsiElement(IDENTIFIER)('child')
+                                                                                                                                            PsiElement(:)(':')
+                                                                                                                                            PsiWhiteSpace(' ')
+                                                                                                                                            PARENTHESIZED_EXPRESSION
+                                                                                                                                              PsiElement(()('(')
+                                                                                                                                              CALL_EXPRESSION
+                                                                                                                                                REFERENCE_EXPRESSION
+                                                                                                                                                  ID
+                                                                                                                                                    PsiElement(IDENTIFIER)('Container')
+                                                                                                                                                ARGUMENTS
+                                                                                                                                                  PsiElement(()('(')
+                                                                                                                                                  PsiWhiteSpace(' ')
+                                                                                                                                                  PsiComment(SINGLE_LINE_COMMENT)('// Level 14')
+                                                                                                                                                  PsiWhiteSpace('\n                                                              ')
+                                                                                                                                                  ARGUMENT_LIST
+                                                                                                                                                    NAMED_ARGUMENT
+                                                                                                                                                      PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                                                        ID
+                                                                                                                                                          PsiElement(IDENTIFIER)('child')
+                                                                                                                                                      PsiElement(:)(':')
+                                                                                                                                                      PsiWhiteSpace(' ')
+                                                                                                                                                      PARENTHESIZED_EXPRESSION
+                                                                                                                                                        PsiElement(()('(')
+                                                                                                                                                        CALL_EXPRESSION
+                                                                                                                                                          REFERENCE_EXPRESSION
+                                                                                                                                                            ID
+                                                                                                                                                              PsiElement(IDENTIFIER)('Padding')
+                                                                                                                                                          ARGUMENTS
+                                                                                                                                                            PsiElement(()('(')
+                                                                                                                                                            PsiWhiteSpace(' ')
+                                                                                                                                                            PsiComment(SINGLE_LINE_COMMENT)('// Level 15')
+                                                                                                                                                            PsiWhiteSpace('\n                                                                  ')
+                                                                                                                                                            ARGUMENT_LIST
+                                                                                                                                                              NAMED_ARGUMENT
+                                                                                                                                                                PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                                                                  ID
+                                                                                                                                                                    PsiElement(IDENTIFIER)('padding')
+                                                                                                                                                                PsiElement(:)(':')
+                                                                                                                                                                PsiWhiteSpace(' ')
+                                                                                                                                                                PARENTHESIZED_EXPRESSION
+                                                                                                                                                                  PsiElement(()('(')
+                                                                                                                                                                  LITERAL_EXPRESSION
+                                                                                                                                                                    PsiElement(NUMBER)('1.0')
+                                                                                                                                                                  PsiElement())(')')
+                                                                                                                                                              PsiElement(,)(',')
+                                                                                                                                                              PsiWhiteSpace('\n                                                                  ')
+                                                                                                                                                              NAMED_ARGUMENT
+                                                                                                                                                                PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                                                                  ID
+                                                                                                                                                                    PsiElement(IDENTIFIER)('child')
+                                                                                                                                                                PsiElement(:)(':')
+                                                                                                                                                                PsiWhiteSpace(' ')
+                                                                                                                                                                PARENTHESIZED_EXPRESSION
+                                                                                                                                                                  PsiElement(()('(')
+                                                                                                                                                                  CALL_EXPRESSION
+                                                                                                                                                                    REFERENCE_EXPRESSION
+                                                                                                                                                                      ID
+                                                                                                                                                                        PsiElement(IDENTIFIER)('ElevatedButton')
+                                                                                                                                                                    ARGUMENTS
+                                                                                                                                                                      PsiElement(()('(')
+                                                                                                                                                                      PsiWhiteSpace(' ')
+                                                                                                                                                                      PsiComment(SINGLE_LINE_COMMENT)('// Level 16')
+                                                                                                                                                                      PsiWhiteSpace('\n                                                                      ')
+                                                                                                                                                                      ARGUMENT_LIST
+                                                                                                                                                                        NAMED_ARGUMENT
+                                                                                                                                                                          PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                                                                            ID
+                                                                                                                                                                              PsiElement(IDENTIFIER)('child')
+                                                                                                                                                                          PsiElement(:)(':')
+                                                                                                                                                                          PsiWhiteSpace(' ')
+                                                                                                                                                                          PARENTHESIZED_EXPRESSION
+                                                                                                                                                                            PsiElement(()('(')
+                                                                                                                                                                            CALL_EXPRESSION
+                                                                                                                                                                              REFERENCE_EXPRESSION
+                                                                                                                                                                                ID
+                                                                                                                                                                                  PsiElement(IDENTIFIER)('Text')
+                                                                                                                                                                              ARGUMENTS
+                                                                                                                                                                                PsiElement(()('(')
+                                                                                                                                                                                ARGUMENT_LIST
+                                                                                                                                                                                  STRING_LITERAL_EXPRESSION
+                                                                                                                                                                                    PsiElement(OPEN_QUOTE)('"')
+                                                                                                                                                                                    PsiElement(REGULAR_STRING_PART)('Deep Button')
+                                                                                                                                                                                    PsiElement(CLOSING_QUOTE)('"')
+                                                                                                                                                                                PsiElement())(')')
+                                                                                                                                                                            PsiElement())(')')
+                                                                                                                                                                        PsiElement(,)(',')
+                                                                                                                                                                        PsiWhiteSpace('\n                                                                      ')
+                                                                                                                                                                        NAMED_ARGUMENT
+                                                                                                                                                                          PARAMETER_NAME_REFERENCE_EXPRESSION
+                                                                                                                                                                            ID
+                                                                                                                                                                              PsiElement(IDENTIFIER)('onPressed')
+                                                                                                                                                                          PsiElement(:)(':')
+                                                                                                                                                                          PsiWhiteSpace(' ')
+                                                                                                                                                                          PARENTHESIZED_EXPRESSION
+                                                                                                                                                                            PsiElement(()('(')
+                                                                                                                                                                            FUNCTION_EXPRESSION
+                                                                                                                                                                              FORMAL_PARAMETER_LIST
+                                                                                                                                                                                PsiElement(()('(')
+                                                                                                                                                                                PsiElement())(')')
+                                                                                                                                                                              PsiWhiteSpace(' ')
+                                                                                                                                                                              FUNCTION_EXPRESSION_BODY
+                                                                                                                                                                                LAZY_PARSEABLE_BLOCK
+                                                                                                                                                                                  PsiElement({)('{')
+                                                                                                                                                                                  PsiWhiteSpace(' ')
+                                                                                                                                                                                  PsiComment(SINGLE_LINE_COMMENT)('// Level 17')
+                                                                                                                                                                                  PsiWhiteSpace('\n                                                                        ')
+                                                                                                                                                                                  STATEMENTS
+                                                                                                                                                                                    CALL_EXPRESSION
+                                                                                                                                                                                      REFERENCE_EXPRESSION
+                                                                                                                                                                                        ID
+                                                                                                                                                                                          PsiElement(IDENTIFIER)('print')
+                                                                                                                                                                                      ARGUMENTS
+                                                                                                                                                                                        PsiElement(()('(')
+                                                                                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                                                                                        PsiComment(SINGLE_LINE_COMMENT)('// Level 18')
+                                                                                                                                                                                        PsiWhiteSpace('\n                                                                            ')
+                                                                                                                                                                                        ARGUMENT_LIST
+                                                                                                                                                                                          PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                            PsiElement(()('(')
+                                                                                                                                                                                            ADDITIVE_EXPRESSION
+                                                                                                                                                                                              STRING_LITERAL_EXPRESSION
+                                                                                                                                                                                                PsiElement(OPEN_QUOTE)('"')
+                                                                                                                                                                                                PsiElement(REGULAR_STRING_PART)('Event: ')
+                                                                                                                                                                                                PsiElement(CLOSING_QUOTE)('"')
+                                                                                                                                                                                              PsiWhiteSpace(' ')
+                                                                                                                                                                                              ADDITIVE_OPERATOR
+                                                                                                                                                                                                PsiElement(+)('+')
+                                                                                                                                                                                              PsiWhiteSpace(' ')
+                                                                                                                                                                                              PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                PsiElement(()('(')
+                                                                                                                                                                                                PsiWhiteSpace(' ')
+                                                                                                                                                                                                PsiComment(SINGLE_LINE_COMMENT)('// Level 19')
+                                                                                                                                                                                                PsiWhiteSpace('\n                                                                                ')
+                                                                                                                                                                                                CALL_EXPRESSION
+                                                                                                                                                                                                  REFERENCE_EXPRESSION
+                                                                                                                                                                                                    PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                      PsiElement(()('(')
+                                                                                                                                                                                                      MULTIPLICATIVE_EXPRESSION
+                                                                                                                                                                                                        LITERAL_EXPRESSION
+                                                                                                                                                                                                          PsiElement(NUMBER)('100')
+                                                                                                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                                                                                                        MULTIPLICATIVE_OPERATOR
+                                                                                                                                                                                                          PsiElement(/)('/')
+                                                                                                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                                                                                                        PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                          PsiElement(()('(')
+                                                                                                                                                                                                          PsiWhiteSpace(' ')
+                                                                                                                                                                                                          PsiComment(SINGLE_LINE_COMMENT)('// Level 20')
+                                                                                                                                                                                                          PsiWhiteSpace('\n                                                                                    ')
+                                                                                                                                                                                                          PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                            PsiElement(()('(')
+                                                                                                                                                                                                            MULTIPLICATIVE_EXPRESSION
+                                                                                                                                                                                                              LITERAL_EXPRESSION
+                                                                                                                                                                                                                PsiElement(NUMBER)('5')
+                                                                                                                                                                                                              PsiWhiteSpace(' ')
+                                                                                                                                                                                                              MULTIPLICATIVE_OPERATOR
+                                                                                                                                                                                                                PsiElement(*)('*')
+                                                                                                                                                                                                              PsiWhiteSpace(' ')
+                                                                                                                                                                                                              PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                PsiElement(()('(')
+                                                                                                                                                                                                                PsiWhiteSpace(' ')
+                                                                                                                                                                                                                PsiComment(SINGLE_LINE_COMMENT)('// Level 21')
+                                                                                                                                                                                                                PsiWhiteSpace('\n                                                                                        ')
+                                                                                                                                                                                                                PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                  PsiElement(()('(')
+                                                                                                                                                                                                                  ADDITIVE_EXPRESSION
+                                                                                                                                                                                                                    LITERAL_EXPRESSION
+                                                                                                                                                                                                                      PsiElement(NUMBER)('1')
+                                                                                                                                                                                                                    PsiWhiteSpace(' ')
+                                                                                                                                                                                                                    ADDITIVE_OPERATOR
+                                                                                                                                                                                                                      PsiElement(+)('+')
+                                                                                                                                                                                                                    PsiWhiteSpace(' ')
+                                                                                                                                                                                                                    PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                      PsiElement(()('(')
+                                                                                                                                                                                                                      PsiWhiteSpace(' ')
+                                                                                                                                                                                                                      PsiComment(SINGLE_LINE_COMMENT)('// Level 22')
+                                                                                                                                                                                                                      PsiWhiteSpace('\n                                                                                            ')
+                                                                                                                                                                                                                      PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                        PsiElement(()('(')
+                                                                                                                                                                                                                        ADDITIVE_EXPRESSION
+                                                                                                                                                                                                                          LITERAL_EXPRESSION
+                                                                                                                                                                                                                            PsiElement(NUMBER)('2')
+                                                                                                                                                                                                                          PsiWhiteSpace(' ')
+                                                                                                                                                                                                                          ADDITIVE_OPERATOR
+                                                                                                                                                                                                                            PsiElement(-)('-')
+                                                                                                                                                                                                                          PsiWhiteSpace(' ')
+                                                                                                                                                                                                                          PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                            PsiElement(()('(')
+                                                                                                                                                                                                                            PsiWhiteSpace(' ')
+                                                                                                                                                                                                                            PsiComment(SINGLE_LINE_COMMENT)('// Level 23')
+                                                                                                                                                                                                                            PsiWhiteSpace('\n                                                                                                ')
+                                                                                                                                                                                                                            PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                              PsiElement(()('(')
+                                                                                                                                                                                                                              MULTIPLICATIVE_EXPRESSION
+                                                                                                                                                                                                                                LITERAL_EXPRESSION
+                                                                                                                                                                                                                                  PsiElement(NUMBER)('3')
+                                                                                                                                                                                                                                PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                MULTIPLICATIVE_OPERATOR
+                                                                                                                                                                                                                                  PsiElement(/)('/')
+                                                                                                                                                                                                                                PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                                  PsiElement(()('(')
+                                                                                                                                                                                                                                  PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                  PsiComment(SINGLE_LINE_COMMENT)('// Level 24')
+                                                                                                                                                                                                                                  PsiWhiteSpace('\n                                                                                                    ')
+                                                                                                                                                                                                                                  PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                                    PsiElement(()('(')
+                                                                                                                                                                                                                                    MULTIPLICATIVE_EXPRESSION
+                                                                                                                                                                                                                                      LITERAL_EXPRESSION
+                                                                                                                                                                                                                                        PsiElement(NUMBER)('4')
+                                                                                                                                                                                                                                      PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                      MULTIPLICATIVE_OPERATOR
+                                                                                                                                                                                                                                        PsiElement(*)('*')
+                                                                                                                                                                                                                                      PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                      PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                                        PsiElement(()('(')
+                                                                                                                                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                        PsiComment(SINGLE_LINE_COMMENT)('// Level 25')
+                                                                                                                                                                                                                                        PsiWhiteSpace('\n                                                                                                        ')
+                                                                                                                                                                                                                                        PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                                          PsiElement(()('(')
+                                                                                                                                                                                                                                          ADDITIVE_EXPRESSION
+                                                                                                                                                                                                                                            LITERAL_EXPRESSION
+                                                                                                                                                                                                                                              PsiElement(NUMBER)('5')
+                                                                                                                                                                                                                                            PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                            ADDITIVE_OPERATOR
+                                                                                                                                                                                                                                              PsiElement(+)('+')
+                                                                                                                                                                                                                                            PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                            PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                                              PsiElement(()('(')
+                                                                                                                                                                                                                                              PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                              PsiComment(SINGLE_LINE_COMMENT)('// Level 26')
+                                                                                                                                                                                                                                              PsiWhiteSpace('\n                                                                                                            ')
+                                                                                                                                                                                                                                              PARENTHESIZED_EXPRESSION
+                                                                                                                                                                                                                                                PsiElement(()('(')
+                                                                                                                                                                                                                                                ADDITIVE_EXPRESSION
+                                                                                                                                                                                                                                                  LITERAL_EXPRESSION
+                                                                                                                                                                                                                                                    PsiElement(NUMBER)('6')
+                                                                                                                                                                                                                                                  PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                                  ADDITIVE_OPERATOR
+                                                                                                                                                                                                                                                    PsiElement(-)('-')
+                                                                                                                                                                                                                                                  PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                                  LITERAL_EXPRESSION
+                                                                                                                                                                                                                                                    PsiElement(NUMBER)('1')
+                                                                                                                                                                                                                                                PsiElement())(')')
+                                                                                                                                                                                                                                              PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                              PsiComment(SINGLE_LINE_COMMENT)('// Level 27')
+                                                                                                                                                                                                                                              PsiWhiteSpace('\n                                                                                                        ')
+                                                                                                                                                                                                                                              PsiElement())(')')
+                                                                                                                                                                                                                                          PsiElement())(')')
+                                                                                                                                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                        PsiComment(SINGLE_LINE_COMMENT)('// Level 26')
+                                                                                                                                                                                                                                        PsiWhiteSpace('\n                                                                                                    ')
+                                                                                                                                                                                                                                        PsiElement())(')')
+                                                                                                                                                                                                                                    PsiElement())(')')
+                                                                                                                                                                                                                                  PsiWhiteSpace(' ')
+                                                                                                                                                                                                                                  PsiComment(SINGLE_LINE_COMMENT)('// Level 25')
+                                                                                                                                                                                                                                  PsiWhiteSpace('\n                                                                                                ')
+                                                                                                                                                                                                                                  PsiElement())(')')
+                                                                                                                                                                                                                              PsiElement())(')')
+                                                                                                                                                                                                                            PsiWhiteSpace(' ')
+                                                                                                                                                                                                                            PsiComment(SINGLE_LINE_COMMENT)('// Level 24')
+                                                                                                                                                                                                                            PsiWhiteSpace('\n                                                                                            ')
+                                                                                                                                                                                                                            PsiElement())(')')
+                                                                                                                                                                                                                        PsiElement())(')')
+                                                                                                                                                                                                                      PsiWhiteSpace(' ')
+                                                                                                                                                                                                                      PsiComment(SINGLE_LINE_COMMENT)('// Level 23')
+                                                                                                                                                                                                                      PsiWhiteSpace('\n                                                                                        ')
+                                                                                                                                                                                                                      PsiElement())(')')
+                                                                                                                                                                                                                  PsiElement())(')')
+                                                                                                                                                                                                                PsiWhiteSpace(' ')
+                                                                                                                                                                                                                PsiComment(SINGLE_LINE_COMMENT)('// Level 22')
+                                                                                                                                                                                                                PsiWhiteSpace('\n                                                                                    ')
+                                                                                                                                                                                                                PsiElement())(')')
+                                                                                                                                                                                                            PsiElement())(')')
+                                                                                                                                                                                                          PsiWhiteSpace(' ')
+                                                                                                                                                                                                          PsiComment(SINGLE_LINE_COMMENT)('// Level 21')
+                                                                                                                                                                                                          PsiWhiteSpace('\n                                                                                ')
+                                                                                                                                                                                                          PsiElement())(')')
+                                                                                                                                                                                                      PsiElement())(')')
+                                                                                                                                                                                                    PsiElement(.)('.')
+                                                                                                                                                                                                    REFERENCE_EXPRESSION
+                                                                                                                                                                                                      ID
+                                                                                                                                                                                                        PsiElement(IDENTIFIER)('toString')
+                                                                                                                                                                                                  ARGUMENTS
+                                                                                                                                                                                                    PsiElement(()('(')
+                                                                                                                                                                                                    PsiElement())(')')
+                                                                                                                                                                                                PsiWhiteSpace(' ')
+                                                                                                                                                                                                PsiComment(SINGLE_LINE_COMMENT)('// Level 20')
+                                                                                                                                                                                                PsiWhiteSpace('\n                                                                            ')
+                                                                                                                                                                                                PsiElement())(')')
+                                                                                                                                                                                            PsiElement())(')')
+                                                                                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                                                                                        PsiComment(SINGLE_LINE_COMMENT)('// Level 19')
+                                                                                                                                                                                        PsiWhiteSpace('\n                                                                        ')
+                                                                                                                                                                                        PsiElement())(')')
+                                                                                                                                                                                    PsiElement(;)(';')
+                                                                                                                                                                                  PsiWhiteSpace(' ')
+                                                                                                                                                                                  PsiComment(SINGLE_LINE_COMMENT)('// Level 18')
+                                                                                                                                                                                  PsiWhiteSpace('\n                                                                      ')
+                                                                                                                                                                                  PsiElement(})('}')
+                                                                                                                                                                            PsiElement())(')')
+                                                                                                                                                                      PsiWhiteSpace(' ')
+                                                                                                                                                                      PsiComment(SINGLE_LINE_COMMENT)('// Level 17')
+                                                                                                                                                                      PsiWhiteSpace('\n                                                                  ')
+                                                                                                                                                                      PsiElement())(')')
+                                                                                                                                                                  PsiElement())(')')
+                                                                                                                                                            PsiWhiteSpace(' ')
+                                                                                                                                                            PsiComment(SINGLE_LINE_COMMENT)('// Level 16')
+                                                                                                                                                            PsiWhiteSpace('\n                                                              ')
+                                                                                                                                                            PsiElement())(')')
+                                                                                                                                                        PsiElement())(')')
+                                                                                                                                                  PsiWhiteSpace(' ')
+                                                                                                                                                  PsiComment(SINGLE_LINE_COMMENT)('// Level 15')
+                                                                                                                                                  PsiWhiteSpace('\n                                                          ')
+                                                                                                                                                  PsiElement())(')')
+                                                                                                                                              PsiElement())(')')
+                                                                                                                                        PsiWhiteSpace(' ')
+                                                                                                                                        PsiComment(SINGLE_LINE_COMMENT)('// Level 14')
+                                                                                                                                        PsiWhiteSpace('\n                                                      ')
+                                                                                                                                        PsiElement())(')')
+                                                                                                                                    PsiElement())(')')
+                                                                                                                              PsiWhiteSpace(' ')
+                                                                                                                              PsiComment(SINGLE_LINE_COMMENT)('// Level 13')
+                                                                                                                              PsiWhiteSpace('\n                                                  ')
+                                                                                                                              PsiElement())(')')
+                                                                                                                          PsiElement())(')')
+                                                                                                                    PsiWhiteSpace(' ')
+                                                                                                                    PsiComment(SINGLE_LINE_COMMENT)('// Level 12')
+                                                                                                                    PsiWhiteSpace('\n                                              ')
+                                                                                                                    PsiElement())(')')
+                                                                                                                PsiElement())(')')
+                                                                                                          PsiWhiteSpace(' ')
+                                                                                                          PsiComment(SINGLE_LINE_COMMENT)('// Level 11')
+                                                                                                          PsiWhiteSpace('\n                                          ')
+                                                                                                          PsiElement())(')')
+                                                                                                      PsiElement())(')')
+                                                                                                PsiWhiteSpace(' ')
+                                                                                                PsiComment(SINGLE_LINE_COMMENT)('// Level 10')
+                                                                                                PsiWhiteSpace('\n                                      ')
+                                                                                                PsiElement())(')')
+                                                                                            PsiElement())(')')
+                                                                                        PsiWhiteSpace(' ')
+                                                                                        PsiComment(SINGLE_LINE_COMMENT)('// Level 9')
+                                                                                        PsiWhiteSpace('\n                                    ')
+                                                                                        PsiElement(])(']')
+                                                                                  PsiWhiteSpace('\n                                ')
+                                                                                  PsiElement())(')')
+                                                                              PsiElement())(')')
+                                                                        PsiWhiteSpace(' ')
+                                                                        PsiComment(SINGLE_LINE_COMMENT)('// Level 8')
+                                                                        PsiWhiteSpace('\n                            ')
+                                                                        PsiElement())(')')
+                                                                    PsiElement())(')')
+                                                              PsiWhiteSpace(' ')
+                                                              PsiComment(SINGLE_LINE_COMMENT)('// Level 7')
+                                                              PsiWhiteSpace('\n                        ')
+                                                              PsiElement())(')')
+                                                          PsiElement())(')')
+                                                      PsiWhiteSpace(' ')
+                                                      PsiComment(SINGLE_LINE_COMMENT)('// Level 6')
+                                                      PsiWhiteSpace('\n                      ')
+                                                      PsiElement(])(']')
+                                                PsiWhiteSpace('\n                  ')
+                                                PsiElement())(')')
+                                            PsiElement())(')')
+                                      PsiWhiteSpace(' ')
+                                      PsiComment(SINGLE_LINE_COMMENT)('// Level 5')
+                                      PsiWhiteSpace('\n              ')
+                                      PsiElement())(')')
+                                  PsiElement())(')')
+                            PsiWhiteSpace(' ')
+                            PsiComment(SINGLE_LINE_COMMENT)('// Level 4')
+                            PsiWhiteSpace('\n          ')
+                            PsiElement())(')')
+                        PsiElement())(')')
+                  PsiWhiteSpace(' ')
+                  PsiComment(SINGLE_LINE_COMMENT)('// Level 3')
+                  PsiWhiteSpace('\n      ')
+                  PsiElement())(')')
+              PsiWhiteSpace(' ')
+              PsiComment(SINGLE_LINE_COMMENT)('// Level 2')
+              PsiWhiteSpace('\n  ')
+              PsiElement())(')')
+            PsiElement(;)(';')
+        PsiWhiteSpace(' ')
+        PsiComment(SINGLE_LINE_COMMENT)('// Level 1')
+        PsiWhiteSpace('\n')
+        PsiElement(})('}')
