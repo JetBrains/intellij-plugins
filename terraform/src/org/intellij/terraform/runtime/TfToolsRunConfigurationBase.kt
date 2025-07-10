@@ -164,6 +164,9 @@ internal class TfToolCommandLineState(
 ) : CommandLineState(env) {
 
   override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
+    if (TestModeFlags.get(TF_RUN_MOCK) == true)
+      return DefaultExecutionResult()
+
     val isToolDetected = runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
       TfToolPathDetector.getInstance(project).detectAndVerifyTool(toolType, false)
     }
@@ -171,8 +174,6 @@ internal class TfToolCommandLineState(
       showIncorrectPathNotification(project, toolType)
       throw ProcessCanceledException()
     }
-    if (TestModeFlags.get(TF_RUN_MOCK) == true)
-      return DefaultExecutionResult()
     return super.execute(executor, runner)
   }
 
