@@ -11,7 +11,7 @@ class VueModuleExportsProvider : JSModuleExportsProvider {
     return true
   }
 
-  override fun getAdditionalScopes(scope: PsiElement): Collection<PsiElement> {
+  override fun getAdditionalScopes(scope: PsiElement, visited: MutableCollection<PsiElement>): Collection<PsiElement> {
     if (scope is VueScriptSetupEmbeddedContentImpl) {
       return listOfNotNull(scope.contextExportScope)
     }
