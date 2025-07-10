@@ -266,4 +266,56 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
   public static boolean isInsideSyncOrAsyncFunction(PsiBuilder builder_, int level_) {
     return builder_.getUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION) == Boolean.TRUE;
   }
+
+  public static boolean parseRecordOrParenthesizedExpression(PsiBuilder builder, int level_) {
+    PsiBuilder.Marker outer = builder.mark();
+    PsiBuilder.Marker record = builder.mark();
+
+    consumeToken(builder, CONST);
+
+    if (!consumeToken(builder, LPAREN)) {
+      outer.rollbackTo();
+      return false;
+    }
+
+    if (consumeToken(builder, RPAREN)) {
+      record.done(RECORD);
+      outer.done(LITERAL_EXPRESSION);
+      return true;
+    }
+
+    if (DartParser.namedRecordField(builder, level_)) {
+      DartParser.recordFieldsRest(builder, level_);
+      consumeToken(builder, RPAREN);
+      record.done(RECORD);
+      outer.done(LITERAL_EXPRESSION);
+      return true;
+    }
+
+    PsiBuilder.Marker firstField = builder.mark();
+    if (!DartParser.expression(builder, level_ + 1)) {
+      outer.rollbackTo();
+      return false;
+    }
+
+    if (builder.getTokenType() == COMMA) {
+      firstField.done(RECORD_FIELD);
+      DartParser.recordFieldsRest(builder, level_);
+      consumeToken(builder, RPAREN);
+      record.done(RECORD);
+      outer.done(LITERAL_EXPRESSION);
+      return true;
+    }
+
+    firstField.drop();
+    record.drop();
+
+    if (consumeToken(builder, RPAREN)) {
+      outer.done(PARENTHESIZED_EXPRESSION);
+      return true;
+    }
+
+    outer.rollbackTo();
+    return false;
+  }
 }

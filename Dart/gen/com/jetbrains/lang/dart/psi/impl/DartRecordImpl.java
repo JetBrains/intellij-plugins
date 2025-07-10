@@ -27,10 +27,4 @@ public class DartRecordImpl extends DartPsiCompositeElementImpl implements DartR
     else super.accept(visitor);
   }
 
-  @Override
-  @NotNull
-  public List<DartRecordField> getRecordFieldList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartRecordField.class);
-  }
-
 }
