@@ -28,10 +28,4 @@ public class DartLiteralExpressionImpl extends DartClassReferenceImpl implements
     else super.accept(visitor);
   }
 
-  @Override
-  @Nullable
-  public DartRecord getRecord() {
-    return findChildByClass(DartRecord.class);
-  }
-
 }

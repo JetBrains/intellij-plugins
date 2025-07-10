@@ -653,6 +653,7 @@ left asExpression ::= 'as' type
 
 private primary ::=  functionExpression |
                      literalExpression |
+                     recordOrParenthesizedExpressionWrapper |
                      newExpression | // constant object expression is also parsed as newExpression
                      shorthandExpression |
                      refOrThisOrSuperOrParenExpression |
@@ -709,12 +710,14 @@ shorthandExpression ::= '.' referenceExpression
 
 // todo get rid of all Wrappers and WITHOUT_CASCADE user data, implement expression parsing according to the spec and Grammar-Kit docs
 literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression |
-                      <<setOrMapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>> | record
+                      <<setOrMapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-record ::= 'const'? '(' ')' |
-           'const'? '(' !(expression ')') recordField ( ',' recordField )* ','? ')'
+private recordOrParenthesizedExpressionWrapper ::= <<parseRecordOrParenthesizedExpression>>
+record ::= ;
+private recordFieldsRest ::= ( ',' recordField )* ','?
 recordField ::= (<<nonStrictID>> ':' )? expression
+namedRecordField ::= <<nonStrictID>> ':' expression {pin = 2 elementType = "recordField"}
 
 symbolLiteralExpression ::= '#' ('void' | userDefinableOperator | simpleQualifiedReferenceExpression) {pin=1}
 
