@@ -32,7 +32,14 @@ abstract class VueCompositionContainer() :
   abstract override val source: JSCallExpression
 
   override val components: Map<String, VueComponent>
-    get() = (delegate?.takeUnless { it is VueComponent }?.components ?: emptyMap()) + getEntitiesAnalysis().components
+    get() = buildMap {
+      val container = delegate?.takeUnless { it is VueComponent }
+      if (container != null) {
+        putAll(container.components)
+      }
+
+      putAll(getEntitiesAnalysis().components)
+    }
 
   override val directives: Map<String, VueDirective>
     get() = (delegate?.directives ?: emptyMap()) + getEntitiesAnalysis().directives
