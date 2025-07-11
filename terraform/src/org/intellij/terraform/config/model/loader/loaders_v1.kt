@@ -1,10 +1,11 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.model.loader.TfMetadataLoader.Companion.LOG
 
@@ -226,7 +227,7 @@ abstract class ProviderLoader(protected val base: BaseLoader) : VersionedMetadat
 }
 
 abstract class ProvisionerLoader(protected val base: BaseLoader) : VersionedMetadataLoader {
-  override fun isSupportedType(type: String): Boolean = type == "provisioner"
+  override fun isSupportedType(type: String): Boolean = type == HCL_PROVISIONER_IDENTIFIER
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
     val provisioner_schema = json.obj("schemas") ?: json

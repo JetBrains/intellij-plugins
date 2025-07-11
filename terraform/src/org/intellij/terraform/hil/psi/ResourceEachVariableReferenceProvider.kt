@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.psi
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider
@@ -13,6 +13,7 @@ import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
+import org.intellij.terraform.hcl.psi.getContainingResourceOrDataSourceOrModule
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
 object ResourceEachVariableReferenceProvider : PsiReferenceProvider() {

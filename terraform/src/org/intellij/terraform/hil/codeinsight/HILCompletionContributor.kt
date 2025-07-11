@@ -43,8 +43,11 @@ import org.intellij.terraform.hil.patterns.HILPatterns.IlseNotFromKnownScope
 import org.intellij.terraform.hil.patterns.HILPatterns.InsideForExpressionBody
 import org.intellij.terraform.hil.patterns.HILPatterns.MethodPosition
 import org.intellij.terraform.hil.patterns.HILPatterns.VariableTypePosition
-import org.intellij.terraform.hil.psi.*
+import org.intellij.terraform.hil.psi.FakeTypeProperty
+import org.intellij.terraform.hil.psi.ForVariableCompletion
+import org.intellij.terraform.hil.psi.getGoodLeftElement
 import org.intellij.terraform.hil.psi.impl.getHCLHost
+import org.intellij.terraform.hil.psi.resolve
 import org.intellij.terraform.opentofu.codeinsight.EncryptionMethodsCompletionProvider
 import org.intellij.terraform.opentofu.codeinsight.KeyProvidersCompletionProvider
 import org.intellij.terraform.opentofu.codeinsight.findEncryptionBlocksIdsByType
@@ -127,7 +130,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
                                   result: CompletionResultSet) {
       // For now 'self' allowed only for provisioners inside resources
 
-      val resource = getProvisionerOrConnectionResource(variable) ?: return
+      val resource = getHclBlockForSelfContext(variable) ?: return
       val properties = TfModelHelper.getBlockProperties(resource)
       // TODO: Filter already defined or computed properties (?)
       // TODO: Add type filtration
@@ -175,7 +178,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
                                   parameters: CompletionParameters,
                                   context: ProcessingContext,
                                   result: CompletionResultSet) {
-      val variables: List<String> = getLocalDefinedLocals(variable)
+      val variables: List<String> = getDefinedLocalsInModule(variable)
       for (v in variables) {
         result.addElement(create(v))
       }
@@ -270,7 +273,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
       result.addAllElements(model.providerDefinedFunctions.map { createFunction(it) })
 
       result.addAllElements(GlobalScopes.map { createScope(it) })
-      if (getProvisionerOrConnectionResource(parent) != null) result.addElement(createScope("self"))
+      if (getHclBlockForSelfContext(parent) != null) result.addElement(createScope("self"))
 
       val host = parent.getHCLHost() ?: return
       val resourceOrDataSource = getContainingResourceOrDataSourceOrModule(host)

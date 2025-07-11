@@ -14,6 +14,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.util.ProgramParametersUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -23,7 +24,6 @@ import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.WriteExternalException
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
-import com.intellij.testFramework.TestModeFlags
 import com.intellij.util.text.findTextRange
 import com.intellij.util.xmlb.XmlSerializer
 import org.intellij.terraform.config.actions.TfActionService
@@ -164,7 +164,7 @@ internal class TfToolCommandLineState(
 ) : CommandLineState(env) {
 
   override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
-    if (TestModeFlags.get(TF_RUN_MOCK) == true)
+    if (ApplicationManager.getApplication().isUnitTestMode)
       return DefaultExecutionResult()
 
     val isToolDetected = runWithModalProgressBlocking(project, HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
