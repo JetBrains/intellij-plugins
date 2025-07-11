@@ -7,7 +7,6 @@ import com.intellij.execution.lineMarker.RunLineMarkerContributor.Info
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.vfs.toNioPathOrNull
-import com.intellij.testFramework.TestModeFlags
 import com.intellij.ui.IconManager
 import javax.swing.Icon
 
@@ -15,11 +14,6 @@ internal class TfRunLineMarkerContributorTest : TfBaseRunConfigurationTest() {
 
   private val warnedRunIcon: Icon =
     IconManager.getInstance().createLayered(AllIcons.RunConfigurations.TestState.Run, AllIcons.Nodes.WarningMark)
-
-  override fun setUp() {
-    super.setUp()
-    TestModeFlags.set(TF_RUN_MOCK, true, testRootDisposable)
-  }
 
   fun testSimpleLineMarker() {
     val info = assertRunLineMarkerIcon("simple.tf")
