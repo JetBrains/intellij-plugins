@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
 import com.intellij.openapi.util.NlsSafe
@@ -34,6 +34,7 @@ object Constants {
   internal const val HCL_PRECONDITION_BLOCK_IDENTIFIER: String = "precondition"
   internal const val HCL_POSTCONDITION_BLOCK_IDENTIFIER: String = "postcondition"
   internal const val HCL_EPHEMERAL_IDENTIFIER: String = "ephemeral"
+  internal const val HCL_SELF_IDENTIFIER: String = "self"
 
   internal const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   internal const val LATEST_VERSION: String = "latest"

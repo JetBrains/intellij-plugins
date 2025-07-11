@@ -8,6 +8,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.hcl.psi.HCLElement
@@ -30,29 +31,21 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
     val from = parent.from as? Identifier ?: return PsiReference.EMPTY_ARRAY
 
     if (from === element) return PsiReference.EMPTY_ARRAY
-
-    when (from.name) {
-      "var" -> {
-        return arrayOf(VariableReference(element))
-      }
-      "self" -> {
-        return arrayOf(SelfResourceReference(element))
-      }
+    return when (from.name) {
+      "var" -> arrayOf(VariableReference(element))
+      HCL_SELF_IDENTIFIER -> arrayOf(SelfResourceReference(element))
       "path" -> {
         // TODO: Resolve 'cwd' and 'root' paths
         if (element.name == "module") {
           val file = host.containingFile.originalFile
           return arrayOf(PsiReferenceBase.Immediate(element, true, file.containingDirectory ?: file))
         }
+        else PsiReference.EMPTY_ARRAY
       }
-      "module" -> {
-        return arrayOf(ModuleReference(element))
-      }
-      "local" -> {
-        return arrayOf(LocalVariableReference(element))
-      }
+      "module" -> arrayOf(ModuleReference(element))
+      "local" -> arrayOf(LocalVariableReference(element))
+      else -> return PsiReference.EMPTY_ARRAY
     }
-    return PsiReference.EMPTY_ARRAY
   }
 
   class VariableReference(element: Identifier) : HCLElementLazyReference<Identifier>(element, false, doResolve = { _, _ ->
@@ -88,7 +81,7 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
 
   class ModuleReference(element: Identifier) : HCLElementLazyReference<Identifier>(element, false, doResolve = { _, _ ->
     this.element.name?.let { name -> this.element.getHCLHost()?.getTerraformModule()?.getDefinedModules(name) }
-        ?: emptyList()
+    ?: emptyList()
   })
 
   class LocalVariableReference(element: Identifier) : HCLElementLazyReference<Identifier>(element, false, doResolve = { _, _ ->

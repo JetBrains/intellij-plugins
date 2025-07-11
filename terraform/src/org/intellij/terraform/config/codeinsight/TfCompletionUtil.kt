@@ -19,6 +19,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.DebugUtil
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.documentation.psi.HCLFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
@@ -37,7 +38,7 @@ import java.util.*
 import javax.swing.Icon
 
 internal object TfCompletionUtil {
-  val Scopes: Set<String> = setOf("data", "var", "self", "path", "count", "terraform", "local", "module", HCL_EPHEMERAL_IDENTIFIER) + OpenTofuScopes
+  val Scopes: Set<String> = setOf("data", "var", HCL_SELF_IDENTIFIER, "path", "count", "terraform", "local", "module", HCL_EPHEMERAL_IDENTIFIER) + OpenTofuScopes
   val GlobalScopes: SortedSet<String> = (setOf("var", "path", "data", "module", "local", HCL_EPHEMERAL_IDENTIFIER) + OpenTofuScopes).toSortedSet()
   val RootBlockKeywords: Set<String> = TypeModel.RootBlocksMap.keys
   val RootBlockSorted: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
@@ -58,7 +59,7 @@ internal object TfCompletionUtil {
       )
   }
 
-  fun createScope(value: String): LookupElementBuilder = LookupElementBuilder.create(value)
+  fun createScopeLookup(value: String): LookupElementBuilder = LookupElementBuilder.create(value)
     .withInsertHandler(ScopeSelectInsertHandler)
     .withRenderer(object : LookupElementRenderer<LookupElement?>() {
       override fun renderElement(element: LookupElement?, presentation: LookupElementPresentation?) {

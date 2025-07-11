@@ -16,9 +16,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.GlobalScopes
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createFunction
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createScope
+import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createScopeLookup
 import org.intellij.terraform.config.codeinsight.TfConfigCompletionContributor
 import org.intellij.terraform.config.codeinsight.TfLookupElementRenderer
 import org.intellij.terraform.config.codeinsight.TfModelHelper
@@ -123,21 +124,19 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
     }
   }
 
-  private object SelfCompletionProvider : SelectFromScopeCompletionProvider("self") {
-    override fun doAddCompletions(variable: Identifier,
-                                  parameters: CompletionParameters,
-                                  context: ProcessingContext,
-                                  result: CompletionResultSet) {
-      // For now 'self' allowed only for provisioners inside resources
-
+  private object SelfCompletionProvider : SelectFromScopeCompletionProvider(HCL_SELF_IDENTIFIER) {
+    override fun doAddCompletions(
+      variable: Identifier,
+      parameters: CompletionParameters,
+      context: ProcessingContext,
+      result: CompletionResultSet,
+    ) {
       val resource = getHclBlockForSelfContext(variable) ?: return
-      val properties = TfModelHelper.getBlockProperties(resource)
-      // TODO: Filter already defined or computed properties (?)
-      // TODO: Add type filtration
-      val set = properties.keys.toHashSet()
-      set.remove(Constants.HAS_DYNAMIC_ATTRIBUTES)
-      resource.`object`?.propertyList?.mapTo(set) { it.name }
-      result.addAllElements(set.map { create(it) })
+      val properties = TfModelHelper.getBlockProperties(resource).filter {
+        it.key != Constants.HAS_DYNAMIC_ATTRIBUTES &&
+        it.value.computed
+      }
+      result.addAllElements(properties.keys.map { create(it) })
     }
   }
 
@@ -272,17 +271,17 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
       result.addAllElements(model.functions.map { createFunction(it) })
       result.addAllElements(model.providerDefinedFunctions.map { createFunction(it) })
 
-      result.addAllElements(GlobalScopes.map { createScope(it) })
-      if (getHclBlockForSelfContext(parent) != null) result.addElement(createScope("self"))
+      result.addAllElements(GlobalScopes.map { createScopeLookup(it) })
+      if (getHclBlockForSelfContext(parent) != null) result.addElement(createScopeLookup(HCL_SELF_IDENTIFIER))
 
       val host = parent.getHCLHost() ?: return
       val resourceOrDataSource = getContainingResourceOrDataSourceOrModule(host)
       if (resourceOrDataSource != null) {
         if (resourceOrDataSource.`object`?.findProperty("for_each") != null) {
-          result.addElement(createScope("each"))
+          result.addElement(createScopeLookup("each"))
         }
         if (resourceOrDataSource.`object`?.findProperty("count") != null) {
-          result.addElement(createScope("count"))
+          result.addElement(createScopeLookup("count"))
         }
       }
     }

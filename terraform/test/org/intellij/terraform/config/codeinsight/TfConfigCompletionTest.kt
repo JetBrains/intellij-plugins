@@ -1029,6 +1029,24 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       }
     """.trimIndent(), 0)
   }
+
+  fun testSelfReferenceInPostCondition() {
+    doBasicCompletionTest(
+      """
+      resource "aws_instance" "example" {
+        instance_type = "t2.micro"
+        ami           = "ami-abc123"
+
+        lifecycle {
+          postcondition {
+            condition     = self.<caret> == "running"
+            error_message = "EC2 instance must be running."
+          }
+        }
+      }
+    """.trimIndent(),
+      "arn", "id", "instance_state", "user_data", "password_data")
+  }
 }
 
 private const val ENTRIES_LIST_SIZE = 900
