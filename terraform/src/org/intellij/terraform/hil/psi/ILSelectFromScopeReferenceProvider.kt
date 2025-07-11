@@ -13,6 +13,7 @@ import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
+import org.intellij.terraform.hcl.psi.getHclBlockForSelfContext
 import org.intellij.terraform.hil.codeinsight.AddVariableFix
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
@@ -68,7 +69,7 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
   class SelfResourceReference(element: Identifier) : HCLElementLazyReferenceBase<Identifier>(element, false) {
     override fun resolve(incompleteCode: Boolean, includeFake: Boolean): List<HCLElement> {
       val name = this.element.name ?: return emptyList()
-      val resource = getProvisionerOrConnectionResource(this.element) ?: return emptyList()
+      val resource = getHclBlockForSelfContext(this.element) ?: return emptyList()
 
       val prop = resource.`object`?.findProperty(name)
       if (prop != null) return listOf(prop)

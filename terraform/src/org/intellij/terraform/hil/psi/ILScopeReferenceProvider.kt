@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.psi
 
 import com.intellij.psi.PsiElement
@@ -7,6 +7,9 @@ import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
+import org.intellij.terraform.hcl.psi.getDataSource
+import org.intellij.terraform.hcl.psi.getHclBlockForSelfContext
+import org.intellij.terraform.hcl.psi.getResource
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 
 object ILScopeReferenceProvider : PsiReferenceProvider() {
@@ -26,7 +29,7 @@ object ILScopeReferenceProvider : PsiReferenceProvider() {
     when (element.name) {
       "self" -> {
         return arrayOf(HCLElementLazyReference(element, false) { _, _ ->
-          val resource = getProvisionerOrConnectionResource(this.element) ?: return@HCLElementLazyReference emptyList()
+          val resource = getHclBlockForSelfContext(this.element) ?: return@HCLElementLazyReference emptyList()
           listOf(resource)
         })
       }
