@@ -31,6 +31,48 @@
     ]]></description>
 
   <change-notes><![CDATA[
+  2025.2
+  <ul>
+    <li>
+      Added support for <em>for_each</em> in import blocks, enhancing configurability and flexibility.
+    </li>
+    <li>
+      Introduced Keycloak provider compatibility, expanding the range of supported providers.
+    </li>
+    <li>
+      Improved <strong>code formatting</strong> for Terraform files, now enabled by default to ensure consistent and clean formatting.
+    </li>
+    <li>
+      Resolved binary detection issues on Windows when multiple Terraform executables were present, ensuring reliable tool selection.
+    </li>
+    <li>
+      Terraform tools: Initialize, Format Files, Generate Providers Metadata are now accessible directly from the in-file context menu, streamlining infrastructure operations.
+    </li>
+    <li>
+      Improved provider-defined functions support, including fixed highlighting issues, added go-to declaration documentation.
+    </li>
+    <li>
+      Enhanced Terraform file recognition, ensuring accurate handling of configuration templates.
+    </li>
+    <li>
+      Added support for the provider_meta block, enabling richer provider configurations.
+    </li>
+    <li>
+      Object variables now benefit from auto-completion, simplifying variable usage in configurations.
+    </li>
+    <li>
+      Resolved bugs in the Terraform reformat file feature, improving formatting reliability.
+    </li>
+    <li>
+      Improved syntax highlighting for better readability of provider-defined functions.
+    </li>
+    <li>
+      Added support for Google Cloud beta resources, reducing confusion with the stable Google provider.
+    </li>
+    <li>
+      Terraform plugin now supports <em>ephemeral</em> root keyword.
+    </li>
+  </ul>
     2025.1
     <ul>
       <li>
