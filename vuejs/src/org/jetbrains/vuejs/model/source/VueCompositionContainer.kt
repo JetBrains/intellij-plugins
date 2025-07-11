@@ -29,13 +29,20 @@ import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDesc
 abstract class VueCompositionContainer() :
   VueDelegatedContainer<VueContainer>() {
 
-  abstract override val source: JSCallExpression
+  abstract override val source: JSElement
+
+  private val plugins: List<VuePlugin>
+    get() = getEntitiesAnalysis().plugins
 
   override val components: Map<String, VueComponent>
     get() = buildMap {
       val container = delegate?.takeUnless { it is VueComponent }
       if (container != null) {
         putAll(container.components)
+      }
+
+      for (plugin in plugins) {
+        putAll(plugin.components)
       }
 
       putAll(getEntitiesAnalysis().components)
@@ -127,7 +134,7 @@ abstract class VueCompositionContainer() :
       else args.getOrNull(nr)
     }
 
-    private fun analyzeCall(call: JSCallExpression): EntitiesAnalysis {
+    private fun analyzeCall(call: JSElement): EntitiesAnalysis {
       val resolveScope = PsiTreeUtil.findFirstContext(call, false) { JSUtils.isScopeOwner(it) || it is JSFile || it is JSEmbeddedContent }
       val searchScope = GlobalSearchScopeUtil.toGlobalSearchScope(LocalSearchScope(resolveScope ?: call.containingFile), call.project)
 
@@ -148,6 +155,9 @@ abstract class VueCompositionContainer() :
               ?.let { processor(name, it, nameLiteral) }
           }
 
+      val plugins = processCalls(USE_FUN, false) { _, el, _ ->
+        VueCompositionPlugin.create(el)
+      }.toList()
 
       val components = processCalls(COMPONENT_FUN, true) { name, el, nameLiteral ->
         VueModelManager.getComponent(getComponentDescriptor(el))?.let {
@@ -198,6 +208,7 @@ abstract class VueCompositionContainer() :
         }
 
       return EntitiesAnalysis(
+        plugins = plugins,
         components = components,
         directives = directives,
         mixins = mixins,
@@ -214,6 +225,7 @@ abstract class VueCompositionContainer() :
   }
 
   private data class EntitiesAnalysis(
+    val plugins: List<VuePlugin>,
     val components: Map<String, VueComponent>,
     val directives: Map<String, VueDirective>,
     val mixins: List<VueMixin>,
