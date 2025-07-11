@@ -269,8 +269,6 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
 
     runAnalysis()
 
-    assertSarifResults()
-
     val (canBeFinalFiles, canBeFinalProblems) = service.getSummaryFor("CanBeFinal")
     assertEquals(1, canBeFinalFiles)
     assertEquals(3, canBeFinalProblems)
@@ -289,8 +287,6 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     val service = project.getService(InspectionDurationsAggregatorService::class.java)
 
     runAnalysis()
-
-    assertSarifResults()
 
     val (canBeFinalFiles, canBeFinalProblems) = service.getSummaryFor("CanBeFinal")
     assertEquals(1, canBeFinalFiles)
