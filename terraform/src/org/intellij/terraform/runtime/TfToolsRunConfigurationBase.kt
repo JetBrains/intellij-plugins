@@ -21,7 +21,6 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.InvalidDataException
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.WriteExternalException
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.util.text.findTextRange
@@ -153,8 +152,6 @@ internal abstract class TfToolsRunConfigurationBase(
     EnvironmentVariablesComponent.writeExternal(element, envs)
   }
 }
-
-internal val TF_RUN_MOCK: Key<Boolean> = Key.create("TF_RUN_MOCK")
 
 internal class TfToolCommandLineState(
   private val project: Project,
