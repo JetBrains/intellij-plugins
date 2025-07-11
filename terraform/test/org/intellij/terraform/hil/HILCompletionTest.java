@@ -88,11 +88,28 @@ public class HILCompletionTest extends CompletionTestCase {
   }
 
   public void testSelfReferenceCompletion() {
-    doBasicCompletionTest("resource 'azurerm_resource_group' 'x' {provisioner 'file' {file = '${self.<caret>}'}", "name", "location");
+    doBasicCompletionTest(
+      """
+        resource "azurerm_resource_group" "x" {
+          location = ""
+          name     = ""
+        
+          provisioner "file" {
+            connection {
+              type = "${self.<caret>}"
+            }
+          }
+        }""", "id");
   }
 
-  public void testSelfReferenceCompletionAbracadabraProvisioner() {
-    doBasicCompletionTest("resource 'abracadabra' 'x' {provisioner 'file' {file = '${self.<caret>}'}", "count");
+  public void testSelfReferenceCompletionAwsProvisioner() {
+    doBasicCompletionTest(
+      """
+        resource "aws_instance" "web" {
+          provisioner "local-exec" {
+            command = "echo The server's IP address is ${self.private<caret>}"
+          }
+        }""", "private_ip");
   }
 
   public void testSelfReferenceCompletionAbracadabra() {

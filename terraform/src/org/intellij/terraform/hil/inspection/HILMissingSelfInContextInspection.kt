@@ -8,6 +8,7 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
+import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.getConnectionOfResource
 import org.intellij.terraform.hcl.psi.getProvisionerOfResource
@@ -31,8 +32,7 @@ class HILMissingSelfInContextInspection : LocalInspectionTool() {
   inner class MyEV(val holder: ProblemsHolder) : ILElementVisitor() {
     override fun visitILVariable(element: ILVariable) {
       ProgressIndicatorProvider.checkCanceled()
-      val name = element.name
-      if ("self" != name) return
+      if (element.name != HCL_SELF_IDENTIFIER) return
 
       val host = element.getHCLHost() ?: return
       val parent = element.parent as? ILSelectExpression ?: return

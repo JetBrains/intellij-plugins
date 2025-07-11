@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
 import org.intellij.terraform.hcl.psi.getDataSource
@@ -27,7 +28,7 @@ object ILScopeReferenceProvider : PsiReferenceProvider() {
     if (from !== element) return PsiReference.EMPTY_ARRAY
 
     when (element.name) {
-      "self" -> {
+      HCL_SELF_IDENTIFIER -> {
         return arrayOf(HCLElementLazyReference(element, false) { _, _ ->
           val resource = getHclBlockForSelfContext(this.element) ?: return@HCLElementLazyReference emptyList()
           listOf(resource)

@@ -63,6 +63,10 @@ public class TfInspectionsTest extends TfInspectionFixtureTestCase {
     doTest("self_references", new HILUnresolvedReferenceInspection());
   }
 
+  public void testSelfReferenceInPostCondition() {
+    doTest("self_reference_in_post_condition", new HILUnresolvedReferenceInspection());
+  }
+
   public void testComplexPropertyKeys() {
     doTest("complex_property_keys", new HILUnresolvedReferenceInspection());
   }
