@@ -17,7 +17,7 @@ Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this supp
     ]]></description>
   i
   <depends>com.intellij.modules.lang</depends>
-  <depends>intellij.regexp.plugin</depends>
+  <depends>com.intellij.modules.regexp</depends>
 
   <depends optional="true" config-file="javascript-plugin.xml">JavaScript</depends>
 

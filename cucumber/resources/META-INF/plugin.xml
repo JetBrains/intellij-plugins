@@ -11,7 +11,7 @@
   <depends>com.intellij.modules.xml</depends>
   <depends>com.intellij.modules.spellchecker</depends>
   <depends>org.intellij.intelliLang</depends>
-  <depends>intellij.regexp.plugin</depends>
+  <depends>com.intellij.modules.regexp</depends>
   <resource-bundle>messages.CucumberBundle</resource-bundle>
   <vendor>JetBrains</vendor>
 
