@@ -10,6 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.siblings
 import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_LIFECYCLE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_POSTCONDITION_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.model.Module
 import org.intellij.terraform.config.model.Variable
@@ -232,7 +234,7 @@ internal fun getDefinedLocalsInModule(element: BaseExpression): List<String> {
 
 internal fun getHclBlockForSelfContext(position: BaseExpression): HCLBlock? {
   val host = position.getHCLHost() ?: return null
-  return getProvisionerOfResource(host) ?: getConnectionOfResource(host)
+  return getProvisionerOfResource(host) ?: getConnectionOfResource(host) ?: getPostConditionOfBlock(host)
 }
 
 internal fun getProvisionerOfResource(host: HCLElement): HCLBlock? {
@@ -252,6 +254,22 @@ internal fun getConnectionOfResource(host: HCLElement): HCLBlock? {
     HCL_CONNECTION_IDENTIFIER -> getParentResourceBlock(connection)
     else -> null
   }
+}
+
+internal fun getPostConditionOfBlock(host: HCLElement): HCLBlock? {
+  val postCondition = host.parentOfType<HCLBlock>() ?: return null
+  if (postCondition.getNameElementUnquoted(0) != HCL_POSTCONDITION_BLOCK_IDENTIFIER)
+    return null
+
+  val lifecycle = postCondition.parentOfType<HCLBlock>()
+  if (lifecycle?.getNameElementUnquoted(0) != HCL_LIFECYCLE_IDENTIFIER) {
+    return null
+  }
+
+  val resourceOrData = lifecycle.parentOfType<HCLBlock>()
+  return if (TfPsiPatterns.ResourceRootBlock.accepts(resourceOrData) || TfPsiPatterns.DataSourceRootBlock.accepts(resourceOrData))
+    resourceOrData
+  else null
 }
 
 internal fun getParentResourceBlock(element: HCLElement): HCLBlock? {
