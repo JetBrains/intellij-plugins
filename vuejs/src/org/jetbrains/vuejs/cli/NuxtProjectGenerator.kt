@@ -50,6 +50,7 @@ class NuxtProjectGenerator : NpmPackageProjectGenerator() {
        * a package manager in UI
        */
       "--packageManager=npm",
+      dir.path,
     )
   }
 
