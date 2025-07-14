@@ -39,12 +39,36 @@ class QodanaRunIncrementalContext private constructor(
   val scopeExtended: Map<VirtualFile, Set<String>>,
 ): QodanaRunContext(project, loadedProfile, scope, qodanaProfile, config, runCoroutineScope, messageReporter) {
   companion object {
-    suspend fun QodanaRunContext.asIncremental(changes: Map<String, Set<Int>>, paths: Iterable<Path>, onFileIncluded: ((VirtualFile) -> Unit)? = null): QodanaRunIncrementalContext {
+    suspend fun QodanaRunContext.asIncremental(changes: Map<String, Set<Int>>,
+                                               paths: Iterable<Path>,
+                                               computeExtendedScope: Boolean = false,
+                                               onFileIncluded: ((VirtualFile) -> Unit)? = null): QodanaRunIncrementalContext {
       val files = resolveVirtualFiles(config.projectPath, paths)
-      val additionalFiles = collectExtendedFiles(files, qodanaProfile, project)
+      val additionalFiles = if (computeExtendedScope) collectExtendedFiles(files, qodanaProfile, project) else emptyMap()
+      return createIncrementalContext(changes, files, additionalFiles, onFileIncluded)
+    }
+
+    suspend fun QodanaRunContext.asIncremental(changes: Map<String, Set<Int>>,
+                                               extendedFiles: Map<String, Set<String>>,
+                                               paths: Iterable<Path>,
+                                               onFileIncluded: ((VirtualFile) -> Unit)? = null): QodanaRunIncrementalContext {
+      val files = resolveVirtualFiles(config.projectPath, paths)
+      val additionalFiles = extendedFiles
+        .mapNotNull { (path, scope) -> resolveVirtualFile(config.projectPath, Path.of(path))?.let { it to scope } }
+        .toMap()
+      return createIncrementalContext(changes, files, additionalFiles, onFileIncluded)
+    }
+
+    private suspend fun QodanaRunContext.createIncrementalContext(
+      changes: Map<String, Set<Int>>,
+      files: List<VirtualFile>,
+      additionalFiles: Map<VirtualFile, Set<String>>,
+      onFileIncluded: ((VirtualFile) -> Unit)?
+    ): QodanaRunIncrementalContext {
       project.serviceAsync<LocalChangesService>()
         .isIncrementalAnalysis
         .set(true)
+      
       return QodanaRunIncrementalContext(
         project,
         loadedProfile,
@@ -78,7 +102,7 @@ class QodanaRunIncrementalContext private constructor(
   }
 }
 
-private suspend fun collectExtendedFiles(files: List<VirtualFile>, qodanaProfile: QodanaProfile, project: Project): Map<VirtualFile, Set<String>> {
+suspend fun collectExtendedFiles(files: List<VirtualFile>, qodanaProfile: QodanaProfile, project: Project): Map<VirtualFile, Set<String>> {
   if (!QodanaRegistry.isScopeExtendingEnabled) return emptyMap()
   val toolsWithExtenders = findToolsWithScopeExtenders(qodanaProfile)
   val manager = PsiManager.getInstance(project)
@@ -113,5 +137,12 @@ private suspend fun resolveVirtualFiles(projectPath: Path, paths: Iterable<Path>
       .map { if (it.isAbsolute) it else projectPath.resolve(it) }
       .mapNotNull(fs::findFileByNioFile)
       .toList()
+  }
+}
+
+private suspend fun resolveVirtualFile(projectPath: Path, path: Path): VirtualFile? {
+  val fs = LocalFileSystem.getInstance()
+  return runInterruptible(StaticAnalysisDispatchers.IO) {
+    if (path.isAbsolute) fs.findFileByNioFile(path) else fs.findFileByNioFile(projectPath.resolve(path))
   }
 }
