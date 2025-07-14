@@ -7,11 +7,12 @@ import org.jetbrains.qodana.registry.QodanaRegistry.SCOPE_EXTENDING_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
-import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
+import org.jetbrains.qodana.staticAnalysis.script.scoped.REVERSE_SCOPED_SCRIPT_NAME
+import org.jetbrains.qodana.staticAnalysis.script.scoped.Stage
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Test
 
-class QodanaScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTest() {
+class QodanaReverseScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTest() {
   public override fun setUp() {
     super.setUp()
     val initInspections = InspectionProfileImpl.INIT_INSPECTIONS
@@ -127,7 +128,44 @@ class QodanaScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegr
     assertEmpty(extendedScope)
   }
 
-  private fun buildExtendedScope(scopeFileText: String, inspectionToInclude: String = "ConstantValue", fileToIgnore: String = ""): Collection<String> {
+  @Test
+  fun `scoped being read from file with empty extended files`() {
+    val extendedScope = buildExtendedScope("""
+      {
+        "files" : [{
+            "path" : "A.java",
+            "added" : [ ],
+            "deleted" : [ ]
+          }],
+        "extendedFiles" : []
+      }
+    """.trimIndent(), stage = Stage.OLD.name)
+    assertEmpty(extendedScope)
+  }
+
+  @Test
+  fun `scoped being read from file and non existing purged`() {
+    val extendedScope = buildExtendedScope("""
+      {
+        "files" : [{
+            "path" : "A.java",
+            "added" : [ ],
+            "deleted" : [ ]
+          }],
+        "extendedFiles" : [{
+            "path" : "B.java",
+            "extenders" : [ "foo", "bar" ]
+          }, {
+            "path" : "IDontExist.java",
+            "extenders" : [ "foo", "bar" ]
+          }]
+      }
+    """.trimIndent(), stage = Stage.OLD.name)
+    assertSize(1, extendedScope)
+    assertContainsElements(extendedScope, "B.java")
+  }
+
+  private fun buildExtendedScope(scopeFileText: String, inspectionToInclude: String = "ConstantValue", fileToIgnore: String = "", stage: String = Stage.NEW.name): Collection<String> {
     val testProjectPath = project.basePath
 
     val qodanaYAML = """
@@ -135,9 +173,10 @@ class QodanaScopedScriptConfigurationIntegrationTest : QodanaConfigurationIntegr
       profile:
         path: profile.yaml
       script:
-        name: $SCOPED_SCRIPT_NAME
+        name: $REVERSE_SCOPED_SCRIPT_NAME
         parameters:
           scope-file: scope
+          stage: $stage
       runPromoInspections: false
       disableSanityInspections: true
     """.trimIndent()

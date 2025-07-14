@@ -1,0 +1,11 @@
+{
+  "files" : [{
+    "path" : "test-module/A.java",
+    "added" : [ ],
+    "deleted" : [ ]
+  }],
+  "extendedFiles":[{
+    "path":"test-module/B.java",
+    "extenders":["InspectionToolScopeExtenderMock"]
+  }]
+}
