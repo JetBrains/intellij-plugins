@@ -16,7 +16,7 @@ import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
 internal const val FLEXINSPECT_STATS_INSPECTION_ID = "flexinspect"
 
 internal object InspectionEventsCollector : CounterUsagesCollector() {
-  private val GROUP = EventLogGroup("qodana.inspections", 13)
+  private val GROUP = EventLogGroup("qodana.inspections", 14)
 
   override fun getGroup() = GROUP
 
