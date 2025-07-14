@@ -19,9 +19,9 @@
                   "uriBaseId": "SRCROOT"
                 },
                 "region": {
-                  "startLine": 3,
+                  "startLine": 5,
                   "startColumn": 9,
-                  "charOffset": 48,
+                  "charOffset": 70,
                   "charLength": 4,
                   "snippet": {
                     "text": "true"
@@ -29,12 +29,12 @@
                   "sourceLanguage": "JAVA"
                 },
                 "contextRegion": {
-                  "startLine": 1,
+                  "startLine": 3,
                   "startColumn": 1,
-                  "charOffset": 0,
-                  "charLength": 65,
+                  "charOffset": 40,
+                  "charLength": 47,
                   "snippet": {
-                    "text": "class B {\n  public static void main() {\n    if (true) {\n    }\n  }"
+                    "text": "    if (true) {\n    }\n    if (true) {\n    }\n  }"
                   },
                   "sourceLanguage": "JAVA"
                 }
@@ -48,8 +48,8 @@
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "33077e607440ec7d",
-            "equalIndicator/v1": "c9bd8a7ff0f83511b759f9595b031703aac907ff8b54e6db84da664a1c31fefd"
+            "equalIndicator/v2": "0b76a95c9560b11f",
+            "equalIndicator/v1": "60cebe68f54846cb1aa201c902ca5ba41d6f273d7f89da256bb656fa65b94468"
           },
           "properties": {
             "ideaSeverity": "WARNING",
