@@ -69,6 +69,8 @@ jvm_library(
     "//plugins/css/common/psi",
     "@community//platform/polySymbols/backend",
     "//plugins/css/backend",
+    "@community//platform/backend/workspace",
+    "@community//platform/workspace/storage",
   ],
   runtime_deps = [
     ":angular_resources",
