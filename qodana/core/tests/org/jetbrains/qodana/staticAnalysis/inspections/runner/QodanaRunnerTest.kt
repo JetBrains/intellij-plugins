@@ -61,6 +61,7 @@ import org.junit.Ignore
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertLinesMatch
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
@@ -710,6 +711,45 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       runAnalysis()
       assertSarifResults()
       assertEquals(manager.sarifRun.isResultOutputSkipped(), false)
+    } finally {
+      System.clearProperty(SCOPED_BASELINE_PROPERTY)
+    }
+  }
+
+  @Test
+  fun `testReverseScoped-script-old-stage-read-properties`(): Unit = runBlocking {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to Stage.OLD.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.NEVER,
+      )
+    }
+
+    scope.writeText("""
+      {
+        "files" : [ {
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        },
+        {
+          "path" : "test-module/B.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        } ]
+      }
+    """.trimIndent())
+
+    try {
+      System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
+      assertDoesNotThrow { runAnalysis() }
+      assertSarifResults()
     } finally {
       System.clearProperty(SCOPED_BASELINE_PROPERTY)
     }
