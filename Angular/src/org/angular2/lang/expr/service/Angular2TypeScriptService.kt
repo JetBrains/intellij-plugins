@@ -319,6 +319,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
 
     override fun isEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): Boolean = true
+
+    override val supportsTypeScriptInInjections: Boolean
+      get() = true
   }
 
   private fun commitDocuments(virtualFile: VirtualFile) {
