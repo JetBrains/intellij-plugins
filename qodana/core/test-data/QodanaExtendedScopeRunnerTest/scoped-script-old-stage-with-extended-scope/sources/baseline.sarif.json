@@ -213,63 +213,121 @@
           }
         },
         {
-            "ruleId": "ConstantValue",
-            "kind": "fail",
-            "level": "warning",
-            "message": {
-              "text": "Condition is always true",
-              "markdown": "Condition is always true"
-            },
-            "locations": [
-              {
-                "physicalLocation": {
-                  "artifactLocation": {
-                    "uri": "test-module/B.java",
-                    "uriBaseId": "SRCROOT"
-                  },
-                  "region": {
-                    "startLine": 3,
-                    "startColumn": 9,
-                    "charOffset": 48,
-                    "charLength": 4,
-                    "snippet": {
-                      "text": "true"
-                    },
-                    "sourceLanguage": "JAVA"
-                  },
-                  "contextRegion": {
-                    "startLine": 1,
-                    "startColumn": 1,
-                    "charOffset": 0,
-                    "charLength": 65,
-                    "snippet": {
-                      "text": "class B {\n  public static void main() {\n    if (true) {\n    }\n  }"
-                    },
-                    "sourceLanguage": "JAVA"
-                  }
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always true",
+            "markdown": "Condition is always true"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
                 },
-                "logicalLocations": [
-                  {
-                    "fullyQualifiedName": "testScoped-script-with-extended-scope",
-                    "kind": "module"
-                  }
-                ]
-              }
-            ],
-            "partialFingerprints": {
-              "equalIndicator/v2": "33077e607440ec7d",
-              "equalIndicator/v1": "c9bd8a7ff0f83511b759f9595b031703aac907ff8b54e6db84da664a1c31fefd"
-            },
-            "properties": {
-              "ideaSeverity": "WARNING",
-              "qodanaSeverity": "High",
-              "problemType": "REGULAR",
-              "hasFixes": true,
-              "tags": [
-                "JAVA"
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 9,
+                  "charOffset": 48,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "charOffset": 0,
+                  "charLength": 77,
+                  "snippet": {
+                    "text": "class B {\n  public static void main() {\n    if (true) {\n    }\n    if (true) {"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testScoped-script-with-extended-scope",
+                  "kind": "module"
+                }
               ]
             }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "e84cacb4f0529ddb",
+            "equalIndicator/v1": "6bc3a38803b7d7576cd7a3b638357a823140f6dd4604b9edd479bfd7611297d6"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "hasFixes": true,
+            "tags": [
+              "JAVA"
+            ]
           }
+        },
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Condition is always true",
+            "markdown": "Condition is always true"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/B.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 9,
+                  "charOffset": 70,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "true"
+                  },
+                  "sourceLanguage": "JAVA"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 40,
+                  "charLength": 47,
+                  "snippet": {
+                    "text": "    if (true) {\n    }\n    if (true) {\n    }\n  }"
+                  },
+                  "sourceLanguage": "JAVA"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "testScoped-script-with-extended-scope",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "0b76a95c9560b11f",
+            "equalIndicator/v1": "60cebe68f54846cb1aa201c902ca5ba41d6f273d7f89da256bb656fa65b94468"
+          },
+          "properties": {
+            "ideaSeverity": "WARNING",
+            "qodanaSeverity": "High",
+            "problemType": "REGULAR",
+            "hasFixes": true,
+            "tags": [
+              "JAVA"
+            ]
+          }
+        }
       ],
       "automationDetails": {
         "id": "tests",
