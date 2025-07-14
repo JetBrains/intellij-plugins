@@ -9,11 +9,14 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.registry.QodanaRegistry.SCOPE_EXTENDING_ENABLE_KEY
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
+import org.jetbrains.qodana.staticAnalysis.inspections.config.SkipResultStrategy
 import org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaScopeExtenderProvider
-import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_SKIP_COMPUTATION_PROPERTY
-import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
+import org.jetbrains.qodana.staticAnalysis.script.scoped.*
 import org.junit.Test
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 @TestDataPath("\$CONTENT_ROOT/testData/QodanaExtendedScopeRunnerTest")
@@ -32,28 +35,82 @@ class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
   @Test
   fun `testScoped-script-with-extended-scope`() {
     val scope = qodanaConfig.projectPath.resolve("scope")
-
-    updateQodanaConfig {
-      it.copy(
-        script = QodanaScriptConfig(SCOPED_SCRIPT_NAME, mapOf("scope-file" to scope.toString())),
-        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
-      )
-    }
-
     scope.writeText("""
       {
-        "files" : [ {
+        "files" : [{
           "path" : "test-module/A.java",
           "added" : [ ],
           "deleted" : [ ]
         }]
       }
     """.trimIndent())
+    runReverseScopedScript(scope, Stage.NEW)
+  }
 
+  @Test
+  fun `testScoped-script-old-stage-empty-extended-scope`() {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+    scope.writeText("""
+      {
+        "files" : [{
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        }]
+      }
+    """.trimIndent())
+    try {
+      System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
+      runReverseScopedScript(scope, Stage.OLD)
+    }
+    finally {
+      System.clearProperty(SCOPED_BASELINE_PROPERTY)
+    }
+  }
+
+  @Test
+  fun `testScoped-script-old-stage-with-extended-scope`() {
+    val scope = qodanaConfig.projectPath.resolve("scope")
+    scope.writeText("""
+      {
+        "files" : [{
+          "path" : "test-module/A.java",
+          "added" : [ ],
+          "deleted" : [ ]
+        }],
+        "extendedFiles":[{
+          "path":"test-module/B.java",
+          "extenders":["InspectionToolScopeExtenderMock"]
+        }]
+      }
+    """.trimIndent())
+    try {
+      System.setProperty(SCOPED_BASELINE_PROPERTY, "test-module/baseline.sarif.json")
+      runReverseScopedScript(scope, Stage.OLD)
+    }
+    finally {
+      System.clearProperty(SCOPED_BASELINE_PROPERTY)
+    }
+  }
+
+  private fun runReverseScopedScript(scope: Path, stage: Stage) {
+    updateQodanaConfig {
+      it.copy(
+        script = QodanaScriptConfig(REVERSE_SCOPED_SCRIPT_NAME, mapOf(
+          SCOPE_ARG to scope.toString(),
+          STAGE_ARG to stage.name
+        )),
+        profile = QodanaProfileConfig.named("qodana.single:ConstantValue"),
+        skipResultStrategy = SkipResultStrategy.ANY,
+      )
+    }
     try {
       System.setProperty(COVERAGE_SKIP_COMPUTATION_PROPERTY, "true")
       runAnalysis()
       assertSarifResults()
+
+      val expectedScope = getTestDataPath("scope.json").absolutePathString()
+      assertSameLinesWithFile(expectedScope, scope.readText().trimIndent())
     } finally {
       System.clearProperty(COVERAGE_SKIP_COMPUTATION_PROPERTY)
     }
