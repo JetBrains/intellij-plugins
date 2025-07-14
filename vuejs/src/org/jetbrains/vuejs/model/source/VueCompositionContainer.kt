@@ -156,7 +156,7 @@ abstract class VueCompositionContainer() :
           }
 
       val plugins = processCalls(USE_FUN, false) { _, el, _ ->
-        VueCompositionPlugin.create(el)
+        VueCompositionPlugin.get(el)
       }.toList()
 
       val components = processCalls(COMPONENT_FUN, true) { name, el, nameLiteral ->

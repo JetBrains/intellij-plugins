@@ -37,21 +37,27 @@ data class VueCompositionPlugin(
     fun create(
       source: PsiElement,
     ): VueCompositionPlugin? {
+      if (source is JSFunction) {
+        return VueCompositionPlugin(source)
+      }
+
+      return null
+    }
+
+    fun get(
+      source: PsiElement,
+    ): VueCompositionPlugin? {
       // copied form `JSGotoDeclarationHandler.getGotoDeclarationTargetsImpl`
-      val pluginDeclarations = when (source) {
+      val declarations = when (source) {
         is ES6ImportedBinding -> JSDeclarationEvaluator.GO_TO_DECLARATION.getDeclarations(source)
         is JSPsiReferenceElement -> JSDeclarationEvaluator.GO_TO_DECLARATION.getDeclarations(source)
         else -> return null
       }
 
-      val pluginDeclaration = pluginDeclarations?.singleOrNull()
-                              ?: return null
+      val declaration = declarations?.singleOrNull()
+                        ?: return null
 
-      if (pluginDeclaration is JSFunction) {
-        return VueCompositionPlugin(pluginDeclaration)
-      }
-
-      return null
+      return create(declaration)
     }
   }
 }
