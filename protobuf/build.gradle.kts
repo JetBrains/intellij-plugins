@@ -7,7 +7,7 @@ apply(from = "../contrib-configuration/common.gradle.kts")
  * Initialize this property in a specific Gradle task to determine the plugin runtime layout
  * that is different for various compatible IDEs
  */
-val defaultPluginRunMode = ProtobufPluginLayout.ProtobufCoreTestsInIdeaCommunity("2025.1.2")
+val defaultPluginRunMode = ProtobufPluginLayout.ProtobufCoreWithJavaAndTestsInIdeaCommunity("252.23591.19")
 
 plugins {
   id("java")
@@ -34,10 +34,13 @@ dependencies {
 
   intellijPlatform {
     jetbrainsRuntime()
-    intellijIdeaCommunity(defaultPluginRunMode.baseIDEVersion, useInstaller = false)
+    intellijIdeaCommunity(defaultPluginRunMode.baseIDEVersion, useInstaller = true)
 
     defaultPluginRunMode.pluginDependencies.forEach {
       bundledPlugins(it)
+    }
+    defaultPluginRunMode.moduleDependencies.forEach {
+      bundledModule(it)
     }
     testFramework(TestFrameworkType.Platform)
     testFramework(TestFrameworkType.Plugin.Java)
@@ -116,40 +119,22 @@ fun ext(name: String): String {
 sealed class ProtobufPluginLayout(
   val baseIDEVersion: String,
   val pluginDependencies: List<String>,
+  val moduleDependencies: List<String>,
   val pluginXmlContents: List<String>,
   val sourcesDirs: Array<String>,
   val resourcesDirs: Array<String>,
   val testSourcesDirs: Array<String>,
   val testResourcesDirs: Array<String>
 ) {
-  abstract class ProtobufCoreWithIjPlatform(
-    baseIDEVersion: String,
-    pluginDependencies: List<String>,
-    pluginXmlContents: List<String>,
-    sourcesDirs: Array<String>,
-    resourcesDirs: Array<String>,
-    testSourcesDirs: Array<String>,
-    testResourcesDirs: Array<String>
-  ) : ProtobufPluginLayout(
-    baseIDEVersion,
-    pluginDependencies,
-    pluginXmlContents,
-    sourcesDirs + arrayOf("protoeditor-core/src", "protoeditor-core/gen"),
-    resourcesDirs + arrayOf("resources", "protoeditor-core/resources"),
-    testSourcesDirs + arrayOf("protoeditor-core/test"),
-    testResourcesDirs + arrayOf("protoeditor-core/testData")
-  )
-
-  class ProtobufCoreTestsInIdeaCommunity(majorIdeVersion: String) :
-    ProtobufCoreWithIjPlatform(
+  class ProtobufCoreWithJavaAndTestsInIdeaCommunity(majorIdeVersion: String) :
+    ProtobufPluginLayout(
       majorIdeVersion,
-      listOf(
-        "com.intellij.java",
-      ),
+      listOf("com.intellij.java"),
+      listOf("intellij.spellchecker"),
       listOf("intellij.protoeditor.jvm"),
-      arrayOf("protoeditor-jvm/src"),
-      arrayOf("protoeditor-jvm/resources"),
-      arrayOf("protoeditor-jvm/test"),
-      arrayOf("protoeditor-jvm/testData")
+      arrayOf("protoeditor-jvm/src", "protoeditor-core/src", "protoeditor-core/gen"),
+      arrayOf("protoeditor-jvm/resources", "resources", "protoeditor-core/resources"),
+      arrayOf("protoeditor-jvm/test", "protoeditor-core/test"),
+      arrayOf("protoeditor-jvm/testData", "protoeditor-core/testData")
     )
 }
