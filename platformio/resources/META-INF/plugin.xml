@@ -69,7 +69,7 @@
                           implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor"/>
     <externalSystemManager implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioManager"/>
     <projectTaskRunner implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioProjectTaskRunner"
-                       id="PlatformioProjectTaskRunner"/>
+                       id="PlatformioProjectTaskRunner" order="first" />
     <registryKey key="PlatformIO.system.in.process" defaultValue="true" restartRequired="true"
                  description="Whether IDE should use 'in-process' mode for PlatformIO"/>
     <externalIconProvider key="PlatformIO" implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioIconProvider"/>
