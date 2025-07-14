@@ -3,8 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.navigation.JSDeclarationEvaluator
-import com.intellij.lang.javascript.psi.JSFunction
-import com.intellij.lang.javascript.psi.JSPsiReferenceElement
+import com.intellij.lang.javascript.psi.*
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -39,6 +38,16 @@ data class VueCompositionPlugin(
     ): VueCompositionPlugin? {
       if (source is JSFunction) {
         return VueCompositionPlugin(source)
+      }
+
+      if (source is JSVariable) {
+        val install = source.initializer
+                        ?.let { it as? JSObjectLiteralExpression }
+                        ?.findProperty(INSTALL_FUN)
+                        ?.let { it as? JSFunctionProperty }
+                      ?: return null
+
+        return VueCompositionPlugin(install)
       }
 
       return null

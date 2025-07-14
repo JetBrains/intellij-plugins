@@ -20,6 +20,7 @@ const val DEFINE_OPTIONS_FUN: String = "defineOptions"
 const val WITH_DEFAULTS_FUN: String = "withDefaults"
 const val CREATE_APP_FUN: String = "createApp"
 const val MOUNT_FUN: String = "mount"
+const val INSTALL_FUN: String = "install"
 const val PROVIDE_FUN: String = "provide"
 const val INJECT_FUN: String = "inject"
 
