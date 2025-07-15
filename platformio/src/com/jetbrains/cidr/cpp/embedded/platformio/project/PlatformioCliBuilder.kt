@@ -30,7 +30,7 @@ class PlatformioCliBuilder(
     if (project?.let { TrustedProjects.isProjectTrusted(it) } == false) {
       throw ExecutionException(ClionEmbeddedPlatformioBundle.message("project.not.trusted"))
     }
-    commandLine = if(usePty) PtyCommandLine() else GeneralCommandLine()
+    commandLine = if(usePty) PtyCommandLine().withConsoleMode(false) else GeneralCommandLine()
   }
 
   fun withParams(vararg params: String): PlatformioCliBuilder {
