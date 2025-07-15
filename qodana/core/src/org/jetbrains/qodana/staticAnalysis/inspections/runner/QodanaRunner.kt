@@ -193,6 +193,12 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
 
   private fun Run.convertPropertyToResults(propertyKey: String): List<Result>? {
     val property = this.properties?.get(propertyKey) ?: return null
+    
+    if (property is List<*> && property.all { it is Result }) {
+      @Suppress("UNCHECKED_CAST")
+      return property as List<Result>
+    }
+    
     return try {
       val gson = SarifUtil.createGson()
       val json = gson.toJson(property)
