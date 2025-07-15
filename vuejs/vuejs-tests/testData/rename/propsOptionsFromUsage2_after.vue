@@ -11,6 +11,7 @@ export default {
 </script>
 
 <template>
+  {{ newName23 }}
   <cmp new-name23="foo"></cmp>
   <cmp newName23="foo"></cmp>
   <cmp OptionsApiWithType="foo"></cmp>

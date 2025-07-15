@@ -12,8 +12,10 @@ import com.intellij.lang.javascript.psi.types.JSWidenType
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.model.Pointer
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
+import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
@@ -244,7 +246,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
 
-  abstract class VueSourceInputProperty<T: PsiElement> protected constructor(
+  abstract class VueSourceInputProperty<T : PsiElement> protected constructor(
     override val name: String,
     val sourceElement: T,
     protected val hasOuterDefault: Boolean = false,
@@ -334,10 +336,19 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     sourceElement: JSLiteralExpression,
     hasOuterDefault: Boolean,
   ) : VueSourceInputProperty<JSLiteralExpression>(name, sourceElement, hasOuterDefault),
-      PolySymbolDeclaredInPsi {
+      PolySymbolDeclaredInPsi, PsiSourcedPolySymbol {
 
     override val textRangeInSourceElement: TextRange
       get() = TextRange(1, sourceElement.textRange.length - 1)
+
+    override val psiContext: PsiElement?
+      get() = super<PolySymbolDeclaredInPsi>.psiContext
+
+    override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+      super<PolySymbolDeclaredInPsi>.getNavigationTargets(project)
+
+    override val source: VueImplicitElement
+      get() = super<VueSourceInputProperty>.source
 
     override fun createPointer(): Pointer<VueStringLiteralInputProperty> {
       val name = name

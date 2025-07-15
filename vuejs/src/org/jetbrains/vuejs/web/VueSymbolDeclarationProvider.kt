@@ -20,6 +20,7 @@ import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.DEFINE_EMITS_FUN
+import org.jetbrains.vuejs.model.source.DEFINE_PROPS_FUN
 import org.jetbrains.vuejs.model.source.EMITS_PROP
 import org.jetbrains.vuejs.model.source.PROPS_PROP
 import org.jetbrains.vuejs.model.source.VueCompositionContainer
@@ -40,17 +41,25 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
       is JSArrayLiteralExpression -> {
         val (qualifiedKind, element) =
           when (val grandparent = parent.parent) {
-            // "emits" property
+            // "emits", "props" property
             is JSProperty ->
-              grandparent.takeIf { it.name == EMITS_PROP }?.let { Pair(JS_EVENTS, it) }
-              ?: grandparent.takeIf { it.name == PROPS_PROP }?.let { Pair(VUE_COMPONENT_PROPS, it) }
+              when (grandparent.name) {
+                EMITS_PROP -> Pair(JS_EVENTS, grandparent)
+                PROPS_PROP -> Pair(VUE_COMPONENT_PROPS, grandparent)
+                else -> null
+              }
 
-            // "defineEmits" call
+            // "defineEmits", "defineProps" call
             is JSArgumentList ->
               grandparent.parent
                 ?.asSafely<JSCallExpression>()
-                ?.takeIf { getFunctionNameFromVueIndex(it) == DEFINE_EMITS_FUN }
-                ?.let { Pair(JS_EVENTS, it) }
+                ?.let {
+                  when (getFunctionNameFromVueIndex(it)) {
+                    DEFINE_EMITS_FUN -> Pair(JS_EVENTS, it)
+                    DEFINE_PROPS_FUN -> Pair(VUE_COMPONENT_PROPS, it)
+                    else -> null
+                  }
+                }
             else -> null
           } ?: return emptyList()
 

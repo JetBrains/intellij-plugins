@@ -11,6 +11,7 @@ export default {
 </script>
 
 <template>
+  {{ optionsApiWithType }}
   <cmp options-api-with-type="foo"></cmp>
   <cmp options<caret>ApiWithType="foo"></cmp>
   <cmp OptionsApiWithType="foo"></cmp>
