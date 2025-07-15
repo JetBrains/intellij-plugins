@@ -6,6 +6,7 @@ export default {
 </script>
 
 <template>
+  {{ newName }}
   <cmp new-name="foo"></cmp>
   <cmp newName="foo"></cmp>
   <cmp OptionsApiWithType="foo"></cmp>

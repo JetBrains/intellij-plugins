@@ -4,6 +4,8 @@ package org.jetbrains.vuejs.findUsages
 import com.intellij.lang.ecmascript6.findUsages.JSFindReferencesResultProcessor
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptObjectType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
@@ -34,7 +36,6 @@ import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
-import org.jetbrains.vuejs.model.source.DATA_PROP
 import org.jetbrains.vuejs.model.source.PROPS_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
 import java.util.*
@@ -46,39 +47,54 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
     val elementName = (element as? JSPsiNamedElementBase)?.name
 
     if (elementName != null) {
-      // Script setup local vars
-      getFullComponentScopeIfInsideScriptSetup(element)?.let { scope ->
-        alternateNames(elementName).forEach {
-          queryParameters.optimizer.searchWord(
-            it,
-            scope,
-            UsageSearchContext.IN_CODE,
-            false,
-            element,
-            PsiSourcedPolySymbolRequestResultProcessor(element, emptyList(), true)
-          )
-        }
 
-        if (element is JSVariable) {
-          // JSReferenceExpression optimizes in case of JSVariables, so we need to search for our implicit element instead to find
-          // references to `ref` attributes qualified on `$refs` in script setup
-          queryParameters.optimizer.searchWord(elementName, LocalSearchScope(element.containingFile),
-                                               UsageSearchContext.ANY, true, element, object : RequestResultProcessor() {
-            override fun processTextOccurrence(occurence: PsiElement, offsetInElement: Int, consumer: Processor<in PsiReference>): Boolean {
-              val implicitElement = (occurence as? XmlAttributeValue)
-                ?.parent?.asSafely<VueRefAttribute>()
-                ?.implicitElement
-              if (implicitElement != null && implicitElement.context == element) {
-                val collector = queryParameters.optimizer
-                collector.searchWord(elementName, LocalSearchScope(element.containingFile),
-                                     UsageSearchContext.ANY, true, implicitElement)
-                return PsiSearchHelper.getInstance(element.getProject()).processRequests(collector, consumer)
+      // Check if we have a potential component property definition
+      val sourceElement = element.asSafely<JSImplicitElement>()?.context ?: element
+      val isPropertyElement =
+        sourceElement
+          .let {
+            it.asSafely<JSProperty>()?.context?.asSafely<JSObjectLiteralExpression>()
+            ?: it.asSafely<JSLiteralExpression>()?.context?.asSafely<JSArrayLiteralExpression>()
+          }
+          ?.context?.asSafely<JSProperty>()
+          ?.name.let { it == PROPS_PROP }
+        || sourceElement is TypeScriptPropertySignature && sourceElement.context is TypeScriptObjectType
+
+      // Script setup local vars
+      if (!isPropertyElement) {
+        getFullComponentScopeIfInsideScriptSetup(element)?.let { scope ->
+          alternateNames(elementName).forEach {
+            queryParameters.optimizer.searchWord(
+              it,
+              scope,
+              UsageSearchContext.IN_CODE,
+              false,
+              element,
+              PsiSourcedPolySymbolRequestResultProcessor(element, emptyList(), true)
+            )
+          }
+
+          if (element is JSVariable) {
+            // JSReferenceExpression optimizes in case of JSVariables, so we need to search for our implicit element instead to find
+            // references to `ref` attributes qualified on `$refs` in script setup
+            queryParameters.optimizer.searchWord(elementName, LocalSearchScope(element.containingFile),
+                                                 UsageSearchContext.ANY, true, element, object : RequestResultProcessor() {
+              override fun processTextOccurrence(occurence: PsiElement, offsetInElement: Int, consumer: Processor<in PsiReference>): Boolean {
+                val implicitElement = (occurence as? XmlAttributeValue)
+                  ?.parent?.asSafely<VueRefAttribute>()
+                  ?.implicitElement
+                if (implicitElement != null && implicitElement.context == element) {
+                  val collector = queryParameters.optimizer
+                  collector.searchWord(elementName, LocalSearchScope(element.containingFile),
+                                       UsageSearchContext.ANY, true, implicitElement)
+                  return PsiSearchHelper.getInstance(element.getProject()).processRequests(collector, consumer)
+                }
+                return true
               }
-              return true
-            }
-          })
+            })
+          }
+          return
         }
-        return
       }
 
       // Vue Scope Elements imported into script setup (as is & aliased)
@@ -91,18 +107,13 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
         ScriptSetupImportProcessor(element, queryParameters)
       )
 
-      // Components (will also mistakenly find directives)
-      val component = if (element is JSImplicitElement && element.context is JSLiteralExpression)
-        VueModelManager.findEnclosingComponent(element)?.takeIf { (it as? VueRegularComponent)?.nameElement == element.context }
-      else if (
-        (element.asSafely<JSImplicitElement>()?.context ?: element).asSafely<JSProperty>()
-          ?.context?.asSafely<JSObjectLiteralExpression>()
-          ?.context?.asSafely<JSProperty>()
-          ?.name.let { it == PROPS_PROP }
-      )
-        VueModelManager.findEnclosingComponent(element)
-      else
-        VueComponents.getComponentDescriptor(element)?.let { VueModelManager.getComponent(it) }
+      val component = if (!isPropertyElement) {
+        if (element is JSImplicitElement && element.context.let { it is JSLiteralExpression && it.context !is JSArrayLiteralExpression })
+          VueModelManager.findEnclosingComponent(element)?.takeIf { (it as? VueRegularComponent)?.nameElement == element.context }
+        else
+          VueComponents.getComponentDescriptor(element)?.let { VueModelManager.getComponent(it) }
+      }
+      else null
 
       // Extend search scope to the whole Vue file if needed
       val searchScope = queryParameters.effectiveSearchScope.let { scope ->
@@ -115,9 +126,9 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
         else scope
       }
 
-      if (component != null && isVueContext(component.source ?: element)) {
+      if ((component != null || isPropertyElement) && isVueContext(component?.source ?: element)) {
         // Add search for default export if present
-        if (element is JSImplicitElement) {
+        if (element is JSImplicitElement && component != null) {
           findDefaultExport(findModule(component.source?.containingFile, false))?.let { defaultExport ->
             val optimizer = queryParameters.optimizer
             val collector = SearchRequestCollector(optimizer.searchSession)
@@ -137,7 +148,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
           }
         }
 
-        val searchTarget = if (element is JSImplicitElement) component.source ?: element else element
+        val searchTarget = if (element is JSImplicitElement) component?.source ?: element else element
         alternateNames(elementName).forEach {
           queryParameters.optimizer.searchWord(
             it,
