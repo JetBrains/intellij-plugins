@@ -31,8 +31,11 @@ abstract class VueCompositionContainer() :
 
   abstract override val source: JSElement
 
-  private val plugins: List<VuePlugin>
+  val plugins: List<VuePlugin>
     get() = getEntitiesAnalysis().plugins
+
+  protected open fun pluginChain(): List<VuePlugin> =
+    emptyList()
 
   override val components: Map<String, VueComponent>
     get() = buildMap {
@@ -41,7 +44,7 @@ abstract class VueCompositionContainer() :
         putAll(container.components)
       }
 
-      for (plugin in plugins) {
+      for (plugin in pluginChain()) {
         putAll(plugin.components)
       }
 

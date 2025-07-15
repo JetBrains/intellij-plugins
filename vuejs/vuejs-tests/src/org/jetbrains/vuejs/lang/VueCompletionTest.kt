@@ -688,6 +688,15 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  fun testComponentFromNestedFunctionPluginWithCycle() =
+    doLookupTest(
+      VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
   fun testComponentFromObjectPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_4_0,
@@ -698,6 +707,15 @@ class VueCompletionTest : VueTestCase("completion") {
     )
 
   fun testComponentFromNestedObjectPlugin() =
+    doLookupTest(
+      VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testComponentFromNestedObjectPluginWithCycle() =
     doLookupTest(
       VueTestModule.VUE_3_4_0,
       dir = true,
