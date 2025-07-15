@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
 import com.intellij.application.options.CodeStyleAbstractConfigurable
@@ -9,9 +9,12 @@ import com.intellij.psi.codeStyle.CodeStyleConfigurable
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings
+import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.hcl.HCLLanguage
 
-open class HCLCodeStyleSettingsProvider(private val language: Language = HCLLanguage) : CodeStyleSettingsProvider() {
+sealed class BaseHclCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
+  abstract override fun getLanguage(): Language
+
   override fun createConfigurable(settings: CodeStyleSettings, originalSettings: CodeStyleSettings): CodeStyleConfigurable {
     return object : CodeStyleAbstractConfigurable(settings, originalSettings, language.displayName) {
       override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel {
@@ -29,11 +32,15 @@ open class HCLCodeStyleSettingsProvider(private val language: Language = HCLLang
     }
   }
 
-  override fun getLanguage(): Language? {
-    return language
-  }
-
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings? {
     return HclCodeStyleSettings(settings, language)
   }
+}
+
+class HclCodeStyleSettingsProvider : BaseHclCodeStyleSettingsProvider() {
+  override fun getLanguage(): Language = HCLLanguage
+}
+
+class TfCodeStyleSettingsProvider : BaseHclCodeStyleSettingsProvider() {
+  override fun getLanguage(): Language = TerraformLanguage
 }
