@@ -142,6 +142,12 @@ class VueRenameTest : VueTestCase("rename") {
   fun testPropsOptionsNumberFromDefinition() =
     checkSymbolRename("newName23", dir = false)
 
+  fun testPropsStringsFromDefinition() =
+    checkSymbolRename("newName", dir = false)
+
+  fun testPropsStringsFromUsage() =
+    checkSymbolRename("newName", dir = false)
+
   fun testComponentFromFunctionPlugin_renameFromDeclaration() {
     checkSymbolRename(
       mainFile = "global-components.ts",

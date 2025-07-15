@@ -3,19 +3,19 @@
  defaultName: "PropsConstructorsAndGenerics",
  props: [
   {
-   class: "VueSourceInputProperty",
+   class: "VuePsiNamedElementInputProperty",
    name: "autofocus",
    jsType: "boolean | undefined",
    required: false,
   },
   {
-   class: "VueSourceInputProperty",
+   class: "VuePsiNamedElementInputProperty",
    name: "msg",
    jsType: "string",
    required: true,
   },
   {
-   class: "VueSourceInputProperty",
+   class: "VuePsiNamedElementInputProperty",
    name: "value",
    jsType: "number | undefined",
    required: false,

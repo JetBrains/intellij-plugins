@@ -93,7 +93,7 @@ class VueComponentSymbol(
             return true
           }
         })
-        props.map { VueInputPropSymbol(it, item, this.origin) }
+        props.map { it as? PolySymbol ?: VueInputPropSymbol(it, item, this.origin) }
       }
       VUE_COMPONENT_DATA_PROPERTIES -> {
         val props = mutableListOf<VueDataProperty>()

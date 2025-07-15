@@ -3,12 +3,12 @@
  defaultName: "TestComponent",
  props: [
   {
-   class: "VueSourceInputProperty",
+   class: "VueStringLiteralInputProperty",
    name: "optional",
    required: false,
   },
   {
-   class: "VueSourceInputProperty",
+   class: "VueStringLiteralInputProperty",
    name: "required",
    required: false,
   },
