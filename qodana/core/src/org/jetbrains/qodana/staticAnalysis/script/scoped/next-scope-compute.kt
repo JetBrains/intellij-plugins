@@ -13,6 +13,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunIncrementalContext
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
@@ -22,30 +23,31 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.Path
 
-internal suspend fun dumpScopedFile(
+internal suspend fun persistNextScopeFile(
   runContext: QodanaRunContext,
   report: SarifReport,
   scopeFile: Path
 ) {
-  val dumpReducedScope = System.getProperty(DUMP_REDUCED_SCOPE_ARG)
+  val persistReducedScopePath = System.getProperty(REDUCED_SCOPE_PATH)
   val root = VfsUtil.findFile(runContext.config.projectPath, false)
-  if (dumpReducedScope != null) {
-    dumpReducedScopeToPath(dumpReducedScope, runContext, report, root)
+             ?: throw QodanaException("Cannot find VFS file for project path ${runContext.config.projectPath}")
+  if (persistReducedScopePath != null) {
+    persistReducedScopeToPath(persistReducedScopePath, runContext, report, root)
   }
   else if (runContext is QodanaRunIncrementalContext) {
-    dumpFullScopeToPath(scopeFile, runContext, root)
+    persistFullScopeToPath(scopeFile, runContext, root)
   }
 }
 
-private suspend fun dumpReducedScopeToPath(
-  dumpReducedScope: String,
+private suspend fun persistReducedScopeToPath(
+  persistReducedScopePath: String,
   runContext: QodanaRunContext,
   report: SarifReport,
-  root: VirtualFile?
+  root: VirtualFile
 ) {
   val projectDir = runContext.config.projectPath
   val path = run {
-    val p = Path(dumpReducedScope)
+    val p = Path(persistReducedScopePath)
     if (p.isAbsolute) p else {
       projectDir.resolve(p)
     }
@@ -56,10 +58,10 @@ private suspend fun dumpReducedScopeToPath(
   writeNextScope(path, ChangedFiles(nextScope, extendedFiles))
 }
 
-private suspend fun dumpFullScopeToPath(
+private suspend fun persistFullScopeToPath(
   scopeFilePath: Path,
   runContext: QodanaRunIncrementalContext,
-  root: VirtualFile?
+  root: VirtualFile
 ) {
   val extendedFiles = extendedFilesToRelativePaths(runContext.scopeExtended, root)
   if (extendedFiles.isNotEmpty()) {
