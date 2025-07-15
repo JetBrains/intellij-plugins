@@ -46,7 +46,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.jetbrains.qodana.staticAnalysis.sarif.configProfile
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.COVERAGE_SKIP_COMPUTATION_PROPERTY
-import org.jetbrains.qodana.staticAnalysis.script.scoped.DUMP_REDUCED_SCOPE_ARG
+import org.jetbrains.qodana.staticAnalysis.script.scoped.REDUCED_SCOPE_PATH
 import org.jetbrains.qodana.staticAnalysis.script.scoped.RESULT_PRINTING_SKIPPED
 import org.jetbrains.qodana.staticAnalysis.script.scoped.REVERSE_SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_BASELINE_PROPERTY
@@ -457,7 +457,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
 
     try {
       val scopePath = qodanaConfig.outPath.resolve("scope")
-      System.setProperty(DUMP_REDUCED_SCOPE_ARG, scopePath.toString())
+      System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
       runAnalysis()
       assertSarifResults()
       // resulting report non empty - decision - continue
@@ -465,7 +465,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       val expectedScope = getTestDataPath("scope.json").absolutePathString()
       assertSameLinesWithFile(expectedScope, scopePath.readText())
     } finally {
-      System.clearProperty(DUMP_REDUCED_SCOPE_ARG)
+      System.clearProperty(REDUCED_SCOPE_PATH)
     }
   }
 
@@ -503,7 +503,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
 
     try {
       val scopePath = qodanaConfig.outPath.resolve("scope")
-      System.setProperty(DUMP_REDUCED_SCOPE_ARG, scopePath.toString())
+      System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
       runAnalysis()
       assertSarifResults()
       // resulting report non empty - decision - continue
@@ -511,7 +511,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       val expectedScope = getTestDataPath("scope.json").absolutePathString()
       assertSameLinesWithFile(expectedScope, scopePath.readText())
     } finally {
-      System.clearProperty(DUMP_REDUCED_SCOPE_ARG)
+      System.clearProperty(REDUCED_SCOPE_PATH)
     }
   }
 
@@ -549,7 +549,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
 
     try {
       val scopePath = qodanaConfig.outPath.resolve("scope")
-      System.setProperty(DUMP_REDUCED_SCOPE_ARG, scopePath.toString())
+      System.setProperty(REDUCED_SCOPE_PATH, scopePath.toString())
       runAnalysis()
       assertSarifResults()
       // resulting report empty from new results - decision - report
@@ -557,7 +557,7 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
       // analysis stopped, file doesn't get created
       assertFalse(scopePath.exists())
     } finally {
-      System.clearProperty(DUMP_REDUCED_SCOPE_ARG)
+      System.clearProperty(REDUCED_SCOPE_PATH)
     }
   }
 

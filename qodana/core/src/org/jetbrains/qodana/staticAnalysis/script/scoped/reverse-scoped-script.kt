@@ -10,7 +10,7 @@ import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.*
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunIncrementalContext.Companion.asIncremental
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunIncrementalContext.Companion.createIncrementalContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.sarif.createInvocation
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
@@ -23,7 +23,7 @@ import kotlin.io.path.notExists
 internal const val STAGE_ARG = "stage"
 internal const val RESULT_PRINTING_SKIPPED = "qodana.result.skipped"
 const val REVERSE_SCOPED_SCRIPT_NAME = "reverse-scoped"
-internal const val DUMP_REDUCED_SCOPE_ARG = "qodana.reduced.scope.path"
+internal const val REDUCED_SCOPE_PATH = "qodana.reduced.scope.path"
 
 enum class Stage {
   NEW,
@@ -84,7 +84,7 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
     val requireFurtherAnalysis = runContext.config.skipResultStrategy.shouldSkip(run)
     preserveShouldSkipState(run, requireFurtherAnalysis)
     if (requireFurtherAnalysis) {
-      dumpScopedFile(runContext, report, scopeFile)
+      persistNextScopeFile(runContext, report, scopeFile)
     }
   }
 }
@@ -176,13 +176,16 @@ internal class ReverseScopedRunContextFactory(
     val changedFiles = parseChangedFiles(scopeFile)
     val addedLines = collectAddedLines(changedFiles, config)
     val paths = changedFiles.files.map { Path.of(it.path) }
-    if (computeExtendedScope) {
-      return delegate.openRunContext()
-        .asIncremental(changes = addedLines, paths = paths, computeExtendedScope = true)
+    val context = delegate.openRunContext()
+    val files = resolveVirtualFiles(config.projectPath, paths)
+
+    val additionalFiles = if (computeExtendedScope) {
+      collectExtendedFiles(files, context.qodanaProfile, context.project)
     } else {
-      val extendedFiles = changedFiles.extendedFiles.associate { e -> e.path to e.extenders }
-      return delegate.openRunContext()
-        .asIncremental(changes = addedLines, extendedFiles = extendedFiles, paths = paths)
+      changedFiles.extendedFiles.associate { e -> e.path to e.extenders }
+        .mapNotNull { (path, scope) -> resolveVirtualFile(config.projectPath, Path.of(path))?.let { it to scope } }
+        .toMap()
     }
+    return context.createIncrementalContext(addedLines, files, additionalFiles, null)
   }
 }
