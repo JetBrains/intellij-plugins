@@ -1,7 +1,8 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -46,6 +47,24 @@ data class VueCompositionApp(
 
   override val parents: List<VueEntitiesContainer>
     get() = VueGlobalImpl.getParents(this)
+
+  override fun pluginChain(): List<VuePlugin> =
+    buildList {
+      val visited = mutableSetOf<VuePlugin>()
+
+      fun visit(plugins: List<VuePlugin>) {
+        for (plugin in plugins) {
+          if (!visited.add(plugin))
+            continue
+
+          visit(plugin.plugins)
+
+          add(plugin)
+        }
+      }
+
+      visit(plugins)
+    }
 
   override fun toString(): String {
     return "VueCompositionApp($source)"
