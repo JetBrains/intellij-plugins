@@ -11,6 +11,7 @@ import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
@@ -20,6 +21,7 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.DEFINE_EMITS_FUN
 import org.jetbrains.vuejs.model.source.EMITS_PROP
+import org.jetbrains.vuejs.model.source.PROPS_PROP
 import org.jetbrains.vuejs.model.source.VueCompositionContainer
 
 class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
@@ -36,22 +38,26 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
           ?.asPolySymbol(name, VueModelVisitor.Proximity.APP)
       }
       is JSArrayLiteralExpression -> {
-        when (val grandparent = parent.parent) {
-          // "emits" property
-          is JSProperty ->
-            grandparent.takeIf { it.name == EMITS_PROP }
+        val (qualifiedKind, element) =
+          when (val grandparent = parent.parent) {
+            // "emits" property
+            is JSProperty ->
+              grandparent.takeIf { it.name == EMITS_PROP }?.let { Pair(JS_EVENTS, it) }
+              ?: grandparent.takeIf { it.name == PROPS_PROP }?.let { Pair(VUE_COMPONENT_PROPS, it) }
 
-          // "defineEmits" call
-          is JSArgumentList ->
-            grandparent.parent
-              ?.asSafely<JSCallExpression>()
-              ?.takeIf { getFunctionNameFromVueIndex(it) == DEFINE_EMITS_FUN }
-          else -> null
-        }
-          ?.let { VueModelManager.findEnclosingComponent(it) }
+            // "defineEmits" call
+            is JSArgumentList ->
+              grandparent.parent
+                ?.asSafely<JSCallExpression>()
+                ?.takeIf { getFunctionNameFromVueIndex(it) == DEFINE_EMITS_FUN }
+                ?.let { Pair(JS_EVENTS, it) }
+            else -> null
+          } ?: return emptyList()
+
+        VueModelManager.findEnclosingComponent(element)
           ?.asPolySymbol("", VueModelVisitor.Proximity.LOCAL)
           ?.asSafely<PolySymbolScope>()
-          ?.getMatchingSymbols(JS_EVENTS.withName(name),
+          ?.getMatchingSymbols(qualifiedKind.withName(name),
                                PolySymbolNameMatchQueryParams.create(PolySymbolQueryExecutorFactory.create(parent, false)),
                                PolySymbolQueryStack())
           ?.getOrNull(0)
@@ -60,8 +66,8 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
       else -> null
     }
 
-    return symbol
-             ?.let { listOf(VueSymbolDeclaration(it, literal)) }
+    return symbol.asSafely<PolySymbolDeclaredInPsi>()?.declaration?.let { listOf(it) }
+           ?: symbol?.let { listOf(VueSymbolDeclaration(it, literal)) }
            ?: emptyList()
   }
 

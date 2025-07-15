@@ -220,14 +220,14 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
           is JSObjectLiteralExpression -> {
             props = collectMembers(arg)
               .map { (name, property) ->
-                VueDefaultContainerInfoProvider.VueSourceInputProperty(name, property, defaults.contains(name))
+                VueDefaultContainerInfoProvider.VueSourceInputProperty.create(name, property, defaults.contains(name))
               }
           }
           is JSArrayLiteralExpression -> {
             props = getStringLiteralsFromInitializerArray(arg)
               .map { literal ->
                 val name = getTextIfLiteral(literal) ?: ""
-                VueDefaultContainerInfoProvider.VueSourceInputProperty(name, literal, defaults.contains(name))
+                VueDefaultContainerInfoProvider.VueSourceInputProperty.create(name, literal, defaults.contains(name))
               }
           }
           else -> {

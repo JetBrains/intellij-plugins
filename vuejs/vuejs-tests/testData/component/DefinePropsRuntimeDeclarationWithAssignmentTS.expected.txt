@@ -5,25 +5,25 @@
  },
  props: [
   {
-   class: "VueSourceInputProperty",
+   class: "VuePsiNamedElementInputProperty",
    name: "optional",
    jsType: "string",
    required: false,
   },
   {
-   class: "VueSourceInputProperty",
+   class: "VuePsiNamedElementInputProperty",
    name: "optionalUnion",
    jsType: "string | number",
    required: false,
   },
   {
-   class: "VueSourceInputProperty",
+   class: "VuePsiNamedElementInputProperty",
    name: "required",
    jsType: "string",
    required: true,
   },
   {
-   class: "VueSourceInputProperty",
+   class: "VuePsiNamedElementInputProperty",
    name: "requiredUnion",
    jsType: "string | number",
    required: true,
