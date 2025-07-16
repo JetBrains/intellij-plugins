@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
 import com.intellij.formatting.*
@@ -16,14 +16,16 @@ import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getNextSiblingNonWhiteSpace
 
-class HCLBlock(val parent: HCLBlock?,
-               node: ASTNode,
-               wrap: Wrap?,
-               alignment: Alignment?,
-               private val spacingBuilder: SpacingBuilder,
-               private val _indent: Indent?,
-               val settings: HclCodeStyleSettings,
-               private val valueAlignment: Alignment? = null) : AbstractBlock(node, wrap, alignment) {
+internal class HCLBlock(
+  val parent: HCLBlock?,
+  node: ASTNode,
+  wrap: Wrap?,
+  alignment: Alignment?,
+  private val spacingBuilder: SpacingBuilder,
+  private val _indent: Indent?,
+  val settings: HclCodeStyleSettings,
+  private val valueAlignment: Alignment? = null,
+) : AbstractBlock(node, wrap, alignment) {
   private val myChildWrap: Wrap? = when (node.elementType) {
     BLOCK_OBJECT -> Wrap.createWrap(settings.OBJECT_WRAPPING, true)
     OBJECT, CONDITIONAL_EXPRESSION -> Wrap.createWrap(settings.OBJECT_WRAPPING, true)

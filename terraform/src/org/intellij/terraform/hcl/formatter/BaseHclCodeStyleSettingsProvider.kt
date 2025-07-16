@@ -12,7 +12,7 @@ import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.hcl.HCLLanguage
 
-sealed class BaseHclCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
+internal sealed class BaseHclCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
   abstract override fun getLanguage(): Language
 
   override fun createConfigurable(settings: CodeStyleSettings, originalSettings: CodeStyleSettings): CodeStyleConfigurable {
@@ -33,14 +33,14 @@ sealed class BaseHclCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
   }
 
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings? {
-    return HclCodeStyleSettings(settings, language)
+    return HclCodeStyleSettings(language.id, settings)
   }
 }
 
-class HclCodeStyleSettingsProvider : BaseHclCodeStyleSettingsProvider() {
+internal class HclCodeStyleSettingsProvider : BaseHclCodeStyleSettingsProvider() {
   override fun getLanguage(): Language = HCLLanguage
 }
 
-class TfCodeStyleSettingsProvider : BaseHclCodeStyleSettingsProvider() {
+internal class TfCodeStyleSettingsProvider : BaseHclCodeStyleSettingsProvider() {
   override fun getLanguage(): Language = TerraformLanguage
 }
