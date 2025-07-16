@@ -71,6 +71,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
     "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
+    "//webcore:webide",
   ],
   runtime_deps = [":tests_test_resources"]
 )
