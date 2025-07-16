@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.documentation;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
@@ -9,18 +9,21 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.documentation.DocumentationMarkup;
 import com.intellij.lang.javascript.documentation.JSDocumentationBuilder;
+import com.intellij.lang.javascript.documentation.JSDocumentationCommentGenerator;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.documentation.JSQuickNavigateBuilder;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -895,14 +898,7 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
   }
 
   @Override
-  protected void appendFunctionInfoDoc(@NotNull JSFunction function, @NotNull StringBuilder builder) {
-    JSType type = JSPsiImplUtils.getTypeFromDeclaration(function);
-
-    if (type != null && !(type instanceof JSVoidType) && !function.isGetProperty()) {
-      builder.append("* @return ");
-
-      //builder.append(s);
-      builder.append("\n");
-    }
+  protected @NotNull JSDocumentationCommentGenerator getCommentGenerator() {
+    return FlexDocumentationCommentGenerator.INSTANCE;
   }
 }
