@@ -23,7 +23,7 @@ private class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesPr
       project = directory.project,
       fileOrDirectory = directory.virtualFile,
       checkCurrentDirectoryOnly = false,
-    ).firstOrNull() != null
+    ).any()
 
     if (isTypeScriptProject) {
       props["SCRIPT_LANG_ATTR"] = " lang=\"ts\""
