@@ -1,5 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.script.scoped
 
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.Options
@@ -17,6 +19,8 @@ import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.*
 import java.nio.file.Path
+import kotlin.collections.component1
+import kotlin.collections.component2
 import kotlin.io.path.Path
 import kotlin.io.path.notExists
 
@@ -62,18 +66,22 @@ internal class ReverseScopedScriptFactory : QodanaScriptFactory {
     if (path.notExists()) throw QodanaException("Scope file $path does not exist")
     val stage = Stage.valueOf(parameters.require<String>(STAGE_ARG))
 
-    val computeExtendedScope = stage == Stage.NEW // we compute it only on new stage
-    val runContextFactory = ReverseScopedRunContextFactory(contextFactory, path, config, computeExtendedScope)
+    val runContextFactory = when (stage) {
+      Stage.NEW -> ReverseScopedRunNewCodeContextFactory(contextFactory, path, config)
+      else -> ReverseScopedRunContextFactory(contextFactory, path, config)
+    }
     return when (stage) {
-      Stage.NEW -> ReverseScopedScriptNew(runContextFactory, path)
+      Stage.NEW -> ReverseScopedScriptNew(runContextFactory)
       Stage.OLD -> ReverseScopedScriptOld(runContextFactory)
       Stage.FIXES -> ReverseScopedScriptFixes(runContextFactory)
     }
   }
 }
 
-internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContextFactory, private val scopeFile: Path) :
+internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContextFactory) :
   ReverseScopedScript(false, runContextFactory) {
+  private val scopeFile: Path = runContextFactory.scopeFile
+
   override suspend fun execute(report: SarifReport, runContext: QodanaRunContext, inspectionContext: QodanaGlobalInspectionContext) {
     val run = report.getOrCreateRun()
     runContext.runAnalysis(context = inspectionContext)
@@ -84,7 +92,15 @@ internal class ReverseScopedScriptNew(runContextFactory: ReverseScopedRunContext
     val requireFurtherAnalysis = runContext.config.skipResultStrategy.shouldSkip(run)
     preserveShouldSkipState(run, requireFurtherAnalysis)
     if (requireFurtherAnalysis) {
-      persistNextScopeFile(runContext, report, scopeFile)
+      val root = VfsUtil.findFile(runContext.config.projectPath, false)
+                 ?: throw QodanaException("Cannot find VFS file for project path ${runContext.config.projectPath}")
+      val persistReducedScopePath = System.getProperty(REDUCED_SCOPE_PATH)
+      if (persistReducedScopePath != null) {
+        persistReducedScopeToPath(persistReducedScopePath, runContext, report, root)
+      }
+      else if (runContext is QodanaRunIncrementalContext) {
+        persistFullScopeToPath(scopeFile, runContext, root)
+      }
     }
   }
 }
@@ -130,10 +146,11 @@ internal class ReverseScopedScriptFixes(runContextFactory: ReverseScopedRunConte
 internal abstract class ReverseScopedScript(val skipCoverageComputation: Boolean, runContextFactory: ReverseScopedRunContextFactory) :
   DefaultScript(runContextFactory, AnalysisKind.INCREMENTAL) {
 
-  override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext) : QodanaGlobalInspectionContext {
+  override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext): QodanaGlobalInspectionContext {
     val computationState = if (skipCoverageComputation) {
       QodanaCoverageComputationState.SKIP_COMPUTE
-    } else {
+    }
+    else {
       QodanaCoverageComputationState.SKIP_REPORT
     }
     return runContext.createGlobalInspectionContext(coverageComputationState = computationState)
@@ -165,12 +182,26 @@ internal abstract class ReverseScopedScript(val skipCoverageComputation: Boolean
   }
 }
 
-internal class ReverseScopedRunContextFactory(
+internal class ReverseScopedRunNewCodeContextFactory(
+  delegate: QodanaRunContextFactory,
+  scopeFile: Path,
+  config: QodanaConfig
+) : ReverseScopedRunContextFactory(delegate, scopeFile, config) {
+  override suspend fun computeAdditionalFiles(context: QodanaRunContext, files: List<VirtualFile>, extendedFiles: List<ExtendedFile>): Map<VirtualFile, Set<String>> {
+    return collectExtendedFiles(files, context.qodanaProfile, context.project)
+  }
+}
+
+internal open class ReverseScopedRunContextFactory(
   private val delegate: QodanaRunContextFactory,
   @VisibleForTesting val scopeFile: Path,
   val config: QodanaConfig,
-  val computeExtendedScope: Boolean,
 ) : QodanaRunContextFactory {
+  protected open suspend fun computeAdditionalFiles(context: QodanaRunContext, files: List<VirtualFile>, extendedFiles: List<ExtendedFile>): Map<VirtualFile, Set<String>> {
+    return extendedFiles.associate { e -> e.path to e.extenders }
+      .mapNotNull { (path, scope) -> resolveVirtualFile(config.projectPath, Path.of(path))?.let { it to scope } }
+      .toMap()
+  }
 
   override suspend fun openRunContext(): QodanaRunContext {
     val changedFiles = parseChangedFiles(scopeFile)
@@ -179,13 +210,7 @@ internal class ReverseScopedRunContextFactory(
     val context = delegate.openRunContext()
     val files = resolveVirtualFiles(config.projectPath, paths)
 
-    val additionalFiles = if (computeExtendedScope) {
-      collectExtendedFiles(files, context.qodanaProfile, context.project)
-    } else {
-      changedFiles.extendedFiles.associate { e -> e.path to e.extenders }
-        .mapNotNull { (path, scope) -> resolveVirtualFile(config.projectPath, Path.of(path))?.let { it to scope } }
-        .toMap()
-    }
+    val additionalFiles = computeAdditionalFiles(context, files, changedFiles.extendedFiles)
     return context.createIncrementalContext(addedLines, files, additionalFiles, null)
   }
 }
