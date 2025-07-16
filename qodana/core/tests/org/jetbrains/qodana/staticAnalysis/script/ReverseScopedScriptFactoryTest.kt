@@ -11,6 +11,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedRunContextFactory
+import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedRunNewCodeContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedScriptFactory
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedScriptFixes
 import org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedScriptNew
@@ -119,7 +120,7 @@ class ReverseScopedScriptFactoryTest : QodanaTestCase() {
 
     assertThat(script).isInstance<ReverseScopedScriptNew>()
       .extracting(DefaultScript::runContextFactory)
-      .isInstance<ReverseScopedRunContextFactory>()
+      .isInstance<ReverseScopedRunNewCodeContextFactory>()
       .extracting(ReverseScopedRunContextFactory::scopeFile)
       .isEqualTo(Path(scopeFile.absolutePath))
   }
@@ -135,7 +136,7 @@ class ReverseScopedScriptFactoryTest : QodanaTestCase() {
 
     assertThat(script).isInstance<ReverseScopedScriptNew>()
       .extracting(DefaultScript::runContextFactory)
-      .isInstance<ReverseScopedRunContextFactory>()
+      .isInstance<ReverseScopedRunNewCodeContextFactory>()
       .extracting(ReverseScopedRunContextFactory::scopeFile)
       .isEqualTo(projectPath.resolve(scopeFile))
   }
