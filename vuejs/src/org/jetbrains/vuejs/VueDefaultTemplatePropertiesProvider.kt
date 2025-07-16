@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs
 
 import com.intellij.ide.fileTemplates.DefaultTemplatePropertiesProvider
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfigServiceImpl
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigServiceImpl.Companion.getNearestParentTsConfigsSequence
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
@@ -18,7 +18,14 @@ private class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesPr
   override fun fillProperties(directory: PsiDirectory, props: Properties) {
     if (!hasVueFiles(directory.project) && !isVueContext(directory))
       return
-    if (TypeScriptConfigServiceImpl.getNearestParentTsConfigsSequence(directory.project, directory.virtualFile, false).firstOrNull() != null) {
+
+    val isTypeScriptProject = getNearestParentTsConfigsSequence(
+      project = directory.project,
+      fileOrDirectory = directory.virtualFile,
+      checkCurrentDirectoryOnly = false,
+    ).firstOrNull() != null
+
+    if (isTypeScriptProject) {
       props["SCRIPT_LANG_ATTR"] = " lang=\"ts\""
       props["USE_DEFINE_COMPONENT"] = supportsDefineComponent(directory)
       props["USE_VUE_EXTEND"] = true
