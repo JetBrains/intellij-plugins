@@ -1,0 +1,81 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "incremental"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "qodana.sanity.results": [
+          {
+            "ruleId": "IgnoreResultOfCall",
+            "kind": "fail",
+            "level": "error",
+            "message": {
+              "text": "Result of 'A.unusedResult()' is ignored",
+              "markdown": "Result of `A.unusedResult()` is ignored"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/A.java",
+                    "uriBaseId": "SRCROOT"
+                  },
+                  "region": {
+                    "startLine": 3,
+                    "startColumn": 5,
+                    "charOffset": 44,
+                    "charLength": 12,
+                    "snippet": {
+                      "text": "unusedResult"
+                    },
+                    "sourceLanguage": "JAVA"
+                  },
+                  "contextRegion": {
+                    "startLine": 1,
+                    "startColumn": 1,
+                    "charOffset": 0,
+                    "charLength": 100,
+                    "snippet": {
+                      "text": "class A {\n  public static void main() {\n    unusedResult();\n  }\n  public static int unusedResult() {"
+                    },
+                    "sourceLanguage": "JAVA"
+                  }
+                },
+                "logicalLocations": [
+                  {
+                    "fullyQualifiedName": "testReverseScoped-script-only-sanity-results-new-stage",
+                    "kind": "module"
+                  }
+                ]
+              }
+            ],
+            "partialFingerprints": {
+              "equalIndicator/v2": "1c648ea8529068fb",
+              "equalIndicator/v1": "0879b8ea5b57a3131d43bd0c06360abc822b4cc7282e2748773dc002cdd80288"
+            },
+            "properties": {
+              "ideaSeverity": "ERROR",
+              "qodanaSeverity": "Critical",
+              "problemType": "REGULAR",
+              "tags": [
+                "JAVA"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
