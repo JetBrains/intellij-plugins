@@ -31,6 +31,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.ui.EDT
 import com.jetbrains.cidr.cpp.embedded.platformio.*
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectStatus.*
@@ -447,6 +448,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     }
   }
 
+  @RequiresBackgroundThread
   private fun runPio(id: ExternalSystemTaskId,
                      pioRunEventId: String,
                      project: Project,
@@ -472,31 +474,25 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
         }
       }
     })
-    var operationResult: OperationResult? = null
+
+    // TODO: don't duplicate messages
+    lateinit var operationResult: OperationResult
     try {
       val pioOutput = processHandler.runProcess()
       if (pioOutput.exitCode != 0) {
-        operationResult = FailureResult(configStartEvent.eventTime, System.currentTimeMillis(), emptyList())
-        throw ExternalSystemException(ClionEmbeddedPlatformioBundle.message("platformio.utility.exit.code", pioOutput.exitCode))
+        val failure = Failure(ClionEmbeddedPlatformioBundle.message("platformio.utility.exit.code", pioOutput.exitCode), pioOutput.stderr, emptyList())
+        operationResult = FailureResult(configStartEvent.eventTime, System.currentTimeMillis(), listOf(failure))
+        throw ExternalSystemException(failure.message)
+      }
+      else {
+        operationResult = SuccessResult(configStartEvent.eventTime, System.currentTimeMillis(), true)
       }
       return pioOutput
     }
-    catch (e: Throwable) {
-      operationResult = FailureResult(configStartEvent.eventTime, System.currentTimeMillis(),
-                                                                                                              listOf(Failure(e.localizedMessage, null, emptyList())))
-      throw ExternalSystemException(e)
-    }
     finally {
       processHandlerToKill = null
-      if (operationResult == null) {
-        operationResult = SuccessResult(configStartEvent.eventTime, System.currentTimeMillis(), true)
-      }
-      listener.onStatusChange(
-        ExternalSystemTaskExecutionEvent(id,
-                                         ExternalSystemFinishEvent(
-                                           pioRunEventId, null,
-                                           configStartEvent.descriptor, operationResult)))
-    }
+      val finishEvent = ExternalSystemFinishEvent(pioRunEventId, null, configStartEvent.descriptor, operationResult)
+      listener.onStatusChange(ExternalSystemTaskExecutionEvent(id, finishEvent))}
   }
 
   private fun addUploadIfMissing(targets: List<PlatformioTargetData>): List<PlatformioTargetData> =
