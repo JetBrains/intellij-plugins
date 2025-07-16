@@ -503,11 +503,19 @@
       }
     },
     "linter": {
-      "description": "The linter (Docker image) to run for Qodana CLI / any CI extensions",
+      "description": "The linter to be used for analysis execution",
+      "type": "string"
+    },
+    "image": {
+      "description": "The docker image to be used for analysis execution",
+      "type": "string"
+    },
+    "withinDocker": {
+      "description": "Defines if analysis is performed within a docker container or not",
       "type": "string"
     },
     "ide": {
-      "description": "The local path to an IDE or a product code to use for Qodana analysis. Incompatible with 'linter'",
+      "description": "Deprecated. The local path to an IDE or a product code to use for Qodana analysis. Incompatible with 'linter'",
       "type": "string"
     },
     "bootstrap": {

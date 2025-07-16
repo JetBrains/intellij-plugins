@@ -34,6 +34,8 @@ object QodanaYamlReader {
     roots.add("plugins") // qodana-cli
     roots.add("properties") // qodana-cli
     roots.add("linter") // qodana-cli
+    roots.add("image") // qodana-cli
+    roots.add("withinDocker") // qodana-cli
 
     roots.addAll(knownProps)
 
