@@ -8,6 +8,7 @@
 <ul><li>Provides coding assistance for step definitions</li></ul>
   ]]>
   </description>
+  <depends>com.intellij.modules.json</depends>
   <depends>com.intellij.modules.xml</depends>
   <depends>com.intellij.modules.spellchecker</depends>
   <depends>org.intellij.intelliLang</depends>
