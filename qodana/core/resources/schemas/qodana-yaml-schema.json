@@ -233,6 +233,10 @@
           "description": "Semicolon-separated list of target framework monikers (TFM) to be analyzed (https://learn.microsoft.com/en-us/dotnet/standard/frameworks)",
           "type": "string",
           "minLength": 1
+        },
+        "fastAnalysisMode": {
+          "description": "Exclude certain files due to their high analysis time. The excluded files will be listed in the logs.",
+          "type": "boolean"
         }
       },
       "additionalProperties": false
