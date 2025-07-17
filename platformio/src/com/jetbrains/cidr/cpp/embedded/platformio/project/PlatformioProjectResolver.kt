@@ -115,10 +115,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       if (pioResolvePolicy?.cleanCache != false) {
         platformioService.cleanCache()
       }
-      val projectName = project.name
-      val ideProjectPath = ExternalSystemApiUtil.toCanonicalPath(project.basePath ?: projectDir.path)
-      val projectData = ProjectData(ID, projectName, ideProjectPath,
-                                    ExternalSystemApiUtil.toCanonicalPath(projectDir.path))
+
       checkCancelled()
       var configJson = platformioService.configJson
       if (configJson == null) {
@@ -150,6 +147,11 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       }
       val scanner = PlatformioFileScanner(projectDir, listener, id, this::checkCancelled)
       platformioService.iniFiles = scanner.findConfigs(platformioSection)
+
+      val projectName = platformioSection["name"]?.asSafely<String>() ?: project.name
+      val ideProjectPath = ExternalSystemApiUtil.toCanonicalPath(project.basePath ?: projectDir.path)
+      val projectData = ProjectData(ID, projectName, ideProjectPath,
+                                    ExternalSystemApiUtil.toCanonicalPath(projectDir.path))
 
       var projectNode: DataNode<ProjectData>
       do {

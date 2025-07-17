@@ -118,6 +118,9 @@ class TestProjectResolve : LightPlatformTestCase() {
 
     verifySwitches(projectNode, CLanguageKind.CPP, commonSwitches + cppSwitches, cSwitches)
     verifySwitches(projectNode, CLanguageKind.C, commonSwitches + cSwitches, cppSwitches)
+
+    assertEquals("Changed name", projectNode.data.externalName)
+    assertEquals("Changed name", projectNode.data.internalName)
   }
 
   private fun verifySwitches(projectNode: DataNode<ProjectData>,
