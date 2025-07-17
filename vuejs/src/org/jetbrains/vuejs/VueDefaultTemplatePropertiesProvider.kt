@@ -2,13 +2,13 @@
 package org.jetbrains.vuejs
 
 import com.intellij.ide.fileTemplates.DefaultTemplatePropertiesProvider
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfigServiceImpl.Companion.getNearestParentTsConfigsSequence
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileBasedIndexEx
+import org.jetbrains.vuejs.VueProjects.isTypeScriptProjectDirectory
 import org.jetbrains.vuejs.context.*
 import org.jetbrains.vuejs.index.VUE_COMPONENT_STYLES_INDEX_KEY
 import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
@@ -19,13 +19,7 @@ private class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesPr
     if (!hasVueFiles(directory.project) && !isVueContext(directory))
       return
 
-    val isTypeScriptProject = getNearestParentTsConfigsSequence(
-      project = directory.project,
-      fileOrDirectory = directory.virtualFile,
-      checkCurrentDirectoryOnly = false,
-    ).any()
-
-    if (isTypeScriptProject) {
+    if (isTypeScriptProjectDirectory(directory)) {
       props["SCRIPT_LANG_ATTR"] = " lang=\"ts\""
       props["USE_DEFINE_COMPONENT"] = supportsDefineComponent(directory)
       props["USE_VUE_EXTEND"] = true
