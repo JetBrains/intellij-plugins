@@ -17,13 +17,25 @@ import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 internal class VueLanguageServiceProvider(project: Project) : TypeScriptServiceProvider() {
   private val classicLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueClassicServiceWrapper>() }
   private val lspLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueLspServiceWrapper>() }
+  private val tsPluginService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueTypeScriptPluginServiceWrapper>() }
 
   override val allServices: List<TypeScriptService>
-    get() = listOf(classicLanguageService.service, lspLanguageService.service)
+    get() {
+      return listOf(classicLanguageService.service, lspLanguageService.service, tsPluginService.service)
+    }
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean {
     return TypeScriptLanguageServiceUtil.isJavaScriptOrTypeScriptFileType(file.fileType)
            || file.isVueFile
+  }
+}
+
+@Service(Service.Level.PROJECT)
+private class VueTypeScriptPluginServiceWrapper(project: Project) : Disposable {
+  val service = VuePluginTypeScriptService(project)
+
+  override fun dispose() {
+    Disposer.dispose(service)
   }
 }
 
