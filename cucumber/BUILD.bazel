@@ -84,6 +84,7 @@ jvm_library(
     "@lib//:fastutil-min",
     "@community//platform/execution-impl",
     "@community//plugins/IntelliLang:langInjection",
+    "@community//plugins/IntelliLang/plugin",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//plugins/IntelliLang/xml-support:xml-langInjection",
