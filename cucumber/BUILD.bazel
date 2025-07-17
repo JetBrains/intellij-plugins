@@ -71,6 +71,8 @@ jvm_library(
     "@community//platform/structure-view-impl:structureView-impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testRunner",
+    "@community//platform/testRunner:testRunner_test_lib",
     "@community//platform/platform-impl:ide-impl",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
