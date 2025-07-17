@@ -222,11 +222,14 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       platformioService.projectStatus = PARSE_FAILED
       throw e
     }
-    catch (e: ExecutionException) {
-      platformioService.projectStatus = PARSED
-      platformioService.projectStatus = UTILITY_FAILED
-      LOG.warn(e)
-      throw ExternalSystemException(e)
+    catch (e: RunPlatformioException) {
+      platformioService.projectStatus = when(e) {
+        is RunPlatformioExitcodeException -> PARSE_FAILED
+        is RunPlatformioExecutionException -> UTILITY_FAILED
+        else -> PARSE_FAILED
+      }
+      LOG.info(e)
+      return null
     }
     catch (e: ExternalSystemException) {
       platformioService.projectStatus = PARSE_FAILED
@@ -448,6 +451,11 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     }
   }
 
+  private open class RunPlatformioException(message: String?, cause: Throwable?) : Exception(message, cause)
+  private class RunPlatformioExecutionException(cause: ExecutionException) : RunPlatformioException(null, cause)
+  private class RunPlatformioExitcodeException(exitCode: Int) : RunPlatformioException(ClionEmbeddedPlatformioBundle.message("platformio.utility.exit.code", exitCode), null)
+
+  @Throws(RunPlatformioException::class)
   @RequiresBackgroundThread
   private fun runPio(id: ExternalSystemTaskId,
                      pioRunEventId: String,
@@ -459,7 +467,12 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
     checkCancelled()
 
     val commandLine = PlatformioCliBuilder(false, project).withParams(parameters).withVerboseAllowed(false)
-    val processHandler = CapturingAnsiEscapesAwareProcessHandler(commandLine.build())
+    val processHandler = try {
+      CapturingAnsiEscapesAwareProcessHandler(commandLine.build())
+    }
+    catch(e: ExecutionException) {
+      throw RunPlatformioExecutionException(e)
+    }
     processHandlerToKill = processHandler
 
     val configTaskDescriptor = TaskOperationDescriptor(taskDescription, System.currentTimeMillis(), "pio-project-config")
@@ -475,14 +488,13 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
       }
     })
 
-    // TODO: don't duplicate messages
     lateinit var operationResult: OperationResult
     try {
       val pioOutput = processHandler.runProcess()
       if (pioOutput.exitCode != 0) {
         val failure = Failure(ClionEmbeddedPlatformioBundle.message("platformio.utility.exit.code", pioOutput.exitCode), pioOutput.stderr, emptyList())
         operationResult = FailureResult(configStartEvent.eventTime, System.currentTimeMillis(), listOf(failure))
-        throw ExternalSystemException(failure.message)
+        throw RunPlatformioExitcodeException(pioOutput.exitCode)
       }
       else {
         operationResult = SuccessResult(configStartEvent.eventTime, System.currentTimeMillis(), true)
