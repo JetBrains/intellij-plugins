@@ -43,6 +43,7 @@
     <module name="intellij.cidr.debugger.backend"/>
     <module name="intellij.cidr.debugger.core"/>
     <module name="intellij.profiler.clion" />
+    <module name="intellij.cidr.profiling" />
   </dependencies>
 
   <content>
@@ -87,6 +88,7 @@
     <treeStructureProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSourcesStructureProvider"/>
     <projectViewNodeDecorator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioLibraryPathNodeDecorator"/>
     <profiler.clion.profilerDisabler implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProfilerDisabler" />
+
   </extensions>
 
   <extensions defaultExtensionNs="clion">
@@ -96,6 +98,7 @@
   <extensions defaultExtensionNs="cidr">
     <buildConfigurationProvider
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildConfigurationProvider"/>
+    <profiler.valgrind.disabler implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioValgrindDisabler" />
   </extensions>
   <extensions  defaultExtensionNs="cidr.project">
     <workspaceProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceProvider"/>

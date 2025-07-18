@@ -62,6 +62,7 @@ jvm_library(
     "//CIDR/cidr-lang-base",
     "//CIDR/clion-projectStatus",
     "//plugins/profiler/clion",
+    "//CIDR/cidr-profiling",
   ],
   runtime_deps = [":platformio_resources"]
 )
@@ -129,6 +130,7 @@ jvm_library(
     "//CIDR/clion-projectStatus",
     "//plugins/profiler/clion",
     "//plugins/profiler/clion:clion_test_lib",
+    "//CIDR/cidr-profiling",
   ],
   runtime_deps = [
     ":platformio_resources",
