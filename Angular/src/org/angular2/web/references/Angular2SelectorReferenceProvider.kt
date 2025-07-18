@@ -4,7 +4,6 @@ package org.angular2.web.references
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.psi.PsiExternalReferenceHost
-import com.intellij.model.psi.PsiSymbolReferenceHints
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
 import com.intellij.polySymbols.PolySymbol
@@ -34,7 +33,7 @@ abstract class Angular2SelectorReferenceProvider : PsiPolySymbolReferenceProvide
       else null
   }
 
-  override fun getOffsetsToReferencedSymbols(psiElement: PsiExternalReferenceHost, hints: PsiSymbolReferenceHints): Map<Int, PolySymbol> {
+  override fun getOffsetsToReferencedSymbols(psiElement: PsiExternalReferenceHost): Map<Int, PolySymbol> {
     val directiveSelector = getDirectiveSelector(psiElement) ?: return emptyMap()
     return JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(psiElement) {
       getReferencedSymbolsInner(directiveSelector)
