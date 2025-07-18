@@ -42,6 +42,7 @@
     <plugin id="com.jetbrains.plugins.ini4idea"/>
     <module name="intellij.cidr.debugger.backend"/>
     <module name="intellij.cidr.debugger.core"/>
+    <module name="intellij.profiler.clion" />
   </dependencies>
 
   <content>
@@ -85,6 +86,7 @@
       id="clion.platformio.experimental.convert"/>
     <treeStructureProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSourcesStructureProvider"/>
     <projectViewNodeDecorator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioLibraryPathNodeDecorator"/>
+    <profiler.clion.profilerDisabler implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProfilerDisabler" />
   </extensions>
 
   <extensions defaultExtensionNs="clion">
