@@ -7,7 +7,6 @@ import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
-import com.intellij.model.psi.PsiSymbolReferenceHints
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.asSafely
 import com.intellij.polySymbols.PolySymbol
@@ -21,7 +20,7 @@ import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 class Angular2DirectivePropertyLiteralReferenceProvider : PsiPolySymbolReferenceProvider<JSLiteralExpression> {
 
-  override fun getOffsetsToReferencedSymbols(psiElement: JSLiteralExpression, hints: PsiSymbolReferenceHints): Map<Int, PolySymbol> {
+  override fun getOffsetsToReferencedSymbols(psiElement: JSLiteralExpression): Map<Int, PolySymbol> {
     val stringValue = psiElement.stubSafeStringValue ?: return emptyMap()
     val colonIndex = stringValue.indexOf(':').takeIf { it >= 0 } ?: stringValue.length
     val startOffset = StringUtil.skipWhitespaceForward(stringValue, 0)
