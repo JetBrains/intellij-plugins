@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
-import com.intellij.openapi.externalSystem.importing.ImportSpecImpl
 import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy
 import com.intellij.openapi.externalSystem.ui.ExternalSystemIconProvider
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
@@ -17,8 +16,14 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PlatformioRefreshAction : AnAction(ClionEmbeddedPlatformioBundle.messagePointer("action.PlatformioRefreshAction.text"),
-                                         ExternalSystemIconProvider.getExtension(ID).reloadIcon) {
+class PlatformioRefreshAction : AnAction() {
+
+  init {
+    with(templatePresentation) {
+      text = ClionEmbeddedPlatformioBundle.message("action.PlatformioRefreshAction.text")
+      icon = ExternalSystemIconProvider.getExtension(ID).reloadIcon
+    }
+  }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
   override fun update(e: AnActionEvent) {
@@ -34,11 +39,10 @@ class PlatformioRefreshAction : AnAction(ClionEmbeddedPlatformioBundle.messagePo
       // Refreshing the project would run pio, which can execute python code via advanced scripting.
       // Just show the untrusted project dialog and do nothing instead.
       ensureProjectIsTrusted(project)
-      val importSpec = ImportSpecBuilder(project, ID).projectResolverPolicy(PlatformioProjectResolvePolicyCleanCache).build()
       val rerunSpec = ImportSpecBuilder(project, ID).projectResolverPolicy(PlatformioProjectResolvePolicyCleanCache).build()
-      if (importSpec is ImportSpecImpl) {
-        importSpec.rerunAction = Runnable { ExternalSystemUtil.refreshProject(project.basePath!!, rerunSpec) }
-      }
+      val importSpec = ImportSpecBuilder(project, ID).projectResolverPolicy(PlatformioProjectResolvePolicyCleanCache).withRerunAction {
+        ExternalSystemUtil.refreshProject(project.basePath!!, rerunSpec)
+      }.build()
       ExternalSystemUtil.refreshProject(project.basePath!!, importSpec)
     }
   }
