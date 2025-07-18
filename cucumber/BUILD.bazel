@@ -73,6 +73,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/testRunner",
     "@community//platform/testRunner:testRunner_test_lib",
+    "@community//json/backend",
     "@community//platform/platform-impl:ide-impl",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
