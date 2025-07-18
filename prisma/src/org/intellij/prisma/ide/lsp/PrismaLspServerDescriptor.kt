@@ -14,7 +14,7 @@ class PrismaLspServerDescriptor(project: Project)
   : JSNodeLspServerDescriptor(project, PrismaLspServerActivationRule, PrismaBundle.message("prisma.framework.name")) {
 
   // code highlighting, references resolution, code completion, and hover info are implemented without using the LSP server
-  override val lspCustomization: LspCustomization = object : DefaultLspCustomization() {
+  override val lspCustomization: LspCustomization = object : LspCustomization() {
     override val semanticTokensCustomizer = LspSemanticTokensDisabled
     override val goToDefinitionCustomizer = LspGoToDefinitionDisabled
     override val goToTypeDefinitionCustomizer = LspGoToTypeDefinitionDisabled
