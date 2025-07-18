@@ -43,6 +43,6 @@ public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumber3ProjectDescriptor();
+    return CucumberJavaTestUtil.createCucumber7ProjectDescriptor();
   }
 }
