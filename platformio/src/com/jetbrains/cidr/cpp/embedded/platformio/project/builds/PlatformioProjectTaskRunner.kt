@@ -10,15 +10,20 @@ import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectModelExternalSource
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.task.*
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.LOG
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
@@ -132,9 +137,10 @@ class PlatformioTaskRunner : CidrTaskRunner {
       }
 
     }
-    catch (_: ProcessCanceledException) {
+    catch (e: ProcessCanceledException) {
       buildProgress.fail()
       promise.setResult(TaskRunnerResults.ABORTED)
+      throw e
     }
     catch (e: ProcessNotCreatedException) {
       LOG.warn(e)
@@ -147,6 +153,14 @@ class PlatformioTaskRunner : CidrTaskRunner {
                             MessageEvent.Kind.ERROR,
                             null)
       fail(buildProgress, promise)
+    }
+    finally {
+      val vfs = LocalFileSystem.getInstance()
+      val toRefresh = mutableListOf<VirtualFile>()
+      val buildDir = project.serviceAsync<PlatformioService>().buildDirectory ?.let { vfs.findFileByNioFile(it) }
+      if (buildDir != null) { toRefresh.add(buildDir) }
+      toRefresh.addAll(project.serviceAsync<ProjectRootManager>().contentRoots)
+      vfs.refreshFiles(toRefresh, true, true, null)
     }
     return promise
   }
