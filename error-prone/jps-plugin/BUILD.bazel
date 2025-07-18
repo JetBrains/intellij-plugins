@@ -16,7 +16,7 @@ jvm_library(
   deps = [
     "@community//jps/jps-builders:build",
     "@community//platform/util",
-    "@rules_jvm//jps-builders-6:build-javac-rt",
+    "@community//build:build-javac-rt",
     "@lib//:jetbrains-annotations",
     "@community//jps/model-serialization",
   ],
@@ -32,7 +32,7 @@ jvm_library(
   deps = [
     "@community//jps/jps-builders:build",
     "@community//platform/util",
-    "@rules_jvm//jps-builders-6:build-javac-rt",
+    "@community//build:build-javac-rt",
     "@lib//:jetbrains-annotations",
     "@community//jps/model-serialization",
     "@community//platform/testFramework",
