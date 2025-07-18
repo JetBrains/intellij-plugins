@@ -154,6 +154,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     override val completionCustomizer = BaseLspTypeScriptServiceCompletionSupport()
     override val diagnosticsCustomizer = LspDiagnosticsDisabled
     override val findReferencesCustomizer = LspFindReferencesDisabled
+    override val foldingRangeCustomizer = LspFoldingRangeDisabled
     override val inlayHintCustomizer: LspInlayHintCustomizer = LspInlayHintDisabled
 
     override val formattingCustomizer = object : LspFormattingSupport() {
