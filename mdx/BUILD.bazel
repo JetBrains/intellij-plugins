@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.mdx` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "mdx_resources",
@@ -74,9 +73,13 @@ jvm_library(
   ],
   runtime_deps = [":mdx_resources"]
 )
+### auto-generated section `build intellij.mdx` end
+
+### auto-generated section `test intellij.mdx` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "mdx_test",
   runtime_deps = [":mdx_test_lib"]
 )
-### auto-generated section `build intellij.mdx` end
+### auto-generated section `test intellij.mdx` end

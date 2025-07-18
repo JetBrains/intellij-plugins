@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.meteor` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "meteor_resources",
@@ -116,9 +115,13 @@ jvm_library(
     ":meteor_resources_1",
   ]
 )
+### auto-generated section `build intellij.meteor` end
+
+### auto-generated section `test intellij.meteor` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "meteor_test",
   runtime_deps = [":meteor_test_lib"]
 )
-### auto-generated section `build intellij.meteor` end
+### auto-generated section `test intellij.meteor` end

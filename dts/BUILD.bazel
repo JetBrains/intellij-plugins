@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.dts` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "dts_resources",
@@ -85,9 +84,13 @@ jvm_library(
     ":dts_test_resources",
   ]
 )
+### auto-generated section `build intellij.dts` end
+
+### auto-generated section `test intellij.dts` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "dts_test",
   runtime_deps = [":dts_test_lib"]
 )
-### auto-generated section `build intellij.dts` end
+### auto-generated section `test intellij.dts` end

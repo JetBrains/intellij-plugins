@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.nextjs` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "nextjs_resources",
@@ -79,9 +78,13 @@ jvm_library(
     ":nextjs_test_resources",
   ]
 )
+### auto-generated section `build intellij.nextjs` end
+
+### auto-generated section `test intellij.nextjs` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "nextjs_test",
   runtime_deps = [":nextjs_test_lib"]
 )
-### auto-generated section `build intellij.nextjs` end
+### auto-generated section `test intellij.nextjs` end

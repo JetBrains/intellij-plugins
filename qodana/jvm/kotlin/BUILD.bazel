@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.qodana.jvm.kotlin` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "kotlin_resources",
@@ -60,9 +59,13 @@ jvm_library(
   ],
   runtime_deps = [":kotlin_resources"]
 )
+### auto-generated section `build intellij.qodana.jvm.kotlin` end
+
+### auto-generated section `test intellij.qodana.jvm.kotlin` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "kotlin_test",
   runtime_deps = [":kotlin_test_lib"]
 )
-### auto-generated section `build intellij.qodana.jvm.kotlin` end
+### auto-generated section `test intellij.qodana.jvm.kotlin` end

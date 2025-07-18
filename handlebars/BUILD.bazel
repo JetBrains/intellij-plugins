@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.handlebars` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "handlebars_resources",
@@ -82,9 +81,13 @@ jvm_library(
     ":handlebars_resources_1",
   ]
 )
+### auto-generated section `build intellij.handlebars` end
+
+### auto-generated section `test intellij.handlebars` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "handlebars_test",
   runtime_deps = [":handlebars_test_lib"]
 )
-### auto-generated section `build intellij.handlebars` end
+### auto-generated section `test intellij.handlebars` end

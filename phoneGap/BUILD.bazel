@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.phoneGap` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "phoneGap_resources",
@@ -80,9 +79,13 @@ jvm_library(
     ":phoneGap_resources_1",
   ]
 )
+### auto-generated section `build intellij.phoneGap` end
+
+### auto-generated section `test intellij.phoneGap` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "phoneGap_test",
   runtime_deps = [":phoneGap_test_lib"]
 )
-### auto-generated section `build intellij.phoneGap` end
+### auto-generated section `test intellij.phoneGap` end

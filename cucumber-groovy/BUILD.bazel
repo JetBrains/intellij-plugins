@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.cucumber.groovy` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "cucumber-groovy_resources",
@@ -69,9 +68,13 @@ jvm_library(
   ],
   runtime_deps = [":cucumber-groovy_resources"]
 )
+### auto-generated section `build intellij.cucumber.groovy` end
+
+### auto-generated section `test intellij.cucumber.groovy` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "cucumber-groovy_test",
   runtime_deps = [":cucumber-groovy_test_lib"]
 )
-### auto-generated section `build intellij.cucumber.groovy` end
+### auto-generated section `test intellij.cucumber.groovy` end
