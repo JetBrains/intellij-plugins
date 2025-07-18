@@ -101,6 +101,8 @@
   <actions>
     <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioRefreshAction"
             id="PlatformioRefreshAction"/>
+    <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioLoadProjectAction"
+            id="PlatformioLoadProjectAction" icon="ClionEmbeddedPlatformioIcons.LogoPlatformIO"/>
     <group id="platformio-group" popup="false">
       <reference ref="PlatformioRefreshAction"/>
       <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCheckAction"
@@ -123,6 +125,12 @@
            icon="ClionEmbeddedPlatformioIcons.LogoPlatformIO">
       <reference ref="platformio-group"/>
       <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
+    </group>
+    <group id="platformio-project-view-menu">
+      <separator/>
+      <reference ref="PlatformioLoadProjectAction"/>
+      <separator/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="WeighingNewGroup"/>
     </group>
     <action id="target-platformio-upload" class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadAction"/>
     <action id="target-platformio-upload-monitor" class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadMonitorAction"/>
