@@ -56,5 +56,6 @@
     <orderEntry type="module" module-name="intellij.cidr.core" />
     <orderEntry type="module" module-name="intellij.clion.testFramework.nolang" scope="TEST" />
     <orderEntry type="module" module-name="intellij.cidr.lang.base" />
+    <orderEntry type="module" module-name="intellij.clion.projectStatus" />
   </component>
 </module>

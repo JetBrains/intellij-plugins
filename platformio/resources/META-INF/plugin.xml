@@ -95,6 +95,7 @@
     <buildConfigurationProvider
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildConfigurationProvider"/>
     <project.workspaceProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceProvider"/>
+    <project.popup.projectFixesProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectFixesProvider" />
   </extensions>
 
   <actions>

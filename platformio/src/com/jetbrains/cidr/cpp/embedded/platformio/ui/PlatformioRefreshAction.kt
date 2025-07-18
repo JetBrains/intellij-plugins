@@ -10,13 +10,15 @@ import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy
 import com.intellij.openapi.externalSystem.ui.ExternalSystemIconProvider
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.progress.currentThreadCoroutineScope
+import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectResolvePolicyCleanCache
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PlatformioRefreshAction : AnAction(ExternalSystemIconProvider.getExtension(ID).reloadIcon) {
+class PlatformioRefreshAction : AnAction(ClionEmbeddedPlatformioBundle.messagePointer("action.PlatformioRefreshAction.text"),
+                                         ExternalSystemIconProvider.getExtension(ID).reloadIcon) {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
   override fun update(e: AnActionEvent) {
