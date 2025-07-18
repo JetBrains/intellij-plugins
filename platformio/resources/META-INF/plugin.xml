@@ -94,8 +94,13 @@
   <extensions defaultExtensionNs="cidr">
     <buildConfigurationProvider
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildConfigurationProvider"/>
-    <project.workspaceProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceProvider"/>
-    <project.popup.projectFixesProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectFixesProvider" />
+  </extensions>
+  <extensions  defaultExtensionNs="cidr.project">
+    <workspaceProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceProvider"/>
+    <popup.projectFixesProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectFixesProvider" />
+    <widget.widgetStatusProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
+    <notifications.editorNotificationWarningProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
+    <popup.projectFixesProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.ExternalProjectStatusAndFixesProvider"/>
   </extensions>
 
   <actions>

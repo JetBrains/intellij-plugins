@@ -10,10 +10,12 @@ import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.ui.ExternalSystemIconProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PlatformIcons
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.Companion.pioIcon
+import com.jetbrains.cidr.cpp.external.system.linkExternalProject
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cidr.external.system.workspace.ExternalWorkspace
@@ -85,6 +87,13 @@ class PlatformioWorkspace(project: Project) : ExternalWorkspace(project), Worksp
 
     fun isPlatformioProject(project: Project): Boolean =
       project.service<PlatformioSettings>().linkedProjectsSettings.any { it is PlatformioProjectSettings }
+
+    fun linkProject(project: Project, projectPath: VirtualFile) {
+      val settings = PlatformioProjectSettings.default()
+      settings.externalProjectPath = projectPath.path
+      val workspace = project.service<PlatformioWorkspace>()
+      linkExternalProject(project, ID, settings, workspace)
+    }
   }
 }
 
