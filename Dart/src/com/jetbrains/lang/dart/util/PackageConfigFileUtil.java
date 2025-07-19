@@ -26,9 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class DotPackagesFileUtil {
-
-  public static final String DOT_PACKAGES = ".packages";
+public final class PackageConfigFileUtil {
 
   public static final String DART_TOOL_DIR = ".dart_tool";
   public static final String PACKAGE_CONFIG_JSON = "package_config.json";
@@ -82,17 +80,6 @@ public final class DotPackagesFileUtil {
       }
     }
 
-    return null;
-  }
-
-  public static @Nullable VirtualFile findDotPackagesFile(@Nullable VirtualFile dir) {
-    while (dir != null) {
-      final VirtualFile file = dir.findChild(DOT_PACKAGES);
-      if (file != null && !file.isDirectory()) {
-        return file;
-      }
-      dir = dir.getParent();
-    }
     return null;
   }
 
@@ -152,7 +139,7 @@ public final class DotPackagesFileUtil {
       jsonElement = JsonParser.parseString(fileContentsStr);
     }
     catch (Exception e) {
-      Logger.getInstance(DotPackagesFileUtil.class).info(e);
+      Logger.getInstance(PackageConfigFileUtil.class).info(e);
       return null;
     }
 

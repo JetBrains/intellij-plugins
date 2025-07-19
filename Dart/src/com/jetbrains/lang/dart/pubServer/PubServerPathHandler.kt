@@ -32,7 +32,7 @@ private class PubServerPathHandler : WebServerPathHandler {
     isCustomHost: Boolean,
   ): Boolean {
     val sdk = DartSdk.getDartSdk(project)
-    if (sdk == null || StringUtil.compareVersionNumbers(sdk.version, "1.6") < 0) {
+    if (sdk == null) {
       return false
     }
 
@@ -77,7 +77,9 @@ private fun getServedDirAndPathForPubServer(project: Project, path: String): Pai
     val parentDir = dir.parent
     if (parentDir?.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) {
       val name = dir.nameSequence
-      if (StringUtil.equals(name, "build") || StringUtil.equals(name, "lib") || StringUtil.equals(name, DartUrlResolver.PACKAGES_FOLDER_NAME)) {
+      if (StringUtil.equals(name, "build") || StringUtil.equals(name, "lib") || StringUtil.equals(name,
+                                                                                                  DartUrlResolver.PACKAGES_FOLDER_NAME)
+      ) {
         // contents of "build" folder should be served by the IDE internal web server directly, i.e. without pub serve
         return null
       }

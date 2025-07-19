@@ -17,23 +17,15 @@ public class DartPubBuildAction extends DartPubActionBase {
   @Override
   public void update(@NotNull AnActionEvent e) {
     super.update(e);
-    final Project project = e.getProject();
-    if (project != null && DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(project))) {
-      e.getPresentation().setText(DartBundle.message("action.text.webdev.build"));
-      e.getPresentation().setDescription(DartBundle.message("action.description.run.webdev.build"));
-    }
-    else {
-      e.getPresentation().setText(DartBundle.message("action.text.pub.build"));
-      e.getPresentation().setDescription(DartBundle.message("action.description.run.pub.build"));
-    }
+    e.getPresentation().setText(DartBundle.message("action.text.webdev.build"));
+    e.getPresentation().setDescription(DartBundle.message("action.description.run.webdev.build"));
   }
 
   @Override
   protected @NotNull @NlsContexts.DialogTitle String getTitle(final @NotNull Project project, final @NotNull VirtualFile pubspecYamlFile) {
     final String projectName = PubspecYamlUtil.getDartProjectName(pubspecYamlFile);
     final String prefix = projectName == null ? "" : ("[" + projectName + "] ");
-    return prefix + DartBundle
-      .message(DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(project)) ? "dart.webdev.build.title" : "dart.pub.build.title");
+    return prefix + DartBundle.message("dart.webdev.build.title");
   }
 
   @Override
@@ -47,12 +39,8 @@ public class DartPubBuildAction extends DartPubActionBase {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) return null; // can't happen, already checked
 
-    if (DartWebdev.INSTANCE.useWebdev(sdk)) {
-      if (!DartWebdev.INSTANCE.ensureWebdevActivated(project)) return null;
+    if (!DartWebdev.INSTANCE.ensureWebdevActivated(project)) return null;
 
-      return new String[]{"global", "run", "webdev", "build", "--output=" + dialog.getInputFolder() + ":" + dialog.getOutputFolder()};
-    }
-
-    return new String[]{"build", "--mode=" + dialog.getPubBuildMode(), "--output=" + dialog.getOutputFolder()};
+    return new String[]{"global", "run", "webdev", "build", "--output=" + dialog.getInputFolder() + ":" + dialog.getOutputFolder()};
   }
 }
