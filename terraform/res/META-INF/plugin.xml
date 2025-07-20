@@ -70,7 +70,7 @@
       Added support for Google Cloud beta resources, reducing confusion with the stable Google provider.
     </li>
     <li>
-      Terraform plugin now supports <em>ephemeral</em> root keyword.
+      Terraform plugin now supports <em>ephemeral</em> block.
     </li>
   </ul>
     2025.1
