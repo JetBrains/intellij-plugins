@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.intellij.openapi.fileTypes.FileType
@@ -12,7 +12,7 @@ import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
-import org.intellij.terraform.config.Constants.OFFICIAL_PROVIDERS_NAMESPACE
+import org.intellij.terraform.config.Constants.OfficialProvidersNamespace
 import org.intellij.terraform.config.Constants.REGISTRY_DOMAIN
 
 // Model for element types
@@ -611,7 +611,7 @@ class ProviderType(
               nesting = blockType?.nesting,
               properties = withDefaults(properties, TypeModel.AbstractProvider.properties)), NamedType {
   val fullName: String = "$namespace/$type"
-  val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OFFICIAL_PROVIDERS_NAMESPACE.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
+  val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OfficialProvidersNamespace.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
 
   override fun toString(): String {
     return "ProviderType (type='$type' namespace='$namespace' tier='${tier.label}')"

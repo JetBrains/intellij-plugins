@@ -16,7 +16,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PATH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_VAR_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.GlobalScopes
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createFunction
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createScopeLookup
@@ -112,7 +114,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
     }
   }
 
-  private object VariableCompletionProvider : SelectFromScopeCompletionProvider("var") {
+  private object VariableCompletionProvider : SelectFromScopeCompletionProvider(HCL_VAR_IDENTIFIER) {
     override fun doAddCompletions(variable: Identifier,
                                   parameters: CompletionParameters,
                                   context: ProcessingContext,
@@ -140,7 +142,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
     }
   }
 
-  private object PathCompletionProvider : SelectFromScopeCompletionProvider("path") {
+  private object PathCompletionProvider : SelectFromScopeCompletionProvider(HCL_PATH_IDENTIFIER) {
     private val PATH_REFERENCES = sortedSetOf("root", "module", "cwd")
 
     override fun doAddCompletions(variable: Identifier,

@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.SelectExpression
@@ -34,11 +35,11 @@ object ILScopeReferenceProvider : PsiReferenceProvider() {
           listOf(resource)
         })
       }
-      "count" -> {
+      HCL_COUNT_IDENTIFIER -> {
         return arrayOf(HCLElementLazyReference(element, true) { _, _ ->
           listOfNotNull(
-              getResource(this.element)?.`object`?.findProperty("count"),
-              getDataSource(this.element)?.`object`?.findProperty("count")
+            getResource(this.element)?.`object`?.findProperty(HCL_COUNT_IDENTIFIER),
+            getDataSource(this.element)?.`object`?.findProperty(HCL_COUNT_IDENTIFIER)
           )
         })
       }
