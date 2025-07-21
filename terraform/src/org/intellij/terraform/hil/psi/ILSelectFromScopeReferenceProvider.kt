@@ -8,7 +8,11 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.util.ProcessingContext
+import org.intellij.terraform.config.Constants.HCL_LOCAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PATH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_VAR_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.hcl.psi.HCLElement
@@ -32,18 +36,18 @@ object ILSelectFromScopeReferenceProvider : PsiReferenceProvider() {
 
     if (from === element) return PsiReference.EMPTY_ARRAY
     return when (from.name) {
-      "var" -> arrayOf(VariableReference(element))
+      HCL_VAR_IDENTIFIER -> arrayOf(VariableReference(element))
       HCL_SELF_IDENTIFIER -> arrayOf(SelfResourceReference(element))
-      "path" -> {
+      HCL_PATH_IDENTIFIER -> {
         // TODO: Resolve 'cwd' and 'root' paths
-        if (element.name == "module") {
+        if (element.name == HCL_MODULE_IDENTIFIER) {
           val file = host.containingFile.originalFile
           return arrayOf(PsiReferenceBase.Immediate(element, true, file.containingDirectory ?: file))
         }
         else PsiReference.EMPTY_ARRAY
       }
-      "module" -> arrayOf(ModuleReference(element))
-      "local" -> arrayOf(LocalVariableReference(element))
+      HCL_MODULE_IDENTIFIER -> arrayOf(ModuleReference(element))
+      HCL_LOCAL_IDENTIFIER -> arrayOf(LocalVariableReference(element))
       else -> return PsiReference.EMPTY_ARRAY
     }
   }

@@ -13,6 +13,7 @@ import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CHECK_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CLOUD_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_IDENTIFIER
@@ -101,8 +102,8 @@ class TypeModel(
       Types.Array,
       ReferenceHint("resource.#name", "data_source.#name", "module.#name", "variable.#name", "ephemeral.#name")
     )
-    private val CountProperty = PropertyType("count", Types.Number, conflictsWith = listOf("for_each"))
-    private val ForEachProperty = PropertyType("for_each", Types.Any, conflictsWith = listOf("count"))
+    private val CountProperty = PropertyType(HCL_COUNT_IDENTIFIER, Types.Number, conflictsWith = listOf("for_each"))
+    private val ForEachProperty = PropertyType("for_each", Types.Any, conflictsWith = listOf(HCL_COUNT_IDENTIFIER))
     private val ProviderProperty = PropertyType("provider", Types.String, hint = ReferenceHint("provider.#type", "provider.#alias"))
 
     val DescriptionProperty: PropertyType = PropertyType("description", Types.String)
@@ -353,7 +354,7 @@ class TypeModel(
     val localNames = psiElement?.let { collectProviderLocalNames(it) } ?: emptyMap()
     val providerShortName = isProviderTypeDefined(psiElement) ?: getResourcePrefix(identifier)
     val providerFullName = localNames[providerShortName]
-                           ?: Constants.OFFICIAL_PROVIDERS_NAMESPACE.map { "$it/$providerShortName" }.firstOrNull { providersByFullName.containsKey(it) }
+                           ?: Constants.OfficialProvidersNamespace.map { "$it/$providerShortName" }.firstOrNull { providersByFullName.containsKey(it) }
                            ?: "hashicorp/$providerShortName" //The last resort
     return providerFullName.lowercase()
   }

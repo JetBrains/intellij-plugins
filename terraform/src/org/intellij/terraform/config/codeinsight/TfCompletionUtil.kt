@@ -18,8 +18,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.DebugUtil
 import org.intellij.terraform.TerraformIcons
+import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_LOCAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_MODULE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PATH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_VAR_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.documentation.psi.HCLFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
@@ -38,8 +45,27 @@ import java.util.*
 import javax.swing.Icon
 
 internal object TfCompletionUtil {
-  val Scopes: Set<String> = setOf("data", "var", HCL_SELF_IDENTIFIER, "path", "count", "terraform", "local", "module", HCL_EPHEMERAL_IDENTIFIER) + OpenTofuScopes
-  val GlobalScopes: SortedSet<String> = (setOf("var", "path", "data", "module", "local", HCL_EPHEMERAL_IDENTIFIER) + OpenTofuScopes).toSortedSet()
+  val Scopes: Set<String> = setOf(
+    HCL_DATASOURCE_IDENTIFIER,
+    HCL_VAR_IDENTIFIER,
+    HCL_SELF_IDENTIFIER,
+    HCL_PATH_IDENTIFIER,
+    HCL_COUNT_IDENTIFIER,
+    HCL_TERRAFORM_IDENTIFIER,
+    HCL_LOCAL_IDENTIFIER,
+    HCL_MODULE_IDENTIFIER,
+    HCL_EPHEMERAL_IDENTIFIER
+  ) + OpenTofuScopes
+
+  val GlobalScopes: SortedSet<String> = (setOf(
+    HCL_VAR_IDENTIFIER,
+    HCL_PATH_IDENTIFIER,
+    HCL_DATASOURCE_IDENTIFIER,
+    HCL_MODULE_IDENTIFIER,
+    HCL_LOCAL_IDENTIFIER,
+    HCL_EPHEMERAL_IDENTIFIER
+  ) + OpenTofuScopes).toSortedSet()
+
   val RootBlockKeywords: Set<String> = TypeModel.RootBlocksMap.keys
   val RootBlockSorted: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
 
