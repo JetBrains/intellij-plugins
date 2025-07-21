@@ -109,6 +109,11 @@ public class GherkinParserTest extends ParsingTestCase {
   public void testRule() {
     doTest(true);
   }
+
+  // Locks-in the buggy behavior from IDEA-375449.
+  public void testIdea375449() {
+    doTest(true);
+  }
 }
 
 

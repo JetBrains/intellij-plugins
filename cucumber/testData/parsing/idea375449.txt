@@ -1,0 +1,60 @@
+GherkinFile:idea375449.feature
+  GherkinFeature:feature
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('feature')
+    PsiWhiteSpace('\n  ')
+    GherkinScenarioOutline:Some title 2
+      PsiElement(SCENARIO_OUTLINE_KEYWORD)('Scenario Outline')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('Some title 2')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:I expect inspection warning on <<type>> with messages 2
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('I expect inspection warning on')
+        PsiWhiteSpace(' ')
+        PsiElement(STEP_PARAMETER_BRACE)('<')
+        GherkinStepParameter:<type
+          PsiElement(STEP_PARAMETER_TEXT)('<type')
+        PsiElement(STEP_PARAMETER_BRACE)('>')
+        PsiElement(TEXT)('> with messages 2')
+      PsiWhiteSpace('\n    ')
+      GherkinExamplesBlock:
+        PsiElement(EXAMPLES_KEYWORD)('Examples')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace('\n      ')
+        GherkinTable
+          GherkinTableHeaderRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('type')
+            PsiWhiteSpace('   ')
+            PsiElement(PIPE)('|')
+          PsiWhiteSpace('\n      ')
+          GherkinTableRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('class')
+            PsiWhiteSpace('  ')
+            PsiElement(PIPE)('|')
+          PsiWhiteSpace('\n      ')
+          GherkinTableRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('method')
+            PsiWhiteSpace(' ')
+            PsiElement(PIPE)('|')
+          PsiWhiteSpace('\n      ')
+          GherkinTableRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('field')
+            PsiWhiteSpace('  ')
+            PsiElement(PIPE)('|')

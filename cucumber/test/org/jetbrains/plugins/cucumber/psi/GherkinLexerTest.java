@@ -92,6 +92,11 @@ public class GherkinLexerTest extends TestCase {
     doTest("Given test step <param01> word <param02>", "STEP_KEYWORD:0-5", "WHITE_SPACE:5-6", "TEXT:6-15", "WHITE_SPACE:15-16", "STEP_PARAMETER_BRACE:16-17", "STEP_PARAMETER_TEXT:17-24", "STEP_PARAMETER_BRACE:24-25", "WHITE_SPACE:25-26", "TEXT:26-30", "WHITE_SPACE:30-31", "STEP_PARAMETER_BRACE:31-32", "STEP_PARAMETER_TEXT:32-39", "STEP_PARAMETER_BRACE:39-40");
   }
 
+  // Locks-in the buggy behavior from IDEA-375449.
+  public void testStepParameterDoubleCaret() {
+    doTest("Given test step <<param01>> yo", "STEP_KEYWORD:0-5", "WHITE_SPACE:5-6", "TEXT:6-15", "WHITE_SPACE:15-16", "STEP_PARAMETER_BRACE:16-17", "STEP_PARAMETER_TEXT:17-25", "STEP_PARAMETER_BRACE:25-26", "TEXT:26-30");
+  }
+
   public void testStepParameterBeforeText() {
     doTest("Given <param01> test <param02>", "STEP_KEYWORD:0-5", "WHITE_SPACE:5-6", "STEP_PARAMETER_BRACE:6-7", "STEP_PARAMETER_TEXT:7-14", "STEP_PARAMETER_BRACE:14-15", "WHITE_SPACE:15-16", "TEXT:16-20", "WHITE_SPACE:20-21", "STEP_PARAMETER_BRACE:21-22", "STEP_PARAMETER_TEXT:22-29", "STEP_PARAMETER_BRACE:29-30");
   }
