@@ -7,7 +7,7 @@ import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileIndexContributor
 import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileKind
 import com.intellij.workspaceModel.core.fileIndex.WorkspaceFileSetRegistrar
 
-class NuxtFolderLibraryContributor : WorkspaceFileIndexContributor<NuxtFolderEntity>, JSLibraryToResolveScopeContributor {
+internal class NuxtFolderLibraryContributor : WorkspaceFileIndexContributor<NuxtFolderEntity>, JSLibraryToResolveScopeContributor {
   override val entityClass: Class<NuxtFolderEntity>
     get() = NuxtFolderEntity::class.java
 

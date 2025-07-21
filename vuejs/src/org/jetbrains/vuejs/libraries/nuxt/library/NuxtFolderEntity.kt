@@ -5,7 +5,7 @@ import com.intellij.platform.workspace.storage.*
 import com.intellij.platform.workspace.storage.impl.containers.toMutableWorkspaceList
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 
-interface NuxtFolderEntity : WorkspaceEntity {
+internal interface NuxtFolderEntity : WorkspaceEntity {
 
   val nuxtFolderUrl: VirtualFileUrl
   val libraryFileUrls: List<VirtualFileUrl>
@@ -42,7 +42,7 @@ interface NuxtFolderEntity : WorkspaceEntity {
 }
 
 //region generated code
-fun MutableEntityStorage.modifyNuxtFolderEntity(
+internal fun MutableEntityStorage.modifyNuxtFolderEntity(
   entity: NuxtFolderEntity,
   modification: NuxtFolderEntity.Builder.() -> Unit,
 ): NuxtFolderEntity {

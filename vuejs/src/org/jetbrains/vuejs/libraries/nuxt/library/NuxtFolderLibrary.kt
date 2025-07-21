@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_DIST_SUBFOLDER
 
-class NuxtFolderLibrary(val nuxtFolder: VirtualFile) {
+internal class NuxtFolderLibrary(val nuxtFolder: VirtualFile) {
   val libraryFiles: List<VirtualFile> = getIncludedFiles(nuxtFolder)
 
   private fun getIncludedFiles(nuxtFolder: VirtualFile): List<VirtualFile> {
