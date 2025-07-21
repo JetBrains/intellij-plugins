@@ -7,8 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 
 public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
-  protected void checkReference(@NotNull final String element, @Nullable final String stepDefinitionName) {
-    final ResolveResult[] result = getResolveResult(element);
+  protected void checkReference(final @NotNull ResolveResult @NotNull [] result, @Nullable final String stepDefinitionName) {
     boolean ok = stepDefinitionName == null;
     for (ResolveResult rr : result) {
       final PsiElement resolvedElement = rr.getElement();
@@ -27,7 +26,12 @@ public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
     assertTrue(ok);
   }
 
-  private ResolveResult[] getResolveResult(@NotNull String step) {
+  protected void checkReference(@NotNull final String element, @Nullable final String stepDefinitionName) {
+    final ResolveResult[] result = getResolveResult(element);
+    checkReference(result, stepDefinitionName);
+  }
+
+  protected ResolveResult[] getResolveResult(@NotNull String step) {
     final PsiReference reference = findReferenceBySignature(step);
     assertNotNull("reference must not be null", reference);
     if (reference instanceof PsiPolyVariantReference polyVariantReference) {
@@ -35,6 +39,13 @@ public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
     }
     return new ResolveResult[] {new PsiElementResolveResult(reference.resolve())};
   }
+  
+  protected ResolveResult[] getResolveResult(@NotNull PsiReference reference) {
+    if (reference instanceof PsiPolyVariantReference polyVariantReference) {
+      return polyVariantReference.multiResolve(true);
+    }
+    return new ResolveResult[] {new PsiElementResolveResult(reference.resolve())};
+  } 
 
   public void doTest(@NotNull final String folder, @NotNull final String step, @Nullable final String stepDefinitionName) {
     init(folder);
