@@ -8,7 +8,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import org.jetbrains.kotlin.idea.base.projectStructure.scope.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.base.projectStructure.toKaLibraryModule
-import org.jetbrains.kotlin.idea.core.script.ScriptDependencyAware
+import org.jetbrains.kotlin.idea.core.script.v1.ScriptDependencyAware
 
 internal class InspectionKtsDependenciesScope(
   private val roots: Set<VirtualFile>,
@@ -19,8 +19,8 @@ internal class InspectionKtsDependenciesScope(
 
     return GlobalSearchScope.union(
       listOfNotNull(
-        ScriptDependencyAware.Companion.getInstance(project).getFirstScriptsSdk()?.toKaLibraryModule(project)?.contentScope,
-        KotlinSourceFilterScope.Companion.libraryClasses(jarsDependenciesScope, project),
+        ScriptDependencyAware.getInstance(project).getFirstScriptsSdk()?.toKaLibraryModule(project)?.contentScope,
+        KotlinSourceFilterScope.libraryClasses(jarsDependenciesScope, project),
         GlobalSearchScope.fileScope(project, file),
       ).toTypedArray()
     )

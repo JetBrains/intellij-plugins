@@ -33,11 +33,11 @@ jvm_library(
     "@community//plugins/kotlin/base/plugin",
     "@community//plugins/kotlin/base/util",
     "@community//plugins/kotlin/base/project-structure",
-    "@community//plugins/kotlin/base/scripting",
     "@community//plugins/kotlin/scripting",
     "@community//platform/util-class-loader:util-classLoader",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/backend/workspace",
+    "@community//plugins/kotlin/base/scripting/scripting.shared",
   ],
   runtime_deps = [
     ":kotlin_resources",
