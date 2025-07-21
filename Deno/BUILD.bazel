@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.deno` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "deno_resources",
@@ -29,7 +28,6 @@ jvm_library(
     "@community//platform/execution-impl",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/ide-core-impl",
-    "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/indexing-api:indexing",
@@ -68,7 +66,6 @@ jvm_library(
     "@community//platform/execution-impl",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/ide-core-impl",
-    "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/indexing-api:indexing",
@@ -98,9 +95,13 @@ jvm_library(
     ":deno_resources_1",
   ]
 )
+### auto-generated section `build intellij.deno` end
+
+### auto-generated section `test intellij.deno` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "deno_test",
   runtime_deps = [":deno_test_lib"]
 )
-### auto-generated section `build intellij.deno` end
+### auto-generated section `test intellij.deno` end

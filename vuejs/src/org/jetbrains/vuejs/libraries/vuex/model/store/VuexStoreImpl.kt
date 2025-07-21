@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -96,7 +96,7 @@ class VuexStoreImpl(override val source: JSCallExpression) : VuexContainerImpl()
         ?.stub
         ?.let {
           @Suppress("USELESS_CAST")
-          return it.findChildStubByElementType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+          return it.findChildStubByElementType(JSElementTypes.OBJECT_LITERAL_EXPRESSION)
             ?.psi as? JSObjectLiteralExpression
         }
       return call.arguments.getOrNull(0) as? JSObjectLiteralExpression

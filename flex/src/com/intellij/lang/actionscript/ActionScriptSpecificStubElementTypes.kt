@@ -4,7 +4,7 @@ package com.intellij.lang.actionscript
 import com.intellij.lang.actionscript.types.ActionScriptLocalVariableElementType
 
 /**
- * Part of [ActionScriptStubElementTypes] which can be moved to Flex plugin. Eventually, all types should be moved here.
+ * Part of [ActionScriptInternalElementTypes] which can be moved to Flex plugin. Eventually, all types should be moved here.
  */
 interface ActionScriptSpecificStubElementTypes {
   /**

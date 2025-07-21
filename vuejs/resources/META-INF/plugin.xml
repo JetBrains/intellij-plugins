@@ -53,6 +53,8 @@
   <extensions defaultExtensionNs="com.intellij">
     <registryKey defaultValue="true" description="Use bundled Vue service" key="vue.language.server.bundled.enabled"/>
     <registryKey defaultValue="" description="Vue service version for downloading" key="vue.language.server.default.version"/>
+    <registryKey defaultValue="" description="Vue TypeScript plugin version for downloading" key="vue.ts.plugin.default.version"/>
+    <registryKey defaultValue="true" description="Use bundled Vue TypeScript plugin" key="vue.ts.plugin.bundled.enabled"/>
     <dependencySupport kind="javascript" coordinate="npm:vue" displayName="Vue.js"/>
     <dependencySupport kind="javascript" coordinate="npm:nuxt" displayName="Nuxt"/>
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
@@ -105,9 +107,6 @@
     <stubIndex implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex"/>
     <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueEmptyComponentInitializersIndex"/>
     <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueComponentStylesIndex"/>
-
-    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes" externalIdPrefix="VUE-JS:"/>
-    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes" externalIdPrefix="VUE:"/>
 
     <languageStubDefinition language="Vue" implementationClass="org.jetbrains.vuejs.lang.stubs.VueLanguageStubDefinition"/>
     <stubElementRegistryExtension implementation="org.jetbrains.vuejs.lang.stubs.VueStubRegistryExtension"/>

@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.dart` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "dart_resources",
@@ -151,9 +150,13 @@ jvm_library(
   ],
   runtime_deps = [":dart_resources"]
 )
+### auto-generated section `build intellij.dart` end
+
+### auto-generated section `test intellij.dart` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "dart_test",
   runtime_deps = [":dart_test_lib"]
 )
-### auto-generated section `build intellij.dart` end
+### auto-generated section `test intellij.dart` end

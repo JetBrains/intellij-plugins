@@ -1,10 +1,9 @@
 ### auto-generated section `build intellij.qodana` start
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 create_kotlinc_options(
-  name = "custom",
+  name = "custom_qodana",
   opt_in = [
     "kotlinx.coroutines.ExperimentalCoroutinesApi",
     "kotlin.ExperimentalStdlibApi",
@@ -28,7 +27,7 @@ jvm_library(
   module_name = "intellij.qodana",
   visibility = ["//visibility:public"],
   srcs = glob(["core/src/**/*.kt", "core/src/**/*.java"], allow_empty = True),
-  kotlinc_opts = ":custom",
+  kotlinc_opts = ":custom_qodana",
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-impl",
@@ -118,7 +117,7 @@ jvm_library(
   name = "qodana_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["core/tests/**/*.kt", "core/tests/**/*.java"], allow_empty = True),
-  kotlinc_opts = ":custom",
+  kotlinc_opts = ":custom_qodana",
   associates = [":qodana"],
   deps = [
     "@community//platform/analysis-api:analysis",
@@ -232,9 +231,13 @@ jvm_library(
     ":qodana_test_resources",
   ]
 )
+### auto-generated section `build intellij.qodana` end
+
+### auto-generated section `test intellij.qodana` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "qodana_test",
   runtime_deps = [":qodana_test_lib"]
 )
-### auto-generated section `build intellij.qodana` end
+### auto-generated section `test intellij.qodana` end

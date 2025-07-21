@@ -20,8 +20,11 @@ class InspectionEventsListener : InspectListener {
     if (verboseLogging) {
       InspectionEventsCollector.logInspectionFinished(duration, threadId, problemsCount, tool, kind, project)
     }
-    val service = project.getService(InspectionDurationsAggregatorService::class.java)
-    service.addInspectionFinishedEvent(duration, problemsCount, tool, kind)
+    val inspectionDurationService = project.getService(InspectionDurationsAggregatorService::class.java)
+    inspectionDurationService.addInspectionFinishedEvent(duration, problemsCount, tool, kind)
+
+    val inspectionProblemsFoundService = project.getService(InspectionProblemsFoundAggregatorService::class.java)
+    inspectionProblemsFoundService.addInspectionFinishedEvent(problemsCount, tool, kind)
 
     InspectionInfoQodanaReporterService.getInstance(project)
       .addInspectionFinishedEvent(duration, problemsCount, tool, kind, file?.virtualFile)

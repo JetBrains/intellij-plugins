@@ -70,7 +70,7 @@ import org.angular2.options.getAngularSettings
 import org.intellij.images.fileTypes.impl.SvgFileType
 import java.util.concurrent.Future
 
-class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Angular Console", "AngularService") {
+class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "AngularService") {
 
   override fun getProcessName(): String = "Angular TypeScript"
 
@@ -319,6 +319,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
 
     override fun isEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): Boolean = true
+
+    override val supportsTypeScriptInInjections: Boolean
+      get() = true
   }
 
   private fun commitDocuments(virtualFile: VirtualFile) {

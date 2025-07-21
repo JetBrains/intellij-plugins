@@ -1,0 +1,106 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "ConstantValue",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Test message"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/A.java"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 9
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "qodana.sanity.results": [
+          {
+            "ruleId": "SanityRule1",
+            "kind": "fail",
+            "level": "warning",
+            "message": {
+              "text": "Sanity test message 1"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/A.java"
+                  },
+                  "region": {
+                    "startLine": 2,
+                    "startColumn": 5
+                  }
+                }
+              }
+            ],
+            "baselineState": "new"
+          },
+          {
+            "ruleId": "SanityRule2",
+            "kind": "fail",
+            "level": "warning",
+            "message": {
+              "text": "Sanity test message 2"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/B.java"
+                  },
+                  "region": {
+                    "startLine": 2,
+                    "startColumn": 5
+                  }
+                }
+              }
+            ],
+            "baselineState": "new"
+          }
+        ],
+        "qodana.promo.results": [
+          {
+            "ruleId": "PromoRule1",
+            "kind": "fail",
+            "level": "warning",
+            "message": {
+              "text": "Promo test message 1"
+            },
+            "locations": [
+              {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "test-module/A.java"
+                  },
+                  "region": {
+                    "startLine": 4,
+                    "startColumn": 5
+                  }
+                }
+              }
+            ],
+            "baselineState": "new"
+          }
+        ]
+      }
+    }
+  ]
+}

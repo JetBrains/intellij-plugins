@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.javascript.JSLanguageDialect
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -82,10 +82,10 @@ internal object VueScriptLangs {
  * Enum values are designed to be a little strange in order to make the reader think about the above.
  */
 enum class LangMode(val exprLang: JSLanguageDialect, scriptElementType: IElementType, vararg val attrValues: String?) {
-  PENDING(VueJSLanguage.INSTANCE, JSStubElementTypes.MOD_ES6_EMBEDDED_CONTENT),
-  NO_TS(VueJSLanguage.INSTANCE, JSStubElementTypes.MOD_ES6_EMBEDDED_CONTENT, "js", "javascript",
+  PENDING(VueJSLanguage.INSTANCE, JSElementTypes.MOD_ES6_EMBEDDED_CONTENT),
+  NO_TS(VueJSLanguage.INSTANCE, JSElementTypes.MOD_ES6_EMBEDDED_CONTENT, "js", "javascript",
         null /* null -> lang attribute is missing */),
-  HAS_TS(VueTSLanguage.INSTANCE, JSStubElementTypes.MOD_TS_EMBEDDED_CONTENT, "ts", "typescript");
+  HAS_TS(VueTSLanguage.INSTANCE, JSElementTypes.MOD_TS_EMBEDDED_CONTENT, "ts", "typescript");
 
   val canonicalAttrValue: String get() = if (this == HAS_TS) "ts" else "js"
 

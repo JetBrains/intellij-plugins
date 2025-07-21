@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.gherkin` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "gherkin_resources",
@@ -71,6 +70,9 @@ jvm_library(
     "@community//platform/structure-view-impl:structureView-impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testRunner",
+    "@community//platform/testRunner:testRunner_test_lib",
+    "@community//json/backend",
     "@community//platform/platform-impl:ide-impl",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
@@ -82,6 +84,7 @@ jvm_library(
     "@lib//:fastutil-min",
     "@community//platform/execution-impl",
     "@community//plugins/IntelliLang:langInjection",
+    "@community//plugins/IntelliLang/plugin",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//plugins/IntelliLang/xml-support:xml-langInjection",
@@ -92,9 +95,13 @@ jvm_library(
     ":gherkin_resources_1",
   ]
 )
+### auto-generated section `build intellij.gherkin` end
+
+### auto-generated section `test intellij.gherkin` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "gherkin_test",
   runtime_deps = [":gherkin_test_lib"]
 )
-### auto-generated section `build intellij.gherkin` end
+### auto-generated section `test intellij.gherkin` end

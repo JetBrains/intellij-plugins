@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.cucumber.java` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "cucumber-java_resources",
@@ -118,9 +117,13 @@ jvm_library(
   ],
   runtime_deps = [":cucumber-java_resources"]
 )
+### auto-generated section `build intellij.cucumber.java` end
+
+### auto-generated section `test intellij.cucumber.java` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "cucumber-java_test",
   runtime_deps = [":cucumber-java_test_lib"]
 )
-### auto-generated section `build intellij.cucumber.java` end
+### auto-generated section `test intellij.cucumber.java` end

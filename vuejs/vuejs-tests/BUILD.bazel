@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.vuejs.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "tests_test_resources",
@@ -28,12 +27,10 @@ jvm_library(
     "@community//platform/refactoring",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
-    "//plugins/JavaScriptLanguage:javascript",
     "//contrib/vuejs",
     "//CSS/frontback/css-api:css-frontback",
     "//CSS:css",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//CSS/impl",
     "@community//java/java-runtime:rt",
     "//plugins/JavaScriptLanguage/javascript-parser",
@@ -73,12 +70,17 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
     "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
+    "//webcore:webide",
   ],
   runtime_deps = [":tests_test_resources"]
 )
+### auto-generated section `build intellij.vuejs.tests` end
+
+### auto-generated section `test intellij.vuejs.tests` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "tests_test",
   runtime_deps = [":tests_test_lib"]
 )
-### auto-generated section `build intellij.vuejs.tests` end
+### auto-generated section `test intellij.vuejs.tests` end

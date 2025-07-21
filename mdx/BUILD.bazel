@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.mdx` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "mdx_resources",
@@ -23,13 +22,11 @@ jvm_library(
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/markdown-utils",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/projectModel-api:projectModel",
     "@community//xml/xml-parser:parser",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
-    "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@lib//:gson",
     "@community//platform/core-ui",
@@ -58,13 +55,11 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/markdown-utils",
     "@community//platform/markdown-utils:markdown-utils_test_lib",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/projectModel-api:projectModel",
     "@community//xml/xml-parser:parser",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
-    "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@lib//:gson",
     "@community//platform/testFramework",
@@ -78,9 +73,13 @@ jvm_library(
   ],
   runtime_deps = [":mdx_resources"]
 )
+### auto-generated section `build intellij.mdx` end
+
+### auto-generated section `test intellij.mdx` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "mdx_test",
   runtime_deps = [":mdx_test_lib"]
 )
-### auto-generated section `build intellij.mdx` end
+### auto-generated section `test intellij.mdx` end

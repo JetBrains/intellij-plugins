@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.lang.stubs.factories
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubElementFactory
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.REF_ATTRIBUTE
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.REF_ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeImpl
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeStubImpl
 

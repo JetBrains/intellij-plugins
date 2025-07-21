@@ -16,7 +16,7 @@ import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
 internal const val FLEXINSPECT_STATS_INSPECTION_ID = "flexinspect"
 
 internal object InspectionEventsCollector : CounterUsagesCollector() {
-  private val GROUP = EventLogGroup("qodana.inspections", 13)
+  private val GROUP = EventLogGroup("qodana.inspections", 14)
 
   override fun getGroup() = GROUP
 
@@ -69,6 +69,14 @@ internal object InspectionEventsCollector : CounterUsagesCollector() {
     filetypeField,
     totalCountField,
     analyzedCountField
+  )
+
+  private val inspectionProblemsFound = GROUP.registerVarargEvent(
+    "inspection.problems.found",
+    inspectionIdField,
+    problemsCountField,
+    filesCountField,
+    EventFields.PluginInfo
   )
 
   private val qodanaActivityFinished = GROUP.registerEvent(
@@ -146,6 +154,30 @@ internal object InspectionEventsCollector : CounterUsagesCollector() {
     }
     else {
       inspectionDuration.log(project, pairs)
+    }
+  }
+
+  @JvmStatic
+  fun logInspectionProblemsFound(
+    problemsCount: Int,
+    filesCount: Int,
+    tool: InspectionToolWrapper<*, *>,
+    project: Project,
+  ) {
+    val pluginInfo = getInfo(tool)
+    val inspectionId = getInspectionIdToReport(project, pluginInfo, tool.id)
+
+    val pairs = listOf(
+      inspectionIdField.with(inspectionId),
+      problemsCountField.with(problemsCount),
+      filesCountField.with(filesCount)
+    )
+
+    if (pluginInfo != null) {
+      inspectionProblemsFound.log(project, pairs + EventFields.PluginInfo.with(pluginInfo))
+    }
+    else {
+      inspectionProblemsFound.log(project, pairs)
     }
   }
 

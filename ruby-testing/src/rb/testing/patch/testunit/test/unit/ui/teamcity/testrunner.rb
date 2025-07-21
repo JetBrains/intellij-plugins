@@ -26,6 +26,14 @@ require 'test/unit/ui/testrunnermediator'
 require 'test/unit/ui/testrunnerutilities'
 require 'test/unit/ui/teamcity/testrunner_events'
 
+require 'teamcity/rakerunner_consts'
+require 'teamcity/utils/runner_utils'
+
+class Test::Unit::UI::TestRunnerMediator
+  TC_TESTCOUNT = name + "::TC_TESTCOUNT"
+  TC_REPORTER_ATTACHED = name + "::TC_REPORTER_ATTACHED"
+end
+
 # Runs a Test::Unit::TestSuite on teamcity server.
 class Test::Unit::UI::TeamCity::TestRunner
   extend Test::Unit::UI::TestRunnerUtilities
@@ -90,7 +98,14 @@ class Test::Unit::UI::TeamCity::TestRunner
   end
 
   def start_mediator
-    @mediator.send Test::Unit::UI::TestRunnerMediator::TC_RUN_METHOD_NAME
+    @mediator.notify_listeners(Test::Unit::UI::TestRunnerMediator::TC_REPORTER_ATTACHED)
+    @mediator.notify_listeners(Test::Unit::UI::TestRunnerMediator::TC_TESTCOUNT, calculate_test_count(@suite))
+
+    if @mediator.respond_to?(:run)
+      @mediator.run
+    else
+      @mediator.run_suite
+    end
   end
 
   private
@@ -116,6 +131,30 @@ class Test::Unit::UI::TeamCity::TestRunner
     @mediator.add_listener(Test::Unit::UI::TestRunnerMediator::TC_TESTCOUNT, &method(:reset_ui))
     @mediator.add_listener(Test::Unit::UI::TestRunnerMediator::TC_REPORTER_ATTACHED, &method(:log_test_reporter_attached))
     #@mediator.add_listener(Test::Unit::UI::TestRunnerMediator::RESET, &method(:reset_ui))
+  end
+
+  def calculate_test_count(suite)
+    # if is a test (not suite) - will have size 1, other way size depends on amount of nested tests.
+    return 1 unless defined? suite.tests
+
+    size = 0
+    tests = suite.tests
+
+    # if suite is empty it will contain only one test with name "default_test"
+    # which will not be reported
+    # let's check if it is fake test method
+    if tests.size == 1 && ::Rake::TeamCity::RunnerUtils.fake_default_test_for_empty_suite?(tests[0])
+       return 0
+    end
+
+    tests.each do |suite_or_test|
+      # If suite is excluded and contains only one test (default test)
+      unless ::Rake::TeamCity::RunnerUtils.excluded_default_testcase?(suite_or_test)
+        size += calculate_test_count(suite_or_test)
+      end
+    end
+
+    size
   end
 end
 

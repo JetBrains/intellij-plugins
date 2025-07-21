@@ -69,7 +69,7 @@ private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean
   return context.fileType is VueFileType || isVueContext(context, project)
 }
 
-object VueLspServerActivationRule : LspServerActivationRule(VueLspServerLoader, VueActivationHelper) {
+object VueLspServerActivationRule : LspServerActivationRule(VueLspServerLoader, VueLspActivationHelper) {
   override fun isFileAcceptable(file: VirtualFile): Boolean {
     if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
 
@@ -77,17 +77,62 @@ object VueLspServerActivationRule : LspServerActivationRule(VueLspServerLoader, 
   }
 }
 
-private object VueActivationHelper : ServiceActivationHelper {
+private object VueLspActivationHelper : ServiceActivationHelper {
   override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
     return isVueServiceContext(project, context)
   }
 
   override fun isEnabledInSettings(project: Project): Boolean {
+    if (getVueSettings(project).tsPluginPreviewEnabled)
+      return false
+
     return when (getVueSettings(project).serviceType) {
       VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> true
       VueServiceSettings.TS_SERVICE -> false
       VueServiceSettings.DISABLED -> false
     }
+  }
+}
+
+private val vueTSPluginPackageVersion = PackageVersion.bundled<VueTSPluginPackageDescriptor>(
+  version = "3.0.1",
+  pluginPath = "vuejs",
+  localPath = "typescript-vue-plugin",
+  isBundledEnabled = { Registry.`is`("vue.ts.plugin.bundled.enabled") },
+)
+
+private object VueTSPluginPackageDescriptor : LspServerPackageDescriptor(
+  name = "@vue/typescript-plugin",
+  defaultVersion = vueTSPluginPackageVersion,
+  defaultPackageRelativePath = "",
+) {
+  override val registryVersion: String
+    get() = Registry.stringValue("vue.ts.plugin.default.version")
+}
+
+@ApiStatus.Experimental
+object VueTSPluginLoader : TSPluginLoader(VueTSPluginPackageDescriptor) {
+  override fun getSelectedPackageRef(project: Project): NodePackageRef {
+    return getVueSettings(project).tsPluginPackageRef
+  }
+}
+
+object VueTSPluginActivationRule : TSPluginActivationRule(VueTSPluginLoader, VueTSPluginActivationHelper) {
+  override fun isEnabled(project: Project, context: VirtualFile): Boolean {
+    if (!getVueSettings(project).tsPluginPreviewEnabled)
+      return false
+
+    return super.isEnabled(project, context)
+  }
+}
+
+private object VueTSPluginActivationHelper : ServiceActivationHelper {
+  override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
+    return isVueServiceContext(project, context)
+  }
+
+  override fun isEnabledInSettings(project: Project): Boolean {
+    return getVueSettings(project).tsPluginPreviewEnabled
   }
 }
 
@@ -97,7 +142,8 @@ private object VueActivationHelper : ServiceActivationHelper {
  * Refers to the classic service that predates official Vue LSP.
  */
 fun isVueClassicTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
-  if (!isVueServiceContext(project, context)) return false
+  if (!isVueServiceContext(project, context) || getVueSettings(project).tsPluginPreviewEnabled)
+    return false
 
   return when (getVueSettings(project).serviceType) {
     VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> false

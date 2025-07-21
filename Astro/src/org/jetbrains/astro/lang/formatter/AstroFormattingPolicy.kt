@@ -5,7 +5,6 @@ import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.formatter.JSBlockContext
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.formatter.JavascriptFormattingModelBuilder
@@ -31,7 +30,7 @@ class AstroFormattingPolicy(settings: CodeStyleSettings, documentModel: Formatti
                                            alignment: Alignment?,
                                            indent: Indent?,
                                            injectedBlockBuilder: InjectedLanguageBlockBuilder) {
-    assert(child.elementType === JSStubElementTypes.EMBEDDED_EXPRESSION)
+    assert(child.elementType === JSElementTypes.EMBEDDED_EXPRESSION)
 
     val childPsi: PsiElement = child.psi
     val childLanguage = childPsi.language

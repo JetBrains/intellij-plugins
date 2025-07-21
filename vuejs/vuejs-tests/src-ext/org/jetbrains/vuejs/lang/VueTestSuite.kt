@@ -30,6 +30,7 @@ import org.junit.runners.Suite
   VueHighlightingTest::class,
   VueControlFlowTest::class,
   VueComponentTest::class,
+  VueNewComponentTest::class,
   VueTypedHandlerTest::class,
   VueAttributeNameParserTest::class,
   VueResolveTest::class,

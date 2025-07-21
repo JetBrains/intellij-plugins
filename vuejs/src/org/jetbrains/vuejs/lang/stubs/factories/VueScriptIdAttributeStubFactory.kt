@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.lang.stubs.factories
 import com.intellij.lang.ASTNode
 import com.intellij.lang.stubs.XmlStubBasedAttributeStubFactory
 import com.intellij.psi.xml.XmlAttribute
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SCRIPT_ID_ATTRIBUTE
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_ID_ATTRIBUTE
 
 class VueScriptIdAttributeStubFactory : XmlStubBasedAttributeStubFactory(SCRIPT_ID_ATTRIBUTE) {
   override fun shouldCreateStub(node: ASTNode): Boolean {

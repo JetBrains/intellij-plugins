@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypesImpl
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
@@ -158,7 +158,7 @@ interface EntityContainerInfoProvider<T> {
             propsObject = resolved
           }
           else if (resolved != null) {
-            propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+            propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved, JSElementTypesImpl.OBJECT_LITERAL_EXPRESSION)
                             .find { it.context == resolved } ?: getObjectLiteral(resolved)
             if ((propsObject == null && canBeArray) || !canBeObject) {
               return readPropsFromArray(resolved)

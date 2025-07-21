@@ -38,7 +38,7 @@ public final class ActionScriptExpressionParser extends ExpressionParser<ActionS
     if (builder.getTokenType() == JSTokenTypes.LPAR) {
       parseParenthesizedExpression();
       parsePropertyInitializer(false);
-      property.done(JSStubElementTypes.PROPERTY);
+      property.done(JSElementTypes.PROPERTY);
       property.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
       return true;
     }

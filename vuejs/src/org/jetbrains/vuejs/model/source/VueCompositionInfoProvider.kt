@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSFunction
@@ -77,7 +77,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
 
     private fun getSetupCalls(initializer: JSObjectLiteralExpression): List<VueNamedSymbol> =
       resolveElementTo(initializer.findProperty(SETUP_METHOD), JSFunction::class)
-        ?.let { JSStubBasedPsiTreeUtil.findDescendants<JSCallExpression>(it, TokenSet.create(JSStubElementTypes.CALL_EXPRESSION)) }
+        ?.let { JSStubBasedPsiTreeUtil.findDescendants<JSCallExpression>(it, TokenSet.create(JSElementTypes.CALL_EXPRESSION)) }
         ?.mapNotNull {
           when (getFunctionNameFromVueIndex(it)) {
             PROVIDE_FUN -> analyzeProvide(it)

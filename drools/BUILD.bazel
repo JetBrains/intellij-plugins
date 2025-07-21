@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.jboss.drools` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "drools_resources",
@@ -71,9 +70,13 @@ jvm_library(
   ],
   runtime_deps = [":drools_resources"]
 )
+### auto-generated section `build intellij.jboss.drools` end
+
+### auto-generated section `test intellij.jboss.drools` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "drools_test",
   runtime_deps = [":drools_test_lib"]
 )
-### auto-generated section `build intellij.jboss.drools` end
+### auto-generated section `test intellij.jboss.drools` end

@@ -20,7 +20,7 @@ class VueJSParser(
     VueJSExpressionParser(this, extraParser)
 
   override fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
-    extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSStubElementTypes.EMBEDDED_EXPR_CONTENT_JS)
+    extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSElementTypes.EMBEDDED_EXPR_CONTENT_JS)
   }
 
   private fun parseExpressionOptional() = expressionParser.parseExpressionOptional()

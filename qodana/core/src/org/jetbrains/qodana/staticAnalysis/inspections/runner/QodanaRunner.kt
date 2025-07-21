@@ -6,7 +6,9 @@ import com.intellij.platform.diagnostic.telemetry.helpers.useWithScope
 import com.intellij.psi.PsiElement
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.delete
+import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.model.*
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runInterruptible
@@ -160,9 +162,8 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     resultingRun: Run,
     commandLineResultsPrinter: CommandLineResultsPrinter,
   ) {
-    resultingRun.properties?.get(SANITY_RESULTS_KEY)?.let {
-      @Suppress("UNCHECKED_CAST")
-      commandLineResultsPrinter.printSanityResults(it as List<Result>)
+    resultingRun.convertPropertyToResults(SANITY_RESULTS_KEY)?.let { results ->
+      commandLineResultsPrinter.printSanityResults(results)
     }
   }
 
@@ -181,13 +182,30 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
     resultingRun: Run,
     commandLineResultsPrinter: CommandLineResultsPrinter,
   ) {
-    resultingRun.properties?.get(PROMO_RESULTS_KEY)?.let {
-      @Suppress("UNCHECKED_CAST")
+    resultingRun.convertPropertyToResults(PROMO_RESULTS_KEY)?.let { results ->
       commandLineResultsPrinter.printResults(
-        it as List<Result>,
+        results,
         sectionTitle = QodanaBundle.message("cli.promo.results.title"),
         message = QodanaBundle.message("cli.promo.results.grouping.message")
       )
+    }
+  }
+
+  private fun Run.convertPropertyToResults(propertyKey: String): List<Result>? {
+    val property = this.properties?.get(propertyKey) ?: return null
+    
+    if (property is List<*> && property.all { it is Result }) {
+      @Suppress("UNCHECKED_CAST")
+      return property as List<Result>
+    }
+    
+    return try {
+      val gson = SarifUtil.createGson()
+      val json = gson.toJson(property)
+      val type = object : TypeToken<List<Result>>() {}.type
+      gson.fromJson(json, type) ?: emptyList()
+    } catch (_: Throwable) {
+      emptyList()
     }
   }
 
@@ -275,14 +293,12 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
         result.ruleId?.let { put(it, profile.getInspectionTool(it, nullPsiElement)?.displayName ?: resolveUnknown(it)) }
       }
 
-      @Suppress("UNCHECKED_CAST")
-      (resultingRun.properties?.get("qodana.sanity.results") as? List<Result>)
+      resultingRun.convertPropertyToResults("qodana.sanity.results")
         ?.filter(shouldIncludeResult)?.forEach { result ->
           result.ruleId?.let { put(it, profile.getInspectionTool(it, nullPsiElement)?.displayName ?: resolveUnknown(it)) }
         }
 
-      @Suppress("UNCHECKED_CAST")
-      (resultingRun.properties?.get("qodana.promo.results") as? List<Result>)
+      resultingRun.convertPropertyToResults("qodana.promo.results")
         ?.filter(shouldIncludeResult)?.forEach { result ->
           result.ruleId?.let { put(it, profile.getInspectionTool(it, nullPsiElement)?.displayName ?: resolveUnknown(it)) }
         }

@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.libraries.vuex.model.component
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitFunctionImpl
@@ -113,7 +113,7 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
       }
 
       fun readStubbedArguments(call: StubElement<PsiElement>): List<Pair<String, JSElement>> {
-        call.findChildStubByElementType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+        call.findChildStubByElementType(JSElementTypes.OBJECT_LITERAL_EXPRESSION)
           ?.asSafely<JSObjectLiteralExpressionStub>()
           ?.let { stub ->
             return stub.psi.properties.asSequence()
@@ -121,7 +121,7 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
               .map { Pair(it.name!!, it) }
               .toList()
           }
-        return call.getChildrenByType(JSStubElementTypes.LITERAL_EXPRESSION) { arrayOfNulls<JSLiteralExpression>(it) }
+        return call.getChildrenByType(JSElementTypes.LITERAL_EXPRESSION) { arrayOfNulls<JSLiteralExpression>(it) }
           .asSequence()
           .filter { it?.significantValue != null }
           .map { Pair(it!!.significantValue!!, it) }

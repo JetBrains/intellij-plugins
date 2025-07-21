@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.webassembly` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "webassembly_resources",
@@ -60,9 +59,13 @@ jvm_library(
     ":webassembly_test_resources",
   ]
 )
+### auto-generated section `build intellij.webassembly` end
+
+### auto-generated section `test intellij.webassembly` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "webassembly_test",
   runtime_deps = [":webassembly_test_lib"]
 )
-### auto-generated section `build intellij.webassembly` end
+### auto-generated section `test intellij.webassembly` end

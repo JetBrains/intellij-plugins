@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.javascript.featuresTrainer` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library", "jvm_resources")
 
 jvm_resources(
   name = "javascript-featuresTrainer_resources",
@@ -27,13 +26,11 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/testRunner",
-    "//plugins/JavaScriptLanguage:javascript",
     "@community//platform/smRunner",
     "@community//plugins/ide-features-trainer:featuresTrainer",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/analysis-impl",
     "@community//platform/refactoring",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
@@ -57,7 +54,6 @@ jvm_library(
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/testRunner",
     "@community//platform/testRunner:testRunner_test_lib",
-    "//plugins/JavaScriptLanguage:javascript",
     "@community//platform/smRunner",
     "@community//platform/smRunner:smRunner_test_lib",
     "@community//plugins/ide-features-trainer:featuresTrainer",
@@ -65,7 +61,6 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/analysis-impl",
     "@community//platform/refactoring",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage:javascript-impl",
@@ -75,9 +70,13 @@ jvm_library(
   ],
   runtime_deps = [":javascript-featuresTrainer_resources"]
 )
+### auto-generated section `build intellij.javascript.featuresTrainer` end
+
+### auto-generated section `test intellij.javascript.featuresTrainer` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "javascript-featuresTrainer_test",
   runtime_deps = [":javascript-featuresTrainer_test_lib"]
 )
-### auto-generated section `build intellij.javascript.featuresTrainer` end
+### auto-generated section `test intellij.javascript.featuresTrainer` end

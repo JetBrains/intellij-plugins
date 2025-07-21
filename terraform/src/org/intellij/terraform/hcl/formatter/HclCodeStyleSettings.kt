@@ -1,7 +1,6 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
-import com.intellij.lang.Language
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings.WrapConstant
@@ -9,7 +8,7 @@ import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 import org.intellij.terraform.hcl.HCLBundle
 
 @Suppress("PropertyName")
-class HclCodeStyleSettings(container: CodeStyleSettings, language: Language) : CustomCodeStyleSettings(language.id, container) {
+internal class HclCodeStyleSettings(languageId: String, container: CodeStyleSettings) : CustomCodeStyleSettings(languageId, container) {
   @JvmField
   var PROPERTY_ALIGNMENT: PropertyAlignment = PropertyAlignment.ON_EQUALS
 

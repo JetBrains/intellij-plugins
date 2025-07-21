@@ -3,7 +3,6 @@ package org.angular2.lang.html.parser
 
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 
 enum class Angular2AttributeType(
   val elementType: IElementType,
@@ -11,14 +10,14 @@ enum class Angular2AttributeType(
   private val mySuffix: String,
   private val canonicalPrefix: String?,
 ) {
-  REFERENCE(Angular2HtmlStubElementTypes.REFERENCE, "#", "", "ref-"),
+  REFERENCE(Angular2HtmlElementTypes.REFERENCE, "#", "", "ref-"),
   REGULAR(XmlElementType.XML_ATTRIBUTE, "", "", null),
-  LET(Angular2HtmlStubElementTypes.LET, "let-", "", null),
-  BANANA_BOX_BINDING(Angular2HtmlStubElementTypes.BANANA_BOX_BINDING, "[(", ")]", "bindon-"),
-  PROPERTY_BINDING(Angular2HtmlStubElementTypes.PROPERTY_BINDING, "[", "]", "bind-"),
-  EVENT(Angular2HtmlStubElementTypes.EVENT, "(", ")", "on-"),
-  TEMPLATE_BINDINGS(Angular2HtmlStubElementTypes.TEMPLATE_BINDINGS, "*", "", null),
-  NG_CONTENT_SELECTOR(Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR, "", "", null),
+  LET(Angular2HtmlElementTypes.LET, "let-", "", null),
+  BANANA_BOX_BINDING(Angular2HtmlElementTypes.BANANA_BOX_BINDING, "[(", ")]", "bindon-"),
+  PROPERTY_BINDING(Angular2HtmlElementTypes.PROPERTY_BINDING, "[", "]", "bind-"),
+  EVENT(Angular2HtmlElementTypes.EVENT, "(", ")", "on-"),
+  TEMPLATE_BINDINGS(Angular2HtmlElementTypes.TEMPLATE_BINDINGS, "*", "", null),
+  NG_CONTENT_SELECTOR(Angular2HtmlElementTypes.NG_CONTENT_SELECTOR, "", "", null),
   I18N(XmlElementType.XML_ATTRIBUTE, "i18n-", "", null);
 
   fun buildName(name: String): String {

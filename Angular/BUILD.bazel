@@ -30,7 +30,6 @@ jvm_library(
     "@community//platform/usageView-impl",
     "@community//platform/util/progress",
     "@community//platform/indexing-api:indexing",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//CSS:css",
     "@community//platform/usageView",
     "@community//xml/xml-parser:parser",
@@ -49,7 +48,6 @@ jvm_library(
     "@community//xml/impl",
     "//CSS/impl",
     "//plugins/webpack",
-    "//plugins/JavaScriptLanguage:javascript",
     "@lib//:gson",
     "@community//plugins/htmltools:html-tools",
     "@lib//:jackson",
@@ -80,9 +78,6 @@ jvm_library(
 ### auto-generated section `build intellij.angular` end
 
 ### auto-generated section `build intellij.angular.tests` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
-
 jvm_resources(
   name = "angular-tests_test_resources",
   files = glob(["testData/**/*"]),
@@ -116,7 +111,6 @@ jvm_library(
     "@community//platform/usageView-impl",
     "@community//platform/util/progress",
     "@community//platform/indexing-api:indexing",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "//CSS:css",
     "@community//platform/usageView",
     "@community//xml/xml-parser:parser",
@@ -140,7 +134,6 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/webpack",
     "//plugins/webpack:webpack_test_lib",
-    "//plugins/JavaScriptLanguage:javascript",
     "@lib//:gson",
     "//plugins/JSIntentionPowerPack:javascript-intentions",
     "//plugins/JSIntentionPowerPack:javascript-intentions_test_lib",
@@ -191,9 +184,13 @@ jvm_library(
     ":angular-tests_test_resources_1",
   ]
 )
+### auto-generated section `build intellij.angular.tests` end
+
+### auto-generated section `test intellij.angular.tests` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "angular-tests_test",
   runtime_deps = [":angular-tests_test_lib"]
 )
-### auto-generated section `build intellij.angular.tests` end
+### auto-generated section `test intellij.angular.tests` end

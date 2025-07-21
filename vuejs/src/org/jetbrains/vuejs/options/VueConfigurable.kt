@@ -11,6 +11,8 @@ import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.layout.ValueComponentPredicate
+import com.intellij.ui.layout.and
 import com.intellij.ui.layout.not
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
@@ -20,12 +22,13 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
 
   override fun Panel.createContent() {
     group(VueBundle.message("vue.configurable.service.group")) {
+      val tsPluginPreviewDisabled = ValueComponentPredicate(!getVueSettings(project).tsPluginPreviewEnabled)
+
       row(VueBundle.message("vue.configurable.service.languageServerPackage")) {
         cell(VueLspServerLoader.createNodePackageField(project))
           .align(AlignX.FILL)
           .bind(settings::packageRef)
-      }
-
+      }.enabledIf(tsPluginPreviewDisabled)
       lateinit var radioButtonDisabled: Cell<JBRadioButton>
       buttonsGroup {
         row {
@@ -41,7 +44,9 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           radioButton(VueBundle.message("vue.configurable.service.ts"), VueServiceSettings.TS_SERVICE)
             .comment(VueBundle.message("vue.configurable.service.ts.help"))
         }
-      }.bind(settings::serviceType)
+      }
+        .bind(settings::serviceType)
+        .enabledIf(tsPluginPreviewDisabled)
 
       separator()
 
@@ -53,7 +58,18 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           .bindSelected(settings::useTypesFromServer)
           .gap(RightGap.SMALL)
         icon(AllIcons.General.Alpha)
-      }.enabledIf(radioButtonDisabled.selected.not())
+      }.enabledIf(radioButtonDisabled.selected.not() and tsPluginPreviewDisabled)
+
+      row {
+        checkBox(VueBundle.message("vue.configurable.service.alpha.preview.label"))
+          .gap(RightGap.SMALL)
+          .comment(VueBundle.message("vue.configurable.service.alpha.preview.comment"))
+          .bindSelected(settings::tsPluginPreviewEnabled)
+          .applyToComponent {
+            toolTipText = VueBundle.message("vue.configurable.service.alpha.preview.tooltip")
+          }
+          .onChanged { tsPluginPreviewDisabled.set(!it.isSelected) }
+      }
     }
   }
 

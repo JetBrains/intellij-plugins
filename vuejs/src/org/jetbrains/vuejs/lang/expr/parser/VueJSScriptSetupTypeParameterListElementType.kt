@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.JSElementType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameterList
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptTypeParameterListImpl
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes.EXTERNAL_ID_PREFIX
+import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.EXTERNAL_ID_PREFIX
 
 class VueJSScriptSetupTypeParameterListElementType : JSElementType<TypeScriptTypeParameterList>(
   "SCRIPT_SETUP_TYPE_PARAMETER_LIST") {

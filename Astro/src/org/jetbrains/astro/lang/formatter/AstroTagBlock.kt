@@ -5,7 +5,7 @@ import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.formatter.xml.XmlBlock
@@ -44,7 +44,7 @@ class AstroTagBlock(node: ASTNode,
   }
 
   override fun processChild(result: MutableList<Block>, child: ASTNode, wrap: Wrap?, alignment: Alignment?, indent: Indent?): ASTNode? {
-    if (child.elementType === JSStubElementTypes.EMBEDDED_EXPRESSION) {
+    if (child.elementType === JSElementTypes.EMBEDDED_EXPRESSION) {
       if (!isBuildIndentsOnly) {
         (myXmlFormattingPolicy as AstroFormattingPolicy).buildInjectedEmbeddedExpressionBlock(
           result, child, wrap, alignment, indent, myInjectedBlockBuilder)

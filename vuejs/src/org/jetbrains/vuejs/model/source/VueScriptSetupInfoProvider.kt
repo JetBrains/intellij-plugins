@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -18,7 +18,7 @@ import com.intellij.lang.javascript.psi.types.JSTupleType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeChildren
-import com.intellij.lang.typescript.TypeScriptStubElementTypes
+import com.intellij.lang.typescript.TypeScriptElementTypes
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -514,12 +514,12 @@ fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
         is JSStatement -> {
           stub.childrenStubs.asSequence()
             .filter {
-              it.elementType == JSStubElementTypes.VARIABLE ||
-              it.elementType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE ||
-              it.elementType == JSStubElementTypes.DESTRUCTURING_ELEMENT
+              it.elementType == JSElementTypes.VARIABLE ||
+              it.elementType == TypeScriptElementTypes.TYPESCRIPT_VARIABLE ||
+              it.elementType == JSElementTypes.DESTRUCTURING_ELEMENT
             }
             .flatMap { it.childrenStubs.asSequence() }
-            .filter { it.elementType == JSStubElementTypes.CALL_EXPRESSION }
+            .filter { it.elementType == JSElementTypes.CALL_EXPRESSION }
             .mapNotNull { it.psi as? JSCallExpression }
         }
         else -> emptySequence()

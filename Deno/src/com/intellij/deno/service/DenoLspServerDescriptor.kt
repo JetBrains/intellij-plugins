@@ -146,7 +146,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     return if (Files.exists(Paths.get(anotherPath))) anotherPath else null
   }
 
-  override val lspCustomization: LspCustomization = object : DefaultLspCustomization() {
+  override val lspCustomization: LspCustomization = object : LspCustomization() {
     override val semanticTokensCustomizer = LspSemanticTokensDisabled
     override val goToDefinitionCustomizer = LspGoToDefinitionDisabled
     override val goToTypeDefinitionCustomizer = LspGoToTypeDefinitionDisabled

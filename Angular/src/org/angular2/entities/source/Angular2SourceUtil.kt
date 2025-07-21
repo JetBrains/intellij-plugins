@@ -42,9 +42,9 @@ import org.angular2.entities.*
 import org.angular2.index.resolveComponentsFromIndex
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import org.jetbrains.annotations.ApiStatus
 import java.util.*
 import java.util.function.BiPredicate
@@ -58,7 +58,7 @@ object Angular2SourceUtil {
       template.withGreenStubOrAst(
         { stub ->
           for (el in stub.childrenStubs) {
-            if (el.elementType === Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR) {
+            if (el.elementType === Angular2HtmlElementTypes.NG_CONTENT_SELECTOR) {
               result.add((el.psi as Angular2HtmlNgContentSelector).selector)
             }
           }

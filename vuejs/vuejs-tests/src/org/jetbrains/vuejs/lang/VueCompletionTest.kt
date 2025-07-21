@@ -670,6 +670,60 @@ class VueCompletionTest : VueTestCase("completion") {
   fun testStyleVBindScriptSetupLess() =
     doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false)
 
+  fun testComponentFromFunctionPlugin() =
+    doLookupTest(
+      VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testComponentFromNestedFunctionPlugin() =
+    doLookupTest(
+      VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testComponentFromNestedFunctionPluginWithCycle() =
+    doLookupTest(
+      VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testComponentFromObjectPlugin() =
+    doLookupTest(
+      VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testComponentFromNestedObjectPlugin() =
+    doLookupTest(
+      VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testComponentFromNestedObjectPluginWithCycle() =
+    doLookupTest(
+      VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
   fun testCreateAppIndex() =
     doLookupTest(VueTestModule.VUE_3_2_2,
                  dir = true,

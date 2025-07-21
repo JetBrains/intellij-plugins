@@ -5,7 +5,7 @@ import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.formatter.xml.AnotherLanguageBlockWrapper
@@ -69,7 +69,7 @@ class AstroBlock(node: ASTNode,
   }
 
   override fun splitAttribute(node: ASTNode, formattingPolicy: XmlFormattingPolicy): MutableList<Block> {
-    node.firstChildNode.takeIf { it.elementType === JSStubElementTypes.EMBEDDED_EXPRESSION }?.let {
+    node.firstChildNode.takeIf { it.elementType === JSElementTypes.EMBEDDED_EXPRESSION }?.let {
       val result = mutableListOf<Block>()
       (myXmlFormattingPolicy as AstroFormattingPolicy).buildInjectedEmbeddedExpressionBlock(
         result, it, wrap, alignment, indent, myInjectedBlockBuilder)

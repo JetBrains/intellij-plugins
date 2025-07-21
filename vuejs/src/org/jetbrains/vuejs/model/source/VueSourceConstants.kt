@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.model.source
 const val VUE_NAMESPACE: String = "Vue"
 
 const val EXTEND_FUN: String = "extend"
+const val USE_FUN: String = "use"
 const val COMPONENT_FUN: String = "component"
 const val MIXIN_FUN: String = "mixin"
 const val DIRECTIVE_FUN: String = "directive"
@@ -19,6 +20,7 @@ const val DEFINE_OPTIONS_FUN: String = "defineOptions"
 const val WITH_DEFAULTS_FUN: String = "withDefaults"
 const val CREATE_APP_FUN: String = "createApp"
 const val MOUNT_FUN: String = "mount"
+const val INSTALL_FUN: String = "install"
 const val PROVIDE_FUN: String = "provide"
 const val INJECT_FUN: String = "inject"
 

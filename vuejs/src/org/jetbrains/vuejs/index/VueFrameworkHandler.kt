@@ -53,7 +53,7 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.libraries.componentDecorator.isVueComponentDecoratorName
 import org.jetbrains.vuejs.model.getSlotTypeFromContext
@@ -79,10 +79,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     createIndexRecord(VUE_ID_INDEX_KEY),
     createIndexRecord(VUE_GLOBAL_FILTERS_INDEX_KEY)
   )
-  private val expectedLiteralOwnerExpressions = TokenSet.create(JSStubElementTypes.CALL_EXPRESSION,
-                                                                JSStubElementTypes.NEW_EXPRESSION,
-                                                                JSStubElementTypes.ASSIGNMENT_EXPRESSION,
-                                                                JSStubElementTypes.EXPORT_DEFAULT_ASSIGNMENT)
+  private val expectedLiteralOwnerExpressions = TokenSet.create(JSElementTypes.CALL_EXPRESSION,
+                                                                JSElementTypes.NEW_EXPRESSION,
+                                                                JSElementTypes.ASSIGNMENT_EXPRESSION,
+                                                                JSElementTypes.EXPORT_DEFAULT_ASSIGNMENT)
 
 
   companion object {
@@ -319,7 +319,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             this, VUE_COMPOSITION_APP_INDEX_JS_KEY,
             // Store reference name for resolution
             callExpression.arguments
-              .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN || referenceName == PROVIDE_FUN) 0 else 1)
+              .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == USE_FUN || referenceName == MIXIN_FUN || referenceName == PROVIDE_FUN) 0 else 1)
               .asSafely<JSReferenceExpression>()
               ?.takeIf { it.qualifier == null }
               ?.referenceName
@@ -399,7 +399,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val treeParent = literalExpressionNode.treeParent
     val parentType = treeParent?.elementType ?: return false
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
-        || (JSStubElementTypes.PROPERTY == parentType
+        || (JSElementTypes.PROPERTY == parentType
             && (isComponentPropertyWithStubbedLiteral(treeParent) || isComponentModelProperty(treeParent)))) {
       return TreeUtil.getFileElement(literalExpressionNode)?.psi?.containingFile is VueFile
              || insideVueDescriptor(literalExpressionNode)
@@ -418,20 +418,20 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   private fun isComponentModelProperty(property: ASTNode) =
     property.findChildByType(JSTokenTypes.IDENTIFIER)?.text.let { it == MODEL_PROP_PROP || it == MODEL_EVENT_PROP }
     && property.treeParent?.treeParent.let {
-      it != null && it.elementType == JSStubElementTypes.PROPERTY
+      it != null && it.elementType == JSElementTypes.PROPERTY
       && it.findChildByType(JSTokenTypes.IDENTIFIER)?.text == MODEL_PROP
     }
 
   private fun isVueComponentDecoratorCall(callNode: ASTNode): Boolean =
-    callNode.treeParent?.elementType == JSStubElementTypes.ES6_DECORATOR
+    callNode.treeParent?.elementType == JSElementTypes.ES6_DECORATOR
     && checkCallExpression(callNode) { refName, hasQualifier ->
       !hasQualifier && isVueComponentDecoratorName(refName)
     }
 
   private fun isVueMixinInitializerCall(callNode: ASTNode): Boolean =
     callNode
-      .treeParent?.takeIf { it.elementType == JSStubElementTypes.ARRAY_LITERAL_EXPRESSION }
-      ?.treeParent?.takeIf { it.elementType == JSStubElementTypes.PROPERTY }
+      .treeParent?.takeIf { it.elementType == JSElementTypes.ARRAY_LITERAL_EXPRESSION }
+      ?.treeParent?.takeIf { it.elementType == JSElementTypes.PROPERTY }
       ?.psi?.asSafely<JSProperty>()?.name == MIXINS_PROP
 
   // limit building stub in other file types like js/html to Vue-descriptor-like members
@@ -439,9 +439,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val statement = TreeUtil.findParent(node,
                                         expectedLiteralOwnerExpressions,
                                         JSExtendedLanguagesTokenSetProvider.STATEMENTS) ?: return false
-    if (statement.elementType == JSStubElementTypes.EXPORT_DEFAULT_ASSIGNMENT) return true
-    val referenceHolder = if (statement.elementType == JSStubElementTypes.ASSIGNMENT_EXPRESSION)
-      statement.findChildByType(JSStubElementTypes.DEFINITION_EXPRESSION)
+    if (statement.elementType == JSElementTypes.EXPORT_DEFAULT_ASSIGNMENT) return true
+    val referenceHolder = if (statement.elementType == JSElementTypes.ASSIGNMENT_EXPRESSION)
+      statement.findChildByType(JSElementTypes.DEFINITION_EXPRESSION)
     else statement
     val ref = referenceHolder?.findChildByType(JSElementTypes.REFERENCE_EXPRESSION) ?: return false
     return ref.getChildren(JSKeywordSets.IDENTIFIER_NAMES).any { it.text in VUE_DESCRIPTOR_OWNERS }
@@ -491,7 +491,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       if (!hasQualifier)
         refName == CREATE_APP_FUN
       else {
-        refName == CREATE_APP_FUN || refName == MOUNT_FUN || refName == MIXIN_FUN ||
+        refName == CREATE_APP_FUN || refName == MOUNT_FUN || refName == USE_FUN || refName == MIXIN_FUN ||
         ((refName == COMPONENT_FUN || refName == FILTER_FUN || refName == DIRECTIVE_FUN || refName == PROVIDE_FUN)
          && callNode.findChildByType(JSElementTypes.ARGUMENT_LIST)?.getChildren(JSElementTypes.EXPRESSIONS)?.size == 2)
       }
@@ -511,8 +511,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
 
   private fun isDescendantOfStubbedScriptTag(callNode: ASTNode): Boolean =
-    TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueStubElementTypes.STUBBED_TAG))
-      ?.takeIf { it.elementType == VueStubElementTypes.STUBBED_TAG }
+    TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueElementTypes.STUBBED_TAG))
+      ?.takeIf { it.elementType == VueElementTypes.STUBBED_TAG }
       .let { it?.psi?.let { it as? HtmlTag }?.name == SCRIPT_TAG_NAME }
 
   private fun recordVueFunctionName(
@@ -542,7 +542,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   private fun checkCallExpression(callNode: ASTNode, check: (referenceName: String, hasQualifier: Boolean) -> Boolean): Boolean {
-    if (callNode.elementType != JSStubElementTypes.CALL_EXPRESSION) return false
+    if (callNode.elementType != JSElementTypes.CALL_EXPRESSION) return false
     val methodExpression = JSCallExpressionImpl.getMethodExpression(callNode)
     if (methodExpression == null || methodExpression.elementType != JSElementTypes.REFERENCE_EXPRESSION) return false
     val referenceName = JSReferenceExpressionImpl.getReferenceName(methodExpression) ?: return false

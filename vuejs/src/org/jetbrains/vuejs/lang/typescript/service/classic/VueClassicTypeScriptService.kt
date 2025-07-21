@@ -46,7 +46,7 @@ import org.jetbrains.vuejs.options.VueConfigurable
  *
  * Doesn't work properly with TypeScript 5+ and is known to have some bugs.
  */
-class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console", "VueService") {
+class VueClassicTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "VueService") {
 
   override fun getProcessName(): String = "Vue TypeScript"
 

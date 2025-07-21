@@ -2,6 +2,7 @@
 package com.intellij.lang.actionscript.highlighting
 
 import com.intellij.lang.javascript.JSDocTokenTypes
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect
@@ -272,7 +273,7 @@ class ECMAL4Highlighter : JSHighlighter(ECMAL4LanguageDialect.DIALECT_OPTION_HOL
 
       ourAttributeMap[JSTokenTypes.C_STYLE_COMMENT] = ECMAL4_BLOCK_COMMENT
       ourAttributeMap[JSTokenTypes.XML_STYLE_COMMENT] = ECMAL4_BLOCK_COMMENT
-      ourAttributeMap[JSTokenTypes.DOC_COMMENT] = ECMAL4_DOC_COMMENT
+      ourAttributeMap[JSElementTypes.DOC_COMMENT] = ECMAL4_DOC_COMMENT
       ourAttributeMap[JSTokenTypes.END_OF_LINE_COMMENT] = ECMAL4_LINE_COMMENT
       ourAttributeMap[JSTokenTypes.BAD_CHARACTER] = ECMAL4_BAD_CHARACTER
 

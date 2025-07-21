@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.meteor` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
 
 jvm_resources(
   name = "meteor_resources",
@@ -21,7 +20,6 @@ jvm_library(
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:gson",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
@@ -49,7 +47,6 @@ jvm_library(
     "//webcore:webide",
     "//webcore/impl",
     "//plugins/LiveEdit:js-liveEdit",
-    "//plugins/JavaScriptLanguage:javascript",
     "//plugins/fileWatcher",
     "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
     "@community//platform/core-ui",
@@ -71,7 +68,6 @@ jvm_library(
   associates = [":meteor"],
   deps = [
     "@lib//:gson",
-    "//plugins/JavaScriptLanguage/javascript-frontback-impl",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
@@ -103,7 +99,6 @@ jvm_library(
     "//webcore/impl",
     "//plugins/LiveEdit:js-liveEdit",
     "//plugins/LiveEdit:js-liveEdit_test_lib",
-    "//plugins/JavaScriptLanguage:javascript",
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
     "//plugins/fileWatcher",
@@ -120,9 +115,13 @@ jvm_library(
     ":meteor_resources_1",
   ]
 )
+### auto-generated section `build intellij.meteor` end
+
+### auto-generated section `test intellij.meteor` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "meteor_test",
   runtime_deps = [":meteor_test_lib"]
 )
-### auto-generated section `build intellij.meteor` end
+### auto-generated section `test intellij.meteor` end

@@ -3,7 +3,7 @@ package com.jetbrains.plugins.jade.js;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
-import com.intellij.lang.javascript.JSStubElementTypes;
+import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSStatement;
@@ -65,7 +65,7 @@ public class JSEachStatementImpl extends JSForInStatementImpl {
   private JSVarStatement[] getAllDeclarationStatements() {
     List<JSVarStatement> varStatements = new ArrayList<>(2);
     for (ASTNode child = getNode().getFirstChildNode(); child != null; child = child.getTreeNext()) {
-      if (child.getElementType() == JSStubElementTypes.VAR_STATEMENT) {
+      if (child.getElementType() == JSElementTypes.VAR_STATEMENT) {
         varStatements.add(((JSVarStatement)child.getPsi()));
       }
       else if (child.getElementType() == JSTokenTypes.IN_KEYWORD) {

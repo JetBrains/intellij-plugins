@@ -42,11 +42,10 @@ public class CucumberUtilTest {
     List<TextRange> expected3 = List.of(new TextRange(7, 12));
     assertEquals(expected3, getCukexHighlightRanges(expression3));
 
-    // Should correctly handle a single parameter. Or should it?
-
-    // String expression4 = "I have {int} cucumber(s) in my belly!";
-    // List<TextRange> expected4 = List.of(new TextRange(7, 12));
-    // assertEquals(expected4, getCukexHighlightRanges(expression4));
+    // Should correctly handle a single parameter and optional text.
+     String expression4 = "I have {int} cucumber(s) in my belly!";
+     List<TextRange> expected4 = List.of(new TextRange(7, 12));
+     assertEquals(expected4, getCukexHighlightRanges(expression4));
   }
 
   @Test

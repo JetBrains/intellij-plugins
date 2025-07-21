@@ -4,6 +4,7 @@ package org.angular2.lang.html.stub
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.types.JSVariableElementType
 import com.intellij.psi.*
+import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 import org.angular2.lang.html.psi.impl.Angular2HtmlAttrVariableImpl
 
@@ -11,7 +12,7 @@ class Angular2HtmlVariableElementType(val kind: Angular2HtmlAttrVariable.Kind)
   : JSVariableElementType(kind.name + "_VARIABLE") {
 
   override fun toString(): String {
-    return Angular2HtmlStubElementTypes.EXTERNAL_ID_PREFIX + debugName
+    return Angular2HtmlElementTypes.EXTERNAL_ID_PREFIX + debugName
   }
 
   override fun construct(node: ASTNode): PsiElement {

@@ -21,7 +21,6 @@
     <orderEntry type="module" module-name="intellij.platform.util.progress" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.platform.indexing" />
-    <orderEntry type="module" module-name="intellij.javascript.frontback.impl" />
     <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.platform.usageView" />
     <orderEntry type="module" module-name="intellij.xml.parser" />
@@ -40,7 +39,6 @@
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.css.impl" />
     <orderEntry type="module" module-name="intellij.webpack" />
-    <orderEntry type="module" module-name="intellij.javascript" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.html.tools" />
     <orderEntry type="library" name="jackson" level="project" />

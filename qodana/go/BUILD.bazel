@@ -1,6 +1,5 @@
 ### auto-generated section `build intellij.qodana.go` start
-load("@community//build:tests-options.bzl", "jps_test")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library", "jvm_resources", "jvm_test")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library", "jvm_resources")
 
 jvm_resources(
   name = "go_resources",
@@ -109,9 +108,13 @@ jvm_library(
   ],
   runtime_deps = [":go_resources"]
 )
+### auto-generated section `build intellij.qodana.go` end
+
+### auto-generated section `test intellij.qodana.go` start
+load("@community//build:tests-options.bzl", "jps_test")
 
 jps_test(
   name = "go_test",
   runtime_deps = [":go_test_lib"]
 )
-### auto-generated section `build intellij.qodana.go` end
+### auto-generated section `test intellij.qodana.go` end

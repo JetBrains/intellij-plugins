@@ -4,8 +4,8 @@ package com.intellij.lang.actionscript.parsing;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
 import com.intellij.lang.actionscript.ActionScriptElementTypes;
+import com.intellij.lang.actionscript.ActionScriptInternalElementTypes;
 import com.intellij.lang.actionscript.ActionScriptSpecificStubElementTypes;
-import com.intellij.lang.actionscript.ActionScriptStubElementTypes;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.FunctionParser;
 import com.intellij.lang.javascript.parsing.StatementParser;
@@ -28,7 +28,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       return;
     }
     parser.getFunctionParser().parseAttributeBody();
-    attribute.done(JSStubElementTypes.ATTRIBUTE);
+    attribute.done(JSElementTypes.ATTRIBUTE);
   }
 
   /** advances lexer */
@@ -74,7 +74,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       builder.advanceLexer();
       builder.advanceLexer();
       checkForSemicolon();
-      statement.done(ActionScriptElementTypes.GOTO_STATEMENT);
+      statement.done(ActionScriptInternalElementTypes.GOTO_STATEMENT);
       return;
     }
 
@@ -100,7 +100,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     checkMatches(builder, JSTokenTypes.STRING_LITERAL, "javascript.parser.message.expected.string.literal");
     checkForSemicolon();
 
-    useNSStatement.done(ActionScriptStubElementTypes.INCLUDE_DIRECTIVE);
+    useNSStatement.done(ActionScriptElementTypes.INCLUDE_DIRECTIVE);
   }
 
   private boolean parseNamespaceNoMarker(final @NotNull PsiBuilder.Marker useNSStatement) {
@@ -130,7 +130,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       }
     }
     checkForSemicolon();
-    useNSStatement.done(ActionScriptStubElementTypes.NAMESPACE_DECLARATION);
+    useNSStatement.done(ActionScriptElementTypes.NAMESPACE_DECLARATION);
     useNSStatement.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
     return true;
   }
@@ -155,7 +155,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     else {
       builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.xml"));
     }
-    marker.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION);
+    marker.done(JSElementTypes.ASSIGNMENT_EXPRESSION);
     checkForSemicolon();
     statementMarker.done(JSElementTypes.EXPRESSION_STATEMENT);
   }
@@ -172,7 +172,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
   @Override
   public IElementType getVariableElementType() {
-    return isBlockBodyContext() ? ActionScriptSpecificStubElementTypes.LOCAL_VARIABLE : ActionScriptStubElementTypes.ACTIONSCRIPT_VARIABLE;
+    return isBlockBodyContext() ? ActionScriptSpecificStubElementTypes.LOCAL_VARIABLE : ActionScriptElementTypes.ACTIONSCRIPT_VARIABLE;
   }
 
   public void parseUseNamespaceDirective() {
@@ -198,7 +198,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       }
     }
     checkForSemicolon();
-    useNSStatement.done(ActionScriptStubElementTypes.USE_NAMESPACE_DIRECTIVE);
+    useNSStatement.done(ActionScriptElementTypes.USE_NAMESPACE_DIRECTIVE);
   }
 
   private void parsePackage() {
@@ -214,7 +214,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     else {
       parseBlockAndAttachStatementsDirectly();
     }
-    _package.done(JSStubElementTypes.PACKAGE_STATEMENT);
+    _package.done(JSElementTypes.PACKAGE_STATEMENT);
   }
 
   private void parseImportStatement() {
@@ -235,7 +235,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
           builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
         }
 
-        nsAssignment.done(JSStubElementTypes.ASSIGNMENT_EXPRESSION);
+        nsAssignment.done(JSElementTypes.ASSIGNMENT_EXPRESSION);
       }
       else {
         nsAssignment.drop();
@@ -244,7 +244,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       checkForSemicolon();
     }
     finally {
-      importStatement.done(JSStubElementTypes.IMPORT_STATEMENT);
+      importStatement.done(JSElementTypes.IMPORT_STATEMENT);
     }
   }
 
@@ -269,15 +269,15 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       }
 
       if (builder.getTokenType() == JSTokenTypes.EXTENDS_KEYWORD) {
-        parseReferenceList(JSStubElementTypes.EXTENDS_LIST);
+        parseReferenceList(JSElementTypes.EXTENDS_LIST);
       }
 
       if (builder.getTokenType() == JSTokenTypes.IMPLEMENTS_KEYWORD) {
-        parseReferenceList(JSStubElementTypes.IMPLEMENTS_LIST);
+        parseReferenceList(JSElementTypes.IMPLEMENTS_LIST);
       }
 
       parseBlockAndAttachStatementsDirectly();
-      clazz.done(ActionScriptStubElementTypes.ACTIONSCRIPT_CLASS);
+      clazz.done(ActionScriptElementTypes.ACTIONSCRIPT_CLASS);
       clazz.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
     }
     finally {
@@ -307,12 +307,12 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
 
   @Override
   protected IElementType getClassElementType() {
-    return ActionScriptStubElementTypes.ACTIONSCRIPT_CLASS;
+    return ActionScriptElementTypes.ACTIONSCRIPT_CLASS;
   }
 
   @Override
   protected IElementType getClassExtendListElementType() {
-    return JSStubElementTypes.EXTENDS_LIST;
+    return JSElementTypes.EXTENDS_LIST;
   }
 
   @Override
@@ -320,7 +320,7 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
     IElementType tokenType = builder.getTokenType();
     if (tokenType == JSTokenTypes.LBRACE) {
       parseBlockAndAttachStatementsDirectly();
-      marker.done(ActionScriptElementTypes.CONDITIONAL_COMPILE_BLOCK_STATEMENT);
+      marker.done(ActionScriptInternalElementTypes.CONDITIONAL_COMPILE_BLOCK_STATEMENT);
       return true;
     }
     else if (tokenType == JSTokenTypes.NAMESPACE_KEYWORD && isECMAL4()) {
