@@ -1,9 +1,8 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
 import com.intellij.application.options.CodeStyleAbstractPanel
 import com.intellij.ide.highlighter.HighlighterFactory
-import com.intellij.lang.Language
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.highlighter.EditorHighlighter
 import com.intellij.openapi.fileTypes.FileType
@@ -14,7 +13,6 @@ import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.UIUtil
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLSyntaxHighlighter
 import org.intellij.terraform.hcl.createHclLexer
@@ -22,7 +20,7 @@ import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
 
-internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings, language: Language) : CodeStyleAbstractPanel(settings) {
+internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings, isTfLanguage: Boolean) : CodeStyleAbstractPanel(settings) {
   private val alignmentComboBox = CollectionComboBoxModel(PropertyAlignment.entries)
   private val commentSymbolComboBox = CollectionComboBoxModel(LineCommenterPrefix.entries)
   private lateinit var reformatCheckBox: JBCheckBox
@@ -37,11 +35,11 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings, language: Lan
       row {
         importProviders = checkBox(HCLBundle.message("code.style.import.provider.automatically")).gap(RightGap.SMALL).component
         contextHelp(HCLBundle.message("code.style.import.provider.text"), HCLBundle.message("code.style.import.provider.header"))
-      }.visible(language is TerraformLanguage)
+      }.visible(isTfLanguage)
       row {
         reformatCheckBox = checkBox(HCLBundle.message("code.style.run.tf.fmt.title")).gap(RightGap.SMALL).component
         contextHelp(HCLBundle.message("code.style.run.tf.fmt.comment"), HCLBundle.message("code.style.run.tf.fmt.header"))
-      }.visible(language is TerraformLanguage)
+      }.visible(isTfLanguage)
     }.apply {
       border = BorderFactory.createEmptyBorder(UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP)
     }, BorderLayout.WEST)
@@ -59,7 +57,7 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings, language: Lan
 
   override fun getFileType(): FileType = TerraformFileType
 
-  override fun getPreviewText(): String = ALIGNMENT_SAMPLE
+  override fun getPreviewText(): String = ALIGNMENT_SAMPLE.trimIndent()
 
   override fun apply(settings: CodeStyleSettings) {
     val tfSettings = settings.getCustomSettings(HclCodeStyleSettings::class.java)
@@ -92,18 +90,18 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings, language: Lan
 }
 
 private const val ALIGNMENT_SAMPLE: String = """
-provider "aws" {
-  region = "us-east-1"
-}
-
-resource "aws_instance" "example" {
-  ami               = "ami-0c55b159cbfafe1f0"
-  instance_type     = "t2.micro"
-  key_name          = aws_key_pair.deployer.key_name
-  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
-
-  tags = {
-    Name = "ExampleInstance"
+  provider "aws" {
+    region = "us-east-1"
   }
-}
+  
+  resource "aws_instance" "example" {
+    ami                    = "ami-0c55b159cbfafe1f0"
+    instance_type          = "t2.micro"
+    key_name               = aws_key_pair.deployer.key_name
+    vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+  
+    tags = {
+      Name = "ExampleInstance"
+    }
+  }
 """

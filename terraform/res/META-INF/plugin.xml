@@ -242,7 +242,7 @@
 
     <!-- Formatter -->
     <codeStyleSettingsProvider implementation="org.intellij.terraform.hcl.formatter.HclCodeStyleSettingsProvider"/>
-    <langCodeStyleSettingsProvider implementation="org.intellij.terraform.hcl.formatter.HCLLanguageCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="org.intellij.terraform.hcl.formatter.HclLanguageCodeStyleSettingsProvider"/>
     <lang.formatter language="HCL" implementationClass="org.intellij.terraform.hcl.formatter.HCLFormattingBuilderModel"/>
     <formattingService implementation="org.intellij.terraform.hcl.formatter.TfAsyncFormattingService"/>
     <lang.quoteHandler language="HCL" implementationClass="org.intellij.terraform.hcl.formatter.HCLQuoteHandler"/>

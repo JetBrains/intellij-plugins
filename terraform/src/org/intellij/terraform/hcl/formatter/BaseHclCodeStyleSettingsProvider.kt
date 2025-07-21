@@ -25,7 +25,7 @@ internal sealed class BaseHclCodeStyleSettingsProvider : CodeStyleSettingsProvid
             addSpacesTab(settings)
             addBlankLinesTab(settings)
             addWrappingAndBracesTab(settings)
-            addTab(HclCodeStyleOtherPanel(settings, language))
+            addTab(HclCodeStyleOtherPanel(settings, language is TerraformLanguage))
           }
         }
       }

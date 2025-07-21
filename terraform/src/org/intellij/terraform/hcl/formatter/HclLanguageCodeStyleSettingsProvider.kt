@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
 import com.intellij.application.options.IndentOptionsEditor
@@ -11,31 +11,10 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 
-open class HCLLanguageCodeStyleSettingsProvider(private val language:Language = HCLLanguage) : LanguageCodeStyleSettingsProvider() {
-  override fun getLanguage(): Language = language
+internal open class HclLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
+  override fun getLanguage(): Language = HCLLanguage
 
-  companion object {
-    const val SAMPLE: String = """
-    name = value
-    block 'name' {
-      long_array = [ 'a', 100, "b", 1234567890, 1234567890, 1234567890, 1234567890, 10e100, true, false ]
-      arr = []
-      empty_object = {}
-      one_line_object = { something : "Yep!", other : "Nope!" }
-      object = { 
-        yeah : "Yay"
-        meh : "Nein" 
-      }
-    }
-    some_object = {
-      echo = true
-    }
-    """
-  }
-
-  override fun getCodeSample(settingsType: SettingsType): String {
-    return SAMPLE
-  }
+  override fun getCodeSample(settingsType: SettingsType): String = SAMPLE.trimIndent()
 
   override fun getIndentOptionsEditor(): IndentOptionsEditor? = SmartIndentOptionsEditor()
 
@@ -67,3 +46,23 @@ open class HCLLanguageCodeStyleSettingsProvider(private val language:Language = 
     }
   }
 }
+
+
+const val SAMPLE: String = """
+  name = value
+  
+  block 'name' {
+    long_array = [ 'a', 100, "b", 1234567890, 1234567890, 1234567890, 1234567890, 10e100, true, false ]
+    arr = []
+    empty_object = {}
+    one_line_object = { something : "Yep!", other : "Nope!" }
+    object = { 
+      yeah : "Yay"
+      meh : "Nein" 
+    }
+  }
+  
+  some_object = {
+    echo = true
+  }
+"""
