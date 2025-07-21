@@ -899,6 +899,6 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
 
   @Override
   protected @NotNull JSDocumentationCommentGenerator getCommentGenerator() {
-    return FlexDocumentationCommentGenerator.INSTANCE;
+    return new FlexDocumentationCommentGenerator();
   }
 }

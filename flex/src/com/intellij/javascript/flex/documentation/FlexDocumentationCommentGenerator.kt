@@ -8,16 +8,13 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType
 
 
-object FlexDocumentationCommentGenerator : JSDocumentationCommentGeneratorBase() {
+class FlexDocumentationCommentGenerator : JSDocumentationCommentGeneratorBase() {
 
-  override fun appendFunctionInfoDoc(function: JSFunction, builder: StringBuilder) {
+  override fun appendFunctionInfoDoc(function: JSFunction) {
     val type: JSType? = JSPsiImplUtils.getTypeFromDeclaration(function)
 
     if (type != null && (type !is JSVoidType) && !function.isGetProperty()) {
-      builder.append("* @return ")
-
-      //builder.append(s);
-      builder.append("\n")
+      append("* @return \n")
     }
   }
 }
