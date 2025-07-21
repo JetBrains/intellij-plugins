@@ -19,7 +19,7 @@ private class NuxtFolderLibraryStartupActivity : ProjectActivity {
   }
 }
 
-class NuxtFolderModelSynchronizer internal constructor(
+internal class NuxtFolderModelSynchronizer internal constructor(
   private val project: Project,
   private val workspaceModel: WorkspaceModel,
   nuxtFolderManager: NuxtFolderManager,
@@ -58,10 +58,8 @@ class NuxtFolderModelSynchronizer internal constructor(
 
   private fun updateEntities(actualEntities: List<NuxtFolderEntity.Builder>) {
     val entitiesStorage = createStorageFrom(actualEntities)
-    NuxtFolderManager.invokeUnderWriteAction(project) {
-      workspaceModel.updateProjectModel(".nuxt outdated (new count: ${actualEntities.size})") { storage ->
-        storage.replaceBySource({ it === NuxtFolderEntity.MyEntitySource }, entitiesStorage)
-      }
+    NuxtFolderManager.getInstance(project).updateWorkspaceModel(".nuxt outdated (new count: ${actualEntities.size})") { _, storage ->
+      storage.replaceBySource({ it === NuxtFolderEntity.MyEntitySource }, entitiesStorage)
     }
   }
 }

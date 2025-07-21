@@ -2,12 +2,16 @@
 package org.jetbrains.vuejs.libraries.nuxt
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
+import com.intellij.openapi.project.Project
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.utils.coroutines.waitCoroutinesBlocking
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
-import org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderModelSynchronizer
+import org.jetbrains.vuejs.libraries.nuxt.library.getDotNuxtFolderManagerCoroutineScope
+import org.jetbrains.vuejs.libraries.nuxt.library.resetDotNuxtFolderManager
 
 class NuxtHighlightingTest : BasePlatformTestCase() {
 
@@ -15,8 +19,7 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    // clear Workspace Model from `NuxtFolderEntity` created by previous tests
-    NuxtFolderModelSynchronizer(project).sync()
+    resetDotNuxtFolderManager(project)
   }
 
   fun testRefToStatic() {
@@ -43,6 +46,7 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject("nuxtAutoImports", ".")
     myFixture.configureFromTempProjectFile("app.vue")
+    awaitDotNuxtFolderProcessing(project)
 
     myFixture.checkHighlighting(true, false, true)
   }
@@ -52,6 +56,7 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.copyDirectoryToProject("nuxtGlobalComponents", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("app.vue")
+    awaitDotNuxtFolderProcessing(project)
 
     myFixture.checkHighlighting(true, false, true)
   }
@@ -61,6 +66,7 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.copyDirectoryToProject("nuxtExtendedGlobalComponents", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("app.vue")
+    awaitDotNuxtFolderProcessing(project)
 
     myFixture.checkHighlighting(true, false, true)
   }
@@ -72,4 +78,9 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
+}
+
+internal fun awaitDotNuxtFolderProcessing(project: Project) {
+  waitCoroutinesBlocking(getDotNuxtFolderManagerCoroutineScope(project))
+  IndexingTestUtil.waitUntilIndexesAreReady(project)
 }

@@ -9,7 +9,7 @@ import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
-import org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderModelSynchronizer
+import org.jetbrains.vuejs.libraries.nuxt.library.resetDotNuxtFolderManager
 
 class NuxtNavigationTest : BasePlatformTestCase() {
 
@@ -17,8 +17,7 @@ class NuxtNavigationTest : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    // clear Workspace Model from `NuxtFolderEntity` created by previous tests
-    NuxtFolderModelSynchronizer(project).sync()
+    resetDotNuxtFolderManager(project)
   }
 
   fun testNuxtGlobalComponents() {
@@ -26,6 +25,7 @@ class NuxtNavigationTest : BasePlatformTestCase() {
     myFixture.copyDirectoryToProject("nuxtGlobalComponents", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     val app = myFixture.configureFromTempProjectFile("app.vue")
+    awaitDotNuxtFolderProcessing(project)
 
     val unnested = JSTestUtils.findElementByText(myFixture, "Unnested", XmlToken::class.java)
     myFixture.editor.caretModel.moveToOffset(unnested.textOffset + 1)
