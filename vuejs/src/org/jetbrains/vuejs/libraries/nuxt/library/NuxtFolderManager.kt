@@ -24,6 +24,7 @@ import com.intellij.platform.workspace.storage.WorkspaceEntity
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
+import com.intellij.util.containers.nullize
 import com.intellij.util.xmlb.annotations.XCollection
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
 import java.util.concurrent.ConcurrentHashMap
@@ -154,9 +155,8 @@ internal class NuxtFolderManager(private val project: Project) : PersistentState
 
   private inner class NuxtFileListener : AsyncFileListener {
     override fun prepareChange(events: List<VFileEvent>): ChangeApplier? {
-      val relevantEvents = events.filter { isRelevantEvent(it) }
-      return if (relevantEvents.isEmpty()) null
-      else object : ChangeApplier {
+      val relevantEvents = events.filter(::isRelevantEvent).nullize() ?: return null
+      return object : ChangeApplier {
         override fun afterVfsChange() {
           for (event in relevantEvents) {
             when (event) {
