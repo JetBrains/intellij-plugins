@@ -25,7 +25,7 @@ object Angular2LangUtil {
   const val OUTPUT_CHANGE_SUFFIX: String = "Change"
 
   enum class AngularVersion {
-    V_2, V_10, V_16, V_17, V_18, V_19, V_19_2, V_20
+    V_2, V_10, V_14_2, V_16, V_17, V_18, V_19, V_19_2, V_20
   }
 
   @JvmStatic

@@ -343,6 +343,7 @@
     <polySymbols.webTypes enableByDefault="true" source="web-types/angular-base@0.0.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@2.0.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@10.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@14.2.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@16.0.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/angular@17.0.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@18.0.0.web-types.json"/>

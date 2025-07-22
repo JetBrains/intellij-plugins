@@ -1,0 +1,5 @@
+alt. (typeText=null; priority=10.0; typeGreyed)
+code. (typeText=null; priority=10.0; typeGreyed)
+control. (typeText=null; priority=10.0; typeGreyed)
+meta. (typeText=null; priority=10.0; typeGreyed)
+shift. (typeText=null; priority=10.0; typeGreyed)

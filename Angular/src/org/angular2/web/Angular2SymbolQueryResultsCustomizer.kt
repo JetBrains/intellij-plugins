@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web
 
-import com.intellij.polySymbols.html.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
@@ -15,6 +14,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.html.NAMESPACE_HTML
+import com.intellij.polySymbols.html.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
@@ -38,6 +38,7 @@ import org.angular2.codeInsight.Angular2CodeInsightUtils.wrapWithImportDeclarati
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
+import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 
 class Angular2SymbolQueryResultsCustomizer private constructor(private val context: PsiElement) : PolySymbolQueryResultsCustomizer {
@@ -51,13 +52,18 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
     qualifiedName: PolySymbolQualifiedName,
   ): List<PolySymbol> =
     when {
-      kinds.contains(qualifiedName.qualifiedKind) ->
+      scopedKinds.contains(qualifiedName.qualifiedKind) ->
         withTypeEvaluationLocation(context) {
           if (strict)
             matches.filterOutOfScopeOrErrorSymbols(scope)
           else
             matches.wrapWithScopedSymbols(scope)
         }
+      qualifiedName.qualifiedKind == NG_KEY_EVENT_MODIFIERS ->
+        if (!Angular2LangUtil.isAtLeastAngularVersion(context, Angular2LangUtil.AngularVersion.V_14_2))
+          matches.filter { !it.name.equals("code", true) }
+        else
+          matches
       qualifiedName.namespace == NAMESPACE_HTML ->
         matches
           .filter { !it.extension }
@@ -78,7 +84,9 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
         && item.name !in svgAllowedElements)
       return null
     val symbol = item.symbol
-    if (symbol == null || !kinds.contains(qualifiedKind)) return item
+    if (qualifiedKind == NG_KEY_EVENT_MODIFIERS && item.name == "code")
+      return item.takeIf { Angular2LangUtil.isAtLeastAngularVersion(context, Angular2LangUtil.AngularVersion.V_14_2) }
+    if (symbol == null || !scopedKinds.contains(qualifiedKind)) return item
     val directives = symbol.unwrapMatchedSymbols()
       .mapNotNull { it[PROP_SYMBOL_DIRECTIVE] }
       .toList()
@@ -203,10 +211,10 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
   companion object {
     private val svgAllowedElements = setOf(ELEMENT_NG_CONTAINER, ELEMENT_NG_TEMPLATE)
 
-    private val kinds = setOf(NG_STRUCTURAL_DIRECTIVES,
-                              NG_DIRECTIVE_ONE_TIME_BINDINGS, NG_DIRECTIVE_ATTRIBUTES,
-                              NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS,
-                              NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
+    private val scopedKinds = setOf(NG_STRUCTURAL_DIRECTIVES,
+                                    NG_DIRECTIVE_ONE_TIME_BINDINGS, NG_DIRECTIVE_ATTRIBUTES,
+                                    NG_DIRECTIVE_INPUTS, NG_DIRECTIVE_OUTPUTS, NG_DIRECTIVE_IN_OUTS,
+                                    NG_DIRECTIVE_ELEMENT_SELECTORS, NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
   }
 
   override fun createPointer(): Pointer<out PolySymbolQueryResultsCustomizer> {
