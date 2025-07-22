@@ -8,6 +8,7 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -36,7 +37,7 @@ import org.intellij.terraform.isTerraformCompatiblePsiFile
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionBlock
 import org.jetbrains.annotations.Nls
 
-class HILUnresolvedReferenceInspection : LocalInspectionTool() {
+class HILUnresolvedReferenceInspection : LocalInspectionTool(), DumbAware {
 
   private val allowedLanguages = setOf(HCLLanguage, HILLanguage)
 
