@@ -90,6 +90,28 @@ function clearOtherAdapters(injector, intellijReporter) {
   });
 }
 
+/**
+ * @description In some cases the Anginal 20 integration adds some incorrect reporters for Krama's `MultiReporter`.
+ * It cleans the incorrect reporters.
+ * More info https://youtrack.jetbrains.com/issue/WEB-73511/Unable-to-run-tests-with-Karma-in-Angular-v20#focus=Comments-27-12371621.0-0
+ */
+function clearBrokenReporters(injector) {
+  var multiReporter;
+
+  try {
+    multiReporter = injector.get('reporter');
+  } catch (ex) {
+    console.warn("WARN - IDE integration: Can't get `reporter` from `injector` for cleaning broken reporters.");
+  }
+
+  if (multiReporter && multiReporter._reporters && multiReporter._reporters.length > 0) {
+    multiReporter._reporters = multiReporter._reporters.filter(function (reporter) {
+      // clean unexpected undefined reporters and reporters without adapters
+      return reporter != null && reporter.adapters != null;
+    });
+  }
+}
+
 function LogManager() {
   this.postponedLog = null;
 }
@@ -143,6 +165,9 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
   var beforeRunStart = true;
 
   this.onRunStart = function (browsers) {
+    // WEB-73511 specific, more info in the function jsDoc
+    clearBrokenReporters(injector);
+
     clearOtherAdapters(injector, that);
 
     beforeRunStart = false;
