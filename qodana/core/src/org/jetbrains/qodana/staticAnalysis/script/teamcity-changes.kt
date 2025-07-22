@@ -32,7 +32,7 @@ class TeamCityChangesScriptFactory : QodanaScriptFactory {
   ): QodanaScript {
     val path = parameters.optional<String>(TEAMCITY_CHANGED_FILES_PATH) ?: DEFAULT_PATH
     val changes = parseChangesFile(path, config)
-    return TeamcityScript(TeamcityRunContextFactory(contextFactory, changes), AnalysisKind.OTHER)
+    return TeamcityScript(TeamcityRunContextFactory(contextFactory, changes))
   }
 
   private fun parseChangesFile(changesPath: String, config: QodanaConfig): List<TeamcityChangesRecord> {
@@ -56,7 +56,7 @@ class TeamCityChangesScriptFactory : QodanaScriptFactory {
   }
 }
 
-private class TeamcityScript(runContextFactory: QodanaRunContextFactory, analysisKind: AnalysisKind): DefaultScript(runContextFactory, analysisKind) {
+private class TeamcityScript(runContextFactory: QodanaRunContextFactory): DefaultScript(runContextFactory, AnalysisKind.OTHER) {
   override suspend fun createGlobalInspectionContext(runContext: QodanaRunContext): QodanaGlobalInspectionContext {
     return runContext.createGlobalInspectionContext(coverageComputationState = QodanaCoverageComputationState.SKIP_COMPUTE)
   }

@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.qodana.staticAnalysis.stat
 
-import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.openapi.project.Project
@@ -9,10 +8,9 @@ import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Internal
 object QodanaProjectInfoCollector : CounterUsagesCollector() {
+  private val GROUP = QodanaEventLogGroup("qodana.project.info", 3)
 
-  override fun getGroup() = GROUP
-
-  private val GROUP = EventLogGroup("qodana.project.info", 2)
+  override fun getGroup() = GROUP.eventLogGroup
 
   private val authors30Field = EventFields.RoundedInt("authors30")
   private val authors60Field = EventFields.RoundedInt("authors60")
@@ -32,7 +30,7 @@ object QodanaProjectInfoCollector : CounterUsagesCollector() {
   )
 
   private val ossLicenseField = EventFields.Boolean("oss_license")
-  private val doesHaveOssLicenseEvent = GROUP.registerEvent("does.have.oss.license", ossLicenseField)
+  private val doesHaveOssLicenseEvent = GROUP.registerVarargEvent("does.have.oss.license", ossLicenseField)
 
   @JvmStatic
   fun logCommitsSummary(
@@ -42,7 +40,7 @@ object QodanaProjectInfoCollector : CounterUsagesCollector() {
     authors90: Int,
     commits30: Int,
     commits60: Int,
-    commits90: Int
+    commits90: Int,
   ) {
     val pairs = listOf(
       authors30Field.with(authors30),
@@ -63,6 +61,6 @@ object QodanaProjectInfoCollector : CounterUsagesCollector() {
 
   @JvmStatic
   fun logOssLicense(project: Project, hasOssLicense: Boolean) {
-    doesHaveOssLicenseEvent.log(project, hasOssLicense)
+    doesHaveOssLicenseEvent.log(project, ossLicenseField.with(hasOssLicense))
   }
 }

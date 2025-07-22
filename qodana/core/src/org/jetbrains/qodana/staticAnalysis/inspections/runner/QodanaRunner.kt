@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
+import com.google.gson.reflect.TypeToken
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.diagnostic.telemetry.helpers.useWithScope
@@ -7,8 +8,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.delete
 import com.jetbrains.qodana.sarif.SarifUtil
-import com.jetbrains.qodana.sarif.model.*
-import com.google.gson.reflect.TypeToken
+import com.jetbrains.qodana.sarif.model.Level
+import com.jetbrains.qodana.sarif.model.Result
+import com.jetbrains.qodana.sarif.model.Run
+import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runInterruptible
@@ -29,6 +32,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.resultsFlowByGroup
 import org.jetbrains.qodana.staticAnalysis.sarif.writeReport
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptResult
+import org.jetbrains.qodana.staticAnalysis.stat.QodanaEventsService
 import java.io.IOException
 import kotlin.io.path.exists
 
@@ -47,12 +51,11 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
   companion object {
     internal suspend fun getInspectionIdToNameMap(
       inspectionNames: Map<String, String>,
-      config: QodanaConfig
+      config: QodanaConfig,
     ): (String) -> String {
       val extensionsList = getBaselineReport(config, false)?.runs?.firstOrNull()?.tool?.extensions?.flatMap { it.rules }
       return { inspectionId ->
-        inspectionNames[inspectionId] ?:
-        extensionsList?.find { it.id == inspectionId }?.shortDescription?.text
+        inspectionNames[inspectionId] ?: extensionsList?.find { it.id == inspectionId }?.shortDescription?.text
         ?: inspectionId
       }
     }
@@ -76,6 +79,8 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
       }
 
       val scriptName = config.script.name
+      QodanaEventsService.getInstance().initAnalysisKind(script.analysisKind)
+
       val scriptResult = qodanaTracer().spanBuilder("qodanaScriptRun").setAttribute("name", scriptName).useWithScope {
         script.execute(sarif)
       }
@@ -193,18 +198,19 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
 
   private fun Run.convertPropertyToResults(propertyKey: String): List<Result>? {
     val property = this.properties?.get(propertyKey) ?: return null
-    
+
     if (property is List<*> && property.all { it is Result }) {
       @Suppress("UNCHECKED_CAST")
       return property as List<Result>
     }
-    
+
     return try {
       val gson = SarifUtil.createGson()
       val json = gson.toJson(property)
       val type = object : TypeToken<List<Result>>() {}.type
       gson.fromJson(json, type) ?: emptyList()
-    } catch (_: Throwable) {
+    }
+    catch (_: Throwable) {
       emptyList()
     }
   }
@@ -233,7 +239,8 @@ class QodanaRunner(val script: QodanaScript, private val config: QodanaConfig, p
           // printer will notify about coverage configuration error
           commandLineResultsPrinter.printCoverage(null, sectionTitle = QodanaBundle.message("cli.coverage.title"))
         }
-      } else {
+      }
+      else {
         commandLineResultsPrinter.printCoverage(stat, sectionTitle = QodanaBundle.message("cli.coverage.title"))
       }
     }

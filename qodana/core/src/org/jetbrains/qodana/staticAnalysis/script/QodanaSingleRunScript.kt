@@ -16,13 +16,13 @@ import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector
 
 abstract class QodanaSingleRunScript(
   @VisibleForTesting val runContextFactory: QodanaRunContextFactory,
-  private val analysisKind: AnalysisKind,
+  override val analysisKind: AnalysisKind,
 ) : QodanaScript {
 
   abstract suspend fun execute(
     report: SarifReport,
     runContext: QodanaRunContext,
-    inspectionContext: QodanaGlobalInspectionContext
+    inspectionContext: QodanaGlobalInspectionContext,
   )
 
   protected open suspend fun createGlobalInspectionContext(runContext: QodanaRunContext) = runContext.createGlobalInspectionContext()

@@ -218,7 +218,7 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
 
   private fun assertEvent(event: LogEvent, eventId: String, vararg data: Pair<String, Any>) {
     val expected = listOf(eventId, data.toMap().toSortedMap())
-    val actual = listOf(event.event.id, event.event.data.toSortedMap())
+    val actual = listOf(event.event.id, event.event.data.filter { it.key != ANALYSIS_KIND_EVENT_NAME }.toSortedMap())
     assertEquals(expected, actual)
   }
 }

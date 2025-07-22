@@ -26,9 +26,8 @@ abstract class ComparingScript(
   private val config: QodanaConfig,
   private val messageReporter: QodanaMessageReporter,
   private val contextFactory: QodanaRunContextFactory,
-  private val analysisKind: AnalysisKind,
+  override val analysisKind: AnalysisKind,
 ) : QodanaScript {
-
   protected val progressIndicator = QodanaProgressIndicator(messageReporter)
 
   override suspend fun execute(report: SarifReport): QodanaScriptResult {

@@ -25,7 +25,7 @@ import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector
 const val RUN_TIMESTAMP = "runTimestamp"
 
 class QodanaInIdeScript(private val runContext: QodanaRunContext) : QodanaScript {
-
+  override val analysisKind : AnalysisKind = AnalysisKind.IDE
   override suspend fun execute(report: SarifReport): QodanaScriptResult {
     val run = report.getOrCreateRun()
     val inspectionContext = runContext.createGlobalInspectionContext()

@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.staticAnalysis.stat
 
-import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventField
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.eventLog.events.EventPair
@@ -27,10 +26,9 @@ import java.time.Duration
 import java.time.Instant
 
 object UsageCollector : CounterUsagesCollector() {
+  private val GROUP = QodanaEventLogGroup("qodana.usage", 12)
 
-  override fun getGroup() = GROUP
-
-  private val GROUP = EventLogGroup("qodana.usage", 11)
+  override fun getGroup() = GROUP.eventLogGroup
 
   private val knownSystems = listOf(  // from https://github.com/cucumber/ci-environment/blob/main/CiEnvironments.json
     "azure-pipelines",
@@ -135,11 +133,11 @@ object UsageCollector : CounterUsagesCollector() {
     daysLeftField
   )
 
-  private val qodanaYamlDetectedEvent = GROUP.registerEvent(
+  private val qodanaYamlDetectedEvent = GROUP.registerVarargEvent(
     "qodana.yaml.detected"
   )
 
-  private val qodanaGithubPromoWorkflowUsed = GROUP.registerEvent(
+  private val qodanaGithubPromoWorkflowUsed = GROUP.registerVarargEvent(
     "qodana.github.promo.workflow.used"
   )
 
@@ -263,7 +261,8 @@ object UsageCollector : CounterUsagesCollector() {
         if (ciFileText?.contains(DefaultQodanaGithubWorkflowBuilder.PROMO_HEADER_TEXT) == true) {
           qodanaGithubPromoWorkflowUsed.log()
         }
-      } catch (e: IOException) {
+      }
+      catch (e: IOException) {
         Logger.getInstance(UsageCollector::class.java).warn("Couldn't read the contents of CI file", e)
       }
     }
