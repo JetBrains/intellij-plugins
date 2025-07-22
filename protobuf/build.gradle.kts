@@ -29,9 +29,6 @@ intellijPlatform {
 }
 
 dependencies {
-  implementation("com.google.protobuf:protobuf-java-util:3.24.4")
-  implementation("com.google.truth:truth:0.42")
-
   intellijPlatform {
     jetbrainsRuntime()
     intellijIdeaCommunity(defaultPluginRunMode.baseIDEVersion, useInstaller = true)
@@ -45,6 +42,11 @@ dependencies {
     testFramework(TestFrameworkType.Platform)
     testFramework(TestFrameworkType.Plugin.Java)
   }
+
+  implementation("com.google.protobuf:protobuf-java-util:3.24.4")
+  implementation("com.google.truth:truth:0.42")
+
+  testImplementation("junit:junit:4.13.2")
 }
 
 sourceSets {
@@ -96,6 +98,7 @@ tasks {
   }
   test {
     systemProperty("ij.protoeditor.test.home.path", "${rootProject.rootDir}")
+    useJUnit()
   }
   buildSearchableOptions {
     enabled = false
