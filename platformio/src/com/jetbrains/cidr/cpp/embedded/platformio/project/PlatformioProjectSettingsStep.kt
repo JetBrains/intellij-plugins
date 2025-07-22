@@ -177,6 +177,7 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
   override fun createPanel(): JPanel? = super.createPanel().also {
     platformioPresent.afterChange { service<WatchPlatformioService>().watch(it, this) }
     startPlatformioWatcher()
+    actionButton.isEnabled = false
   }
 
   override fun createAdvancedSettings(): JPanel? {
@@ -206,9 +207,11 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
     val parameters = peer.settings.get().asSafely<BoardInfo>()?.parameters
     if (parameters.isNullOrEmpty()) {
       setWarningText(ClionEmbeddedPlatformioBundle.message("please.select.target"))
+      actionButton.isEnabled = false
       return false
     }
     else {
+      /** Resets text and enables the [actionButton]. */
       setErrorText(null)
       return true
     }
