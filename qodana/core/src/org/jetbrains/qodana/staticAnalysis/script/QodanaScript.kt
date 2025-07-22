@@ -10,6 +10,7 @@ import kotlin.collections.orEmpty
 
 interface QodanaScript {
   suspend fun execute(report: SarifReport): QodanaScriptResult
+  val analysisKind: AnalysisKind
 }
 
 data class QodanaScriptResult(

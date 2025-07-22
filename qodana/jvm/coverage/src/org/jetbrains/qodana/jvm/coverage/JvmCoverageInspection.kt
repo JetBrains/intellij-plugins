@@ -31,6 +31,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector
+import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.COVERAGE_LANGUAGE_FIELD
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.UastAnonymousClassUtil
 import org.jetbrains.uast.visitor.AbstractUastNonRecursiveVisitor
@@ -60,7 +61,7 @@ class JvmCoverageInspection : CoverageInspectionBase() {
     globalContext.putUserData(xmlcov, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
       val data = computeXmlCoverageData(globalContext, XMLReportEngine::class)
       if (data != null) {
-        CoverageFeatureEventsCollector.INSPECTION_LOADED_COVERAGE.log(globalContext.project, CoverageLanguage.JVM)
+        CoverageFeatureEventsCollector.INPUT_COVERAGE_LOADED.log(globalContext.project, COVERAGE_LANGUAGE_FIELD.with(CoverageLanguage.JVM))
       }
       data
     })

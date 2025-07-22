@@ -20,7 +20,8 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coverage.CoverageLanguage
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.precomputedCoverageFiles
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
-import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.INSPECTION_LOADED_COVERAGE
+import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.INPUT_COVERAGE_LOADED
+import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector.COVERAGE_LANGUAGE_FIELD
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.ExperimentalPathApi
@@ -133,7 +134,8 @@ abstract class CoverageInspectionBase: GlobalSimpleInspectionTool() {
       val engine = CoverageEngine.EP_NAME.findExtensionOrFail(engineType.java)
       val data = retrieveCoverageData(engine, coverageFiles, globalContext)
       if (data != null) {
-        INSPECTION_LOADED_COVERAGE.log(globalContext.project, CoverageLanguage.mapEngine(engineType.java.simpleName))
+        INPUT_COVERAGE_LOADED.log(globalContext.project,
+                                       COVERAGE_LANGUAGE_FIELD.with(CoverageLanguage.mapEngine(engineType.java.simpleName)))
         return data
       }
     }
