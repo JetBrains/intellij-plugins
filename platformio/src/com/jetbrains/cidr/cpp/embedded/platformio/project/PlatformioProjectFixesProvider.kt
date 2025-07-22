@@ -1,5 +1,6 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
+import com.intellij.clion.projectStatus.fus.ProjectFixKinds
 import com.intellij.clion.projectStatus.popup.ProjectFixesProvider
 import com.intellij.clion.projectStatus.popup.asProjectFixAction
 import com.intellij.clion.projectStatus.ui.isProjectAwareFile
@@ -27,7 +28,7 @@ class PlatformioProjectFixesProvider : ProjectFixesProvider {
         && readAction { isProjectAwareFile(file, project) }
         && OCFileTypeHelpers.isSourceFile(file.name)
         && OCFileScopeProvider.waitGetProjectSourceLocationKind(project, file).isOutOfProject())
-      listOf(PlatformioRefreshAction().asProjectFixAction())
+      listOf(PlatformioRefreshAction().asProjectFixAction(ProjectFixKinds.PLATFORMIO_RELOAD_PROJECT))
     else emptyList()
 }
 
@@ -37,7 +38,7 @@ class PlatformioProjectFixesProvider : ProjectFixesProvider {
 class ExternalProjectStatusAndFixesProvider : ExternalProjectStatusAndFixesProviderBase() {
   override fun isBuildFile(file: VirtualFile): Boolean = PlatformioFileType.isFileOfType(file)
 
-  override fun createLoadAction(project: Project, buildFile: VirtualFile): AnAction = LoadPlatformioAction(project, buildFile).asProjectFixAction()
+  override fun createLoadAction(project: Project, buildFile: VirtualFile): AnAction = LoadPlatformioAction(project, buildFile).asProjectFixAction(ProjectFixKinds.PLATFORMIO_LOAD_PROJECT)
 
   private class LoadPlatformioAction(private val project: Project, private val buildFile: VirtualFile)
     : AnAction(ClionEmbeddedPlatformioBundle.message("action.PlatformioLoadProjectAction.text")) {
@@ -46,7 +47,7 @@ class ExternalProjectStatusAndFixesProvider : ExternalProjectStatusAndFixesProvi
     }
   }
 
-  override fun createSelectAndLoadAction(project: Project, rootDirectory: VirtualFile): AnAction = SelectAndLoadPlatformioAction(project, rootDirectory).asProjectFixAction()
+  override fun createSelectAndLoadAction(project: Project, rootDirectory: VirtualFile): AnAction = SelectAndLoadPlatformioAction(project, rootDirectory).asProjectFixAction(ProjectFixKinds.PLATFORMIO_SELECT_AND_LOAD_PROJECT)
 
   private class SelectAndLoadPlatformioAction(project: Project, rootDirectory: VirtualFile) : SelectAndLoadProjectActionBase(project, rootDirectory, @Suppress("DialogTitleCapitalization") ClionEmbeddedPlatformioBundle.message("project.status.action.select")) {
     override fun isBuildFile(file: VirtualFile): Boolean = PlatformioFileType.isFileOfType(file)
