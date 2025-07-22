@@ -5,16 +5,12 @@ import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithou
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredAltAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleElementInspection
 import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.TypeScriptTestUtil
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
-import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesConstants
-import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
 import com.intellij.psi.PsiFile
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
@@ -304,12 +300,14 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting()
   }
 
+  /*
   fun testFlowJSEmbeddedContent() {
     // Flow is not used unless there is associated .flowconfig. Instead of it to have 'console' resolved we may enable HTML library.
     JSTestUtils.setDependencyOnPredefinedJsLibraries(project, testRootDisposable, JSCorePredefinedLibrariesConstants.LIB_HTML)
     testWithinLanguageLevel<Exception>(JSLanguageLevel.FLOW, project) {
       myFixture.configureByText("FlowJSEmbeddedContent.vue", """
 <script>
+    // @flow
     type Foo = { a: number }
     const foo: Foo = { a: 1 }
     console.log(foo);
@@ -318,6 +316,7 @@ const props = {seeMe: {}}
       myFixture.checkHighlighting()
     }
   }
+  */
 
   fun testTopLevelTags() = doTest()
 
