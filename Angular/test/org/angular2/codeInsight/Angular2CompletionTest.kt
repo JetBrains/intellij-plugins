@@ -10,6 +10,7 @@ import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCach
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
+import org.angular2.Angular2TestModule.ANGULAR_CORE_15_1_5
 import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
 import org.angular2.Angular2TsConfigFile
 
@@ -319,6 +320,16 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
                      configureFileName = "src/tailwindInNgClass.ts") {
       waitUntilFileOpenedByLspServer(getProject(), getFile().getVirtualFile())
       checkLookupItems(renderTypeText = true)
+    }
+
+  fun testNoKeyupEventCodeModifierNg13() =
+    doLookupTest(ANGULAR_CORE_13_3_5, extension = "html") {
+      it.lookupString.endsWith(".")
+    }
+
+  fun testKeyupEventCodeModifierNg15() =
+    doLookupTest(ANGULAR_CORE_15_1_5, extension = "html") {
+      it.lookupString.endsWith(".")
     }
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")

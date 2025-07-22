@@ -686,6 +686,115 @@
             },
             {
               "name": "shift"
+            },
+            {
+              "name": "code",
+              "key-names": [
+                {
+                  "name": "Custom key code",
+                  "pattern": ".*",
+                  "priority": "lowest",
+                  "doc-hide-pattern": true,
+                  "hide-from-completion": true
+                },
+                {
+                  "name": "Key code",
+                  "priority": "high",
+                  "pattern": {
+                    "or": [
+                      "space",
+                      "dot",
+                      "escape",
+                      "enter",
+                      "tab",
+                      "arrowDown",
+                      "arrowLeft",
+                      "arrowRight",
+                      "arrowUp",
+                      "end",
+                      "home",
+                      "pageDown",
+                      "pageUp",
+                      "backspace",
+                      "delete",
+                      "insert",
+                      "contextMenu",
+                      "help",
+                      "printScreen",
+                      "altRight",
+                      "backquote",
+                      "backslash",
+                      "bracketLeft",
+                      "bracketRight",
+                      "capsLock",
+                      "comma",
+                      "controlLeft",
+                      "controlRight",
+                      "equal",
+                      "intlBackslash",
+                      "intlRo",
+                      "intlYen",
+                      "lang1",
+                      "lang2",
+                      "mediaTrackNext",
+                      "mediaTrackPrevious",
+                      "metaLeft",
+                      "metaRight",
+                      "minus",
+                      "numLock",
+                      "numpadAdd",
+                      "numpadComma",
+                      "numpadDecimal",
+                      "numpadDivide",
+                      "numpadMultiply",
+                      "numpadSubtract",
+                      "osLeft",
+                      "period",
+                      "quote",
+                      "scrollLock",
+                      "semicolon",
+                      "shiftLeft",
+                      "shiftRight",
+                      "slash",
+                      "unidentified",
+                      "volumeDown",
+                      "volumeMute",
+                      "volumeUp",
+                      "wakeUp",
+                      {
+                        "template": [
+                          {
+                            "or": [
+                              "digit",
+                              "numpad"
+                            ]
+                          },
+                          {
+                            "regex": "[0-9]"
+                          }
+                        ]
+                      },
+                      {
+                        "template": [
+                          "key",
+                          {
+                            "regex": "[A-Z]",
+                            "case-sensitive": false
+                          }
+                        ]
+                      },
+                      {
+                        "template": [
+                          "f",
+                          {
+                            "regex": "[0-9]|1[0-9]|2[0-4]"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
             }
           ],
           "key-names": [
@@ -695,6 +804,7 @@
                 "or": [
                   "space",
                   "dot",
+                  "esc",
                   "escape",
                   "enter",
                   "tab",
@@ -711,7 +821,8 @@
                   "insert",
                   "contextMenu",
                   "help",
-                  "printScreen"
+                  "printScreen",
+                  "os"
                 ]
               }
             },

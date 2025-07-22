@@ -378,6 +378,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testCssCustomPropertyExternalTemplate() =
     checkHighlighting(ANGULAR_CORE_19_2_0, dir = true, configureFileName = "test.css")
 
+  fun testNoKeyupEventCodeModifierNg13() =
+    checkHighlighting(ANGULAR_CORE_13_3_5, extension = "html")
+
+  fun testKeyupEventCodeModifierNg15() =
+    checkHighlighting(ANGULAR_CORE_15_1_5, extension = "html")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

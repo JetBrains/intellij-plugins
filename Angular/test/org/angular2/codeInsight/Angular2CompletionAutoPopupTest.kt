@@ -123,4 +123,14 @@ class Angular2CompletionAutoPopupTest : Angular2TestCase("completionAutoPopup", 
       type("ab\n")
     }
   }
+
+  fun testKeyupCodeModifierTyping() =
+    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "html", checkResult = false) {
+      type("(keyup.")
+      checkLookupItems { it.lookupString.endsWith(".") }
+      type("al\n")
+      checkLookupItems { it.lookupString.endsWith(".") }
+      type("co\n")
+      checkLookupItems()
+    }
 }

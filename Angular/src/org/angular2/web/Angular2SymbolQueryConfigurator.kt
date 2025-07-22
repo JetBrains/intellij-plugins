@@ -357,6 +357,7 @@ val NG_BLOCK_PARAMETER_PREFIXES: PolySymbolQualifiedKind = PolySymbolQualifiedKi
 val NG_DEFER_ON_TRIGGERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-defer-on-triggers"]
 val NG_TEMPLATE_BINDING_KEYWORDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-template-binding-keywords"]
 val NG_TEMPLATE_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-template-bindings"]
+val NG_KEY_EVENT_MODIFIERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "key-event-modifiers"]
 
 fun isNgClassLiteralContext(literal: PsiElement): Boolean =
   isJSLiteralContextFromEmbeddedContent(literal, Angular2Binding::class.java, ::isNgClassAttribute)
