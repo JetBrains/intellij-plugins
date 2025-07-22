@@ -19,7 +19,6 @@ import org.jetbrains.qodana.ui.ci.providers.circleci.CircleCIFileChecker
 import org.jetbrains.qodana.ui.ci.providers.github.GitHubCIFileChecker
 import org.jetbrains.qodana.ui.ci.providers.gitlab.GitLabCIFileChecker
 import org.jetbrains.qodana.ui.ci.providers.jenkins.JenkinsCIFileChecker
-import org.jetbrains.qodana.ui.ci.providers.space.SpaceAutomationCIFileChecker
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
@@ -206,28 +205,6 @@ class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
 
     assertThat(presentFile).isInstanceOf(CIFile.NotExisting::class.java)
   }
-
-  fun `test space file with qodana`() = runDispatchingOnUi {
-    val checker = SpaceAutomationCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
-
-    assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
-  }
-
-  fun `test space file without qodana`() = runDispatchingOnUi {
-    val checker = SpaceAutomationCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
-
-    assertThat(presentFile).isInstanceOf(CIFile.ExistingSingleInstance::class.java)
-  }
-
-  fun `test space no file`() = runDispatchingOnUi {
-    val checker = SpaceAutomationCIFileChecker(project, scope)
-    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
-
-    assertThat(presentFile).isInstanceOf(CIFile.NotExisting::class.java)
-  }
-
 
   private fun createPhysicalConfigYml(name: String, expectedText: String) {
     myFixture.tempDirFixture.createFile(name, expectedText)
