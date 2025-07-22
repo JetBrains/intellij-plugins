@@ -14,6 +14,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioRefreshAction
 import com.jetbrains.cidr.cpp.external.system.project.ui.ExternalProjectStatusAndFixesProviderBase
 import com.jetbrains.cidr.cpp.external.system.project.ui.SelectAndLoadProjectActionBase
+import com.jetbrains.cidr.lang.OCFileTypeHelpers
 import com.jetbrains.cidr.lang.daemon.OCFileScopeProvider
 
 /**
@@ -24,6 +25,7 @@ class PlatformioProjectFixesProvider : ProjectFixesProvider {
     if (file != null
         && PlatformioWorkspace.isPlatformioProject(project)
         && readAction { isProjectAwareFile(file, project) }
+        && OCFileTypeHelpers.isSourceFile(file.name)
         && OCFileScopeProvider.waitGetProjectSourceLocationKind(project, file).isOutOfProject())
       listOf(PlatformioRefreshAction().asProjectFixAction())
     else emptyList()
