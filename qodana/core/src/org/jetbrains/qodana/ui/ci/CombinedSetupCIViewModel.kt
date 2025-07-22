@@ -16,7 +16,6 @@ import org.jetbrains.qodana.ui.ci.providers.circleci.SetupCircleCIViewModel
 import org.jetbrains.qodana.ui.ci.providers.github.SetupGitHubActionsViewModel
 import org.jetbrains.qodana.ui.ci.providers.gitlab.SetupGitLabCIViewModel
 import org.jetbrains.qodana.ui.ci.providers.jenkins.SetupJenkinsViewModel
-import org.jetbrains.qodana.ui.ci.providers.space.SetupSpaceAutomationViewModel
 import org.jetbrains.qodana.ui.ci.providers.teamcity.SetupTeamcityDslViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -94,7 +93,6 @@ class CombinedSetupCIViewModel(
       is SetupJenkinsViewModel -> SetupCiProvider.JENKINS
       is SetupAzurePipelinesViewModel -> SetupCiProvider.AZURE
       is SetupCircleCIViewModel -> SetupCiProvider.CIRCLECI
-      is SetupSpaceAutomationViewModel -> SetupCiProvider.SPACE
       is SetupBitbucketCIViewModel -> SetupCiProvider.BITBUCKET
       else -> return
     }

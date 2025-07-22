@@ -14,7 +14,6 @@ import org.jetbrains.qodana.ui.ci.providers.circleci.CircleCIFileChecker
 import org.jetbrains.qodana.ui.ci.providers.github.GitHubCIFileChecker
 import org.jetbrains.qodana.ui.ci.providers.gitlab.GitLabCIFileChecker
 import org.jetbrains.qodana.ui.ci.providers.jenkins.JenkinsCIFileChecker
-import org.jetbrains.qodana.ui.ci.providers.space.SpaceAutomationCIFileChecker
 import kotlin.io.path.Path
 
 @State(name = "QodanaCIConfigService", storages = [Storage(value = StoragePathMacros.WORKSPACE_FILE)])
@@ -34,7 +33,6 @@ class QodanaCIConfigService(project: Project, scope: CoroutineScope)
     Pair(CIType.JENKINS, JenkinsCIFileChecker(project, scope)),
     Pair(CIType.AZURE, AzurePipelinesCIFileChecker(project, scope)),
     Pair(CIType.CIRCLECI, CircleCIFileChecker(project, scope)),
-    Pair(CIType.SPACE, SpaceAutomationCIFileChecker (project, scope)),
     Pair(CIType.BITBUCKET, BitbucketCIFIleChecker(project, scope))
   )
 
@@ -94,7 +92,6 @@ enum class CIType {
   JENKINS,
   AZURE,
   CIRCLECI,
-  SPACE,
   BITBUCKET
 }
 
@@ -105,7 +102,6 @@ private fun CIFileChecker.toCIType(): CIType? {
     is JenkinsCIFileChecker -> CIType.JENKINS
     is AzurePipelinesCIFileChecker -> CIType.AZURE
     is CircleCIFileChecker -> CIType.CIRCLECI
-    is SpaceAutomationCIFileChecker -> CIType.SPACE
     is BitbucketCIFIleChecker -> CIType.BITBUCKET
     else -> null
   }

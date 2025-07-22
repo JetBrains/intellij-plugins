@@ -25,7 +25,6 @@ public final class QodanaIcons {
       /** 16x16 */ public static final @NotNull Icon GitHub = load("icons/ci/gitHub.svg", 248269223, 2);
       /** 16x16 */ public static final @NotNull Icon GitLab = load("icons/ci/gitLab.svg", 1254119175, 0);
       /** 16x16 */ public static final @NotNull Icon Jenkins = load("icons/ci/jenkins.svg", -1502763703, 0);
-      /** 16x16 */ public static final @NotNull Icon Space = load("icons/ci/space.svg", 785058272, 0);
       /** 16x16 */ public static final @NotNull Icon TeamCity = load("icons/ci/teamCity.svg", 1663093890, 0);
     }
 

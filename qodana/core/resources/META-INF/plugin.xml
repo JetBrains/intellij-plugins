@@ -378,7 +378,6 @@
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.jenkins.SetupJenkinsProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.azure.SetupAzurePipelinesProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.circleci.SetupCircleCIProviderFactory"/>
-    <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.space.SetupSpaceAutomationProviderFactory"/>
     <setupCIProviderFactory implementation="org.jetbrains.qodana.ui.ci.providers.bitbucket.SetupBitbucketCIProviderFactory"/>
 
     <qodanaYamlItemProvider implementation="org.jetbrains.qodana.settings.QodanaYamlHeaderItemProvider"/>
