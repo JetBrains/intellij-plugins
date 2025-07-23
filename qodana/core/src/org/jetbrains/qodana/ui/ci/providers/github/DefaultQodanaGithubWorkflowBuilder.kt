@@ -69,7 +69,7 @@ class DefaultQodanaGithubWorkflowBuilder(
 
     val baselineText = getSarifBaseline(project)?.let { "  args: --baseline,$it" }
     val otherArgsText = """
-      # In pr-mode: 'true' Qodana checks only changed files
+      # When pr-mode is set to true, Qodana analyzes only the files that have been changed
       pr-mode: false
       use-caches: true
       post-pr-comment: true

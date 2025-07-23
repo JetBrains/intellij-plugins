@@ -1,12 +1,24 @@
+#-------------------------------------------------------------------------------#
+#        Discover additional configuration options in our documentation         #
+#       https://www.jetbrains.com/help/qodana/qodana-azure-pipelines.html       #
+#-------------------------------------------------------------------------------#
+
 trigger:
   - main
   - dev
   - test-branch
 
+pr:
+  branches:
+    include:
+      - '*'
+
 pool:
   vmImage: ubuntu-latest
 
 steps:
+  - checkout: self
+    fetchDepth: 0
   - task: Cache@2  # Not required, but Qodana will open projects with cache faster.
     inputs:
       key: '"$(Build.Repository.Name)" | "$(Build.SourceBranchName)" | "$(Build.SourceVersion)"'
@@ -17,5 +29,12 @@ steps:
   - task: QodanaScan@VERSION_PLACEHOLDER
     inputs:
       args: -l,jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
+      # When prMode is set to true, Qodana analyzes only the files that have been changed
+      prMode: false,
+      postPrComment: true
+      # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+      uploadResult: false
+      # quick-fixes available in Ultimate and Ultimate Plus plans
+      pushFixes: 'none'
     env:
       QODANA_TOKEN: $(QODANA_TOKEN)

@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.ui.ci
 
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.vfs.VirtualFile
@@ -75,7 +76,7 @@ class SetupGitLabCIViewModelTest : QodanaPluginHeavyTestBase() {
     assertThat(configState).isNotNull
     assertThat(configState.ciConfigFileState).isNotNull
     assertThat(configState.ciConfigFileState).isInstanceOf(CIConfigFileState.Physical::class.java)
-    assertThat(configState.ciConfigFileState.document.text).isEqualTo(expectedText)
+    assertThat(configState.ciConfigFileState.document.text.updateVersion()).isEqualTo(expectedText)
   }
 
   fun `test yaml in project without qodana section`() = runDispatchingOnUi {
@@ -116,7 +117,7 @@ class SetupGitLabCIViewModelTest : QodanaPluginHeavyTestBase() {
     assertThat(configState).isNotNull
     assertThat(configState.ciConfigFileState).isNotNull
     assertThat(configState.ciConfigFileState).isInstanceOf(CIConfigFileState.Physical::class.java)
-    assertThat(configState.ciConfigFileState.document.text).isEqualTo(expectedText)
+    assertThat(configState.ciConfigFileState.document.text.updateVersion()).isEqualTo(expectedText)
 
     dispatchAllTasksOnUi()
 
@@ -242,7 +243,7 @@ class SetupGitLabCIViewModelTest : QodanaPluginHeavyTestBase() {
   }
 
   private val expectedText: String
-    get() = myFixture.tempDirFixture.getFile("expected.yml")?.readText() ?: ""
+    get() = myFixture.tempDirFixture.getFile("expected.yml")?.readText()?.updateVersion() ?: ""
 
   private fun physicalConfigYml(): VirtualFile? {
     return myFixture.tempDirFixture.getFile(".gitlab-ci.yml")
@@ -258,5 +259,12 @@ class SetupGitLabCIViewModelTest : QodanaPluginHeavyTestBase() {
     edtWriteAction {
       myFixture.tempDirFixture.getFile(".gitlab-ci.yml")!!.delete(this)
     }
+  }
+
+  private fun String.updateVersion(): String {
+    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
+    val ideMinorVersion = ApplicationInfo.getInstance().minorVersionMainPart
+    return this
+      .replace("<VERSION_PLACEHOLDER>", "v$ideMajorVersion.$ideMinorVersion")
   }
 }

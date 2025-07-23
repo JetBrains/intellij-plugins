@@ -2,6 +2,7 @@ package org.jetbrains.qodana.ui.ci.providers.gitlab
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +17,6 @@ import org.jetbrains.qodana.ui.ci.SetupCIFinishProvider
 import org.jetbrains.qodana.ui.ci.SetupCIViewModel
 import org.jetbrains.qodana.ui.ci.providers.getSarifBaseline
 import org.jetbrains.qodana.ui.ciRelevantBranches
-import org.jetbrains.qodana.ui.getQodanaImageNameMatchingIDE
 import org.jetbrains.qodana.ui.originHost
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -41,6 +41,15 @@ class SetupGitLabCIViewModel(
     baseSetupCIViewModel.unselected()
   }
 
+  private val HEADER_TEXT = """
+      #-------------------------------------------------------------------------------#
+      #        Discover additional configuration options in our documentation         #
+      #              https://www.jetbrains.com/help/qodana/gitlab.html                #
+      #-------------------------------------------------------------------------------#
+      
+      
+    """.trimIndent()
+
   private fun spawnAddedConfigurationNotification() {
     QodanaNotifications.General.notification(
       QodanaBundle.message("qodana.add.to.ci.finish.notification.gitlab.title"),
@@ -50,32 +59,39 @@ class SetupGitLabCIViewModel(
     ).notify(project)
   }
 
-  @Suppress("LocalVariableName")
   private suspend fun defaultConfigurationText(): String {
-    val CI_PROJECT_DIR_ENV = "\$CI_PROJECT_DIR"
-    val QODANA_CLOUD_TOKEN_ENV = "\$qodana_token"
+    val branchesToAdd = projectVcsDataProvider.ciRelevantBranches()
 
-    val branchesToAdd = projectVcsDataProvider.ciRelevantBranches() + "merge_requests"
-
-    @Language("YAML")
-    val branchesText = """
-      qodana:
-        only:
-      
-    """.trimIndent() + branchesToAdd.joinToString(separator = "\n", postfix = "\n") { "    - $it" }
-
-    val baselineText = getSarifBaseline(project)?.let { "--baseline=$it " } ?: ""
+    val branchesText = branchesToAdd.joinToString(separator = "\n", prefix = "\n") { $$"        - if: $CI_COMMIT_BRANCH == \"$$it\"" }
 
     @Language("YAML")
-    val yamlConfiguration = branchesText + """
-        image:
-          name: ${getQodanaImageNameMatchingIDE(useVersionPostfix = false)}
-          entrypoint: [""]
-        variables:
-          QODANA_TOKEN: $QODANA_CLOUD_TOKEN_ENV
-        script:
-          - qodana --save-report $baselineText--results-dir=$CI_PROJECT_DIR_ENV/.qodana
-    """.replaceIndent("  ")
+    val rulesText = $$"""
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    """.replaceIndent("      ").trimStart() + branchesText
+
+    val argsText = getSarifBaseline(project)?.let { "args: --baseline=$it\n" } ?: ""
+    val inputsText = argsText + """
+      # When mr-mode is set to true, Qodana analyzes only the files that have been changed
+      mr-mode: false
+      use-caches: true
+      post-mr-comment: true
+      # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+      upload-result: false
+      # quick-fixes available in Ultimate and Ultimate Plus plans
+      push-fixes: 'none'
+    """.trimIndent()
+
+    @Language("YAML")
+    val yamlConfiguration = HEADER_TEXT + $$"""
+    include:
+      - component: $CI_SERVER_FQDN/qodana/qodana/qodana-gitlab-ci@v$${ApplicationInfo.getInstance().majorVersion}.$${ApplicationInfo.getInstance().minorVersionMainPart}
+        inputs:
+          $${inputsText.replaceIndent("          ").trimStart()}
+    
+    qodana:
+      $$rulesText
+    """.trimIndent()
     return yamlConfiguration
   }
 

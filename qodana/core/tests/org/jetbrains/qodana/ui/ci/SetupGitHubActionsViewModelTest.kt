@@ -99,7 +99,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
               env:
                 QODANA_TOKEN: $$TOKEN_TEXT
               with:
-                # In pr-mode: 'true' Qodana checks only changed files
+                # When pr-mode is set to true, Qodana analyzes only the files that have been changed
                 pr-mode: false
                 use-caches: true
                 post-pr-comment: true
@@ -198,7 +198,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
               env:
                 QODANA_TOKEN: $$TOKEN_TEXT
               with:
-                # In pr-mode: 'true' Qodana checks only changed files
+                # When pr-mode is set to true, Qodana analyzes only the files that have been changed
                 pr-mode: false
                 use-caches: true
                 post-pr-comment: true
@@ -396,7 +396,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
               env:
                 QODANA_TOKEN: $$TOKEN_TEXT
               with:
-                # In pr-mode: 'true' Qodana checks only changed files
+                # When pr-mode is set to true, Qodana analyzes only the files that have been changed
                 pr-mode: false
                 use-caches: true
                 post-pr-comment: true
@@ -471,7 +471,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
               env:
                 QODANA_TOKEN: $$TOKEN_TEXT
               with:
-                # In pr-mode: 'true' Qodana checks only changed files
+                # When pr-mode is set to true, Qodana analyzes only the files that have been changed
                 pr-mode: false
                 use-caches: true
                 post-pr-comment: true
@@ -531,7 +531,7 @@ class SetupGitHubActionsViewModelTest : QodanaPluginHeavyTestBase() {
                 QODANA_TOKEN: $$TOKEN_TEXT
               with:
                 args: --baseline,qodana.sarif.json
-                # In pr-mode: 'true' Qodana checks only changed files
+                # When pr-mode is set to true, Qodana analyzes only the files that have been changed
                 pr-mode: false
                 use-caches: true
                 post-pr-comment: true

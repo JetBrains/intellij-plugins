@@ -85,6 +85,13 @@ class QodanaCIConfigServiceTest : QodanaPluginHeavyTestBase() {
     assertThat(lastCiFile!!.path).contains("Jenkinsfile")
   }
 
+  fun `test gitlab file with qodana old`() = runDispatchingOnUi {
+    val checker = GitLabCIFileChecker(project, scope)
+    val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
+
+    assertThat(presentFile).isInstanceOf(CIFile.ExistingWithQodana::class.java)
+  }
+
   fun `test gitlab file with qodana`() = runDispatchingOnUi {
     val checker = GitLabCIFileChecker(project, scope)
     val presentFile = checker.ciFileFlow.filter { it !is CIFile.NotInitialized }.first()
