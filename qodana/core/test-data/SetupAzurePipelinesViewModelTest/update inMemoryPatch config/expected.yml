@@ -9,5 +9,7 @@ steps:
   - task: QodanaScan@VERSION_PLACEHOLDER
     inputs:
       args: -l,jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
+      # to enable pr-mode, the checkout step should be with fetchDepth: 0
+      pr-mode: false
     env:
       QODANA_TOKEN: $(QODANA_TOKEN)

@@ -1,10 +1,17 @@
 trigger:
   - main
 
+pr:
+  branches:
+    include:
+      - '*'
+
 pool:
   vmImage: ubuntu-latest
 
 steps:
+  - checkout: self
+    fetchDepth: 0
   - task: Cache@2  # Not required, but Qodana will open projects with cache faster.
     inputs:
       key: '"$(Build.Repository.Name)" | "$(Build.SourceBranchName)" | "$(Build.SourceVersion)"'

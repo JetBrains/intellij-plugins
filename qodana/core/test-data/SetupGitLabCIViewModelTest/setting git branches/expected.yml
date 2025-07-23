@@ -1,13 +1,11 @@
+# add QODANA_TOKEN secret to have access to Qodana Cloud
+include:
+  - component: $CI_SERVER_FQDN/qodana/qodana/qodana-gitlab-ci@<VERSION_PLACEHOLDER>
+
+
 qodana:
-  only:
-    - main
-    - dev
-    - test-branch
-    - merge_requests
-  image:
-    name: jetbrains/qodana-<linter>
-    entrypoint: [""]
-  variables:
-    QODANA_TOKEN: $qodana_token
-  script:
-    - qodana --save-report --results-dir=$CI_PROJECT_DIR/.qodana
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "test-branch"

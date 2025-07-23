@@ -2,6 +2,7 @@ package org.jetbrains.qodana.ui.ci.providers.gitlab
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +17,6 @@ import org.jetbrains.qodana.ui.ci.SetupCIFinishProvider
 import org.jetbrains.qodana.ui.ci.SetupCIViewModel
 import org.jetbrains.qodana.ui.ci.providers.getSarifBaseline
 import org.jetbrains.qodana.ui.ciRelevantBranches
-import org.jetbrains.qodana.ui.getQodanaImageNameMatchingIDE
 import org.jetbrains.qodana.ui.originHost
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -50,32 +50,30 @@ class SetupGitLabCIViewModel(
     ).notify(project)
   }
 
-  @Suppress("LocalVariableName")
   private suspend fun defaultConfigurationText(): String {
-    val CI_PROJECT_DIR_ENV = "\$CI_PROJECT_DIR"
-    val QODANA_CLOUD_TOKEN_ENV = "\$qodana_token"
-
-    val branchesToAdd = projectVcsDataProvider.ciRelevantBranches() + "merge_requests"
+    val branchesToAdd = projectVcsDataProvider.ciRelevantBranches()
 
     @Language("YAML")
-    val branchesText = """
-      qodana:
-        only:
-      
-    """.trimIndent() + branchesToAdd.joinToString(separator = "\n", postfix = "\n") { "    - $it" }
+    val branchesText = $$"""
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    """.replaceIndent("  ") + branchesToAdd.joinToString(separator = "\n", prefix = "\n") { $$"    - if: $CI_COMMIT_BRANCH == \"$$it\"" }
 
-    val baselineText = getSarifBaseline(project)?.let { "--baseline=$it " } ?: ""
+    val inputsText = getSarifBaseline(project)?.let {"""
+    inputs:
+      args: --baseline=$it
+    """.replaceIndent("    ") } ?: ""
 
     @Language("YAML")
-    val yamlConfiguration = branchesText + """
-        image:
-          name: ${getQodanaImageNameMatchingIDE(useVersionPostfix = false)}
-          entrypoint: [""]
-        variables:
-          QODANA_TOKEN: $QODANA_CLOUD_TOKEN_ENV
-        script:
-          - qodana --save-report $baselineText--results-dir=$CI_PROJECT_DIR_ENV/.qodana
-    """.replaceIndent("  ")
+    val yamlConfiguration = $$"""
+# add QODANA_TOKEN secret to have access to Qodana Cloud
+include:
+  - component: $CI_SERVER_FQDN/qodana/qodana/qodana-gitlab-ci@v$${ApplicationInfo.getInstance().majorVersion}.$${ApplicationInfo.getInstance().minorVersionMainPart}
+$$inputsText
+
+qodana:
+$$branchesText
+""".trimStart()
     return yamlConfiguration
   }
 

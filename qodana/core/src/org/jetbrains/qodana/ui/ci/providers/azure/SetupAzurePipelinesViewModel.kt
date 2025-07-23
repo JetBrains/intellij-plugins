@@ -82,10 +82,17 @@ class SetupAzurePipelinesViewModel(
     @Language("YAML")
     val yamlConfiguration = branchesText + """
       
+      pr:
+        branches:
+          include:
+            - '*'
+      
       pool:
         vmImage: ubuntu-latest
       
       steps:
+        - checkout: self
+          fetchDepth: 0
         - task: Cache@2  # Not required, but Qodana will open projects with cache faster.
           inputs:
             key: '"$(Build.Repository.Name)" | "$(Build.SourceBranchName)" | "$(Build.SourceVersion)"'
@@ -109,6 +116,8 @@ class SetupAzurePipelinesViewModel(
       task: QodanaScan@${ideMajorVersion}
         inputs:
           args: ${baselineText}-l,${getQodanaImageNameMatchingIDE(true)}
+          # to enable pr-mode, the checkout step should be with fetchDepth: 0
+          pr-mode: false
         env:
           QODANA_TOKEN: $(QODANA_TOKEN)
     """.trimIndent()
