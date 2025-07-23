@@ -233,9 +233,13 @@ public class GherkinLexer extends LexerBase {
         return;
       } else if (isParameterAllowed()) {
         if (myPosition < myEndOffset && myBuffer.charAt(myPosition) == '<' && isStepParameter("\n")) {
-          myState = STATE_PARAMETER_INSIDE_STEP;
+          if (myPosition + 1 < myEndOffset && myBuffer.charAt(myPosition + 1) != '<' && !Character.isWhitespace(myBuffer.charAt(myPosition + 1))) {
+            myState = STATE_PARAMETER_INSIDE_STEP;
+            myCurrentToken = GherkinTokenTypes.STEP_PARAMETER_BRACE;
+          } else {
+            myCurrentToken = GherkinTokenTypes.TEXT;
+          }
           myPosition++;
-          myCurrentToken = GherkinTokenTypes.STEP_PARAMETER_BRACE;
         } else {
           myCurrentToken = GherkinTokenTypes.TEXT;
           advanceToParameterOrSymbol("\n", STATE_AFTER_STEP_KEYWORD, true);
