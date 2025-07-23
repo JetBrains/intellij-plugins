@@ -788,7 +788,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
     assertEquals("on-keyup.alt.meta.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1)!!.getText())
     UsefulTestCase.assertDoesntContain(myFixture.getLookupElementStrings()!!,
                                        "alt.", "meta.")
-    myFixture.type("esc\n")
+    myFixture.type("esca\n")
     val source = resolvePolySymbolReference("on-keyup.alt.meta.<caret>escape=\"\"")
     assertEquals("Extended event special key", source.name)
   }

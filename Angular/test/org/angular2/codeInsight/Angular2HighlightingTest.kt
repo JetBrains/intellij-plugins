@@ -384,6 +384,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testKeyupEventCodeModifierNg15() =
     checkHighlighting(ANGULAR_CORE_15_1_5, extension = "html")
 
+  fun testKeydownCaseNonsensitive() =
+    checkHighlighting(ANGULAR_CORE_15_1_5, extension = "html")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

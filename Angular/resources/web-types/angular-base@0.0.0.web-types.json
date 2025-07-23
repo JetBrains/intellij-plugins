@@ -646,12 +646,29 @@
             "template": [
               {
                 "or": [
-                  "keyup",
-                  "keydown"
+                  {
+                    "regex": "keyup",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "keydown",
+                    "case-sensitive": false
+                  }
                 ]
               },
               {
-                "items": "key-event-modifiers",
+                "items": {
+                  "path": "key-event-modifiers",
+                  "name-conversion": {
+                    "canonical-names": "lowercase",
+                    "match-names": [
+                      "lowercase"
+                    ],
+                    "name-variants": [
+                      "as-is"
+                    ]
+                  }
+                },
                 "template": [
                   ".",
                   "#...",
@@ -663,7 +680,9 @@
                 "required": false
               },
               {
-                "items": "key-names",
+                "items": {
+                  "path": "key-names"
+                },
                 "template": [
                   ".",
                   "#...",
@@ -702,71 +721,254 @@
                   "priority": "high",
                   "pattern": {
                     "or": [
-                      "space",
-                      "dot",
-                      "escape",
-                      "enter",
-                      "tab",
-                      "arrowDown",
-                      "arrowLeft",
-                      "arrowRight",
-                      "arrowUp",
-                      "end",
-                      "home",
-                      "pageDown",
-                      "pageUp",
-                      "backspace",
-                      "delete",
-                      "insert",
-                      "contextMenu",
-                      "help",
-                      "printScreen",
-                      "altRight",
-                      "backquote",
-                      "backslash",
-                      "bracketLeft",
-                      "bracketRight",
-                      "capsLock",
-                      "comma",
-                      "controlLeft",
-                      "controlRight",
-                      "equal",
-                      "intlBackslash",
-                      "intlRo",
-                      "intlYen",
-                      "lang1",
-                      "lang2",
-                      "mediaTrackNext",
-                      "mediaTrackPrevious",
-                      "metaLeft",
-                      "metaRight",
-                      "minus",
-                      "numLock",
-                      "numpadAdd",
-                      "numpadComma",
-                      "numpadDecimal",
-                      "numpadDivide",
-                      "numpadMultiply",
-                      "numpadSubtract",
-                      "osLeft",
-                      "period",
-                      "quote",
-                      "scrollLock",
-                      "semicolon",
-                      "shiftLeft",
-                      "shiftRight",
-                      "slash",
-                      "unidentified",
-                      "volumeDown",
-                      "volumeMute",
-                      "volumeUp",
-                      "wakeUp",
+                      {
+                        "regex": "space",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "dot",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "escape",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "enter",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "tab",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "arrowDown",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "arrowLeft",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "arrowRight",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "arrowUp",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "end",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "home",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "pageDown",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "pageUp",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "backspace",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "delete",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "insert",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "contextMenu",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "help",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "printScreen",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "altRight",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "backquote",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "backslash",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "bracketLeft",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "bracketRight",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "capsLock",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "comma",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "controlLeft",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "controlRight",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "equal",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "intlBackslash",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "intlRo",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "intlYen",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "lang1",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "lang2",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "mediaTrackNext",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "mediaTrackPrevious",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "metaLeft",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "metaRight",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "minus",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "numLock",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "numpadAdd",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "numpadComma",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "numpadDecimal",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "numpadDivide",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "numpadMultiply",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "numpadSubtract",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "osLeft",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "period",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "quote",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "scrollLock",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "semicolon",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "shiftLeft",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "shiftRight",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "slash",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "unidentified",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "volumeDown",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "volumeMute",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "volumeUp",
+                        "case-sensitive": false
+                      },
+                      {
+                        "regex": "wakeUp",
+                        "case-sensitive": false
+                      },
                       {
                         "template": [
                           {
                             "or": [
-                              "digit",
-                              "numpad"
+                              {
+                                "regex": "digit",
+                                "case-sensitive": false
+                              },
+                              {
+                                "regex": "numpad",
+                                "case-sensitive": false
+                              }
                             ]
                           },
                           {
@@ -776,7 +978,10 @@
                       },
                       {
                         "template": [
-                          "key",
+                          {
+                            "regex": "key",
+                            "case-sensitive": false
+                          },
                           {
                             "regex": "[A-Z]",
                             "case-sensitive": false
@@ -785,9 +990,13 @@
                       },
                       {
                         "template": [
-                          "f",
                           {
-                            "regex": "[0-9]|1[0-9]|2[0-4]"
+                            "regex": "f",
+                            "case-sensitive": false
+                          },
+                          {
+                            "regex": "[0-9]|1[0-9]|2[0-4]",
+                            "case-sensitive": false
                           }
                         ]
                       }
@@ -802,27 +1011,90 @@
               "name": "Extended event special key",
               "pattern": {
                 "or": [
-                  "space",
-                  "dot",
-                  "esc",
-                  "escape",
-                  "enter",
-                  "tab",
-                  "arrowDown",
-                  "arrowLeft",
-                  "arrowRight",
-                  "arrowUp",
-                  "end",
-                  "home",
-                  "pageDown",
-                  "pageUp",
-                  "backspace",
-                  "delete",
-                  "insert",
-                  "contextMenu",
-                  "help",
-                  "printScreen",
-                  "os"
+                  {
+                    "regex": "space",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "dot",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "esc",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "escape",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "enter",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "tab",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "arrowDown",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "arrowLeft",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "arrowRight",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "arrowUp",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "end",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "home",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "pageDown",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "pageUp",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "backspace",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "delete",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "insert",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "contextMenu",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "help",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "printScreen",
+                    "case-sensitive": false
+                  },
+                  {
+                    "regex": "os",
+                    "case-sensitive": false
+                  }
                 ]
               }
             },
@@ -830,7 +1102,10 @@
               "name": "Extended event standard key",
               "description": "Key name: `f1`-`f20`, `a`-`z`, `0`-`9`, `` ` ``, `~`, `@`, `#`, `$`, `%`, `^`, `&`, `*`, `(`, `)`, `_`, `+`, `-`, `[`, `]`, `{`, `}`, `|`, `;`, `:`, `,` or `?`.",
               "priority": "low",
-              "pattern": "f1[1-9]|f20|f[1-9]|[a-z]|[0-9]|[\\`~\\!@#\\$%\\^\\&\\*\\(\\)_+\\-\\[\\]\\{\\}\\|;:,\\?]",
+              "pattern": {
+                "regex": "f1[1-9]|f20|f[1-9]|[a-z]|[0-9]|[\\`~\\!@#\\$%\\^\\&\\*\\(\\)_+\\-\\[\\]\\{\\}\\|;:,\\?]",
+                "case-sensitive": false
+              },
               "doc-hide-pattern": true,
               "hide-from-completion": true
             }
