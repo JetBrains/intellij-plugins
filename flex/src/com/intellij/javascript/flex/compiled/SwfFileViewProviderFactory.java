@@ -1,9 +1,10 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.compiled;
 
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.LanguageUtil;
+import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSFileCachedData;
@@ -11,6 +12,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +50,7 @@ public final class SwfFileViewProviderFactory implements FileViewProviderFactory
 
     CompiledJSFile(FileViewProvider fileViewProvider) {
       super(fileViewProvider, Objects.requireNonNullElse(
-        DialectDetector.getJSLanguageFromFileType(fileViewProvider.getVirtualFile()),
+        ObjectUtils.tryCast(LanguageUtil.getFileTypeLanguage(fileViewProvider.getFileType()), JSLanguageDialect.class),
         FlexSupportLoader.ECMA_SCRIPT_L4));
     }
 
