@@ -19,7 +19,7 @@ import javax.swing.*;
 public class SerialMonitorToolWindowFactory implements ToolWindowFactory, DumbAware {
   @Override
   public void init(@NotNull ToolWindow toolWindow) {
-    toolWindow.getComponent().putClientProperty(ToolWindowContentUi.ALLOW_DND_FOR_TABS, true);
+    ToolWindowContentUi.setAllowTabsReordering(toolWindow, true);
     toolWindow.setToHideOnEmptyContent(false);
     toolWindow.setStripeTitle(SerialMonitorBundle.message("tab.title.serial.connections"));
     toolWindow.setAvailable(true);
