@@ -24,6 +24,11 @@ public class JadeFindUsagesTest extends LightPlatformCodeInsightTestCase {
     assertEquals(4, usages.length);
   }
 
+  public void testConstVar() {
+    configureByFile(getTestName(true) + ".jade");
+    final PsiReference[] usages = findUsages();
+    assertEquals(3, usages.length);
+  }
 
   private PsiReference[] findUsages() {
     final PsiElement element =

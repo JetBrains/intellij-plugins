@@ -4,13 +4,13 @@ package com.jetbrains.plugins.jade.js;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.psi.JSEmbeddedContent;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.plugins.jade.psi.JadeTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
-public class JSInJadeEmbeddedContentImpl extends ASTWrapperPsiElement implements JSEmbeddedContent {
+public class JSInJadeEmbeddedContentImpl extends ASTWrapperPsiElement implements JSElement, JSControlFlowScope {
 
   public JSInJadeEmbeddedContentImpl(ASTNode node) {
     super(node);
@@ -33,10 +33,5 @@ public class JSInJadeEmbeddedContentImpl extends ASTWrapperPsiElement implements
   public void subtreeChanged() {
     super.subtreeChanged();
     JSControlFlowService.getService(getProject()).resetControlFlow(this);
-  }
-
-  @Override
-  public IElementType getElementType() {
-    return getNode().getElementType();
   }
 }
