@@ -20,7 +20,6 @@ import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.net.NetUtils;
@@ -194,13 +193,8 @@ public class DartCommandLineRunningState extends CommandLineState {
       }
     }
 
-    if (myRunnerParameters.isCheckedModeOrEnableAsserts()) {
-      if (StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
-        addVmOption(sdk, commandLine, "--checked");
-      }
-      else {
-        addVmOption(sdk, commandLine, "--enable-asserts");
-      }
+    if (myRunnerParameters.areAssertsEnabled()) {
+      addVmOption(sdk, commandLine, "--enable-asserts");
     }
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {

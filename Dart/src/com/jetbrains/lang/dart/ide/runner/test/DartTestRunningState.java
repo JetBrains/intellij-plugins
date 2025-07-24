@@ -7,7 +7,6 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
-import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.filters.UrlFilter;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -29,7 +28,6 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
@@ -46,14 +44,14 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   private static final String RUN_COMMAND = "run";
   private static final String TEST_PACKAGE_SPEC = "test";
   private static final String EXPANDED_REPORTER_OPTION = "-r json";
-  public static final String DART_VM_OPTIONS_ENV_VAR = "DART_VM_OPTIONS";
 
   public DartTestRunningState(final @NotNull ExecutionEnvironment environment) throws ExecutionException {
     super(environment);
   }
 
   @Override
-  public @NotNull ExecutionResult execute(final @NotNull Executor executor, final @NotNull ProgramRunner<?> runner) throws ExecutionException {
+  public @NotNull ExecutionResult execute(final @NotNull Executor executor, final @NotNull ProgramRunner<?> runner)
+    throws ExecutionException {
     final ProcessHandler processHandler = startProcess();
     final ConsoleView consoleView = createConsole(getEnvironment());
     consoleView.attachToProcess(processHandler);
@@ -149,7 +147,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     }
 
     params.setArguments(builder.toString());
-    params.setCheckedModeOrEnableAsserts(false);
+    params.setAssertsEnabled(false);
     // working directory is not configurable in UI because there's only one valid value that we calculate ourselves
     params.setWorkingDirectory(params.computeProcessWorkingDirectory(project));
 
@@ -158,13 +156,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
 
   @Override
   protected void setupExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk sdk) {
-    boolean useDartTest = DartPubActionBase.isUseDartRunTestInsteadOfPubRunTest(sdk);
-    if (useDartTest) {
-      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk)));
-    }
-    else {
-      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
-    }
+    commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk)));
   }
 
   @Override
@@ -174,31 +166,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
 
   @Override
   protected void addVmOption(@NotNull DartSdk sdk, @NotNull GeneralCommandLine commandLine, @NotNull String option) {
-    boolean useDartTest = DartPubActionBase.isUseDartRunTestInsteadOfPubRunTest(sdk);
-    if (useDartTest) {
-      super.addVmOption(sdk, commandLine, option);
-      return;
-    }
-
-    // SDK 2.9 and older
-    final String arguments = StringUtil.notNullize(myRunnerParameters.getArguments());
-    if (DefaultRunExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId()) &&
-        option.startsWith("--enable-vm-service:") &&
-        (arguments.startsWith("-p ") || arguments.contains(" -p "))) {
-      // When we start browser-targeted tests then there are 2 dart processes spawned: parent (pub) and child (tests).
-      // If we add --enable-vm-service option to the DART_VM_OPTIONS env var then it will apply for both processes and will obviously
-      // fail for the child process (because the port will be already occupied by the parent one).
-      // Setting --enable-vm-service option for the parent process doesn't make much sense, so we skip it.
-      return;
-    }
-
-    String options = commandLine.getEnvironment().get(DART_VM_OPTIONS_ENV_VAR);
-    if (StringUtil.isEmpty(options)) {
-      commandLine.getEnvironment().put(DART_VM_OPTIONS_ENV_VAR, option);
-    }
-    else {
-      commandLine.getEnvironment().put(DART_VM_OPTIONS_ENV_VAR, options + " " + option);
-    }
+    super.addVmOption(sdk, commandLine, option);
   }
 
   DartTestRunnerParameters getParameters() {
