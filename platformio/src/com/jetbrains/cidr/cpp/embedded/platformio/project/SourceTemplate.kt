@@ -6,7 +6,7 @@ enum class SourceTemplate(val fileName: String, val content: String) {
   GENERIC(
     "main.c",
     """
-      int main() {
+      int app_main() {
       // write your code here
       }
       
