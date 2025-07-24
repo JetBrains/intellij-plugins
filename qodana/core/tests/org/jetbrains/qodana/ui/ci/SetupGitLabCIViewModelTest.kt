@@ -76,7 +76,7 @@ class SetupGitLabCIViewModelTest : QodanaPluginHeavyTestBase() {
     assertThat(configState).isNotNull
     assertThat(configState.ciConfigFileState).isNotNull
     assertThat(configState.ciConfigFileState).isInstanceOf(CIConfigFileState.Physical::class.java)
-    assertThat(configState.ciConfigFileState.document.text).isEqualTo(expectedText)
+    assertThat(configState.ciConfigFileState.document.text.updateVersion()).isEqualTo(expectedText)
   }
 
   fun `test yaml in project without qodana section`() = runDispatchingOnUi {
@@ -117,7 +117,7 @@ class SetupGitLabCIViewModelTest : QodanaPluginHeavyTestBase() {
     assertThat(configState).isNotNull
     assertThat(configState.ciConfigFileState).isNotNull
     assertThat(configState.ciConfigFileState).isInstanceOf(CIConfigFileState.Physical::class.java)
-    assertThat(configState.ciConfigFileState.document.text).isEqualTo(expectedText)
+    assertThat(configState.ciConfigFileState.document.text.updateVersion()).isEqualTo(expectedText)
 
     dispatchAllTasksOnUi()
 

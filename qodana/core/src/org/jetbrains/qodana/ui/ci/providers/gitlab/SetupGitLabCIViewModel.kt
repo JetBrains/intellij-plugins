@@ -41,6 +41,15 @@ class SetupGitLabCIViewModel(
     baseSetupCIViewModel.unselected()
   }
 
+  private val HEADER_TEXT = """
+      #-------------------------------------------------------------------------------#
+      #        Discover additional configuration options in our documentation         #
+      #              https://www.jetbrains.com/help/qodana/gitlab.html                #
+      #-------------------------------------------------------------------------------#
+      
+      
+    """.trimIndent()
+
   private fun spawnAddedConfigurationNotification() {
     QodanaNotifications.General.notification(
       QodanaBundle.message("qodana.add.to.ci.finish.notification.gitlab.title"),
@@ -53,27 +62,36 @@ class SetupGitLabCIViewModel(
   private suspend fun defaultConfigurationText(): String {
     val branchesToAdd = projectVcsDataProvider.ciRelevantBranches()
 
+    val branchesText = branchesToAdd.joinToString(separator = "\n", prefix = "\n") { $$"        - if: $CI_COMMIT_BRANCH == \"$$it\"" }
+
     @Language("YAML")
-    val branchesText = $$"""
+    val rulesText = $$"""
     rules:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    """.replaceIndent("  ") + branchesToAdd.joinToString(separator = "\n", prefix = "\n") { $$"    - if: $CI_COMMIT_BRANCH == \"$$it\"" }
+    """.replaceIndent("      ").trimStart() + branchesText
 
-    val inputsText = getSarifBaseline(project)?.let {"""
-    inputs:
-      args: --baseline=$it
-    """.replaceIndent("    ") } ?: ""
+    val argsText = getSarifBaseline(project)?.let { "args: --baseline=$it\n" } ?: ""
+    val inputsText = argsText + """
+      # In 'mr-mode: true' Qodana checks only changed files
+      mr-mode: false
+      use-caches: true
+      post-mr-comment: true
+      # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+      upload-result: false
+      # quick-fixes available in Ultimate and Ultimate Plus plans
+      push-fixes: 'none'
+    """.trimIndent()
 
     @Language("YAML")
-    val yamlConfiguration = $$"""
-# add QODANA_TOKEN secret to have access to Qodana Cloud
-include:
-  - component: $CI_SERVER_FQDN/qodana/qodana/qodana-gitlab-ci@v$${ApplicationInfo.getInstance().majorVersion}.$${ApplicationInfo.getInstance().minorVersionMainPart}
-$$inputsText
-
-qodana:
-$$branchesText
-""".trimStart()
+    val yamlConfiguration = HEADER_TEXT + $$"""
+    include:
+      - component: $CI_SERVER_FQDN/qodana/qodana/qodana-gitlab-ci@v$${ApplicationInfo.getInstance().majorVersion}.$${ApplicationInfo.getInstance().minorVersionMainPart}
+        inputs:
+          $${inputsText.replaceIndent("          ").trimStart()}
+    
+    qodana:
+      $$rulesText
+    """.trimIndent()
     return yamlConfiguration
   }
 

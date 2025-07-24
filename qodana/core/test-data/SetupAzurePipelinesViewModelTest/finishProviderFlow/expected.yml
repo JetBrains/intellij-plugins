@@ -1,3 +1,8 @@
+#-------------------------------------------------------------------------------#
+#        Discover additional configuration options in our documentation         #
+#       https://www.jetbrains.com/help/qodana/qodana-azure-pipelines.html       #
+#-------------------------------------------------------------------------------#
+
 trigger:
   - main
 
@@ -22,5 +27,12 @@ steps:
   - task: QodanaScan@VERSION_PLACEHOLDER
     inputs:
       args: -l,jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
+      # In 'prMode: true' Qodana checks only changed files
+      prMode: false,
+      postPrComment: true
+      # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+      uploadResult: false
+      # quick-fixes available in Ultimate and Ultimate Plus plans
+      pushFixes: 'none'
     env:
       QODANA_TOKEN: $(QODANA_TOKEN)

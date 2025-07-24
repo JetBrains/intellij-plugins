@@ -1,7 +1,19 @@
-# add QODANA_TOKEN secret to have access to Qodana Cloud
+#-------------------------------------------------------------------------------#
+#        Discover additional configuration options in our documentation         #
+#              https://www.jetbrains.com/help/qodana/gitlab.html                #
+#-------------------------------------------------------------------------------#
+
 include:
   - component: $CI_SERVER_FQDN/qodana/qodana/qodana-gitlab-ci@<VERSION_PLACEHOLDER>
-
+    inputs:
+      # In 'mr-mode: true' Qodana checks only changed files
+      mr-mode: false
+      use-caches: true
+      post-mr-comment: true
+      # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+      upload-result: false
+      # quick-fixes available in Ultimate and Ultimate Plus plans
+      push-fixes: 'none'
 
 qodana:
   rules:
