@@ -46,7 +46,6 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@community//java/execution/openapi:java-execution",
     "@community//platform/lang-impl",
-    "@community//xml/openapi:xml",
     "@community//java/openapi:java",
     "@community//xml/impl",
     "//plugins/css/impl",
