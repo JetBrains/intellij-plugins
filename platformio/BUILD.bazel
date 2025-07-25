@@ -86,7 +86,7 @@ jvm_library(
     "@community//platform/xdebugger-impl:debugger-impl",
     "@community//platform/xdebugger-impl:debugger-impl_test_lib",
     "//CIDR/clion-toolchains",
-    "//CIDR/cidr-common-testFramework/core/nolang",
+    "//CIDR/cidr-common-testFramework/nolang",
     "//CIDR/cidr-debugger/backend-api:cidr-debugger-backend",
     "//CIDR/cidr-debugger/core",
     "//CIDR/cidr-debugger/core:core_test_lib",
