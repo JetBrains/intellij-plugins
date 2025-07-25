@@ -38,7 +38,7 @@ jvm_library(
     "//CSS/impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
-    "//CSS/css-psi-impl:css-psi",
+    "//plugins/css/psi",
     "//contrib/flex/flex-shared:shared",
     "@community//platform/util:util-tests_test_lib",
     "@community//platform/editor-ui-ex:editor-ex",

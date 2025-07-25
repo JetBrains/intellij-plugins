@@ -50,7 +50,7 @@ jvm_library(
     "@community//java/openapi:java",
     "@community//xml/impl",
     "//CSS/impl",
-    "//CSS/css-psi-impl:css-psi",
+    "//plugins/css/psi",
     "@community//platform/testRunner",
     "@community//java/execution/impl",
     "@community//platform/smRunner",

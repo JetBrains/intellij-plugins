@@ -44,7 +44,7 @@ jvm_library(
     "@community//platform/analysis-impl",
     "@community//platform/lang-impl",
     "//plugins/JavaScriptLanguage:javascript-plugin",
-    "//CSS/css-psi-impl:css-psi",
+    "//plugins/css/psi",
     "@community//plugins/copyright",
     "@community//plugins/copyright:copyright_test_lib",
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",

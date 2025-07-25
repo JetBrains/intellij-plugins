@@ -25,7 +25,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//plugins/htmltools:html-tools",
     "//plugins/JavaScriptLanguage:javascript-plugin",
-    "//CSS/css-psi-impl:css-psi",
+    "//plugins/css/psi",
     "@community//plugins/copyright",
     "@community//plugins/copyright:copyright_test_lib",
     "//plugins/JavaScriptLanguage/javascript-parser",
