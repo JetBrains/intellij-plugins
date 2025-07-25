@@ -1,6 +1,6 @@
 package org.angular2.web.scopes
 
-import com.intellij.css.frontback.icons.CssFrontbackApiIcons
+import com.intellij.css.common.icons.CssCommonIcons
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
@@ -12,6 +12,12 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.css.CSS_PROPERTIES
+import com.intellij.polySymbols.css.properties.AbstractCssCustomPropertySymbolDeclaredInPsi
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -21,12 +27,6 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.elementType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.css.CSS_PROPERTIES
-import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
-import com.intellij.polySymbols.css.properties.AbstractCssCustomPropertySymbolDeclaredInPsi
 import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
 import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostBinding
@@ -148,7 +148,7 @@ class Angular2CustomCssPropertiesScope(file: PsiFile) :
     @Suppress("HardCodedStringLiteral")
     override val presentation: TargetPresentation =
       TargetPresentation.builder(name.removePrefix("--"))
-        .icon(CssFrontbackApiIcons.Custom_property)
+        .icon(CssCommonIcons.Custom_property)
         .containerText(CssNamedItemPresentation.getLocationString(sourceElement))
         .presentation()
 

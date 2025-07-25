@@ -100,6 +100,6 @@
     <orderEntry type="module" module-name="intellij.platform.images" />
     <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.webide.impl" />
-    <orderEntry type="module" module-name="intellij.css.frontback.psi" />
+    <orderEntry type="module" module-name="intellij.css.common.psi" />
   </component>
 </module>

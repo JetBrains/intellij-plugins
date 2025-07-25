@@ -27,7 +27,7 @@
     <orderEntry type="module" module-name="intellij.platform.refactoring" />
     <orderEntry type="module" module-name="intellij.platform.workspace.storage" />
     <orderEntry type="module" module-name="intellij.xml.psi" />
-    <orderEntry type="module" module-name="intellij.css.frontback" />
+    <orderEntry type="module" module-name="intellij.css.common" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.regexp" />
     <orderEntry type="module" module-name="intellij.xml.parser" />
@@ -70,7 +70,7 @@
     <orderEntry type="module" module-name="intellij.platform.backend.workspace" />
     <orderEntry type="library" name="commons-text" level="project" />
     <orderEntry type="module" module-name="intellij.markdown" />
-    <orderEntry type="module" module-name="intellij.css.frontback.psi" />
+    <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />
   </component>
 </module>

@@ -25,7 +25,7 @@
     <orderEntry type="module" module-name="intellij.platform.jps.model" />
     <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
-    <orderEntry type="module" module-name="intellij.css.frontback" />
+    <orderEntry type="module" module-name="intellij.css.common" />
     <orderEntry type="module" module-name="intellij.platform.lang.core" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
     <orderEntry type="module" module-name="intellij.platform.refactoring" />
@@ -79,6 +79,6 @@
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.javascript.debugger.ui" />
     <orderEntry type="module" module-name="intellij.platform.util.text.matching" />
-    <orderEntry type="module" module-name="intellij.css.frontback.psi" />
+    <orderEntry type="module" module-name="intellij.css.common.psi" />
   </component>
 </module>

@@ -18,7 +18,7 @@
     <orderEntry type="module" module-name="intellij.platform.editor.ui" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
-    <orderEntry type="module" module-name="intellij.css.frontback" />
+    <orderEntry type="module" module-name="intellij.css.common" />
     <orderEntry type="module" module-name="intellij.platform.indexing" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.platform.editor.ex" />
@@ -48,7 +48,7 @@
     <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />
     <orderEntry type="module" module-name="intellij.javascript.web" />
     <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.css.frontback.psi" />
+    <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.css.testFramework" scope="TEST" />
   </component>
 </module>

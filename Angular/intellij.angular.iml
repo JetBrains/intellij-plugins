@@ -26,7 +26,7 @@
     <orderEntry type="module" module-name="intellij.xml.parser" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.editor.ex" />
-    <orderEntry type="module" module-name="intellij.css.frontback" />
+    <orderEntry type="module" module-name="intellij.css.common" />
     <orderEntry type="module" module-name="intellij.xml.psi" />
     <orderEntry type="module" module-name="intellij.xml.psi.impl" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
@@ -58,7 +58,7 @@
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="library" name="opentelemetry" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
-    <orderEntry type="module" module-name="intellij.css.frontback.psi" />
+    <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />
   </component>
 </module>
