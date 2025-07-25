@@ -48,7 +48,7 @@ jvm_library(
     "//plugins/css/impl",
     "@community//plugins/copyright",
     "@community//platform/core-ui",
-    "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "//plugins/css/common/psi",
   ],
   exports = ["@community//xml/impl"],
   runtime_deps = [
@@ -89,7 +89,7 @@ jvm_library(
     "@community//plugins/copyright",
     "@community//plugins/copyright:copyright_test_lib",
     "@community//platform/core-ui",
-    "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "//plugins/css/common/psi",
     "//plugins/css/testFramework",
   ],
   runtime_deps = [

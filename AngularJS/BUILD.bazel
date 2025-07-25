@@ -59,7 +59,7 @@ jvm_library(
     "@lib//:fastutil-min",
     "@community//images",
     "//webcore/impl",
-    "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "//plugins/css/common/psi",
   ],
   runtime_deps = [":angularJS_resources"]
 )
@@ -135,7 +135,7 @@ jvm_library(
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "//webcore/impl",
-    "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "//plugins/css/common/psi",
   ],
   runtime_deps = [
     ":angularJS_resources",

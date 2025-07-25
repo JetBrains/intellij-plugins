@@ -67,7 +67,7 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@lib//:opentelemetry",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "//plugins/css/common/psi",
     "@community//platform/polySymbols/backend",
   ],
   runtime_deps = [
@@ -173,7 +173,7 @@ jvm_library(
     "@lib//:opentelemetry",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
     "@community//xml/testFramework",
-    "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "//plugins/css/common/psi",
     "//plugins/tailwindcss",
     "//plugins/tailwindcss:tailwindcss_test_lib",
     "//platform/lsp/testFramework",

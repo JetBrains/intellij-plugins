@@ -54,7 +54,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
-    "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "//plugins/css/common/psi",
   ],
   runtime_deps = [
     ":jade_resources",
@@ -108,7 +108,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//xml/testFramework",
-    "//CSS/frontback/css-psi-impl:css-frontback-psi",
+    "//plugins/css/common/psi",
     "//plugins/css/testFramework",
   ],
   runtime_deps = [
