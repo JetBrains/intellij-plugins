@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.service
 
+import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
@@ -29,6 +30,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.r
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.runBlockingCancellable
@@ -102,6 +104,12 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       null // For now do not use TS server for quick info
     else
       super.getQuickInfoAt(usageElement, originalFile)
+
+  override suspend fun getCompletionItemsSuspending(virtualFile: VirtualFile, document: Document, offset: Int, parameters: CompletionParameters): List<TypeScriptService.CompletionEntry>? =
+    if (readAction { parameters.position.containingFile.language }.let { it is Angular2HtmlDialect || it is Angular2Language })
+      null // For now do not use TS server for code completions
+    else
+      super.getCompletionItemsSuspending(virtualFile, document, offset, parameters)
 
   override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
     val result = getTranspiledDirectiveAndTopLevelSourceFile(file)
@@ -305,8 +313,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       // The evaluation location is in the template, so the config will be searched for the containing component file,
       // which is the transpiledFile.originalFile
       val projectFileName = TypeScriptConfigUtil.getConfigForPsiFile(transpiledFile.originalFile.originalFile)
-                              ?.configFile
-                              ?.let { JSLanguageServiceUtil.awaitFuture(getFilePath(it), JSLanguageServiceUtil.getShortTimeout()) }
+        ?.configFile
+        ?.let { JSLanguageServiceUtil.awaitFuture(getFilePath(it), JSLanguageServiceUtil.getShortTimeout()) }
 
       val range = Range(
         start = StringUtil.offsetToLineColumn(transpiledFile.generatedCode, generatedRange.startOffset).let { Position(it.line, it.column) },
