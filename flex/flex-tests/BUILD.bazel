@@ -20,7 +20,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//CSS/frontback/css-api:css-frontback",
     "//plugins/JavaScriptLanguage:javascript-impl",
-    "//CSS:css",
+    "//plugins/css",
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",

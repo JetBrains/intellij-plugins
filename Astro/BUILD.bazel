@@ -42,7 +42,7 @@ jvm_library(
     "@lib//:fastutil-min",
     "//plugins/JavaScriptLanguage:javascript-impl",
     "@community//platform/code-style-impl:codeStyle-impl",
-    "//CSS:css",
+    "//plugins/css",
     "//contrib/postcss",
     "//platform/lsp",
     "@ultimate_lib//:eclipse-lsp4j",

@@ -61,7 +61,7 @@ jvm_library(
     "@community//xml/impl",
     "@community//spellchecker",
     "//CSS/css-analysis-impl:css-analysis",
-    "//CSS:css",
+    "//plugins/css",
     "@community//platform/built-in-server:builtInServer-impl",
     "//webcore/impl",
     "//contrib/prettierJS",

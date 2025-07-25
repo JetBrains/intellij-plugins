@@ -54,7 +54,7 @@ jvm_library(
     "@community//platform/testRunner",
     "@community//java/execution/impl",
     "@community//platform/smRunner",
-    "//CSS:css",
+    "//plugins/css",
     "@community//java/idea-ui:ui",
     "@community//plugins/maven",
     "@community//plugins/ant",
