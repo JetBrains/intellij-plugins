@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport.UpdateContextInfo
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceQueueImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
@@ -44,6 +45,7 @@ import com.intellij.polySymbols.context.PolyContext
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
@@ -60,7 +62,6 @@ import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.service.protocol.Angular2TypeScriptServiceProtocol
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeCommand
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeRequestArgs
-import org.angular2.lang.expr.service.protocol.commands.Angular2TranspiledTemplateCommand
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.TranspiledDirectiveFile
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile
@@ -128,8 +129,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   @RequiresReadLock
   override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? = withScopedServiceTraceSpan("getInlayHintsAngular", myLifecycleSpan) {
-    val hasTranspiledTemplate = refreshTranspiledTemplateIfNeededCancellable(file.virtualFile
-                                                                             ?: return@withScopedServiceTraceSpan null) != null
+    val hasTranspiledTemplate = refreshTranspiledTemplateIfNeeded(file.virtualFile
+                                                                  ?: return@withScopedServiceTraceSpan null) != null
     val result = super.getInlayHints(file, textRange) ?: return@withScopedServiceTraceSpan null
 
     if (hasTranspiledTemplate)
@@ -174,7 +175,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   @RequiresReadLock
   override suspend fun beforeGetErrors(file: VirtualFile) {
-    refreshTranspiledTemplateIfNeededCancellable(file)
+    refreshTranspiledTemplateIfNeeded(file)
   }
 
   override fun isGeterrSupported(psiFile: PsiFile): Boolean {
@@ -247,30 +248,26 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     element is LeafPsiElement
     && element.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2Language }
 
-  private fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledDirectiveFile? = withServiceTraceSpan("refreshTranspiledTemplateIfNeededCancellable") {
-    JSLanguageServiceUtil.nonBlockingReadActionWithTimeout {
-      if (DumbService.isDumb(project)) return@nonBlockingReadActionWithTimeout null
-      // Updating the cache can cause the transpiled template to be (re)built,
-      // so let's build the template first and ensure that it doesn't change
-      // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
-      // on server cache locking leading to tests instability.
-      val result = Angular2TranspiledDirectiveFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
-      runBlockingCancellable {
-        getProcess()?.execute(Angular2TranspiledTemplateCommand(virtualFile))
-      }
-      result
-    }
-  }
-
   @RequiresReadLock
-  private suspend fun refreshTranspiledTemplateIfNeededCancellable(virtualFile: VirtualFile): TranspiledDirectiveFile? = withScopedServiceTraceSpan("refreshTranspiledTemplateIfNeededCancellable") {
+  private suspend fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledDirectiveFile? = withScopedServiceTraceSpan("refreshTranspiledTemplateIfNeeded") {
     if (DumbService.isDumb(project)) return@withScopedServiceTraceSpan null
     // Updating the cache can cause the transpiled template to be (re)built,
     // so let's build the template first and ensure that it doesn't change
     // by keeping the read action lock. Otherwise, we can get unnecessary cancellations
     // on server cache locking leading to tests instability.
-    val result = Angular2TranspiledDirectiveFileBuilder.getTranspiledComponentFileForTemplateFile(myProject, virtualFile)
-    getProcess()?.execute(Angular2TranspiledTemplateCommand(virtualFile))
+    val templatePsiFile = PsiManager.getInstance(project).findFile(virtualFile)
+    val componentFile = templatePsiFile?.let { Angular2TranspiledDirectiveFileBuilder.findDirectiveFile(it) }
+    val result = componentFile?.let { Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(it) }
+
+    val componentVirtualFile = componentFile?.virtualFile
+    if (componentVirtualFile != null) {
+      val process = getProcess()
+      if (process is TypeScriptLanguageServiceQueueImpl) {
+        val cacheData = process.serverState.cacheData
+        (cacheData as? Angular2LanguageServiceCache)?.refreshAndCacheTranspiledTemplate(process, componentVirtualFile, result)
+      }
+    }
+
     result
   }
 
@@ -304,7 +301,9 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
         commitDocuments(evaluationLocation)
       }
       // Ensure that transpiled template is up-to-date
-      refreshTranspiledTemplateIfNeeded(componentVirtualFile)
+      runBlockingCancellable {
+        refreshTranspiledTemplateIfNeeded(componentVirtualFile)
+      }
       ?: return@withServiceTraceSpan null
 
       val filePath = JSLanguageServiceUtil.awaitFuture(getFilePath(componentVirtualFile), JSLanguageServiceUtil.getShortTimeout())

@@ -10,17 +10,10 @@ import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.endOffset
-import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.*
 import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.angular2.Angular2DecoratorUtil
@@ -61,14 +54,6 @@ object Angular2TranspiledDirectiveFileBuilder {
       ?: return null
     else
       topLevelFile
-  }
-
-  fun getTranspiledComponentFileForTemplateFile(project: Project, templateFile: VirtualFile): TranspiledDirectiveFile? {
-    val templatePsiFile = PsiManager.getInstance(project).findFile(templateFile)
-                          ?: return null
-    val componentFile = findDirectiveFile(templatePsiFile)
-                        ?: return null
-    return getTranspiledDirectiveFile(componentFile)
   }
 
   fun getTranspiledDirectiveFile(directiveFile: PsiFile): TranspiledDirectiveFile? =
