@@ -84,10 +84,6 @@ class SetupAzurePipelinesViewModel(
       
     """.trimIndent() + branchesToAdd.joinToString(separator = "\n", postfix = "\n") { "  - $it" }
 
-    val baselineText = getSarifBaseline(project)?.let { "--baseline,$it," } ?: ""
-
-    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
-
     @Language("YAML")
     val yamlConfiguration = HEADER_TEXT + branchesText + """
       
@@ -121,7 +117,7 @@ class SetupAzurePipelinesViewModel(
       task: QodanaScan@${ideMajorVersion}
         inputs:
           args: ${baselineText}-l,${getQodanaImageNameMatchingIDE(true)}
-          # In 'prMode: true' Qodana checks only changed files
+          # When prMode is set to true, Qodana analyzes only the files that have been changed
           prMode: false,
           postPrComment: true
           # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job

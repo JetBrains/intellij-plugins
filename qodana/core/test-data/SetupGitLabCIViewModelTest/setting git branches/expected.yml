@@ -6,7 +6,7 @@
 include:
   - component: $CI_SERVER_FQDN/qodana/qodana/qodana-gitlab-ci@<VERSION_PLACEHOLDER>
     inputs:
-      # In 'mr-mode: true' Qodana checks only changed files
+      # When mr-mode is set to true, Qodana analyzes only the files that have been changed
       mr-mode: false
       use-caches: true
       post-mr-comment: true

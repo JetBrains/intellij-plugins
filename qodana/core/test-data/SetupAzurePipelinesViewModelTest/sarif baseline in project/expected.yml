@@ -27,7 +27,7 @@ steps:
   - task: QodanaScan@VERSION_PLACEHOLDER
     inputs:
       args: --baseline,qodana.sarif.json,-l,jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
-      # In 'prMode: true' Qodana checks only changed files
+      # When prMode is set to true, Qodana analyzes only the files that have been changed
       prMode: false,
       postPrComment: true
       # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job

@@ -72,7 +72,7 @@ class SetupGitLabCIViewModel(
 
     val argsText = getSarifBaseline(project)?.let { "args: --baseline=$it\n" } ?: ""
     val inputsText = argsText + """
-      # In 'mr-mode: true' Qodana checks only changed files
+      # When mr-mode is set to true, Qodana analyzes only the files that have been changed
       mr-mode: false
       use-caches: true
       post-mr-comment: true

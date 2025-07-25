@@ -9,7 +9,7 @@ steps:
   - task: QodanaScan@2025
     inputs:
       args: -l,jetbrains/qodana-<linter>:2025.3
-      # In 'prMode: true' Qodana checks only changed files
+      # When prMode is set to true, Qodana analyzes only the files that have been changed
       prMode: false,
       postPrComment: true
       # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
