@@ -35,7 +35,7 @@ jvm_library(
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
     "@lib//:assert_j",
-    "//CSS/impl",
+    "//plugins/css/impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/css/psi",

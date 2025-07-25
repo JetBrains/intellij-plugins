@@ -49,7 +49,7 @@ jvm_library(
     "@community//xml/openapi:xml",
     "@community//java/openapi:java",
     "@community//xml/impl",
-    "//CSS/impl",
+    "//plugins/css/impl",
     "//plugins/css/psi",
     "@community//platform/testRunner",
     "@community//java/execution/impl",
