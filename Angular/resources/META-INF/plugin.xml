@@ -249,10 +249,10 @@
                        id="angular2"/>
     <xml.xmlExtension implementation="org.angular2.codeInsight.Angular2HtmlExtension" order="before html, before poly-symbols-react"
                       id="angular2"/>
-    <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
+    <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlParserDefinition"/>
     <languageStubDefinition language="Angular2Html" implementationClass="org.angular2.lang.stubs.Angular2HtmlLanguageStubDefinition"/>
-    <lang.parserDefinition language="Angular17Html" implementationClass="org.angular2.lang.html.parser.Angular17HtmlParserDefinition"/>
-    <lang.parserDefinition language="Angular181Html" implementationClass="org.angular2.lang.html.parser.Angular181HtmlParserDefinition"/>
+    <lang.parserDefinition language="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlParserDefinition"/>
+    <lang.parserDefinition language="Angular181Html" implementationClass="org.angular2.lang.html.Angular181HtmlParserDefinition"/>
     <tree.CustomLanguageASTComparator language="Angular2Html"
                                       implementationClass="org.angular2.lang.expr.parser.Angular2HtmlASTComparator"/>
     <braceMatcher filetype="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
@@ -365,9 +365,9 @@
     <completion.confidence language="Angular2Html" implementationClass="org.angular2.editor.Angular2PreventCompletionAutoPopupOnImport"/>
 
     <!-- Angular 2 SVG contributions -->
-    <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>
-    <lang.parserDefinition language="Angular17Svg" implementationClass="org.angular2.lang.svg.parser.Angular17SvgParserDefinition"/>
-    <lang.parserDefinition language="Angular181Svg" implementationClass="org.angular2.lang.svg.parser.Angular181SvgParserDefinition"/>
+    <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.Angular2SvgParserDefinition"/>
+    <lang.parserDefinition language="Angular17Svg" implementationClass="org.angular2.lang.svg.Angular17SvgParserDefinition"/>
+    <lang.parserDefinition language="Angular181Svg" implementationClass="org.angular2.lang.svg.Angular181SvgParserDefinition"/>
     <fileType name="Angular2Svg" implementationClass="org.angular2.lang.svg.Angular2SvgFileType" fieldName="INSTANCE"
               language="Angular2Svg"/>
     <fileType name="Angular17Svg" implementationClass="org.angular2.lang.svg.Angular17SvgFileType" fieldName="INSTANCE"
