@@ -90,7 +90,7 @@ jvm_library(
     "@community//plugins/copyright:copyright_test_lib",
     "@community//platform/core-ui",
     "//CSS/frontback/css-psi-impl:css-frontback-psi",
-    "//CSS/testFramework",
+    "//plugins/css/testFramework",
   ],
   runtime_deps = [
     ":postcss_resources",
