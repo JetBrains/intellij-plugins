@@ -68,7 +68,7 @@ class Angular2Injector : MultiHostInjector {
     }
 
     if (isPropertyWithName(parent, TEMPLATE_PROP)) {
-      injectIntoDecoratorExpr(registrar, context, parent, Angular2LangUtil.getTemplateSyntax(context).language, null)
+      injectIntoDecoratorExpr(registrar, context, parent, Angular2LangUtil.getTemplateSyntax(context).languageHtml, null)
       return
     }
 

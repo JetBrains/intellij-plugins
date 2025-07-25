@@ -12,13 +12,17 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.util.asSafely
 import org.angular2.lang.html.Angular2HtmlFile
+import org.angular2.lang.html.Angular2TemplateLanguageBase
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorElementType
 
-abstract class Angular2HtmlParserDefinitionBase : HTMLParserDefinition() {
+abstract class Angular2TemplateParserDefinitionBase(
+  language: Angular2TemplateLanguageBase,
+) : HTMLParserDefinition() {
 
-  protected abstract val syntax: Angular2TemplateSyntax
+  private val syntax: Angular2TemplateSyntax = language.templateSyntax
+  private val svg: Boolean = language.svgDialect
 
   override fun createLexer(project: Project?): Lexer {
     return Angular2HtmlLexer(false, syntax, null)
@@ -28,7 +32,9 @@ abstract class Angular2HtmlParserDefinitionBase : HTMLParserDefinition() {
     return Angular2HtmlParser(syntax)
   }
 
-  abstract override fun getFileNodeType(): IFileElementType
+  override fun getFileNodeType(): IFileElementType {
+    return if (svg) syntax.fileElementTypeSvg else syntax.fileElementTypeHtml
+  }
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile {
     return Angular2HtmlFile(viewProvider, fileNodeType)
