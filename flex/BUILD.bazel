@@ -26,7 +26,7 @@ jvm_library(
     "@community//jps/model-api:model",
     "@community//jps/model-serialization",
     "@community//platform/lang-api:lang",
-    "//CSS/frontback/css-api:css-frontback",
+    "//plugins/css/common:frontback",
     "@community//platform/lang-core",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/refactoring",

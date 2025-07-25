@@ -17,7 +17,7 @@ jvm_library(
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
-    "//CSS/frontback/css-api:css-frontback",
+    "//plugins/css/common:frontback",
     "@community//platform/platform-api:ide",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/indexing-api:indexing",

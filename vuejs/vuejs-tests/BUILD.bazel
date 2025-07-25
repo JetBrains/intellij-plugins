@@ -28,7 +28,7 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/vuejs",
-    "//CSS/frontback/css-api:css-frontback",
+    "//plugins/css/common:frontback",
     "//plugins/css",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/css/impl",

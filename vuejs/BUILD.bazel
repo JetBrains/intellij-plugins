@@ -40,7 +40,7 @@ jvm_library(
     "@community//platform/refactoring",
     "@community//platform/workspace/storage",
     "@community//xml/xml-psi-api:psi",
-    "//CSS/frontback/css-api:css-frontback",
+    "//plugins/css/common:frontback",
     "@community//platform/lang-api:lang",
     "@community//RegExpSupport:regexp",
     "@community//xml/xml-parser:parser",
