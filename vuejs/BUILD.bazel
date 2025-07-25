@@ -60,7 +60,7 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@community//xml/impl",
     "@community//spellchecker",
-    "//CSS/css-analysis-impl:css-analysis",
+    "//plugins/css/analysis",
     "//plugins/css",
     "@community//platform/built-in-server:builtInServer-impl",
     "//webcore/impl",
