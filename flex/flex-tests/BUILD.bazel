@@ -20,7 +20,6 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/css/common",
     "//plugins/JavaScriptLanguage:javascript-impl",
-    "//plugins/css",
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",
@@ -35,7 +34,7 @@ jvm_library(
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
     "@lib//:assert_j",
-    "//plugins/css/impl",
+    "//plugins/css/plugin",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/css/psi",
@@ -65,6 +64,8 @@ jvm_library(
     "@community//platform/structuralsearch:structuralSearch-tests_test_lib",
     "@community//xml/xml-psi-api:psi",
     "@community//platform/structuralsearch:structuralSearch",
+    "//plugins/css/backend",
+    "//plugins/css/analysis",
   ]
 )
 ### auto-generated section `build intellij.flex.tests` end

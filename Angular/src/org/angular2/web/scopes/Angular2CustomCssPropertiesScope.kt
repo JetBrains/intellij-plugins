@@ -1,6 +1,6 @@
 package org.angular2.web.scopes
 
-import com.intellij.css.common.icons.CssCommonIcons
+import com.intellij.css.common.CssIcons
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
@@ -148,7 +148,7 @@ class Angular2CustomCssPropertiesScope(file: PsiFile) :
     @Suppress("HardCodedStringLiteral")
     override val presentation: TargetPresentation =
       TargetPresentation.builder(name.removePrefix("--"))
-        .icon(CssCommonIcons.Custom_property)
+        .icon(CssIcons.Custom_property)
         .containerText(CssNamedItemPresentation.getLocationString(sourceElement))
         .presentation()
 

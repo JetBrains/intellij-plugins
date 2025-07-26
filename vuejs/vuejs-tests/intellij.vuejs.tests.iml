@@ -19,9 +19,8 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.vuejs" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.common" />
-    <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.css.plugin" />
     <orderEntry type="module" module-name="intellij.java.rt" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.parser" />
     <orderEntry type="module" module-name="intellij.html.tools" scope="TEST" />
@@ -54,5 +53,7 @@
     <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.webide" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.backend" scope="TEST" />
   </component>
 </module>

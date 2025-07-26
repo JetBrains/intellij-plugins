@@ -15,7 +15,6 @@
     <orderEntry type="module" module-name="intellij.javascript.parser" />
     <orderEntry type="module" module-name="intellij.css.common" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />
-    <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.codeStyle" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />
@@ -29,7 +28,7 @@
     <orderEntry type="module" module-name="intellij.platform.structureView.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.spellchecker" />
     <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
-    <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.css.plugin" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.psi" />
     <orderEntry type="module" module-name="intellij.flex.shared" />
@@ -54,5 +53,7 @@
     <orderEntry type="module" module-name="intellij.platform.structuralSearch.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.psi" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.structuralSearch" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.analysis" scope="TEST" />
   </component>
 </module>

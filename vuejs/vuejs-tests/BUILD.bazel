@@ -29,9 +29,8 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/vuejs",
     "//plugins/css/common",
-    "//plugins/css",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "//plugins/css/impl",
+    "//plugins/css/plugin",
     "@community//java/java-runtime:rt",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//plugins/htmltools:html-tools",
@@ -71,6 +70,8 @@ jvm_library(
     "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
     "//webcore:webide",
+    "//plugins/css/analysis",
+    "//plugins/css/backend",
   ],
   runtime_deps = [":tests_test_resources"]
 )

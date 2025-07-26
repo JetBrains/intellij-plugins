@@ -1,4 +1,6 @@
 <idea-plugin>
+  <depends>com.intellij.modules.css.backend</depends>
+
   <extensions defaultExtensionNs="com.intellij">
     <css.inclusionContext implementation="org.angular2.css.Angular2CssInclusionContext"/>
     <css.embeddedCssProvider implementation="org.angular2.codeInsight.Angular2EmbeddedCssProvider"/>

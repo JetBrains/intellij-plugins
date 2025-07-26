@@ -21,7 +21,6 @@
     <orderEntry type="module" module-name="intellij.platform.util.progress" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.platform.indexing" />
-    <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.platform.usageView" />
     <orderEntry type="module" module-name="intellij.xml.parser" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
@@ -37,7 +36,7 @@
     <orderEntry type="module" module-name="intellij.platform.execution.impl" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
-    <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.css.plugin" />
     <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.html.tools" />
@@ -60,5 +59,6 @@
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />
+    <orderEntry type="module" module-name="intellij.css.backend" />
   </component>
 </module>
