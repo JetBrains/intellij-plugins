@@ -8,22 +8,22 @@ jvm_resources(
 )
 
 jvm_provided_library(
-  name = "qodana_provided",
+  name = "contrib_qodana_provided",
   lib = "//contrib/qodana"
 )
 
 jvm_provided_library(
-  name = "analysis_provided",
+  name = "community_platform_analysis_provided",
   lib = "@community//platform/analysis-api:analysis"
 )
 
 jvm_provided_library(
-  name = "core_provided",
+  name = "community_platform_core_provided",
   lib = "@community//platform/core-api:core"
 )
 
 jvm_provided_library(
-  name = "lang-impl_provided",
+  name = "community_platform_lang-impl_provided",
   lib = "@community//platform/lang-impl"
 )
 
@@ -33,12 +33,12 @@ jvm_provided_library(
 )
 
 jvm_provided_library(
-  name = "coverage_provided",
+  name = "community_plugins_coverage_provided",
   lib = "@community//plugins/coverage-common:coverage"
 )
 
 jvm_provided_library(
-  name = "coverage-agent_provided",
+  name = "community_plugins_coverage-common_coverage-agent_provided",
   lib = "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent"
 )
 
@@ -50,13 +50,13 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "//contrib/qodana/coverage",
-    ":qodana_provided",
-    ":analysis_provided",
-    ":core_provided",
-    ":lang-impl_provided",
+    ":contrib_qodana_provided",
+    ":community_platform_analysis_provided",
+    ":community_platform_core_provided",
+    ":community_platform_lang-impl_provided",
     ":python_provided",
-    ":coverage_provided",
-    ":coverage-agent_provided",
+    ":community_plugins_coverage_provided",
+    ":community_plugins_coverage-common_coverage-agent_provided",
   ],
   runtime_deps = [":coverage_resources"]
 )

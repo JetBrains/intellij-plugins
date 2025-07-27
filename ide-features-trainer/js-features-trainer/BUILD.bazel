@@ -8,7 +8,7 @@ jvm_resources(
 )
 
 jvm_provided_library(
-  name = "javascript-impl_provided",
+  name = "plugins_javascript-impl_provided",
   lib = "//plugins/JavaScriptLanguage:javascript-impl"
 )
 
@@ -34,7 +34,7 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    ":javascript-impl_provided",
+    ":plugins_javascript-impl_provided",
   ],
   runtime_deps = [":javascript-featuresTrainer_resources"]
 )
