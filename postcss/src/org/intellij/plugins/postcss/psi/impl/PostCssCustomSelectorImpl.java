@@ -1,6 +1,6 @@
 package org.intellij.plugins.postcss.psi.impl;
 
-import com.intellij.css.util.CssPsiUtil;
+import com.intellij.css.util.CssPsiUtilCore;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
@@ -54,7 +54,9 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
   @Override
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     PsiElement nameIdentifier = getNameIdentifier();
-    return nameIdentifier != null ? CssPsiUtil.replaceToken(nameIdentifier, StringUtil.startsWith(name, "--") ? name : "--" + name) : this;
+    return nameIdentifier != null
+           ? CssPsiUtilCore.replaceToken(nameIdentifier, StringUtil.startsWith(name, "--") ? name : "--" + name)
+           : this;
   }
 
   @Override
