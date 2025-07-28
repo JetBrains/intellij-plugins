@@ -97,7 +97,7 @@ class AngularIntroduceLetVariableHandler : JSBaseIntroduceHandler<PsiElement, Ba
     }
   }
 
-  override fun createDialog(project: Project?, expression: JSExpression?, occurrences: Array<out JSExpression>?, scope: PsiElement?): JSIntroduceVariableDialog {
+  override fun createDialog(project: Project, expression: JSExpression, occurrences: Array<out JSExpression>?, scope: PsiElement?): JSIntroduceVariableDialog {
     return JSIntroduceVariableDialog(project, occurrences, expression, scope, Settings.IntroducedVarType.LET)
   }
 
