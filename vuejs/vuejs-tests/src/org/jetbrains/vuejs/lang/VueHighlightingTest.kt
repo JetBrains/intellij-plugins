@@ -679,6 +679,48 @@ const props = {seeMe: {}}
     doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
   }
 
+  fun testComponentFromFunctionPlugin() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedFunctionPlugin() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedFunctionPluginWithCycle() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromObjectPlugin() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedObjectPlugin() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedObjectPluginWithCycle() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
   fun testStdTagsInspections() {
     myFixture.enableInspections(HtmlRequiredTitleElementInspection::class.java, HtmlRequiredAltAttributeInspection::class.java)
     doTest()
