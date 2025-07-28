@@ -11,7 +11,9 @@ import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VuePlugin
 
-data class VueCompositionPlugin(
+@ConsistentCopyVisibility
+data class VueCompositionPlugin
+private constructor(
   override val source: JSFunction,
 ) : VueCompositionContainer(),
     VuePlugin {
