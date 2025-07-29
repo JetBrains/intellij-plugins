@@ -9,6 +9,7 @@ export const MAPPING_FLAG_REVERSE_TYPES = 64
 
 export interface Angular2TcbMappingInfo {
   fileName: string,
+  externalFile: boolean
   sourceOffsets: number[]
   sourceLengths: number[]
   generatedOffsets: number[]

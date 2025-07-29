@@ -168,9 +168,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
 
           fun rangeToText(text: String, offset: Int, length: Int, offsetPrefix: Int = 0) =
             "«${text.substring(offset, offset + length)}» [${offset - offsetPrefix}]"
-
-          mapOf("file-name" to fileInfo.sourceFile.name,
-                "mappings" to fileInfo.sourceMappings
+          val result = mutableMapOf<String, Any>()
+          result["file-name"] = fileInfo.sourceFile.name
+          if (fileInfo.externalFile)
+            result["external-file"] = true
+          result["mappings"] = fileInfo.sourceMappings
                   .map { mapping ->
                     val result = StringBuilder()
                     if (mapping.generatedOffset >= prefixLength)
@@ -201,7 +203,8 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
                         result.append(" (reverse types)")
                     }
                     result.toString()
-                  })
+                  }
+          result
         }),
         if (dir) "${testName}/mappings.json" else "$testName.mappings.json"
       )

@@ -39,16 +39,13 @@ class Angular2SourceDirectiveVirtualProperty(
     get() = null
 
   override val rawJsType: JSType?
-    get() = null
+    get() = transformParameterType
 
   override val virtualProperty: Boolean
     get() = true
 
   override val isSignalProperty: Boolean
     get() = false
-
-  override val transformParameterType: JSType?
-    get() = super.transformParameterType
 
   override val apiStatus: PolySymbolApiStatus
     get() = owner?.apiStatus ?: PolySymbolApiStatus.Stable
