@@ -1,6 +1,7 @@
 /* Angular type checking code */
 /* Imports */
 import * as _i1 from "./let.directive";
+import * as _i2 from "./testComponent3";
 /* Directives */
 const _ctor1: <PO = any>(init: Pick<_i1.LetDirective<PO>, "ngrxLet" | "suspenseTemplateRef">) => _i1.LetDirective<PO> = null!;
 
@@ -28,4 +29,11 @@ _t8 = {foo1: 12};
 var _t9 = null! as { foo2: number };
 _t9 = {foo2: 12};
 _t7.obj3 = {foo3: 12};
+var _t10 = document.createElement("app-test3");
+var _t11 = null! as _i2.TestComponent3;
+var _t12 = null! as { foo1: number };
+_t12 = {foo1: 12};
+var _t13 = null! as { foo2: number };
+_t13 = {foo2: 12};
+_t11.obj3 = {foo3: 12};
 }

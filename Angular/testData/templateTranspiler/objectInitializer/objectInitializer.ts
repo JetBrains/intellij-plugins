@@ -3,6 +3,7 @@ import {Component, Input} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {Observable, of} from "rxjs";
 import {LetDirective} from "./let.directive";
+import {TestComponent3} from "./testComponent3";
 
 @Component({
   inputs: [
@@ -22,7 +23,7 @@ export class TestComponent2 {
 
 @Component({
   selector: 'app-test',
-  imports: [CommonModule, LetDirective, TestComponent2],
+  imports: [CommonModule, LetDirective, TestComponent2, TestComponent3],
   standalone: true,
   template: `
     <ng-container *ngrxLet="{ number1: number$, number2: numberOrNot$ } as vm">
@@ -33,6 +34,11 @@ export class TestComponent2 {
             [obj2]="{foo2: 12}"
             [obj3]="{foo3: 12}"
     ></app-test2>
+    <app-test3
+            [obj1]="{foo1: 12}"
+            [obj2]="{foo2: 12}"
+            [obj3]="{foo3: 12}"
+    ></app-test3>
   `,
 })
 export class TestComponent {

@@ -72,7 +72,7 @@ internal class Environment(
 
   fun referenceType(dirTypeRef: JSType): Expression {
     val substitutedType = dirTypeRef.substitute()
-    if (substitutedType.sourceElement?.containingFile == file) {
+    if (substitutedType.sourceElement != null) {
       val typeScriptType = substitutedType as? TypeScriptType
                            ?: substitutedType.sourceElement as? TypeScriptType
       if (typeScriptType is TypeScriptType) {

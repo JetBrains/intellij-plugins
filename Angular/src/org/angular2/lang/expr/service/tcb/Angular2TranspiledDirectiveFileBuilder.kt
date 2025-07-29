@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSStatement
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.impl.JSFileImpl
 import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -273,7 +274,8 @@ object Angular2TranspiledDirectiveFileBuilder {
       directiveFile,
       generatedCode.toString(),
       fileMappings.mapValues { (file, info) ->
-        FileMappings(file, info.sourceMappings.sorted(), info.contextVarMappings, info.directiveVarMappings)
+        FileMappings(file, file != directiveFile && file is JSFileImpl,
+                     info.sourceMappings.sorted(), info.contextVarMappings, info.directiveVarMappings)
       },
       diagnostics.entrySet().associateBy({ it.key }, { it.value.toList() }),
       nameMaps.entrySet().associateBy({ it.key }, { pair -> pair.value.associateByTo(TreeMap(), { it.first }, { it.second }) }),
@@ -295,6 +297,7 @@ object Angular2TranspiledDirectiveFileBuilder {
 
   class FileMappings(
     val sourceFile: PsiFile,
+    val externalFile: Boolean,
     val sourceMappings: List<SourceMapping>,
     val contextVarMappings: Map<TextRange, TextRange>,
     val directiveVarMappings: Map<Pair<TextRange, Angular2Directive>, TextRange>,
