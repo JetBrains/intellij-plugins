@@ -1,6 +1,6 @@
 package org.intellij.plugins.postcss.fileStructure;
 
-import com.intellij.css.util.CssPsiUtil;
+import com.intellij.css.util.CssPsiUtilCore;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.impl.structure.CssStructureViewElement;
@@ -19,7 +19,7 @@ public class PostCssStructureViewElementsProvider extends CssStructureViewElemen
 
   @Override
   public boolean isMyContext(PsiElement element) {
-    return PostCssLanguage.INSTANCE.is(CssPsiUtil.getStylesheetLanguage(element));
+    return PostCssLanguage.INSTANCE.is(CssPsiUtilCore.getStylesheetLanguage(element));
   }
 
   @Override
