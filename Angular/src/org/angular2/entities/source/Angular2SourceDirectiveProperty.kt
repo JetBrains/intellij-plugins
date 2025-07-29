@@ -61,21 +61,12 @@ abstract class Angular2SourceDirectiveProperty(
   override val fieldName: String
     get() = signature.memberName
 
-  val transformParameterType: JSType?
-    get() = objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP)
-      ?.jsType
-      ?.asRecordType(owner)
-      ?.callSignatures
-      ?.firstNotNullOfOrNull { signature -> signature.functionType.parameters.takeIf { it.size > 0 }?.get(0) }
-      ?.inferredType
-
-  override val isCoerced: Boolean
-    get() = super.isCoerced || objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP) != null
-
   override val isSignalProperty: Boolean
-    get() = signature.jsType
-      ?.asRecordType()
-      ?.findPropertySignature(R3Identifiers.InputSignalBrandWriteType.name) != null
+    get() = withTypeEvaluationLocation(owner) {
+      signature.jsType
+        ?.asRecordType()
+        ?.findPropertySignature(R3Identifiers.InputSignalBrandWriteType.name) != null
+    }
 
   override val type: JSType?
     get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS)
@@ -136,7 +127,7 @@ abstract class Angular2SourceDirectiveProperty(
 
   abstract override fun createPointer(): Pointer<out Angular2SourceDirectiveProperty>
 
-  private val objectInitializer: JSObjectLiteralExpression?
+  override val objectInitializer: JSObjectLiteralExpression?
     get() = declarationSource as? JSObjectLiteralExpression
             ?: (declarationSource as? JSLiteralExpression)
               ?.context?.asSafely<JSProperty>()

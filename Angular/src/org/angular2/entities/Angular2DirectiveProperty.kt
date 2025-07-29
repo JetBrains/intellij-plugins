@@ -46,6 +46,11 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
   val virtualProperty: Boolean
 
   val isSignalProperty: Boolean
+
+  val transformParameterType: JSType?
+    get() = null
+
+  val isCoerced: Boolean
     get() = false
 
   override val modifiers: Set<PolySymbolModifier>

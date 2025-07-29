@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.polySymbols.js.apiStatus
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -21,6 +22,7 @@ class Angular2SourceDirectiveVirtualProperty(
   override val required: Boolean,
   override val sourceElement: PsiElement,
   override val textRangeInSourceElement: TextRange?,
+  override val objectInitializer: JSObjectLiteralExpression?,
 ) : Angular2ClassBasedDirectiveProperty, PolySymbolDeclaredInPsi {
 
   constructor(owner: TypeScriptClass, qualifiedKind: PolySymbolQualifiedKind, info: Angular2PropertyInfo)
@@ -30,7 +32,7 @@ class Angular2SourceDirectiveVirtualProperty(
              info.declaringElement != null -> TextRange(1, 1 + info.name.length)
              info.nameElement != null -> TextRange(1, 1 + info.name.length)
              else -> null
-           }
+           }, info.declarationSource as? JSObjectLiteralExpression
   )
 
   override val fieldName: String?
@@ -44,6 +46,9 @@ class Angular2SourceDirectiveVirtualProperty(
 
   override val isSignalProperty: Boolean
     get() = false
+
+  override val transformParameterType: JSType?
+    get() = super.transformParameterType
 
   override val apiStatus: PolySymbolApiStatus
     get() = owner?.apiStatus ?: PolySymbolApiStatus.Stable
@@ -78,10 +83,12 @@ class Angular2SourceDirectiveVirtualProperty(
     val required = this.required
     val sourceElementPtr = sourceElement.createSmartPointer()
     val textRangeInSourceElement = textRangeInSourceElement
+    val objectInitializerPtr = objectInitializer?.createSmartPointer()
     return Pointer {
       val owner = ownerPtr?.let { it.dereference() ?: return@Pointer null }
       val sourceElement = sourceElementPtr.dereference() ?: return@Pointer null
-      Angular2SourceDirectiveVirtualProperty(owner, qualifiedKind, name, required, sourceElement, textRangeInSourceElement)
+      val objectInitializer = objectInitializerPtr?.let { it.dereference() ?: return@Pointer null }
+      Angular2SourceDirectiveVirtualProperty(owner, qualifiedKind, name, required, sourceElement, textRangeInSourceElement, objectInitializer)
     }
   }
 }

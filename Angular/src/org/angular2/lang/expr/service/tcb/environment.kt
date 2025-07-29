@@ -17,6 +17,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.SmartList
 import com.intellij.util.containers.sequenceOfNotNull
@@ -76,15 +77,14 @@ internal class Environment(
                            ?: substitutedType.sourceElement as? TypeScriptType
       if (typeScriptType is TypeScriptType) {
         return typeScriptType.toExpression()
-      } else if (substitutedType is JSTypeImpl && substitutedType.sourceElement is TypeScriptClass) {
+      }
+      else if (substitutedType is JSTypeImpl && substitutedType.sourceElement is TypeScriptClass) {
         val sourceElement = substitutedType.sourceElement as TypeScriptClass
         return Expression {
           withSourceFile(sourceElement.containingFile) {
             append(substitutedType.getTypeText(JSType.TypeTextFormat.CODE), originalRange = sourceElement.nameIdentifier?.textRange)
           }
         }
-      } else {
-        thisLogger().error("Cannot properly map type to an expression: $dirTypeRef")
       }
     }
     // TODO detect stuff to import
@@ -311,40 +311,50 @@ internal class Environment(
 
   private fun TypeScriptType.toExpression(): Expression = Expression {
     withSourceFile(containingFile) {
-      acceptChildren(object : JSRecursiveWalkingElementVisitor() {
-        override fun visitElement(element: PsiElement) {
-          if (element is LeafPsiElement) {
-            append(element.text)
-          }
-          else {
-            super.visitElement(element)
+      withSupportReverseTypes {
+        withIgnoreMappings {
+          withSourceSpan(textRange) {
+            this@withSourceSpan.buildTypeExpression(this@toExpression)
           }
         }
-
-        override fun visitJSReferenceExpression(node: JSReferenceExpression) {
-          if (node.qualifier == null) {
-            var importSpecifierKind = ImportExportSpecifierKind.IMPORT
-            val templateTarget = node.resolve().let { resolveResult ->
-              if (resolveResult is ES6ImportSpecifier) {
-                importSpecifierKind = resolveResult.specifierKind
-                resolveResult.resolveOverAliases().firstOrNull { it.isValidResult && it.element != null }?.element
-              }
-              else
-                resolveResult
-            }
-            if (templateTarget !is JSQualifiedNamedElement) {
-              append(node.text, node.textRange, supportTypes = true)
-            }
-            else {
-              append(reference(templateTarget, importSpecifierKind), node.textRange, supportTypes = true)
-            }
-          }
-          else {
-            super.visitJSReferenceExpression(node)
-          }
-        }
-      })
+      }
     }
+  }
+
+  private fun Expression.ExpressionBuilder.buildTypeExpression(type: TypeScriptType) {
+    type.acceptChildren(object : JSRecursiveWalkingElementVisitor() {
+      override fun visitElement(element: PsiElement) {
+        if (element is LeafPsiElement) {
+          append(element.text, element.textRange.takeIf { element !is PsiWhiteSpace })
+        }
+        else {
+          super.visitElement(element)
+        }
+      }
+
+      override fun visitJSReferenceExpression(node: JSReferenceExpression) {
+        if (node.qualifier == null) {
+          var importSpecifierKind = ImportExportSpecifierKind.IMPORT
+          val templateTarget = node.resolve().let { resolveResult ->
+            if (resolveResult is ES6ImportSpecifier) {
+              importSpecifierKind = resolveResult.specifierKind
+              resolveResult.resolveOverAliases().firstOrNull { it.isValidResult && it.element != null }?.element
+            }
+            else
+              resolveResult
+          }
+          if (templateTarget !is JSQualifiedNamedElement) {
+            append(node.text, node.textRange)
+          }
+          else {
+            append(reference(templateTarget, importSpecifierKind), node.textRange)
+          }
+        }
+        else {
+          super.visitJSReferenceExpression(node)
+        }
+      }
+    })
   }
 
   private data class ImportInfo(
