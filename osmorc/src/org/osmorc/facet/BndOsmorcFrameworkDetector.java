@@ -5,6 +5,9 @@ import com.intellij.facet.FacetType;
 import com.intellij.framework.detection.FacetBasedFrameworkDetector;
 import com.intellij.framework.detection.FileContentPattern;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PatternCondition;
@@ -33,10 +36,25 @@ public class BndOsmorcFrameworkDetector extends FacetBasedFrameworkDetector<Osmo
 
   @Override
   protected OsmorcFacetConfiguration createConfiguration(Collection<? extends VirtualFile> files) {
-    var osmorcFacetConfiguration = getFacetType().createDefaultConfiguration();
-    osmorcFacetConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd);
-    osmorcFacetConfiguration.setBndFileLocation(BND_FILE_NAME);
-    return osmorcFacetConfiguration;
+    var facetConfiguration = getFacetType().createDefaultConfiguration();
+    facetConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd);
+    facetConfiguration.setBndFileLocation(files.iterator().next().getPath());
+    facetConfiguration.setUseProjectDefaultManifestFileLocation(false);
+    return facetConfiguration;
+  }
+
+  @Override
+  public void setupFacet(@NotNull OsmorcFacet facet, ModifiableRootModel model) {
+    var facetConfiguration = facet.getConfiguration();
+    var bndFile = LocalFileSystem.getInstance().findFileByPath(facetConfiguration.getBndFileLocation());
+    if (bndFile != null) {
+      for (var contentRoot : model.getContentRoots()) {
+        if (VfsUtilCore.isAncestor(contentRoot, bndFile, false)) {
+          facetConfiguration.setBndFileLocation(VfsUtilCore.getRelativePath(bndFile, contentRoot, '/'));
+          break;
+        }
+      }
+    }
   }
 
   @Override

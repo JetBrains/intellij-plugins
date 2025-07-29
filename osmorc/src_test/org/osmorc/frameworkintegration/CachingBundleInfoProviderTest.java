@@ -24,14 +24,16 @@
  */
 package org.osmorc.frameworkintegration;
 
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.NioFiles;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.OsgiTestUtil;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.Assert.*;
 
@@ -39,23 +41,24 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class CachingBundleInfoProviderTest {
-  private File myTempDir;
+  private Path myTempDir;
   private String myDirBundle;
   private String myInvalidDirBundle;
   private String myJarBundle;
 
   @Before
+  @SuppressWarnings("SpellCheckingInspection")
   public void setUp() throws Exception {
-    myTempDir = FileUtil.createTempDirectory("osgi.", ".test");
-    OsgiTestUtil.extractProject("CachingBundleInfoProviderTest", myTempDir.getPath());
-      myDirBundle = new File(myTempDir, "t0/dirbundle").getPath();
-    myInvalidDirBundle = new File(myTempDir, "t0/invaliddirbundle").getPath();
-    myJarBundle = new File(myTempDir, "t0/jarbundle.jar").getPath();
+    myTempDir = Files.createTempDirectory("osgi.test.");
+    OsgiTestUtil.extractProject("CachingBundleInfoProviderTest", myTempDir);
+    myDirBundle = myTempDir.resolve("t0/dirbundle").toString();
+    myInvalidDirBundle = myTempDir.resolve("t0/invaliddirbundle").toString();
+    myJarBundle = myTempDir.resolve("t0/jarbundle.jar").toString();
   }
 
   @After
-  public void tearDown() {
-    FileUtil.delete(myTempDir);
+  public void tearDown() throws IOException {
+    NioFiles.deleteRecursively(myTempDir);
   }
 
   @Test
@@ -66,6 +69,7 @@ public class CachingBundleInfoProviderTest {
   }
 
   @Test
+  @SuppressWarnings("SpellCheckingInspection")
   public void testGetBundleSymbolicName() {
     assertEquals("dirbundle", CachingBundleInfoProvider.getBundleSymbolicName(myDirBundle));
     assertEquals("jarbundle", CachingBundleInfoProvider.getBundleSymbolicName(myJarBundle));

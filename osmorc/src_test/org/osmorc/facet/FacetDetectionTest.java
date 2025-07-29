@@ -24,13 +24,8 @@
  */
 package org.osmorc.facet;
 
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.patterns.ElementPattern;
-import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.FileContentImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +33,7 @@ import org.osmorc.HeavyOsgiFixtureTestCase;
 import org.osmorc.SwingRunner;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -50,21 +45,21 @@ import static org.junit.Assert.*;
 public class FacetDetectionTest extends HeavyOsgiFixtureTestCase {
   @Test
   public void testDetectFacet() throws IOException {
-    Module t0 = ModuleManager.getInstance(myFixture.getProject()).findModuleByName("t0");
-    assertNotNull(t0);
+    var module = ModuleManager.getInstance(myFixture.getProject()).findModuleByName("t0");
+    assertNotNull(module);
 
-    OsmorcFrameworkDetector detector = new OsmorcFrameworkDetector();
-    ElementPattern<FileContent> filter = detector.createSuitableFilePattern();
-    VirtualFile manifestFile = myTempDirFixture.getFile("t0/src/META-INF/MANIFEST.MF");
+    var detector = new OsmorcFrameworkDetector();
+    var filter = detector.createSuitableFilePattern();
+    var manifestFile = myTempDirFixture.getFile("t0/src/META-INF/MANIFEST.MF");
     assertTrue(filter.accepts(FileContentImpl.createByFile(manifestFile)));
 
-    OsmorcFacetConfiguration facetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
+    var facetConfiguration = detector.createConfiguration(List.of(manifestFile));
     assertNotNull(facetConfiguration);
-    assertEquals(facetConfiguration.getManifestLocation(), manifestFile.getPath());
+    assertEquals(manifestFile.getPath(), facetConfiguration.getManifestLocation());
     assertFalse(facetConfiguration.isUseProjectDefaultManifestFileLocation());
 
-    OsmorcFacet facet = OsmorcFacetType.getInstance().createFacet(t0, "OSGi", facetConfiguration, null);
-    ModifiableRootModel model = ModuleRootManager.getInstance(t0).getModifiableModel();
+    var facet = OsmorcFacetType.getInstance().createFacet(module, "OSGi", facetConfiguration, null);
+    var model = ModuleRootManager.getInstance(module).getModifiableModel();
     try {
       detector.setupFacet(facet, model);
       assertEquals("src/META-INF/MANIFEST.MF", facetConfiguration.getManifestLocation());
@@ -76,22 +71,22 @@ public class FacetDetectionTest extends HeavyOsgiFixtureTestCase {
 
   @Test
   public void testDetectBundlorFacet() throws IOException {
-    ModuleManager moduleManager = ModuleManager.getInstance(myFixture.getProject());
-    Module t2 = moduleManager.findModuleByName("t2");
-    assertNotNull(t2);
+    var moduleManager = ModuleManager.getInstance(myFixture.getProject());
+    var module = moduleManager.findModuleByName("t2");
+    assertNotNull(module);
 
-    OsmorcFrameworkDetector detector = new OsmorcFrameworkDetector();
-    ElementPattern<FileContent> filter = detector.createSuitableFilePattern();
-    VirtualFile manifestFile = myTempDirFixture.getFile("t2/src/META-INF/template.mf");
+    var detector = new OsmorcFrameworkDetector();
+    var filter = detector.createSuitableFilePattern();
+    var manifestFile = myTempDirFixture.getFile("t2/src/META-INF/template.mf");
     assertTrue(filter.accepts(FileContentImpl.createByFile(manifestFile)));
 
-    OsmorcFacetConfiguration facetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
+    var facetConfiguration = detector.createConfiguration(List.of(manifestFile));
     assertNotNull(facetConfiguration);
     assertEquals(manifestFile.getPath(), facetConfiguration.getManifestLocation());
     assertFalse(facetConfiguration.isUseProjectDefaultManifestFileLocation());
 
-    OsmorcFacet facet = OsmorcFacetType.getInstance().createFacet(t2, "OSGi", facetConfiguration, null);
-    ModifiableRootModel model = ModuleRootManager.getInstance(t2).getModifiableModel();
+    var facet = OsmorcFacetType.getInstance().createFacet(module, "OSGi", facetConfiguration, null);
+    var model = ModuleRootManager.getInstance(module).getModifiableModel();
     try {
       detector.setupFacet(facet, model);
       assertEquals("", facetConfiguration.getManifestLocation());
@@ -105,8 +100,36 @@ public class FacetDetectionTest extends HeavyOsgiFixtureTestCase {
 
   @Test
   public void testDetectNoFacet() throws IOException {
-    ElementPattern<FileContent> filter = new OsmorcFrameworkDetector().createSuitableFilePattern();
-    VirtualFile manifestFile = myTempDirFixture.getFile("t1/src/META-INF/MANIFEST.MF");
+    var filter = new OsmorcFrameworkDetector().createSuitableFilePattern();
+    var manifestFile = myTempDirFixture.getFile("t1/src/META-INF/MANIFEST.MF");
     assertFalse(filter.accepts(FileContentImpl.createByFile(manifestFile)));
+  }
+
+  @Test
+  public void testDetectingFacetByBndFile() throws IOException {
+    var module = ModuleManager.getInstance(myFixture.getProject()).findModuleByName("t3");
+    assertNotNull(module);
+
+    var detector = new BndOsmorcFrameworkDetector();
+    var filter = detector.createSuitableFilePattern();
+    var bndFile = myTempDirFixture.getFile("t3/bnd.bnd");
+    assertTrue(filter.accepts(FileContentImpl.createByFile(bndFile)));
+
+    var facetConfiguration = detector.createConfiguration(List.of(bndFile));
+    assertNotNull(facetConfiguration);
+    assertEquals(bndFile.getPath(), facetConfiguration.getBndFileLocation());
+    assertFalse(facetConfiguration.isUseProjectDefaultManifestFileLocation());
+
+    var facet = OsmorcFacetType.getInstance().createFacet(module, "OSGi", facetConfiguration, null);
+    var model = ModuleRootManager.getInstance(module).getModifiableModel();
+    try {
+      detector.setupFacet(facet, model);
+      assertEquals("", facetConfiguration.getManifestLocation());
+      assertEquals("bnd.bnd", facetConfiguration.getBndFileLocation());
+      assertTrue(facetConfiguration.isUseBndFile());
+    }
+    finally {
+      model.dispose();
+    }
   }
 }
