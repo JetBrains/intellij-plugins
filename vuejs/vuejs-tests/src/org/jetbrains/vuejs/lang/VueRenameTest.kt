@@ -124,4 +124,100 @@ class VueRenameTest : VueTestCase("rename") {
       checkFileRename("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
+  fun testComponentFromFunctionPlugin_renameFromDeclaration() {
+    checkSymbolRename(
+      mainFile = "global-components.ts",
+      newName = "OtherButtonFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromFunctionPlugin_renameFromUsage() {
+    checkSymbolRename(
+      mainFile = "App.vue",
+      newName = "OtherButtonFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedFunctionPlugin_renameFromDeclaration() {
+    checkSymbolRename(
+      mainFile = "other-global-components.js",
+      newName = "OtherLabelFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedFunctionPlugin_renameFromUsage() {
+    checkSymbolRename(
+      mainFile = "App.vue",
+      newName = "OtherLabelFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedFunctionPluginWithCycle_renameFromDeclaration() {
+    checkSymbolRename(
+      mainFile = "other-global-components.js",
+      newName = "OtherLabelFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedFunctionPluginWithCycle_renameFromUsage() {
+    checkSymbolRename(
+      mainFile = "App.vue",
+      newName = "OtherLabelFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromObjectPlugin_renameFromDeclaration() {
+    checkSymbolRename(
+      mainFile = "global-components.ts",
+      newName = "OtherButtonFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromObjectPlugin_renameFromUsage() {
+    checkSymbolRename(
+      mainFile = "App.vue",
+      newName = "OtherButtonFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedObjectPlugin_renameFromDeclaration() {
+    checkSymbolRename(
+      mainFile = "other-global-components.js",
+      newName = "OtherLabelFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedObjectPlugin_renameFromUsage() {
+    checkSymbolRename(
+      mainFile = "App.vue",
+      newName = "OtherLabelFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedObjectPluginWithCycle_renameFromDeclaration() {
+    checkSymbolRename(
+      mainFile = "other-global-components.js",
+      newName = "OtherLabelFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedObjectPluginWithCycle_renameFromUsage() {
+    checkSymbolRename(
+      mainFile = "App.vue",
+      newName = "OtherLabelFromPlugin",
+      modules = arrayOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
 }
