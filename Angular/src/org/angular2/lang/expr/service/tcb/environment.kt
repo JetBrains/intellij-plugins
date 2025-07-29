@@ -12,6 +12,8 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
+import com.intellij.lang.javascript.psi.types.JSTypeImpl
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -67,9 +69,27 @@ internal class Environment(
   private fun referenceExternalType(extRef: R3Identifiers.ExternalReference): Expression =
     referenceExternalType(extRef.moduleName, extRef.name)
 
-  fun referenceType(dirTypeRef: JSType): Expression =
+  fun referenceType(dirTypeRef: JSType): Expression {
+    val substitutedType = dirTypeRef.substitute()
+    if (substitutedType.sourceElement?.containingFile == file) {
+      val typeScriptType = substitutedType as? TypeScriptType
+                           ?: substitutedType.sourceElement as? TypeScriptType
+      if (typeScriptType is TypeScriptType) {
+        return typeScriptType.toExpression()
+      } else if (substitutedType is JSTypeImpl && substitutedType.sourceElement is TypeScriptClass) {
+        val sourceElement = substitutedType.sourceElement as TypeScriptClass
+        return Expression {
+          withSourceFile(sourceElement.containingFile) {
+            append(substitutedType.getTypeText(JSType.TypeTextFormat.CODE), originalRange = sourceElement.nameIdentifier?.textRange)
+          }
+        }
+      } else {
+        thisLogger().error("Cannot properly map type to an expression: $dirTypeRef")
+      }
+    }
     // TODO detect stuff to import
-    Expression(dirTypeRef.getTypeText(JSType.TypeTextFormat.CODE))
+    return Expression(substitutedType.getTypeText(JSType.TypeTextFormat.CODE))
+  }
 
   private fun reference(element: JSQualifiedNamedElement, kind: ImportExportSpecifierKind): String =
     importCache.computeIfAbsent(element) {
@@ -290,36 +310,41 @@ internal class Environment(
     }.toList()
 
   private fun TypeScriptType.toExpression(): Expression = Expression {
-    acceptChildren(object : JSRecursiveWalkingElementVisitor() {
-      override fun visitElement(element: PsiElement) {
-        if (element is LeafPsiElement) {
-          append(element.text)
-        }
-        else {
-          super.visitElement(element)
-        }
-      }
-
-      override fun visitJSReferenceExpression(node: JSReferenceExpression) {
-        if (node.qualifier == null) {
-          var importSpecifierKind = ImportExportSpecifierKind.IMPORT
-          val templateTarget = node.resolve().let { resolveResult ->
-            if (resolveResult is ES6ImportSpecifier) {
-              importSpecifierKind = resolveResult.specifierKind
-              resolveResult.resolveOverAliases().firstOrNull { it.isValidResult && it.element != null }?.element
-            }
-            else
-              resolveResult
-          }
-          if (templateTarget !is JSQualifiedNamedElement) {
-            append(node.text, node.textRange, supportTypes = true)
+    withSourceFile(containingFile) {
+      acceptChildren(object : JSRecursiveWalkingElementVisitor() {
+        override fun visitElement(element: PsiElement) {
+          if (element is LeafPsiElement) {
+            append(element.text)
           }
           else {
-            append(reference(templateTarget, importSpecifierKind), node.textRange, supportTypes = true)
+            super.visitElement(element)
           }
         }
-      }
-    })
+
+        override fun visitJSReferenceExpression(node: JSReferenceExpression) {
+          if (node.qualifier == null) {
+            var importSpecifierKind = ImportExportSpecifierKind.IMPORT
+            val templateTarget = node.resolve().let { resolveResult ->
+              if (resolveResult is ES6ImportSpecifier) {
+                importSpecifierKind = resolveResult.specifierKind
+                resolveResult.resolveOverAliases().firstOrNull { it.isValidResult && it.element != null }?.element
+              }
+              else
+                resolveResult
+            }
+            if (templateTarget !is JSQualifiedNamedElement) {
+              append(node.text, node.textRange, supportTypes = true)
+            }
+            else {
+              append(reference(templateTarget, importSpecifierKind), node.textRange, supportTypes = true)
+            }
+          }
+          else {
+            super.visitJSReferenceExpression(node)
+          }
+        }
+      })
+    }
   }
 
   private data class ImportInfo(

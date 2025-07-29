@@ -2,22 +2,22 @@
   {
     "file-name": "safeAccess.ts",
     "mappings": [
+      "0:275 => 0:275 (source)",
       "«div» [284] => «_t1» [104]} (no diagnostics) (no semantic)",
       "«i» [300] => «_t2» [145]} (no diagnostics) (no semantic)",
       "«data» [314] => «data» [229]} (no types)",
       "«data» [314] => «this.data» [224]}",
-      "«icon» [320] => «icon» [236]}",
       "«data?.icon» [314] => «(0 as any ? (this.data)!.icon : undefined)» [211]}",
-      "«toString» [326] => «toString» [256]}",
       "«data?.icon?.toString» [314] => «((0 as any ? ((0 as any ? (this.data)!.icon : undefined))!.toString : undefined))!» [197]}",
       "«data?.icon?.toString()» [314] => «(0 as any ? ((0 as any ? ((0 as any ? (this.data)!.icon : undefined))!.toString : undefined))!() : undefined)» [185]}",
+      "«icon» [320] => «icon» [236]}",
+      "«toString» [326] => «toString» [256]}",
       "«i» [361] => «_t3» [300]} (no diagnostics) (no semantic)",
       "«data» [375] => «data» [371]} (no types)",
       "«data» [375] => «this.data» [366]}",
-      "«check» [381] => «check» [378]}",
       "«data?.check» [375] => «((0 as any ? (this.data)!.check : undefined))!» [352]}",
       "«data?.check?.()» [375] => «(0 as any ? ((0 as any ? (this.data)!.check : undefined))!() : undefined)» [340]}",
-      "0:275 => 0:275 (source)",
+      "«check» [381] => «check» [378]}",
       "420:567 => 420:567 (source)"
     ]
   }
