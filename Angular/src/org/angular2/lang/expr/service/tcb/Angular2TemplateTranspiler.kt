@@ -239,6 +239,7 @@ object Angular2TemplateTranspiler {
     val diagnosticsOffset: Int?
     val diagnosticsLength: Int?
     val flags: EnumSet<SourceMappingFlag>
+    val sourceFile: PsiFile?
 
     fun offsetBy(generatedOffset: Int = 0, sourceOffset: Int = 0): SourceMapping
 

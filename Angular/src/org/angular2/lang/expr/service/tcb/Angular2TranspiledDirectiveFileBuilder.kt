@@ -134,6 +134,12 @@ object Angular2TranspiledDirectiveFileBuilder {
     val environment: Environment,
   )
 
+  private class FileMappingsInfo() {
+    val sourceMappings = mutableListOf<SourceMapping>()
+    val contextVarMappings = mutableMapOf<TextRange, TextRange>()
+    val directiveVarMappings = mutableMapOf<Pair<TextRange, Angular2Directive>, TextRange>()
+  }
+
   private fun buildTranspiledDirectiveFile(
     context: Angular2TemplateTranspiler.FileContext,
     directiveFile: PsiFile,
@@ -146,29 +152,35 @@ object Angular2TranspiledDirectiveFileBuilder {
 
     val injectedLanguageManager = InjectedLanguageManager.getInstance(directiveFile.project)
 
-    val componentFileMappings = SmartList<SourceMapping>()
-    val directiveFileContextVarMappings = mutableMapOf<TextRange, TextRange>()
-    val componentFileDirectiveVarMappings = mutableMapOf<Pair<TextRange, Angular2Directive>, TextRange>()
+    val fileMappings: MutableMap<PsiFile, FileMappingsInfo> = mutableMapOf()
     val diagnostics = MultiMap<PsiFile, Angular2TemplateTranspiler.Diagnostic>()
     val nameMaps = MultiMap<PsiFile, Pair<Int, Map<String, String>>>()
-    val mappings = SmartList<FileMappings>()
+
+    fun addSourceMapping(psiFile: PsiFile, sourceMapping: SourceMapping) {
+      fileMappings.computeIfAbsent(psiFile) { FileMappingsInfo() }.sourceMappings.add(sourceMapping)
+    }
+
+    fun addContextVarMapping(psiFile: PsiFile, sourceOffset: TextRange, generatedOffset: TextRange) {
+      fileMappings.computeIfAbsent(psiFile) { FileMappingsInfo() }.contextVarMappings[sourceOffset] = generatedOffset
+    }
+
+    fun addDirectiveVarMapping(psiFile: PsiFile, sourceOffset: TextRange, directive: Angular2Directive, generatedOffset: TextRange) {
+      fileMappings.computeIfAbsent(psiFile) { FileMappingsInfo() }.directiveVarMappings[sourceOffset to directive] = generatedOffset
+    }
 
     fun contributeInlineTranspilation(template: TranspiledCode, sourceFile: PsiFile, generatedMappingsOffset: Int, sourceMappingOffset: Int) {
-      template.sourceMappings.mapTo(componentFileMappings) {
-        it.offsetBy(sourceOffset = sourceMappingOffset, generatedOffset = generatedMappingsOffset)
+      template.sourceMappings.forEach {
+        it.sourceFile?.let { sourceFile -> addSourceMapping(sourceFile, it.offsetBy(generatedOffset = generatedMappingsOffset)) }
+        ?: addSourceMapping(sourceFile, it.offsetBy(sourceOffset = sourceMappingOffset, generatedOffset = generatedMappingsOffset))
       }
-      template.contextVarMappings
-        .associateTo(directiveFileContextVarMappings) { mapping ->
-          Pair(mapping.getElementNameRangeWithOffset(sourceMappingOffset),
-               mapping.getGeneratedRangeWithOffset(generatedMappingsOffset))
-        }
-      template.directiveVarMappings
-        .associateTo(componentFileDirectiveVarMappings) { mapping ->
-          Pair(
-            Pair(mapping.getElementNameRangeWithOffset(sourceMappingOffset), mapping.directive),
-            mapping.getGeneratedRangeWithOffset(generatedMappingsOffset)
-          )
-        }
+      template.contextVarMappings.forEach {
+        addContextVarMapping(sourceFile, it.getElementNameRangeWithOffset(sourceMappingOffset),
+                             it.getGeneratedRangeWithOffset(generatedMappingsOffset))
+      }
+      template.directiveVarMappings.forEach {
+        addDirectiveVarMapping(sourceFile, it.getElementNameRangeWithOffset(sourceMappingOffset), it.directive,
+                               it.getGeneratedRangeWithOffset(generatedMappingsOffset))
+      }
       diagnostics.putValues(sourceFile, template.diagnostics.map { it.offsetBy(sourceMappingOffset) })
       nameMaps.putValues(sourceFile, template.nameMappings.map { (offset, map) -> Pair(offset + sourceMappingOffset, map) })
     }
@@ -200,13 +212,14 @@ object Angular2TranspiledDirectiveFileBuilder {
     generatedCode.append(context.getCommonCode())
 
     for (template in templates) {
+      val templateFile = template.templateFile
       generatedCode.append("\n/* TCB for ")
-        .append(template.templateFile.name)
+        .append(templateFile.name)
         .append(" */\n\n")
       val generatedMappingsOffset = generatedCode.length
       generatedCode.append(template.generatedCode)
 
-      val injectionHost = injectedLanguageManager.getInjectionHost(template.templateFile)
+      val injectionHost = injectedLanguageManager.getInjectionHost(templateFile)
       if (injectionHost != null) {
         val hostRange = injectionHost.textRange
         inlineTemplateRanges.add(hostRange)
@@ -214,18 +227,18 @@ object Angular2TranspiledDirectiveFileBuilder {
         contributeInlineTranspilation(template, injectionHost.containingFile, generatedMappingsOffset, sourceMappingOffset)
       }
       else {
-        val fileMappings = template.sourceMappings.map {
-          it.offsetBy(generatedOffset = generatedMappingsOffset)
+        template.sourceMappings.forEach {
+          addSourceMapping(it.sourceFile ?: templateFile, it.offsetBy(generatedOffset = generatedMappingsOffset))
         }
-        val contextVarMappings = template.contextVarMappings.associate { mapping ->
-          Pair(mapping.getElementNameRangeWithOffset(0), mapping.getGeneratedRangeWithOffset(generatedMappingsOffset))
+        template.contextVarMappings.forEach { mapping ->
+          addContextVarMapping(templateFile, mapping.getElementNameRangeWithOffset(0), mapping.getGeneratedRangeWithOffset(generatedMappingsOffset))
         }
-        val directiveVarMappings = template.directiveVarMappings.associate { mapping ->
-          Pair(Pair(mapping.getElementNameRangeWithOffset(0), mapping.directive), mapping.getGeneratedRangeWithOffset(generatedMappingsOffset))
+        template.directiveVarMappings.forEach { mapping ->
+          addDirectiveVarMapping(templateFile, mapping.getElementNameRangeWithOffset(0), mapping.directive,
+                                 mapping.getGeneratedRangeWithOffset(generatedMappingsOffset))
         }
-        mappings.add(FileMappings(template.templateFile, fileMappings.sorted(), contextVarMappings, directiveVarMappings))
-        diagnostics.putValues(template.templateFile, template.diagnostics)
-        nameMaps.putValues(template.templateFile, template.nameMappings)
+        diagnostics.putValues(templateFile, template.diagnostics)
+        nameMaps.putValues(templateFile, template.nameMappings)
       }
     }
     for (hostBindings in directiveHostBindings) {
@@ -243,7 +256,7 @@ object Angular2TranspiledDirectiveFileBuilder {
     for (inlineTemplateRange in inlineTemplateRanges + TextRange(componentFileText.length, componentFileText.length)) {
       val totalCodeOffset = insertedCodeMap.floorEntry(inlineTemplateRange.startOffset - 1)?.value ?: 0
       val sourceLength = inlineTemplateRange.startOffset - lastRangeEnd
-      componentFileMappings.add(SourceMappingData(
+      addSourceMapping(directiveFile, SourceMappingData(
         lastRangeEnd,
         sourceLength,
         totalCodeOffset + lastRangeEnd,
@@ -251,15 +264,17 @@ object Angular2TranspiledDirectiveFileBuilder {
         diagnosticsOffset = lastRangeEnd,
         diagnosticsLength = sourceLength,
         flags = EnumSet.allOf(SourceMappingFlag::class.java),
+        sourceFile = null,
       ))
       lastRangeEnd = inlineTemplateRange.endOffset
     }
 
-    mappings.add(FileMappings(directiveFile, componentFileMappings, directiveFileContextVarMappings, componentFileDirectiveVarMappings))
     return TranspiledDirectiveFile(
       directiveFile,
       generatedCode.toString(),
-      mappings.associateBy { it.sourceFile },
+      fileMappings.mapValues { (file, info) ->
+        FileMappings(file, info.sourceMappings.sorted(), info.contextVarMappings, info.directiveVarMappings)
+      },
       diagnostics.entrySet().associateBy({ it.key }, { it.value.toList() }),
       nameMaps.entrySet().associateBy({ it.key }, { pair -> pair.value.associateByTo(TreeMap(), { it.first }, { it.second }) }),
     ).also {
