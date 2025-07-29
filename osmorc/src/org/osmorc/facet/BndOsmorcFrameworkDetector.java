@@ -17,9 +17,7 @@ import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import java.util.Collection;
 
 /**
- * Framework detector for bnd files. File needs to be named bnd.bnd
- *
- * @author <a href="mailto:tibor@malanik.eu">Tibor Malanik</a>
+ * Framework detector for Bnd/Bndtools files.
  */
 public class BndOsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcFacet, OsmorcFacetConfiguration> {
   private static final String BND_FILE_NAME = "bnd.bnd";
@@ -35,7 +33,7 @@ public class BndOsmorcFrameworkDetector extends FacetBasedFrameworkDetector<Osmo
 
   @Override
   protected OsmorcFacetConfiguration createConfiguration(Collection<? extends VirtualFile> files) {
-    OsmorcFacetConfiguration osmorcFacetConfiguration = getFacetType().createDefaultConfiguration();
+    var osmorcFacetConfiguration = getFacetType().createDefaultConfiguration();
     osmorcFacetConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd);
     osmorcFacetConfiguration.setBndFileLocation(BND_FILE_NAME);
     return osmorcFacetConfiguration;

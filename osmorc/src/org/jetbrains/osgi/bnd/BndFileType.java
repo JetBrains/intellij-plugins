@@ -5,13 +5,12 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 
 /**
- * File type for bnd (osgi bundle) files.
- *
- * @author <a href="mailto:tibor@malanik.eu">Tibor Malanik</a>
+ * File type for Bnd/Bndtools files.
  */
 public class BndFileType extends LanguageFileType {
   public static final String BND_EXT = "bnd";
@@ -23,18 +22,22 @@ public class BndFileType extends LanguageFileType {
     super(BndLanguage.INSTANCE);
   }
 
+  @Override
   public @NotNull String getName() {
     return "bnd";
   }
 
+  @Override
   public @NotNull String getDescription() {
-    return "bnd";
+    return OsmorcBundle.message("bnd.file.type");
   }
 
+  @Override
   public @NotNull String getDefaultExtension() {
     return BND_EXT;
   }
 
+  @Override
   public @Nullable Icon getIcon() {
     return AllIcons.FileTypes.Config;
   }

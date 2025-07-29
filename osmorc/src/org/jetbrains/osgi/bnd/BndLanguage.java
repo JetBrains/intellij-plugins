@@ -3,13 +3,10 @@ package org.jetbrains.osgi.bnd;
 
 import com.intellij.lang.Language;
 
-/**
- * @author <a href="mailto:tibor@malanik.eu">Tibor Malanik</a>
- */
 public class BndLanguage extends Language {
     public static final BndLanguage INSTANCE = new BndLanguage();
 
-    public BndLanguage() {
+    private BndLanguage() {
         super("bnd");
     }
 }
