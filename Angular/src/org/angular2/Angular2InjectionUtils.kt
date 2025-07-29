@@ -48,6 +48,7 @@ object Angular2InjectionUtils {
       }
     }
     return file.findElementAt(caretOffset)
+           ?: if (caretOffset == file.textLength) file.findElementAt(caretOffset - 1) else null
   }
 
   @JvmStatic

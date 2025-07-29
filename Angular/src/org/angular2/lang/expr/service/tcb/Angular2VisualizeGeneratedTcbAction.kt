@@ -45,8 +45,8 @@ private class Angular2VisualizeGeneratedTcbAction : AnAction() {
     runWithModalProgressBlocking(element.project, "Building TCBs") {
       val transpiledTemplate =
         readAction {
-          Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveFile(element.containingFile
-                                                                            ?: return@readAction null)
+          Angular2TranspiledDirectiveFileBuilder.getTranspiledDirectiveAndTopLevelSourceFile(
+            element.containingFile ?: return@readAction null)?.first
         }
         ?: return@runWithModalProgressBlocking
 
