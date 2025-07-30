@@ -54,7 +54,7 @@ class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private
     val elementType = element.node.elementType
     if (elementType == Angular2HtmlTokenTypes.INTERPOLATION_START || elementType == Angular2HtmlTokenTypes.INTERPOLATION_END) return true
     for (parent in element.parents(false)) {
-      if (parent.node.elementType == Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR) return true
+      if (parent.node.elementType is Angular2EmbeddedExprTokenType.Angular2InterpolationExprTokenType) return true
     }
     return false
   }
@@ -104,7 +104,7 @@ class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private
 
     (enclosingTag ?: sourceFile).acceptChildren(object : Angular2HtmlRecursiveElementVisitor() {
       override fun visitElement(element: PsiElement) {
-        if (element.node.elementType == Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR) {
+        if (element.node.elementType is Angular2EmbeddedExprTokenType.Angular2InterpolationExprTokenType) {
           var grandChild = element.firstChild
           while (grandChild != null) {
             if (grandChild is Angular2Interpolation) {

@@ -16,6 +16,7 @@ import com.intellij.xml.util.XmlUtil
 import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
+import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.Angular2InterpolationExprTokenType
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.Companion.createTemplateBindings
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
@@ -119,7 +120,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
         }
         val interpolation = mark()
         advance()
-        if (token() === Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR) {
+        if (token() is Angular2InterpolationExprTokenType) {
           advance()
         }
         if (!inNgNonBindableContext()) {
@@ -321,7 +322,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
             || tt === XmlTokenType.XML_START_TAG_START) {
           break
         }
-        if (tt === Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR && result === XmlElementType.XML_ATTRIBUTE) {
+        if (tt is Angular2InterpolationExprTokenType && result === XmlElementType.XML_ATTRIBUTE) {
           result = Angular2HtmlStubElementTypes.PROPERTY_BINDING
         }
         when (tt) {
@@ -378,7 +379,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
     assert(token() === Angular2HtmlTokenTypes.EXPANSION_FORM_START)
     var expansionForm = mark()
     advance()
-    if (!remapTokensUntilComma(Angular2EmbeddedExprTokenType.BINDING_EXPR) /*switch value*/
+    if (!remapTokensUntilComma(Angular2EmbeddedExprTokenType.createBindingExpr()) /*switch value*/
         || !remapTokensUntilComma(XmlTokenType.XML_DATA_CHARACTERS) /*type*/) {
       markCriticalExpansionFormProblem(expansionForm)
       return
@@ -539,10 +540,10 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
     private fun getAttributeContentType(type: IElementType, name: String): IElementType? =
       when (type) {
         Angular2HtmlStubElementTypes.PROPERTY_BINDING, Angular2HtmlStubElementTypes.BANANA_BOX_BINDING -> {
-          Angular2EmbeddedExprTokenType.BINDING_EXPR
+          Angular2EmbeddedExprTokenType.createBindingExpr()
         }
         Angular2HtmlStubElementTypes.EVENT -> {
-          Angular2EmbeddedExprTokenType.ACTION_EXPR
+          Angular2EmbeddedExprTokenType.createActionExpr()
         }
         Angular2HtmlStubElementTypes.TEMPLATE_BINDINGS -> {
           createTemplateBindings(name)

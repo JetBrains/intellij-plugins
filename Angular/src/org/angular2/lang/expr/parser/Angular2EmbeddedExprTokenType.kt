@@ -45,6 +45,7 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
     if (other == null || javaClass != other.javaClass) return false
     val type = other as Angular2EmbeddedExprTokenType?
     return expressionType == type!!.expressionType && name == type.name
+           && index == other.index
   }
 
 
@@ -52,6 +53,7 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
     var result = super.hashCode()
     result = 31 * result + expressionType.hashCode()
     result = 31 * result + name.hashCode()
+    result = 31 * result + index
     return result
   }
 
@@ -71,6 +73,10 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
       ThreeState.NO
     else
       ThreeState.UNSURE
+
+  class Angular2InterpolationExprTokenType
+  internal constructor()
+    : Angular2EmbeddedExprTokenType( "NG:INTERPOLATION_EXPR", ExpressionType.INTERPOLATION)
 
   class Angular2BlockExprTokenType
   internal constructor(@NonNls debugName: String, expressionType: ExpressionType, @NonNls blockName: String, parameterIndex: Int)
@@ -125,30 +131,24 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
 
   companion object {
 
-    @JvmField
-    val ACTION_EXPR: Angular2EmbeddedExprTokenType = Angular2EmbeddedExprTokenType(
-      "NG:ACTION_EXPR", ExpressionType.ACTION)
-
-    @JvmField
-    val BINDING_EXPR: Angular2EmbeddedExprTokenType = Angular2EmbeddedExprTokenType(
-      "NG:BINDING_EXPR", ExpressionType.BINDING)
-
-    @JvmField
-    val INTERPOLATION_EXPR: Angular2EmbeddedExprTokenType = Angular2EmbeddedExprTokenType(
-      "NG:INTERPOLATION_EXPR", ExpressionType.INTERPOLATION)
-
-    @JvmField
-    val SIMPLE_BINDING_EXPR: Angular2EmbeddedExprTokenType = Angular2EmbeddedExprTokenType(
-      "NG:SIMPLE_BINDING_EXPR", ExpressionType.SIMPLE_BINDING)
+    @JvmStatic
+    fun createActionExpr(): Angular2EmbeddedExprTokenType =
+      Angular2EmbeddedExprTokenType( "NG:ACTION_EXPR", ExpressionType.ACTION)
 
     @JvmStatic
-    fun createBlockParameter(blockName: String, parameterIndex: Int): Angular2EmbeddedExprTokenType {
-      return Angular2BlockExprTokenType("NG:BLOCK_PARAMETER", ExpressionType.BLOCK_PARAMETER, blockName, parameterIndex)
-    }
+    fun createBindingExpr(): Angular2EmbeddedExprTokenType =
+      Angular2EmbeddedExprTokenType( "NG:BINDING_EXPR", ExpressionType.BINDING)
 
     @JvmStatic
-    fun createTemplateBindings(templateKey: String): Angular2EmbeddedExprTokenType {
-      return Angular2EmbeddedExprTokenType("NG:TEMPLATE_BINDINGS_EXPR", ExpressionType.TEMPLATE_BINDINGS, templateKey)
-    }
+    fun createInterpolationExpr(): Angular2EmbeddedExprTokenType =
+      Angular2InterpolationExprTokenType()
+
+    @JvmStatic
+    fun createBlockParameter(blockName: String, parameterIndex: Int): Angular2EmbeddedExprTokenType =
+      Angular2BlockExprTokenType("NG:BLOCK_PARAMETER", ExpressionType.BLOCK_PARAMETER, blockName, parameterIndex)
+
+    @JvmStatic
+    fun createTemplateBindings(templateKey: String): Angular2EmbeddedExprTokenType =
+      Angular2EmbeddedExprTokenType("NG:TEMPLATE_BINDINGS_EXPR", ExpressionType.TEMPLATE_BINDINGS, templateKey)
   }
 }

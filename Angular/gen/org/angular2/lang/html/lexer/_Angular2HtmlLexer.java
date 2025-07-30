@@ -1301,7 +1301,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
           case 109: break;
           case 34:
             { if (processInterpolationChar(INTERPOLATION_END)) {
-    return Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
+    return Angular2EmbeddedExprTokenType.createInterpolationExpr();
   }
             }
           // fall through
@@ -1322,7 +1322,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
           case 112: break;
           case 37:
             { if (processInterpolationChar(yystate() == INTERPOLATION_DQ ? INTERPOLATION_END_DQ : INTERPOLATION_END_SQ)) {
-    return Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
+    return Angular2EmbeddedExprTokenType.createInterpolationExpr();
   }
             }
           // fall through
