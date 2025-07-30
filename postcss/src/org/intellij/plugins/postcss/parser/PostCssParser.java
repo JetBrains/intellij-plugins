@@ -360,7 +360,7 @@ public final class PostCssParser extends CssParser2 {
     }
     PsiBuilder.Marker idSelector = createCompositeElement();
     addIdentOrAmpersandOrError(CssElementTypes.CSS_HASH, CssElementTypes.CSS_HASH, PostCssTokenTypes.HASH_SIGN);
-    idSelector.done(CssStubElementTypes.CSS_ID_SELECTOR);
+    idSelector.done(CssElementTypes.CSS_ID_SELECTOR);
     return true;
   }
 
