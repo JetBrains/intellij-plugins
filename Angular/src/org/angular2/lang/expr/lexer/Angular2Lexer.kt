@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lexer.*
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.expr.lexer.Angular2TokenTypes.Companion.STRING_PART_SPECIAL_SEQ
+import org.angular2.lang.html.Angular2TemplateSyntax
 
 class Angular2Lexer(config: Config) : MergingLexerAdapterBase(FlexAdapter(_Angular2Lexer(config))), RestartableLexer {
 
@@ -64,18 +65,26 @@ class Angular2Lexer(config: Config) : MergingLexerAdapterBase(FlexAdapter(_Angul
     }
   }
 
-  sealed interface Config
+  sealed interface Config {
+    val syntax: Angular2TemplateSyntax
+  }
 
-  data object RegularBinding : Config
+  data class RegularBinding(
+    override val syntax: Angular2TemplateSyntax,
+  ) : Config
 
-  data class BlockParameter(val name: String, val index: Int) : Config
+  data class BlockParameter(
+    override val syntax: Angular2TemplateSyntax,
+    val name: String,
+    val index: Int,
+  ) : Config
 
   private class MyMergeFunction(prevTokenEscapeSequence: Boolean) : MergeFunction {
 
     var isPrevTokenEscapeSequence: Boolean = prevTokenEscapeSequence
       private set
 
-    override fun merge(type: IElementType, originalLexer: Lexer): IElementType? {
+    override fun merge(type: IElementType, originalLexer: Lexer): IElementType {
       when (type) {
         JSTokenTypes.STRING_LITERAL_PART -> while (true) {
           val tokenType = originalLexer.tokenType

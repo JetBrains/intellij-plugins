@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
   private boolean tokenizeExpansionForms;
   private boolean enableBlockSyntax;
   private boolean enableLetSyntax;
+  private Angular2TemplateSyntax templateSyntax;
 
   private String interpolationStart;
   private String interpolationEnd;
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
       interpolationStart = interpolationConfig.first;
       interpolationEnd = interpolationConfig.second;
     }
+    this.templateSyntax = templateSyntax;
     this.tokenizeExpansionForms = templateSyntax.getTokenizeExpansionForms();
     this.enableBlockSyntax = templateSyntax.getEnableBlockSyntax();
     this.enableLetSyntax = templateSyntax.getEnableLetSyntax();
@@ -358,7 +360,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 
 <INTERPOLATION_DQ, INTERPOLATION_SQ> [^] {
   if (processInterpolationChar(yystate() == INTERPOLATION_DQ ? INTERPOLATION_END_DQ : INTERPOLATION_END_SQ)) {
-    return Angular2EmbeddedExprTokenType.createInterpolationExpr();
+    return Angular2EmbeddedExprTokenType.createInterpolationExpr(templateSyntax);
   }
 }
 
@@ -399,7 +401,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 
 <INTERPOLATION> [^] {
   if (processInterpolationChar(INTERPOLATION_END)) {
-    return Angular2EmbeddedExprTokenType.createInterpolationExpr();
+    return Angular2EmbeddedExprTokenType.createInterpolationExpr(templateSyntax);
   }
 }
 <INTERPOLATION_END> [^] {
@@ -476,7 +478,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
        yypushback(1);
        yybegin(BLOCK_PARAMETERS_END);
        if (parameterStart < zzMarkedPos)
-          return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+          return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex);
      }
   }
   "(" {
@@ -487,14 +489,14 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
        yypushback(1);
        yybegin(YYINITIAL);
        if (parameterStart < zzMarkedPos)
-          return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+          return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex);
       }
   ";" {
       yypushback(1);
       blockParenLevel = 1;
       yybegin(BLOCK_PARAMETER_END);
       if (parameterStart < zzMarkedPos)
-         return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex++);
+         return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex++);
       else
          parameterIndex++;
     }
@@ -506,7 +508,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
   <<EOF>> {
     yybegin(YYINITIAL);
     if (parameterStart < zzMarkedPos)
-       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+       return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex);
   }
 }
 <BLOCK_PARAMETER_END> {
@@ -548,7 +550,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
   [^] {
     yybegin(YYINITIAL);
     yypushback(1);
-    return Angular2EmbeddedExprTokenType.createBlockParameter("let", 0);
+    return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, "let", 0);
   }
 }
 <LET_VALUE> {
@@ -561,11 +563,11 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
   ";" {
     yybegin(LET_VALUE_END);
     yypushback(1);
-    return Angular2EmbeddedExprTokenType.createBlockParameter("let", 0);
+    return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, "let", 0);
   }
   <<EOF>> {
     yybegin(YYINITIAL);
-    return Angular2EmbeddedExprTokenType.createBlockParameter("let", 0);
+    return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, "let", 0);
   }
 }
 <LET_VALUE_END> {

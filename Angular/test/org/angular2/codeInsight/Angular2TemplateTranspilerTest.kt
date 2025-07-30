@@ -139,6 +139,18 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_COMMON_19_2_0,
   )
 
+  fun testPower() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_20_0_0_NEXT_3
+  )
+
+  fun testVoidKeyword() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_20_0_0_NEXT_3
+  )
+
+  fun testVoidKeywordNg19() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_19_2_0
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,

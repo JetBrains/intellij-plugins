@@ -10,10 +10,15 @@ import org.angular2.codeInsight.blocks.BLOCK_DEFER
 import org.angular2.codeInsight.blocks.BLOCK_IF
 import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.expr.lexer.Angular2Lexer
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.jetbrains.annotations.NonNls
+import java.io.File
 
-class Angular2LexerTest : AngularLexerTestCase() {
-  private var lexerFactory: () -> Lexer = { Angular2Lexer(Angular2Lexer.RegularBinding) }
+open class Angular2LexerTest : AngularLexerTestCase() {
+
+  protected open val templateSyntax: Angular2TemplateSyntax get() = Angular2TemplateSyntax.V_2
+
+  private var lexerFactory: () -> Lexer = { Angular2Lexer(Angular2Lexer.RegularBinding(templateSyntax)) }
 
   fun testIdent() {
     doFileTest("js")
@@ -94,7 +99,7 @@ class Angular2LexerTest : AngularLexerTestCase() {
   }
 
   private fun doBlockTest(name: String, index: Int) {
-    doFileTest { Angular2Lexer(Angular2Lexer.BlockParameter(name, index)) }
+    doFileTest { Angular2Lexer(Angular2Lexer.BlockParameter(templateSyntax, name, index)) }
   }
 
   private fun doFileTest(factory: () -> Lexer) {
@@ -103,4 +108,20 @@ class Angular2LexerTest : AngularLexerTestCase() {
     doFileTest("js")
     lexerFactory = oldFactory
   }
+
+
+  override fun getPathToTestDataFile(extension: String): String {
+    val basePath = dirPath
+    val fileName = getTestName(true) + extension
+    // Iterate over syntax versions starting from the `templateSyntax` down to V_2
+    return Angular2TemplateSyntax.entries.toList().asReversed().asSequence()
+             .dropWhile { it != templateSyntax }
+             .filter { it != Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS }
+             .firstNotNullOfOrNull { syntax ->
+               "${basePath}${syntax.dirSuffix}/$fileName".takeIf { File(it).exists() }
+             }
+           ?: "${basePath}${templateSyntax.dirSuffix}/$fileName"
+  }
+
+  private val Angular2TemplateSyntax.dirSuffix: String get() = if (this == Angular2TemplateSyntax.V_2) "" else "_$this"
 }

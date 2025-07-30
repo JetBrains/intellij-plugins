@@ -15,7 +15,7 @@ abstract class Angular2SyntaxHighlighterBase(
 ) : TypeScriptHighlighter(language.optionHolder) {
 
   override fun getHighlightingLexer(): Lexer =
-    Angular2Lexer(Angular2Lexer.RegularBinding)
+    Angular2Lexer(Angular2Lexer.RegularBinding(language.templateSyntax))
 
   override fun getKeywords(): TokenSet =
     language.getKeywords()

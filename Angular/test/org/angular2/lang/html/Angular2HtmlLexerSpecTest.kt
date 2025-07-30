@@ -649,7 +649,7 @@ class Angular2HtmlLexerSpecTest {
   }
 
   private val INTERPOLATION_EXPR_TOKEN =
-    Angular2EmbeddedExprTokenType.createInterpolationExpr()
+    Angular2EmbeddedExprTokenType.createInterpolationExpr(Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS)
 
   private fun tokenizeWithoutErrors(
     input: String, tokenizeExpansionForms: Boolean = false,

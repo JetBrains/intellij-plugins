@@ -30,6 +30,9 @@ interface Angular2TokenTypes {
                                              JSTokenTypes.TYPE_KEYWORD, JSTokenTypes.IN_KEYWORD)
 
     @JvmField
+    val KEYWORDS_20: TokenSet = TokenSet.orSet(KEYWORDS, TokenSet.create(JSTokenTypes.VOID_KEYWORD))
+
+    @JvmField
     val STRING_PART_SPECIAL_SEQ: TokenSet = TokenSet.create(ESCAPE_SEQUENCE, INVALID_ESCAPE_SEQUENCE, XML_CHAR_ENTITY_REF)
   }
 }

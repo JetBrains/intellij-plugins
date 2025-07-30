@@ -18,6 +18,7 @@ enum class Angular2TemplateSyntax(
   val tokenizeExpansionForms: Boolean,
   val enableBlockSyntax: Boolean = false,
   val enableLetSyntax: Boolean = false,
+  val enableVoidKeyword: Boolean = false,
 ) {
   V_2(
     Angular2HtmlLanguage, Angular2HtmlFileElementType,
@@ -39,6 +40,11 @@ enum class Angular2TemplateSyntax(
     Angular181SvgLanguage, Angular181SvgFileElementType,
     Angular2Language, Angular2FileElementType,
     true, true, true),
+  V_20(
+    Angular20HtmlLanguage, Angular20HtmlFileElementType,
+    Angular20SvgLanguage, Angular20SvgFileElementType,
+    Angular20Language, Angular20FileElementType,
+    true, true, true, true),
   ;
 
   val version: String = name.filter { it.isDigit() }

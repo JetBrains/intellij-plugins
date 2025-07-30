@@ -129,8 +129,20 @@ JSFile:test.comparison.action
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('1')
         PsiElement(JS:GT)('>')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('2')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:MULTMULT)('**')
+          PsiWhiteSpace(' ')
+          JSBinaryExpression
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('3')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:MULTMULT)('**')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('4')
 ------
 JSFile:test.comparison.action
   Angular2Action

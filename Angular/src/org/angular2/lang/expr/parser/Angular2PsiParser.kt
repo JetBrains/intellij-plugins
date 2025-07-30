@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.IElementType
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.jetbrains.annotations.NonNls
 
 class Angular2PsiParser : PsiParser {
@@ -16,19 +17,20 @@ class Angular2PsiParser : PsiParser {
     if (containingFile != null) {
       val ext = FileUtilRt.getExtension(containingFile.name)
       val parseMethod = parseMappings[ext]
+      val templateSyntax = Angular2TemplateSyntax.of(containingFile) ?: Angular2TemplateSyntax.entries.last()
       if (parseMethod != null) {
-        parseMethod(builder, root)
+        parseMethod(templateSyntax, builder, root)
       }
       else if (TEMPLATE_BINDINGS == ext) {
         val templateKey = FileUtilRt.getExtension(FileUtilRt.getNameWithoutExtension(containingFile.name))
-        Angular2Parser.parseTemplateBindings(builder, root, templateKey)
+        Angular2Parser.parseTemplateBindings(templateSyntax, builder, root, templateKey)
       }
       else if (ext == "js") {
         //special case for creation of AST from text
-        Angular2Parser.parseJS(builder, root)
+        Angular2Parser.parseJS(templateSyntax, builder, root)
       }
       else {
-        Angular2Parser.parseInterpolation(builder, root)
+        Angular2Parser.parseInterpolation(templateSyntax, builder, root)
       }
     }
     else {
@@ -50,17 +52,17 @@ class Angular2PsiParser : PsiParser {
     private val LOG: @NonNls Logger = Logger.getInstance(Angular2PsiParser::class.java)
 
     private val parseMappings = mapOf(
-      ACTION to { builder: PsiBuilder, root: IElementType ->
-        Angular2Parser.parseAction(builder, root)
+      ACTION to { templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType ->
+        Angular2Parser.parseAction(templateSyntax, builder, root)
       },
-      BINDING to { builder: PsiBuilder, root: IElementType ->
-        Angular2Parser.parseBinding(builder, root)
+      BINDING to { templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType ->
+        Angular2Parser.parseBinding(templateSyntax, builder, root)
       },
-      INTERPOLATION to { builder: PsiBuilder, root: IElementType ->
-        Angular2Parser.parseInterpolation(builder, root)
+      INTERPOLATION to { templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType ->
+        Angular2Parser.parseInterpolation(templateSyntax, builder, root)
       },
-      SIMPLE_BINDING to { builder: PsiBuilder, root: IElementType ->
-        Angular2Parser.parseSimpleBinding(builder, root)
+      SIMPLE_BINDING to { templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType ->
+        Angular2Parser.parseSimpleBinding(templateSyntax, builder, root)
       })
   }
 }

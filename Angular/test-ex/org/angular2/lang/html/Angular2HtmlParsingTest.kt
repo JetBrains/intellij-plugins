@@ -20,6 +20,7 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
 
     configureFromParserDefinition(
       when (templateSyntax) {
+        Angular2TemplateSyntax.V_20 -> Angular20HtmlParserDefinition()
         Angular2TemplateSyntax.V_18_1 -> Angular181HtmlParserDefinition()
         Angular2TemplateSyntax.V_17 -> Angular17HtmlParserDefinition()
         Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS,
@@ -27,15 +28,7 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
           -> Angular2HtmlParserDefinition()
       }, "html")
 
-    sequenceOf(
-      when (templateSyntax) {
-        Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS,
-        Angular2TemplateSyntax.V_2,
-        Angular2TemplateSyntax.V_17,
-        Angular2TemplateSyntax.V_18_1,
-          -> Angular2ParserDefinition()
-      }, Angular2ParserDefinition(), Angular2HtmlParserDefinition()
-    ).forEach(::registerParserDefinition)
+    sequenceOf(Angular2ParserDefinition(), Angular2HtmlParserDefinition()).forEach(::registerParserDefinition)
 
     addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, Angular2HtmlLanguage, Angular2HtmlASTComparator())
     HtmlEmbeddedContentSupport.register(application, getTestRootDisposable(), Angular2HtmlEmbeddedContentSupport::class.java)
@@ -439,4 +432,17 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
       {{ `https://www.google.com?q=${'$'}{test + {a:12}.a}` }}
     """.trimIndent())
   }
+
+  fun testVoidKeyword() {
+    doTestHtml("""
+      <div (click)='void fun()'></div>
+    """)
+  }
+
+  fun testPowerOperator() {
+    doTestHtml("""
+      <div (click)='12 ** 2 ** 3'></div>
+    """)
+  }
+
 }
