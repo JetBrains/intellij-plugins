@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.types.JSExpressionElementType
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import com.intellij.util.ThreeState
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.impl.*
@@ -30,19 +31,29 @@ interface Angular2ElementTypes: Angular2StubElementTypes {
     : Angular2ElementType(debugName, classConstructor), JSExpressionElementType
 
   class Angular2TemplateBindingType(private val key: String, private val keyKind: Angular2TemplateBinding.KeyKind, private val name: String?)
-    : IElementType("NG:TEMPLATE_BINDING_STATEMENT", Angular2Language, false), ICompositeElementType {
+    : IElementType("NG:TEMPLATE_BINDING_STATEMENT ($key:$keyKind:$name)", Angular2Language, false), ICompositeElementType {
 
-    override fun createCompositeNode(): ASTNode {
-      return Angular2TemplateBindingImpl(TEMPLATE_BINDING_STATEMENT, key, keyKind, name)
-    }
+    override fun createCompositeNode(): ASTNode =
+      Angular2TemplateBindingImpl(this, key, keyKind, name)
+
+    fun compareTo(other: Angular2TemplateBindingType): ThreeState =
+      if (other.key != key || other.keyKind != keyKind || other.name != name)
+        ThreeState.NO
+      else
+        ThreeState.UNSURE
   }
 
   class Angular2TemplateBindingsType(private val myTemplateName: String)
-    : IElementType("NG:TEMPLATE_BINDINGS_STATEMENT", Angular2Language, false), ICompositeElementType {
+    : IElementType("NG:TEMPLATE_BINDINGS_STATEMENT ($myTemplateName)", Angular2Language, false), ICompositeElementType {
 
-    override fun createCompositeNode(): ASTNode {
-      return Angular2TemplateBindingsImpl(TEMPLATE_BINDINGS_STATEMENT, myTemplateName)
-    }
+    override fun createCompositeNode(): ASTNode =
+      Angular2TemplateBindingsImpl(this, myTemplateName)
+
+    fun compareTo(other: Angular2TemplateBindingsType): ThreeState =
+      if (other.myTemplateName != myTemplateName)
+        ThreeState.NO
+      else
+        ThreeState.UNSURE
   }
 
   companion object {
@@ -87,20 +98,8 @@ interface Angular2ElementTypes: Angular2StubElementTypes {
       Angular2ElementType("NG:SIMPLE_BINDING") { node -> Angular2SimpleBindingImpl(node) }
 
     @JvmField
-    val TEMPLATE_BINDINGS_STATEMENT: IElementType =
-      Angular2ElementType("NG:TEMPLATE_BINDINGS_STATEMENT") {
-        throw UnsupportedOperationException("Use createTemplateBindingsStatement method instead")
-      }
-
-    @JvmField
     val TEMPLATE_BINDING_KEY: IElementType =
       Angular2ElementType("NG:TEMPLATE_BINDING_KEY") { node -> Angular2TemplateBindingKeyImpl(node) }
-
-    @JvmField
-    val TEMPLATE_BINDING_STATEMENT: IElementType =
-      Angular2ElementType("NG:TEMPLATE_BINDING_STATEMENT") {
-        throw UnsupportedOperationException("Use createTemplateBindingStatement method instead")
-      }
 
     @JvmField
     val BLOCK_PARAMETER_STATEMENT: IElementType =

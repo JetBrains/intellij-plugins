@@ -42,9 +42,9 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    if (other == null || javaClass != other.javaClass) return false
-    val type = other as Angular2EmbeddedExprTokenType?
-    return expressionType == type!!.expressionType && name == type.name
+    if (other !is Angular2EmbeddedExprTokenType || javaClass != other.javaClass) return false
+    return expressionType == other.expressionType
+           && name == other.name
            && index == other.index
   }
 
