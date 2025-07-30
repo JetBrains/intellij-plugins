@@ -1,7 +1,10 @@
+<script lang="ts">
+import MyLocalPanel from './MyLocalPanel.vue'
+</script>
+
 <template>
   <MyButtonFromPlugin></MyButtonFromPlugin>
   <MyLabelFromPlugin></MyLabelFromPlugin>
-</template>
 
-<script lang="ts">
-</script>
+  <MyLocalPanel></MyLocalPanel>
+</template>
