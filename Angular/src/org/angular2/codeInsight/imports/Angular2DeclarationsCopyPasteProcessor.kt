@@ -15,7 +15,10 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.XmlRecursiveElementWalkingVisitor
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
@@ -31,7 +34,7 @@ import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.inspections.actions.NgModuleImportAction
 import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.Angular2HtmlFile
@@ -50,7 +53,7 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
   }
 
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
-    context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language == Angular2Language) }
+    context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language is Angular2ExprDialect) }
 
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean =
     false

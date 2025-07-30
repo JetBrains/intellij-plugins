@@ -52,7 +52,7 @@ class AngularInaccessibleSymbolInspection : JSInspection() {
 
   override fun createVisitor(holder: ProblemsHolder, session: LocalInspectionToolSession): PsiElementVisitor {
     val fileLang = holder.file.language
-    if (fileLang.isKindOf(Angular2HtmlLanguage) || Angular2Language.`is`(fileLang)) {
+    if (fileLang.isKindOf(Angular2HtmlLanguage) || fileLang.isKindOf(Angular2Language)) {
       return object : Angular2ElementVisitor(), HintedPsiElementVisitor {
 
         override fun getHintPsiElements(): List<Class<*>> =

@@ -4,22 +4,15 @@ import com.intellij.lang.javascript.stubs.register
 import com.intellij.lang.javascript.stubs.serializers.JSFileStubSerializer
 import com.intellij.psi.stubs.StubRegistry
 import com.intellij.psi.stubs.StubRegistryExtension
-import org.angular2.lang.expr.parser.FILE
-import org.angular2.lang.html.psi.impl.Angular2HtmlBananaBoxBindingImpl
-import org.angular2.lang.html.psi.impl.Angular2HtmlEventImpl
-import org.angular2.lang.html.psi.impl.Angular2HtmlLetImpl
-import org.angular2.lang.html.psi.impl.Angular2HtmlPropertyBindingImpl
-import org.angular2.lang.html.psi.impl.Angular2HtmlReferenceImpl
-import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl
+import org.angular2.lang.html.Angular2TemplateSyntax
+import org.angular2.lang.html.psi.impl.*
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.*
 import org.angular2.lang.stubs.*
-import org.angular2.lang.stubs.Angular2HtmlAttributeStubFactory
-import org.angular2.lang.stubs.Angular2HtmlAttributeStubSerializer
 
 class Angular2StubRegistryExtension : StubRegistryExtension {
   override fun register(registry: StubRegistry) {
-    FILE.let {
-      registry.registerStubSerializer(it, JSFileStubSerializer(it.language))
+    for (type in Angular2TemplateSyntax.entries.map { it.expressionLanguageFileElementType }.distinct()) {
+      registry.registerStubSerializer(type, JSFileStubSerializer(type.language))
     }
 
     listOf(

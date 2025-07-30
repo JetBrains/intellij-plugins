@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
 import org.angular2.index.Angular2IndexUtil
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.Angular2FormsComponent
 
@@ -20,7 +20,7 @@ class Angular2FormsComponentImpl(private val componentClass: TypeScriptClass) : 
     reference
       .takeIf { it.qualifier == null || it.qualifier is JSThisExpression }
       ?.let {
-        if (it.language == Angular2Language || it.qualifier is JSThisExpression)
+        if (it.language is Angular2ExprDialect || it.qualifier is JSThisExpression)
           it.resolve()
         else
           Angular2IndexUtil.resolveLocally(it)

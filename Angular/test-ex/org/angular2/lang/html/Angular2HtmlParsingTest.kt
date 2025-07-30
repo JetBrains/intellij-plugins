@@ -6,8 +6,8 @@ import com.intellij.javascript.testFramework.web.JSHtmlParsingTest
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.CustomLanguageASTComparator
 import org.angular2.Angular2TestUtil
+import org.angular2.lang.expr.Angular2ParserDefinition
 import org.angular2.lang.expr.parser.Angular2HtmlASTComparator
-import org.angular2.lang.expr.parser.Angular2ParserDefinition
 import org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport
 import java.io.File
 
@@ -27,7 +27,15 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
           -> Angular2HtmlParserDefinition()
       }, "html")
 
-    sequenceOf(Angular2ParserDefinition(), Angular2HtmlParserDefinition()).forEach(::registerParserDefinition)
+    sequenceOf(
+      when (templateSyntax) {
+        Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS,
+        Angular2TemplateSyntax.V_2,
+        Angular2TemplateSyntax.V_17,
+        Angular2TemplateSyntax.V_18_1,
+          -> Angular2ParserDefinition()
+      }, Angular2ParserDefinition(), Angular2HtmlParserDefinition()
+    ).forEach(::registerParserDefinition)
 
     addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, Angular2HtmlLanguage, Angular2HtmlASTComparator())
     HtmlEmbeddedContentSupport.register(application, getTestRootDisposable(), Angular2HtmlEmbeddedContentSupport::class.java)

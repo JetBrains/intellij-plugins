@@ -14,7 +14,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.map2Array
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.highlighting.Angular2HighlighterColors
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.html.Angular2TemplateSyntax
@@ -33,7 +33,7 @@ class Angular2HtmlFileHighlighter(
       return result
     }
     result = super.getTokenHighlights(tokenType)
-    if (tokenType.language is Angular2Language
+    if (tokenType.language is Angular2ExprDialect
         || tokenType.language is JavascriptLanguage) {
       result = ArrayUtil.insert(result, 1, Angular2HtmlHighlighterColors.NG_EXPRESSION)
     }

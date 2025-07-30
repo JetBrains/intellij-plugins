@@ -14,7 +14,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.util.asSafely
 import org.angular2.codeInsight.blocks.BLOCK_LET
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.psi.Angular2HtmlBlock
@@ -148,11 +148,11 @@ internal object Angular2HtmlFormattingHelper {
     else
       null
 
-  private fun endsWithLetBlockWithinTag(block: Block?):Boolean =
+  private fun endsWithLetBlockWithinTag(block: Block?): Boolean =
     block is Angular2SyntheticBlock
     && isLetBlock(block.subBlocks.lastOrNull())
 
-  private fun startsWithLetBlockWithinTag(block: Block?):Boolean =
+  private fun startsWithLetBlockWithinTag(block: Block?): Boolean =
     block is Angular2SyntheticBlock
     && isLetBlock(block.subBlocks.firstOrNull())
 
@@ -192,7 +192,8 @@ internal object Angular2HtmlFormattingHelper {
           Angular2HtmlTokenTypes.BLOCK_NAME,
           Angular2HtmlElementTypes.BLOCK_PARAMETERS,
           Angular2HtmlElementTypes.BLOCK_CONTENTS,
-            -> { Spacing.createSpacing(1, 1, 0,
+            -> {
+            Spacing.createSpacing(1, 1, 0,
                                   false, xmlFormattingPolicy.keepBlankLines)
           }
           else -> null
@@ -271,6 +272,6 @@ internal object Angular2HtmlFormattingHelper {
   private fun isAngularInterpolationBorder(child1: Block?, child2: Block?): Boolean =
     (child1 is Angular2HtmlFormattingBlock && (child1.node.elementType == Angular2HtmlTokenTypes.INTERPOLATION_START
                                                || child1.node.elementType == Angular2HtmlTokenTypes.INTERPOLATION_END))
-    && (child2 as? AnotherLanguageBlockWrapper)?.node?.psi?.let { it.language is Angular2Language && it.parent !is XmlAttribute } == true
+    && (child2 as? AnotherLanguageBlockWrapper)?.node?.psi?.let { it.language is Angular2ExprDialect && it.parent !is XmlAttribute } == true
 
 }

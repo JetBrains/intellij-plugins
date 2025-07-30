@@ -15,7 +15,7 @@ import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.Angular2PipeArgumentsList
 import org.jetbrains.annotations.NonNls
@@ -39,7 +39,7 @@ object Angular2InspectionSuppressor : InspectionSuppressor {
     @Throws(IncorrectOperationException::class)
     override fun createSuppression(project: Project, element: PsiElement, container: PsiElement) {
       val parserFacade = PsiParserFacade.getInstance(project)
-      val comment = parserFacade.createLineOrBlockCommentFromText(Angular2Language, suppressText)
+      val comment = parserFacade.createLineOrBlockCommentFromText(Angular2ExprDialect.forContext(element), suppressText)
       container.parent.addAfter(comment, container)
     }
 
@@ -60,8 +60,10 @@ object Angular2InspectionSuppressor : InspectionSuppressor {
   @NonNls
   private val PREFIXES_TO_STRIP = arrayOf("TypeScript", "JS", "Angular")
 
-  private fun getStatementToolSuppressedIn(place: PsiElement,
-                                           toolId: String): PsiElement? {
+  private fun getStatementToolSuppressedIn(
+    place: PsiElement,
+    toolId: String,
+  ): PsiElement? {
     val statement = PsiTreeUtil.getParentOfType(place, Angular2EmbeddedExpression::class.java)
     if (statement != null) {
       var candidate = PsiTreeUtil.skipWhitespacesForward(statement)
@@ -80,8 +82,10 @@ object Angular2InspectionSuppressor : InspectionSuppressor {
     return null
   }
 
-  private fun isSuppressedInStatement(place: PsiElement,
-                                      toolId: String): Boolean {
+  private fun isSuppressedInStatement(
+    place: PsiElement,
+    toolId: String,
+  ): Boolean {
     return ReadAction.compute<PsiElement, RuntimeException> { getStatementToolSuppressedIn(place, toolId) } != null
   }
 

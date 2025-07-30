@@ -14,13 +14,13 @@ import org.angular2.codeInsight.blocks.isLetDeclarationVariable
 import org.angular2.codeInsight.blocks.isLetReferenceBeforeDeclaration
 import org.angular2.codeInsight.template.getTemplateElementsScopeFor
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 
 class AngularIncorrectLetUsageInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
     object : JSElementVisitor() {
       override fun visitJSVariable(node: JSVariable) {
-        if (!isLetDeclarationVariable(node) || node.language != Angular2Language) return
+        if (!isLetDeclarationVariable(node) || node.language !is Angular2ExprDialect) return
         val varName = node.name
                       ?: return
         val varScope = getTemplateElementsScopeFor(node)
@@ -45,7 +45,7 @@ class AngularIncorrectLetUsageInspection : LocalInspectionTool() {
       }
 
       override fun visitJSReferenceExpression(node: JSReferenceExpression) {
-        if (node.qualifier == null && node.language == Angular2Language) {
+        if (node.qualifier == null && node.language is Angular2ExprDialect) {
           val resolved = node.resolve()
           if (resolved != null && isLetReferenceBeforeDeclaration(node, resolved)) {
             holder.registerProblem(

@@ -37,7 +37,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import org.angular2.codeInsight.imports.Angular2ExpressionsCopyPasteProcessor.Angular2ExpressionsImportsTransferableData
 import org.angular2.entities.source.Angular2SourceUtil
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.Angular2HtmlFile
 import java.awt.datatransfer.DataFlavor
 
@@ -53,7 +53,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   }
 
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
-    context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language == Angular2Language) }
+    context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language is Angular2ExprDialect) }
 
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean =
     false
@@ -100,11 +100,13 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     Angular2SourceUtil.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
 
-  override fun insertRequiredImports(pasteContext: PsiElement,
-                                     data: Angular2ExpressionsImportsTransferableData,
-                                     destinationModule: PsiElement,
-                                     imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
-                                     pasteContextLanguage: Language) {
+  override fun insertRequiredImports(
+    pasteContext: PsiElement,
+    data: Angular2ExpressionsImportsTransferableData,
+    destinationModule: PsiElement,
+    imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
+    pasteContextLanguage: Language,
+  ) {
     if (Util.isExpressionContext(pasteContext) != data.isExpressionContext) return
     val globalImports = data.importedElements.mapNotNull {
       if (it.myInfo.importType == ImportExportType.BARE && it.myPath == "")
@@ -115,7 +117,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
         null
     }
     if (imports.isNotEmpty() || globalImports.isNotEmpty()) {
-      ES6CreateImportUtil.addRequiredImports(pasteContext, Angular2Language, imports)
+      ES6CreateImportUtil.addRequiredImports(pasteContext, Angular2ExprDialect.forContext(pasteContext), imports)
 
       globalImports.forEach {
         JSImportAction(null, pasteContext, it.name)
