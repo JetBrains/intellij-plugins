@@ -8,7 +8,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType
-import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
+import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.Angular2InterpolationExprTokenType
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
@@ -111,7 +111,7 @@ open class Angular2HtmlLexer(
       var result = type
       val next = originalLexer.tokenType
       if (result === Angular2HtmlTokenTypes.INTERPOLATION_START
-          && next !== Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR
+          && next !is Angular2InterpolationExprTokenType
           && next !== Angular2HtmlTokenTypes.INTERPOLATION_END) {
         result = if (next === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN
                      || next === XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER)

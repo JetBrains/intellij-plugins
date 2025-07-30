@@ -358,7 +358,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 
 <INTERPOLATION_DQ, INTERPOLATION_SQ> [^] {
   if (processInterpolationChar(yystate() == INTERPOLATION_DQ ? INTERPOLATION_END_DQ : INTERPOLATION_END_SQ)) {
-    return Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
+    return Angular2EmbeddedExprTokenType.createInterpolationExpr();
   }
 }
 
@@ -399,7 +399,7 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 
 <INTERPOLATION> [^] {
   if (processInterpolationChar(INTERPOLATION_END)) {
-    return Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
+    return Angular2EmbeddedExprTokenType.createInterpolationExpr();
   }
 }
 <INTERPOLATION_END> [^] {

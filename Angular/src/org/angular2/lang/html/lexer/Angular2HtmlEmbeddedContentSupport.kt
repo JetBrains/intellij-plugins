@@ -30,7 +30,7 @@ class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
   override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> {
     return listOf(
       HtmlTokenEmbeddedContentProvider(lexer,
-                                       Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR,
+                                       Angular2EmbeddedExprTokenType.Angular2InterpolationExprTokenType::class.java,
                                        { Angular2EmbeddedHighlightingLexer(Angular2Lexer.RegularBinding) }),
       HtmlTokenEmbeddedContentProvider(lexer,
                                        Angular2BlockExprTokenType::class.java,

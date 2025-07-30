@@ -180,7 +180,7 @@ class Angular2HtmlLexerSpecTest {
                    listOf(XmlTokenType.XML_EQ, "="),
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, "v"),
+                   listOf(INTERPOLATION_EXPR_TOKEN, "v"),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}"),
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
                    listOf(TokenType.WHITE_SPACE, " "),
@@ -189,7 +189,7 @@ class Angular2HtmlLexerSpecTest {
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN, "s"),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, "m"),
+                   listOf(INTERPOLATION_EXPR_TOKEN, "m"),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}"),
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN, "e"),
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
@@ -199,7 +199,7 @@ class Angular2HtmlLexerSpecTest {
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN, "s"),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, "m//c"),
+                   listOf(INTERPOLATION_EXPR_TOKEN, "m//c"),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}"),
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN, "e"),
                    listOf(XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
@@ -382,15 +382,15 @@ class Angular2HtmlLexerSpecTest {
         it("should parse interpolation") {
           Matchers.expect(tokenizeAndHumanizeParts("{{ a }}b{{ c // comment }}")).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, " a "),
+                   listOf(INTERPOLATION_EXPR_TOKEN, " a "),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}"),
                    listOf(XmlTokenType.XML_DATA_CHARACTERS, "b"),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, " c // comment "),
+                   listOf(INTERPOLATION_EXPR_TOKEN, " c // comment "),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}")))
           Matchers.expect(tokenizeAndHumanizeParts("{{a}}", false)).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, "a"),
+                   listOf(INTERPOLATION_EXPR_TOKEN, "a"),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}")))
         }
         it("should parse empty interpolation") {
@@ -399,13 +399,13 @@ class Angular2HtmlLexerSpecTest {
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}")))
           Matchers.expect(tokenizeAndHumanizeParts("{{ }}", false)).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, " "),
+                   listOf(INTERPOLATION_EXPR_TOKEN, " "),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}")))
         }
         it("should parse interpolation with custom markers") {
           Matchers.expect(tokenizeAndHumanizeParts("{% a %}", false, Pair.pair("{%", "%}"))).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{%"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, " a "),
+                   listOf(INTERPOLATION_EXPR_TOKEN, " a "),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "%}")))
         }
         it("should parse empty interpolation with custom markers") {
@@ -414,17 +414,17 @@ class Angular2HtmlLexerSpecTest {
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "%}")))
           Matchers.expect(tokenizeAndHumanizeParts("{% %}", false, Pair.pair("{%", "%}"))).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{%"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, " "),
+                   listOf(INTERPOLATION_EXPR_TOKEN, " "),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "%}")))
         }
         it("should parse interpolation with entities") {
           Matchers.expect(tokenizeAndHumanizeParts("{{&lt;}}", false)).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, "&lt;"),
+                   listOf(INTERPOLATION_EXPR_TOKEN, "&lt;"),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}")))
           Matchers.expect(tokenizeAndHumanizeParts("{{&xee12;}}", false)).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, "&xee12;"),
+                   listOf(INTERPOLATION_EXPR_TOKEN, "&xee12;"),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}")))
         }
         it("should handle CR & LF") {
@@ -456,7 +456,7 @@ class Angular2HtmlLexerSpecTest {
         it("should allow \"<\" in text nodes") {
           Matchers.expect(tokenizeAndHumanizeParts("{{ a < b ? c : d }}")).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, " a < b ? c : d "),
+                   listOf(INTERPOLATION_EXPR_TOKEN, " a < b ? c : d "),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}")))
 
           //expect(tokenizeAndHumanizeSourceSpans("<p>a<b</p>")).toEqual(newArrayList(
@@ -501,13 +501,13 @@ class Angular2HtmlLexerSpecTest {
         it("should be able to escape {") {
           Matchers.expect(tokenizeAndHumanizeParts("{{ \"{\" }}")).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, " \"{\" "),
+                   listOf(INTERPOLATION_EXPR_TOKEN, " \"{\" "),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}")))
         }
         it("should be able to escape {{") {
           Matchers.expect(tokenizeAndHumanizeParts("{{ \"{{\" }}")).toEqual(
             listOf(listOf(Angular2HtmlTokenTypes.INTERPOLATION_START, "{{"),
-                   listOf(Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, " \"{{\" "),
+                   listOf(INTERPOLATION_EXPR_TOKEN, " \"{{\" "),
                    listOf(Angular2HtmlTokenTypes.INTERPOLATION_END, "}}")))
         }
         it("should treat expansion form as text when they are not parsed") {
@@ -648,9 +648,13 @@ class Angular2HtmlLexerSpecTest {
     }
   }
 
+  private val INTERPOLATION_EXPR_TOKEN =
+    Angular2EmbeddedExprTokenType.createInterpolationExpr()
+
   private fun tokenizeWithoutErrors(
     input: String, tokenizeExpansionForms: Boolean = false,
-    interpolationConfig: Pair<String, String>? = null): List<Token> {
+    interpolationConfig: Pair<String, String>? = null,
+  ): List<Token> {
 
     //
     //  const tokenizeResult = lex.tokenize(
@@ -667,7 +671,8 @@ class Angular2HtmlLexerSpecTest {
 
   private fun tokenizeAndHumanizeParts(
     input: String, tokenizeExpansionForms: Boolean = false,
-    interpolationConfig: Pair<String, String>? = null): List<List<*>?> {
+    interpolationConfig: Pair<String, String>? = null,
+  ): List<List<*>?> {
     return tokenizeWithoutErrors(input, tokenizeExpansionForms, interpolationConfig)
       .map { (type, contents) -> listOf(type, contents) }
   }
