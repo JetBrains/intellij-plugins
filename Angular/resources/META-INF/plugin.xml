@@ -258,11 +258,11 @@
     <braceMatcher filetype="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <braceMatcher filetype="Angular181Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <lang.syntaxHighlighterFactory language="Angular2Html"
-                                   implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
+                                   implementationClass="org.angular2.lang.html.Angular2HtmlSyntaxHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="Angular17Html"
-                                   implementationClass="org.angular2.lang.html.highlighting.Angular17HtmlHighlighterFactory"/>
+                                   implementationClass="org.angular2.lang.html.Angular17HtmlSyntaxHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="Angular181Html"
-                                   implementationClass="org.angular2.lang.html.highlighting.Angular181HtmlHighlighterFactory"/>
+                                   implementationClass="org.angular2.lang.html.Angular181HtmlSyntaxHighlighterFactory"/>
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2HtmlCompletionContributor"
                             id="Angular2HtmlCompletionContributor"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
@@ -325,10 +325,10 @@
     <errorQuickFixProvider implementation="org.angular2.inspections.Angular2ErrorQuickFixProvider"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
-    <idIndexer filetype="Angular17Html" implementationClass="org.angular2.lang.html.index.Angular17HtmlIdIndexer"/>
-    <todoIndexer filetype="Angular17Html" implementationClass="org.angular2.lang.html.index.Angular17HtmlTodoIndexer"/>
-    <idIndexer filetype="Angular181Html" implementationClass="org.angular2.lang.html.index.Angular181HtmlIdIndexer"/>
-    <todoIndexer filetype="Angular181Html" implementationClass="org.angular2.lang.html.index.Angular181HtmlTodoIndexer"/>
+    <idIndexer filetype="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlIdIndexer"/>
+    <todoIndexer filetype="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlTodoIndexer"/>
+    <idIndexer filetype="Angular181Html" implementationClass="org.angular2.lang.html.Angular181HtmlIdIndexer"/>
+    <todoIndexer filetype="Angular181Html" implementationClass="org.angular2.lang.html.Angular181HtmlTodoIndexer"/>
     <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.psi.formatter.Angular2HtmlFormattingModelBuilder"/>
     <lang.foldingBuilder language="Angular2Html" implementationClass="org.angular2.editor.Angular2HtmlFoldingBuilder"/>
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>

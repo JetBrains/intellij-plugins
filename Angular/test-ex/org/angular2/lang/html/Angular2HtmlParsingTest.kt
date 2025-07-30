@@ -9,9 +9,6 @@ import org.angular2.Angular2TestUtil
 import org.angular2.lang.expr.parser.Angular2HtmlASTComparator
 import org.angular2.lang.expr.parser.Angular2ParserDefinition
 import org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport
-import org.angular2.lang.html.parser.Angular17HtmlParserDefinition
-import org.angular2.lang.html.parser.Angular181HtmlParserDefinition
-import org.angular2.lang.html.parser.Angular2HtmlParserDefinition
 import java.io.File
 
 open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
