@@ -4,7 +4,10 @@ package org.angular2.lang.expr.parser
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.WhitespacesBinders
-import com.intellij.lang.javascript.*
+import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSKeywordSets
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.JavaScriptParserBundle
 import com.intellij.lang.javascript.parsing.AdvancesLexer
 import com.intellij.lang.javascript.parsing.ExpressionParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
@@ -16,23 +19,25 @@ import com.intellij.psi.tree.TokenSet
 import org.angular2.codeInsight.blocks.*
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingStatement
 import org.angular2.lang.expr.parser.Angular2ElementTypes.Companion.createTemplateBindingsStatement
 import org.angular2.lang.expr.psi.Angular2TemplateBinding.KeyKind
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.templateBindingVarToDirectiveInput
 import org.jetbrains.annotations.NonNls
 
 class Angular2Parser private constructor(
+  language: Angular2ExprDialect,
   builder: PsiBuilder,
   private val myIsAction: Boolean,
   private val myIsSimpleBinding: Boolean,
   private val myIsJavaScript: Boolean,
 ) : JavaScriptParser(
-  Angular2Language, builder
+  language, builder
 ) {
-  constructor(builder: PsiBuilder) : this(builder, false, false, true)
+  constructor(language: Angular2ExprDialect, builder: PsiBuilder) : this(language, builder, false, false, true)
 
   override val expressionParser: Angular2ExpressionParser =
     Angular2ExpressionParser()
@@ -483,42 +488,42 @@ class Angular2Parser private constructor(
     private const val CHAR_ENTITY_QUOT: @NonNls String = "&quot;"
     private const val CHAR_ENTITY_APOS: @NonNls String = "&apos;"
 
-    fun parseAction(builder: PsiBuilder, root: IElementType) {
-      parseRoot(builder, root, Angular2ElementTypes.ACTION_STATEMENT, true, false) { parser ->
+    fun parseAction(templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType) {
+      parseRoot(templateSyntax, builder, root, Angular2ElementTypes.ACTION_STATEMENT, true, false) { parser ->
         parser.parseChain()
       }
     }
 
-    fun parseBinding(builder: PsiBuilder, root: IElementType) {
-      parseRoot(builder, root, Angular2ElementTypes.BINDING_STATEMENT, false, false) { parser ->
+    fun parseBinding(templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType) {
+      parseRoot(templateSyntax, builder, root, Angular2ElementTypes.BINDING_STATEMENT, false, false) { parser ->
         if (!parser.parseQuote()) {
           parser.parseChain()
         }
       }
     }
 
-    fun parseTemplateBindings(builder: PsiBuilder, root: IElementType, templateKey: String) {
-      parseRoot(builder, root, createTemplateBindingsStatement(templateKey), false, false) { parser ->
+    fun parseTemplateBindings(templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType, templateKey: String) {
+      parseRoot(templateSyntax, builder, root, createTemplateBindingsStatement(templateKey), false, false) { parser ->
         parser.parseTemplateBindings(templateKey)
       }
     }
 
-    fun parseInterpolation(builder: PsiBuilder, root: IElementType) {
-      parseRoot(builder, root, Angular2ElementTypes.INTERPOLATION_STATEMENT, false, false) { parser ->
+    fun parseInterpolation(templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType) {
+      parseRoot(templateSyntax, builder, root, Angular2ElementTypes.INTERPOLATION_STATEMENT, false, false) { parser ->
         parser.parseChain()
       }
     }
 
-    fun parseSimpleBinding(builder: PsiBuilder, root: IElementType) {
-      parseRoot(builder, root, Angular2ElementTypes.SIMPLE_BINDING_STATEMENT, false, true) { parser ->
+    fun parseSimpleBinding(templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType) {
+      parseRoot(templateSyntax, builder, root, Angular2ElementTypes.SIMPLE_BINDING_STATEMENT, false, true) { parser ->
         if (!parser.parseQuote()) {
           parser.parseChain()
         }
       }
     }
 
-    fun parseBlockParameter(builder: PsiBuilder, root: IElementType, blockName: String, parameterIndex: Int) {
-      parseRoot(builder, root, Angular2ElementTypes.BLOCK_PARAMETER_STATEMENT, false, false) { parser ->
+    fun parseBlockParameter(templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType, blockName: String, parameterIndex: Int) {
+      parseRoot(templateSyntax, builder, root, Angular2ElementTypes.BLOCK_PARAMETER_STATEMENT, false, false) { parser ->
         when (blockName) {
           BLOCK_IF -> when (parameterIndex) {
             0 -> parser.parseChain(allowEmpty = false)
@@ -709,6 +714,7 @@ class Angular2Parser private constructor(
     }
 
     private fun parseRoot(
+      templateSyntax: Angular2TemplateSyntax,
       builder: PsiBuilder,
       root: IElementType,
       statementType: IElementType,
@@ -718,13 +724,13 @@ class Angular2Parser private constructor(
     ) {
       val rootMarker = builder.mark()
       val statementMarker = builder.mark()
-      parseAction(Angular2Parser(builder, isAction, isSimpleBinding, false).statementParser)
+      parseAction(Angular2Parser(templateSyntax.expressionLanguage, builder, isAction, isSimpleBinding, false).statementParser)
       statementMarker.done(statementType)
       rootMarker.done(root)
     }
 
-    fun parseJS(builder: PsiBuilder, root: IElementType) {
-      Angular2Parser(builder).parseJS(root)
+    fun parseJS(templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType) {
+      Angular2Parser(templateSyntax.expressionLanguage, builder).parseJS(root)
     }
 
     private fun finishTemplateBindingKey(key: Marker, isVariable: Boolean) {

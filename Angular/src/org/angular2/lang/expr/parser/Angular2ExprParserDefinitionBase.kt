@@ -22,7 +22,7 @@ abstract class Angular2ExprParserDefinitionBase(
   private val templateSyntax: Angular2TemplateSyntax,
 ) : JavascriptParserDefinition() {
   override fun createLexer(project: Project?): Lexer {
-    return Angular2Lexer(Angular2Lexer.RegularBinding)
+    return Angular2Lexer(Angular2Lexer.RegularBinding(templateSyntax))
   }
 
   override fun createParser(project: Project?): PsiParser {
@@ -30,7 +30,7 @@ abstract class Angular2ExprParserDefinitionBase(
   }
 
   override fun createJSParser(builder: PsiBuilder): JavaScriptParser {
-    return Angular2Parser(builder)
+    return Angular2Parser(templateSyntax.expressionLanguage, builder)
   }
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile {

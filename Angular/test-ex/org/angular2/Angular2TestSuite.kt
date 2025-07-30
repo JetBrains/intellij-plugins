@@ -9,23 +9,14 @@ import org.angular2.cli.Angular2CliContextTest
 import org.angular2.cli.Angular2ConfigTest
 import org.angular2.codeInsight.*
 import org.angular2.codeInsight.deprecated.*
-import org.angular2.codeInsight.deprecated.Angular2ComponentDeclarationNavigationTest
 import org.angular2.codeInsight.inspections.*
 import org.angular2.codeInsight.navigation.Angular2FindUsagesTest
 import org.angular2.codeInsight.navigation.Angular2GotoDeclarationTest
 import org.angular2.codeInsight.navigation.Angular2GotoRelatedTest
 import org.angular2.codeInsight.navigation.Angular2GotoSymbolTest
 import org.angular2.codeInsight.refactoring.*
-import org.angular2.css.Angular2CssClassTest
-import org.angular2.css.Angular2CssCompletionTest
-import org.angular2.css.Angular2CssHighlightingTest
-import org.angular2.css.Angular2CssInspectionsTest
-import org.angular2.css.Angular2CssRenameTest
-import org.angular2.css.Angular2CssUsageHighlightingTest
-import org.angular2.lang.expr.Angular2LexerSpecTest
-import org.angular2.lang.expr.Angular2LexerTest
-import org.angular2.lang.expr.Angular2ParserSpecTest
-import org.angular2.lang.expr.Angular2ParserTest
+import org.angular2.css.*
+import org.angular2.lang.expr.*
 import org.angular2.lang.html.*
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest
 import org.angular2.library.forms.Angular2FormsTestSuite
@@ -38,8 +29,10 @@ import org.junit.runners.Suite
   Angular2BlueprintListTest::class,
   Angular2LexerSpecTest::class,
   Angular2LexerTest::class,
+  Angular20LexerTest::class,
   Angular2ParserSpecTest::class,
   Angular2ParserTest::class,
+  Angular20ParserTest::class,
   Angular2HtmlLexerSpecTest::class,
   Angular2HtmlLexerTest::class,
   Angular2HtmlHighlightingLexerTest::class,
@@ -50,9 +43,13 @@ import org.junit.runners.Suite
   Angular181HtmlLexerTest::class,
   Angular181HtmlHighlightingLexerTest::class,
   Angular181HtmlIndexerTest::class,
+  Angular20HtmlLexerTest::class,
+  Angular20HtmlHighlightingLexerTest::class,
+  Angular20HtmlIndexerTest::class,
   Angular2HtmlParsingTest::class,
   Angular17HtmlParsingTest::class,
   Angular181HtmlParsingTest::class,
+  Angular20HtmlParsingTest::class,
   Angular2SemanticHighlightingTest::class,
   Angular2DirectiveSimpleSelectorSpecTest::class,
   Angular2TemplateTranspilerTest::class,

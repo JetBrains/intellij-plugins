@@ -15,10 +15,9 @@ import org.angular2.lang.html.parser.Angular2AttributeType
 
 open class Angular2HtmlLexer(
   highlightMode: Boolean,
-  templateSyntax: Angular2TemplateSyntax,
+  val templateSyntax: Angular2TemplateSyntax,
   interpolationConfig: Pair<String, String>?,
-)
-  : HtmlLexer(Angular2HtmlMergingLexer(Angular2HtmlFlexAdapter(templateSyntax, interpolationConfig), highlightMode),
+) : HtmlLexer(Angular2HtmlMergingLexer(Angular2HtmlFlexAdapter(templateSyntax, interpolationConfig), highlightMode),
               true, highlightMode) {
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int, tokenIterator: TokenIterator?) {

@@ -53,4 +53,5 @@ class AngularUnsupportedSyntaxInspection : LocalInspectionTool() {
 private val keywordToVersionMap = mutableMapOf(
   JSTokenTypes.TYPEOF_KEYWORD to Angular2LangUtil.AngularVersion.V_19,
   JSTokenTypes.IN_KEYWORD to Angular2LangUtil.AngularVersion.V_20,
+  JSTokenTypes.MULTMULT to Angular2LangUtil.AngularVersion.V_20,
 )

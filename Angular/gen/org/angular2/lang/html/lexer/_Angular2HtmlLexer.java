@@ -677,6 +677,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
   private boolean tokenizeExpansionForms;
   private boolean enableBlockSyntax;
   private boolean enableLetSyntax;
+  private Angular2TemplateSyntax templateSyntax;
 
   private String interpolationStart;
   private String interpolationEnd;
@@ -701,6 +702,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
       interpolationStart = interpolationConfig.first;
       interpolationEnd = interpolationConfig.second;
     }
+    this.templateSyntax = templateSyntax;
     this.tokenizeExpansionForms = templateSyntax.getTokenizeExpansionForms();
     this.enableBlockSyntax = templateSyntax.getEnableBlockSyntax();
     this.enableLetSyntax = templateSyntax.getEnableLetSyntax();
@@ -1061,12 +1063,12 @@ public class _Angular2HtmlLexer implements FlexLexer {
             case BLOCK_PARAMETER: {
               yybegin(YYINITIAL);
     if (parameterStart < zzMarkedPos)
-       return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+       return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex);
             }  // fall though
             case 220: break;
             case LET_VALUE: {
               yybegin(YYINITIAL);
-    return Angular2EmbeddedExprTokenType.createBlockParameter("let", 0);
+    return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, "let", 0);
             }  // fall though
             case 221: break;
             default:
@@ -1301,7 +1303,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
           case 109: break;
           case 34:
             { if (processInterpolationChar(INTERPOLATION_END)) {
-    return Angular2EmbeddedExprTokenType.createInterpolationExpr();
+    return Angular2EmbeddedExprTokenType.createInterpolationExpr(templateSyntax);
   }
             }
           // fall through
@@ -1322,7 +1324,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
           case 112: break;
           case 37:
             { if (processInterpolationChar(yystate() == INTERPOLATION_DQ ? INTERPOLATION_END_DQ : INTERPOLATION_END_SQ)) {
-    return Angular2EmbeddedExprTokenType.createInterpolationExpr();
+    return Angular2EmbeddedExprTokenType.createInterpolationExpr(templateSyntax);
   }
             }
           // fall through
@@ -1385,7 +1387,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
        yypushback(1);
        yybegin(BLOCK_PARAMETERS_END);
        if (parameterStart < zzMarkedPos)
-          return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+          return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex);
      }
             }
           // fall through
@@ -1395,7 +1397,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
       blockParenLevel = 1;
       yybegin(BLOCK_PARAMETER_END);
       if (parameterStart < zzMarkedPos)
-         return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex++);
+         return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex++);
       else
          parameterIndex++;
             }
@@ -1406,7 +1408,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
        yypushback(1);
        yybegin(YYINITIAL);
        if (parameterStart < zzMarkedPos)
-          return Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex);
+          return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex);
             }
           // fall through
           case 124: break;
@@ -1437,7 +1439,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
           case 53:
             { yybegin(YYINITIAL);
     yypushback(1);
-    return Angular2EmbeddedExprTokenType.createBlockParameter("let", 0);
+    return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, "let", 0);
             }
           // fall through
           case 129: break;
@@ -1455,7 +1457,7 @@ public class _Angular2HtmlLexer implements FlexLexer {
           case 56:
             { yybegin(LET_VALUE_END);
     yypushback(1);
-    return Angular2EmbeddedExprTokenType.createBlockParameter("let", 0);
+    return Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, "let", 0);
             }
           // fall through
           case 132: break;

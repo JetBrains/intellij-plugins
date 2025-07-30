@@ -1,0 +1,84 @@
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSLiteralExpression
+      PsiElement(JS:NULL_KEYWORD)('null')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('nullize')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:UNDEFINED_KEYWORD)('undefined')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('undefinedes')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSLiteralExpression
+      PsiElement(JS:TRUE_KEYWORD)('true')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('trues')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSLiteralExpression
+      PsiElement(JS:FALSE_KEYWORD)('false')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('falses')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSThisExpression
+      PsiElement(JS:THIS_KEYWORD)('this')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('thisus')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSPrefixExpression
+      PsiElement(JS:TYPEOF_KEYWORD)('typeof')
+      PsiErrorElement:Expression expected
+        <empty list>
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('typeofus')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    PsiErrorElement:Expression expected
+      <empty list>
+    PsiElement(JS:IN_KEYWORD)('in')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('ins')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSPrefixExpression
+      PsiElement(JS:VOID_KEYWORD)('void')
+      PsiErrorElement:Expression expected
+        <empty list>
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('voids')

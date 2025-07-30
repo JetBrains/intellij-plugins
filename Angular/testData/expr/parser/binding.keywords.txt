@@ -70,3 +70,13 @@ JSFile:test.keywords.binding
   Angular2Binding
     JSReferenceExpression
       PsiElement(JS:IDENTIFIER)('ins')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('void')
+------
+JSFile:test.keywords.binding
+  Angular2Binding
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('voids')
