@@ -10,7 +10,9 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.index.GLOBAL_COMPONENTS
+import org.jetbrains.vuejs.index.GLOBAL_DIRECTIVES
 import org.jetbrains.vuejs.index.VUE_CORE_MODULES
+import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.*
 
 data class VueTypedGlobal(
@@ -27,8 +29,33 @@ data class VueTypedGlobal(
       CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
     }
 
+  private val typedGlobalDirectives: Map<String, VueDirective> =
+    CachedValuesManager.getCachedValue(source) {
+      val augmentedProperties = resolveSymbolPropertiesFromAugmentations(
+        scope = source,
+        moduleNames = setOf(VUE_MODULE),
+        symbolName = GLOBAL_DIRECTIVES,
+      )
+
+      val result = buildMap {
+        for ((rawName, source) in augmentedProperties) {
+          val name = rawName.removePrefix("v")
+          if (name == rawName || name.isEmpty()) {
+            continue
+          }
+
+          put(name, VueTypedDirective(source, name))
+        }
+      }
+
+      CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+    }
+
   override val components: Map<String, VueComponent>
     get() = delegate.components + typedGlobalComponents
+
+  override val directives: Map<String, VueDirective>
+    get() = delegate.directives + typedGlobalDirectives
 
   override val apps: List<VueApp>
     get() = delegate.apps
