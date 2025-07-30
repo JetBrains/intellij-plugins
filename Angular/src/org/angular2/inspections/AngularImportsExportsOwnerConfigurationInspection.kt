@@ -41,7 +41,7 @@ import org.angular2.inspections.quickfixes.MoveDeclarationOfStandaloneToImportsQ
 import org.angular2.inspections.quickfixes.RemoveEntityImportQuickFix
 import org.angular2.inspections.quickfixes.WrapWithForwardRefQuickFix
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -332,7 +332,7 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
           if (element is Angular2EmbeddedExpression) {
             element.acceptChildren(expressionVisitor)
           }
-          else if (element is JSLiteralExpression && element.language !is Angular2Language) {
+          else if (element is JSLiteralExpression && element.language !is Angular2ExprDialect) {
             // Pug support
             visitInjectedExpressions(element)
           }

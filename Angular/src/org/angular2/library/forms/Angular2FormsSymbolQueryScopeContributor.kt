@@ -1,6 +1,5 @@
 package org.angular2.library.forms
 
-import com.intellij.polySymbols.js.JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.psi.*
 import com.intellij.model.Pointer
@@ -9,6 +8,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
+import com.intellij.polySymbols.js.JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS
 import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
@@ -17,7 +17,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.asSafely
 import org.angular2.Angular2Framework
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.Angular2HtmlFile
 import org.angular2.library.forms.scopes.Angular2FormGroupGetCallArrayLiteralScope
 import org.angular2.library.forms.scopes.Angular2FormGroupGetCallLiteralScope
@@ -53,7 +53,7 @@ class Angular2FormsSymbolQueryScopeContributor : PolySymbolQueryScopeContributor
 
         forPsiLocations(JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS)
           .inFile(psiFile().withLanguage {
-            it !is Angular2Language && it is JSLanguageDialect && it.optionHolder.isTypeScript
+            it !is Angular2ExprDialect && it is JSLanguageDialect && it.optionHolder.isTypeScript
           })
           .contributeScopeProvider { location ->
             findFormGroupForGetCallParameter(location)

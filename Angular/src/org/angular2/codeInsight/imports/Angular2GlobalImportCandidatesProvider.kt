@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.modules.imports.providers.JSCandidatesProces
 import com.intellij.lang.javascript.modules.imports.providers.JSImportCandidatesProvider
 import com.intellij.lang.typescript.resolve.TypeScriptClassResolver
 import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.Angular2HtmlFile
 import java.util.function.Consumer
 
@@ -26,7 +26,7 @@ class Angular2GlobalImportCandidatesProvider(private val placeInfo: JSImportPlac
   class Factory : JSImportCandidatesProvider.CandidatesFactory {
 
     override fun createProvider(placeInfo: JSImportPlaceInfo): JSImportCandidatesProvider? =
-      if (placeInfo.place.containingFile.let { it is Angular2HtmlFile || it.language is Angular2Language }
+      if (placeInfo.place.containingFile.let { it is Angular2HtmlFile || it.language is Angular2ExprDialect }
           && Angular2LangUtil.isAngular2Context(placeInfo.place))
         Angular2GlobalImportCandidatesProvider(placeInfo)
       else

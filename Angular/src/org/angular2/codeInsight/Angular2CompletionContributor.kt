@@ -25,9 +25,10 @@ import com.intellij.lang.javascript.psi.util.runWithTimeout
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
 import com.intellij.polySymbols.js.JS_KEYWORDS
-import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
@@ -37,7 +38,6 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.polySymbols.completion.PolySymbolsCompletionProviderBase
 import icons.AngularIcons
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
@@ -77,7 +77,7 @@ class Angular2CompletionContributor : CompletionContributor() {
     extend(CompletionType.BASIC,
            psiElement(JSTokenTypes.IDENTIFIER)
              .withParents(Angular2TemplateVariableImpl::class.java),
-           object: CompletionProvider<CompletionParameters>() {
+           object : CompletionProvider<CompletionParameters>() {
              override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
                result.stopHere()
              }
@@ -393,7 +393,7 @@ private val BLOCK_PARAMETER_NAME_TOKENS = TokenSet.create(Angular2TokenTypes.BLO
 fun <T : PsiElement> language(language: Language): PatternCondition<T> {
   return object : PatternCondition<T>("language(" + language.id + ")") {
     override fun accepts(t: T, context: ProcessingContext): Boolean {
-      return language.`is`(PsiUtilCore.findLanguageFromElement(t))
+      return PsiUtilCore.findLanguageFromElement(t).isKindOf(language)
     }
   }
 }

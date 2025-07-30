@@ -3,13 +3,13 @@ package org.angular2.inspections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.polySymbols.js.jsType
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSEmptyExpression
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.validation.JSTypeChecker
+import com.intellij.polySymbols.js.jsType
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.xml.XmlAttribute
 import org.angular2.codeInsight.Angular2HighlightingUtils
@@ -19,7 +19,7 @@ import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.inspections.quickfixes.Angular2FixesFactory.getCreateInputTransformFixes
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2Interpolation
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
@@ -106,7 +106,8 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
 
       val highlightType = Angular2InspectionUtils.getTypeScriptInspectionHighlightType(attribute)
 
-      JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(attribute, symbolType, valueType, Angular2Language.optionHolder,
+      JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(attribute, symbolType, valueType,
+                                                             Angular2ExprDialect.forContext(attribute).optionHolder,
                                                              "javascript.type.is.not.assignable.to.type")
         ?.let {
           holder.registerProblem(attribute.valueElement?.takeIf { reportOnValue } ?: attribute.nameElement ?: attribute, it,

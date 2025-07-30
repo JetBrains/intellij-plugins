@@ -13,7 +13,7 @@ import org.angular2.codeInsight.Angular2HighlightingUtils
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 
 class AngularUnsupportedSyntaxInspection : LocalInspectionTool() {
 
@@ -22,8 +22,8 @@ class AngularUnsupportedSyntaxInspection : LocalInspectionTool() {
       override fun visitElement(element: PsiElement) {
         super.visitElement(element)
         if (element is LeafPsiElement
-            && element.parent?.let { it.language is Angular2Language && it is JSExpressionWithOperationNode } == true
-          ) {
+            && element.parent?.let { it.language is Angular2ExprDialect && it is JSExpressionWithOperationNode } == true
+        ) {
           val version = keywordToVersionMap[element.elementType]
           if (version != null
               && Angular2LangUtil.isAngular2Context(element)
@@ -38,7 +38,7 @@ class AngularUnsupportedSyntaxInspection : LocalInspectionTool() {
         }
         else if (
           element is JSStringTemplateExpression
-          && element.language is Angular2Language
+          && element.language is Angular2ExprDialect
           && Angular2LangUtil.isAngular2Context(element)
           && !Angular2LangUtil.isAtLeastAngularVersion(element, Angular2LangUtil.AngularVersion.V_19_2)
         ) {

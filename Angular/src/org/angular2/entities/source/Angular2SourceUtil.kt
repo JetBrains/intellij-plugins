@@ -40,6 +40,7 @@ import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.refs.Angular2TemplateReferencesProvider
 import org.angular2.entities.*
 import org.angular2.index.resolveComponentsFromIndex
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
@@ -254,7 +255,7 @@ object Angular2SourceUtil {
 
   @JvmStatic
   fun findComponentClass(templateContext: PsiElement): TypeScriptClass? {
-    if (templateContext.language is Angular2Language
+    if (templateContext.language is Angular2ExprDialect
         && isHostBindingExpression(templateContext)) {
       return Angular2DecoratorUtil.getClassForDecoratorElement(
         InjectedLanguageManager.getInstance(templateContext.project).getInjectionHost(templateContext)
@@ -271,7 +272,7 @@ object Angular2SourceUtil {
   fun findComponentClasses(templateContext: PsiElement): List<TypeScriptClass> {
     val file = templateContext.containingFile
     if (file == null || !(file.language.isKindOf(Angular2HtmlLanguage)
-                          || file.language.`is`(Angular2Language)
+                          || file.language.isKindOf(Angular2Language)
                           || isStylesheet(file))) {
       return Collections.emptyList()
     }

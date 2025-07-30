@@ -7,7 +7,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFix
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.Angular2HtmlDialect
 
 object Angular2LanguageServiceQuickFixFilter {
@@ -17,7 +17,7 @@ object Angular2LanguageServiceQuickFixFilter {
     || action !is TypeScriptLanguageServiceFix
     || when (error.errorCode) {
       TS_ERROR_CODE_UNUSED_DECLARATION -> {
-        !file.language.let { it is Angular2HtmlDialect || it is Angular2Language }
+        !file.language.let { it is Angular2HtmlDialect || it is Angular2ExprDialect }
         && element?.parent !is JSLiteralExpression
       }
       else -> true

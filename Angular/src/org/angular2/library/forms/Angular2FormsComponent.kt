@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.source.Angular2SourceUtil
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.library.forms.impl.Angular2FormsComponentImpl
 
@@ -16,7 +16,7 @@ interface Angular2FormsComponent {
 
   companion object {
     fun getFor(location: PsiElement): Angular2FormsComponent? =
-      if (location.language is Angular2HtmlDialect || location.language is Angular2Language)
+      if (location.language is Angular2HtmlDialect || location.language is Angular2ExprDialect)
         Angular2SourceUtil.findComponentClass(location)?.let { Angular2FormsComponentImpl(it) }
       else
         location.parentOfType<TypeScriptClass>(true)

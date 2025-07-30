@@ -4,23 +4,24 @@ package org.angular2.lang.expr.highlighting
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
 
-class Angular2SyntaxHighlighter : TypeScriptHighlighter(Angular2Language.optionHolder) {
+abstract class Angular2SyntaxHighlighterBase(
+  private val language: Angular2ExprDialect,
+) : TypeScriptHighlighter(language.optionHolder) {
 
   override fun getHighlightingLexer(): Lexer =
     Angular2Lexer(Angular2Lexer.RegularBinding)
 
   override fun getKeywords(): TokenSet =
-    Angular2TokenTypes.KEYWORDS
+    language.getKeywords()
 
   override fun getTokenHighlights(tokenType: IElementType): Array<out TextAttributesKey> =
-    angularKeys[tokenType]?.let { SyntaxHighlighterBase.pack(it) }
+    angularKeys[tokenType]?.let { pack(it) }
     ?: super.getTokenHighlights(tokenType)
 }
 

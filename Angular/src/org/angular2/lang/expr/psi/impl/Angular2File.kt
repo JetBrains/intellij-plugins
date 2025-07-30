@@ -8,10 +8,10 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.xml.XmlFile
 import org.angular2.entities.source.Angular2SourceUtil
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.Angular2HtmlFile
 
-class Angular2FileImpl(fileViewProvider: FileViewProvider) : JSFileImpl(fileViewProvider, Angular2Language), JSConfigProvider {
+class Angular2FileImpl(fileViewProvider: FileViewProvider, language: Angular2ExprDialect) : JSFileImpl(fileViewProvider, language), JSConfigProvider {
 
   override fun getJSConfig(): JSConfig? =
     when (val topLevelFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(this)) {

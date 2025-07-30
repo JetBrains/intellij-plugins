@@ -59,7 +59,7 @@ import org.angular2.Angular2DecoratorUtil.isHostBindingExpression
 import org.angular2.codeInsight.blocks.isDeferOnReferenceExpression
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.service.protocol.Angular2TypeScriptServiceProtocol
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeCommand
 import org.angular2.lang.expr.service.protocol.commands.Angular2GetGeneratedElementTypeRequestArgs
@@ -91,24 +91,24 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     }
 
   override fun supportsInjectedFile(file: PsiFile): Boolean {
-    return file.language is Angular2Language || file.language is Angular2HtmlDialect
+    return file.language is Angular2ExprDialect || file.language is Angular2HtmlDialect
   }
 
   override fun isAcceptableForHighlighting(file: PsiFile): Boolean =
-    if (file.language is Angular2HtmlDialect || file.language is Angular2Language)
+    if (file.language is Angular2HtmlDialect || file.language is Angular2ExprDialect)
       Angular2EntitiesProvider.findTemplateComponent(file) != null
       || isHostBindingExpression(file)
     else
       super.isAcceptableForHighlighting(file)
 
   override fun getQuickInfoAt(usageElement: PsiElement, originalFile: VirtualFile): Future<TypeScriptQuickInfoResponse?>? =
-    if (usageElement.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2Language })
+    if (usageElement.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2ExprDialect })
       null // For now do not use TS server for quick info
     else
       super.getQuickInfoAt(usageElement, originalFile)
 
   override suspend fun getCompletionItemsSuspending(virtualFile: VirtualFile, document: Document, offset: Int, parameters: CompletionParameters): List<TypeScriptService.CompletionEntry>? =
-    if (readAction { parameters.position.containingFile.language }.let { it is Angular2HtmlDialect || it is Angular2Language })
+    if (readAction { parameters.position.containingFile.language }.let { it is Angular2HtmlDialect || it is Angular2ExprDialect })
       null // For now do not use TS server for code completions
     else
       super.getCompletionItemsSuspending(virtualFile, document, offset, parameters)
@@ -154,7 +154,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override val typeEvaluationSupport: Angular2TypeScriptServiceEvaluationSupport = Angular2CompilerServiceEvaluationSupport(project)
 
   override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean =
-    (element.language.let { it is Angular2Language || it is Angular2HtmlDialect }
+    (element.language.let { it is Angular2ExprDialect || it is Angular2HtmlDialect }
      && Angular2EntitiesProvider.findTemplateComponent(element) != null
     ) || super.supportsTypeEvaluation(virtualFile, element)
 
@@ -180,7 +180,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   }
 
   override fun isGeterrSupported(psiFile: PsiFile): Boolean {
-    return psiFile.language.let { it !is Angular2Language && it !is Angular2HtmlDialect }
+    return psiFile.language.let { it !is Angular2ExprDialect && it !is Angular2HtmlDialect }
   }
 
   override fun skipInternalErrors(element: PsiElement): Boolean {
@@ -247,7 +247,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
   private fun acceptElementToRepositionHint(element: PsiElement): Boolean =
     element is LeafPsiElement
-    && element.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2Language }
+    && element.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2ExprDialect }
 
   @RequiresReadLock
   private suspend fun refreshTranspiledTemplateIfNeeded(virtualFile: VirtualFile): TranspiledDirectiveFile? = withScopedServiceTraceSpan("refreshTranspiledTemplateIfNeeded") {
@@ -285,7 +285,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     override suspend fun commitDocuments(updateContext: UpdateContextInfo) {
       super.commitDocuments(updateContext)
       val element = updateContext.element
-      if (element.language is Angular2Language || element.language is Angular2HtmlDialect) {
+      if (element.language is Angular2ExprDialect || element.language is Angular2HtmlDialect) {
         refreshTranspiledTemplateIfNeeded(updateContext.file)
       }
     }
