@@ -90,7 +90,6 @@ jvm_library(
     "@community//plugins/copyright:copyright_test_lib",
     "@community//platform/core-ui",
     "//plugins/css/common/psi",
-    "//plugins/css/testFramework",
     "//plugins/css/backend",
     "//plugins/css/copyright",
   ],

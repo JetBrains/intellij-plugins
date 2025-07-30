@@ -108,7 +108,6 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//xml/testFramework",
     "//plugins/css/common/psi",
-    "//plugins/css/testFramework",
     "//plugins/css/backend",
     "//plugins/css/analysis",
   ],
