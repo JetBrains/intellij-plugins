@@ -22,6 +22,9 @@ import org.jetbrains.annotations.NonNls
 import java.nio.charset.Charset
 import javax.swing.JComponent
 import kotlin.reflect.KMutableProperty1
+import com.intellij.openapi.observable.util.whenTextChangedFromUi
+import com.intellij.ui.UIBundle
+import javax.swing.text.JTextComponent
 
 private val charsets: Collection<String> = Charset.availableCharsets().filter { it.value.canEncode() }.keys
 
@@ -99,18 +102,52 @@ fun Panel.serialSettings(disposable: Disposable,
     return this
   }
 
+  fun Cell<ComboBox<Int>>.changesIntBind(prop: KMutableProperty1<SerialPortProfile, Int>): Cell<ComboBox<Int>> {
+    component.selectedItem = prop.get(profile)
+
+    val setter: (Int?) -> Unit = { value ->
+      if (value != null && value != prop.get(profile)) {
+        prop.set(profile, value)
+        save(profile)
+      }
+    }
+
+    whenItemSelectedFromUi(disposable, setter)
+    val textEditorComponent = component.editor.editorComponent as JTextComponent
+    textEditorComponent.whenTextChangedFromUi(disposable) {
+      setter(it.toIntOrNull())
+    }
+
+    return this
+  }
+
+  fun Cell<ComboBox<Int>>.intValidationOnInput(): Cell<ComboBox<Int>> = validationOnInput {
+    val number = when(val item = it.editor.item) {
+      is Int -> item
+      is String -> item.toIntOrNull()
+      else -> null
+    }
+    when(number) {
+      null -> error(UIBundle.message("please.enter.a.number"))
+      in Int.MIN_VALUE..0 -> error(message("please.enter.positive.number"))
+      else -> null
+    }
+  }
+
   fun <T : JComponent> Cell<T>.stdWidth(): Cell<T> =
     this.widthGroup("portControl")
 
   row {
     customize(UnscaledGapsY(top = 20))
     comboBox(StandardBauds)
-      .changesBind(SerialPortProfile::baudRate)
+      .applyToComponent { isEditable = true }
+      .changesIntBind(SerialPortProfile::baudRate)
       .speedSearch()
       .label(message("label.baud"))
       .enabled(!readOnly)
       .stdWidth()
       .focused()
+      .intValidationOnInput()
     comboBox(SerialBits)
       .changesBind(SerialPortProfile::bits)
       .enabled(!readOnly)
