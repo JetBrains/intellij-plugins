@@ -146,7 +146,6 @@ val Project.qodanaAnalysisConfig: QodanaConfig?
  * Not available in IDE run, use it for project configuration
  * If you need qodana config during analysis, use [Project.qodanaAnalysisConfig]
  */
-@Suppress("unused")
 // TODO – use in dotnet
 val Application.qodanaAnalysisConfigForConfiguration: QodanaConfig?
   get() = getUserData(QODANA_CONFIG_KEY)
@@ -178,6 +177,7 @@ data class QodanaConfig(
   val hardcodedPasswords: HardcodedPasswords,
 
   val dotnet: DotNetProjectConfiguration?,
+  val cpp: QodanaCppConfig?,
   val php: QodanaPhpConfig?,
   val jvm: QodanaJvmConfig,
   val dependencyAnalysis: DependencyAnalysisConfig,
@@ -254,6 +254,7 @@ data class QodanaConfig(
         coverage = coverage,
         hardcodedPasswords = HardcodedPasswords.fromConfig(yaml.hardcodedPasswords),
         dotnet = dotnet,
+        cpp = yaml.cpp,
         php = php,
         jvm = jvm,
         dependencyAnalysis = dependencyAnalysis,

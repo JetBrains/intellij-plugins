@@ -15,6 +15,10 @@
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.clion.cmake" />
     <orderEntry type="module" module-name="intellij.qodana" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="module" module-name="intellij.cidr.projectModel" />
+    <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
+    <orderEntry type="module" module-name="intellij.rider.plugins.clion.radler" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" />
   </component>
 </module>

@@ -32,6 +32,9 @@ data class QodanaYamlConfig(
   // dotnet
   val dotnet: DotNetProjectConfiguration? = null,
 
+  // cpp
+  val cpp: QodanaCppConfig? = null,
+
   // php
   val php: QodanaPhpConfig? = null,
 
