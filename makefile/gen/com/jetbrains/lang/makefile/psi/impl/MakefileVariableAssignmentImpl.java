@@ -40,14 +40,12 @@ public class MakefileVariableAssignmentImpl extends ASTWrapperPsiElement impleme
   }
 
   @Override
-  @Nullable
-  public PsiElement getAssignment() {
+  public @Nullable PsiElement getAssignment() {
     return MakefilePsiImplUtil.getAssignment(this);
   }
 
   @Override
-  @Nullable
-  public String getValue() {
+  public @NotNull String getValue() {
     return MakefilePsiImplUtil.getValue(this);
   }
 

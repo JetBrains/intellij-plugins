@@ -39,8 +39,7 @@ public class MakefilePrerequisiteImpl extends MakefilePrerequisiteMixin implemen
   }
 
   @Override
-  @NotNull
-  public MakefilePrerequisiteImpl updateText(@NotNull String newText) {
+  public @NotNull MakefilePrerequisiteImpl updateText(@NotNull String newText) {
     return MakefilePsiImplUtil.updateText(this, newText);
   }
 

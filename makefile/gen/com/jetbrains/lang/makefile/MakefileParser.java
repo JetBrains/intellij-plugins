@@ -87,33 +87,18 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '\t'+ line EOL?
+  // RECIPE_PREFIX line EOL?
   public static boolean command(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "command")) return false;
-    if (!nextTokenIs(b, TAB)) return false;
+    if (!nextTokenIs(b, RECIPE_PREFIX)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, COMMAND, null);
-    r = command_0(b, l + 1);
+    r = consumeToken(b, RECIPE_PREFIX);
     p = r; // pin = 1
     r = r && report_error_(b, line(b, l + 1));
     r = p && command_2(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  // '\t'+
-  private static boolean command_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "command_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, TAB);
-    while (r) {
-      int c = current_position_(b);
-      if (!consumeToken(b, TAB)) break;
-      if (!empty_element_parsed_guard_(b, "command_0", c)) break;
-    }
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   // EOL?

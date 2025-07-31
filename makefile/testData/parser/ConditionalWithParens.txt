@@ -20,7 +20,7 @@ Makefile
     PsiElement(EOL)('\n')
     MakefileBlockImpl(BLOCK)
       MakefileCommandImpl(COMMAND)
-        PsiElement(\t)('\t')
+        PsiElement(RECIPE_PREFIX)('\t')
         PsiElement(unexport)('unexport')
         PsiWhiteSpace(' ')
         PsiElement(chars)('GOFLAGS')

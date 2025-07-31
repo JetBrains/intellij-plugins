@@ -8,10 +8,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.jetbrains.lang.makefile.psi.MakefileTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.jetbrains.lang.makefile.psi.*;
 
-public class MakefileCommandImpl extends ASTWrapperPsiElement implements MakefileCommand {
+public class MakefileCommandImpl extends MakefileCommandMixin implements MakefileCommand {
 
   public MakefileCommandImpl(@NotNull ASTNode node) {
     super(node);

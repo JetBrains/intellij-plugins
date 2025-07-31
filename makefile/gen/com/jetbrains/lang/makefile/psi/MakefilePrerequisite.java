@@ -14,8 +14,7 @@ public interface MakefilePrerequisite extends PsiElement {
   @NotNull
   List<MakefileVariableUsage> getVariableUsageList();
 
-  @NotNull
-  MakefilePrerequisiteImpl updateText(@NotNull String newText);
+  @NotNull MakefilePrerequisiteImpl updateText(@NotNull String newText);
 
   boolean isPhonyTarget();
 

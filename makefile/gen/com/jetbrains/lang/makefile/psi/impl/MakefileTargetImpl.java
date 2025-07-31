@@ -19,8 +19,8 @@ public class MakefileTargetImpl extends MakefileTargetNamedElementImpl implement
     super(node);
   }
 
-  public MakefileTargetImpl(@NotNull MakefileTargetStubElement stub, @NotNull IStubElementType<?, ?> nodeType) {
-    super(stub, nodeType);
+  public MakefileTargetImpl(@NotNull MakefileTargetStubElement stub, @NotNull IStubElementType<?, ?> type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
@@ -46,26 +46,22 @@ public class MakefileTargetImpl extends MakefileTargetNamedElementImpl implement
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return MakefilePsiImplUtil.getName(this);
   }
 
   @Override
-  @NotNull
-  public PsiElement setName(@NotNull String newName) {
+  public @NotNull PsiElement setName(@NotNull String newName) {
     return MakefilePsiImplUtil.setName(this, newName);
   }
 
   @Override
-  @Nullable
-  public PsiElement getNameIdentifier() {
+  public @Nullable PsiElement getNameIdentifier() {
     return MakefilePsiImplUtil.getNameIdentifier(this);
   }
 
   @Override
-  @NotNull
-  public ItemPresentation getPresentation() {
+  public @NotNull ItemPresentation getPresentation() {
     return MakefilePsiImplUtil.getPresentation(this);
   }
 
@@ -85,8 +81,7 @@ public class MakefileTargetImpl extends MakefileTargetNamedElementImpl implement
   }
 
   @Override
-  @Nullable
-  public String getDocComment() {
+  public @Nullable String getDocComment() {
     return MakefilePsiImplUtil.getDocComment(this);
   }
 
