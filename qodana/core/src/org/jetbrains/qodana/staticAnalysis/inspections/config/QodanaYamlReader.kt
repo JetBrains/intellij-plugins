@@ -30,6 +30,8 @@ object QodanaYamlReader {
     roots.add("dot-net") // deprecated .NET
     roots.add("dotnet") // current .NET, see Rider
 
+    roots.add("cpp") // qodana-cpp
+
     roots.add("ide") // qodana-cli
     roots.add("plugins") // qodana-cli
     roots.add("properties") // qodana-cli
