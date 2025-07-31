@@ -98,6 +98,7 @@ jvm_library(
 
 jvm_library(
   name = "angular-tests_test_lib",
+  module_name = "intellij.angular.tests",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test-ex/**/*.kt", "test-ex/**/*.java"], allow_empty = True),
   deps = [

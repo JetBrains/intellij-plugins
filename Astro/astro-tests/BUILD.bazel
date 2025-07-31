@@ -9,6 +9,7 @@ jvm_library(
 
 jvm_library(
   name = "astro-tests_test_lib",
+  module_name = "intellij.astro.tests",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src-ext/**/*.kt", "src-ext/**/*.java"], allow_empty = True),
   deps = [
