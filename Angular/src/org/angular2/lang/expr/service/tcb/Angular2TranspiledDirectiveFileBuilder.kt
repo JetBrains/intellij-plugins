@@ -34,7 +34,7 @@ import java.util.*
 object Angular2TranspiledDirectiveFileBuilder {
 
   private val mappingsComparator: Comparator<SourceMapping> =
-    Comparator.comparingInt<SourceMapping?> { it.sourceOffset }.thenComparingInt { it.sourceLength }
+    compareBy<SourceMapping> { it.sourceOffset }.thenBy { it.sourceLength }
 
   fun getTranspiledDirectiveAndTopLevelSourceFile(context: PsiElement): Pair<TranspiledDirectiveFile, PsiFile>? = withServiceTraceSpan("getTranspiledDirectiveAndTopLevelSourceFile") {
     if (DumbService.isDumb(context.project)) return@withServiceTraceSpan null
