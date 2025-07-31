@@ -6,6 +6,7 @@ import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.WhitespacesBinders
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSKeywordSets
+import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptParserBundle
 import com.intellij.lang.javascript.parsing.AdvancesLexer
@@ -314,7 +315,7 @@ class Angular2Parser private constructor(
         expr.drop()
         return false
       }
-      if (builder.tokenType === JSTokenTypes.EQ) {
+      if (Angular2TokenTypes.ASSIGNMENT_OPERATORS.contains(builder.tokenType)) {
         definitionExpr.done(JSStubElementTypes.DEFINITION_EXPRESSION)
         if (!myIsAction && !myIsJavaScript) {
           builder.error(Angular2Bundle.message("angular.parse.expression.assignment-in-binding"))

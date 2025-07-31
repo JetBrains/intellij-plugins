@@ -7,3 +7,6 @@ aaa!.foo
 aaa**bbb**ccc
 foo in bar
 let todo of todoService.todos | started : status | search : term
+fooBar += 13
+fooBar **= 13
+fooBar &&= true

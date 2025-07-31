@@ -399,6 +399,12 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testExponentialOperatorNg19() =
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "html")
 
+  fun testAssignmentOperatorsNg20() =
+    checkHighlighting(ANGULAR_CORE_20_0_0_NEXT_3, extension = "html", dir = true)
+
+  fun testAssignmentOperatorsNg20_1() =
+    checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html", dir = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

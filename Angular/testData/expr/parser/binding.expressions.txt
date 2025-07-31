@@ -1,0 +1,83 @@
+JSFile:test.expressions.binding
+  Angular2Binding
+    JSBinaryExpression
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:PLUS)('+')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+JSFile:test.expressions.binding
+  Angular2Binding
+    JSBinaryExpression
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:MULTMULT)('**')
+      PsiWhiteSpace(' ')
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('3')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:MULTMULT)('**')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('4')
+------
+JSFile:test.expressions.binding
+  Angular2Binding
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('fooBar')
+      PsiErrorElement:Binding expression cannot contain assignments
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+JSFile:test.expressions.binding
+  Angular2Binding
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('fooBar')
+      PsiErrorElement:Binding expression cannot contain assignments
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(JS:PLUSEQ)('+=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('13')
+------
+JSFile:test.expressions.binding
+  Angular2Binding
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('fooBar')
+      PsiErrorElement:Binding expression cannot contain assignments
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(JS:MULTMULTEQ)('**=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('13')
+------
+JSFile:test.expressions.binding
+  Angular2Binding
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('fooBar')
+      PsiErrorElement:Binding expression cannot contain assignments
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(JS:AND_AND_EQ)('&&=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:TRUE_KEYWORD)('true')

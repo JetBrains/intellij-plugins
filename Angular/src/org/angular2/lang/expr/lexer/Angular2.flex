@@ -149,6 +149,16 @@ LINE_TERMINATOR_SEQUENCE=\R
   "|"                         { return OR; }
   "!"                         { return EXCL; }
 
+  "+="                        { return PLUSEQ; }
+  "-="                        { return MINUSEQ; }
+  "*="                        { return MULTEQ; }
+  "/="                        { return DIVEQ; }
+  "%="                        { return PERCEQ; }
+  "**="                       { return MULTMULTEQ; }
+  "&&="                       { return AND_AND_EQ; }
+  "||="                       { return OR_OR_EQ; }
+  "??="                       { return QUEST_QUEST_EQ; }
+
   "("                         { return LPAR; }
   ")"                         { return RPAR; }
   "{"                         {

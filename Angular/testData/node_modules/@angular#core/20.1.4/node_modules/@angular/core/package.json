@@ -1,0 +1,92 @@
+{
+  "name": "@angular/core",
+  "version": "20.1.4",
+  "description": "Angular - the core framework",
+  "author": "angular",
+  "license": "MIT",
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+  },
+  "exports": {
+    "./schematics/*": {
+      "default": "./schematics/*.js"
+    },
+    "./event-dispatch-contract.min.js": {
+      "default": "./event-dispatch-contract.min.js"
+    },
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./fesm2022/core.mjs"
+    },
+    "./primitives/di": {
+      "types": "./primitives/di/index.d.ts",
+      "default": "./fesm2022/primitives/di.mjs"
+    },
+    "./primitives/event-dispatch": {
+      "types": "./primitives/event-dispatch/index.d.ts",
+      "default": "./fesm2022/primitives/event-dispatch.mjs"
+    },
+    "./primitives/signals": {
+      "types": "./primitives/signals/index.d.ts",
+      "default": "./fesm2022/primitives/signals.mjs"
+    },
+    "./rxjs-interop": {
+      "types": "./rxjs-interop/index.d.ts",
+      "default": "./fesm2022/rxjs-interop.mjs"
+    },
+    "./testing": {
+      "types": "./testing/index.d.ts",
+      "default": "./fesm2022/testing.mjs"
+    }
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@angular/compiler": "20.1.4",
+    "rxjs": "^6.5.3 || ^7.4.0",
+    "zone.js": "~0.15.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular/compiler": {
+      "optional": true
+    },
+    "zone.js": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular/angular.git",
+    "directory": "packages/core"
+  },
+  "ng-update": {
+    "migrations": "./schematics/migrations.json",
+    "packageGroup": [
+      "@angular/core",
+      "@angular/bazel",
+      "@angular/common",
+      "@angular/compiler",
+      "@angular/compiler-cli",
+      "@angular/animations",
+      "@angular/elements",
+      "@angular/platform-browser",
+      "@angular/platform-browser-dynamic",
+      "@angular/forms",
+      "@angular/platform-server",
+      "@angular/upgrade",
+      "@angular/router",
+      "@angular/language-service",
+      "@angular/localize",
+      "@angular/service-worker"
+    ]
+  },
+  "schematics": "./schematics/collection.json",
+  "sideEffects": false,
+  "module": "./fesm2022/core.mjs",
+  "typings": "./index.d.ts",
+  "type": "module"
+}

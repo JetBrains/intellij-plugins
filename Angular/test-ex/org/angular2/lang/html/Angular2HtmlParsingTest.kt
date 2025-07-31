@@ -445,4 +445,12 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
     """)
   }
 
+  fun testAssignmentExpressions() {
+    doTestHtml("""
+      {{ test += 1 }}
+      <div (click)='test += 1'></div>
+      <div (click)='test = 1 + 2 + 3'></div>
+    """.trimIndent())
+  }
+
 }

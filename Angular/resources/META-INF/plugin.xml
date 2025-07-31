@@ -357,6 +357,7 @@
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@19.0.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@19.2.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@20.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@20.1.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
 
