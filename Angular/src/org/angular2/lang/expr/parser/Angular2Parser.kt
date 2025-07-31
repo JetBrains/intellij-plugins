@@ -314,7 +314,7 @@ class Angular2Parser private constructor(
         expr.drop()
         return false
       }
-      if (builder.tokenType === JSTokenTypes.EQ) {
+      if (Angular2TokenTypes.ASSIGNMENT_OPERATORS.contains(builder.tokenType)) {
         definitionExpr.done(JSElementTypes.DEFINITION_EXPRESSION)
         if (!myIsAction && !myIsJavaScript) {
           builder.error(Angular2Bundle.message("angular.parse.expression.assignment-in-binding"))
