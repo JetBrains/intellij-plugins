@@ -17,17 +17,13 @@ public interface MakefileTarget extends MakefileNamedElement, NavigationItem, St
   @NotNull
   List<MakefileVariableUsage> getVariableUsageList();
 
-  @NotNull
-  String getName();
+  @NotNull String getName();
 
-  @NotNull
-  PsiElement setName(@NotNull String newName);
+  @NotNull PsiElement setName(@NotNull String newName);
 
-  @Nullable
-  PsiElement getNameIdentifier();
+  @Nullable PsiElement getNameIdentifier();
 
-  @NotNull
-  ItemPresentation getPresentation();
+  @NotNull ItemPresentation getPresentation();
 
   boolean isSpecialTarget();
 
@@ -35,7 +31,6 @@ public interface MakefileTarget extends MakefileNamedElement, NavigationItem, St
 
   boolean matches(@NotNull String prerequisite);
 
-  @Nullable
-  String getDocComment();
+  @Nullable String getDocComment();
 
 }

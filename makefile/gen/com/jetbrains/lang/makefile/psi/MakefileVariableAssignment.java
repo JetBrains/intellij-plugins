@@ -13,10 +13,8 @@ public interface MakefileVariableAssignment extends PsiElement {
   @Nullable
   MakefileVariableValue getVariableValue();
 
-  @Nullable
-  PsiElement getAssignment();
+  @Nullable PsiElement getAssignment();
 
-  @Nullable
-  String getValue();
+  @NotNull String getValue();
 
 }

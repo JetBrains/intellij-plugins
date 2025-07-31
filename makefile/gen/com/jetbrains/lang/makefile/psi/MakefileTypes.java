@@ -81,6 +81,7 @@ public interface MakefileTypes {
   IElementType OPEN_PAREN = new MakefileTokenType("(");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType QUOTE = new MakefileTokenType("'");
+  IElementType RECIPE_PREFIX = new MakefileTokenType("RECIPE_PREFIX");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType SPLIT = new MakefileTokenType("split");
   IElementType TAB = new MakefileTokenType("\\t");

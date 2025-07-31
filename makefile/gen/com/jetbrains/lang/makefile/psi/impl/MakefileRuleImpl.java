@@ -40,8 +40,7 @@ public class MakefileRuleImpl extends ASTWrapperPsiElement implements MakefileRu
   }
 
   @Override
-  @NotNull
-  public List<MakefileTarget> getTargets() {
+  public @NotNull List<@NotNull MakefileTarget> getTargets() {
     return MakefilePsiImplUtil.getTargets(this);
   }
 

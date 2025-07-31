@@ -33,20 +33,17 @@ public class MakefileVariableImpl extends MakefileVariableNamedElementImpl imple
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return MakefilePsiImplUtil.getName(this);
   }
 
   @Override
-  @NotNull
-  public PsiElement setName(@NotNull String newName) {
+  public @NotNull PsiElement setName(@NotNull String newName) {
     return MakefilePsiImplUtil.setName(this, newName);
   }
 
   @Override
-  @Nullable
-  public PsiElement getNameIdentifier() {
+  public @Nullable PsiElement getNameIdentifier() {
     return MakefilePsiImplUtil.getNameIdentifier(this);
   }
 

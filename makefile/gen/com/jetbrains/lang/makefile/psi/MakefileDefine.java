@@ -22,10 +22,8 @@ public interface MakefileDefine extends PsiElement {
   @NotNull
   List<MakefileVariableUsage> getVariableUsageList();
 
-  @Nullable
-  PsiElement getAssignment();
+  @Nullable PsiElement getAssignment();
 
-  @Nullable
-  String getValue();
+  @NotNull String getValue();
 
 }

@@ -67,7 +67,7 @@ Makefile
       PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
-        PsiElement(\t)('\t')
+        PsiElement(RECIPE_PREFIX)('\t')
         PsiElement(chars)('ugligyjs')
         PsiWhiteSpace(' ')
         PsiElement($)('$')

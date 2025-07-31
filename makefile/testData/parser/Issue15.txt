@@ -31,7 +31,7 @@ Makefile
         PsiElement(EOL)('\n')
         MakefileBlockImpl(BLOCK)
           MakefileCommandImpl(COMMAND)
-            PsiElement(\t)('\t')
+            PsiElement(RECIPE_PREFIX)('\t')
             PsiElement(chars)('x')
             PsiElement(EOL)('\n')
         PsiElement(endif)('endif')
