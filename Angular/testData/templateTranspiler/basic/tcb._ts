@@ -28,6 +28,6 @@ _t9.foo2 = _pipe1.transform(12);
 var _t10 = document.createElement("router-outlet");
 }
 var _t11 = document.createElement("span");
-"" + this.minutes;
-"" + this.minutes;
+"" + (this.minutes);
+"" + (this.minutes);
 }

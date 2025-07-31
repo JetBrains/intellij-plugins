@@ -24,12 +24,12 @@ if (_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)){
 this.onSelect(_t3);
 }
 });
-"" + _t3.name;
-"" + _t4;
+"" + (_t3.name);
+"" + (_t4);
 }
-"" + this.heroes.length;
-"" + this.heroes.length;
-"" + this.movieSig();
+"" + (this.heroes.length);
+"" + (this.heroes.length);
+"" + (this.movieSig());
 var _t6 = document.createElement("input");
 var _t7 = null! as _i2.DefaultValueAccessor;
 var _t8 = null! as _i2.NgControlStatus;
@@ -39,7 +39,7 @@ _t9["update"].subscribe(($event): any => {
 this.hero.name;
 });
 var _t10 = _t9;
-"" + _t10;
+"" + (_t10);
 var _t13 = null! as any;
 var _t12 = (_t13 as any as _i3.TemplateRef<any>);
 var _t11 = _ctor2({"ngIf": true, "ngIfElse": _t12, "ngIfThen": 0 as any});

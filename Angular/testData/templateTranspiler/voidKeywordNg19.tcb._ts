@@ -3,9 +3,9 @@
 /* TCB for voidKeywordNg19.ts */
 
 function _tcb1(this: RobotProfileComponent) {
-"" + this.void;
+"" + (this.void);
 var _t1 = document.createElement("div");
 (this.void);
 var _t2 = document.createElement("div");
-"" + this.void;
+"" + (this.void);
 }

@@ -10,7 +10,7 @@ var _pipe2 = null! as _i1.DatePipe;
 function _tcb1(this: AppComponent) {
 const _t1 = 12;
 const _t2 = "";
-"" + `Multiple Interpolations: ${_t1} ${_t2}`;
+"" + (`Multiple Interpolations: ${_t1} ${_t2}`);
 for (const _t3 of ([`Test1 ${{foo:12}.foo}`])!) {
 var _t4 = null! as boolean;
 var _t5 = null! as boolean;
@@ -21,5 +21,5 @@ var _t9 = null! as number;
 (undefined);
 }
 var _t10 = document.createElement("time");
-"" + _pipe1.transform(`today is ${_pipe2.transform(this.today, 'fullDate')}`);
+"" + (_pipe1.transform(`today is ${_pipe2.transform(this.today, 'fullDate')}`));
 }
