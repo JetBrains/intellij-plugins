@@ -5,6 +5,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
+import com.jetbrains.lang.makefile.psi.impl.IMakeFileCommand;
 import com.intellij.navigation.NavigationItem;
 
 public class MakefileVisitor extends PsiElementVisitor {
@@ -14,7 +15,7 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitCommand(@NotNull MakefileCommand o) {
-    visitPsiElement(o);
+    visitIMakeFileCommand(o);
   }
 
   public void visitComment(@NotNull MakefileComment o) {
@@ -177,6 +178,10 @@ public class MakefileVisitor extends PsiElementVisitor {
 
   public void visitNamedElement(@NotNull MakefileNamedElement o) {
     visitPsiElement(o);
+  }
+
+  public void visitIMakeFileCommand(@NotNull IMakeFileCommand o) {
+    visitElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {

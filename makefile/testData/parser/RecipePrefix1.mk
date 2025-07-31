@@ -1,0 +1,4 @@
+.RECIPEPREFIX=\t
+
+recipe:
+	@echo ITS NOT WEDNESDAY, MAYBE

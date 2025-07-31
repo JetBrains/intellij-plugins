@@ -11,7 +11,7 @@ Makefile
       PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
-        PsiElement(\t)('\t')
+        PsiElement(RECIPE_PREFIX)('\t')
         MakefileStringImpl(STRING)
           PsiElement(")('"')
           PsiElement(chars)(''')

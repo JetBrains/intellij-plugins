@@ -20,7 +20,7 @@ Makefile
       PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
-        PsiElement(\t)('\t')
+        PsiElement(RECIPE_PREFIX)('\t')
         PsiElement(chars)('echo')
         PsiWhiteSpace(' ')
         MakefileVariableUsageImpl(VARIABLE_USAGE)

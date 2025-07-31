@@ -23,10 +23,7 @@ class MakefileShellLanguageInjector : MultiHostInjector {
     val rangesToInject = when (context) {
       is MakefileRecipe -> {
         context.children.filterIsInstance<MakefileCommand>().map {
-          val tabs = it.text.takeWhile(::isTab).count()
-          val firstSymbol = it.text.dropWhile(::isTab).firstOrNull()
-          val silent = if (firstSymbol == '@' || firstSymbol == '-') 1 else 0
-          TextRange.create(it.textRangeInParent.startOffset + tabs + silent, min(it.textRangeInParent.endOffset, context.textLength))
+          it.getShellCommandRange()
         }
       }
       is MakefileFunction -> {

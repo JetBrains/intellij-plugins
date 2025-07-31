@@ -1,0 +1,34 @@
+.RECIPEPREFIX = $
+
+recipe:
+$	@echo ITS NOT WEDNESDAY, MAYBE
+
+.RECIPEPREFIX = (
+
+recipe:
+(	@echo ITS NOT WEDNESDAY, MAYBE
+
+.RECIPEPREFIX = )
+
+recipe:
+)	@echo ITS NOT WEDNESDAY, MAYBE
+
+.RECIPEPREFIX = {
+
+recipe:
+{	@echo ITS NOT WEDNESDAY, MAYBE
+
+.RECIPEPREFIX = }
+
+recipe:
+}	@echo ITS NOT WEDNESDAY, MAYBE
+
+.RECIPEPREFIX = [
+
+recipe:
+[	@echo ITS NOT WEDNESDAY, MAYBE
+
+.RECIPEPREFIX = ]
+
+recipe:
+]	@echo ITS NOT WEDNESDAY, MAYBE

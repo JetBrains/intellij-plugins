@@ -94,5 +94,17 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testFunctionForeach() = doTest(true)
   fun testFunctionCall() = doTest(true)
 
+  fun testRecipePrefix0() = doTest(true)
+  fun testRecipePrefix1() = doTest(true)
+  fun testRecipePrefix2() = doTest(true)
+  fun testRecipePrefix3() = doTest(true)
+  fun testRecipePrefix4() = doTest(true)
+  fun testRecipePrefix5() = doTest(true)
+  fun testRecipePrefix6() = doTest(true)
+  fun testRecipePrefix7() = doTest(true)
+  fun testRecipePrefix8() = doTest(true)
+
+  fun testRecipeIndent() = doTest(true)
+
   override fun getTestDataPath() = BASE_TEST_DATA_PATH
 }

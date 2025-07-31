@@ -70,8 +70,7 @@ public class MakefileTargetLineImpl extends ASTWrapperPsiElement implements Make
   }
 
   @Override
-  @Nullable
-  public String getTargetName() {
+  public @Nullable String getTargetName() {
     return MakefilePsiImplUtil.getTargetName(this);
   }
 

@@ -12,8 +12,8 @@ import com.jetbrains.lang.makefile.psi.*;
 
 public class MakefileFilenameImpl extends MakefileFilenameMixin implements MakefileFilename {
 
-  public MakefileFilenameImpl(@NotNull ASTNode node) {
-    super(node);
+  public MakefileFilenameImpl(@NotNull ASTNode astNode) {
+    super(astNode);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
