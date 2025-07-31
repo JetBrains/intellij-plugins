@@ -1,9 +1,8 @@
 {
-  "name": "local-modules",
+  "name": "frontend-a",
   "version": "1.0.0",
-  "license": "ISC",
   "dependencies": {
     "isobject": "^4.0.0",
-    "local": "file:./local"
+    "frontend-commons": "file:../frontend-commons"
   }
 }

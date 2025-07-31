@@ -1,0 +1,11 @@
+{
+  "name": "unlinked-local",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "is-unix": "2.0.10"
+  },
+  "devDependencies": {
+    "unlinked-linked-local": "file:../unlinked-linked-local"
+  }
+}

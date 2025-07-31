@@ -1,0 +1,8 @@
+{
+  "name": "frontend-b",
+  "version": "1.0.0",
+  "dependencies": {
+    "isobject": "^3.0.1",
+    "frontend-commons": "file:../../frontend-commons"
+  }
+}

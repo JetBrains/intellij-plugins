@@ -1,0 +1,85 @@
+{
+  "version": "1.0.0",
+  "name": "unlinked",
+  "private": "true",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "local": "file:./local"
+  },
+  "_id": "unlinked@1.0.0",
+  "extraneous": false,
+  "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/unlinked modules/sources",
+  "_dependencies": {
+    "isobject": "^4.0.0"
+  },
+  "peerDependencies": {},
+  "dependencies": {
+    "cli": {
+      "version": "1.0.0",
+      "resolved": "file:../packages/cli",
+      "overridden": false,
+      "name": "cli",
+      "license": "MIT",
+      "_id": "cli@1.0.0",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/unlinked modules/sources/node_modules/cli",
+      "_dependencies": {
+        "is-unix": "2.0.9"
+      },
+      "devDependencies": {},
+      "peerDependencies": {},
+      "dependencies": {
+        "is-unix": {
+          "version": "2.0.9",
+          "resolved": "https://registry.npmjs.org/is-unix/-/is-unix-2.0.9.tgz",
+          "overridden": false,
+          "name": "is-unix",
+          "integrity": "sha512-PetX6i7selThHQPxo6RgfA8nAwqE3W/VcPZU1ducfhNTJXAhn+MLse+eNQDeYl2ZNL9WOzq8vqOD2E6f5uhpcw==",
+          "license": "MIT",
+          "engines": {
+            "node": ">= 12"
+          },
+          "_id": "is-unix@2.0.9",
+          "extraneous": false,
+          "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/unlinked modules/sources/node_modules/is-unix",
+          "_dependencies": {},
+          "devDependencies": {},
+          "peerDependencies": {}
+        }
+      }
+    },
+    "isobject": {
+      "version": "4.0.0",
+      "resolved": "https://registry.npmjs.org/isobject/-/isobject-4.0.0.tgz",
+      "overridden": false,
+      "name": "isobject",
+      "integrity": "sha512-S/2fF5wH8SJA/kmwr6HYhK/RI/OkhD84k8ntalo0iJjZikgq1XFvR5M8NPT1x5F7fBwCG3qHfnzeP/Vh/ZxCUA==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "_id": "isobject@4.0.0",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/unlinked modules/sources/node_modules/isobject",
+      "_dependencies": {},
+      "devDependencies": {},
+      "peerDependencies": {}
+    },
+    "local": {
+      "version": "1.0.0",
+      "resolved": "file:../local",
+      "overridden": false,
+      "name": "local",
+      "dev": true,
+      "license": "Apache-2.0",
+      "_id": "local@1.0.0",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/unlinked modules/sources/node_modules/local",
+      "_dependencies": {},
+      "devDependencies": {},
+      "peerDependencies": {}
+    }
+  }
+}

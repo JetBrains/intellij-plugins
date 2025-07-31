@@ -1,8 +1,7 @@
 {
-  "name": "local-test",
+  "name": "frontend-commons",
   "version": "1.0.0",
-  "license": "Apache-2.0",
-  "description": "",
+  "license": "ISC",
   "devDependencies": {
     "is-windows": "^1.0.2"
   }

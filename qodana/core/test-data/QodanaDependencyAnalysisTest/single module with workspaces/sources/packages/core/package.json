@@ -1,0 +1,9 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "is-unix": "^2.0.10",
+    "should-equal": "^2.0.0"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "name": "unlinked-core",
+  "license": "MIT",
+  "_id": "unlinked-core@1.0.0",
+  "extraneous": false,
+  "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/unlinked modules/sources/packages/cli/unlinked-core",
+  "_dependencies": {
+    "is-unix": "^2.0.10"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "dependencies": {
+    "is-unix": {
+      "version": "2.0.10",
+      "resolved": "https://registry.npmjs.org/is-unix/-/is-unix-2.0.10.tgz",
+      "overridden": false,
+      "name": "is-unix",
+      "integrity": "sha512-CcasZSEOQUoE7JHy56se4wyRhdJfjohuMWYmceSTaDY4naKyd1fpLiY8rJsIT6AKfVstQAhHJOfPx7jcUxK61Q==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 12"
+      },
+      "_id": "is-unix@2.0.10",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/unlinked modules/sources/packages/cli/unlinked-core/node_modules/is-unix",
+      "_dependencies": {},
+      "devDependencies": {},
+      "peerDependencies": {}
+    }
+  }
+}

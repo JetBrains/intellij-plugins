@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "name": "unlinked-linked-local",
+  "license": "Apache-2.0",
+  "_id": "unlinked-linked-local@1.0.0",
+  "extraneous": false,
+  "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/unlinked modules/sources/unlinked-linked-local",
+  "_dependencies": {
+    "is-unix": "2.0.9"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "dependencies": {
+    "is-unix": {
+      "version": "2.0.9",
+      "resolved": "https://registry.npmjs.org/is-unix/-/is-unix-2.0.9.tgz",
+      "overridden": false,
+      "name": "is-unix",
+      "integrity": "sha512-PetX6i7selThHQPxo6RgfA8nAwqE3W/VcPZU1ducfhNTJXAhn+MLse+eNQDeYl2ZNL9WOzq8vqOD2E6f5uhpcw==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 12"
+      },
+      "_id": "is-unix@2.0.9",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/unlinked modules/sources/unlinked-linked-local/node_modules/is-unix",
+      "_dependencies": {},
+      "devDependencies": {},
+      "peerDependencies": {}
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "private": "true",
+  "name": "unlinked",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {
+    "isobject": "^4.0.0"
+  },
+  "devDependencies": {
+    "local": "file:./local"
+  }
+}

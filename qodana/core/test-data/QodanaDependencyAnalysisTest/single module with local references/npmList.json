@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "name": "local-modules",
-  "license": "MIT",
+  "license": "ISC",
   "_id": "local-modules@1.0.0",
   "extraneous": false,
   "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/single module with local references/sources",
@@ -34,7 +34,7 @@
       "resolved": "file:../local",
       "overridden": false,
       "name": "local",
-      "license": "Apache-2.0",
+      "license": "MIT",
       "devDependencies": {
         "local-test": "file:../local-test"
       },
@@ -69,7 +69,7 @@
           "overridden": false,
           "name": "local-test",
           "dev": true,
-          "license": "ISC",
+          "license": "Apache-2.0",
           "devDependencies": {
             "is-windows": "^1.0.2"
           },

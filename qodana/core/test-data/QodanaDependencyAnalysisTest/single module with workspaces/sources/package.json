@@ -1,0 +1,12 @@
+{
+  "private": "true",
+  "name": "workspaces",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "extensions/*/*"
+  ],
+  "dependencies": {
+    "isobject": "^4.0.0"
+  }
+}
