@@ -156,7 +156,7 @@ class HCLStringLiteralTextEscaper(host: HCLStringLiteralMixin,
                 if (code == 0x000aL || code == 0x000dL) return false // WTF?
                 c = chars[index]
                 if (c == '+' || c == '-') return false // WTF?
-                outChars.append(code.toChar())
+                outChars.append(code.toInt().toChar())
                 index += 8
               } catch (e: Exception) {
                 return false

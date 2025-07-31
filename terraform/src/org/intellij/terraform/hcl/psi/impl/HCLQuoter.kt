@@ -129,7 +129,7 @@ object HCLQuoter {
             try {
               val code = java.lang.Long.parseLong(s.substring(idx + 1, idx + 9), 16)
               idx += 8
-              buffer.append(code.toChar())
+              buffer.append(code.toInt().toChar())
             } catch(e: NumberFormatException) {
               if (safe) buffer.append('\\').append(ch)
               else throw e
