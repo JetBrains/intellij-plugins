@@ -1,0 +1,9 @@
+{
+  "name": "local-modules",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "isobject": "^4.0.0",
+    "local": "file:./local"
+  }
+}

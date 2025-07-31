@@ -38,6 +38,7 @@ import java.io.StringWriter
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
+import kotlin.io.path.readText
 
 class QodanaTestManager {
   private lateinit var testData: TestData
@@ -166,6 +167,10 @@ class QodanaTestManager {
         coroutineContext.cancelChildren()
       }
     }
+  }
+
+  fun getProjectMetadataJson() : String {
+    return qodanaConfig.outPath.resolve("projectStructure/projectMetadata.json").readText()
   }
 
   suspend fun loadInspectionProfile(project: Project) = LoadedProfile.load(qodanaConfig, project, QodanaMessageReporter.DEFAULT)

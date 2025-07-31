@@ -1,0 +1,9 @@
+{
+  "name": "local-test",
+  "version": "1.0.0",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "is-windows": "^1.0.2"
+  }
+}

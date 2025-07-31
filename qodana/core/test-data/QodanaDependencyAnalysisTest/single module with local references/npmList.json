@@ -1,0 +1,105 @@
+{
+  "version": "1.0.0",
+  "name": "local-modules",
+  "license": "MIT",
+  "_id": "local-modules@1.0.0",
+  "extraneous": false,
+  "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/single module with local references/sources",
+  "_dependencies": {
+    "isobject": "^4.0.0",
+    "local": "file:./local"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "dependencies": {
+    "isobject": {
+      "version": "4.0.0",
+      "resolved": "https://registry.npmjs.org/isobject/-/isobject-4.0.0.tgz",
+      "overridden": false,
+      "name": "isobject",
+      "integrity": "sha512-S/2fF5wH8SJA/kmwr6HYhK/RI/OkhD84k8ntalo0iJjZikgq1XFvR5M8NPT1x5F7fBwCG3qHfnzeP/Vh/ZxCUA==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "_id": "isobject@4.0.0",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/single module with local references/sources/node_modules/isobject",
+      "_dependencies": {},
+      "devDependencies": {},
+      "peerDependencies": {}
+    },
+    "local": {
+      "version": "1.0.0",
+      "resolved": "file:../local",
+      "overridden": false,
+      "name": "local",
+      "license": "Apache-2.0",
+      "devDependencies": {
+        "local-test": "file:../local-test"
+      },
+      "_id": "local@1.0.0",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/single module with local references/sources/node_modules/local",
+      "_dependencies": {
+        "is-unix": "^2.0.10"
+      },
+      "peerDependencies": {},
+      "dependencies": {
+        "is-unix": {
+          "version": "2.0.10",
+          "resolved": "https://registry.npmjs.org/is-unix/-/is-unix-2.0.10.tgz",
+          "overridden": false,
+          "name": "is-unix",
+          "integrity": "sha512-CcasZSEOQUoE7JHy56se4wyRhdJfjohuMWYmceSTaDY4naKyd1fpLiY8rJsIT6AKfVstQAhHJOfPx7jcUxK61Q==",
+          "license": "MIT",
+          "engines": {
+            "node": ">= 12"
+          },
+          "_id": "is-unix@2.0.10",
+          "extraneous": false,
+          "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/single module with local references/sources/node_modules/is-unix",
+          "_dependencies": {},
+          "devDependencies": {},
+          "peerDependencies": {}
+        },
+        "local-test": {
+          "version": "1.0.0",
+          "resolved": "file:../local-test",
+          "overridden": false,
+          "name": "local-test",
+          "dev": true,
+          "license": "ISC",
+          "devDependencies": {
+            "is-windows": "^1.0.2"
+          },
+          "_id": "local-test@1.0.0",
+          "extraneous": false,
+          "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/single module with local references/sources/node_modules/local-test",
+          "_dependencies": {},
+          "peerDependencies": {},
+          "dependencies": {
+            "is-windows": {
+              "version": "1.0.2",
+              "resolved": "https://registry.npmjs.org/is-windows/-/is-windows-1.0.2.tgz",
+              "overridden": false,
+              "name": "is-windows",
+              "integrity": "sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==",
+              "dev": true,
+              "license": "MIT",
+              "engines": {
+                "node": ">=0.10.0"
+              },
+              "_id": "is-windows@1.0.2",
+              "extraneous": false,
+              "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/single module with local references/sources/node_modules/is-windows",
+              "_dependencies": {},
+              "devDependencies": {},
+              "peerDependencies": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}
