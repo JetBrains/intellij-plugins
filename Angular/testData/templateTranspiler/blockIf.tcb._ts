@@ -5,8 +5,8 @@
 function _tcb1(this: RobotProfileComponent) {
 var _t1 = this.user.isRobot;
 if ((this.user.isRobot) && _t1) {
-"" + _t1;
-"" + this.user.name;
+"" + (_t1);
+"" + (this.user.name);
 var _t2 = document.createElement("a");
 _t2.addEventListener("click", ($event): any => {
 if ((this.user.isRobot) && _t1){
@@ -15,8 +15,8 @@ this.use(this.user.isRobot);
 });
 }
 else if (this.user.isHuman) {
-"" + this.isRobot;
-"" + this.user.name;
+"" + (this.isRobot);
+"" + (this.user.name);
 var _t3 = document.createElement("a");
 _t3.addEventListener("click", ($event): any => {
 if (!((this.user.isRobot) && _t1) && this.user.isHuman){
@@ -25,10 +25,10 @@ this.use(this.user.isHuman);
 });
 }
 else {
-"" + this.isRobot;
-"" + this.user.name;
+"" + (this.isRobot);
+"" + (this.user.name);
 if (this.user.name) {
-"" + this.user.name;
+"" + (this.user.name);
 }
 }
 

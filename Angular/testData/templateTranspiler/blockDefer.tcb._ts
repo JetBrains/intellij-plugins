@@ -4,11 +4,11 @@
 
 function _tcb1(this: RobotProfileComponent) {
 (this.user.name);
-"" + this.user.name;
-"" + this.user.name + 0;
-"" + this.user.name + 2;
-"" + this.user.name + 1;
+"" + (this.user.name);
+"" + (this.user.name + 0);
+"" + (this.user.name + 2);
+"" + (this.user.name + 1);
 var _t1 = document.createElement("div");
 var _t2 = _t1;
-"" + this.user.name + 12;
+"" + (this.user.name + 12);
 }

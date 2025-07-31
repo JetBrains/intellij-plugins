@@ -394,7 +394,7 @@ private class TcbExpressionOp(
       val expr = tcbExpression(this.expression, this.tcb, this.scope)
       this.scope.addStatement {
         if (isBoundText) {
-          append("\"\" + ").append(expr).append(";")
+          append("\"\" + (").append(expr).append(");")
         }
         else {
           append("(").append(expr).append(");")

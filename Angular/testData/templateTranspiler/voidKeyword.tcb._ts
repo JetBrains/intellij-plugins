@@ -3,9 +3,9 @@
 /* TCB for voidKeyword.ts */
 
 function _tcb1(this: RobotProfileComponent) {
-"" + void this.check(true);
+"" + (void this.check(true));
 var _t1 = document.createElement("div");
 (void this.check(true));
 var _t2 = document.createElement("div");
-"" + void this.check(true);
+"" + (void this.check(true));
 }

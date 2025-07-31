@@ -4,10 +4,10 @@
 
 function _tcb1(this: RobotProfileComponent) {
 if (typeof this.value === 'string') {
-"" + this.check(this.value);
+"" + (this.check(this.value));
 }
 else {
-"" + this.check(this.value);
+"" + (this.check(this.value));
 }
 
 }

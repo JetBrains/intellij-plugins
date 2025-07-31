@@ -10,13 +10,13 @@ function _tcb1(this: LetComponent) {
 const _t1 = this.value;
 var _t2 = document.createElement("div");
 const _t3 = this.value;
-"" + _t1;
-"" + _t3;
+"" + (_t1);
+"" + (_t3);
 if (this.condition) {
-"" + _t1 + _t3;
+"" + (_t1 + _t3);
 const _t4 = this.value;
 if (this.condition) {
-"" + _t1 + _t3 + _t4;
+"" + (_t1 + _t3 + _t4);
 }
 }
 var _t5 = _ctor1({"ngIf": this.condition, "ngIfThen": 0 as any, "ngIfElse": 0 as any});
@@ -25,7 +25,7 @@ var _t6 = null! as any;
 if (_i1.NgIf.ngTemplateContextGuard(_t5, _t6) && this.condition) {
 _t6;
 var _t7 = document.createElement("div");
-"" + _t1 + _t3;
+"" + (_t1 + _t3);
 const _t8 = this.value;
 var _t9 = _ctor1({"ngIf": this.condition, "ngIfThen": 0 as any, "ngIfElse": 0 as any});
 _t9.ngIf = this.condition;
@@ -33,9 +33,9 @@ var _t10 = null! as any;
 if (_i1.NgIf.ngTemplateContextGuard(_t9, _t10) && this.condition) {
 _t10;
 var _t11 = document.createElement("div");
-"" + _t1 + _t3 + _t8;
+"" + (_t1 + _t3 + _t8);
 }
 }
-"" + this.nested;
-"" + this.nestedNgIf;
+"" + (this.nested);
+"" + (this.nestedNgIf);
 }

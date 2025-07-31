@@ -22,7 +22,7 @@ var _t6 = null! as any;
 _t6;
 var _t7 = _t6.$implicit;
 var _t8 = document.createElement("p");
-"" + _t5('text1');
+"" + (_t5('text1'));
 }
 var _t9 = (_t6 as any as _i1.TemplateRef<any>);
 }

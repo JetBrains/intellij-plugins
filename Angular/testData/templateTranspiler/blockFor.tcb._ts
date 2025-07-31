@@ -12,12 +12,12 @@ var _t6 : boolean = _t2;
 var _t7 = null! as number;
 var _t8 = null! as boolean;
 var _t9 : number = _t3;
-"" + _t1;
-"" + _t4;
-"" + _t6;
-"" + _t2;
-"" + _t9;
-"" + this.$foo;
+"" + (_t1);
+"" + (_t4);
+"" + (_t6);
+"" + (_t2);
+"" + (_t9);
+"" + (this.$foo);
 (_t1.name);
 }
 for (const _t10 of (this.array)!) {
@@ -27,12 +27,12 @@ var _t13 = null! as boolean;
 var _t14 = null! as number;
 var _t15 = null! as boolean;
 var _t16 = null! as number;
-"" + _t11;
-"" + _t13;
-"" + _t12;
-"" + _t15;
-"" + _t14;
-"" + _t16;
+"" + (_t11);
+"" + (_t13);
+"" + (_t12);
+"" + (_t15);
+"" + (_t14);
+"" + (_t16);
 (_t10.name);
 }
 for (const __error of (undefined)!) {
@@ -42,7 +42,7 @@ var _t19 = null! as boolean;
 var _t20 = null! as number;
 var _t21 = null! as boolean;
 var _t22 = null! as number;
-"" + this.a;
+"" + (this.a);
 (undefined);
 }
 }
