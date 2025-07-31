@@ -28,7 +28,7 @@ class DatabaseProblemsDuplicatesTest : QodanaTestCase() {
   @Test
   fun `duplicates eliminated tags are merged`(): Unit = runBlocking {
     QodanaToolResultDatabase.create(getTempOutputPath()).use { database ->
-      val messages = ConcurrentHashMap.newKeySet<String?>()
+      val messages = ConcurrentHashMap.newKeySet<String>()
       val reporter = object : QodanaMessageReporter {
         override fun reportError(e: Throwable) {}
 
