@@ -87,6 +87,14 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(fal
       }
   }
 
+  private fun monitorByProfile(profile: SerialPortProfile): SerialMonitor? {
+    return toolWindow.contentManager.contents
+      .mapNotNull { it.getUserData(SERIAL_MONITOR) }
+      .firstOrNull {
+        it.portProfile == profile
+      }
+  }
+
   fun openConsole(portName: String?) {
     val content = contentByPortName(portName)
     toolWindow.getContentManager().setSelectedContent(content ?: return)
@@ -94,6 +102,10 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(fal
 
   fun disconnectPort(portName: String?) {
     contentByPortName(portName)?.getUserData(SERIAL_MONITOR)?.disconnect()
+  }
+
+  fun notifyProfileChanged(profile: SerialPortProfile) {
+    monitorByProfile(profile)?.notifyProfileChanged()
   }
 
   fun connectProfile(profile: SerialPortProfile,

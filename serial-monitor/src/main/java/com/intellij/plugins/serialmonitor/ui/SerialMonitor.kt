@@ -60,7 +60,6 @@ class SerialMonitor(private val project: Project,
   private val myCommand: TextFieldWithStoredHistory
   private val myLineEnd: JBCheckBox
   private val myHardwareControls: DialogPanel
-  //private val myHardwareStatus: DialogPanel
   private val myHardwareStatusComponents = HardwareStatusComponents()
   private val duplexConsoleView: JeditermSerialMonitorDuplexConsoleView
 

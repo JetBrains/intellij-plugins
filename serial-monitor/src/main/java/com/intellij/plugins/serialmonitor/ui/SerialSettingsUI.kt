@@ -269,6 +269,7 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
         val profiles = service.getProfiles().toMutableMap()
         profiles[profileName] = it
         service.setProfiles(profiles)
+        connectableList.parent.notifyProfileChanged(profile)
       }
       row {
         when (status) {
