@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
+import com.intellij.javascript.types.TSType
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
@@ -277,7 +278,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     override val service: TypeScriptService
       get() = this@Angular2TypeScriptService
 
-    override fun getElementType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind, virtualFile: VirtualFile, projectFile: VirtualFile?): JSType? =
+    override fun getElementType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind, virtualFile: VirtualFile, projectFile: VirtualFile?): TSType? =
       if (element !is JSElement && element.parent !is JSElement) null
       else super.getElementType(element, typeRequestKind, virtualFile, projectFile)
 
