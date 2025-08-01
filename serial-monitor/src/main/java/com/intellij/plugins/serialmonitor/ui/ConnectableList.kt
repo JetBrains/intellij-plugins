@@ -78,11 +78,19 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
 
     private val duplicateProfile = object : DumbAwareAction(SerialMonitorBundle.message("action.duplicate.profile.text"), null,
                                                             AllIcons.Actions.Copy) {
+      init {
+        registerCustomShortcutSet(CommonShortcuts.getDuplicate(), this@ConnectableList)
+      }
+
       override fun actionPerformed(e: AnActionEvent) = createNewProfile(entityName)
     }
 
     private val removeProfile = object : DumbAwareAction(SerialMonitorBundle.message("action.remove.profile.text"), null,
                                                          AllIcons.General.Remove) {
+      init {
+        registerCustomShortcutSet(CommonShortcuts.getDelete(), this@ConnectableList)
+      }
+
       override fun actionPerformed(e: AnActionEvent) {
         if (MessageDialogBuilder.yesNo(
             SerialMonitorBundle.message("dialog.title.delete.profile", entityName),
@@ -124,6 +132,10 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
 
     private val createProfile = object : DumbAwareAction(SerialMonitorBundle.message("action.create.profile.text"), null,
                                                          AllIcons.General.Add) {
+      init {
+        registerCustomShortcutSet(CommonShortcuts.getNew(), this@ConnectableList)
+      }
+
       override fun actionPerformed(e: AnActionEvent) = createNewProfile(null, portName())
     }
 
