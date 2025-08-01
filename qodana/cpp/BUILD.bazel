@@ -23,7 +23,7 @@ jvm_library(
     "@community//platform/platform-api:ide",
     "//CIDR/cidr-projectModel",
     "//CIDR/cidr-workspaceModel",
-    "//rider/plugins/clion-radler:rider-plugins-clion-radler",
+    "//rider/plugins/clion-radler/core",
     "@community//platform/projectModel-api:projectModel",
   ],
   runtime_deps = [":cpp_resources"]

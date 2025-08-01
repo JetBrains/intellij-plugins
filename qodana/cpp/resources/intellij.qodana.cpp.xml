@@ -2,6 +2,7 @@
   <dependencies>
     <plugin id="com.intellij.modules.clion.cmake"/>
     <plugin id="org.jetbrains.plugins.clion.radler"/>
+    <module name="intellij.rider.plugins.clion.radler.core"/>
     <module name="intellij.cidr.projectModel"/>
   </dependencies>
 
