@@ -1,12 +1,14 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types
 
+import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedNameResolver
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterfaceClass
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverType
@@ -85,7 +87,18 @@ object Angular2TypeUtils {
 
   fun buildTypeFromClass(cls: JSClass, context: PsiElement = cls): JSRecordType =
     withTypeEvaluationLocation(context) {
-      TypeScriptTypeParser.buildTypeFromClass(cls, false)
+      cls.name?.let { clsName ->
+        // Turns out that TS interface may provide additional properties for a TS class,
+        // when in the same scope. Gather all classes and interfaces with the same name and scope.
+        TypeScriptQualifiedNameResolver(cls)
+          .getLocalElements(clsName, listOf(cls.getContext()))
+          .filterIsInstance<TypeScriptInterfaceClass>()
+          .flatMap { TypeScriptTypeParser.buildTypeFromClass(it, false).typeMembers }
+          .takeIf { it.isNotEmpty() }
+          ?.let {
+            JSSimpleRecordTypeImpl(JSTypeSourceFactory.createTypeSource(cls), it)
+          }
+      } ?: TypeScriptTypeParser.buildTypeFromClass(cls, false)
     }
 
   val TypeScriptClass.possiblyGenericJsType: JSType

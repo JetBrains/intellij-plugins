@@ -56,6 +56,8 @@ enum class Angular2TestModule(myPackageName: String, myVersion: String) : WebFra
   IONIC_ANGULAR_4_1_1("@ionic/angular", "4.1.1"),
   IONIC_ANGULAR_4_11_4_IVY("@ionic/angular", "4.11.4-ivy"),
   IONIC_ANGULAR_7_7_3("@ionic/angular", "7.7.3"),
+  IONIC_ANGULAR_8_4_3("@ionic/angular", "8.4.3"),
+  IONIC_CORE_8_4_3("@ionic/core", "8.4.3"),
   NGNEAT_TRANSLOCO_2_6_0_IVY("@ngneat/transloco", "2.6.0-ivy"),
   NGXS_STORE_3_6_2("@ngxs/store", "3.6.2"),
   NGXS_STORE_3_6_2_MIXED("@ngxs/store", "3.6.2-mixed"),
