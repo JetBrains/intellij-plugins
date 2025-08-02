@@ -1,0 +1,10 @@
+import { RouterLinkDelegateDirective as RouterLinkDelegateBase, RouterLinkWithHrefDelegateDirective as RouterLinkHrefDelegateBase } from '@ionic/angular/common';
+import * as i0 from "@angular/core";
+export declare class IonRouterLink extends RouterLinkDelegateBase {
+    static ɵfac: i0.ɵɵFactoryDeclaration<IonRouterLink, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<IonRouterLink, ":not(a):not(area)[routerLink]", never, {}, {}, never, never, true, never>;
+}
+export declare class IonRouterLinkWithHref extends RouterLinkHrefDelegateBase {
+    static ɵfac: i0.ɵɵFactoryDeclaration<IonRouterLinkWithHref, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<IonRouterLinkWithHref, "a[routerLink],area[routerLink]", never, {}, {}, never, never, true, never>;
+}
