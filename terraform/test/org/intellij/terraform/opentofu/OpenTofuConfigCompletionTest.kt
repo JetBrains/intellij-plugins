@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.opentofu
 
 import org.intellij.terraform.config.codeinsight.TfBaseCompletionTestCase
@@ -318,5 +318,10 @@ internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
     myFixture.testCompletionVariants(file.virtualFile.name, "some_method_name", "some_method_name2")
   }
 
-
+   fun testNoEphemeralResourcesAtTopLevel() {
+     val file = myFixture.configureByText("main.tofu", """
+       ephem<caret>
+     """.trimIndent())
+     myFixture.testCompletionVariants(file.virtualFile.name)
+   }
 }
