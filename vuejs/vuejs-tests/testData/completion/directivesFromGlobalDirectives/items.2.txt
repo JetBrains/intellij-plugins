@@ -1,0 +1,3 @@
+v-my-click-outside (typeText=null; priority=10.0; typeGreyed)
+v-my-intersect (typeText=null; priority=10.0; typeGreyed)
+v-my-mutate (typeText=null; priority=10.0; typeGreyed)
