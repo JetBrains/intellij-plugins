@@ -35,6 +35,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/xml-psi-api:psi",
     "@community//xml/impl",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":mdx_resources"]
 )
@@ -70,6 +71,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/xml-psi-api:psi",
     "@community//xml/impl",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":mdx_resources"]
 )

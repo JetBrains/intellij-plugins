@@ -55,6 +55,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "//plugins/css/common/psi",
     "//plugins/css/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":jade_resources",
@@ -110,6 +111,7 @@ jvm_library(
     "//plugins/css/common/psi",
     "//plugins/css/backend",
     "//plugins/css/analysis",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":jade_resources",

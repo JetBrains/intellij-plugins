@@ -101,5 +101,6 @@
     <orderEntry type="module" module-name="intellij.platform.webide.impl" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.css.common" />
+    <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />
   </component>
 </module>

@@ -46,6 +46,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/statistics",
     "@community//platform/diff-impl",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":prettierJS_resources",
@@ -94,6 +95,7 @@ jvm_library(
     "@community//platform/statistics:statistics_test_lib",
     "@community//platform/statistics/testFramework",
     "@community//platform/diff-impl",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":prettierJS_resources",

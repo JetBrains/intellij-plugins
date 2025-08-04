@@ -47,6 +47,7 @@ jvm_library(
     "@ultimate_lib//:eclipse-lsp4j",
     "//plugins/css/psi",
     "@community//platform/polySymbols/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":astro_resources"]
 )

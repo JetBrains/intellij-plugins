@@ -180,6 +180,7 @@ jvm_library(
     "//contrib/Angular:angular",
     "//plugins/css/backend",
     "//plugins/css/analysis",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":angular-tests_test_resources",

@@ -67,6 +67,7 @@ jvm_library(
     "@community//platform/structuralsearch:structuralSearch",
     "//plugins/css/backend",
     "//plugins/css/analysis",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ]
 )
 ### auto-generated section `build intellij.flex.tests` end

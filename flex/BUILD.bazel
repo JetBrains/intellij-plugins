@@ -79,6 +79,7 @@ jvm_library(
     "@community//platform/util/text-matching",
     "//plugins/css/common/psi",
     "//plugins/css/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":flex_resources",

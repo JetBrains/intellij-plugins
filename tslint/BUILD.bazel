@@ -40,6 +40,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//json/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":tslint_resources",
@@ -78,6 +79,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//json/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":tslint_resources",

@@ -136,6 +136,7 @@ jvm_library(
     "//webcore/impl",
     "//plugins/css/common/psi",
     "//plugins/css/common",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":angularJS_resources",

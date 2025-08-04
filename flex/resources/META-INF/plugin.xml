@@ -307,6 +307,7 @@
     <smartCompletionContributor language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptSmartCompletionContributor"/>
     <dialectSpecificHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptSpecificHandlersFactory"/>
     <handlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptHandlersFactory"/>
+    <commonHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptCommonHandlersFactory"/>
     <JSImplicitElementsIndexFileTypeProvider implementation="com.intellij.javascript.flex.MxmlJSImplicitElementsIndexFileTypeProvider"/>
     <analysisHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnalysisHandlersFactory"/>
     <predefinedLibraryProvider implementation="com.intellij.lang.javascript.flex.library.ActionScriptLibraryProvider"/>

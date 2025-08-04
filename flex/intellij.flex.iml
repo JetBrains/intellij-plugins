@@ -79,5 +79,6 @@
     <orderEntry type="module" module-name="intellij.platform.util.text.matching" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.css.backend" />
+    <orderEntry type="module" module-name="intellij.javascript.common" />
   </component>
 </module>

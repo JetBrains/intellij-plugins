@@ -73,6 +73,7 @@ jvm_library(
     "//webcore:webide",
     "//plugins/css/analysis",
     "//plugins/css/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":tests_test_resources"]
 )
