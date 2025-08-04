@@ -68,7 +68,7 @@ private class KotlinAnalyzeEntrypointNode(
 
 private fun getEntrypointKtLifetimeApiMethods(ktElement: KtElement): List<KtLifetimeOwnerApiMethod> {
   return buildList {
-    if (ktElement is KtDeclaration) {
+    if (ktElement is KtDeclarationWithReturnType) {
       add(ktApiMethodOnPsi(ktElement, "getReturnKtType") { it.returnType })
     }
     if (ktElement is KtExpression) {
