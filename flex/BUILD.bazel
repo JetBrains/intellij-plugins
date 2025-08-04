@@ -35,7 +35,7 @@ jvm_library(
     "@community//xml/xml-structure-view-api:structureView",
     "@community//platform/usageView",
     "//plugins/JavaScriptLanguage/javascript-parser",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "@community//xml/xml-parser:parser",
     "@community//platform/indexing-impl",
     "//plugins/JavaScriptDebugger:javascript-debugger",

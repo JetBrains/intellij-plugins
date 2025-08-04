@@ -21,7 +21,7 @@
     <orderEntry type="module" module-name="intellij.platform.editor.ex" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
-    <orderEntry type="module" module-name="intellij.javascript.impl" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.javascript.backend" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.javascript.debugger" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
   </component>

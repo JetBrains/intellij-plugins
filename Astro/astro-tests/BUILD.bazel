@@ -23,7 +23,7 @@ jvm_library(
     "//contrib/Astro:astro",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "@community//plugins/htmltools:html-tools",
     "//plugins/JavaScriptLanguage:javascript-plugin",
     "//plugins/css/psi",

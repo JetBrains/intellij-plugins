@@ -32,7 +32,7 @@
     <orderEntry type="module" module-name="intellij.javascript.debugger" />
     <orderEntry type="module" module-name="intellij.javascript.debugger.backend" />
     <orderEntry type="module" module-name="intellij.javascript.wip.backend" />
-    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.backend" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.handlebars" />

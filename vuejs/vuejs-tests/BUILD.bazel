@@ -40,7 +40,7 @@ jvm_library(
     "@community//spellchecker:spellchecker_test_lib",
     "@community//platform/indexing-impl",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "@community//platform/analysis-impl",
     "@community//platform/lang-impl",
     "//plugins/JavaScriptLanguage:javascript-plugin",

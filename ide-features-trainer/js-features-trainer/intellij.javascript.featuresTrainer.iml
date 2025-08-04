@@ -25,7 +25,7 @@
     <orderEntry type="module" module-name="intellij.platform.refactoring" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
-    <orderEntry type="module" module-name="intellij.javascript.impl" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.javascript.backend" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
   </component>

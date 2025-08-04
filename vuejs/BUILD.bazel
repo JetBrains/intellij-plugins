@@ -52,7 +52,7 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/analysis-impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "//plugins/JavaScriptDebugger:javascript-debugger",
     "//plugins/JavaScriptDebugger/backend",
     "//plugins/JavaScriptDebugger/debugger-ui:javascript-debugger-ui",

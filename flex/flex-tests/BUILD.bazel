@@ -20,7 +20,7 @@ jvm_library(
     "//contrib/flex",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/css/common",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",
