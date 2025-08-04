@@ -146,6 +146,19 @@ class VueCompletionTest : VueTestCase("completion") {
   fun testCustomDirectivesLinkedFilesInCompletion() =
     doLookupTest(VueTestModule.VUE_2_5_3, configureFileName = "CustomDirectives.html", dir = true) { it.lookupString.startsWith("v-") }
 
+  fun testDirectivesFromGlobalDirectives() {
+    doLookupTest(
+      VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<main v-<caret>my-click-outside>",
+        "<main v-my<caret>-click-outside>",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+  }
+
   fun testPrettyLookup() =
     doLookupTest(renderTailText = true, lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties)
 
