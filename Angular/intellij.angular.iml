@@ -53,7 +53,7 @@
     <orderEntry type="module" module-name="intellij.platform.polySymbols" />
     <orderEntry type="library" name="fastutil-min" level="project" />
     <orderEntry type="module" module-name="intellij.platform.images" />
-    <orderEntry type="module" module-name="intellij.platform.webide.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.common" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="library" name="opentelemetry" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />

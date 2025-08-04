@@ -6,12 +6,12 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSLanguageUtil
 import com.intellij.lang.javascript.formatter.JSBlockContext
 import com.intellij.lang.javascript.formatter.JavascriptFormattingModelBuilder
+import com.intellij.lang.javascript.formatter.SpacingStrategy
 import com.intellij.lang.javascript.formatter.blocks.CompositeJSBlock
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.psi.formatter.WrappingUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
-import com.intellij.webcore.formatter.SpacingStrategy
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
 class VueExprFormattingModelBuilder : JavascriptFormattingModelBuilder() {

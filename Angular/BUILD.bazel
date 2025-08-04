@@ -62,7 +62,7 @@ jvm_library(
     "@community//platform/polySymbols",
     "@lib//:fastutil-min",
     "@community//images",
-    "//webcore/impl",
+    "//plugins/JavaScriptLanguage/javascript-common",
     "@community//platform/xdebugger-api:debugger",
     "@lib//:opentelemetry",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",

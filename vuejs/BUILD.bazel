@@ -62,7 +62,7 @@ jvm_library(
     "@community//spellchecker",
     "//plugins/css/analysis",
     "@community//platform/built-in-server:builtInServer-impl",
-    "//webcore/impl",
+    "//plugins/JavaScriptLanguage/javascript-common",
     "//contrib/prettierJS",
     "//plugins/webpack",
     "@lib//:jackson",
