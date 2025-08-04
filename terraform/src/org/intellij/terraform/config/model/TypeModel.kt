@@ -123,19 +123,21 @@ class TypeModel(
 
     val ErrorMessageProperty: PropertyType = PropertyType("error_message", Types.String)
     val ConditionProperty: PropertyType = PropertyType("condition", Types.Boolean, injectionAllowed = false)
-    val Variable_Type: PropertyType = PropertyType("type", Types.Any, injectionAllowed = false)
-    val Variable_Default: PropertyType = PropertyType("default", Types.Any)
-    val Variable_Validation: BlockType = BlockType(HCL_VALIDATION_IDENTIFIER, 0, properties = listOf(
+    val VariableType: PropertyType = PropertyType("type", Types.Any, injectionAllowed = false)
+    val VariableDefault: PropertyType = PropertyType("default", Types.Any)
+    val VariableValidation: BlockType = BlockType(HCL_VALIDATION_IDENTIFIER, 0, properties = listOf(
       ConditionProperty,
       ErrorMessageProperty
     ).toMap())
+    val EphemeralProperty: PropertyType = PropertyType(HCL_EPHEMERAL_IDENTIFIER, Types.Boolean)
     val Variable: BlockType = BlockType(HCL_VARIABLE_IDENTIFIER, 1, properties = listOf<PropertyOrBlockType>(
-      Variable_Type,
-      Variable_Default,
-      Variable_Validation,
+      VariableType,
+      VariableDefault,
+      VariableValidation,
       DescriptionProperty,
       SensitiveProperty,
-      NullableProperty
+      NullableProperty,
+      EphemeralProperty
     ).toMap())
 
     val Connection: BlockType = BlockType(HCL_CONNECTION_IDENTIFIER, 0, properties = listOf(
@@ -178,7 +180,8 @@ class TypeModel(
       DescriptionProperty,
       DependsOnProperty,
       SensitiveProperty,
-      PreconditionBlock
+      PreconditionBlock,
+      EphemeralProperty
     ).toMap())
 
     val ResourceLifecycle: BlockType = BlockType(HCL_LIFECYCLE_IDENTIFIER, 0,

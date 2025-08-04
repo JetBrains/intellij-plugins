@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
@@ -37,7 +37,7 @@ class TfIncorrectVariableTypeInspection : LocalInspectionTool() {
 
       val obj = block.`object` ?: return
 
-      val typeProperty = obj.findProperty(TypeModel.Variable_Type.name)
+      val typeProperty = obj.findProperty(TypeModel.VariableType.name)
       val typePropertyValue = typeProperty?.value ?: return
 
       if (typePropertyValue is HCLStringLiteral) {
@@ -60,7 +60,7 @@ class TfIncorrectVariableTypeInspection : LocalInspectionTool() {
                                                                     joinCommaOr(legacyAllowedValues)))
       }
 
-      val defaultProperty = block.`object`?.findProperty(TypeModel.Variable_Default.name) ?: return
+      val defaultProperty = block.`object`?.findProperty(TypeModel.VariableDefault.name) ?: return
 
       val value = defaultProperty.value as? HCLValue ?: return
       val actual = value.getType() ?: return
@@ -90,7 +90,7 @@ class TfIncorrectVariableTypeInspection : LocalInspectionTool() {
       // next statement will also check type and add warnings if needed
       val expected = TypeSpecificationValidator(holder, true).getType(value) ?: return
 
-      val defaultValue = block.`object`?.findProperty(TypeModel.Variable_Default.name)?.value as? HCLValue ?: return
+      val defaultValue = block.`object`?.findProperty(TypeModel.VariableDefault.name)?.value as? HCLValue ?: return
       val actual = defaultValue.getType() ?: return
 
       if (actual == Types.Null) return // Allowed in Terraform 0.12
@@ -109,7 +109,7 @@ class TfIncorrectVariableTypeInspection : LocalInspectionTool() {
       if (element !is HCLValue) return
       val property = element.parent as? HCLProperty ?: return
       val obj = property.parent as? HCLObject ?: return
-      val typeProperty = obj.findProperty(TypeModel.Variable_Type.name)
+      val typeProperty = obj.findProperty(TypeModel.VariableType.name)
 
       if (typeProperty == null) {
         obj.addAfter(HCLElementGenerator(project).createProperty("type", "\"$toType\""), obj.firstChild)
