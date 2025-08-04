@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.intellij.psi.PsiElement
@@ -12,11 +12,11 @@ class Variable(val declaration: HCLBlock) : Block(TypeModel.Variable) {
   val nameIdentifier: PsiElement get() = declaration.nameIdentifier!!
 
   fun getDefault(): HCLExpression? {
-    return declaration.`object`?.findProperty(TypeModel.Variable_Default.name)?.value
+    return declaration.`object`?.findProperty(TypeModel.VariableDefault.name)?.value
   }
 
   fun getTypeExpression(): HCLExpression? {
-    return declaration.`object`?.findProperty(TypeModel.Variable_Type.name)?.value
+    return declaration.`object`?.findProperty(TypeModel.VariableType.name)?.value
   }
 
   fun getType(): Type? {
