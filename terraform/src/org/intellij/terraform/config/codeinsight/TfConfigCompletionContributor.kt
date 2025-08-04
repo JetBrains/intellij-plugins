@@ -253,7 +253,8 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       val leftNWS = position.getPrevSiblingNonWhiteSpace()
       LOG.debug { "TF.BlockKeywordCompletionProvider{position=$position, parent=$parent, left=${position.prevSibling}, lnws=$leftNWS}" }
       assert(getClearTextValue(leftNWS) == null, dumpPsiFileModel(position))
-      result.addAllElements(RootBlockSorted.map { createPropertyOrBlockType(it) })
+      val fileType = position.containingFile.originalFile.fileType
+      result.addAllElements(RootBlockSorted.filter { it.canBeUsedIn(fileType) }.map { createPropertyOrBlockType(it) })
     }
   }
 
