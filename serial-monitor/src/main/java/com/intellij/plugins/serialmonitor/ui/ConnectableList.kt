@@ -76,36 +76,6 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
       }
     }
 
-    private val duplicateProfile = object : DumbAwareAction(SerialMonitorBundle.message("action.duplicate.profile.text"), null,
-                                                            AllIcons.Actions.Copy) {
-      init {
-        registerCustomShortcutSet(CommonShortcuts.getDuplicate(), this@ConnectableList)
-      }
-
-      override fun actionPerformed(e: AnActionEvent) = createNewProfile(entityName)
-    }
-
-    private val removeProfile = object : DumbAwareAction(SerialMonitorBundle.message("action.remove.profile.text"), null,
-                                                         AllIcons.General.Remove) {
-      init {
-        registerCustomShortcutSet(CommonShortcuts.getDelete(), this@ConnectableList)
-      }
-
-      override fun actionPerformed(e: AnActionEvent) {
-        if (MessageDialogBuilder.yesNo(
-            SerialMonitorBundle.message("dialog.title.delete.profile", entityName),
-            SerialMonitorBundle.message("dialog.message.are.you.sure")).ask(this@ConnectableList)) {
-          with(service<SerialProfileService>()) {
-            val newProfiles = getProfiles().toMutableMap()
-            newProfiles.remove(entityName)
-            clearSelection()
-            setProfiles(newProfiles)
-            application.invokeLater { rescanProfiles() }
-          }
-        }
-      }
-    }
-
     override fun actions(): Array<AnAction> =
       when (status) {
         PortStatus.UNAVAILABLE ->
@@ -128,15 +98,6 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
 
     override fun connect() {
       parent.connectProfile(service<SerialProfileService>().copyDefaultProfile(entityName))
-    }
-
-    private val createProfile = object : DumbAwareAction(SerialMonitorBundle.message("action.create.profile.text"), null,
-                                                         AllIcons.General.Add) {
-      init {
-        registerCustomShortcutSet(CommonShortcuts.getNew(), this@ConnectableList)
-      }
-
-      override fun actionPerformed(e: AnActionEvent) = createNewProfile(null, portName())
     }
 
     override fun actions(): Array<AnAction> =
@@ -272,4 +233,49 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
     else null
   }
 
+  private val removeProfile = object : DumbAwareAction(SerialMonitorBundle.message("action.remove.profile.text"), null,
+                                                       AllIcons.General.Remove) {
+    init {
+      registerCustomShortcutSet(CommonShortcuts.getDelete(), this@ConnectableList)
+    }
+    override fun actionPerformed(e: AnActionEvent) {
+      val selectedProfile = selectedValue.asSafely<ConnectableProfile>() ?: return
+      val entityName = selectedProfile.entityName
+
+      if (MessageDialogBuilder.yesNo(
+          SerialMonitorBundle.message("dialog.title.delete.profile", entityName),
+          SerialMonitorBundle.message("dialog.message.are.you.sure")).ask(this@ConnectableList)) {
+        with(service<SerialProfileService>()) {
+          val newProfiles = getProfiles().toMutableMap()
+          newProfiles.remove(entityName)
+          clearSelection()
+          setProfiles(newProfiles)
+          application.invokeLater { rescanProfiles() }
+        }
+      }
+    }
+  }
+
+  private val duplicateProfile = object : DumbAwareAction(SerialMonitorBundle.message("action.duplicate.profile.text"), null,
+                                                          AllIcons.Actions.Copy) {
+    init {
+      registerCustomShortcutSet(CommonShortcuts.getDuplicate(), this@ConnectableList)
+    }
+    override fun actionPerformed(e: AnActionEvent) {
+      val selectedProfile = selectedValue.asSafely<ConnectableProfile>() ?: return
+      val entityName = selectedProfile.entityName
+      createNewProfile(entityName)
+    }
+  }
+
+  private val createProfile = object : DumbAwareAction(SerialMonitorBundle.message("action.create.profile.text"), null,
+                                                       AllIcons.General.Add) {
+    init {
+      registerCustomShortcutSet(CommonShortcuts.getNew(), this@ConnectableList)
+    }
+    override fun actionPerformed(e: AnActionEvent) {
+      val portName = getSelectedPortName()
+      createNewProfile(null, portName)
+    }
+  }
 }
