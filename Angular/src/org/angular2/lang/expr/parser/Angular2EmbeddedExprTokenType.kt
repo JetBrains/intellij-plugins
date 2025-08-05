@@ -22,7 +22,7 @@ open class Angular2EmbeddedExprTokenType : HtmlCustomEmbeddedContentTokenType {
   protected val index: Int
 
   private constructor(templateSyntax: Angular2TemplateSyntax, @NonNls debugName: String, expressionType: ExpressionType)
-    : super(debugName, Angular2Language) {
+    : super(debugName, Angular2Language, false) {
     this.templateSyntax = templateSyntax
     this.expressionType = expressionType
     name = null
