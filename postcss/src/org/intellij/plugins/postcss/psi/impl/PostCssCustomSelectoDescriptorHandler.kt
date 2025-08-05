@@ -6,6 +6,6 @@ import com.intellij.psi.css.descriptor.CssElementDescriptor
 import org.intellij.plugins.postcss.descriptors.PostCssCustomSelectorDescriptor
 
 class PostCssCustomSelectoDescriptorHandler : CssDescriptorHandler<PostCssCustomSelectorImpl, CssElementDescriptor> {
-  override fun getDescriptors(descriptorOwner: PostCssCustomSelectorImpl, context: PsiElement): MutableCollection<out CssElementDescriptor> =
-    mutableListOf(PostCssCustomSelectorDescriptor(descriptorOwner))
+  override fun getDescriptors(descriptorOwner: PostCssCustomSelectorImpl, context: PsiElement): Collection<CssElementDescriptor> =
+    listOf(PostCssCustomSelectorDescriptor(descriptorOwner))
 }
