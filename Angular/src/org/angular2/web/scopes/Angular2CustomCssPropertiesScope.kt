@@ -21,7 +21,7 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.css.impl.CssNamedItemPresentation
+import com.intellij.psi.css.impl.CssPsiPresentationService
 import com.intellij.psi.css.impl.util.CssUtil
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.elementType
@@ -149,7 +149,7 @@ class Angular2CustomCssPropertiesScope(file: PsiFile) :
     override val presentation: TargetPresentation =
       TargetPresentation.builder(name.removePrefix("--"))
         .icon(CssIcons.Custom_property)
-        .containerText(CssNamedItemPresentation.getLocationString(sourceElement))
+        .containerText(CssPsiPresentationService.getInstance().getLocationString(sourceElement))
         .presentation()
 
   }
