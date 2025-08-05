@@ -122,6 +122,9 @@ class PrettierLanguageServiceImpl(
       JSLanguageServiceUtil.addNodeProcessArgumentsFromRegistry(targetRun.commandLineBuilder, serviceName) {
         Registry.stringValue("prettier.service.node.arguments")
       }
+
+      // Check for Node.js version and add experimental strip types if needed
+      PrettierUtil.addExperimentalStripTypesIfNeeded(targetRun, serviceName)
       targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "prettierLanguageService")!!.absolutePath)
     }
 
