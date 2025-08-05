@@ -4,6 +4,7 @@ import com.intellij.openapi.project.guessModuleDir
 import com.intellij.openapi.project.modules
 import com.intellij.psi.search.scope.packageSet.FilePatternPackageSet
 import git4idea.repo.GitRepositoryManager
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.junit.Test
 import java.nio.file.Path
@@ -28,7 +29,7 @@ class GitIgnoreExcludeScopeModifierTest : QodanaRunnerWithVcsTestCase() {
   }
 
   @Test
-  fun runQodanaWithGitIgnore() {
+  fun runQodanaWithGitIgnore() = runBlocking {
     createGitIgnoreFile("/test-module/dir\n")
 
     val dir = project.modules.first().guessModuleDir()!!.toNioPath().resolve("dir")
@@ -45,7 +46,7 @@ class GitIgnoreExcludeScopeModifierTest : QodanaRunnerWithVcsTestCase() {
   }
 
   @Test
-  fun runQodanaWithGitIgnorePart() {
+  fun runQodanaWithGitIgnorePart() = runBlocking {
     createGitIgnoreFile("/test-module/dir/A.java\n")
 
     val srcDir = project.modules.single().guessModuleDir()!!.toNioPath().resolve("dir")
@@ -73,7 +74,7 @@ class GitIgnoreExcludeScopeModifierTest : QodanaRunnerWithVcsTestCase() {
    * PackageSet pattern syntax.
    */
   @Test
-  fun `wildcards in gitignore`() {
+  fun `wildcards in gitignore`() = runBlocking {
     createGitIgnoreFile("/test-module/dir/[A-M].java\n")
 
     val srcDir = project.modules.single().guessModuleDir()!!.toNioPath().resolve("dir")
@@ -94,7 +95,7 @@ class GitIgnoreExcludeScopeModifierTest : QodanaRunnerWithVcsTestCase() {
   }
 
   @Test
-  fun runQodanaWithGitIgnoreYaml() {
+  fun runQodanaWithGitIgnoreYaml() = runBlocking {
     createGitIgnoreFile("/test-module/dir\n")
 
     runYamlTest()
@@ -105,7 +106,7 @@ class GitIgnoreExcludeScopeModifierTest : QodanaRunnerWithVcsTestCase() {
   }
 
   @Test
-  fun runQodanaWithGitIgnorePartYaml() {
+  fun runQodanaWithGitIgnorePartYaml() = runBlocking {
     createGitIgnoreFile("/test-module/dir/A.java\n")
 
     runYamlTest()
@@ -119,7 +120,7 @@ class GitIgnoreExcludeScopeModifierTest : QodanaRunnerWithVcsTestCase() {
   }
 
   @Test
-  fun `wildcards in gitignore yaml`() {
+  fun `wildcards in gitignore yaml`() = runBlocking {
     createGitIgnoreFile("/test-module/dir/[A-M].java\n")
 
     runYamlTest()
@@ -131,7 +132,7 @@ class GitIgnoreExcludeScopeModifierTest : QodanaRunnerWithVcsTestCase() {
     )
   }
 
-  private fun runYamlTest() {
+  private suspend fun runYamlTest() {
     updateQodanaConfig {
       it.copy(
         profile = QodanaProfileConfig.fromPath(getTestDataPath("inspection-profile.yaml").absolutePathString()),
@@ -143,9 +144,9 @@ class GitIgnoreExcludeScopeModifierTest : QodanaRunnerWithVcsTestCase() {
     runAnalysis()
   }
 
-  private fun ensureIgnoredFilesLoaded() {
+  private suspend fun ensureIgnoredFilesLoaded() {
     val untrackedFilesHolder = GitRepositoryManager.getInstance(project).repositories.single().untrackedFilesHolder
     untrackedFilesHolder.invalidate()
-    untrackedFilesHolder.createWaiter().waitFor()
+    untrackedFilesHolder.awaitNotBusy()
   }
 }
