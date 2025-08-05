@@ -240,9 +240,9 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     if (myWorkingDirField.getText().isEmpty()) {
       final CompilerProjectExtension extension = CompilerProjectExtension.getInstance(myProject);
       if (extension != null) {
-        final VirtualFilePointer outputDirPointer = extension.getCompilerOutputPointer();
+        final String outputDirPointer = extension.getCompilerOutputUrl();
         if (outputDirPointer != null) {
-          myWorkingDirField.setText(VfsUtilCore.urlToPath(outputDirPointer.getUrl() + "/run.osgi/"));
+          myWorkingDirField.setText(VfsUtilCore.urlToPath(outputDirPointer + "/run.osgi/"));
         }
       }
     }
