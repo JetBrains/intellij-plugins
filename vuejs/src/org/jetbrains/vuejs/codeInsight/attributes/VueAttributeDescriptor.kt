@@ -86,7 +86,7 @@ open class VueAttributeDescriptor(
       fun of(proximity: VueModelVisitor.Proximity): AttributePriority {
         return when (proximity) {
           LOCAL -> HIGH
-          PLUGIN, APP -> NORMAL
+          LIBRARY, APP -> NORMAL
           GLOBAL -> LOW
           OUT_OF_SCOPE -> NONE
         }

@@ -216,7 +216,7 @@ class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
         enclosingContainer.parents.forEach { parent ->
           when (parent) {
             is VueApp -> containerToProximity[parent] = VueModelVisitor.Proximity.APP
-            is VueLibrary -> containerToProximity[parent] = VueModelVisitor.Proximity.PLUGIN
+            is VueLibrary -> containerToProximity[parent] = VueModelVisitor.Proximity.LIBRARY
           }
         }
 

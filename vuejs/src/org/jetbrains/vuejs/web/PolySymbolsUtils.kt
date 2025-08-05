@@ -33,7 +33,7 @@ fun VueModelVisitor.Proximity.asPolySymbolPriority(): PolySymbol.Priority =
   when (this) {
     VueModelVisitor.Proximity.LOCAL -> PolySymbol.Priority.HIGHEST
     VueModelVisitor.Proximity.APP -> PolySymbol.Priority.HIGH
-    VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.GLOBAL -> PolySymbol.Priority.NORMAL
+    VueModelVisitor.Proximity.LIBRARY, VueModelVisitor.Proximity.GLOBAL -> PolySymbol.Priority.NORMAL
     VueModelVisitor.Proximity.OUT_OF_SCOPE -> PolySymbol.Priority.LOW
   }
 
