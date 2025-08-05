@@ -11,6 +11,7 @@ import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.PackageJsonData;
+import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
@@ -22,6 +23,7 @@ import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -59,6 +61,7 @@ import javax.swing.event.HyperlinkListener;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil.findChildPackageJsonFile;
 import static com.intellij.prettierjs.PrettierConfig.createFromMap;
@@ -81,7 +84,8 @@ public final class PrettierUtil {
     RC_FILE_NAME + ".yaml", RC_FILE_NAME + ".json5",
     RC_FILE_NAME + ".js", CONFIG_FILE_NAME + ".js",
     RC_FILE_NAME + ".mjs", CONFIG_FILE_NAME + ".mjs",
-    RC_FILE_NAME + ".cjs", CONFIG_FILE_NAME + ".cjs",
+    RC_FILE_NAME + ".cjs", CONFIG_FILE_NAME + ".cjs", RC_FILE_NAME + ".ts", CONFIG_FILE_NAME + ".ts", RC_FILE_NAME + ".mts",
+    CONFIG_FILE_NAME + ".mts", RC_FILE_NAME + ".cts", CONFIG_FILE_NAME + ".cts",
     RC_FILE_NAME + ".toml"
   );
 
@@ -89,6 +93,8 @@ public final class PrettierUtil {
     ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
 
   public static final SemVer MIN_VERSION = new SemVer("1.13.0", 1, 13, 0);
+  public static final SemVer NODE_MIN_VERSION_FOR_STRIP_TYPES_FLAG = new SemVer("22.6.0", 22, 6, 0);
+  public static final SemVer NODE_MAX_VERSION_FOR_STRIP_TYPES_FLAG = new SemVer("23.6.0", 23, 6, 0);
   private static final Logger LOG = Logger.getInstance(PrettierUtil.class);
 
   private static final class Holder {
@@ -117,7 +123,8 @@ public final class PrettierUtil {
 
   @Contract("null -> false")
   public static boolean isNonJSConfigFile(@Nullable VirtualFile virtualFile) {
-    return isConfigFile(virtualFile) && !ArrayUtil.contains(StringUtil.toLowerCase(virtualFile.getExtension()), "js", "mjs", "cjs");
+    return isConfigFile(virtualFile) &&
+           !ArrayUtil.contains(StringUtil.toLowerCase(virtualFile.getExtension()), "js", "mjs", "cjs", "ts", "mts", "cts");
   }
 
   @Contract("null -> false")
@@ -399,6 +406,22 @@ public final class PrettierUtil {
         .showEditorHint(hint, editor, HintManager.UNDER, HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE |
                                                          HintManager.HIDE_BY_SCROLLING, 0, false);
     }, ModalityState.nonModal(), o -> editor.isDisposed() || !editor.getComponent().isShowing());
+  }
+
+  public static void addExperimentalStripTypesIfNeeded(@NotNull NodeTargetRun targetRun, @NotNull String serviceName) {
+    var interpreter = targetRun.getInterpreter();
+    SemVer nodeVersion;
+    try {
+      nodeVersion = interpreter.provideCachedVersionOrFetch().blockingGet(1500, TimeUnit.MILLISECONDS);
+    }
+    catch (Exception e) {
+      nodeVersion = null;
+    }
+    if (nodeVersion != null &&
+        nodeVersion.compareTo(NODE_MIN_VERSION_FOR_STRIP_TYPES_FLAG) >= 0 &&
+        nodeVersion.compareTo(NODE_MAX_VERSION_FOR_STRIP_TYPES_FLAG) < 0) {
+      JSLanguageServiceUtil.addNodeProcessArguments(targetRun.getCommandLineBuilder(), serviceName, "--experimental-strip-types");
+    }
   }
 
   public static boolean checkNodeAndPackage(@NotNull PsiFile psiFile, @Nullable Editor editor, @NotNull ErrorHandler errorHandler) {
