@@ -31,11 +31,13 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
+import org.jetbrains.vuejs.model.source.DEFINE_PROPS_FUN
 import org.jetbrains.vuejs.model.source.PROPS_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
 import java.util.*
@@ -56,8 +58,14 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
             it.asSafely<JSProperty>()?.context?.asSafely<JSObjectLiteralExpression>()
             ?: it.asSafely<JSLiteralExpression>()?.context?.asSafely<JSArrayLiteralExpression>()
           }
-          ?.context?.asSafely<JSProperty>()
-          ?.name.let { it == PROPS_PROP }
+          ?.parent
+          .let { parent ->
+            parent?.asSafely<JSProperty>()?.name?.let { it == PROPS_PROP }
+            ?: parent?.asSafely<JSArgumentList>()?.parent
+              ?.asSafely<JSCallExpression>()
+              ?.let { getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
+            ?: false
+          }
         || sourceElement is TypeScriptPropertySignature && sourceElement.context is TypeScriptObjectType
 
       // Script setup local vars

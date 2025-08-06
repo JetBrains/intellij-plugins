@@ -187,6 +187,21 @@ class VueRenameTest : VueTestCase("rename") {
   fun testDefinePropsArrayLiteralExtUsageFromUsage() =
     checkSymbolRename("MyUsage.vue", "newName", VueTestModule.VUE_3_3_4)
 
+  fun testDefinePropsObjectLiteralFromDefinition() =
+    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+
+  fun testDefinePropsObjectLiteralFromUsage1() =
+    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+
+  fun testDefinePropsObjectLiteralFromUsage2() =
+    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+
+  fun testDefinePropsObjectLiteralExtUsageFromDefinition() =
+    checkSymbolRename("MyComponent.vue", "newName", VueTestModule.VUE_3_3_4)
+
+  fun testDefinePropsObjectLiteralExtUsageFromUsage() =
+    checkSymbolRename("MyUsage.vue", "newName", VueTestModule.VUE_3_3_4)
+
   fun testDefinePropsInterfaceFromDefinition() =
     checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
 
