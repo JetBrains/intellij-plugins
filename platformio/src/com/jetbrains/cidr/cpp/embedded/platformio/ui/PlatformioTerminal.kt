@@ -4,20 +4,15 @@ import com.intellij.CommonBundle
 import com.intellij.execution.ExecutionBundle
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.execution.ui.RunContentManager
 import com.intellij.icons.AllIcons
 import com.intellij.ide.ActivityTracker
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonShortcuts
-import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.application.UiWithModelAccess
 import com.intellij.openapi.application.WriteIntentReadAction
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
@@ -25,14 +20,13 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts.TabTitle
 import com.intellij.terminal.JBTerminalSystemSettingsProviderBase
 import com.intellij.terminal.TerminalExecutionConsole
-import com.intellij.util.application
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
 import com.jetbrains.cidr.cpp.embedded.platformio.project.LOG
-import com.jetbrains.cidr.cpp.embedded.platformio.refreshProject
 import com.jetbrains.cidr.execution.CidrPathWithOffsetConsoleFilter
 import com.jetbrains.cidr.system.LocalHost.TerminalEmulatorOSProcessHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.awt.BorderLayout
 import java.nio.file.Path
 import javax.swing.JPanel
@@ -101,13 +95,11 @@ fun doRun(service: PlatformioService,
       }
 
       override fun actionPerformed(e: AnActionEvent) {
-        application.executeOnPooledThread {
-          if (!project.isDisposed) {
-            processHandler.destroyProcess()
-            if (processHandler.waitFor(TIMEOUT_MS)) {
-              application.invokeLater({
-                                        doRun(service, text, commandLine, reloadProject)
-                                      }, { project.isDisposed() })
+        currentThreadCoroutineScope().launch(Dispatchers.IO) {
+          processHandler.destroyProcess()
+          if (processHandler.waitFor(TIMEOUT_MS)) {
+            withContext(Dispatchers.UiWithModelAccess) {
+              doRun(service, text, commandLine, reloadProject)
             }
           }
         }
@@ -139,14 +131,14 @@ fun doRun(service: PlatformioService,
 
     console.attachToProcess(processHandler)
 
-    processHandler.addProcessListener(object : ProcessAdapter() {
+    processHandler.addProcessListener(object : ProcessListener {
       override fun processTerminated(event: ProcessEvent) {
         ActivityTracker.getInstance().inc()
         if (reloadProject) {
-          runInEdt { if (!project.isDisposed) refreshProject(project, true) }
+          service.refreshProject(true)
         }
       }
-    })
+    }, service)
     processHandler.startNotify()
   }
   catch (e: Throwable) {

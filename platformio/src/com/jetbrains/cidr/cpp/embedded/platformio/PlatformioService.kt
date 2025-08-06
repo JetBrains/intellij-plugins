@@ -1,8 +1,9 @@
 package com.jetbrains.cidr.cpp.embedded.platformio
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.UiWithModelAccess
+import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.*
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
@@ -18,12 +19,16 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuild
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioProjectResolvePolicy
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioTargetAction
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadMonitorAction
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.ensureProjectIsTrusted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicLong
 
 @Service(Service.Level.PROJECT)
 @State(name = "PlatformIO", storages = [Storage(StoragePathMacros.CACHE_FILE)])
-class PlatformioService(val project: Project) : PersistentStateComponentWithModificationTracker<PlatformioState> {
+class PlatformioService(val project: Project, val cs: CoroutineScope) : PersistentStateComponentWithModificationTracker<PlatformioState>, Disposable.Default {
 
   @Volatile
   var librariesPaths: Map<String, @NlsSafe String> = emptyMap()
@@ -140,29 +145,32 @@ class PlatformioService(val project: Project) : PersistentStateComponentWithModi
   }
 
   override fun getStateModificationCount(): Long = stateModCounter.get()
+
+  fun refreshProject(cleanCache: Boolean) {
+    cs.launch(Dispatchers.UiWithModelAccess) {
+      ensureProjectIsTrusted(project)
+      writeAction {
+        val policy = if (cleanCache) PlatformioProjectResolvePolicyCleanCache else PlatformioProjectResolvePolicyPreserveCache
+        ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
+      }
+
+    }
+  }
+
+  fun initializeProject() {
+    cs.launch(Dispatchers.UiWithModelAccess) {
+      ensureProjectIsTrusted(project)
+      writeAction {
+        val policy = PlatformioProjectResolvePolicyInitialize
+        ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
+      }
+    }
+  }
 }
 
 val PlatformioProjectResolvePolicyCleanCache: PlatformioProjectResolvePolicy = PlatformioProjectResolvePolicy(true, false)
 val PlatformioProjectResolvePolicyPreserveCache: PlatformioProjectResolvePolicy = PlatformioProjectResolvePolicy(false, false)
 val PlatformioProjectResolvePolicyInitialize: PlatformioProjectResolvePolicy = PlatformioProjectResolvePolicy(false, true)
-
-fun refreshProject(project: Project, cleanCache: Boolean) {
-  ApplicationManager.getApplication().invokeLater {
-    WriteAction.run<Throwable> {
-      val policy = if (cleanCache) PlatformioProjectResolvePolicyCleanCache else PlatformioProjectResolvePolicyPreserveCache
-      ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
-    }
-  }
-}
-
-fun initializeProject(project: Project) {
-  ApplicationManager.getApplication().invokeLater {
-    WriteAction.run<Throwable> {
-      val policy = PlatformioProjectResolvePolicyInitialize
-      ExternalSystemUtil.refreshProject(project.basePath!!, ImportSpecBuilder(project, ID).projectResolverPolicy(policy))
-    }
-  }
-}
 
 data class PlatformioTargetData(
   @NlsSafe val name: String,
