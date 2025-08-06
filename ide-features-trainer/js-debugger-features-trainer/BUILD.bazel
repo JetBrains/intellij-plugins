@@ -13,8 +13,8 @@ jvm_provided_library(
 )
 
 jvm_provided_library(
-  name = "plugins_javascript-debugger_provided",
-  lib = "//plugins/JavaScriptDebugger:javascript-debugger"
+  name = "plugins_JavaScriptDebugger_backend_provided",
+  lib = "//plugins/JavaScriptDebugger/backend"
 )
 
 jvm_library(
@@ -37,7 +37,7 @@ jvm_library(
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     ":plugins_javascript-backend_provided",
-    ":plugins_javascript-debugger_provided",
+    ":plugins_JavaScriptDebugger_backend_provided",
   ],
   runtime_deps = [":javascript-debugger-featuresTrainer_resources"]
 )
