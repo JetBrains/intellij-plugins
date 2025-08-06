@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import org.angular2.lang.Angular2LangUtil.getTemplateSyntax
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.jetbrains.annotations.NonNls
 
@@ -28,7 +29,7 @@ abstract class Angular2ExprDialect(
   companion object {
 
     fun forContext(element: PsiElement): Angular2ExprDialect =
-      Angular2TemplateSyntax.of(element)?.expressionLanguage ?: Angular2Language
+      (Angular2TemplateSyntax.of(element) ?: getTemplateSyntax(element)).expressionLanguage
 
   }
 
