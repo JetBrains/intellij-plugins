@@ -7,7 +7,7 @@ apply(from = "../contrib-configuration/common.gradle.kts")
  * Initialize this property in a specific Gradle task to determine the plugin runtime layout
  * that is different for various compatible IDEs
  */
-val defaultPluginRunMode = ProtobufPluginLayout.ProtobufCoreWithJavaAndTestsInIdeaCommunity("252.23591.19")
+val defaultPluginRunMode = ProtobufPluginLayout.ProtobufCoreWithJavaAndTestsInIdeaCommunity("2025.2")
 
 plugins {
   id("java")
@@ -45,8 +45,6 @@ dependencies {
 
   implementation("com.google.protobuf:protobuf-java-util:3.24.4")
   implementation("com.google.truth:truth:0.42")
-
-  testImplementation("junit:junit:4.13.2")
 }
 
 sourceSets {
