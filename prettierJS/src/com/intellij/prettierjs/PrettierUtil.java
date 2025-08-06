@@ -20,6 +20,7 @@ import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.json.psi.JsonFile;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
@@ -90,7 +91,7 @@ public final class PrettierUtil {
   );
 
   private static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
-    ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
+    ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonCommonUtil.FILE_NAME);
 
   public static final SemVer MIN_VERSION = new SemVer("1.13.0", 1, 13, 0);
   public static final SemVer NODE_MIN_VERSION_FOR_STRIP_TYPES_FLAG = new SemVer("22.6.0", 22, 6, 0);
@@ -113,7 +114,7 @@ public final class PrettierUtil {
   }
 
   public static boolean isConfigFileOrPackageJson(@Nullable VirtualFile virtualFile) {
-    return PackageJsonUtil.isPackageJsonFile(virtualFile) || isConfigFile(virtualFile);
+    return PackageJsonCommonUtil.isPackageJsonFile(virtualFile) || isConfigFile(virtualFile);
   }
 
   @Contract("null -> false")
@@ -204,7 +205,7 @@ public final class PrettierUtil {
 
   public static @Nullable VirtualFile findSingleConfigInContentRoots(@NotNull Project project) {
     return JSLinterConfigFileUtil.findDistinctConfigInContentRoots(project, CONFIG_FILE_NAMES_WITH_PACKAGE_JSON, file -> {
-      if (PackageJsonUtil.isPackageJsonFile(file)) {
+      if (PackageJsonCommonUtil.isPackageJsonFile(file)) {
         PackageJsonData data = PackageJsonData.getOrCreate(file);
         return data.getTopLevelProperties().contains(CONFIG_SECTION_NAME);
       }
@@ -239,7 +240,7 @@ public final class PrettierUtil {
       for (String name : CONFIG_FILE_NAMES_WITH_PACKAGE_JSON) {
         VirtualFile file = dir.findChild(name);
         if (file != null && file.isValid() && !file.isDirectory()) {
-          if (PackageJsonUtil.isPackageJsonFile(file)) {
+          if (PackageJsonCommonUtil.isPackageJsonFile(file)) {
             PackageJsonData data = PackageJsonData.getOrCreate(file);
             if (data.getTopLevelProperties().contains(CONFIG_SECTION_NAME)) {
               return file;
@@ -273,7 +274,7 @@ public final class PrettierUtil {
 
   private static @Nullable PrettierConfig parseConfigInternal(@NotNull PsiFile file) {
     try {
-      if (PackageJsonUtil.isPackageJsonFile(file)) {
+      if (PackageJsonCommonUtil.isPackageJsonFile(file)) {
         PackageJsonData packageJsonData = PackageJsonData.getOrCreate(file.getVirtualFile());
         if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
           return null;

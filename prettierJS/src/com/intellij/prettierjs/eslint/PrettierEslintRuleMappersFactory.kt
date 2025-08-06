@@ -2,7 +2,7 @@
 package com.intellij.prettierjs.eslint
 
 import com.intellij.json.psi.*
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil
 import com.intellij.lang.javascript.linter.eslint.importer.EslintRuleMapper
 import com.intellij.lang.javascript.linter.eslint.importer.EslintRuleMappersFactory
 import com.intellij.lang.javascript.linter.eslint.importer.EslintSettingsConverter
@@ -46,7 +46,7 @@ class PrettierEslintRuleMappersFactory : EslintRuleMappersFactory {
             ?.let { directory ->
               PrettierUtil.findSingleConfigInDirectory(directory)
               ?: directory.findChild(NodeModuleNamesUtil.PACKAGE_JSON)
-                ?.takeIf { PackageJsonUtil.isPackageJsonFile(it) }
+                ?.takeIf { PackageJsonCommonUtil.isPackageJsonFile(it) }
             }
             ?.let { PrettierUtil.parseConfig(project, it) } ?: DEFAULT
         else DEFAULT)
