@@ -9,7 +9,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.TokenType;
-import com.intellij.psi.css.impl.CssElementTypes;
+import com.intellij.psi.css.impl.CssAdvancedElementTypes;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlElementType;
@@ -76,7 +76,7 @@ public interface JadeTokenTypes {
   IElementType JS_EACH_EXPR = new JSInJadeForeachLineType();
   IElementType JS_META_CODE = new JSInJadeMetaCode();
 
-  IElementType STYLE_BLOCK = CssElementTypes.CSS_LAZY_STYLESHEET;
+  IElementType STYLE_BLOCK = CssAdvancedElementTypes.CSS_LAZY_STYLESHEET;
 
   IElementType FILTER_CODE = new IElementType("FILTER_CODE", JadeLanguage.INSTANCE);
 

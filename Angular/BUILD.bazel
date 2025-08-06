@@ -142,7 +142,7 @@ jvm_library(
     "//plugins/IntelliLang-js:javascript-langInjection",
     "//plugins/IntelliLang-js:javascript-langInjection_test_lib",
     "@community//plugins/IntelliLang/xml-support:xml-langInjection",
-    "//plugins/sass",
+    "//plugins/sass/plugin",
     "//plugins/less",
     "//plugins/less:less_test_lib",
     "//contrib/postcss",
@@ -180,6 +180,7 @@ jvm_library(
     "//plugins/css/backend",
     "//plugins/css/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/sass/backend",
   ],
   runtime_deps = [
     ":angular-tests_test_resources",

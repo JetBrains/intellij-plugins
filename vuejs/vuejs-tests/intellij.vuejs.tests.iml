@@ -56,5 +56,7 @@
     <orderEntry type="module" module-name="intellij.css.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.sass.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.sass" scope="TEST" />
   </component>
 </module>

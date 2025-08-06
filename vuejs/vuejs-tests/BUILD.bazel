@@ -48,7 +48,7 @@ jvm_library(
     "@community//plugins/copyright",
     "@community//plugins/copyright:copyright_test_lib",
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
-    "//plugins/sass",
+    "//plugins/sass/plugin",
     "//contrib/jade",
     "//contrib/jade:jade_test_lib",
     "//contrib/postcss",
@@ -73,6 +73,8 @@ jvm_library(
     "//plugins/css/analysis",
     "//plugins/css/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/sass/backend",
+    "//plugins/sass",
   ],
   runtime_deps = [":tests_test_resources"]
 )
