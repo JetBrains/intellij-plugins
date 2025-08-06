@@ -3,6 +3,7 @@ package org.jetbrains.qodana.cpp
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.util.PlatformUtils
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceManager
@@ -17,6 +18,8 @@ class QodanaCppHeadlessStartupExtension : RadHeadlessStartupExtension {
   }
 
   override suspend fun afterCidrWorkspacesReady(project: Project) {
+    if (!PlatformUtils.isQodana()) return
+
     try {
       afterCidrWorkspacesReadyImpl(project)
     } catch (e: QodanaException) {
