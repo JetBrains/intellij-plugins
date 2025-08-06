@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Container;
@@ -13,9 +13,11 @@ import com.intellij.facet.impl.FacetUtil;
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.*;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.projectRoots.JavaSdk;
@@ -60,6 +62,7 @@ import java.util.zip.ZipFile;
 
 import static org.osmorc.i18n.OsmorcBundle.message;
 
+@SuppressWarnings({"IO_FILE_USAGE", "UsagesOfObsoleteApi"})
 public final class BndProjectImporter {
   public static final String CNF_DIR = Workspace.CNFDIR;
   public static final String BUILD_FILE = Workspace.BUILDFILE;
@@ -81,7 +84,7 @@ public final class BndProjectImporter {
       return weight(o1) - weight(o2);
     }
 
-    private int weight(OrderEntry e) {
+    private static int weight(OrderEntry e) {
       return e instanceof JdkOrderEntry ? 2 :
              e instanceof ModuleSourceOrderEntry ? 0 :
              1;
@@ -97,9 +100,11 @@ public final class BndProjectImporter {
   private final Collection<? extends Project> myProjects;
   private final Map<String, String> mySourcesMap = CollectionFactory.createFilePathMap();
 
-  public BndProjectImporter(@NotNull com.intellij.openapi.project.Project project,
-                            @NotNull Workspace workspace,
-                            @NotNull Collection<? extends Project> toImport) {
+  public BndProjectImporter(
+    @NotNull com.intellij.openapi.project.Project project,
+    @NotNull Workspace workspace,
+    @NotNull Collection<? extends Project> toImport
+  ) {
     myProject = project;
     myWorkspace = workspace;
     myProjects = toImport;
@@ -118,11 +123,13 @@ public final class BndProjectImporter {
   public void setupProject() {
     LanguageLevel sourceLevel = LanguageLevel.parse(myWorkspace.getProperty(JAVAC_SOURCE));
     if (sourceLevel != null) {
-      LanguageLevelProjectExtension.getInstance(myProject).setLanguageLevel(sourceLevel);
+      LanguageLevelProjectExtension langLevelExt = LanguageLevelProjectExtension.getInstance(myProject);
+      WriteAction.run(() -> langLevelExt.setLanguageLevel(sourceLevel));
     }
 
     String targetLevel = myWorkspace.getProperty(JAVAC_TARGET);
-    CompilerConfiguration.getInstance(myProject).setProjectBytecodeTarget(targetLevel);
+    CompilerConfiguration targetLevelExt = CompilerConfiguration.getInstance(myProject);
+    WriteAction.run(() -> targetLevelExt.setProjectBytecodeTarget(targetLevel));
 
     // compilation options (see Project#getCommonJavac())
     JpsJavaCompilerOptions javacOptions = JavacConfiguration.getOptions(myProject, JavacConfiguration.class);
@@ -461,9 +468,8 @@ public final class BndProjectImporter {
 
   private void checkErrors(Project project, Exception e) {
     if (!isUnitTestMode()) {
-      String text;
       LOG.warn(e);
-      text = message("bnd.import.resolve.error", project.getName(), e.getMessage());
+      String text = message("bnd.import.resolve.error", project.getName(), e.getMessage());
       OsmorcBundle.bnd(message("bnd.import.error.title"), text, NotificationType.ERROR).notify(myProject);
     }
     else {
@@ -556,6 +562,7 @@ public final class BndProjectImporter {
         p.forceRefresh();
       }
     }
+    catch (ProcessCanceledException e) { throw e; }
     catch (Exception e) {
       LOG.error("ws=" + workspace.getBase(), e);
       return;
@@ -588,9 +595,11 @@ public final class BndProjectImporter {
     }
   }
 
-  private static void doReimportProjects(com.intellij.openapi.project.Project project,
-                                         Collection<String> projectDirs,
-                                         ProgressIndicator indicator) {
+  private static void doReimportProjects(
+    com.intellij.openapi.project.Project project,
+    Collection<String> projectDirs,
+    ProgressIndicator indicator
+  ) {
     Workspace workspace = getWorkspace(project);
     assert workspace != null : project;
 
@@ -609,6 +618,7 @@ public final class BndProjectImporter {
         }
       }
     }
+    catch (ProcessCanceledException e) { throw e; }
     catch (Exception e) {
       LOG.error("ws=" + workspace.getBase() + " pr=" + projectDirs, e);
       return;
