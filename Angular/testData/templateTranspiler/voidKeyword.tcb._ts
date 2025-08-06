@@ -9,3 +9,11 @@ var _t1 = document.createElement("div");
 var _t2 = document.createElement("div");
 "" + (void this.check(true));
 }
+/* TCB for host bindings of RobotProfileComponent */
+
+function _tcb_host_1(this: RobotProfileComponent) {
+var _t1 = document.createElement("robot-profile");
+($event: any): any => {
+void this.handleClick();
+};
+}

@@ -32,7 +32,16 @@
       "«(true)» [218] => «(true)» [268]}",
       "«true» [219] => «true» [269]}",
       "«)» [223] => «)» [273]}",
-      "237:339 => 237:339 (source)"
+      "237:265 => 237:265 (source)",
+      "«void» [265] => «void» [460]}",
+      "«void handleClick()» [265] => «void this.handleClick()» [460]}",
+      "«handleClick» [270] => «handleClick» [470]} (no types)",
+      "«handleClick» [270] => «this.handleClick» [465]}",
+      "«handleClick()» [270] => «this.handleClick()» [465]}",
+      "«(» [281] => «(» [481]}",
+      "«()» [281] => «()» [481]}",
+      "«)» [282] => «)» [482]}",
+      "283:432 => 283:432 (source)"
     ]
   }
 ]
