@@ -143,7 +143,6 @@ jvm_library(
     "//plugins/IntelliLang-js:javascript-langInjection_test_lib",
     "@community//plugins/IntelliLang/xml-support:xml-langInjection",
     "//plugins/sass",
-    "//plugins/sass:sass_test_lib",
     "//plugins/less",
     "//plugins/less:less_test_lib",
     "//contrib/postcss",

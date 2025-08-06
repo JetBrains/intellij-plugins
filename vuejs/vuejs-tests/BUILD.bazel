@@ -49,7 +49,6 @@ jvm_library(
     "@community//plugins/copyright:copyright_test_lib",
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "//plugins/sass",
-    "//plugins/sass:sass_test_lib",
     "//contrib/jade",
     "//contrib/jade:jade_test_lib",
     "//contrib/postcss",
