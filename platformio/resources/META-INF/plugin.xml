@@ -88,7 +88,7 @@
     <treeStructureProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSourcesStructureProvider"/>
     <projectViewNodeDecorator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioLibraryPathNodeDecorator"/>
     <profiler.clion.profilerDisabler implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProfilerDisabler" />
-
+    <postStartupActivity implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioReloadOnRunConfigChange"/>
   </extensions>
 
   <extensions defaultExtensionNs="clion">
