@@ -79,17 +79,6 @@ class PlatformioUploadBeforeRunTaskProvider : PlatformioBeforeRunTaskProvider() 
 
 }
 
-class PlatformioDebugBuildBeforeRunTaskProvider : PlatformioBeforeRunTaskProvider() {
-
-  private val ID = Key.create<PlatformioBeforeRunTask>("PlatformioUploadBeforeRun")
-  override fun getId(): Key<PlatformioBeforeRunTask> = ID
-
-  override fun createTask(runConfiguration: RunConfiguration): PlatformioBeforeRunTask =
-    PlatformioBeforeRunTask(id) { PlatformioTargetTask(name, "debug") }
-
-  override fun getName(): String = ClionEmbeddedPlatformioBundle.message("platformio.pre.debug")
-}
-
 class PlatformioBuildBeforeRunTaskProvider : PlatformioBeforeRunTaskProvider() {
 
   private val ID = Key.create<PlatformioBeforeRunTask>("PlatformioBuildBeforeRun")

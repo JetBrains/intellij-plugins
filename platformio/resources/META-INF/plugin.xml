@@ -57,7 +57,6 @@
               implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUploadBeforeRunTaskProvider"/>
-    <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioDebugBuildBeforeRunTaskProvider"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBuildBeforeRunTaskProvider"/>
     <notificationGroup id="PlatformIO plugin" displayType="BALLOON" bundle="messages.ClionEmbeddedPlatformioBundle"
                        key="notification.group.platformio"/>
