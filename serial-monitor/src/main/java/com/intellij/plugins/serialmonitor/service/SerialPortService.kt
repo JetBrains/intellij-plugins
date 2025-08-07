@@ -154,7 +154,7 @@ class SerialPortService(val cs: CoroutineScope) : Disposable {
 
     private var localEcho: Boolean = false
 
-    var rts = false
+    var rts: Boolean = true
       @Throws(SerialMonitorException::class)
       set(value) {
         runWithExceptionWrapping(value) {
@@ -163,7 +163,7 @@ class SerialPortService(val cs: CoroutineScope) : Disposable {
         }
       }
 
-    var dtr = false
+    var dtr: Boolean = true
       @Throws(SerialMonitorException::class)
       set(value) {
         runWithExceptionWrapping(value) {
