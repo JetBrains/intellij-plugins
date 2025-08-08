@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "dependencies": {
     "isobject": "^4.0.0",
-    "frontend-commons": "file:../frontend-commons"
+    "frontend-commons": "file:../../frontend-commons"
   }
 }

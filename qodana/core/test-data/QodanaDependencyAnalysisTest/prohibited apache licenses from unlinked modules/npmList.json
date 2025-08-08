@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "name": "transitive",
+  "private": "true",
+  "_id": "transitive@1.0.0",
+  "extraneous": false,
+  "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/prohibited licenses/sources",
+  "_dependencies": {
+    "should-equal": "^2.0.0"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "dependencies": {
+    "should-equal": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/should-equal/-/should-equal-2.0.0.tgz",
+      "overridden": false,
+      "name": "should-equal",
+      "integrity": "sha512-ZP36TMrK9euEuWQYBig9W55WPC7uo37qzAEmbjHz4gfyuXrEUgF8cUvQVO+w+d3OMfPvSRQJ22lSm8MQJ43LTA==",
+      "license": "MIT",
+      "_id": "should-equal@2.0.0",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/prohibited licenses/sources/node_modules/should-equal",
+      "_dependencies": {
+        "should-type": "^1.4.0"
+      },
+      "devDependencies": {},
+      "peerDependencies": {},
+      "dependencies": {
+        "should-type": {
+          "version": "1.4.0",
+          "resolved": "https://registry.npmjs.org/should-type/-/should-type-1.4.0.tgz",
+          "overridden": false,
+          "name": "should-type",
+          "integrity": "sha512-MdAsTu3n25yDbIe1NeN69G4n6mUnJGtSJHygX3+oN0ZbO3DTiATnf7XnYJdGT42JCXurTb1JI0qOBR65shvhPQ==",
+          "license": "MIT",
+          "_id": "should-type@1.4.0",
+          "extraneous": false,
+          "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/prohibited licenses/sources/node_modules/should-type",
+          "_dependencies": {},
+          "devDependencies": {},
+          "peerDependencies": {}
+        }
+      }
+    }
+  }
+}

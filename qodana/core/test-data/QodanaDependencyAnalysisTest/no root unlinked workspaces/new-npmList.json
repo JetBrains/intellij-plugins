@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "name": "new",
+  "private": "true",
+  "workspaces": [
+    "backend/*"
+  ],
+  "_id": "new@1.0.0",
+  "extraneous": false,
+  "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/no root unlinked workspaces/sources/new",
+  "_dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {},
+  "dependencies": {
+    "cli": {
+      "version": "1.0.0",
+      "resolved": "file:../backend/cli",
+      "overridden": false,
+      "name": "cli",
+      "license": "MIT",
+      "_id": "cli@1.0.0",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/no root unlinked workspaces/sources/new/node_modules/cli",
+      "_dependencies": {
+        "is-unix": "2.0.10"
+      },
+      "devDependencies": {},
+      "peerDependencies": {},
+      "dependencies": {
+        "is-unix": {
+          "version": "2.0.10",
+          "resolved": "https://registry.npmjs.org/is-unix/-/is-unix-2.0.10.tgz",
+          "overridden": false,
+          "name": "is-unix",
+          "integrity": "sha512-CcasZSEOQUoE7JHy56se4wyRhdJfjohuMWYmceSTaDY4naKyd1fpLiY8rJsIT6AKfVstQAhHJOfPx7jcUxK61Q==",
+          "license": "MIT",
+          "engines": {
+            "node": ">= 12"
+          },
+          "_id": "is-unix@2.0.10",
+          "extraneous": false,
+          "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/no root unlinked workspaces/sources/new/node_modules/is-unix",
+          "_dependencies": {},
+          "devDependencies": {},
+          "peerDependencies": {}
+        }
+      }
+    },
+    "core": {
+      "version": "1.0.0",
+      "resolved": "file:../backend/core",
+      "overridden": false,
+      "name": "core",
+      "license": "MIT",
+      "_id": "core@1.0.0",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/no root unlinked workspaces/sources/new/node_modules/core",
+      "_dependencies": {
+        "should-equal": "^2.0.0"
+      },
+      "devDependencies": {},
+      "peerDependencies": {},
+      "dependencies": {
+        "should-equal": {
+          "version": "2.0.0",
+          "resolved": "https://registry.npmjs.org/should-equal/-/should-equal-2.0.0.tgz",
+          "overridden": false,
+          "name": "should-equal",
+          "integrity": "sha512-ZP36TMrK9euEuWQYBig9W55WPC7uo37qzAEmbjHz4gfyuXrEUgF8cUvQVO+w+d3OMfPvSRQJ22lSm8MQJ43LTA==",
+          "license": "MIT",
+          "_id": "should-equal@2.0.0",
+          "extraneous": false,
+          "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/no root unlinked workspaces/sources/new/node_modules/should-equal",
+          "_dependencies": {
+            "should-type": "^1.4.0"
+          },
+          "devDependencies": {},
+          "peerDependencies": {},
+          "dependencies": {
+            "should-type": {
+              "version": "1.4.0",
+              "resolved": "https://registry.npmjs.org/should-type/-/should-type-1.4.0.tgz",
+              "overridden": false,
+              "name": "should-type",
+              "integrity": "sha512-MdAsTu3n25yDbIe1NeN69G4n6mUnJGtSJHygX3+oN0ZbO3DTiATnf7XnYJdGT42JCXurTb1JI0qOBR65shvhPQ==",
+              "license": "MIT",
+              "_id": "should-type@1.4.0",
+              "extraneous": false,
+              "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/no root unlinked workspaces/sources/new/node_modules/should-type",
+              "_dependencies": {},
+              "devDependencies": {},
+              "peerDependencies": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

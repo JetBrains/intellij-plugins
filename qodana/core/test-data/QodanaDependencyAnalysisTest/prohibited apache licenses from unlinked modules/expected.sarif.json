@@ -1,0 +1,78 @@
+{
+  "runs": [
+    {
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "CheckDependencyLicenses",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "'safe-json-value' ('3.0.1') 'Apache-2.0' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'",
+            "markdown": "'safe-json-value' ('3.0.1') 'Apache-2.0' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/frontend/package.json",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 24,
+                  "charOffset": 89,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "\"^3.0.1\""
+                  },
+                  "sourceLanguage": "JSON"
+                },
+                "contextRegion": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "charOffset": 24,
+                  "charLength": 79,
+                  "snippet": {
+                    "text": "  \"version\": \"1.0.0\",\n  \"dependencies\": {\n    \"safe-json-value\": \"^3.0.1\"\n  }\n}"
+                  },
+                  "sourceLanguage": "JSON"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "prohibited apache licenses from unlinked modules",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "b5c71f435311a139",
+            "equalIndicator/v1": "e0e350d222571436db5ce695988c9b418be725fd589a79ca1143d18c42fb029f"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
+            "tags": [
+              "JSON"
+            ]
+          }
+        }
+      ],
+      "automationDetails": {
+        "id": "tests",
+        "guid": "tests",
+        "properties": {
+          "jobUrl": "",
+          "analysisKind": "regular"
+        }
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}

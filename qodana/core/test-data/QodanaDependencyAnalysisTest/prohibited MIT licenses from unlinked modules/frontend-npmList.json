@@ -1,0 +1,114 @@
+{
+  "version": "1.0.0",
+  "name": "frontend",
+  "_id": "frontend@1.0.0",
+  "extraneous": false,
+  "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/prohibited licenses/sources/frontend",
+  "_dependencies": {
+    "safe-json-value": "^3.0.1"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "dependencies": {
+    "safe-json-value": {
+      "version": "3.0.1",
+      "resolved": "https://registry.npmjs.org/safe-json-value/-/safe-json-value-3.0.1.tgz",
+      "overridden": false,
+      "name": "safe-json-value",
+      "integrity": "sha512-SLpLoERUlSefVk6ZuUFhj42IoQGIjGBEAeb7cEkPUGbsj7NrxJ/AjqYiSRDdYP5GMMAEzqJlJuoHzoW6cVvYtw==",
+      "license": "Apache-2.0",
+      "engines": {
+        "node": ">=18.18.0"
+      },
+      "_id": "safe-json-value@3.0.1",
+      "extraneous": false,
+      "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/prohibited licenses/sources/frontend/node_modules/safe-json-value",
+      "_dependencies": {
+        "is-plain-obj": "^4.1.0",
+        "normalize-exception": "^4.0.1"
+      },
+      "devDependencies": {},
+      "peerDependencies": {},
+      "dependencies": {
+        "is-plain-obj": {
+          "version": "4.1.0",
+          "resolved": "https://registry.npmjs.org/is-plain-obj/-/is-plain-obj-4.1.0.tgz",
+          "overridden": false,
+          "name": "is-plain-obj",
+          "integrity": "sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==",
+          "license": "MIT",
+          "engines": {
+            "node": ">=12"
+          },
+          "funding": {
+            "url": "https://github.com/sponsors/sindresorhus"
+          },
+          "_id": "is-plain-obj@4.1.0",
+          "extraneous": false,
+          "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/prohibited licenses/sources/frontend/node_modules/is-plain-obj",
+          "_dependencies": {},
+          "devDependencies": {},
+          "peerDependencies": {}
+        },
+        "normalize-exception": {
+          "version": "4.0.1",
+          "resolved": "https://registry.npmjs.org/normalize-exception/-/normalize-exception-4.0.1.tgz",
+          "overridden": false,
+          "name": "normalize-exception",
+          "integrity": "sha512-2fUwKMZLYvHIHZN4a6Bt2FYEea6mDwQcTVCffRvQ1bJHndQRRrNhq8+WQiLolOzJ7bJl59SCURGSwCLvQv/X7w==",
+          "license": "MIT",
+          "engines": {
+            "node": ">=18.18.0"
+          },
+          "_id": "normalize-exception@4.0.1",
+          "extraneous": false,
+          "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/prohibited licenses/sources/frontend/node_modules/normalize-exception",
+          "_dependencies": {
+            "is-error-instance": "^3.0.1",
+            "is-plain-obj": "^4.1.0"
+          },
+          "devDependencies": {},
+          "peerDependencies": {},
+          "dependencies": {
+            "is-error-instance": {
+              "version": "3.0.1",
+              "resolved": "https://registry.npmjs.org/is-error-instance/-/is-error-instance-3.0.1.tgz",
+              "overridden": false,
+              "name": "is-error-instance",
+              "integrity": "sha512-nEw1ptjtbmXRkHOFrLvpHywsv+jMUZdtqI2BAC/XxMd24vUY5gXhvOprH0Bh4xA2gqQCQsEkr7aaxsgvxYRjnQ==",
+              "license": "MIT",
+              "engines": {
+                "node": ">=18.18.0"
+              },
+              "_id": "is-error-instance@3.0.1",
+              "extraneous": false,
+              "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/prohibited licenses/sources/frontend/node_modules/is-error-instance",
+              "_dependencies": {},
+              "devDependencies": {},
+              "peerDependencies": {}
+            },
+            "is-plain-obj": {
+              "version": "4.1.0",
+              "name": "is-plain-obj",
+              "resolved": "https://registry.npmjs.org/is-plain-obj/-/is-plain-obj-4.1.0.tgz",
+              "integrity": "sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==",
+              "license": "MIT",
+              "engines": {
+                "node": ">=12"
+              },
+              "funding": {
+                "url": "https://github.com/sponsors/sindresorhus"
+              },
+              "_id": "is-plain-obj@4.1.0",
+              "extraneous": false,
+              "path": "/Users/jacob/Projects/ultimate/contrib/qodana/core/test-data/QodanaDependencyAnalysisTest/prohibited licenses/sources/frontend/node_modules/is-plain-obj",
+              "_dependencies": {},
+              "devDependencies": {},
+              "peerDependencies": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

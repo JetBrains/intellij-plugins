@@ -8,8 +8,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "Transitive dependency: 'normalize-exception' ('4.0.1') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'",
-            "markdown": "Transitive dependency: 'normalize-exception' ('4.0.1') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'"
+            "text": "Transitive dependency: 'is-error-instance' ('3.0.1') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'",
+            "markdown": "Transitive dependency: 'is-error-instance' ('3.0.1') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'"
           },
           "locations": [
             {
@@ -41,15 +41,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "prohibited licenses from unlinked modules",
+                  "fullyQualifiedName": "prohibited MIT licenses from unlinked modules",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "676e2c0f1e582545",
-            "equalIndicator/v1": "22139502a6a0a744e1a364b88a03c720b0644981f2b8318d40c367e06db3bf21"
+            "equalIndicator/v2": "2a85db7453328752",
+            "equalIndicator/v1": "1c969bf9ac98e6f59ba96e7c0f7c28dd6bc9a1597220ad17721edc0ecde642b7"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -98,15 +98,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "prohibited licenses from unlinked modules",
+                  "fullyQualifiedName": "prohibited MIT licenses from unlinked modules",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "676e2c0f1e582545",
-            "equalIndicator/v1": "23f9c184a1c7e0e5c2dd0071d1d18684ff92d93b9eb530a73ccc6696143d1f53"
+            "equalIndicator/v2": "2a85db7453328752",
+            "equalIndicator/v1": "b3770d366340779364cbeb091e1f4e8fe99817716fc5c347b6c0a447625baba3"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -122,8 +122,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "Transitive dependency: 'is-error-instance' ('3.0.1') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'",
-            "markdown": "Transitive dependency: 'is-error-instance' ('3.0.1') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'"
+            "text": "Transitive dependency: 'normalize-exception' ('4.0.1') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'",
+            "markdown": "Transitive dependency: 'normalize-exception' ('4.0.1') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'"
           },
           "locations": [
             {
@@ -155,72 +155,15 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "prohibited licenses from unlinked modules",
+                  "fullyQualifiedName": "prohibited MIT licenses from unlinked modules",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "676e2c0f1e582545",
-            "equalIndicator/v1": "bf14bf133d8235500960ee03c05d485046a9ab5c77be867e4ad2f2eedbe9d4da"
-          },
-          "properties": {
-            "ideaSeverity": "ERROR",
-            "qodanaSeverity": "Critical",
-            "problemType": "REGULAR",
-            "tags": [
-              "JSON"
-            ]
-          }
-        },
-        {
-          "ruleId": "CheckDependencyLicenses",
-          "kind": "fail",
-          "level": "error",
-          "message": {
-            "text": "'should-equal' ('2.0.0') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'",
-            "markdown": "'should-equal' ('2.0.0') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "test-module/package.json",
-                  "uriBaseId": "SRCROOT"
-                },
-                "region": {
-                  "startLine": 6,
-                  "startColumn": 21,
-                  "charOffset": 109,
-                  "charLength": 8,
-                  "snippet": {
-                    "text": "\"^2.0.0\""
-                  },
-                  "sourceLanguage": "JSON"
-                },
-                "contextRegion": {
-                  "startLine": 4,
-                  "startColumn": 1,
-                  "charOffset": 47,
-                  "charLength": 76,
-                  "snippet": {
-                    "text": "  \"version\": \"1.0.0\",\n  \"dependencies\": {\n    \"should-equal\": \"^2.0.0\"\n  }\n}"
-                  },
-                  "sourceLanguage": "JSON"
-                }
-              },
-              "logicalLocations": [
-                {
-                  "fullyQualifiedName": "prohibited licenses from unlinked modules",
-                  "kind": "module"
-                }
-              ]
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v2": "f83ea365d1f8d615",
-            "equalIndicator/v1": "740e9b3e67b0627535e16c1be30d595ddd28e6012f067f68c729878544903e0a"
+            "equalIndicator/v2": "2a85db7453328752",
+            "equalIndicator/v1": "c0c3204bdbcdacd72f34da92a68bc1809f72409eb97495848e326f85eac23832"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -269,15 +212,72 @@
               },
               "logicalLocations": [
                 {
-                  "fullyQualifiedName": "prohibited licenses from unlinked modules",
+                  "fullyQualifiedName": "prohibited MIT licenses from unlinked modules",
                   "kind": "module"
                 }
               ]
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v2": "f83ea365d1f8d615",
-            "equalIndicator/v1": "f8d8cc6ff4ac040682b430b0be9704c1e864c8ef0da7e78b039b48a382302ac8"
+            "equalIndicator/v2": "fb49b95e53af5f1a",
+            "equalIndicator/v1": "38f1d2e62e8274cbf8c383dd2b89afa13291c0cd7a7d5b86a06ab81a57bf7dda"
+          },
+          "properties": {
+            "ideaSeverity": "ERROR",
+            "qodanaSeverity": "Critical",
+            "problemType": "REGULAR",
+            "tags": [
+              "JSON"
+            ]
+          }
+        },
+        {
+          "ruleId": "CheckDependencyLicenses",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "'should-equal' ('2.0.0') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'",
+            "markdown": "'should-equal' ('2.0.0') 'MIT' license is in the prohibited licenses list with project license 'PROPRIETARY-LICENSE'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test-module/package.json",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 21,
+                  "charOffset": 109,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "\"^2.0.0\""
+                  },
+                  "sourceLanguage": "JSON"
+                },
+                "contextRegion": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "charOffset": 47,
+                  "charLength": 76,
+                  "snippet": {
+                    "text": "  \"version\": \"1.0.0\",\n  \"dependencies\": {\n    \"should-equal\": \"^2.0.0\"\n  }\n}"
+                  },
+                  "sourceLanguage": "JSON"
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "prohibited MIT licenses from unlinked modules",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v2": "fb49b95e53af5f1a",
+            "equalIndicator/v1": "793cfe31a5cfc532e87e4d93a1b14bde02922b9e7b8226df785253e6450c7c6f"
           },
           "properties": {
             "ideaSeverity": "ERROR",
