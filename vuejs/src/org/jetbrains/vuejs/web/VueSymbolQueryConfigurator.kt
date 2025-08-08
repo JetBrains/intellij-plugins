@@ -18,11 +18,7 @@ import com.intellij.polySymbols.query.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.html.HtmlTag
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.psi.xml.XmlElement
-import com.intellij.psi.xml.XmlTag
-import com.intellij.psi.xml.XmlText
+import com.intellij.psi.xml.*
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
