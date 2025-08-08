@@ -479,6 +479,9 @@ inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   return host.parentOfType<T>()
 }
 
+fun isGlobalDirectiveName(name: String): Boolean =
+  name.length > 1 && name[0] == 'v' && name[1].isUpperCase()
+
 fun isScriptSetupLocalDirectiveName(name: String): Boolean =
   name.length > 1 && name[0] == 'v' && name[1].isUpperCase()
 

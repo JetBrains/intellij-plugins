@@ -83,6 +83,7 @@ private constructor(
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == VUE_COMPONENTS
+    || qualifiedKind == VUE_GLOBAL_DIRECTIVES
     || qualifiedKind == VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
     || qualifiedKind == VUE_DIRECTIVES
 

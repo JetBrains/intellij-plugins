@@ -1038,6 +1038,12 @@
           }
         },
         {
+          "name": "Vue Composition API global directive",
+          "pattern": {
+            "items": "vue-global-directives"
+          }
+        },
+        {
           "name": "Vue Composition API local directive",
           "pattern": {
             "items": "vue-script-setup-local-directives"
