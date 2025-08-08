@@ -196,7 +196,7 @@ const props = {seeMe: {}}
   fun testDirectivesFromGlobalDirectives() {
     doDirTest(
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
