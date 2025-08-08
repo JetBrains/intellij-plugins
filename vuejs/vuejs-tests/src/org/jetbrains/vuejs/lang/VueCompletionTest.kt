@@ -148,7 +148,7 @@ class VueCompletionTest : VueTestCase("completion") {
 
   fun testDirectivesFromGlobalDirectives() {
     doLookupTest(
-      VueTestModule.VUE_3_4_0,
+      VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
       locations = listOf(
