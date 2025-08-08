@@ -54,7 +54,8 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
 
     val project = psiFile.project
     val configuration = PrettierConfiguration.getInstance(project)
-    if (!configuration.isRunOnReformat) return false
+    val pasteOnly = psiFile.getUserData(IN_PASTE_ACTION_KEY) == true
+    if (!configuration.isRunOnReformat && !pasteOnly) return false
 
     val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(file) as? TextEditor
     val template = fileEditor?.let { TemplateManager.getInstance(project).getActiveTemplate(it.editor) }

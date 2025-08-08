@@ -40,6 +40,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     public boolean runOnSave = PRETTIER_ON_SAVE_DEFAULT;
     @OptionTag("myRunOnReformat")
     public boolean runOnReformat = PRETTIER_ON_REFORMAT_DEFAULT;
+    public boolean runOnPaste = PRETTIER_ON_PASTE_DEFAULT;
     @OptionTag("myFilesPattern")
     public @NotNull String filesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
     public @NotNull String customIgnorePath = "";
@@ -52,6 +53,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   private static final boolean PRETTIER_ON_SAVE_DEFAULT = false;
   private static final boolean PRETTIER_FORMAT_FILES_OUTSIDE_DEPENDENCY_SCOPE_DEFAULT = true;
   private static final boolean PRETTIER_ON_REFORMAT_DEFAULT = false;
+  private static final boolean PRETTIER_ON_PASTE_DEFAULT = true;
   private static final @NonNls String PRETTIER_FILES_PATTERN_DEFAULT = "**/*.{js,ts,jsx,tsx,cjs,cts,mjs,mts,vue,astro}";
 
   private static final NodePackageDescriptor PKG_DESC = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME);
@@ -143,6 +145,10 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
 
   public boolean isRunOnReformat() {
     return !isDisabled() && (isAutomatic() || myState.runOnReformat);
+  }
+
+  public boolean isRunOnPaste() {
+    return !isDisabled() && myState.runOnPaste;
   }
 
   public @NotNull String getFilesPattern() {

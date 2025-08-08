@@ -50,6 +50,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   private lateinit var packageField: NodePackageField
   private lateinit var runForFilesField: JBTextField
   private lateinit var runOnSaveCheckBox: JCheckBox
+  private lateinit var runOnPasteCheckBox: JCheckBox
   private lateinit var customIgnorePathField: TextFieldWithBrowseButton
   private var codeStyleModifierCheckBox: JCheckBox? = null
 
@@ -76,6 +77,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
               addItemListener { e ->
                 if (e.stateChange == ItemEvent.SELECTED) {
                   runOnSaveCheckBox.isSelected = false
+                  runOnPasteCheckBox.isSelected = false
                   codeStyleModifierCheckBox?.isSelected = false
                 }
               }
@@ -187,6 +189,12 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
         val link = ActionsOnSaveConfigurable.createGoToActionsOnSavePageLink()
         cell(link)
+      }.enabledIf(!disabledConfiguration.selected)
+
+      row {
+        runOnPasteCheckBox = checkBox(PrettierBundle.message("run.on.paste.label"))
+          .bindSelected({ prettierState.configurationMode != ConfigurationMode.DISABLED && prettierState.runOnPaste }, { prettierState.runOnPaste = it })
+          .component
       }.enabledIf(!disabledConfiguration.selected)
 
       row {
