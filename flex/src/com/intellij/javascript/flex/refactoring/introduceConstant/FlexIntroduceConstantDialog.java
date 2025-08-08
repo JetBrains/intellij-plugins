@@ -130,6 +130,7 @@ public class FlexIntroduceConstantDialog extends JSBaseClassBasedIntroduceDialog
   private void createUIComponents() {
     myNameField = configureNameField();
     myVarType = configureTypeField();
+    myVisibilityPanel = new JSVisibilityPanel();
   }
 
   @Override

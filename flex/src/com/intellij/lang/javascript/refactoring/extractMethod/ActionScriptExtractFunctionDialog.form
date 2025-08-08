@@ -123,11 +123,11 @@
           </component>
         </children>
       </grid>
-      <nested-form id="934c2" form-file="com/intellij/lang/javascript/refactoring/ui/JSVisibilityPanel.form" binding="myVisibilityPanel">
+      <component id="e6f62" class="com.intellij.lang.javascript.refactoring.ui.JSVisibilityPanel" binding="myVisibilityPanel" custom-create="true">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-      </nested-form>
+      </component>
     </children>
   </grid>
 </form>

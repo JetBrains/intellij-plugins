@@ -242,6 +242,7 @@ public class ActionScriptExtractFunctionDialog extends JSBaseClassBasedIntroduce
   }
 
   private void createUIComponents() {
+    myVisibilityPanel = new JSVisibilityPanel();
     myFunctionName = configureNameField();
     myVarType = configureTypeField();
     myPreviewText = new MethodSignatureComponent(mySignatureGenerator.fun(
