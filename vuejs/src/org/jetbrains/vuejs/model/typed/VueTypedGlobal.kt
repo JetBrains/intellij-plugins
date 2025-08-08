@@ -9,6 +9,7 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.vuejs.codeInsight.isGlobalDirectiveName
 import org.jetbrains.vuejs.index.GLOBAL_COMPONENTS
 import org.jetbrains.vuejs.index.GLOBAL_DIRECTIVES
 import org.jetbrains.vuejs.index.VUE_CORE_MODULES
@@ -38,9 +39,8 @@ data class VueTypedGlobal(
       )
 
       val result = buildMap {
-        for ((rawName, source) in augmentedProperties) {
-          val name = rawName.removePrefix("v")
-          if (name == rawName || name.isEmpty()) {
+        for ((name, source) in augmentedProperties) {
+          if (!isGlobalDirectiveName(name)) {
             continue
           }
 
