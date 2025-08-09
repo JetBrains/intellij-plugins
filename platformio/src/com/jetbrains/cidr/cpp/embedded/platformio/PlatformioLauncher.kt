@@ -25,7 +25,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.notifyUploadUnavailable
 import com.jetbrains.cidr.cpp.execution.CLionLauncher
 import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration
-import com.jetbrains.cidr.cpp.execution.debugger.peripheralview.SvdPanel.Companion.registerPeripheralTab
+import com.intellij.clion.embedded.debugger.peripheralview.SvdPanel.Companion.registerPeripheralTab
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain
