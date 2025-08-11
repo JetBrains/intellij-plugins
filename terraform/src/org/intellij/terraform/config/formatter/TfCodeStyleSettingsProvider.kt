@@ -1,5 +1,5 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.hcl.formatter
+package org.intellij.terraform.config.formatter
 
 import com.intellij.application.options.CodeStyleAbstractConfigurable
 import com.intellij.application.options.CodeStyleAbstractPanel
@@ -10,10 +10,11 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 import org.intellij.terraform.config.TerraformLanguage
-import org.intellij.terraform.hcl.HCLLanguage
+import org.intellij.terraform.hcl.formatter.HclCodeStyleOtherPanel
+import org.intellij.terraform.hcl.formatter.HclCodeStyleSettings
 
-internal sealed class BaseHclCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
-  abstract override fun getLanguage(): Language
+internal class TfCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
+  override fun getLanguage(): Language = TerraformLanguage
 
   override fun createConfigurable(settings: CodeStyleSettings, originalSettings: CodeStyleSettings): CodeStyleConfigurable {
     return object : CodeStyleAbstractConfigurable(settings, originalSettings, language.displayName) {
@@ -25,22 +26,14 @@ internal sealed class BaseHclCodeStyleSettingsProvider : CodeStyleSettingsProvid
             addSpacesTab(settings)
             addBlankLinesTab(settings)
             addWrappingAndBracesTab(settings)
-            addTab(HclCodeStyleOtherPanel(settings, language is TerraformLanguage))
+            addTab(HclCodeStyleOtherPanel(settings))
           }
         }
       }
     }
   }
 
-  override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings? {
+  override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings {
     return HclCodeStyleSettings(language.id, settings)
   }
-}
-
-internal class HclCodeStyleSettingsProvider : BaseHclCodeStyleSettingsProvider() {
-  override fun getLanguage(): Language = HCLLanguage
-}
-
-internal class TfCodeStyleSettingsProvider : BaseHclCodeStyleSettingsProvider() {
-  override fun getLanguage(): Language = TerraformLanguage
 }
