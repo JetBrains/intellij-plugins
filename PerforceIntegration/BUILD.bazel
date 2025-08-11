@@ -34,6 +34,7 @@ jvm_library(
     "@community//platform/dvcs-api:vcs-dvcs",
     "@community//platform/backend/workspace",
     "@community//platform/util/coroutines",
+    "@community//platform/vcs-impl/shared",
   ],
   runtime_deps = [":vcs-perforce_resources"]
 )
