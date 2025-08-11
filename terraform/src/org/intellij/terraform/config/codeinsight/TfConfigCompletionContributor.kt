@@ -253,8 +253,11 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       val leftNWS = position.getPrevSiblingNonWhiteSpace()
       LOG.debug { "TF.BlockKeywordCompletionProvider{position=$position, parent=$parent, left=${position.prevSibling}, lnws=$leftNWS}" }
       assert(getClearTextValue(leftNWS) == null, dumpPsiFileModel(position))
+
       val fileType = position.containingFile.originalFile.fileType
-      result.addAllElements(RootBlockSorted.filter { it.canBeUsedIn(fileType) }.map { createPropertyOrBlockType(it) })
+      RootBlockSorted.asSequence().filter { it.canBeUsedIn(fileType) }.map { createPropertyOrBlockType(it) }.forEach {
+        result.addElement(it)
+      }
     }
   }
 
@@ -559,7 +562,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
           .flatten()
           .mapNotNull {
             return@mapNotNull when (it) {
-              is String -> "" + '$' + "{$it}"
+              is String -> "\${$it}"
               else -> null
             }
           }
