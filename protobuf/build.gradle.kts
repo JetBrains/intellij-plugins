@@ -1,7 +1,12 @@
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
-apply(from = "../contrib-configuration/common.gradle.kts")
+rootProject.extensions.add("gradle.version", "9.0")
+rootProject.extensions.add("kotlin.jvmTarget", "21")
+rootProject.extensions.add("java.sourceCompatibility", "21")
+rootProject.extensions.add("java.targetCompatibility", "21")
+rootProject.extensions.add("junit.version", "4.13.2")
 
 /**
  * Initialize this property in a specific Gradle task to determine the plugin runtime layout
@@ -20,6 +25,9 @@ repositories {
     defaultRepositories()
     snapshots()
   }
+
+  mavenCentral()
+  google()
 }
 
 intellijPlatform {
@@ -60,11 +68,16 @@ sourceSets {
   }
 }
 
+java {
+  sourceCompatibility = JavaVersion.toVersion(ext("java.sourceCompatibility"))
+  targetCompatibility = JavaVersion.toVersion(ext("java.targetCompatibility"))
+}
+
 kotlin {
   compilerOptions {
     jvmTarget.set(JvmTarget.fromTarget(ext("kotlin.jvmTarget")))
-    @Suppress("UNCHECKED_CAST")
-    freeCompilerArgs.addAll(rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>)
+    apiVersion = KotlinVersion.KOTLIN_2_2
+    languageVersion = KotlinVersion.KOTLIN_2_2
   }
 }
 
@@ -85,30 +98,22 @@ tasks {
       fileToChange.writeText(newPluginXmlText)
     }
   }
-  named("buildPlugin") {
-    dependsOn(manipulatePluginXml)
-  }
-  named("runIde") {
-    dependsOn(manipulatePluginXml)
-  }
-  named("test") {
+  buildPlugin {
     dependsOn(manipulatePluginXml)
   }
   test {
+    dependsOn(manipulatePluginXml)
     systemProperty("ij.protoeditor.test.home.path", "${rootProject.rootDir}")
     useJUnit()
   }
   buildSearchableOptions {
     enabled = false
   }
-  java {
-    sourceCompatibility = JavaVersion.toVersion(ext("java.sourceCompatibility"))
-    targetCompatibility = JavaVersion.toVersion(ext("java.targetCompatibility"))
-  }
   wrapper {
     gradleVersion = ext("gradle.version")
   }
   runIde {
+    dependsOn(manipulatePluginXml)
     autoReload.set(false)
   }
 }
