@@ -21,6 +21,7 @@
 
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.javascript</depends>
+  <depends>com.intellij.modules.scriptDebugger.ui</depends>
 
   <depends optional="true" config-file="karma-debug.xml">JavaScriptDebugger</depends>
 
