@@ -42,6 +42,7 @@
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
     <module name="intellij.json.backend"/>
+    <module name="intellij.platform.inspect"/>
     <module name="intellij.platform.collaborationTools"/>
   </dependencies>
 
