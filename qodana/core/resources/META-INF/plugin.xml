@@ -44,6 +44,7 @@
     <module name="intellij.json.backend"/>
     <module name="intellij.platform.inspect"/>
     <module name="intellij.platform.collaborationTools"/>
+    <module name="intellij.platform.collaborationTools.auth"/>
   </dependencies>
 
   <depends optional="true" config-file="static-analysis-intellijLang.xml">org.intellij.intelliLang</depends>
