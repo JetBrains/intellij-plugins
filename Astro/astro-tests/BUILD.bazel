@@ -46,6 +46,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",
     "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
+    "//plugins/css/common",
   ]
 )
 ### auto-generated section `build intellij.astro.tests` end
