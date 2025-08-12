@@ -132,6 +132,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
 
     fun withIgnoreMappings(builder: ExpressionBuilder.() -> Unit)
 
+    fun withSourceFile(file: PsiFile, builder: ExpressionBuilder.() -> Unit)
+
     fun codeBlock(builder: BlockBuilder.() -> Unit)
 
     fun statements(builder: BlockBuilder.() -> Unit)
@@ -160,6 +162,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
     private var ignoreMappings = false
 
     private var supportReversedTypes = false
+
+    private var sourceFile: PsiFile? = null
 
     override val isIgnoreDiagnostics: Boolean
       get() = ignoreMappings
@@ -204,7 +208,8 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           generatedLength = generatedLength,
           diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreMappings },
           diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreMappings },
-          flags = buildMappingFlags(ignoreMappings, supportTypes, supportSemanticHighlighting, supportReversedTypes || this.supportReversedTypes)
+          flags = buildMappingFlags(ignoreMappings, supportTypes, supportSemanticHighlighting, supportReversedTypes || this.supportReversedTypes),
+          sourceFile = sourceFile,
         ))
         if (!ignoreMappings) {
           if (contextVar) {
@@ -297,6 +302,7 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
           diagnosticsOffset = diagnosticsRange?.startOffset?.takeIf { !ignoreMappings },
           diagnosticsLength = diagnosticsRange?.length?.takeIf { !ignoreMappings },
           flags = buildMappingFlags(ignoreMappings, supportTypes, supportSemanticHighlighting, supportReversedTypes || this.supportReversedTypes),
+          sourceFile = sourceFile,
         ))
       }
       else {
@@ -379,6 +385,13 @@ internal class Expression(builder: ExpressionBuilder.() -> Unit) {
       supportReversedTypes = false
     }
 
+    override fun withSourceFile(file: PsiFile, builder: ExpressionBuilder.() -> Unit) {
+      val oldFile = sourceFile
+      sourceFile = file
+      this.builder()
+      sourceFile = oldFile
+    }
+
     override fun codeBlock(builder: BlockBuilder.() -> Unit) {
       append("{\n")
       this.builder()
@@ -432,6 +445,7 @@ internal data class SourceMappingData(
   override val diagnosticsOffset: Int?,
   override val diagnosticsLength: Int?,
   override val flags: EnumSet<SourceMappingFlag>,
+  override val sourceFile: PsiFile?,
 ) : Angular2TemplateTranspiler.SourceMapping {
   override fun offsetBy(generatedOffset: Int, sourceOffset: Int): Angular2TemplateTranspiler.SourceMapping =
     copy(sourceOffset = this.sourceOffset + sourceOffset,

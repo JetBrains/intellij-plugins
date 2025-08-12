@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.html.parser
 import com.intellij.lang.ASTNode
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.CustomLanguageASTComparator
+import com.intellij.psi.tree.IElementType
 import com.intellij.util.ThreeState
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
@@ -14,14 +15,19 @@ import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
  */
 class VueASTComparator : CustomLanguageASTComparator {
   override fun compareAST(oldNode: ASTNode, newNode: LighterASTNode, structure: FlyweightCapableTreeStructure<LighterASTNode>): ThreeState {
-    val old = oldNode.elementType
-    val new = newNode.tokenType
+    return compareTypes(oldNode.elementType, newNode.tokenType)
+  }
+
+  override fun compareAST(oldNode: ASTNode, newNode: ASTNode): ThreeState {
+    return compareTypes(oldNode.elementType, newNode.elementType)
+  }
+
+  private fun compareTypes(old: IElementType, new: IElementType): ThreeState {
     if (old is VueJSEmbeddedExprTokenType && new is VueJSEmbeddedExprTokenType) {
       if (old.langMode != new.langMode) {
         return ThreeState.NO
       }
     }
-
     return ThreeState.UNSURE
   }
 }

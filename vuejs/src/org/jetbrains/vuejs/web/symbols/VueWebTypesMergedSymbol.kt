@@ -105,7 +105,8 @@ class VueWebTypesMergedSymbol(
       .flatMap { it.getSymbols(qualifiedKind, params, stack) }
       .toList()
       .takeIf { it.isNotEmpty() }
-      ?.let { list ->
+      ?.groupBy { it.name }
+      ?.mapValues { (_, list) ->
         val containers = mutableListOf<PolySymbol>()
         var psiSourcedPolySymbol: PsiSourcedPolySymbol? = null
         val polySymbols = mutableListOf<PolySymbol>()
@@ -128,6 +129,7 @@ class VueWebTypesMergedSymbol(
         }
         containers
       }
+      ?.flatMap { it.value }
     ?: emptyList()
 
   override fun getCodeCompletions(
@@ -146,7 +148,7 @@ class VueWebTypesMergedSymbol(
         else {
           var psiSourcedPolySymbol: PsiSourcedPolySymbol? = null
           val symbols = mutableListOf<PolySymbol>()
-          items.asSequence().mapNotNull { it.symbol }.forEach {
+          items.asSequence().mapNotNull { it.symbol }.distinct().forEach {
             if (it is PsiSourcedPolySymbol && psiSourcedPolySymbol == null)
               psiSourcedPolySymbol = it
             else symbols.add(it)

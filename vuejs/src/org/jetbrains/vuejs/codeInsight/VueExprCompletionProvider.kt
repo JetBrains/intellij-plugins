@@ -114,7 +114,7 @@ class VueExprCompletionProvider : CompletionProvider<CompletionParameters>() {
     when (proximity) {
       VueModelVisitor.Proximity.LOCAL -> LOCAL_SCOPE_MAX_PRIORITY
       VueModelVisitor.Proximity.APP -> NESTING_LEVEL_1
-      VueModelVisitor.Proximity.PLUGIN -> NESTING_LEVEL_2
+      VueModelVisitor.Proximity.LIBRARY -> NESTING_LEVEL_2
       VueModelVisitor.Proximity.GLOBAL -> NESTING_LEVEL_3
       else -> LOWEST_PRIORITY
     }

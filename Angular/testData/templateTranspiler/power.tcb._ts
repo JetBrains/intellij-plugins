@@ -1,0 +1,11 @@
+/* Angular type checking code */
+
+/* TCB for power.ts */
+
+function _tcb1(this: RobotProfileComponent) {
+"" + (12 ** 33 ** this.value);
+var _t1 = document.createElement("div");
+(12 ** 33 ** this.value);
+var _t2 = document.createElement("div");
+"" + (12 ** 33 ** this.value);
+}

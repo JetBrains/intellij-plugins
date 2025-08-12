@@ -29,12 +29,13 @@ import org.angular2.Angular2DecoratorUtil.VIEW_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
 import org.angular2.cli.config.AngularConfigProvider
 import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.ACTION
 import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.BINDING
 import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.INTERPOLATION
 import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.SIMPLE_BINDING
 import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.TEMPLATE_BINDINGS
+import org.angular2.lang.html.Angular2HtmlDialect
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import java.util.function.Consumer
@@ -52,8 +53,8 @@ class Angular2Injector : MultiHostInjector {
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
     val parent = context.parent
     if (parent == null
-        || parent.language.`is`(Angular2Language)
-        || parent.language.isKindOf(Angular2HtmlLanguage)
+        || parent.language is Angular2ExprDialect
+        || parent.language is Angular2HtmlDialect
         || !Angular2LangUtil.isAngular2Context(context)) {
       return
     }
@@ -68,7 +69,7 @@ class Angular2Injector : MultiHostInjector {
     }
 
     if (isPropertyWithName(parent, TEMPLATE_PROP)) {
-      injectIntoDecoratorExpr(registrar, context, parent, Angular2LangUtil.getTemplateSyntax(context).language, null)
+      injectIntoDecoratorExpr(registrar, context, parent, Angular2LangUtil.getTemplateSyntax(context).languageHtml, null)
       return
     }
 
@@ -89,7 +90,7 @@ class Angular2Injector : MultiHostInjector {
         val name = parent.name ?: return
         val fileExtension = getExpressionFileExtension(context.textLength, name, true)
                             ?: return
-        injectIntoDecoratorExpr(registrar, context, ancestor, Angular2Language, fileExtension)
+        injectIntoDecoratorExpr(registrar, context, ancestor, Angular2ExprDialect.forContext(context), fileExtension)
       }
     }
   }
@@ -116,15 +117,17 @@ class Angular2Injector : MultiHostInjector {
     }
   }
 
-  private fun injectIntoEmbeddedLiteral(registrar: MultiHostRegistrar,
-                                        context: JSLiteralExpression,
-                                        parent: PsiElement): Boolean {
+  private fun injectIntoEmbeddedLiteral(
+    registrar: MultiHostRegistrar,
+    context: JSLiteralExpression,
+    parent: PsiElement,
+  ): Boolean {
     val attribute = parent.asSafely<JSEmbeddedContent>()
                       ?.let { PsiTreeUtil.getParentOfType(it, XmlAttribute::class.java) }
                     ?: return false
     val expressionType: String? = getExpressionFileExtension(context.textLength, attribute.name, false)
     if (expressionType != null) {
-      inject(registrar, context, Angular2Language, expressionType)
+      inject(registrar, context, Angular2ExprDialect.forContext(context), expressionType)
     }
     else {
       injectInterpolations(registrar, context)
@@ -134,7 +137,7 @@ class Angular2Injector : MultiHostInjector {
 
   private fun injectInterpolations(registrar: MultiHostRegistrar, context: PsiElement) {
     val braces = Holder.BRACES_FACTORY.`fun`(context) ?: return
-    JSInjectionBracesUtil.injectInXmlTextByDelimiters(registrar, context, Angular2Language,
+    JSInjectionBracesUtil.injectInXmlTextByDelimiters(registrar, context, Angular2ExprDialect.forContext(context),
                                                       braces.first, braces.second, INTERPOLATION)
   }
 
@@ -162,11 +165,13 @@ class Angular2Injector : MultiHostInjector {
     }
   }
 
-  private fun injectIntoDecoratorExpr(registrar: MultiHostRegistrar,
-                                      context: JSLiteralExpression,
-                                      ancestor: PsiElement,
-                                      language: Language,
-                                      fileExtension: String?) {
+  private fun injectIntoDecoratorExpr(
+    registrar: MultiHostRegistrar,
+    context: JSLiteralExpression,
+    ancestor: PsiElement,
+    language: Language,
+    fileExtension: String?,
+  ) {
     val decorator = PsiTreeUtil.getContextOfType(ancestor, ES6Decorator::class.java)
     if (decorator != null) {
       if (isAngularEntityDecorator(decorator, true, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC)) {
@@ -178,8 +183,10 @@ class Angular2Injector : MultiHostInjector {
   }
 
 
-  private fun inject(registrar: MultiHostRegistrar, context: JSLiteralExpression, language: Language,
-                     extension: String?, customizer: Consumer<MultiHostRegistrar>? = null) {
+  private fun inject(
+    registrar: MultiHostRegistrar, context: JSLiteralExpression, language: Language,
+    extension: String?, customizer: Consumer<MultiHostRegistrar>? = null,
+  ) {
     JSInjectionUtil.injectInQuotedLiteral(registrar, language, extension, context, null, null, customizer)
   }
 

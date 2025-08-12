@@ -8,8 +8,8 @@ jvm_resources(
 )
 
 jvm_provided_library(
-  name = "javascript-impl_provided",
-  lib = "//plugins/JavaScriptLanguage:javascript-impl"
+  name = "plugins_javascript-backend_provided",
+  lib = "//plugins/JavaScriptLanguage:javascript-backend"
 )
 
 jvm_library(
@@ -34,7 +34,7 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    ":javascript-impl_provided",
+    ":plugins_javascript-backend_provided",
   ],
   runtime_deps = [":javascript-featuresTrainer_resources"]
 )
@@ -63,7 +63,7 @@ jvm_library(
     "@community//platform/refactoring",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/core-ui",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",

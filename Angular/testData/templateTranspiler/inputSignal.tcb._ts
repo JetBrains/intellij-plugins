@@ -12,5 +12,5 @@ var _t2 = _ctor1({"bar": 2, "boo": 3});
 _t2.bar = 2;
 _t2.boo[_i1.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = 3;
 var _t3 = _t2;
-"" + _t3;
+"" + (_t3);
 }

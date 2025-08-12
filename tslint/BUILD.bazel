@@ -31,7 +31,7 @@ jvm_library(
     "@community//platform/projectModel-api:projectModel",
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage/javascript-parser",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "//webcore/impl",
     "@lib//:gson",
     "@lib//:snakeyaml",
@@ -40,6 +40,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//json/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":tslint_resources",
@@ -65,7 +66,7 @@ jvm_library(
     "@community//platform/projectModel-api:projectModel",
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage/javascript-parser",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "//webcore/impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
@@ -78,6 +79,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//json/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [
     ":tslint_resources",

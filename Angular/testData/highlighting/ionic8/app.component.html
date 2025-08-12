@@ -1,0 +1,15 @@
+<ion-app>
+  <ion-router-outlet></ion-router-outlet>
+</ion-app>
+
+<!-- Types work -->
+<ion-back-button <error descr="TS2322: Type 'string' is not assignable to type 'boolean'.">[disabled]</error>="'test'"></ion-back-button>
+<ion-back-button [disabled]="true"></ion-back-button>
+
+<!-- Types didn't work -->
+<ion-accordion <error descr="TS2322: Type 'string' is not assignable to type 'boolean'.">[disabled]</error>="'test'"></ion-accordion>
+<ion-accordion [disabled]="true"></ion-accordion>
+
+<<warning descr="Unknown html tag ion-foo">ion-foo</warning>></<warning descr="Unknown html tag ion-foo">ion-foo</warning>>
+
+

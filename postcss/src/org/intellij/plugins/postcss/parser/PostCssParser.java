@@ -3,7 +3,6 @@ package org.intellij.plugins.postcss.parser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.impl.CssElementTypes;
-import com.intellij.psi.css.impl.CssStubElementTypes;
 import com.intellij.psi.css.impl.parsing.CssMathParser;
 import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.tree.IElementType;
@@ -59,7 +58,7 @@ public final class PostCssParser extends CssParser2 {
     if (getTokenType() == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN) {
       PsiBuilder.Marker simpleSelector = createCompositeElement();
       parseSimpleVariable();
-      simpleSelector.done(CssStubElementTypes.CSS_SIMPLE_SELECTOR);
+      simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
     }
     else {
       super.parseSimpleSelector();
@@ -360,7 +359,7 @@ public final class PostCssParser extends CssParser2 {
     }
     PsiBuilder.Marker idSelector = createCompositeElement();
     addIdentOrAmpersandOrError(CssElementTypes.CSS_HASH, CssElementTypes.CSS_HASH, PostCssTokenTypes.HASH_SIGN);
-    idSelector.done(CssStubElementTypes.CSS_ID_SELECTOR);
+    idSelector.done(CssElementTypes.CSS_ID_SELECTOR);
     return true;
   }
 

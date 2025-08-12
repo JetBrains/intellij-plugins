@@ -100,7 +100,7 @@ fun fromAsset(name: String, hyphenBeforeDigit: Boolean = false): String {
       ch in '0'..'9' -> {
         if (hyphenBeforeDigit
             && result.isNotEmpty()
-            && result.last() != '-') {
+            && result.last().let { it != '-' && !it.isDigit() }) {
           result.append('-')
         }
         result.append(ch)
@@ -478,6 +478,9 @@ inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this
   return host.parentOfType<T>()
 }
+
+fun isGlobalDirectiveName(name: String): Boolean =
+  name.length > 1 && name[0] == 'v' && name[1].isUpperCase()
 
 fun isScriptSetupLocalDirectiveName(name: String): Boolean =
   name.length > 1 && name[0] == 'v' && name[1].isUpperCase()

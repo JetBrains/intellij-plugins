@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  },
+  "author": "",
+  "license": "ISC"
+}

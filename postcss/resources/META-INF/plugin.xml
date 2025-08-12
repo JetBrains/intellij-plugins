@@ -31,6 +31,7 @@
   <dependencies>
     <plugin id="com.intellij.css"/>
     <plugin id="com.intellij.modules.lang"/>
+    <module name="intellij.css.backend"/>
   </dependencies>
 
   <content>
@@ -98,5 +99,7 @@
     <supportedFileTypesProvider implementation="org.intellij.plugins.postcss.index.PostCssSupportedFileTypesProvider" version="1"/>
     <cssInspectionFilter language="PostCSS"
                          implementationClass="org.intellij.plugins.postcss.inspections.suppress.PostCssInspectionFilter"/>
+    <descriptorHandler forClass="org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectorImpl"
+                       implementationClass="org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectoDescriptorHandler"/>
   </extensions>
 </idea-plugin>

@@ -1,4 +1,5 @@
 <idea-plugin>
+  <depends>com.intellij.modules.css.common</depends>
   <extensions defaultExtensionNs="com.intellij">
     <css.elementDescriptorProvider implementation="org.angularjs.codeInsight.AngularJSCssElementDescriptionProvider"/>
   </extensions>

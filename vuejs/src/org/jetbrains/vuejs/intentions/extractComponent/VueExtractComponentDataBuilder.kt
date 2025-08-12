@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
@@ -17,7 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.css.CssSelectorSuffix
-import com.intellij.psi.css.impl.CssStubElementTypes
+import com.intellij.psi.css.impl.CssElementTypes
 import com.intellij.psi.css.inspections.CssUnusedSymbolUtils.getUnusedStyles
 import com.intellij.psi.css.inspections.RemoveUnusedSymbolIntentionAction
 import com.intellij.psi.impl.source.xml.TagNameReference
@@ -202,7 +202,7 @@ export default {
     currentlyUnused.forEach { suffix -> RemoveUnusedSymbolIntentionAction.removeUnused(suffix) }
     val toDelete = findStyles(file).filter { styleTag ->
       styleTag.isValid &&
-      PsiTreeUtil.processElements(styleTag) { !(CssStubElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) }
+      PsiTreeUtil.processElements(styleTag) { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) }
     }
     toDelete.forEach { styleTag -> styleTag.delete() }
   }

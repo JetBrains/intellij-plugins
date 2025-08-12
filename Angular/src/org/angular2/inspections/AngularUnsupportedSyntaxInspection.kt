@@ -13,7 +13,9 @@ import org.angular2.codeInsight.Angular2HighlightingUtils
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.Angular2LangUtil.AngularVersion
+import org.angular2.lang.expr.Angular2ExprDialect
+import org.angular2.lang.expr.lexer.Angular2TokenTypes.Companion.ASSIGNMENT_OPERATORS
 
 class AngularUnsupportedSyntaxInspection : LocalInspectionTool() {
 
@@ -22,8 +24,8 @@ class AngularUnsupportedSyntaxInspection : LocalInspectionTool() {
       override fun visitElement(element: PsiElement) {
         super.visitElement(element)
         if (element is LeafPsiElement
-            && element.parent?.let { it.language is Angular2Language && it is JSExpressionWithOperationNode } == true
-          ) {
+            && element.parent?.let { it.language is Angular2ExprDialect && it is JSExpressionWithOperationNode } == true
+        ) {
           val version = keywordToVersionMap[element.elementType]
           if (version != null
               && Angular2LangUtil.isAngular2Context(element)
@@ -38,9 +40,9 @@ class AngularUnsupportedSyntaxInspection : LocalInspectionTool() {
         }
         else if (
           element is JSStringTemplateExpression
-          && element.language is Angular2Language
+          && element.language is Angular2ExprDialect
           && Angular2LangUtil.isAngular2Context(element)
-          && !Angular2LangUtil.isAtLeastAngularVersion(element, Angular2LangUtil.AngularVersion.V_19_2)
+          && !Angular2LangUtil.isAtLeastAngularVersion(element, AngularVersion.V_19_2)
         ) {
           holder.registerProblem(element, Angular2Bundle.htmlMessage("angular.inspection.unsupported-syntax-inspection.message.template"))
         }
@@ -51,6 +53,9 @@ class AngularUnsupportedSyntaxInspection : LocalInspectionTool() {
 }
 
 private val keywordToVersionMap = mutableMapOf(
-  JSTokenTypes.TYPEOF_KEYWORD to Angular2LangUtil.AngularVersion.V_19,
-  JSTokenTypes.IN_KEYWORD to Angular2LangUtil.AngularVersion.V_20,
-)
+  JSTokenTypes.TYPEOF_KEYWORD to AngularVersion.V_19,
+  JSTokenTypes.IN_KEYWORD to AngularVersion.V_20,
+  JSTokenTypes.MULTMULT to AngularVersion.V_20,
+).apply {
+  ASSIGNMENT_OPERATORS.types.forEach { if (it != JSTokenTypes.EQ) put(it, AngularVersion.V_20_1) }
+}

@@ -34,10 +34,9 @@
     <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.css.impl" />
-    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.css.plugin" />
+    <orderEntry type="module" module-name="intellij.javascript.backend" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.customization" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.fileWatcher" />
     <orderEntry type="module" module-name="intellij.spellchecker" />
     <orderEntry type="module" module-name="intellij.xml.psi" />
@@ -49,6 +48,8 @@
     <orderEntry type="module" module-name="intellij.javascript.web" />
     <orderEntry type="module" module-name="intellij.xml.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
-    <orderEntry type="module" module-name="intellij.css.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.css.backend" />
+    <orderEntry type="module" module-name="intellij.css.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.common" />
   </component>
 </module>

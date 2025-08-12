@@ -419,18 +419,19 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("provider aws {}\ndata <caret> \"aaa\" {}", matcher)
   }
 
-  //</editor-fold>
-
   fun testOutputBasicCompletion() {
-    doBasicCompletionTest("output test1 {<caret>}", 5, "description")
-    doBasicCompletionTest("output test2 {\np<caret>}", 3, "precondition", "description", "depends_on")
+    doBasicCompletionTest("output test1 {<caret>}", 6, "value", "ephemeral", "sensitive")
+    doBasicCompletionTest("output test2 {\np<caret>}", 4, "precondition", "description", "depends_on", "ephemeral")
   }
 
   fun testVariableBasicCompletion() {
-    doBasicCompletionTest("variable test1 {\n<caret>}", 6, "type")
+    doBasicCompletionTest("variable test1 {\n<caret>}", 7, "type")
     doBasicCompletionTest("variable test2 {\ns<caret>}", 2, "sensitive", "description")
     doBasicCompletionTest("variable test3 {\nn<caret>}", 4, "nullable", "validation")
     doBasicCompletionTest("variable test4 {\nd<caret>}", 3, "default")
+    doBasicCompletionTest(
+      "variable test5 {\ne<caret>}", 6, "ephemeral", "type", "sensitive", "description", "nullable", "default"
+    )
   }
 
   fun testLifecycleBasicCompletion() {

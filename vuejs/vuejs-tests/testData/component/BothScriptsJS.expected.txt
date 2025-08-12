@@ -6,7 +6,7 @@
  },
  props: [
   {
-   class: "VueSourceInputProperty",
+   class: "VuePsiNamedElementInputProperty",
    name: "optional",
    jsType: "Struct",
    required: false,

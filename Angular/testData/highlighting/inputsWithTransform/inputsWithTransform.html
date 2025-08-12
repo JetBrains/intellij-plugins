@@ -9,7 +9,7 @@
         [alsoNo]="'false'"
         [strict]="'false'"
         [obj]="{foo: 12, <error descr="TS2353: Object literal may only specify known properties, and 'bar' does not exist in type '{ foo: number; }'.">bar</error>: 13}"
-        [obj_virtual]="{foo: 12, bar: 13}"
+        [obj_virtual]="{foo: 12, <error descr="TS2353: Object literal may only specify known properties, and 'bar' does not exist in type '{ foo: number; }'.">bar</error>: 13}"
 ></app-test>
 <app-test
         [nope]="'foo'"

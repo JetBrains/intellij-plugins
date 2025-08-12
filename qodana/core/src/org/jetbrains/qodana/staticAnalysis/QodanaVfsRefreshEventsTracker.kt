@@ -14,7 +14,7 @@ class QodanaVfsRefreshEventsTracker : ActivityTracker {
     if (!PlatformUtils.isQodana()) {
       return false
     }
-    return RefreshQueueImpl.isEventProcessingInProgress()
+    return RefreshQueueImpl.isEventProcessingInProgress
   }
 
   override suspend fun awaitConfiguration(project: Project) {

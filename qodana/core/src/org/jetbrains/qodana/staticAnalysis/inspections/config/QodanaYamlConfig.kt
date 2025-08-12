@@ -32,6 +32,9 @@ data class QodanaYamlConfig(
   // dotnet
   val dotnet: DotNetProjectConfiguration? = null,
 
+  // cpp
+  val cpp: QodanaCppConfig? = null,
+
   // php
   val php: QodanaPhpConfig? = null,
 
@@ -56,10 +59,10 @@ data class QodanaYamlConfig(
   }
 
   /**
-   * profile path is constructed either from [yamlPath] or from [projectPath], [projectPath] is in priority
+   * profile path is constructed either from [yamlPath] or from [projectPath], [yamlPath] is in priority
    *
    * - Q: why projectPath is used?
-   *   A: because it was implemented like this, and was present in this form (without [yamlPath]) in 2024.3, since 205.1 [yamlPath] is used aswell
+   *   A: because it was implemented like this, and was present in this form (without [yamlPath]) in 2024.3, since 2025.1 [yamlPath] is used aswell
    */
   fun withAbsoluteProfilePath(
     projectPath: Path,
@@ -73,7 +76,7 @@ data class QodanaYamlConfig(
 
       val absoluteFromProjectPath = projectPath.resolve(profilePath).toAbsolutePath()
       val absoluteFromYamlPath = yamlPath.parent.resolve(profilePath).toAbsolutePath()
-      val absolutePath = absoluteFromProjectPath.takeIf { it.exists() } ?: absoluteFromYamlPath
+      val absolutePath = absoluteFromYamlPath.takeIf { it.exists() } ?: absoluteFromProjectPath
       return absolutePath.pathString
     }
 

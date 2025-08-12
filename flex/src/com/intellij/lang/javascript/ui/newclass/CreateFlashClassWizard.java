@@ -80,7 +80,7 @@ public class CreateFlashClassWizard extends AbstractWizardEx {
   }
 
   @Override
-  protected String getHelpID() {
+  protected String getHelpId() {
     return myHelpId;
   }
 }

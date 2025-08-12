@@ -1,6 +1,6 @@
 package org.intellij.plugins.postcss.psi;
 
-import com.intellij.psi.css.CssFileElementType;
+import com.intellij.psi.css.impl.stubs.CssStubDefinition;
 import com.intellij.psi.tree.IStubFileElementType;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ public class PostCssFileElementType extends IStubFileElementType {
 
   @Override
   public int getStubVersion() {
-    return super.getStubVersion() + CssFileElementType.BASE_VERSION + MY_STUB_VERSION;
+    return super.getStubVersion() + CssStubDefinition.BASE_VERSION + MY_STUB_VERSION;
   }
 
   @Override

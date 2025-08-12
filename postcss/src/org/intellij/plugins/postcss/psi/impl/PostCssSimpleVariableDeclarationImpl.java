@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.css.CssTermList;
-import com.intellij.psi.css.impl.util.CssUtil;
+import com.intellij.psi.css.impl.util.CssUtilCore;
 import com.intellij.psi.impl.source.tree.CompositePsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -39,7 +39,7 @@ public class PostCssSimpleVariableDeclarationImpl extends CompositePsiElement im
 
   @Override
   public int getLineNumber() {
-    return CssUtil.getLineNumber(this);
+    return CssUtilCore.getLineNumber(this);
   }
 
   @Override

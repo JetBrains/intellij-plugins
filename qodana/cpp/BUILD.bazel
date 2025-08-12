@@ -20,7 +20,11 @@ jvm_library(
     "@community//platform/util",
     "//CIDR/clion-cmake",
     "//contrib/qodana",
+    "@community//platform/platform-api:ide",
     "//CIDR/cidr-projectModel",
+    "//CIDR/cidr-workspaceModel",
+    "//rider/plugins/clion-radler/core",
+    "@community//platform/projectModel-api:projectModel",
   ],
   runtime_deps = [":cpp_resources"]
 )

@@ -139,6 +139,22 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_COMMON_19_2_0,
   )
 
+  fun testPower() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_20_0_0_NEXT_3
+  )
+
+  fun testVoidKeyword() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_20_0_0_NEXT_3
+  )
+
+  fun testVoidKeywordNg19() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_19_2_0
+  )
+
+  fun testAssignmentOperators() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_20_1_4
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
@@ -168,9 +184,11 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
 
           fun rangeToText(text: String, offset: Int, length: Int, offsetPrefix: Int = 0) =
             "«${text.substring(offset, offset + length)}» [${offset - offsetPrefix}]"
-
-          mapOf("file-name" to fileInfo.sourceFile.name,
-                "mappings" to fileInfo.sourceMappings
+          val result = mutableMapOf<String, Any>()
+          result["file-name"] = fileInfo.sourceFile.name
+          if (fileInfo.externalFile)
+            result["external-file"] = true
+          result["mappings"] = fileInfo.sourceMappings
                   .map { mapping ->
                     val result = StringBuilder()
                     if (mapping.generatedOffset >= prefixLength)
@@ -201,7 +219,8 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
                         result.append(" (reverse types)")
                     }
                     result.toString()
-                  })
+                  }
+          result
         }),
         if (dir) "${testName}/mappings.json" else "$testName.mappings.json"
       )

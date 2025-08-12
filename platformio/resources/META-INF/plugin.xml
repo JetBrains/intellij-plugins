@@ -57,7 +57,7 @@
               implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUploadBeforeRunTaskProvider"/>
-    <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioDebugBuildBeforeRunTaskProvider"/>
+    <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBuildBeforeRunTaskProvider"/>
     <notificationGroup id="PlatformIO plugin" displayType="BALLOON" bundle="messages.ClionEmbeddedPlatformioBundle"
                        key="notification.group.platformio"/>
     <applicationConfigurable order="last" id="clion.platformio.config"
@@ -88,7 +88,7 @@
     <treeStructureProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioSourcesStructureProvider"/>
     <projectViewNodeDecorator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioLibraryPathNodeDecorator"/>
     <profiler.clion.profilerDisabler implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProfilerDisabler" />
-
+    <postStartupActivity implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioReloadOnRunConfigChange"/>
   </extensions>
 
   <extensions defaultExtensionNs="clion">

@@ -39,6 +39,7 @@ class Angular2TranspiledTemplateRequestArgs private constructor(
 @Suppress("unused")
 class Angular2TcbMappingInfo(
   @JvmField val fileName: String, /* source file name */
+  @JvmField val externalFile: Boolean, /* whether to bind source mappings to the file */
   @JvmField val sourceOffsets: List<Int>,
   @JvmField val sourceLengths: List<Int>,
   @JvmField val generatedOffsets: List<Int>,
@@ -100,6 +101,7 @@ private fun Angular2TranspiledDirectiveFileBuilder.FileMappings.toCodeMapping(
   val mappings = sourceMappings.filter { !it.ignored }
   return Angular2TcbMappingInfo(
     fileName = fileName,
+    externalFile = externalFile,
     sourceOffsets = mappings.map { it.sourceOffset.translate(sourceMappingOffsets) },
     sourceLengths = mappings.map { it.sourceLength.translateLength(it.sourceOffset, sourceMappingOffsets) },
     generatedOffsets = mappings.map { it.generatedOffset.translate(generatedMappingOffsets) },

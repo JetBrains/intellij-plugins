@@ -40,14 +40,14 @@ jvm_library(
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@lib//:fastutil-min",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "@community//platform/code-style-impl:codeStyle-impl",
-    "//plugins/css",
     "//contrib/postcss",
     "//platform/lsp",
     "@ultimate_lib//:eclipse-lsp4j",
     "//plugins/css/psi",
     "@community//platform/polySymbols/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":astro_resources"]
 )

@@ -13,7 +13,6 @@ public interface MakefileRule extends PsiElement {
   @NotNull
   MakefileTargetLine getTargetLine();
 
-  @NotNull
-  List<MakefileTarget> getTargets();
+  @NotNull List<@NotNull MakefileTarget> getTargets();
 
 }

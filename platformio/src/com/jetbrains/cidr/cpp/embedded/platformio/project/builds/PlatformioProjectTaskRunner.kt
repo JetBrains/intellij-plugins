@@ -116,7 +116,7 @@ class PlatformioTaskRunner : CidrTaskRunner {
       })
 
       val indicator = EmptyProgressIndicator()
-      val buildDescriptor = PlatformioBuildDescriptor(project, title, basePath, processHandler, indicator, buildProgress)
+      val buildDescriptor = PlatformioBuildDescriptor(project, title, basePath, processHandler, indicator)
 
       buildProgress.start(buildDescriptor)
       withContext(Dispatchers.EDT) {

@@ -1,0 +1,14 @@
+{{ <error descr="TS2322: Type 'string' is not assignable to type 'number'.">a</error><error descr="Binding expression cannot contain assignments"> </error>= '12' }}
+{{ a<error descr="Binding expression cannot contain assignments"> </error><error descr="The += operator is supported only in Angular 20.1 and above.">+=</error> 12 }}
+{{ a<error descr="Binding expression cannot contain assignments"> </error><error descr="The &&= operator is supported only in Angular 20.1 and above.">&&=</error> 12 }}
+{{ a &<error descr="Expression expected">=</error> 12 }}
+
+<div (click)="<error descr="TS2322: Type 'string' is not assignable to type 'number'.">a</error> = '12'"></div>
+<div (click)="a <error descr="The += operator is supported only in Angular 20.1 and above.">+=</error> 12"></div>
+<div (click)="a <error descr="The &&= operator is supported only in Angular 20.1 and above.">&&=</error> 12"></div>
+<div (click)="a &<error descr="Expression expected">=</error> 12"></div>
+
+<div [title]="<error descr="TS2322: Type 'string' is not assignable to type 'number'.">a</error><error descr="Binding expression cannot contain assignments"> </error>= '12'"></div>
+<div [title]="a<error descr="Binding expression cannot contain assignments"> </error><error descr="The += operator is supported only in Angular 20.1 and above.">+=</error> 12"></div>
+<div [title]="a<error descr="Binding expression cannot contain assignments"> </error><error descr="The &&= operator is supported only in Angular 20.1 and above.">&&=</error> 12"></div>
+<div [title]="a &<error descr="Expression expected">=</error> 12"></div>

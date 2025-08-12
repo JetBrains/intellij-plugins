@@ -13,7 +13,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.util.SmartList
 import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.inspections.quickfixes.*
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.psi.Angular2Action
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
@@ -34,7 +34,7 @@ class Angular2UnresolvedReferenceErrorUpdater : JSUnresolvedReferenceErrorUpdate
       Angular2FixesFactory.addUnresolvedDeclarationFixes(node, myFixes)
       info.addAll(myFixes)
     }
-    else if (node.language is Angular2Language) {
+    else if (node.language is Angular2ExprDialect) {
       val quickFixes = mutableListOf<LocalQuickFix>()
       if (resolveResults.isEmpty()
           && addCreateFromUsageFixesInAngularExpression(node, quickFixes)

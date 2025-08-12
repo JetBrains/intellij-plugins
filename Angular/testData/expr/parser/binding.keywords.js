@@ -12,3 +12,5 @@ typeof
 typeofus
 in
 ins
+void
+voids

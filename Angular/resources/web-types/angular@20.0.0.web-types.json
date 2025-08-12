@@ -7,7 +7,7 @@
   "default-icon": "icons/angular2.svg",
   "contexts-config": {
     "angular-template-syntax": {
-      "V_18_1": {
+      "V_20": {
         "enable-when": {
           "node-packages": [
             "@angular/core"

@@ -12,7 +12,7 @@ Makefile
     PsiComment(COMMENT)('# comment\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
-        PsiElement(\t)('\t')
+        PsiElement(RECIPE_PREFIX)('\t')
         PsiElement(chars)('echo')
         PsiWhiteSpace(' ')
         PsiElement(chars)('yo')

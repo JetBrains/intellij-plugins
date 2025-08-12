@@ -695,7 +695,8 @@ class Angular2ParserSpecTest {
                                       @Suppress("unused") location: String? = null): Array<Angular2TemplateBinding> {
       val root = parse(value, key + "." + Angular2PsiParser.TEMPLATE_BINDINGS)
       return ReadAction.compute<Array<Angular2TemplateBinding>, RuntimeException> {
-        root.findChildByType(Angular2ElementTypes.TEMPLATE_BINDINGS_STATEMENT)!!
+        root.getChildren(null)
+          .first { it.elementType is Angular2ElementTypes.Angular2TemplateBindingsType }
           .getPsi(Angular2TemplateBindings::class.java)
           .bindings
       }

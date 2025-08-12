@@ -62,13 +62,15 @@ class Angular2SourceHostDirectiveWithMappings(private val definition: JSObjectLi
         if (info.declaringElement == null) return@mapNotNullTo null
         Angular2SourceDirectiveVirtualProperty(directive?.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass,
                                                NG_DIRECTIVE_INPUTS, info.name,
-                                               info.required, info.declaringElement, info.declarationRange)
+                                               info.required, info.declaringElement, info.declarationRange,
+                                               info.declarationSource as? JSObjectLiteralExpression)
       }
       outputsMap.mapNotNullTo(outputs) { (_, info) ->
         if (info.declaringElement == null) return@mapNotNullTo null
         Angular2SourceDirectiveVirtualProperty(directive?.asSafely<Angular2ClassBasedDirective>()?.typeScriptClass,
                                                NG_DIRECTIVE_OUTPUTS, info.name,
-                                               info.required, info.declaringElement, info.declarationRange)
+                                               info.required, info.declaringElement, info.declarationRange,
+                                               info.declarationSource as? JSObjectLiteralExpression)
       }
       return Angular2DirectiveProperties(inputs.toList(), outputs.toList())
     }

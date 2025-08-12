@@ -1,0 +1,81 @@
+import { AfterContentChecked, AfterContentInit, ElementRef, EventEmitter, AfterViewInit, QueryList } from '@angular/core';
+import { NavController } from '../../providers/nav-controller';
+import { StackDidChangeEvent, StackWillChangeEvent } from './stack-utils';
+import * as i0 from "@angular/core";
+export declare abstract class IonTabs implements AfterViewInit, AfterContentInit, AfterContentChecked {
+    private navCtrl;
+    /**
+     * Note: These must be redeclared on each child class since it needs
+     * access to generated components such as IonRouterOutlet and IonTabBar.
+     */
+    abstract outlet: any;
+    abstract tabBar: any;
+    abstract tabBars: QueryList<any>;
+    abstract tabs: QueryList<any>;
+    tabsInner: ElementRef<HTMLDivElement>;
+    /**
+     * Emitted before the tab view is changed.
+     */
+    ionTabsWillChange: EventEmitter<{
+        tab: string;
+    }>;
+    /**
+     * Emitted after the tab view is changed.
+     */
+    ionTabsDidChange: EventEmitter<{
+        tab: string;
+    }>;
+    private tabBarSlot;
+    private hasTab;
+    private selectedTab?;
+    private leavingTab?;
+    constructor(navCtrl: NavController);
+    ngAfterViewInit(): void;
+    ngAfterContentInit(): void;
+    ngAfterContentChecked(): void;
+    /**
+     * @internal
+     */
+    onStackWillChange({ enteringView, tabSwitch }: StackWillChangeEvent): void;
+    /**
+     * @internal
+     */
+    onStackDidChange({ enteringView, tabSwitch }: StackDidChangeEvent): void;
+    /**
+     * When a tab button is clicked, there are several scenarios:
+     * 1. If the selected tab is currently active (the tab button has been clicked
+     *    again), then it should go to the root view for that tab.
+     *
+     *   a. Get the saved root view from the router outlet. If the saved root view
+     *      matches the tabRootUrl, set the route view to this view including the
+     *      navigation extras.
+     *   b. If the saved root view from the router outlet does
+     *      not match, navigate to the tabRootUrl. No navigation extras are
+     *      included.
+     *
+     * 2. If the current tab tab is not currently selected, get the last route
+     *    view from the router outlet.
+     *
+     *   a. If the last route view exists, navigate to that view including any
+     *      navigation extras
+     *   b. If the last route view doesn't exist, then navigate
+     *      to the default tabRootUrl
+     */
+    select(tabOrEvent: string | CustomEvent): Promise<boolean> | undefined;
+    private setActiveTab;
+    private tabSwitch;
+    getSelected(): string | undefined;
+    /**
+     * Detects changes to the slot attribute of the tab bar.
+     *
+     * If the slot attribute has changed, then the tab bar
+     * should be relocated to the new slot position.
+     */
+    private detectSlotChanges;
+    /**
+     * Relocates the tab bar to the new slot position.
+     */
+    private relocateTabBar;
+    static ɵfac: i0.ɵɵFactoryDeclaration<IonTabs, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<IonTabs, "ion-tabs", never, {}, { "ionTabsWillChange": "ionTabsWillChange"; "ionTabsDidChange": "ionTabsDidChange"; }, never, never, false, never>;
+}

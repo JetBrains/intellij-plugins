@@ -16,8 +16,6 @@ import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.css.testFramework.CssElementTypeServiceHelper.registerCssElementTypeServices;
-
 @TestDataPath("$CONTENT_ROOT/testData/parser/")
 public abstract class PostCssParsingTest extends ParsingTestCase {
   public PostCssParsingTest(@NonNls @NotNull String dataPath) {
@@ -26,7 +24,6 @@ public abstract class PostCssParsingTest extends ParsingTestCase {
 
   @Override
   public void configureFromParserDefinition(@NotNull ParserDefinition definition, String extension) {
-    registerCssElementTypeServices(getApplication(), getTestRootDisposable());
     super.configureFromParserDefinition(definition, extension);
   }
 

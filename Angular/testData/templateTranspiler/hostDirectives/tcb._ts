@@ -53,8 +53,8 @@ $event;
 });
 var _t21 = _t18;
 var _t22 = 0 as any;
-"" + _t6.title;
-"" + _t7.title;
-"" + _t8.title;
-"" + _t6 + _t9 + _t15 + _t16 + _t21 + _t22;
+"" + (_t6.title);
+"" + (_t7.title);
+"" + (_t8.title);
+"" + (_t6 + _t9 + _t15 + _t16 + _t21 + _t22);
 }

@@ -13,7 +13,7 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
   deps = [
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/platform-util-io:ide-util-io",
@@ -28,6 +28,7 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//platform/core-ui",
     "@community//json/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":bower_resources"]
 )

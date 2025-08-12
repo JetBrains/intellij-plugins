@@ -11,13 +11,21 @@ import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.JSWidenType
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.model.Pointer
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.TextRange
+import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.StubBasedPsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
@@ -29,6 +37,7 @@ import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDesc
 import org.jetbrains.vuejs.model.typed.VueTypedMixin
 import org.jetbrains.vuejs.types.VueSourcePropType
 import org.jetbrains.vuejs.types.optionalIf
+import org.jetbrains.vuejs.web.symbols.VueInputPropSymbolMixin
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
@@ -78,7 +87,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     val DELIMITERS = DelimitersAccessor()
     val PROVIDES = ProvidesAccessor()
     val INJECTS = SimpleMemberAccessor(ContainerMember.Injects, ::VueSourceInject)
-    val PROPS = SimpleMemberAccessor(ContainerMember.Props, ::VueSourceInputProperty)
+    val PROPS = SimpleMemberAccessor(ContainerMember.Props, VueSourceInputProperty.Companion::create)
     val DATA = SimpleMemberAccessor(ContainerMember.Data, ::VueSourceDataProperty)
     val COMPUTED = SimpleMemberAccessor(ContainerMember.Computed, ::VueSourceComputedProperty)
     val METHODS = SimpleMemberAccessor(ContainerMember.Methods, ::VueSourceMethod)
@@ -237,13 +246,15 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
 
-  class VueSourceInputProperty(
+  abstract class VueSourceInputProperty<T : PsiElement> protected constructor(
     override val name: String,
-    sourceElement: PsiElement,
-    hasOuterDefault: Boolean = false,
-  ) : VueInputProperty {
+    val sourceElement: T,
+    protected val hasOuterDefault: Boolean = false,
+  ) : VueInputPropSymbolMixin {
 
-    override val required: Boolean = isRequired(hasOuterDefault, sourceElement)
+    override val required: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      isRequired(hasOuterDefault, sourceElement)
+    }
 
     override val source: VueImplicitElement =
       VueImplicitElement(name, createType(sourceElement, isOptional(sourceElement)),
@@ -267,6 +278,88 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     private fun isOptional(sourceElement: PsiElement?): Boolean =
       getPropOptionality((sourceElement as? JSProperty)?.initializerOrStub, required)
+
+    override fun equals(other: Any?): Boolean =
+      other === this ||
+      other is VueSourceInputProperty<*>
+      && other.sourceElement == sourceElement
+
+    override fun hashCode(): Int =
+      sourceElement.hashCode()
+
+    override fun getModificationCount(): Long =
+      PsiModificationTracker.getInstance(sourceElement.project).modificationCount
+
+    companion object {
+      fun create(
+        name: String,
+        sourceElement: PsiElement,
+        hasOuterDefault: Boolean = false,
+      ): VueSourceInputProperty<*> =
+        when (sourceElement) {
+          is JSLiteralExpression if sourceElement.isQuotedLiteral ->
+            VueStringLiteralInputProperty(name, sourceElement, hasOuterDefault)
+          is JSProperty ->
+            VuePsiNamedElementInputProperty(name, sourceElement, hasOuterDefault)
+          is JSImplicitElement if sourceElement.context is JSProperty ->
+            VuePsiNamedElementInputProperty(name, sourceElement, hasOuterDefault)
+          else -> throw IllegalArgumentException("Unsupported source element $sourceElement (${sourceElement.javaClass.name})")
+        }
+    }
+
+  }
+
+  private class VuePsiNamedElementInputProperty(
+    name: String,
+    sourceElement: PsiNamedElement,
+    hasOuterDefault: Boolean,
+  ) : VueSourceInputProperty<PsiNamedElement>(name, sourceElement, hasOuterDefault),
+      PsiSourcedPolySymbol {
+
+    override val source: VueImplicitElement
+      get() = super<VueSourceInputProperty>.source
+
+    override fun createPointer(): Pointer<out VuePsiNamedElementInputProperty> {
+      val name = name
+      val propertyPtr = sourceElement.createSmartPointer()
+      val hasOuterDefault = hasOuterDefault
+      return Pointer {
+        val property = propertyPtr.dereference() ?: return@Pointer null
+        VuePsiNamedElementInputProperty(property.name ?: name, property, hasOuterDefault)
+      }
+    }
+
+  }
+
+  private class VueStringLiteralInputProperty(
+    name: String,
+    sourceElement: JSLiteralExpression,
+    hasOuterDefault: Boolean,
+  ) : VueSourceInputProperty<JSLiteralExpression>(name, sourceElement, hasOuterDefault),
+      PolySymbolDeclaredInPsi, PsiSourcedPolySymbol {
+
+    override val textRangeInSourceElement: TextRange
+      get() = TextRange(1, sourceElement.textRange.length - 1)
+
+    override val psiContext: PsiElement?
+      get() = super<PolySymbolDeclaredInPsi>.psiContext
+
+    override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+      super<PolySymbolDeclaredInPsi>.getNavigationTargets(project)
+
+    override val source: VueImplicitElement
+      get() = super<VueSourceInputProperty>.source
+
+    override fun createPointer(): Pointer<VueStringLiteralInputProperty> {
+      val name = name
+      val sourceElementPtr = sourceElement.createSmartPointer()
+      val hasOuterDefault = hasOuterDefault
+      return Pointer {
+        val sourceElement = sourceElementPtr.dereference() ?: return@Pointer null
+        VueStringLiteralInputProperty(sourceElement.stringValue ?: name, sourceElement, hasOuterDefault)
+      }
+    }
+
   }
 
   private class VueSourceDataProperty(

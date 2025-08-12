@@ -73,10 +73,10 @@
       "«car» [121] => «_t6» [731]}",
       "«\"outlet\"» [125] => «_t7» [737]}",
       "«span» [170] => «_t11» [1036]} (no diagnostics) (no semantic)",
-      "«minutes» [189] => «minutes» [1085]} (no types)",
-      "«minutes» [189] => «this.minutes» [1080]}",
-      "«minutes» [249] => «minutes» [1104]} (no types)",
-      "«minutes» [249] => «this.minutes» [1099]}"
+      "«minutes» [189] => «minutes» [1086]} (no types)",
+      "«minutes» [189] => «this.minutes» [1081]}",
+      "«minutes» [249] => «minutes» [1107]} (no types)",
+      "«minutes» [249] => «this.minutes» [1102]}"
     ]
   },
   {

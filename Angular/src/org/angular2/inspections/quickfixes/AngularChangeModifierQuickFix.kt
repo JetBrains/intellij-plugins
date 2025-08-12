@@ -20,13 +20,14 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.asSafely
 import org.angular2.inspections.getInputSourceElements
 import org.angular2.inspections.isAccessible
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.jetbrains.annotations.Nls
 
-class AngularChangeModifierQuickFix(private val newModifier: JSAttributeList.AccessType,
-                                    private val ownerClassName: String? = null)
-  : JSChangeModifierIntentionBase(), LocalQuickFix {
+class AngularChangeModifierQuickFix(
+  private val newModifier: JSAttributeList.AccessType,
+  private val ownerClassName: String? = null,
+) : JSChangeModifierIntentionBase(), LocalQuickFix {
 
   override fun supportsModifier(element: PsiElement): Boolean = true
 
@@ -103,6 +104,6 @@ class AngularChangeModifierQuickFix(private val newModifier: JSAttributeList.Acc
 
   private fun isAngularTemplateElement(element: PsiElement): Boolean {
     val language = element.containingFile.language
-    return language is HTMLLanguage || language is Angular2Language
+    return language is HTMLLanguage || language is Angular2ExprDialect
   }
 }

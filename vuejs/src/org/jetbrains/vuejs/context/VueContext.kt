@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.context
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.hasFilesOfType
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.openapi.project.Project
@@ -92,7 +93,7 @@ private fun detectPkgVersion(context: PsiElement, packageName: String): SemVer? 
     fromRange = data.allDependencyEntries[packageName]
       ?.takeIf { it.versionRange.let { range -> !range.contains(" ") && !range.startsWith('<') } }
       ?.parseVersion()
-    exact = pkgJson.parent.findFileByRelativePath(NodeModuleUtil.NODE_MODULES + "/" + packageName + "/" + PackageJsonUtil.FILE_NAME)
+    exact = pkgJson.parent.findFileByRelativePath(NodeModuleUtil.NODE_MODULES + "/" + packageName + "/" + PackageJsonCommonUtil.FILE_NAME)
       ?.let { PackageJsonData.getOrCreate(it).version }
     fromRange == null && exact == null
   }

@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -35,6 +36,7 @@ import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.Constants.HCL_VALIDATION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_WORKSPACES_BLOCK_IDENTIFIER
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -123,19 +125,21 @@ class TypeModel(
 
     val ErrorMessageProperty: PropertyType = PropertyType("error_message", Types.String)
     val ConditionProperty: PropertyType = PropertyType("condition", Types.Boolean, injectionAllowed = false)
-    val Variable_Type: PropertyType = PropertyType("type", Types.Any, injectionAllowed = false)
-    val Variable_Default: PropertyType = PropertyType("default", Types.Any)
-    val Variable_Validation: BlockType = BlockType(HCL_VALIDATION_IDENTIFIER, 0, properties = listOf(
+    val VariableType: PropertyType = PropertyType("type", Types.Any, injectionAllowed = false)
+    val VariableDefault: PropertyType = PropertyType("default", Types.Any)
+    val VariableValidation: BlockType = BlockType(HCL_VALIDATION_IDENTIFIER, 0, properties = listOf(
       ConditionProperty,
       ErrorMessageProperty
     ).toMap())
+    val EphemeralProperty: PropertyType = PropertyType(HCL_EPHEMERAL_IDENTIFIER, Types.Boolean)
     val Variable: BlockType = BlockType(HCL_VARIABLE_IDENTIFIER, 1, properties = listOf<PropertyOrBlockType>(
-      Variable_Type,
-      Variable_Default,
-      Variable_Validation,
+      VariableType,
+      VariableDefault,
+      VariableValidation,
       DescriptionProperty,
       SensitiveProperty,
-      NullableProperty
+      NullableProperty,
+      EphemeralProperty
     ).toMap())
 
     val Connection: BlockType = BlockType(HCL_CONNECTION_IDENTIFIER, 0, properties = listOf(
@@ -178,7 +182,8 @@ class TypeModel(
       DescriptionProperty,
       DependsOnProperty,
       SensitiveProperty,
-      PreconditionBlock
+      PreconditionBlock,
+      EphemeralProperty
     ).toMap())
 
     val ResourceLifecycle: BlockType = BlockType(HCL_LIFECYCLE_IDENTIFIER, 0,
@@ -218,13 +223,16 @@ class TypeModel(
       AbstractResourceProvisioner
     ).toMap())
 
-    val AbstractEphemeralResource: BlockType = BlockType(HCL_EPHEMERAL_IDENTIFIER, 2, properties = listOf<PropertyOrBlockType>(
+    // Ephemeral resources are not supported yet in OpenTofu: https://github.com/opentofu/opentofu/issues/2834
+    val AbstractEphemeralResource: BlockType = object : BlockType(HCL_EPHEMERAL_IDENTIFIER, 2, properties = listOf<PropertyOrBlockType>(
       DependsOnProperty,
       CountProperty,
       ForEachProperty,
       ProviderProperty,
       ResourceLifecycle
-    ).toMap())
+    ).toMap()) {
+      override fun canBeUsedIn(fileType: FileType): Boolean = fileType == TerraformFileType
+    }
 
     @JvmField
     val AbstractDataSource: BlockType = BlockType(HCL_DATASOURCE_IDENTIFIER, 2, properties = listOf(

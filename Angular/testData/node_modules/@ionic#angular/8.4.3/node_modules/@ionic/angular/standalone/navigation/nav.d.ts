@@ -1,0 +1,8 @@
+import { ElementRef, Injector, EnvironmentInjector, NgZone, ChangeDetectorRef } from '@angular/core';
+import { IonNav as IonNavBase, AngularDelegate } from '@ionic/angular/common';
+import * as i0 from "@angular/core";
+export declare class IonNav extends IonNavBase {
+    constructor(ref: ElementRef, environmentInjector: EnvironmentInjector, injector: Injector, angularDelegate: AngularDelegate, z: NgZone, c: ChangeDetectorRef);
+    static ɵfac: i0.ɵɵFactoryDeclaration<IonNav, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<IonNav, "ion-nav", never, {}, {}, never, ["*"], true, never>;
+}

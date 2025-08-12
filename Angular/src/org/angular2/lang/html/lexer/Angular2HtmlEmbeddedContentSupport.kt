@@ -30,8 +30,8 @@ class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
   override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> {
     return listOf(
       HtmlTokenEmbeddedContentProvider(lexer,
-                                       Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR,
-                                       { Angular2EmbeddedHighlightingLexer(Angular2Lexer.RegularBinding) }),
+                                       Angular2EmbeddedExprTokenType.Angular2InterpolationExprTokenType::class.java,
+                                       { Angular2EmbeddedHighlightingLexer(Angular2Lexer.RegularBinding((lexer as Angular2HtmlLexer).templateSyntax)) }),
       HtmlTokenEmbeddedContentProvider(lexer,
                                        Angular2BlockExprTokenType::class.java,
                                        { Angular2EmbeddedHighlightingLexer((it as Angular2BlockExprTokenType).lexerConfig) }),
@@ -47,7 +47,7 @@ class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
                  && Holder.NG_EL_ATTRIBUTES.contains(info.type)) {
         object : HtmlEmbedmentInfo {
           override fun createHighlightingLexer(): Lexer {
-            return Angular2EmbeddedHighlightingLexer(Angular2Lexer.RegularBinding)
+            return Angular2EmbeddedHighlightingLexer(Angular2Lexer.RegularBinding((lexer as Angular2HtmlLexer).templateSyntax))
           }
 
           override fun getElementType(): IElementType? {

@@ -63,8 +63,10 @@ abstract class VueModelVisitor {
     OUT_OF_SCOPE,
     GLOBAL,
     APP,
-    PLUGIN,
-    LOCAL
+    LIBRARY,
+    LOCAL,
+
+    ;
   }
 
 }

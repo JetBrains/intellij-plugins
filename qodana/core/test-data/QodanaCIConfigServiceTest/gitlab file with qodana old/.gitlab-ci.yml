@@ -1,0 +1,15 @@
+qodana:
+  image:
+    name: jetbrains/qodana-<linter>
+    entrypoint: [""]
+  cache:
+    - key: qodana-2023.2-$CI_DEFAULT_BRANCH-$CI_COMMIT_REF_SLUG
+      fallback_keys:
+        - qodana-2023.2-$CI_DEFAULT_BRANCH-
+        - qodana-2023.2-
+      paths:
+        - .qodana/cache
+  variables:
+    QODANA_TOKEN: $qodana_token
+  script:
+    - qodana --cache-dir=$CI_PROJECT_DIR/.qodana/cache

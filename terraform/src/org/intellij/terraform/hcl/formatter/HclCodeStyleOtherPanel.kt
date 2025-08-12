@@ -20,7 +20,7 @@ import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
 
-internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings, isTfLanguage: Boolean) : CodeStyleAbstractPanel(settings) {
+internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel(settings) {
   private val alignmentComboBox = CollectionComboBoxModel(PropertyAlignment.entries)
   private val commentSymbolComboBox = CollectionComboBoxModel(LineCommenterPrefix.entries)
   private lateinit var reformatCheckBox: JBCheckBox
@@ -35,11 +35,11 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings, isTfLanguage:
       row {
         importProviders = checkBox(HCLBundle.message("code.style.import.provider.automatically")).gap(RightGap.SMALL).component
         contextHelp(HCLBundle.message("code.style.import.provider.text"), HCLBundle.message("code.style.import.provider.header"))
-      }.visible(isTfLanguage)
+      }
       row {
         reformatCheckBox = checkBox(HCLBundle.message("code.style.run.tf.fmt.title")).gap(RightGap.SMALL).component
         contextHelp(HCLBundle.message("code.style.run.tf.fmt.comment"), HCLBundle.message("code.style.run.tf.fmt.header"))
-      }.visible(isTfLanguage)
+      }
     }.apply {
       border = BorderFactory.createEmptyBorder(UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP)
     }, BorderLayout.WEST)

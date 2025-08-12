@@ -39,8 +39,7 @@
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.analysis.impl" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
-    <orderEntry type="module" module-name="intellij.javascript.impl" />
-    <orderEntry type="module" module-name="intellij.javascript.debugger" />
+    <orderEntry type="module" module-name="intellij.javascript.backend" />
     <orderEntry type="module" module-name="intellij.javascript.debugger.backend" />
     <orderEntry type="module" module-name="intellij.javascript.debugger.ui" />
     <orderEntry type="module" module-name="intellij.css.psi" />
@@ -48,9 +47,8 @@
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.spellchecker" />
     <orderEntry type="module" module-name="intellij.css.analysis" />
-    <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" />
-    <orderEntry type="module" module-name="intellij.platform.webide.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.common" />
     <orderEntry type="module" module-name="intellij.prettierJS" />
     <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="library" name="jackson" level="project" />

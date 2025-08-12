@@ -394,7 +394,7 @@ private class TcbExpressionOp(
       val expr = tcbExpression(this.expression, this.tcb, this.scope)
       this.scope.addStatement {
         if (isBoundText) {
-          append("\"\" + ").append(expr).append(";")
+          append("\"\" + (").append(expr).append(");")
         }
         else {
           append("(").append(expr).append(");")
@@ -693,6 +693,7 @@ private class TcbDirectiveInputsOp(
       for (input in attr.inputs) {
         val fieldName = input.fieldName
         val isSignal = input.isSignal
+        val transformType = input.transformType
         var target: Expression
 
         // Note: There is no special logic for transforms/coercion with signal inputs.
@@ -701,10 +702,9 @@ private class TcbDirectiveInputsOp(
         // transform write type into their member type, and we extract it below when
         // setting the `WriteT` of such `InputSignalWithTransform<_, WriteT>`.
 
-        if (fieldName != null && input.isCoerced && !input.isSignal) {
+        if ((fieldName != null || transformType != null) && input.isCoerced && !input.isSignal) {
           var type: Expression
 
-          val transformType = input.transformType
           if (transformType != null) {
             type = tcb.env.referenceType(transformType)
           }
@@ -714,7 +714,7 @@ private class TcbDirectiveInputsOp(
             // with a type of `typeof Directive.ngAcceptInputType_fieldName` which is then used as
             // target of the assignment.
             val dirTypeRef: JSType = dir.entityJsType!!
-            type = tsCreateTypeQueryForCoercedInput(tcb.env.referenceType(dirTypeRef), fieldName)
+            type = tsCreateTypeQueryForCoercedInput(tcb.env.referenceType(dirTypeRef), fieldName!!)
           }
 
           val id = this.tcb.allocateId()
@@ -2749,11 +2749,10 @@ private fun getBoundAttributes(directive: TmplDirectiveMetadata, node: `TmplAstE
           TcbBoundAttributeInput(
             fieldName = input.fieldName,
             required = input.required,
-            transformType = (input as? Angular2SourceDirectiveProperty)?.transformParameterType,
-            isSignal = (((input as? Angular2SymbolDelegate<*>)?.delegate
-                         ?: input) as? Angular2SourceDirectiveProperty)?.typeFromSignal != null,
+            transformType = input.transformParameterType,
+            isSignal = input.isSignalProperty,
             isTwoWayBinding = attr is TmplAstBoundAttribute && attr.type == BindingType.TwoWay,
-            isCoerced = (input as? Angular2ClassBasedDirectiveProperty)?.isCoerced == true,
+            isCoerced = input.isCoerced,
             isRestricted = (input as? Angular2SourceDirectiveProperty)?.sources?.any {
               it is JSAttributeListOwner && it is JSRecordType.PropertySignature &&
               (it.attributeList?.hasModifier(ModifierType.READONLY) == true || it.accessType != JSAttributeList.AccessType.PUBLIC)

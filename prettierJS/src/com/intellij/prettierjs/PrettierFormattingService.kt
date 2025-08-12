@@ -63,7 +63,7 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
     return PrettierUtil.isFormattingAllowedForFile(project, file)
   }
 
-  private inner class PrettierFormattingTask(
+  private class PrettierFormattingTask(
     private val request: AsyncFormattingRequest,
     private val file: PsiFile,
     private val virtualFile: com.intellij.openapi.vfs.VirtualFile,

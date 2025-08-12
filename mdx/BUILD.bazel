@@ -27,7 +27,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "@lib//:gson",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
@@ -35,6 +35,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/xml-psi-api:psi",
     "@community//xml/impl",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":mdx_resources"]
 )
@@ -60,7 +61,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "@lib//:gson",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
@@ -70,6 +71,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/xml-psi-api:psi",
     "@community//xml/impl",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":mdx_resources"]
 )

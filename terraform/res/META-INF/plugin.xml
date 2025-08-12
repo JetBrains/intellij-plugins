@@ -241,7 +241,6 @@
     <vetoRenameCondition implementation="org.intellij.terraform.config.refactoring.TfVetoRenameCondition"/>
 
     <!-- Formatter -->
-    <codeStyleSettingsProvider implementation="org.intellij.terraform.hcl.formatter.HclCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="org.intellij.terraform.hcl.formatter.HclLanguageCodeStyleSettingsProvider"/>
     <lang.formatter language="HCL" implementationClass="org.intellij.terraform.hcl.formatter.HCLFormattingBuilderModel"/>
     <formattingService implementation="org.intellij.terraform.hcl.formatter.TfAsyncFormattingService"/>
@@ -320,7 +319,7 @@
     <statementUpDownMover implementation="org.intellij.terraform.config.HCLStatementMover" id="HCL_SM" order="before line"/>
 
     <!-- Formatter -->
-    <codeStyleSettingsProvider implementation="org.intellij.terraform.hcl.formatter.TfCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider implementation="org.intellij.terraform.config.formatter.TfCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="org.intellij.terraform.config.formatter.TfConfigCodeStyleSettingsProvider"/>
     <lang.formatter language="HCL-Terraform" implementationClass="org.intellij.terraform.config.formatter.TfFormattingBuilderModel"/>
     <lang.quoteHandler language="HCL-Terraform" implementationClass="org.intellij.terraform.hcl.formatter.HCLQuoteHandler"/>

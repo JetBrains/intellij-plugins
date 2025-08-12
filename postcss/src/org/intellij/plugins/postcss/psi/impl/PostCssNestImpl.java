@@ -1,6 +1,6 @@
 package org.intellij.plugins.postcss.psi.impl;
 
-import com.intellij.css.util.CssPsiUtil;
+import com.intellij.css.util.CssPsiUtilCore;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.css.*;
@@ -42,7 +42,7 @@ public final class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest 
 
   @Override
   public @NotNull String getPresentableText() {
-    return ("nest " + CssPsiUtil.getTokenText(getSelectorList())).trim();
+    return ("nest " + CssPsiUtilCore.getTokenText(getSelectorList())).trim();
   }
 
   @Override

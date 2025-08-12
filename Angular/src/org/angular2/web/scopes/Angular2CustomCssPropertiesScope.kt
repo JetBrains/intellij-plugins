@@ -1,6 +1,6 @@
 package org.angular2.web.scopes
 
-import com.intellij.css.common.icons.CssCommonIcons
+import com.intellij.css.common.CssIcons
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
@@ -21,7 +21,7 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
-import com.intellij.psi.css.impl.CssNamedItemPresentation
+import com.intellij.psi.css.impl.CssPsiPresentationService
 import com.intellij.psi.css.impl.util.CssUtil
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.elementType
@@ -148,8 +148,8 @@ class Angular2CustomCssPropertiesScope(file: PsiFile) :
     @Suppress("HardCodedStringLiteral")
     override val presentation: TargetPresentation =
       TargetPresentation.builder(name.removePrefix("--"))
-        .icon(CssCommonIcons.Custom_property)
-        .containerText(CssNamedItemPresentation.getLocationString(sourceElement))
+        .icon(CssIcons.Custom_property)
+        .containerText(CssPsiPresentationService.getInstance().getLocationString(sourceElement))
         .presentation()
 
   }

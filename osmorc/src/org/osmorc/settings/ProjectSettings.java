@@ -67,9 +67,9 @@ public final class ProjectSettings implements PersistentStateComponent<ProjectSe
   public static @NotNull String getDefaultBundlesOutputPath(Project project) {
     CompilerProjectExtension instance = CompilerProjectExtension.getInstance(project);
     if (instance != null) {
-      final VirtualFilePointer compilerOutput = instance.getCompilerOutputPointer();
+      final String compilerOutput = instance.getCompilerOutputUrl();
       if (compilerOutput != null) {
-        return VfsUtilCore.urlToPath(compilerOutput.getUrl()) + "/bundles";
+        return VfsUtilCore.urlToPath(compilerOutput) + "/bundles";
       }
     }
     // this actually should never happen (only in tests)

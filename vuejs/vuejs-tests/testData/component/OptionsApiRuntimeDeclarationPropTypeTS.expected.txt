@@ -3,7 +3,7 @@
  defaultName: "TestComponent",
  props: [
   {
-   class: "VueSourceInputProperty",
+   class: "VuePsiNamedElementInputProperty",
    name: "book",
    jsType: "Book",
    required: true,

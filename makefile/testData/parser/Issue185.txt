@@ -11,7 +11,7 @@ Makefile
       PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
-        PsiElement(\t)('\t')
+        PsiElement(RECIPE_PREFIX)('\t')
         PsiElement(chars)('@echo')
         PsiWhiteSpace(' ')
         MakefileStringImpl(STRING)
@@ -37,7 +37,7 @@ Makefile
             <empty list>
         PsiElement(EOL)('\n')
       MakefileCommandImpl(COMMAND)
-        PsiElement(\t)('\t')
+        PsiElement(RECIPE_PREFIX)('\t')
         PsiElement(chars)('@echo')
         PsiWhiteSpace(' ')
         MakefileStringImpl(STRING)

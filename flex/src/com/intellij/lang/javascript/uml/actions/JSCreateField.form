@@ -38,11 +38,11 @@
         </constraints>
         <properties/>
       </component>
-      <nested-form id="5777f" form-file="com/intellij/lang/javascript/refactoring/ui/JSVisibilityPanel.form" binding="myVisibilityPanel">
+      <component id="5777f" class="com.intellij.lang.javascript.refactoring.ui.JSVisibilityPanel" binding="myVisibilityPanel" custom-create="true">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-      </nested-form>
+      </component>
       <component id="55441" class="javax.swing.JCheckBox" binding="myDeclareStaticCb">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>

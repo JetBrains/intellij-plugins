@@ -10,6 +10,7 @@ import com.mscharhag.oleaster.runner.StaticRunnerSupport.describe
 import com.mscharhag.oleaster.runner.StaticRunnerSupport.it
 import org.angular2.lang.expr.lexer.Angular2Lexer
 import org.angular2.lang.expr.lexer.Angular2TokenTypes
+import org.angular2.lang.html.Angular2TemplateSyntax
 import org.junit.runner.RunWith
 
 @RunWith(OleasterRunner::class)
@@ -260,7 +261,7 @@ class Angular2LexerSpecTest {
 
   companion object {
     private fun lex(text: String): Array<Token> {
-      return Token.create(Angular2Lexer(Angular2Lexer.RegularBinding), text)
+      return Token.create(Angular2Lexer(Angular2Lexer.RegularBinding(Angular2TemplateSyntax.V_2)), text)
     }
 
     private fun expectToken(token: Token, index: Int) {

@@ -1,3 +1,7 @@
+# some unrelated component
+include:
+  - component: $CI_SERVER_FQDN/your-group/gradle-build-publish/gradle-build-publish@1.0
+
 qodana:
   image:
     name: jetbrains/qodana-<linter>

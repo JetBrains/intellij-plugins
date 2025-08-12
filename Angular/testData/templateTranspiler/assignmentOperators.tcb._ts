@@ -1,0 +1,34 @@
+/* Angular type checking code */
+
+/* TCB for assignmentOperators.ts */
+
+function _tcb1(this: MyDirective) {
+"" + (this.a = 12);
+"" + (this.a += 12);
+"" + (this.a &&= 12);
+"" + (this.a &= 12);
+var _t1 = document.createElement("div");
+_t1.addEventListener("click", ($event): any => {
+this.a = 12;
+});
+var _t2 = document.createElement("div");
+_t2.addEventListener("click", ($event): any => {
+this.a += 12;
+});
+var _t3 = document.createElement("div");
+_t3.addEventListener("click", ($event): any => {
+this.a &&= 12;
+});
+var _t4 = document.createElement("div");
+_t4.addEventListener("click", ($event): any => {
+this.a &= 12;
+});
+var _t5 = document.createElement("div");
+(this.a = 12);
+var _t6 = document.createElement("div");
+(this.a += 12);
+var _t7 = document.createElement("div");
+(this.a &&= 12);
+var _t8 = document.createElement("div");
+(this.a &= 12);
+}

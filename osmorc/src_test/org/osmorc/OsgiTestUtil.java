@@ -25,13 +25,11 @@
 package org.osmorc;
 
 import com.intellij.openapi.application.PathManager;
-import com.intellij.util.io.ZipUtil;
+import com.intellij.util.io.Decompressor;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.junit.Assert.assertTrue;
 
@@ -39,26 +37,24 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public final class OsgiTestUtil {
-  public static File extractProject(String projectName, String projectDirPath) throws IOException {
-    Path projectZip = getTestDataDir().toPath().resolve(projectName + ".zip");
+  public static void extractProject(String projectName, Path projectDir) throws IOException {
+    var projectZip = getTestDataDir().resolve(projectName + ".zip");
     assertTrue(projectZip.toString(), Files.isRegularFile(projectZip));
-    Path projectDir = Paths.get(projectDirPath);
-    ZipUtil.extract(projectZip, projectDir, null);
-    return projectDir.toFile();
+    new Decompressor.Zip(projectZip).extract(projectDir);
   }
 
-  private static File ourTestDataDir;
+  private static Path ourTestDataDir;
 
-  private static File getTestDataDir() {
+  private static Path getTestDataDir() {
     if (ourTestDataDir == null) {
-      ourTestDataDir = new File(OsgiTestUtil.class.getResource("/").getFile(), "../../../testdata");
-      if (!ourTestDataDir.exists()) {
-        ourTestDataDir = new File(OsgiTestUtil.class.getResource("").getFile(), "../../../../../testdata");
+      ourTestDataDir = Path.of(OsgiTestUtil.class.getResource("/").getFile(), "../../../testdata");
+      if (!Files.exists(ourTestDataDir)) {
+        ourTestDataDir = Path.of(OsgiTestUtil.class.getResource("").getFile(), "../../../../../testdata");
       }
-      if (!ourTestDataDir.exists()) {
-        ourTestDataDir = new File(PathManager.getHomePath(), "contrib/osmorc/testdata");
+      if (!Files.exists(ourTestDataDir)) {
+        ourTestDataDir = Path.of(PathManager.getHomePath(), "contrib/osmorc/testdata");
       }
-      assertTrue(ourTestDataDir.getPath(), ourTestDataDir.isDirectory());
+      assertTrue(ourTestDataDir.toString(), Files.isDirectory(ourTestDataDir));
     }
 
     return ourTestDataDir;

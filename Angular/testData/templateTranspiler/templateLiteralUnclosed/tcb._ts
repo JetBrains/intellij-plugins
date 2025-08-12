@@ -15,7 +15,7 @@ var _t8 = null! as number;
 var _t9 = document.createElement("a");
 (_t2.link);
 var _t10 = document.createElement("span");
-"" + _t2.title;
+"" + (_t2.title);
 (_t2.title);
 }
 }

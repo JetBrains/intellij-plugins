@@ -68,6 +68,8 @@ public class JSCreateFieldDialog extends DialogWrapper {
     GlobalSearchScope scope = getTypeFieldScope(module, myTargetClass.getProject());
     myTypeField = createTypeField(myTargetClass.getProject(), scope);
 
+    myVisibilityPanel = new JSVisibilityPanel();
+
     PsiCodeFragment initializerCodeFragment = createInitializerCodeFragment(myTargetClass);
     Document document = PsiDocumentManager.getInstance(myTargetClass.getProject()).getDocument(initializerCodeFragment);
     myInitializerField = new JSEditorTextField(myTargetClass.getProject(), document);

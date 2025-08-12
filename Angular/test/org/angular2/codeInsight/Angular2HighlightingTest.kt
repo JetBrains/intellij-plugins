@@ -387,6 +387,29 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testKeydownCaseNonsensitive() =
     checkHighlighting(ANGULAR_CORE_15_1_5, extension = "html")
 
+  fun testVoidOperatorNg20() =
+    checkHighlighting(ANGULAR_CORE_20_0_0_NEXT_3, extension = "html")
+
+  fun testVoidOperatorNg19() =
+    checkHighlighting(ANGULAR_CORE_19_2_0, extension = "html")
+
+  fun testExponentialOperatorNg20() =
+    checkHighlighting(ANGULAR_CORE_20_0_0_NEXT_3, extension = "html")
+
+  fun testExponentialOperatorNg19() =
+    checkHighlighting(ANGULAR_CORE_19_2_0, extension = "html")
+
+  fun testAssignmentOperatorsNg20() =
+    checkHighlighting(ANGULAR_CORE_20_0_0_NEXT_3, extension = "html", dir = true)
+
+  fun testAssignmentOperatorsNg20_1() =
+    checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html", dir = true)
+
+  fun testIonic8() =
+    checkHighlighting(ANGULAR_CORE_19_2_0, IONIC_ANGULAR_8_4_3, IONIC_CORE_8_4_3,
+                      configurators = listOf(Angular2TsConfigFile(strictTemplates = true)),
+                      configureFileName = "app.component.html", dir = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

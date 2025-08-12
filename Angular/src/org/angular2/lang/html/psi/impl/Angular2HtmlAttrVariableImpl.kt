@@ -19,7 +19,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.IncorrectOperationException
-import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 import org.angular2.lang.html.psi.Angular2HtmlLet
 import org.angular2.lang.html.psi.Angular2HtmlReference
@@ -40,7 +40,7 @@ class Angular2HtmlAttrVariableImpl : JSVariableImpl<JSVariableStub<JSVariable>, 
     }
   }
 
-  override fun getLanguage(): Language = Angular2Language
+  override fun getLanguage(): Language = Angular2ExprDialect.forContext(this)
 
   override fun isLocal(): Boolean =
     when (kind) {

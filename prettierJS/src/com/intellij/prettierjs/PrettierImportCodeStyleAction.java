@@ -2,7 +2,7 @@
 package com.intellij.prettierjs;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -53,7 +53,7 @@ public class PrettierImportCodeStyleAction extends AnAction implements DumbAware
   }
 
   private static boolean isPackageJsonWithDependencyOnPrettier(@NotNull VirtualFile file) {
-    if (!PackageJsonUtil.isPackageJsonFile(file)) return false;
+    if (!PackageJsonCommonUtil.isPackageJsonFile(file)) return false;
 
     PackageJsonData data = PackageJsonData.getOrCreate(file);
     return data.isDependencyOfAnyType(PrettierUtil.PACKAGE_NAME);

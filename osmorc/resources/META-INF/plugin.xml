@@ -70,6 +70,8 @@
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndProjectImportProvider"/>
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndModuleImportProvider"/>
 
+    <fileType name="bnd" implementationClass="org.jetbrains.osgi.bnd.BndFileType" fieldName="INSTANCE" extensions="bnd" language="bnd"/>
+
     <applicationService serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
     <applicationService serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
     <applicationService serviceImplementation="org.jetbrains.osgi.project.BundleManifestCache"/>
@@ -112,6 +114,7 @@
 
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
+    <framework.detector implementation="org.osmorc.facet.BndOsmorcFrameworkDetector"/>
     <frameworkSupport implementation="org.osmorc.facet.OsgiFrameworkSupportProvider"/>
     <library.type implementation="org.osmorc.facet.OsgiCoreLibraryType"/>
     <library.dependencyScopeSuggester implementation="org.osmorc.facet.OsgiLibraryDependencyScopeSuggester"/>

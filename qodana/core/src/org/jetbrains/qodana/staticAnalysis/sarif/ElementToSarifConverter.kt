@@ -123,6 +123,7 @@ object ElementToSarifConverter {
     }
 
     val message = providedMessage ?: safeDescriptionText(description)
+    if (message?.text == null) throw IllegalStateException("Inspection $inspectionId does not provide message, which is required by SARIF format")
     return Result(message)
       .withRuleId(inspectionId)
       .withLevel(level)

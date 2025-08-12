@@ -11,13 +11,10 @@ public interface MakefileVariable extends MakefileNamedElement, NavigationItem {
   @NotNull
   MakefileIdentifier getIdentifier();
 
-  @NotNull
-  String getName();
+  @NotNull String getName();
 
-  @NotNull
-  PsiElement setName(@NotNull String newName);
+  @NotNull PsiElement setName(@NotNull String newName);
 
-  @Nullable
-  PsiElement getNameIdentifier();
+  @Nullable PsiElement getNameIdentifier();
 
 }

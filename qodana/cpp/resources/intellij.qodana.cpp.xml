@@ -1,17 +1,30 @@
 <idea-plugin package="org.jetbrains.qodana.cpp">
   <dependencies>
     <plugin id="com.intellij.modules.clion.cmake"/>
+    <plugin id="org.jetbrains.plugins.clion.radler"/>
+    <module name="intellij.rider.plugins.clion.radler.core"/>
     <module name="intellij.cidr.projectModel"/>
   </dependencies>
 
   <projectListeners>
     <listener class="org.jetbrains.qodana.cpp.CppQodanaCMakeGenerationStepListener"
               topic="com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener"/>
+    <listener class="org.jetbrains.qodana.cpp.QodanaCppCidrWorkspaceListener"
+              topic="com.jetbrains.cidr.project.workspace.CidrWorkspaceListener"/>
   </projectListeners>
-  <extensions defaultExtensionNs="org.intellij.qodana">
-    <externalToolsConfigurationProvider  implementation="org.jetbrains.qodana.cpp.QodanaRadlerScopeLimitator"/>
+
+  <extensions defaultExtensionNs="cidr.projectModel">
+    <runAfterOCWorkspaceIsInitialized implementation="org.jetbrains.qodana.cpp.QodanaCppInitializationActivity" order="first"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
+    <cmake.workspace.enabledProfileInitializer implementation="org.jetbrains.qodana.cpp.QodanaCppCMakeEnabledProfileInitializer" order="first"/>
     <registryKey defaultValue="false" description="Force printing of CMake configuration output" key="qd.force.cmake.output.enabled"/>
+  </extensions>
+  <extensions defaultExtensionNs="org.intellij">
+    <qodana.externalToolsConfigurationProvider implementation="org.jetbrains.qodana.cpp.QodanaRadlerScopeLimitator"/>
+    <qodana.workflowExtension implementation="org.jetbrains.qodana.cpp.QodanaCppWorkflow"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.jetbrains">
+    <cidr.radler.headlessStartupExtension implementation="org.jetbrains.qodana.cpp.QodanaCppHeadlessStartupExtension"/>
   </extensions>
 </idea-plugin>

@@ -15,6 +15,7 @@ jvm_library(
 
 jvm_library(
   name = "tests_test_lib",
+  module_name = "intellij.vuejs.tests",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src-ext/**/*.kt", "src-ext/**/*.java"], allow_empty = True),
   deps = [
@@ -29,9 +30,8 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/vuejs",
     "//plugins/css/common",
-    "//plugins/css",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "//plugins/css/impl",
+    "//plugins/css/plugin",
     "@community//java/java-runtime:rt",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//plugins/htmltools:html-tools",
@@ -40,7 +40,7 @@ jvm_library(
     "@community//spellchecker:spellchecker_test_lib",
     "@community//platform/indexing-impl",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
-    "//plugins/JavaScriptLanguage:javascript-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
     "@community//platform/analysis-impl",
     "@community//platform/lang-impl",
     "//plugins/JavaScriptLanguage:javascript-plugin",
@@ -48,8 +48,7 @@ jvm_library(
     "@community//plugins/copyright",
     "@community//plugins/copyright:copyright_test_lib",
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
-    "//plugins/sass",
-    "//plugins/sass:sass_test_lib",
+    "//plugins/sass/plugin",
     "//contrib/jade",
     "//contrib/jade:jade_test_lib",
     "//contrib/postcss",
@@ -71,6 +70,11 @@ jvm_library(
     "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
     "//webcore:webide",
+    "//plugins/css/analysis",
+    "//plugins/css/backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/sass/backend",
+    "//plugins/sass",
   ],
   runtime_deps = [":tests_test_resources"]
 )

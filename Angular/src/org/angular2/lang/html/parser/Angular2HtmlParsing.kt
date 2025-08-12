@@ -16,6 +16,7 @@ import com.intellij.xml.util.XmlUtil
 import org.angular2.codeInsight.blocks.BLOCK_LET
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
+import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.Angular2InterpolationExprTokenType
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.Companion.createTemplateBindings
 import org.angular2.lang.html.Angular2TemplateSyntax
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
@@ -118,7 +119,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
         }
         val interpolation = mark()
         advance()
-        if (token() === Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR) {
+        if (token() is Angular2InterpolationExprTokenType) {
           advance()
         }
         if (!inNgNonBindableContext()) {
@@ -200,7 +201,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
           }
         }
         else if (builder.tokenType == Angular2HtmlTokenTypes.BLOCK_SEMICOLON) {
-          builder.mark().collapse(Angular2EmbeddedExprTokenType.createBlockParameter(blockName, parameterIndex))
+          builder.mark().collapse(Angular2EmbeddedExprTokenType.createBlockParameter(templateSyntax, blockName, parameterIndex))
           builder.advanceLexer()
         }
         else {
@@ -307,7 +308,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
   private fun parseAttributeValue(attributeElementType: IElementType, name: String): IElementType {
     var result = attributeElementType
     val attValue = mark()
-    val contentType = getAttributeContentType(result, name)
+    val contentType = getAttributeContentType(templateSyntax, result, name)
     if (token() === XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER) {
       advance()
       val contentStart = if (contentType != null) mark() else null
@@ -320,7 +321,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
             || tt === XmlTokenType.XML_START_TAG_START) {
           break
         }
-        if (tt === Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR && result === XmlElementType.XML_ATTRIBUTE) {
+        if (tt is Angular2InterpolationExprTokenType && result === XmlElementType.XML_ATTRIBUTE) {
           result = Angular2HtmlElementTypes.PROPERTY_BINDING
         }
         when (tt) {
@@ -377,7 +378,7 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
     assert(token() === Angular2HtmlTokenTypes.EXPANSION_FORM_START)
     var expansionForm = mark()
     advance()
-    if (!remapTokensUntilComma(Angular2EmbeddedExprTokenType.BINDING_EXPR) /*switch value*/
+    if (!remapTokensUntilComma(Angular2EmbeddedExprTokenType.createBindingExpr(templateSyntax)) /*switch value*/
         || !remapTokensUntilComma(XmlTokenType.XML_DATA_CHARACTERS) /*type*/) {
       markCriticalExpansionFormProblem(expansionForm)
       return
@@ -535,16 +536,16 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
                                                  Angular2HtmlTokenTypes.BLOCK_NAME,
                                                  Angular2HtmlTokenTypes.BLOCK_END)
     private val DATA_TOKENS = TokenSet.create(XmlTokenType.XML_COMMA, XmlTokenType.XML_DATA_CHARACTERS)
-    private fun getAttributeContentType(type: IElementType, name: String): IElementType? =
+    private fun getAttributeContentType(templateSyntax: Angular2TemplateSyntax, type: IElementType, name: String): IElementType? =
       when (type) {
         Angular2HtmlElementTypes.PROPERTY_BINDING, Angular2HtmlElementTypes.BANANA_BOX_BINDING -> {
-          Angular2EmbeddedExprTokenType.BINDING_EXPR
+          Angular2EmbeddedExprTokenType.createBindingExpr(templateSyntax)
         }
         Angular2HtmlElementTypes.EVENT -> {
-          Angular2EmbeddedExprTokenType.ACTION_EXPR
+          Angular2EmbeddedExprTokenType.createActionExpr(templateSyntax)
         }
         Angular2HtmlElementTypes.TEMPLATE_BINDINGS -> {
-          createTemplateBindings(name)
+          createTemplateBindings(templateSyntax, name)
         }
         Angular2HtmlElementTypes.NG_CONTENT_SELECTOR -> {
           Angular2HtmlElementTypes.NG_CONTENT_SELECTOR

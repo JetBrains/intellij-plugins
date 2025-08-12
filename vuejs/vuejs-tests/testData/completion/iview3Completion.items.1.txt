@@ -1,5 +1,6 @@
 closable (typeText='boolean'; priority=100.0; bold; typeGreyed)
 show-icon (typeText='boolean'; priority=100.0; bold; typeGreyed)
+showIcon (typeText='boolean'; priority=100.0; bold; typeGreyed)
 type (typeText='"info" | "success" | "warning" | "error"'; priority=100.0; bold; typeGreyed)
 is (typeText=null; priority=2.0; typeGreyed)
 key (typeText=null; priority=2.0; typeGreyed)

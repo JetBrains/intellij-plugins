@@ -193,6 +193,13 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting(true, false, true)
   }
 
+  fun testDirectivesFromGlobalDirectives() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
+    )
+  }
+
   fun testEmptyAttributeValue() = doTest()
 
   fun testNoCreateVarQuickFix() {

@@ -8,47 +8,47 @@ jvm_resources(
 )
 
 jvm_provided_library(
-  name = "ide_provided",
+  name = "community_platform_ide_provided",
   lib = "@community//platform/platform-api:ide"
 )
 
 jvm_provided_library(
-  name = "ide-impl_provided",
+  name = "community_platform_ide-impl_provided",
   lib = "@community//platform/platform-impl:ide-impl"
 )
 
 jvm_provided_library(
-  name = "lang-impl_provided",
+  name = "community_platform_lang-impl_provided",
   lib = "@community//platform/lang-impl"
 )
 
 jvm_provided_library(
-  name = "qodana_provided",
+  name = "contrib_qodana_provided",
   lib = "//contrib/qodana"
 )
 
 jvm_provided_library(
-  name = "plugin_provided",
+  name = "goland_intellij-go_plugin_provided",
   lib = "//goland/intellij-go/plugin"
 )
 
 jvm_provided_library(
-  name = "go-coverage_provided",
+  name = "goland_intellij-go_go-coverage_provided",
   lib = "//goland/intellij-go/go-coverage"
 )
 
 jvm_provided_library(
-  name = "jdom_provided",
+  name = "community_platform_util_jdom_provided",
   lib = "@community//platform/util/jdom"
 )
 
 jvm_provided_library(
-  name = "coverage_provided",
+  name = "community_plugins_coverage_provided",
   lib = "@community//plugins/coverage-common:coverage"
 )
 
 jvm_provided_library(
-  name = "coverage-agent_provided",
+  name = "community_plugins_coverage-common_coverage-agent_provided",
   lib = "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent"
 )
 
@@ -63,15 +63,15 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/projectModel-api:projectModel",
     "//contrib/qodana/coverage",
-    ":ide_provided",
-    ":ide-impl_provided",
-    ":lang-impl_provided",
-    ":qodana_provided",
-    ":plugin_provided",
-    ":go-coverage_provided",
-    ":jdom_provided",
-    ":coverage_provided",
-    ":coverage-agent_provided",
+    ":community_platform_ide_provided",
+    ":community_platform_ide-impl_provided",
+    ":community_platform_lang-impl_provided",
+    ":contrib_qodana_provided",
+    ":goland_intellij-go_plugin_provided",
+    ":goland_intellij-go_go-coverage_provided",
+    ":community_platform_util_jdom_provided",
+    ":community_plugins_coverage_provided",
+    ":community_plugins_coverage-common_coverage-agent_provided",
   ],
   runtime_deps = [":go_resources"]
 )

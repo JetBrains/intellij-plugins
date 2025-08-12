@@ -14,7 +14,7 @@ import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ExternalSystemException
 import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.model.project.*
+import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.model.task.event.*
@@ -52,8 +52,8 @@ import org.jetbrains.annotations.Nls
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.nio.file.Path
 import java.io.FileNotFoundException
+import java.nio.file.Path
 import java.util.*
 import java.util.zip.DeflaterOutputStream
 import java.util.zip.InflaterInputStream
@@ -485,7 +485,7 @@ open class PlatformioProjectResolver : ExternalSystemProjectResolver<PlatformioE
 
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
         if (logStdout || outputType != ProcessOutputType.STDOUT) {
-          listener.onTaskOutput(id, event.text, !ProcessOutputType.isStderr(outputType))
+          listener.onTaskOutput(id, event.text, ProcessOutputType.fromKey(outputType))
         }
       }
     })

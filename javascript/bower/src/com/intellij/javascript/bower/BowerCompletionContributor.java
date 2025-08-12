@@ -7,7 +7,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.javascript.bower.browsePackages.BowerPackageSearcher;
 import com.intellij.json.codeinsight.JsonStringPropertyInsertHandler;
 import com.intellij.json.psi.*;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationUtil;
 import com.intellij.openapi.diagnostic.Logger;
@@ -50,7 +50,7 @@ public class BowerCompletionContributor extends CompletionContributor {
       JsonProperty dependenciesProperty = ObjectUtils.tryCast(obj.getParent(), JsonProperty.class);
       if (dependenciesProperty != null
           && DEPENDENCIES_NAMES.contains(dependenciesProperty.getName())
-          && PackageJsonUtil.isTopLevelProperty(dependenciesProperty)) {
+          && PackageJsonCommonUtil.isTopLevelProperty(dependenciesProperty)) {
         return dependenciesProperty;
       }
     }

@@ -241,6 +241,8 @@
               language="Angular17Html"/>
     <fileType name="Angular181Html" implementationClass="org.angular2.lang.html.Angular181HtmlFileType" fieldName="INSTANCE"
               language="Angular181Html"/>
+    <fileType name="Angular20Html" implementationClass="org.angular2.lang.html.Angular20HtmlFileType" fieldName="INSTANCE"
+              language="Angular20Html"/>
     <langCodeStyleSettingsProvider implementation="org.angular2.options.Angular2HtmlCodeStyleSettingsProvider"/>
     <fileIndentOptionsProvider implementation="org.angular2.lang.html.psi.formatter.Angular2HtmlFileIndentOptionsProvider"
                                id="angular2html" order="before html"/>
@@ -249,20 +251,22 @@
                        id="angular2"/>
     <xml.xmlExtension implementation="org.angular2.codeInsight.Angular2HtmlExtension" order="before html, before poly-symbols-react"
                       id="angular2"/>
-    <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
+    <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlParserDefinition"/>
     <languageStubDefinition language="Angular2Html" implementationClass="org.angular2.lang.stubs.Angular2HtmlLanguageStubDefinition"/>
-    <lang.parserDefinition language="Angular17Html" implementationClass="org.angular2.lang.html.parser.Angular17HtmlParserDefinition"/>
-    <lang.parserDefinition language="Angular181Html" implementationClass="org.angular2.lang.html.parser.Angular181HtmlParserDefinition"/>
-    <tree.CustomLanguageASTComparator language="Angular2Html"
-                                      implementationClass="org.angular2.lang.expr.parser.Angular2HtmlASTComparator"/>
+    <lang.parserDefinition language="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlParserDefinition"/>
+    <lang.parserDefinition language="Angular181Html" implementationClass="org.angular2.lang.html.Angular181HtmlParserDefinition"/>
+    <lang.parserDefinition language="Angular20Html" implementationClass="org.angular2.lang.html.Angular20HtmlParserDefinition"/>
     <braceMatcher filetype="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <braceMatcher filetype="Angular181Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
+    <braceMatcher filetype="Angular20Html" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
+    <tree.CustomLanguageASTComparator language="Angular2Html"
+                                      implementationClass="org.angular2.lang.expr.parser.Angular2HtmlASTComparator"/>
     <lang.syntaxHighlighterFactory language="Angular2Html"
-                                   implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
+                                   implementationClass="org.angular2.lang.html.Angular2HtmlSyntaxHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="Angular17Html"
-                                   implementationClass="org.angular2.lang.html.highlighting.Angular17HtmlHighlighterFactory"/>
+                                   implementationClass="org.angular2.lang.html.Angular17HtmlSyntaxHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="Angular181Html"
-                                   implementationClass="org.angular2.lang.html.highlighting.Angular181HtmlHighlighterFactory"/>
+                                   implementationClass="org.angular2.lang.html.Angular181HtmlSyntaxHighlighterFactory"/>
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2HtmlCompletionContributor"
                             id="Angular2HtmlCompletionContributor"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
@@ -325,10 +329,12 @@
     <errorQuickFixProvider implementation="org.angular2.inspections.Angular2ErrorQuickFixProvider"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
-    <idIndexer filetype="Angular17Html" implementationClass="org.angular2.lang.html.index.Angular17HtmlIdIndexer"/>
-    <todoIndexer filetype="Angular17Html" implementationClass="org.angular2.lang.html.index.Angular17HtmlTodoIndexer"/>
-    <idIndexer filetype="Angular181Html" implementationClass="org.angular2.lang.html.index.Angular181HtmlIdIndexer"/>
-    <todoIndexer filetype="Angular181Html" implementationClass="org.angular2.lang.html.index.Angular181HtmlTodoIndexer"/>
+    <idIndexer filetype="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlIdIndexer"/>
+    <todoIndexer filetype="Angular17Html" implementationClass="org.angular2.lang.html.Angular17HtmlTodoIndexer"/>
+    <idIndexer filetype="Angular181Html" implementationClass="org.angular2.lang.html.Angular181HtmlIdIndexer"/>
+    <todoIndexer filetype="Angular181Html" implementationClass="org.angular2.lang.html.Angular181HtmlTodoIndexer"/>
+    <idIndexer filetype="Angular20Html" implementationClass="org.angular2.lang.html.Angular20HtmlIdIndexer"/>
+    <todoIndexer filetype="Angular20Html" implementationClass="org.angular2.lang.html.Angular20HtmlTodoIndexer"/>
     <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.psi.formatter.Angular2HtmlFormattingModelBuilder"/>
     <lang.foldingBuilder language="Angular2Html" implementationClass="org.angular2.editor.Angular2HtmlFoldingBuilder"/>
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
@@ -353,6 +359,7 @@
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@19.0.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@19.2.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@20.0.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@20.1.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
 
@@ -365,26 +372,33 @@
     <completion.confidence language="Angular2Html" implementationClass="org.angular2.editor.Angular2PreventCompletionAutoPopupOnImport"/>
 
     <!-- Angular 2 SVG contributions -->
-    <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>
-    <lang.parserDefinition language="Angular17Svg" implementationClass="org.angular2.lang.svg.parser.Angular17SvgParserDefinition"/>
-    <lang.parserDefinition language="Angular181Svg" implementationClass="org.angular2.lang.svg.parser.Angular181SvgParserDefinition"/>
+    <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.Angular2SvgParserDefinition"/>
+    <lang.parserDefinition language="Angular17Svg" implementationClass="org.angular2.lang.svg.Angular17SvgParserDefinition"/>
+    <lang.parserDefinition language="Angular181Svg" implementationClass="org.angular2.lang.svg.Angular181SvgParserDefinition"/>
+    <lang.parserDefinition language="Angular20Svg" implementationClass="org.angular2.lang.svg.Angular20SvgParserDefinition"/>
     <fileType name="Angular2Svg" implementationClass="org.angular2.lang.svg.Angular2SvgFileType" fieldName="INSTANCE"
               language="Angular2Svg"/>
     <fileType name="Angular17Svg" implementationClass="org.angular2.lang.svg.Angular17SvgFileType" fieldName="INSTANCE"
               language="Angular17Svg"/>
     <fileType name="Angular181Svg" implementationClass="org.angular2.lang.svg.Angular181SvgFileType" fieldName="INSTANCE"
               language="Angular181Svg"/>
+    <fileType name="Angular20Svg" implementationClass="org.angular2.lang.svg.Angular20SvgFileType" fieldName="INSTANCE"
+              language="Angular20Svg"/>
     <braceMatcher filetype="Angular17Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <braceMatcher filetype="Angular181Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
+    <braceMatcher filetype="Angular20Svg" implementationClass="org.angular2.lang.html.Angular17HtmlBraceMatcher"/>
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Svg"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <lang.syntaxHighlighter language="Angular2"
-                            implementationClass="org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter"/>
+                            implementationClass="org.angular2.lang.expr.Angular2SyntaxHighlighter"/>
+    <lang.syntaxHighlighter language="Angular20"
+                            implementationClass="org.angular2.lang.expr.Angular20SyntaxHighlighter"/>
     <lang.formatter language="Angular2" implementationClass="org.angular2.lang.expr.formatter.Angular2FormattingModelBuilder"/>
     <codeInsight.template.postfixTemplateProvider language="Angular2"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
-    <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
+    <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.Angular2ParserDefinition"/>
+    <lang.parserDefinition language="Angular20" implementationClass="org.angular2.lang.expr.Angular20ParserDefinition"/>
     <stubElementRegistryExtension implementation="org.angular2.lang.Angular2StubRegistryExtension"/>
     <completion.contributor language="any" implementationClass="org.angular2.codeInsight.Angular2CompletionContributor"
                             id="Angular2CompletionContributor"

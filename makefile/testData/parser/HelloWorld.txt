@@ -35,7 +35,7 @@ Makefile
       PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
-        PsiElement(\t)('\t')
+        PsiElement(RECIPE_PREFIX)('\t')
         MakefileVariableUsageImpl(VARIABLE_USAGE)
           PsiElement($)('$')
           PsiElement(()('(')

@@ -48,6 +48,15 @@ class SetupAzurePipelinesViewModel(
     baseSetupCIViewModel.unselected()
   }
 
+  private val HEADER_TEXT = """
+      #-------------------------------------------------------------------------------#
+      #        Discover additional configuration options in our documentation         #
+      #       https://www.jetbrains.com/help/qodana/qodana-azure-pipelines.html       #
+      #-------------------------------------------------------------------------------#
+      
+      
+    """.trimIndent()
+
   private fun spawnAddedConfigurationNotification() {
     QodanaNotifications.General.notification(
       QodanaBundle.message("qodana.add.to.ci.finish.notification.azure.pipelines.title"),
@@ -75,17 +84,20 @@ class SetupAzurePipelinesViewModel(
       
     """.trimIndent() + branchesToAdd.joinToString(separator = "\n", postfix = "\n") { "  - $it" }
 
-    val baselineText = getSarifBaseline(project)?.let { "--baseline,$it," } ?: ""
-
-    val ideMajorVersion = ApplicationInfo.getInstance().majorVersion
-
     @Language("YAML")
-    val yamlConfiguration = branchesText + """
+    val yamlConfiguration = HEADER_TEXT + branchesText + """
+      
+      pr:
+        branches:
+          include:
+            - '*'
       
       pool:
         vmImage: ubuntu-latest
       
       steps:
+        - checkout: self
+          fetchDepth: 0
         - task: Cache@2  # Not required, but Qodana will open projects with cache faster.
           inputs:
             key: '"$(Build.Repository.Name)" | "$(Build.SourceBranchName)" | "$(Build.SourceVersion)"'
@@ -93,11 +105,7 @@ class SetupAzurePipelinesViewModel(
             restoreKeys: |
               "$(Build.Repository.Name)" | "$(Build.SourceBranchName)"
               "$(Build.Repository.Name)"
-        - task: QodanaScan@${ideMajorVersion}
-          inputs:
-            args: ${baselineText}-l,${getQodanaImageNameMatchingIDE(true)}
-          env:
-            QODANA_TOKEN: $(QODANA_TOKEN)
+        - ${defaultQodanaTaskText().replaceIndent("        ").trimStart()}
     """.trimIndent()
     return yamlConfiguration
   }
@@ -109,6 +117,13 @@ class SetupAzurePipelinesViewModel(
       task: QodanaScan@${ideMajorVersion}
         inputs:
           args: ${baselineText}-l,${getQodanaImageNameMatchingIDE(true)}
+          # When prMode is set to true, Qodana analyzes only the files that have been changed
+          prMode: false,
+          postPrComment: true
+          # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+          uploadResult: false
+          # quick-fixes available in Ultimate and Ultimate Plus plans
+          pushFixes: 'none'
         env:
           QODANA_TOKEN: $(QODANA_TOKEN)
     """.trimIndent()

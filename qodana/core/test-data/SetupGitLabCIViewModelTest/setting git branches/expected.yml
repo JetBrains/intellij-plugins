@@ -1,13 +1,23 @@
+#-------------------------------------------------------------------------------#
+#        Discover additional configuration options in our documentation         #
+#              https://www.jetbrains.com/help/qodana/gitlab.html                #
+#-------------------------------------------------------------------------------#
+
+include:
+  - component: $CI_SERVER_FQDN/qodana/qodana/qodana-gitlab-ci@<VERSION_PLACEHOLDER>
+    inputs:
+      # When mr-mode is set to true, Qodana analyzes only the files that have been changed
+      mr-mode: false
+      use-caches: true
+      post-mr-comment: true
+      # Upload Qodana results (SARIF, other artifacts, logs) as an artifact to the job
+      upload-result: false
+      # quick-fixes available in Ultimate and Ultimate Plus plans
+      push-fixes: 'none'
+
 qodana:
-  only:
-    - main
-    - dev
-    - test-branch
-    - merge_requests
-  image:
-    name: jetbrains/qodana-<linter>
-    entrypoint: [""]
-  variables:
-    QODANA_TOKEN: $qodana_token
-  script:
-    - qodana --save-report --results-dir=$CI_PROJECT_DIR/.qodana
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "test-branch"

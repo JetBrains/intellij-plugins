@@ -12,6 +12,9 @@
   elementTypeClass = "com.jetbrains.lang.makefile.psi.MakefileElementType"
   tokenTypeClass = "com.jetbrains.lang.makefile.psi.MakefileTokenType"
 
+  implements("command") = "com.jetbrains.lang.makefile.psi.impl.IMakeFileCommand"
+  mixin("command") = "com.jetbrains.lang.makefile.psi.impl.MakefileCommandMixin"
+
   tokens = [
     TAB = "\t"
     COLON = ":"
@@ -45,6 +48,8 @@
     KEYWORD_UNEXPORT = "unexport"
     KEYWORD_PRIVATE = "private"
     KEYWORD_VPATH = "vpath"
+
+    RECIPE_PREFIX = "RECIPE_PREFIX"
   ]
 
   psiImplUtilClass = "com.jetbrains.lang.makefile.psi.MakefilePsiImplUtil"
@@ -60,7 +65,7 @@ directive ::= define|include|undefine|override|export|unexport|privatevar|vpath
 
 rule ::= target_line recipe? {methods=[getTargets]}
 recipe ::= (command|conditional)+ (command|conditional|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="com.jetbrains.lang.makefile.psi.impl.MakefileRecipeElementImpl"}
-command ::= '\t'+ line EOL? {pin=1}
+command ::= RECIPE_PREFIX line EOL? {pin=1}
 inline_command ::= line
 private line ::= (<<parseLine>>|function|variable-usage|substitution|string)*
 private defline ::= (<<parseLineNotEndef>>|function|variable-usage|substitution|string)*

@@ -22,7 +22,7 @@
   <dependencies>
     <module name="intellij.spellchecker"/>
     <plugin id="com.intellij.modules.xml"/>
-    <plugin id="com.intellij.css"/>
+    <module name="intellij.css.backend"/>
     <plugin id="JavaScript"/>
   </dependencies>
   <depends optional="true" config-file="jade-liveEdit.xml">com.intellij.plugins.html.instantEditing</depends>

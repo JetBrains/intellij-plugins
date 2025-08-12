@@ -18,7 +18,7 @@ object Angular2TemplateScopesResolver {
     if (!checkLanguage(original)) {
       return emptyList()
     }
-    val expressionIsInjected = original.containingFile.language.`is`(Angular2Language)
+    val expressionIsInjected = original.containingFile.language.isKindOf(Angular2Language)
     val hostElement: PsiElement?
     if (expressionIsInjected) {
       //we are working within injection
@@ -44,8 +44,10 @@ object Angular2TemplateScopesResolver {
   }
 
   private fun checkLanguage(element: PsiElement): Boolean {
-    return (element.language.`is`(Angular2Language)
-            || element.language.isKindOf(Angular2HtmlLanguage) || element.parent != null && (element.parent.language.`is`(
-      Angular2Language) || element.parent.language.isKindOf(Angular2HtmlLanguage)))
+    return (element.language.isKindOf(Angular2Language)
+            || element.language.isKindOf(Angular2HtmlLanguage
+    ) || element.parent != null && (
+              element.parent.language.isKindOf(Angular2Language)
+              || element.parent.language.isKindOf(Angular2HtmlLanguage)))
   }
 }

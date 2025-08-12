@@ -11,11 +11,13 @@ import org.angular2.lang.expr.psi.Angular2TemplateBindings
 class Angular2EmptyTemplateBindings(private val myParent: PsiElement?,
                                     override val templateName: String) : FakePsiElement(), Angular2TemplateBindings {
 
+  private val type = Angular2ElementTypes.Angular2TemplateBindingsType(templateName)
+
   override val bindings: Array<Angular2TemplateBinding>
     get() = Angular2TemplateBinding.EMPTY_ARRAY
 
   override fun getElementType(): IElementType {
-    return Angular2ElementTypes.TEMPLATE_BINDINGS_STATEMENT
+    return type
   }
 
   override fun getParent(): PsiElement? {

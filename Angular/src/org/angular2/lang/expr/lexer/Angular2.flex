@@ -18,11 +18,13 @@ import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 
   private String blockName;
   private int blockParamIndex;
+  private boolean enableVoidKeyword;
 
   private IntStack myStateStack = new IntStack(5);
 
   public _Angular2Lexer(Angular2Lexer.Config config) {
     this((java.io.Reader)null);
+    enableVoidKeyword = config.getSyntax().getEnableVoidKeyword();
     if (config instanceof Angular2Lexer.BlockParameter blockParameter) {
       blockName = blockParameter.getName();
       blockParamIndex = blockParameter.getIndex();
@@ -119,6 +121,7 @@ LINE_TERMINATOR_SEQUENCE=\R
   "this"                      { return THIS_KEYWORD; }
   "typeof"                    { return TYPEOF_KEYWORD; }
   "in"                        { return IN_KEYWORD; }
+  "void"                      { if (enableVoidKeyword) return VOID_KEYWORD; else return IDENTIFIER; }
 
   "as"/(\.)                   { return IDENTIFIER; }
   {IDENT}                     { return IDENTIFIER; }
@@ -126,6 +129,7 @@ LINE_TERMINATOR_SEQUENCE=\R
   "+"                         { return PLUS; }
   "-"                         { return MINUS; }
   "*"                         { return MULT; }
+  "**"                        { return MULTMULT; }
   "/"                         { return DIV; }
   "%"                         { return PERC; }
   "^"                         { return XOR; }
@@ -144,6 +148,16 @@ LINE_TERMINATOR_SEQUENCE=\R
   "&"                         { return AND; }
   "|"                         { return OR; }
   "!"                         { return EXCL; }
+
+  "+="                        { return PLUSEQ; }
+  "-="                        { return MINUSEQ; }
+  "*="                        { return MULTEQ; }
+  "/="                        { return DIVEQ; }
+  "%="                        { return PERCEQ; }
+  "**="                       { return MULTMULTEQ; }
+  "&&="                       { return AND_AND_EQ; }
+  "||="                       { return OR_OR_EQ; }
+  "??="                       { return QUEST_QUEST_EQ; }
 
   "("                         { return LPAR; }
   ")"                         { return RPAR; }

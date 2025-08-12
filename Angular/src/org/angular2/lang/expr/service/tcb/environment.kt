@@ -12,9 +12,12 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
+import com.intellij.lang.javascript.psi.types.JSTypeImpl
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.SmartList
 import com.intellij.util.containers.sequenceOfNotNull
@@ -67,9 +70,26 @@ internal class Environment(
   private fun referenceExternalType(extRef: R3Identifiers.ExternalReference): Expression =
     referenceExternalType(extRef.moduleName, extRef.name)
 
-  fun referenceType(dirTypeRef: JSType): Expression =
+  fun referenceType(dirTypeRef: JSType): Expression {
+    val substitutedType = dirTypeRef.substitute()
+    if (substitutedType.sourceElement != null) {
+      val typeScriptType = substitutedType as? TypeScriptType
+                           ?: substitutedType.sourceElement as? TypeScriptType
+      if (typeScriptType is TypeScriptType) {
+        return typeScriptType.toExpression()
+      }
+      else if (substitutedType is JSTypeImpl && substitutedType.sourceElement is TypeScriptClass) {
+        val sourceElement = substitutedType.sourceElement as TypeScriptClass
+        return Expression {
+          withSourceFile(sourceElement.containingFile) {
+            append(substitutedType.getTypeText(JSType.TypeTextFormat.CODE), originalRange = sourceElement.nameIdentifier?.textRange)
+          }
+        }
+      }
+    }
     // TODO detect stuff to import
-    Expression(dirTypeRef.getTypeText(JSType.TypeTextFormat.CODE))
+    return Expression(substitutedType.getTypeText(JSType.TypeTextFormat.CODE))
+  }
 
   private fun reference(element: JSQualifiedNamedElement, kind: ImportExportSpecifierKind): String =
     importCache.computeIfAbsent(element) {
@@ -290,10 +310,22 @@ internal class Environment(
     }.toList()
 
   private fun TypeScriptType.toExpression(): Expression = Expression {
-    acceptChildren(object : JSRecursiveWalkingElementVisitor() {
+    withSourceFile(containingFile) {
+      withSupportReverseTypes {
+        withIgnoreMappings {
+          withSourceSpan(textRange) {
+            this@withSourceSpan.buildTypeExpression(this@toExpression)
+          }
+        }
+      }
+    }
+  }
+
+  private fun Expression.ExpressionBuilder.buildTypeExpression(type: TypeScriptType) {
+    type.acceptChildren(object : JSRecursiveWalkingElementVisitor() {
       override fun visitElement(element: PsiElement) {
         if (element is LeafPsiElement) {
-          append(element.text)
+          append(element.text, element.textRange.takeIf { element !is PsiWhiteSpace })
         }
         else {
           super.visitElement(element)
@@ -312,11 +344,14 @@ internal class Environment(
               resolveResult
           }
           if (templateTarget !is JSQualifiedNamedElement) {
-            append(node.text, node.textRange, supportTypes = true)
+            append(node.text, node.textRange)
           }
           else {
-            append(reference(templateTarget, importSpecifierKind), node.textRange, supportTypes = true)
+            append(reference(templateTarget, importSpecifierKind), node.textRange)
           }
+        }
+        else {
+          super.visitJSReferenceExpression(node)
         }
       }
     })

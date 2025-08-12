@@ -12,8 +12,8 @@ import com.jetbrains.lang.makefile.psi.*;
 
 public class MakefileDirectoryImpl extends MakefileFilenameMixin implements MakefileDirectory {
 
-  public MakefileDirectoryImpl(@NotNull ASTNode node) {
-    super(node);
+  public MakefileDirectoryImpl(@NotNull ASTNode astNode) {
+    super(astNode);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {

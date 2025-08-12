@@ -3,7 +3,6 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project
 import com.intellij.execution.ExecutionTargetListener
 import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.configurations.SimpleJavaParameters
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware
 import com.intellij.openapi.externalSystem.ExternalSystemManager
@@ -21,9 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioService
-import com.jetbrains.cidr.cpp.embedded.platformio.initializeProject
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceInitializationUtil.runAfterPlatformioInitialized
-import com.jetbrains.cidr.cpp.embedded.platformio.refreshProject
 import java.io.File
 import java.nio.file.Path
 
@@ -72,14 +69,12 @@ class PlatformioManager :
 
   override fun runActivity(project: Project) {
     project.runAfterPlatformioInitialized {
-      val workspace = project.service<PlatformioWorkspace>()
       // Check if initial project reload is needed
       if (PlatformioWorkspace.isPlatformioProject(project)) {
-        runInEdt {
-          initializeProject(workspace.project)
-          project.messageBus.connect()
-            .subscribe(ExecutionTargetManager.TOPIC, ExecutionTargetListener { runInEdt { refreshProject(project, false) } })
-        }
+        val platformioService = project.service<PlatformioService>()
+        platformioService.initializeProject()
+        project.messageBus.connect()
+          .subscribe(ExecutionTargetManager.TOPIC, ExecutionTargetListener { platformioService.refreshProject(false) })
       }
     }
   }

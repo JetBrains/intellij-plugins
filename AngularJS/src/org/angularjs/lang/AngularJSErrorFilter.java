@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.css.impl.CssAdvancedElementTypes;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
@@ -70,13 +71,13 @@ final class AngularJSErrorFilter extends HighlightErrorFilter {
     while (element != null && element.getNode().getElementType().equals(CssElementTypes.CSS_WHITE_SPACE)) {
       element = element.getNextSibling();
     }
-    if (element != null && element.getNode().getElementType().equals(CssElementTypes.CSS_DECLARATION_BLOCK)) {
+    if (element != null && element.getNode().getElementType().equals(CssAdvancedElementTypes.CSS_DECLARATION_BLOCK)) {
       PsiElement firstChild = element.getFirstChild();
       if (firstChild == null) return false;
       PsiElement secondChild = firstChild.getNextSibling();
       if (firstChild.getNode().getElementType().equals(CssElementTypes.CSS_LBRACE) &&
           secondChild != null &&
-          secondChild.getNode().getElementType().equals(CssElementTypes.CSS_DECLARATION_BLOCK) &&
+          secondChild.getNode().getElementType().equals(CssAdvancedElementTypes.CSS_DECLARATION_BLOCK) &&
           secondChild.getFirstChild() != null && secondChild.getFirstChild().getNextSibling() != null) {
         return hasAngularInjectionAt(project, file, secondChild.getFirstChild().getNextSibling().getTextOffset());
       }

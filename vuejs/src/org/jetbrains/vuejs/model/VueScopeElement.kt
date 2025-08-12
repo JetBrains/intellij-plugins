@@ -33,13 +33,13 @@ interface VueScopeElement : VueDocumentedItem {
       }
     }
 
-    if (minimumProximity <= VueModelVisitor.Proximity.PLUGIN) {
+    if (minimumProximity <= VueModelVisitor.Proximity.LIBRARY) {
       parents.forEach { parent ->
         when (parent) {
           is VueApp -> if (minimumProximity <= VueModelVisitor.Proximity.APP)
             containersStack.add(Pair(parent, VueModelVisitor.Proximity.APP))
-          is VueLibrary -> if (minimumProximity <= VueModelVisitor.Proximity.PLUGIN)
-            containersStack.add(Pair(parent, VueModelVisitor.Proximity.PLUGIN))
+          is VueLibrary -> if (minimumProximity <= VueModelVisitor.Proximity.LIBRARY)
+            containersStack.add(Pair(parent, VueModelVisitor.Proximity.LIBRARY))
         }
       }
     }

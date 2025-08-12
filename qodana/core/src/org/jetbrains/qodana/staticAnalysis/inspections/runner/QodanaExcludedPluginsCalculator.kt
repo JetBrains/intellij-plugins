@@ -11,10 +11,13 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.runBlockingCancellable
 import kotlinx.coroutines.delay
-import java.io.File
+import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
 import java.util.*
+import kotlin.io.path.appendText
 import kotlin.io.path.exists
+import kotlin.io.path.readLines
 import kotlin.system.exitProcess
 
 
@@ -30,21 +33,19 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     runBlockingCancellable {
       delay(30000)
     }
-    if (args.size < 3) {
+    if (args.size < 4) {
       printHelpAndExit()
     }
     val input = args[1]  //list of ids
     val output = args[2] //.dockerignore for update
-    // fill disabled_plugins.txt
-    @Suppress("UNUSED_VARIABLE") // disabled_plugins.txt is not modified by this script
-    val disabledPluginsPath = if (args.size == 4) { args[3] } else ""
+    val disabledPluginMacFile = args[3] // fill disabled_plugins_mac.txt
     try {
-      val requiredIds = File(input).readLines()
+      val requiredIds = Paths.get(input).readLines()
       if (requiredIds.isEmpty()) {
         printHelpAndExit()
       }
 
-      val (included, _) = calculateActual(requiredIds)
+      val (included, disabledIds) = calculateActual(requiredIds)
       val dockerIgnorePath = Paths.get(output)
       val baseFolder = dockerIgnorePath.parent.toAbsolutePath()
 
@@ -53,7 +54,13 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
         val path = Paths.get(pathPresentation).toAbsolutePath()
         if (path.exists()) "!${baseFolder.relativize(path)}" else null
       }
-      dockerIgnorePath.toFile().appendText("\n" + includedPaths.joinToString("\n"))
+      dockerIgnorePath.appendText("\n" + includedPaths.joinToString("\n"))
+
+      val disabledPluginMacPath = Paths.get(disabledPluginMacFile)
+      val predefinedDisabled = Files.readString(disabledPluginMacPath).trim()
+      val disablePluginsText = disabledIds.joinToString("\n") + "\n" + predefinedDisabled
+
+      Files.writeString(disabledPluginMacPath, disablePluginsText, StandardOpenOption.TRUNCATE_EXISTING)
       ApplicationManagerEx.getApplicationEx().exit(true, true)
     }
     catch (e: Throwable) {

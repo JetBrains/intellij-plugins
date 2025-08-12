@@ -1,6 +1,6 @@
 package org.intellij.plugins.postcss.psi;
 
-import com.intellij.css.util.CssPsiUtil;
+import com.intellij.css.util.CssPsiUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -25,7 +25,7 @@ public final class PostCssPsiUtil {
 
   @Contract("null -> false")
   public static boolean isInsidePostCss(@Nullable PsiElement element) {
-    return CssPsiUtil.getStylesheetLanguage(element) == PostCssLanguage.INSTANCE;
+    return CssPsiUtilCore.getStylesheetLanguage(element) == PostCssLanguage.INSTANCE;
   }
 
   @Contract("null -> true")

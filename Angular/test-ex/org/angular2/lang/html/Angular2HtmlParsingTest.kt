@@ -6,12 +6,9 @@ import com.intellij.javascript.testFramework.web.JSHtmlParsingTest
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.CustomLanguageASTComparator
 import org.angular2.Angular2TestUtil
+import org.angular2.lang.expr.Angular2ParserDefinition
 import org.angular2.lang.expr.parser.Angular2HtmlASTComparator
-import org.angular2.lang.expr.parser.Angular2ParserDefinition
 import org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport
-import org.angular2.lang.html.parser.Angular17HtmlParserDefinition
-import org.angular2.lang.html.parser.Angular181HtmlParserDefinition
-import org.angular2.lang.html.parser.Angular2HtmlParserDefinition
 import java.io.File
 
 open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
@@ -23,6 +20,7 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
 
     configureFromParserDefinition(
       when (templateSyntax) {
+        Angular2TemplateSyntax.V_20 -> Angular20HtmlParserDefinition()
         Angular2TemplateSyntax.V_18_1 -> Angular181HtmlParserDefinition()
         Angular2TemplateSyntax.V_17 -> Angular17HtmlParserDefinition()
         Angular2TemplateSyntax.V_2_NO_EXPANSION_FORMS,
@@ -434,4 +432,25 @@ open class Angular2HtmlParsingTest : JSHtmlParsingTest("html") {
       {{ `https://www.google.com?q=${'$'}{test + {a:12}.a}` }}
     """.trimIndent())
   }
+
+  fun testVoidKeyword() {
+    doTestHtml("""
+      <div (click)='void fun()'></div>
+    """)
+  }
+
+  fun testPowerOperator() {
+    doTestHtml("""
+      <div (click)='12 ** 2 ** 3'></div>
+    """)
+  }
+
+  fun testAssignmentExpressions() {
+    doTestHtml("""
+      {{ test += 1 }}
+      <div (click)='test += 1'></div>
+      <div (click)='test = 1 + 2 + 3'></div>
+    """.trimIndent())
+  }
+
 }

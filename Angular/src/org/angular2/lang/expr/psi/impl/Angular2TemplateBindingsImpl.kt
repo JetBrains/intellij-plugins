@@ -3,7 +3,6 @@ package org.angular2.lang.expr.psi.impl
 
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.tree.TokenSet
 import org.angular2.lang.expr.parser.Angular2ElementTypes
 import org.angular2.lang.expr.psi.Angular2ElementVisitor
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
@@ -22,7 +21,10 @@ class Angular2TemplateBindingsImpl(elementType: IElementType?, override val temp
   }
 
   override val bindings: Array<Angular2TemplateBinding>
-    get() = getChildren(TokenSet.create(Angular2ElementTypes.TEMPLATE_BINDING_STATEMENT))
-      .mapNotNull { it.getPsi(Angular2TemplateBinding::class.java) }
+    get() = getChildren(null)
+      .mapNotNull {
+        it.takeIf { it.elementType is Angular2ElementTypes.Angular2TemplateBindingType }
+          ?.getPsi(Angular2TemplateBinding::class.java)
+      }
       .toTypedArray()
 }

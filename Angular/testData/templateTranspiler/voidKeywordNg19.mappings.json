@@ -1,0 +1,17 @@
+[
+  {
+    "file-name": "voidKeywordNg19.ts",
+    "mappings": [
+      "0:116 => 0:116 (source)",
+      "«void» [124] => «void» [125]} (no types)",
+      "«void» [124] => «this.void» [120]}",
+      "«div» [148] => «_t1» [136]} (no diagnostics) (no semantic)",
+      "«void» [161] => «void» [179]} (no types)",
+      "«void» [161] => «this.void» [174]}",
+      "«div» [191] => «_t2» [190]} (no diagnostics) (no semantic)",
+      "«void» [208] => «void» [238]} (no types)",
+      "«void» [208] => «this.void» [233]}",
+      "237:339 => 237:339 (source)"
+    ]
+  }
+]

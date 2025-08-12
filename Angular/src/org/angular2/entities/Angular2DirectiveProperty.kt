@@ -1,9 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.polySymbols.js.documentation.JSSymbolWithSubstitutor
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
-import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor
@@ -17,10 +14,13 @@ import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.js.documentation.JSSymbolWithSubstitutor
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.css.impl.CssNamedItemPresentation
+import com.intellij.psi.css.impl.CssPsiPresentationService
 import com.intellij.psi.util.contextOfType
 import com.intellij.util.ThreeState
 import icons.AngularIcons
@@ -46,6 +46,11 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
   val virtualProperty: Boolean
 
   val isSignalProperty: Boolean
+
+  val transformParameterType: JSType?
+    get() = null
+
+  val isCoerced: Boolean
     get() = false
 
   override val modifiers: Set<PolySymbolModifier>
@@ -66,7 +71,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
           else -> Angular2Bundle.message("angular.entity.directive.property")
         })
       .locationText((sourceElement as? NavigatablePsiElement)?.presentation?.locationString
-                    ?: CssNamedItemPresentation.getLocationString(sourceElement))
+                    ?: CssPsiPresentationService.getInstance().getLocationString(sourceElement))
       .presentation()
 
   override val searchTarget: PolySymbolSearchTarget?

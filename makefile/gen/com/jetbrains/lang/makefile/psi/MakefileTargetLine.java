@@ -28,7 +28,6 @@ public interface MakefileTargetLine extends PsiElement {
   @Nullable
   MakefileVariableAssignment getVariableAssignment();
 
-  @Nullable
-  String getTargetName();
+  @Nullable String getTargetName();
 
 }
