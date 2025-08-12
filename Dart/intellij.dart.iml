@@ -45,7 +45,6 @@
     <orderEntry type="module" module-name="intellij.platform.workspace.storage" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" />
-    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
     <orderEntry type="module" module-name="intellij.javascript.debugger" />
     <orderEntry type="module" module-name="intellij.xml.psi" />
     <orderEntry type="module" module-name="intellij.yaml.backend" />

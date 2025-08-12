@@ -60,7 +60,6 @@
     <orderEntry type="module" module-name="intellij.properties.backend" />
     <orderEntry type="module" module-name="intellij.platform.webide" />
     <orderEntry type="module" module-name="intellij.properties.psi" />
-    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
     <orderEntry type="module" module-name="intellij.diagram" />
     <orderEntry type="module" module-name="intellij.platform.graph" />
     <orderEntry type="module" module-name="intellij.flex.jps" scope="RUNTIME" />

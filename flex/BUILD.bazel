@@ -61,7 +61,6 @@ jvm_library(
     "@community//plugins/properties:properties-backend",
     "//webcore:webide",
     "@community//plugins/properties/properties-psi-api:psi",
-    "@community//platform/script-debugger/debugger-ui:scriptDebugger-ui",
     "//plugins/uml:diagram",
     "//plugins/graph",
     "@lib//:protobuf",
