@@ -1,6 +1,7 @@
 package com.jetbrains.lang.makefile;
 
 import com.intellij.lexer.FlexLexer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.makefile.psi.MakefileTypes;
 
@@ -15,7 +16,7 @@ import static com.jetbrains.lang.makefile.psi.MakefileTypes.*;
     final var index = variable.indexOf('=');
     assert index != -1;
 
-    final var value = variable.substring(index + 1, variable.length()).trim();
+    final var value = StringUtil.trimLeading(variable.substring(index + 1, variable.length()), ' ');
     if (value.startsWith("\\t")) {
       return '\t';
     }
@@ -63,7 +64,7 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 CHARS = [0-9\p{L}.!\-?%@/_\[\]+~*\^&+<>] | (\\[\\:\(\)#])
 
-RECIPEPREFIX=[\t ]*"\.RECIPEPREFIX"[\t ]*"="[\t ]*(\S)+
+RECIPEPREFIX=[\t ]*"\.RECIPEPREFIX"[\t ]*"="[^\n]+
 
 
 %state SQSTRING DQSTRING DEFINE LINE
@@ -74,14 +75,14 @@ RECIPEPREFIX=[\t ]*"\.RECIPEPREFIX"[\t ]*"="[\t ]*(\S)+
   "'"   { resetState(); return QUOTE; }
   "\""  { return CHARS; }
   "#"+  { return CHARS; }
-  {EOL} { resetState(); return EOL; }
+  {EOL} { setState(YYINITIAL); return EOL; }
 }
 
 <DQSTRING> {
   "\""  { resetState(); return DOUBLEQUOTE; }
   "'"   { return CHARS; }
   "#"+  { return CHARS; }
-  {EOL} { resetState(); return EOL; }
+  {EOL} { setState(YYINITIAL); return EOL; }
 }
 
 <DEFINE> {
@@ -90,78 +91,82 @@ RECIPEPREFIX=[\t ]*"\.RECIPEPREFIX"[\t ]*"="[\t ]*(\S)+
   "\""     { return CHARS; }
   "'"      { return CHARS; }
   "#"+     { return CHARS; }
+  {EOL}    { return EOL; }
 }
 
 <YYINITIAL, LINE> {
-  ^[ ]*{COMMENT}\n       { return COMMENT; }
-  {DOCCOMMENT}           { return DOC_COMMENT; }
-  {MULTILINECOMMENT}     { return COMMENT; }
-  {COMMENT}              { return COMMENT; }
+  ^[ ]*{COMMENT}\n       { setState(YYINITIAL); return COMMENT; }
+  {DOCCOMMENT}           { setState(YYINITIAL); return DOC_COMMENT; }
+  {MULTILINECOMMENT}     { setState(YYINITIAL); return COMMENT; }
+  {COMMENT}              { setState(YYINITIAL); return COMMENT; }
 }
 
 ^{MACRO} { return MACRO; }
 
 <YYINITIAL> {
   ^. {
+    setState(LINE);
+
     if (yytext().charAt(0) == recipePrefix) {
       return RECIPE_PREFIX;
     } else {
-      setState(LINE);
-      yypushback(1);
+      yypushback(yylength());
     }
   }
 
   ^{RECIPEPREFIX} {
-    recipePrefix = getRecipePrefix(yytext().toString());
+    setState(LINE);
 
+    recipePrefix = getRecipePrefix(yytext().toString());
+    yypushback(yylength());
+  }
+
+  [^] {
     setState(LINE);
     yypushback(yylength());
   }
 }
 
-<LINE> {
-  {EOL}            { setState(YYINITIAL); return EOL; }
+<LINE, SQSTRING, DQSTRING, DEFINE> {
+  {EOL}              { setState(YYINITIAL); return EOL; }
+
+  \t+                { return WHITE_SPACE; }
+  {SPACES}           { return WHITE_SPACE; }
+  ":"                { return COLON; }
+  ","                { return COMMA; }
+  "`"                { return BACKTICK; }
+  {ASSIGN}           { return ASSIGN; }
+  {BACKSLASHCRLF}    { return SPLIT; }
+  "|"                { return PIPE; }
+  ";"                { return SEMICOLON; }
+  "include"          { return KEYWORD_INCLUDE; }
+  "-include"         { return KEYWORD_INCLUDE; }
+  "sinclude"         { return KEYWORD_INCLUDE; }
+  "vpath"            { return KEYWORD_VPATH; }
+  ^"define"          { setState(DEFINE); return KEYWORD_DEFINE; }
+  "undefine"         { return KEYWORD_UNDEFINE; }
+  "ifeq"             { return KEYWORD_IFEQ; }
+  "ifneq"            { return KEYWORD_IFNEQ; }
+  "ifdef"            { return KEYWORD_IFDEF; }
+  "ifndef"           { return KEYWORD_IFNDEF; }
+  "else"             { return KEYWORD_ELSE; }
+  "endif"            { return KEYWORD_ENDIF; }
+  "override"         { return KEYWORD_OVERRIDE; }
+  "export"           { return KEYWORD_EXPORT; }
+  "unexport"         { return KEYWORD_UNEXPORT; }
+  "private"          { return KEYWORD_PRIVATE; }
+  "$"                { return DOLLAR; }
+  {FUNCTIONS}        { return FUNCTION_NAME; }
+  "("                { return OPEN_PAREN; }
+  ")"                { return CLOSE_PAREN; }
+  "{"                { return OPEN_CURLY; }
+  "}"                { return CLOSE_CURLY; }
+  \\\"               { return ESCAPED_DOUBLEQUOTE; }
+  "'"                { setState(SQSTRING); return QUOTE; }
+  "\""               { setState(DQSTRING); return DOUBLEQUOTE; }
+
+  {CHARS}+           { return CHARS; }
+  \\                 { return CHARS; }
+
+  [^] { return BAD_CHARACTER; }
 }
-
-// it is not possible to match more then 1 tab at the time, because otherweise this rule would have a higher priority then RECIPE_PREFIX
-\t                 { return WHITE_SPACE; }
-
-{EOL}              { return EOL; }
-{SPACES}           { return WHITE_SPACE; }
-":"                { return COLON; }
-","                { return COMMA; }
-"`"                { return BACKTICK; }
-{ASSIGN}           { return ASSIGN; }
-{BACKSLASHCRLF}    { return SPLIT; }
-"|"                { return PIPE; }
-";"                { return SEMICOLON; }
-"include"          { return KEYWORD_INCLUDE; }
-"-include"         { return KEYWORD_INCLUDE; }
-"sinclude"         { return KEYWORD_INCLUDE; }
-"vpath"            { return KEYWORD_VPATH; }
-^"define"          { setState(DEFINE); return KEYWORD_DEFINE; }
-"undefine"         { return KEYWORD_UNDEFINE; }
-"ifeq"             { return KEYWORD_IFEQ; }
-"ifneq"            { return KEYWORD_IFNEQ; }
-"ifdef"            { return KEYWORD_IFDEF; }
-"ifndef"           { return KEYWORD_IFNDEF; }
-"else"             { return KEYWORD_ELSE; }
-"endif"            { return KEYWORD_ENDIF; }
-"override"         { return KEYWORD_OVERRIDE; }
-"export"           { return KEYWORD_EXPORT; }
-"unexport"         { return KEYWORD_UNEXPORT; }
-"private"          { return KEYWORD_PRIVATE; }
-"$"                { return DOLLAR; }
-{FUNCTIONS}        { return FUNCTION_NAME; }
-"("                { return OPEN_PAREN; }
-")"                { return CLOSE_PAREN; }
-"{"                { return OPEN_CURLY; }
-"}"                { return CLOSE_CURLY; }
-\\\"               { return ESCAPED_DOUBLEQUOTE; }
-"'"                { setState(SQSTRING); return QUOTE; }
-"\""               { setState(DQSTRING); return DOUBLEQUOTE; }
-
-{CHARS}+           { return CHARS; }
-\\                 { return CHARS; }
-
-[^] { return BAD_CHARACTER; }

@@ -6,9 +6,9 @@ pool:
 
 steps:
   - task: SomeTask
-  - task: QodanaScan@2025
+  - task: QodanaScan@VERSION_PLACEHOLDER
     inputs:
-      args: -l,jetbrains/qodana-<linter>:2025.3
+      args: -l,jetbrains/qodana-<linter>:LINTER_PLACEHOLDER
       # When prMode is set to true, Qodana analyzes only the files that have been changed
       prMode: false,
       postPrComment: true
