@@ -32,8 +32,10 @@ internal class NuxtFolderModelSynchronizer internal constructor(
   constructor(project: Project) : this(project, WorkspaceModel.getInstance(project), NuxtFolderManager.getInstance(project))
 
   fun sync() {
-    val actualEntities = buildActualEntities()
-    if (areEntitiesOutdated(actualEntities)) {
+    val actualEntities: List<NuxtFolderEntity.Builder> = buildActualEntities()
+    val workspaceModelEntities: List<NuxtFolderEntity> = getWorkspaceModelEntities()
+    if (areEntitiesOutdated(actualEntities, workspaceModelEntities)) {
+      LOG.info("Syncing outdated .nuxt/ workspace model (old count: ${workspaceModelEntities.size}, new count: ${actualEntities.size})")
       updateEntities(actualEntities)
     }
   }
@@ -44,8 +46,10 @@ internal class NuxtFolderModelSynchronizer internal constructor(
     }
   }
 
-  private fun areEntitiesOutdated(actualEntities: List<NuxtFolderEntity.Builder>): Boolean {
-    val workspaceModelEntities: List<NuxtFolderEntity> = getWorkspaceModelEntities()
+  private fun areEntitiesOutdated(
+    actualEntities: List<NuxtFolderEntity.Builder>,
+    workspaceModelEntities: List<NuxtFolderEntity>,
+  ): Boolean {
     if (workspaceModelEntities.size != actualEntities.size) return true
     val wrappedWorkspaceModelEntities = workspaceModelEntities.mapTo(HashSet()) { NuxtFolderEntityWrapper(it) }
     val wrappedActualEntities = actualEntities.mapTo(HashSet()) { NuxtFolderEntityWrapper(it) }
@@ -58,7 +62,7 @@ internal class NuxtFolderModelSynchronizer internal constructor(
 
   private fun updateEntities(actualEntities: List<NuxtFolderEntity.Builder>) {
     val entitiesStorage = createStorageFrom(actualEntities)
-    NuxtFolderManager.getInstance(project).updateWorkspaceModel(".nuxt outdated (new count: ${actualEntities.size})") { _, storage ->
+    NuxtFolderManager.getInstance(project).updateWorkspaceModel("sync outdated .nuxt/") { _, storage ->
       storage.replaceBySource({ it === NuxtFolderEntity.MyEntitySource }, entitiesStorage)
     }
   }

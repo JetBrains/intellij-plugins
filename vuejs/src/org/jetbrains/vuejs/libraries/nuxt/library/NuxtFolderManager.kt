@@ -85,6 +85,7 @@ internal class NuxtFolderManager(
 
   fun addIfMissing(nuxtFolder: VirtualFile) {
     if (!folders.contains(nuxtFolder) && isAccepted(nuxtFolder, true) && folders.add(nuxtFolder)) {
+      LOG.info("Added .nuxt/ folder (${nuxtFolder.path}), total folders: ${folders.size}")
       addExcludeEntity(nuxtFolder)
       addOrUpdateLibraryEntity(nuxtFolder)
     }
