@@ -6,7 +6,7 @@ import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesColle
 
 public final class PlatformioUsagesCollector extends CounterUsagesCollector {
 
-  public static final EventLogGroup EVENT_LOG_GROUP = new EventLogGroup("cidr.embedded.platformio", 2);
+  public static final EventLogGroup EVENT_LOG_GROUP = new EventLogGroup("cidr.embedded.platformio", 3);
 
   public static final EventId DEBUG_START_EVENT_ID = EVENT_LOG_GROUP.registerEvent("start-debug");
 

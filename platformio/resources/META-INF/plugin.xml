@@ -66,6 +66,7 @@
                              key="configurable.ClionEmbeddedPlatformioBundle.display.name"
                              groupId="language"/>
     <statistics.counterUsagesCollector implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUsagesCollector"/>
+    <statistics.projectUsagesCollector implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioStateCollector"/>
     <projectService serviceImplementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioSvdWindowState"/>
     <projectOpenProcessor id="PlatformioProjectOpenProcessor"
                           implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor"/>
