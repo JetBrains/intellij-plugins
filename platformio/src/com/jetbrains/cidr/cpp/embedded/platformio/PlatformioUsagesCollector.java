@@ -10,10 +10,7 @@ public final class PlatformioUsagesCollector extends CounterUsagesCollector {
 
   public static final EventId DEBUG_START_EVENT_ID = EVENT_LOG_GROUP.registerEvent("start-debug");
 
-  public static final EventId PROJECT_OPEN_VIA_HOME_ID = EVENT_LOG_GROUP.registerEvent("project-open-via-home");
   public static final EventId NEW_PROJECT = EVENT_LOG_GROUP.registerEvent("new-project");
-
-  public static final EventId FILE_OPEN_VIA_HOME_ID = EVENT_LOG_GROUP.registerEvent("file-open-via-home");
 
   @Override
   public EventLogGroup getGroup() {
