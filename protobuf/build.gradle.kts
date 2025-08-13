@@ -1,11 +1,11 @@
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 rootProject.extensions.add("gradle.version", "9.0")
 rootProject.extensions.add("kotlin.jvmTarget", "21")
 rootProject.extensions.add("java.sourceCompatibility", "21")
 rootProject.extensions.add("java.targetCompatibility", "21")
+rootProject.extensions.add("kotlin.freeCompilerArgs", listOf("-Xjvm-default=all"))
 rootProject.extensions.add("junit.version", "4.13.2")
 
 /**
@@ -76,8 +76,8 @@ java {
 kotlin {
   compilerOptions {
     jvmTarget.set(JvmTarget.fromTarget(ext("kotlin.jvmTarget")))
-    apiVersion = KotlinVersion.KOTLIN_2_2
-    languageVersion = KotlinVersion.KOTLIN_2_2
+    @Suppress("UNCHECKED_CAST")
+    freeCompilerArgs.addAll(rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>)
   }
 }
 
