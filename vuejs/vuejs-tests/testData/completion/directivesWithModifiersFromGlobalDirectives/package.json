@@ -1,0 +1,9 @@
+{
+  "name": "directives-with-modifiers-from-global-directives",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "my-vue-global-directives": "*",
+    "typescript": "*"
+  }
+}
