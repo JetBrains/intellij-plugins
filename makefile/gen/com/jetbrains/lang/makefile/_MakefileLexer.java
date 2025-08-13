@@ -4,7 +4,8 @@
 package com.jetbrains.lang.makefile;
 
 import com.intellij.lexer.FlexLexer;
-import com.intellij.openapi.util.text.StringUtil;import com.intellij.psi.tree.IElementType;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.makefile.psi.MakefileTypes;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
@@ -289,10 +290,10 @@ public class _MakefileLexer implements FlexLexer {
     "\1\37\4\7\1\40\1\7\1\41\10\7\1\42\4\7"+
     "\1\43\1\0\2\7\1\44\1\33\1\7\1\45\7\7"+
     "\1\46\1\0\1\7\1\47\1\7\1\50\2\7\1\0"+
-    "\1\7\1\51\1\52\1\53\6\0\1\54";
+    "\1\7\1\51\1\52\1\53\5\0\1\54";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[263];
+    int [] result = new int[262];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -349,10 +350,10 @@ public class _MakefileLexer implements FlexLexer {
     "\0\u0483\0\u2a8a\0\u2ac1\0\u0483\0\u2af8\0\u2b2f\0\u2b66\0\u2b9d"+
     "\0\u2bd4\0\u2c0b\0\u2c42\0\u0483\0\u2c79\0\u2cb0\0\u0483\0\u2ce7"+
     "\0\u0483\0\u2d1e\0\u2d55\0\u2d8c\0\u2dc3\0\u0483\0\u0483\0\u0483"+
-    "\0\u2dfa\0\u2e31\0\u2e68\0\u2e9f\0\u2ed6\0\u2f0d\0\u2f0d";
+    "\0\u2dfa\0\u2e31\0\u2e68\0\u2e9f\0\u2ed6\0\u2f0d";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[263];
+    int [] result = new int[262];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -723,8 +724,8 @@ public class _MakefileLexer implements FlexLexer {
     "\34\0\1\u0101\42\0\1\33\3\0\1\33\4\0\2\33"+
     "\3\0\10\33\1\121\1\0\23\33\1\236\3\33\30\0"+
     "\1\u0102\67\0\1\u0103\67\0\1\u0104\71\0\1\u0105\35\0"+
-    "\1\u0105\2\0\1\u0105\15\0\1\u0106\44\0\2\u0107\1\0"+
-    "\64\u0107";
+    "\1\u0105\2\0\1\u0105\15\0\1\u0106\44\0\2\u0106\1\0"+
+    "\64\u0106";
 
   private static int [] zzUnpacktrans() {
     int [] result = new int[12100];
@@ -771,10 +772,10 @@ public class _MakefileLexer implements FlexLexer {
     "\4\1\4\0\1\1\1\11\2\1\3\0\1\1\1\0"+
     "\1\1\1\11\44\1\1\0\2\1\1\0\2\1\1\0"+
     "\1\11\52\1\1\0\36\1\1\0\32\1\1\0\16\1"+
-    "\1\0\6\1\1\0\4\1\6\0\1\1";
+    "\1\0\6\1\1\0\4\1\5\0\1\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[263];
+    int [] result = new int[262];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -846,7 +847,7 @@ public class _MakefileLexer implements FlexLexer {
     assert index != -1;
 
     final var value = StringUtil.trimLeading(variable.substring(index + 1, variable.length()), ' ');
-    if (value.startsWith("\\t")) {
+    if (value.startsWith("\\t") || value.isEmpty()) {
       return '\t';
     }
 
