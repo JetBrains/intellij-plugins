@@ -56,6 +56,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-ui",
     "@lib//:commons-lang3",
+    "@community//java/java-runtime:rt",
     "@ultimate_lib//:cloud_formation-intellij-aws-cloudformation-meta",
   ],
   runtime_deps = [":cloudFormation_resources"]
