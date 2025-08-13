@@ -200,6 +200,13 @@ const props = {seeMe: {}}
     )
   }
 
+  fun testDirectivesWithModifiersFromGlobalDirectives() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
+    )
+  }
+
   fun testEmptyAttributeValue() = doTest()
 
   fun testNoCreateVarQuickFix() {
