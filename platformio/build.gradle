@@ -28,7 +28,6 @@ intellij {
   plugins = ["nativeDebug-plugin",
              "com.intellij.clion",
              "com.intellij.clion.embedded",
-             "clion-ide",
              "terminal"]
 }
 

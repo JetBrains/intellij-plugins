@@ -23,8 +23,7 @@
 
   <dependencies>
     <plugin id="com.intellij.nativeDebug"/>
-    <plugin id="com.intellij.modules.clion.ide"/>
-    <plugin id="com.intellij.modules.externalSystem"/>
+    <plugin id="com.jetbrains.plugins.ini4idea"/>
     <module name="intellij.cidr.core"/>
     <module name="intellij.cidr.execution"/>
     <module name="intellij.cidr.externalSystem"/>
@@ -35,15 +34,16 @@
     <module name="intellij.cidr.runner"/>
     <module name="intellij.cidr.util"/>
     <module name="intellij.cidr.util.execution"/>
+    <module name="intellij.cidr.debugger.backend"/>
+    <module name="intellij.cidr.debugger.core"/>
+    <module name="intellij.cidr.profiling" />
     <plugin id="com.intellij.clion.embedded"/>
     <module name="intellij.clion.toolchains"/>
     <module name="intellij.clion.execution"/>
     <module name="intellij.clion.externalSystem"/>
-    <plugin id="com.jetbrains.plugins.ini4idea"/>
-    <module name="intellij.cidr.debugger.backend"/>
-    <module name="intellij.cidr.debugger.core"/>
+    <module name="intellij.clion.projectStatus"/>
     <module name="intellij.profiler.clion" />
-    <module name="intellij.cidr.profiling" />
+    <module name="intellij.clion.ide.core"/>
   </dependencies>
 
   <content>

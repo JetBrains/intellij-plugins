@@ -9,55 +9,55 @@
       <sourceFolder url="file://$MODULE_DIR$/test-resources" type="java-test-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="eclipse.lsp4j.jsonrpc" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" name="jediterm-core" level="project" />
+    <orderEntry type="library" name="jediterm-ui" level="project" />
+    <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core.nolang" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.cidr.core" />
+    <orderEntry type="module" module-name="intellij.cidr.debugger.backend" />
+    <orderEntry type="module" module-name="intellij.cidr.debugger.core" />
+    <orderEntry type="module" module-name="intellij.cidr.execution" />
+    <orderEntry type="module" module-name="intellij.cidr.externalSystem" />
+    <orderEntry type="module" module-name="intellij.cidr.lang.base" />
+    <orderEntry type="module" module-name="intellij.cidr.profiling" />
+    <orderEntry type="module" module-name="intellij.cidr.projectModel" />
+    <orderEntry type="module" module-name="intellij.cidr.psi.base" />
+    <orderEntry type="module" module-name="intellij.cidr.runner" />
+    <orderEntry type="module" module-name="intellij.cidr.util" />
+    <orderEntry type="module" module-name="intellij.cidr.util.execution" />
+    <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
+    <orderEntry type="module" module-name="intellij.clion.embedded" />
+    <orderEntry type="module" module-name="intellij.clion.execution" />
+    <orderEntry type="module" module-name="intellij.clion.externalSystem" />
+    <orderEntry type="module" module-name="intellij.clion.projectStatus" />
+    <orderEntry type="module" module-name="intellij.clion.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.clion.testFramework.nolang" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.clion.toolchains" />
     <orderEntry type="module" module-name="intellij.platform.analysis" />
     <orderEntry type="module" module-name="intellij.platform.concurrency" />
     <orderEntry type="module" module-name="intellij.platform.core" />
-    <orderEntry type="module" module-name="intellij.platform.editor.ui" />
-    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
-    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" />
-    <orderEntry type="module" module-name="intellij.platform.ide.observable" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="intellij.clion.embedded" />
-    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="module" module-name="intellij.platform.debugger.impl" />
-    <orderEntry type="module" module-name="intellij.clion.toolchains" />
-    <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core.nolang" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.cidr.debugger.backend" />
-    <orderEntry type="module" module-name="intellij.cidr.debugger.core" />
-    <orderEntry type="module" module-name="intellij.cidr.common.testFramework.core" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.clion.execution" />
-    <orderEntry type="module" module-name="intellij.cidr.execution" />
-    <orderEntry type="module" module-name="intellij.platform.lang.core" />
-    <orderEntry type="module" module-name="intellij.platform.projectModel" />
-    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
+    <orderEntry type="module" module-name="intellij.platform.editor.ui" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" />
-    <orderEntry type="module" module-name="intellij.clion.externalSystem" />
-    <orderEntry type="module" module-name="intellij.cidr.externalSystem" />
-    <orderEntry type="module" module-name="intellij.platform.core.ui" />
-    <orderEntry type="module" module-name="intellij.platform.statistics" />
-    <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
-    <orderEntry type="module" module-name="intellij.platform.util.jdom" />
-    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
-    <orderEntry type="module" module-name="intellij.cidr.util" />
-    <orderEntry type="module" module-name="intellij.cidr.util.execution" />
-    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
-    <orderEntry type="library" name="eclipse.lsp4j.jsonrpc" level="project" />
-    <orderEntry type="library" name="jediterm-core" level="project" />
-    <orderEntry type="library" name="jediterm-ui" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide.observable" />
+    <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
+    <orderEntry type="module" module-name="intellij.platform.lang.core" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.ui.jcef" />
-    <orderEntry type="module" module-name="intellij.clion.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.cidr.projectModel" />
-    <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
-    <orderEntry type="module" module-name="intellij.cidr.runner" />
-    <orderEntry type="module" module-name="intellij.cidr.psi.base" />
-    <orderEntry type="module" module-name="intellij.cidr.core" />
-    <orderEntry type="module" module-name="intellij.clion.testFramework.nolang" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.cidr.lang.base" />
-    <orderEntry type="module" module-name="intellij.clion.projectStatus" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.profiler.clion" />
-    <orderEntry type="module" module-name="intellij.cidr.profiling" />
   </component>
 </module>
