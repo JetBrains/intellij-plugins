@@ -14,7 +14,7 @@ class PlatformioStateCollector : ProjectUsagesCollector() {
     const val PLATFORMIO_ENV_DIR_SUFFIX = "DIR"
   }
 
-  private val GROUP = PlatformioUsagesCollector.EVENT_LOG_GROUP
+  private val GROUP = EventLogGroup("cidr.embedded.platformio.state", 1);
 
   private fun isPlatformioEnv(env: String) = env.startsWith(PLATFORMIO_ENV_PREFIX)
   private fun isDirEnv(env: String) = env.endsWith(PLATFORMIO_ENV_DIR_SUFFIX)
