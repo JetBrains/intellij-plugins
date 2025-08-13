@@ -2,18 +2,21 @@
 package org.jetbrains.vuejs.model.typed
 
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
-import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.VueDirective
 
 class VueTypedDirective(
-  override val source: PsiElement,
+  override val source: TypeScriptPropertySignature,
   override val defaultName: String,
 ) : VueTypedContainer(source),
     VueDirective {
+
+  override val jsType: JSType?
+    get() = source.jsType
 
   override val thisType: JSType
     get() = JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS)
