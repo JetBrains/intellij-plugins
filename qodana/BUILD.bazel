@@ -188,7 +188,7 @@ jvm_library(
     "@community//platform/vcs-log/impl",
     "@community//platform/vcs-log/impl:impl_test_lib",
     "@community//platform/vcs-log/api:vcs-log",
-    "@lib//:mockito",
+    "@community//libraries/mockito",
     "@community//platform/util",
     "@ultimate_lib//:jetbrains-qodana-publisher",
     "@lib//:netty-buffer",
