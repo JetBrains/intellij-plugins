@@ -10,7 +10,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -71,12 +70,6 @@ public class DartWebdevParameters implements Cloneable {
     if (dartSdk == null) {
       throw new RuntimeConfigurationError(DartBundle.message("dart.sdk.is.not.configured"),
                                           () -> DartConfigurable.openDartSettings(project));
-    }
-    final String dartSdkVersion = dartSdk.getVersion();
-    if (!dartSdkVersion.isEmpty() &&
-        !DartAnalysisServerService.isDartSdkVersionSufficientForWebdev(dartSdk)) {
-      throw new RuntimeConfigurationError(
-        DartBundle.message("old.dart.sdk.for.webdev", DartAnalysisServerService.MIN_WEBDEV_SDK_VERSION, dartSdkVersion));
     }
 
     // check html file
