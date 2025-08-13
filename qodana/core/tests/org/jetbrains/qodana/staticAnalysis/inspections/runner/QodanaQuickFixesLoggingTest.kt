@@ -2,7 +2,6 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.TestDataPath
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.sarif.ALLOW_NON_BATCH_FIXES
@@ -12,8 +11,8 @@ import org.junit.Test
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
-@TestDataPath("\$CONTENT_ROOT/testData/QodanaQuickFixesLoggingTest")
-class QodanaQuickFixesLoggingTest: QodanaRunnerTestCase() {
+@TestDataPath($$"$CONTENT_ROOT/testData/QodanaQuickFixesLoggingTest")
+class QodanaQuickFixesLoggingTest : QodanaRunnerTestCase() {
 
   @Test
   fun cleanupGeneral() {

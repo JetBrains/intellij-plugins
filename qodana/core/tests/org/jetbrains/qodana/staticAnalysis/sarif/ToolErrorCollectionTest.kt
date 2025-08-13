@@ -20,7 +20,7 @@ import kotlin.io.path.bufferedReader
 import kotlin.io.path.div
 import kotlin.io.path.pathString
 
-@TestDataPath("\$CONTENT_ROOT/testData/QodanaRunnerTest")
+@TestDataPath($$"$CONTENT_ROOT/testData/QodanaRunnerTest")
 class ToolErrorCollectionTest : QodanaRunnerTestCase() {
   @Test
   fun localInspection() {

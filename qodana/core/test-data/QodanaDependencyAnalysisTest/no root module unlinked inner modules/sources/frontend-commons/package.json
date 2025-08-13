@@ -1,8 +1,0 @@
-{
-  "name": "frontend-commons",
-  "version": "1.0.0",
-  "license": "ISC",
-  "devDependencies": {
-    "is-windows": "^1.0.2"
-  }
-}

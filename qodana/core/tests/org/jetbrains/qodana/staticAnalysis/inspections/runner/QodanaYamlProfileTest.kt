@@ -6,7 +6,6 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.SourceFolder
 import com.intellij.openapi.roots.TestSourcesFilter
 import com.intellij.testFramework.TestDataPath
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
@@ -20,7 +19,7 @@ import kotlin.io.path.absolutePathString
 /**
  * Tests of yaml profile functionality.
  */
-@TestDataPath("\$CONTENT_ROOT/testData/QodanaYamlProfileTest")
+@TestDataPath($$"$CONTENT_ROOT/testData/QodanaYamlProfileTest")
 class QodanaYamlProfileTest : QodanaRunnerTestCase() {
   @Test
   fun `testYaml profile`(): Unit = runBlocking {

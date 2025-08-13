@@ -1,16 +1,20 @@
 package org.jetbrains.qodana.jvm.coverage
 
+import com.intellij.openapi.application.PluginPathManager
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_DATA
-import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
+import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.path.writeText
 
-@TestDataPath("\$CONTENT_ROOT/testData/QodanaRunnerTest")
-class QodanaScopedScriptRunnerTest : QodanaRunnerTestCase(){
+@TestDataPath($$"$CONTENT_ROOT/test-data/QodanaScopedScriptRunnerTest")
+class QodanaScopedScriptRunnerTest : QodanaRunnerTestCase() {
+  override val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "jvm", "coverage", "test-data")
 
   @Test
   fun testWithoutChangesData() {
@@ -37,7 +41,8 @@ class QodanaScopedScriptRunnerTest : QodanaRunnerTestCase(){
     try {
       System.setProperty("qodana.skip.coverage.issues.reporting", "true")
       runAnalysis()
-    } finally {
+    }
+    finally {
       System.clearProperty("qodana.skip.coverage.issues.reporting")
     }
     assertSarifResults()
@@ -75,7 +80,8 @@ class QodanaScopedScriptRunnerTest : QodanaRunnerTestCase(){
     try {
       System.setProperty("qodana.skip.coverage.issues.reporting", "true")
       runAnalysis()
-    } finally {
+    }
+    finally {
       System.clearProperty("qodana.skip.coverage.issues.reporting")
     }
     assertSarifResults()
@@ -113,7 +119,8 @@ class QodanaScopedScriptRunnerTest : QodanaRunnerTestCase(){
     try {
       System.setProperty("qodana.skip.coverage.computation", "true")
       runAnalysis()
-    } finally {
+    }
+    finally {
       System.clearProperty("qodana.skip.coverage.computation")
     }
     assertSarifResults()

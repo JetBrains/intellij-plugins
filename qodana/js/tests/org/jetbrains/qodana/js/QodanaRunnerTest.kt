@@ -1,5 +1,6 @@
 package org.jetbrains.qodana.js
 
+import com.intellij.openapi.application.PluginPathManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.IndexingTestUtil
@@ -11,9 +12,12 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
+import java.nio.file.Path
 
-@TestDataPath("\$CONTENT_ROOT/testData/QodanaRunnerTest")
+@TestDataPath($$"$CONTENT_ROOT/test-data/QodanaRunnerTest")
 class QodanaRunnerTest : QodanaRunnerTestCase() {
+  override val testData: Path = Path.of(PluginPathManager.getPluginHomePath("qodana"), "js", "test-data")
+
   @Test
   fun testDuplicatedCodeInspection() = runBlocking {
     HashFragmentIndex.requestRebuild()

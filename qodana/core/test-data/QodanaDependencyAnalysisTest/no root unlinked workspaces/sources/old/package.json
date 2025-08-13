@@ -1,8 +1,0 @@
-{
-  "private": "true",
-  "name": "old",
-  "version": "1.0.0",
-  "workspaces": [
-    "backend/*"
-  ]
-}

@@ -1,13 +1,17 @@
 package org.jetbrains.qodana.jvm.kotlin
 
+import com.intellij.openapi.application.PluginPathManager
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
+import java.nio.file.Path
+import java.nio.file.Paths
 
-@TestDataPath("/QodanaSanityInspectionTagsTest")
+@TestDataPath($$"$CONTENT_ROOT/test-data/QodanaSanityInspectionTagsTest")
 class QodanaSanityInspectionTagsTest : QodanaRunnerTestCase() {
+  override val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "jvm", "kotlin", "test-data")
 
   @Test
   fun `testUnresolved imports`(): Unit = runTest {

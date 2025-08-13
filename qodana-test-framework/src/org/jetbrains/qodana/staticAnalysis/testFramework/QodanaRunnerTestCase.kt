@@ -101,7 +101,8 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
     manager.loadInspectionProfile(project)
   }
 
-  protected val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "core", "test-data")
+  /** Returns the path to the module's test data directory, test cases specific test data names will be resolved against it. */
+  protected open val testData: Path = Paths.get(PluginPathManager.getPluginHomePath("qodana"), "core", "test-data")
 
   /** Returns the path to the test data, relative to the `testData` directory. */
   protected open val testDataBasePath: Path get() = Path.of(javaClass.simpleName, getTestName(true))
@@ -194,7 +195,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
 
   protected fun registerTool(tool: InspectionProfileEntry) {
     val inspection = LocalInspectionEP().apply {
-      pluginDescriptor = DefaultPluginDescriptor(PluginId.Companion.getId("qodanaTest"), javaClass.getClassLoader())
+      pluginDescriptor = DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.getClassLoader())
     }
     register(tool, inspection, LocalInspectionEP.LOCAL_INSPECTION.point)
   }
@@ -202,7 +203,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
   protected fun registerGlobalTool(tool: GlobalInspectionTool) {
     val inspection = InspectionEP(
       tool.javaClass.canonicalName,
-      DefaultPluginDescriptor(PluginId.Companion.getId("qodanaTest"), javaClass.getClassLoader())
+      DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.getClassLoader())
     )
 
     register(tool, inspection, InspectionEP.GLOBAL_INSPECTION.point)
@@ -211,7 +212,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
   private fun <T : InspectionEP> register(
     tool: InspectionProfileEntry,
     emptyInspection: T,
-    extensionPoint: ExtensionPoint<T>
+    extensionPoint: ExtensionPoint<T>,
   ) {
     emptyInspection.apply {
       shortName = tool.shortName

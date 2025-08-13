@@ -1,8 +1,0 @@
-{
-  "name": "core",
-  "version": "1.0.0",
-  "license": "MIT",
-  "dependencies": {
-    "should-equal": "1.0.1"
-  }
-}

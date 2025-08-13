@@ -69,7 +69,7 @@ import kotlin.io.path.writeText
  *
  * To regenerate the baseline tests, see `regenerate-baseline-tests.sh`.
  */
-@TestDataPath("\$CONTENT_ROOT/testData/QodanaRunnerTest")
+@TestDataPath($$"$CONTENT_ROOT/core/test-data/QodanaRunnerTest")
 class QodanaRunnerTest : QodanaRunnerTestCase() {
 
   override fun setUp() {

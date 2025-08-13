@@ -20,7 +20,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
-@TestDataPath("\$CONTENT_ROOT/testData/QodanaExtendedScopeRunnerTest")
+@TestDataPath($$"$CONTENT_ROOT/testData/QodanaExtendedScopeRunnerTest")
 class QodanaExtendedScopeRunnerTest : QodanaRunnerTestCase() {
   override fun setUp() {
     super.setUp()

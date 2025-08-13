@@ -1,9 +1,0 @@
-version: 1.0
-raiseLicenseProblems: true
-licenseRules:
-  - keys:
-      - "PROPRIETARY-LICENSE"
-    allowed:
-      - "MIT"
-    prohibited:
-      - "Apache-2.0"

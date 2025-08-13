@@ -1,7 +1,0 @@
-{
-  "name": "frontend",
-  "version": "1.0.0",
-  "dependencies": {
-    "safe-json-value": "^3.0.1"
-  }
-}

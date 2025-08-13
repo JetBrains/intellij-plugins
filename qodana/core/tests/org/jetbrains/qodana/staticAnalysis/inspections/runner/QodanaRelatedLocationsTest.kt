@@ -16,7 +16,7 @@ import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspection
 import org.junit.Test
 
 
-@TestDataPath("\$CONTENT_ROOT/testData/QodanaRunnerTest")
+@TestDataPath($$"$CONTENT_ROOT/testData/QodanaRunnerTest")
 class QodanaRelatedLocationsTest : QodanaRunnerTestCase(){
   @Test
   fun testRelatedLocations() {

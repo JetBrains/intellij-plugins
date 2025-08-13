@@ -1,8 +1,0 @@
-{
-  "private": "true",
-  "name": "transitive",
-  "version": "1.0.0",
-  "dependencies": {
-    "should-equal": "^2.0.0"
-  }
-}

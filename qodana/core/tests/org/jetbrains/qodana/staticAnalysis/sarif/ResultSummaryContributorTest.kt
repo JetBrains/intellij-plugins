@@ -9,7 +9,7 @@ import org.junit.Test
 import java.nio.file.Files
 import kotlin.io.path.deleteIfExists
 
-@TestDataPath("\$CONTENT_ROOT/testData/ResultSummaryContributorTest")
+@TestDataPath($$"$CONTENT_ROOT/testData/ResultSummaryContributorTest")
 class ResultSummaryContributorTest: QodanaRunnerTestCase() {
 
   private fun getSerializedValue(): Map<String, Int>? {

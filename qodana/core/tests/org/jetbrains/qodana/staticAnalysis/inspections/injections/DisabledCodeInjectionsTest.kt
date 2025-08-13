@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
 
-@TestDataPath("\$CONTENT_ROOT/testData/DisabledCodeInjectionsTest")
+@TestDataPath($$"$CONTENT_ROOT/core/test-data/DisabledCodeInjectionsTest")
 class DisabledCodeInjectionsTest: QodanaRunnerTestCase() {
 
   @Test

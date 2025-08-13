@@ -1,9 +1,0 @@
-{
-  "name": "local-modules",
-  "version": "1.0.0",
-  "license": "ISC",
-  "dependencies": {
-    "isobject": "^4.0.0",
-    "local": "file:./local"
-  }
-}

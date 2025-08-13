@@ -1,8 +1,0 @@
-{
-  "name": "plugin",
-  "version": "1.0.0",
-  "license": "ISC",
-  "devDependencies": {
-    "should-equal": "1.0.1"
-  }
-}
