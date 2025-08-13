@@ -159,6 +159,20 @@ class VueCompletionTest : VueTestCase("completion") {
     )
   }
 
+  fun testDirectivesWithModifiersFromGlobalDirectives() {
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<main v-my-click-outside.<caret>once>",
+        "<main v-my-intersect.<caret>once>",
+        "<main v-my-mutate.<caret>once>",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+  }
+
   fun testPrettyLookup() =
     doLookupTest(renderTailText = true, lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties)
 
