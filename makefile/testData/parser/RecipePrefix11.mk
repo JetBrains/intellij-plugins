@@ -1,0 +1,9 @@
+.RECIPEPREFIX = @
+
+recipe:
+@@echo ITS NOT WEDNESDAY, MAYBE
+
+.RECIPEPREFIX =
+
+recipe2:
+	@echo ITS NOT WEDNESDAY, MAYBE
