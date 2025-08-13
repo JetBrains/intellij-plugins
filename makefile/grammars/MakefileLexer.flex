@@ -17,7 +17,7 @@ import static com.jetbrains.lang.makefile.psi.MakefileTypes.*;
     assert index != -1;
 
     final var value = StringUtil.trimLeading(variable.substring(index + 1, variable.length()), ' ');
-    if (value.startsWith("\\t")) {
+    if (value.startsWith("\\t") || value.isEmpty()) {
       return '\t';
     }
 
@@ -64,7 +64,7 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 CHARS = [0-9\p{L}.!\-?%@/_\[\]+~*\^&+<>] | (\\[\\:\(\)#])
 
-RECIPEPREFIX=[\t ]*"\.RECIPEPREFIX"[\t ]*"="[^\n]+
+RECIPEPREFIX=[\t ]*"\.RECIPEPREFIX"[\t ]*"="[^\n]*
 
 
 %state SQSTRING DQSTRING DEFINE LINE

@@ -105,6 +105,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testRecipePrefix8() = doTest(true)
   fun testRecipePrefix9() = doTest(true)
   fun testRecipePrefix10() = doTest(true)
+  fun testRecipePrefix11() = doTest(true)
 
   fun testRecipeIndent() = doTest(true)
 
