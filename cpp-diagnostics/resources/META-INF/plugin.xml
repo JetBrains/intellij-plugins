@@ -8,15 +8,13 @@
     ]]></description>
 
   <dependencies>
-    <plugin id="com.intellij.modules.clion"/>
-    <plugin id="com.intellij.modules.clion.ide"/>
-    <plugin id="com.intellij.clion.cmake"/>
     <module name="intellij.cidr.workspaceModel"/>
     <module name="intellij.cidr.projectModel"/>
     <module name="intellij.cidr.psi.base"/>
     <module name="intellij.cidr.util"/>
     <module name="intellij.cidr.util.execution"/>
     <module name="intellij.clion.toolchains"/>
+    <plugin id="com.intellij.clion.cmake"/>
   </dependencies>
 
   <module value="com.intellij.modules.clion.diagnostics"/>
