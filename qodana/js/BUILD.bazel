@@ -28,6 +28,7 @@ jvm_library(
     "//plugins/NodeJS:nodeJS",
     "@community//plugins/coverage-common:coverage",
     "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":js_resources"]
 )
@@ -65,6 +66,7 @@ jvm_library(
     "//duplicatedetector:duplicatesDetector",
     "//duplicatedetector:duplicatesDetector_test_lib",
     "//plugins/NodeJS/tests:tests_test_lib",
+    "//plugins/JavaScriptLanguage/javascript-common",
   ],
   runtime_deps = [":js_resources"]
 )

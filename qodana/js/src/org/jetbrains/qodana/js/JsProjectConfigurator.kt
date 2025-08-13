@@ -3,6 +3,7 @@ package org.jetbrains.qodana.js
 import com.intellij.execution.configuration.EnvironmentVariablesData
 import com.intellij.execution.process.CapturingProcessRunner
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
+import com.intellij.javascript.nodejs.YarnLockFileType
 import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
@@ -34,7 +35,7 @@ class JsProjectConfigurator : CommandLineInspectionProjectConfigurator {
     if (Registry.`is`(JS_CONFIGURATOR_STATUS)) {
       val lockJsonFile = detectPackageManagerRefInDirectory(project.guessProjectDir())
       if (lockJsonFile != null) {
-        if (lockJsonFile.name == NpmUtil.YARN_LOCK_FILENAME)
+        if (lockJsonFile.name == YarnLockFileType.YARN_LOCK_FILENAME)
           installDependency(project, lockJsonFile, NpmCommand.INSTALL)
         else
           installDependency(project, lockJsonFile, NpmCommand.CI)
@@ -73,15 +74,15 @@ class JsProjectConfigurator : CommandLineInspectionProjectConfigurator {
   }
 
   private fun prepareCommandLineYarnLock(packageJson: VirtualFile, targetRun: NodeTargetRun) {
-    if (packageJson.name == NpmUtil.YARN_LOCK_FILENAME) {
+    if (packageJson.name == YarnLockFileType.YARN_LOCK_FILENAME) {
       targetRun.commandLineBuilder.addParameters("--immutable", "--immutable-cache", "--check-cache")
     }
   }
 
   private fun detectPackageManagerRefInDirectory(dir: VirtualFile?): VirtualFile? {
     if (dir == null) return null
-    if (dir.exists(NpmUtil.YARN_LOCK_FILENAME))
-      return dir.findChild(NpmUtil.YARN_LOCK_FILENAME)
+    if (dir.exists(YarnLockFileType.YARN_LOCK_FILENAME))
+      return dir.findChild(YarnLockFileType.YARN_LOCK_FILENAME)
 
     if (dir.exists(NpmUtil.PACKAGE_LOCK_JSON_FILENAME))
       return dir.findChild(NpmUtil.PACKAGE_LOCK_JSON_FILENAME)
