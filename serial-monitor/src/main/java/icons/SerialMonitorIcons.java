@@ -18,4 +18,5 @@ public final class SerialMonitorIcons {
   /** 16x16 */ public static final @NotNull Icon DisconnectedSerial = load("icons/disconnectedSerial.svg", 797574013, 2);
   /** 16x16 */ public static final @NotNull Icon HexSerial = load("icons/hexSerial.svg", 1706249060, 2);
   /** 14x14 */ public static final @NotNull Icon Invalid = load("icons/invalid.svg", 1332496178, 2);
+  /** 16x16 */ public static final @NotNull Icon Toolwindow = load("icons/toolwindow.svg", -240482935, 2);
 }
