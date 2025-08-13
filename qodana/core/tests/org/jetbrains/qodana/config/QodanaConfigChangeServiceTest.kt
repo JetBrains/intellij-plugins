@@ -137,6 +137,11 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
       #               Qodana analysis is configured by qodana.yaml file               #
       #             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
       #-------------------------------------------------------------------------------#
+
+      #################################################################################
+      #              WARNING: Do not store sensitive information in this file,        #
+      #               as its contents will be included in the Qodana report.          #
+      #################################################################################
       version: "1.0"
       
       #Specify inspection profile for code analysis
@@ -188,6 +193,11 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
         #               Qodana analysis is configured by qodana.yaml file               #
         #             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
         #-------------------------------------------------------------------------------#
+  
+        #################################################################################
+        #              WARNING: Do not store sensitive information in this file,        #
+        #               as its contents will be included in the Qodana report.          #
+        #################################################################################
         version: "1.0"
         
         #Specify inspection profile for code analysis
@@ -240,6 +250,11 @@ class QodanaConfigChangeServiceTest : QodanaPluginHeavyTestBase() {
         #               Qodana analysis is configured by qodana.yaml file               #
         #             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
         #-------------------------------------------------------------------------------#
+  
+        #################################################################################
+        #              WARNING: Do not store sensitive information in this file,        #
+        #               as its contents will be included in the Qodana report.          #
+        #################################################################################
         version: "1.0"
         
         #Specify inspection profile for code analysis
