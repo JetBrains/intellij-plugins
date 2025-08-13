@@ -50,11 +50,19 @@ class VueGlobalDirectiveSymbol(
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    if (qualifiedKind == VUE_DIRECTIVE_ARGUMENT
-        && !params.expandPatterns) {
-      listOf(VueAnySymbol(this.origin, qualifiedKind, "Vue directive argument"))
+    when (qualifiedKind) {
+      VUE_DIRECTIVE_ARGUMENT -> {
+        listOf(VueAnySymbol(this.origin, qualifiedKind, "Vue directive argument"))
+      }
+
+      VUE_DIRECTIVE_MODIFIERS -> {
+        item.modifiers.map { modifier ->
+          VueGlobalDirectiveModifierSymbol(modifier, this.vueProximity)
+        }
+      }
+
+      else -> emptyList()
     }
-    else emptyList()
 
   override fun createPointer(): Pointer<VueGlobalDirectiveSymbol> {
     val directive = item.createPointer()
