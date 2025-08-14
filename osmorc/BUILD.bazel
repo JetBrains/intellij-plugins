@@ -80,6 +80,7 @@ jvm_library(
     "@community//java/execution/openapi:java-execution",
     "@community//java/execution/impl",
     "@community//java/debugger/impl",
+    "@community//java/debugger/impl:impl_test_lib",
     "@community//java/manifest",
     "@community//java/manifest:manifest_test_lib",
     "@community//platform/smRunner",

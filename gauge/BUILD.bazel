@@ -88,6 +88,7 @@ jvm_library(
     "@ultimate_lib//:gauge-com-thoughtworks-gauge-gauge-java",
     "@community//platform/xdebugger-api:debugger",
     "@community//java/debugger/impl",
+    "@community//java/debugger/impl:impl_test_lib",
     "@community//java/execution/impl",
     "@lib//:kotlin-stdlib",
     "@community//platform/smRunner",
