@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.inspectionKts.kotlin.script
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -19,7 +20,7 @@ internal class InspectionKtsDependenciesScope(
 
     return GlobalSearchScope.union(
       listOfNotNull(
-        ScriptDependencyAware.getInstance(project).getFirstScriptsSdk()?.toKaLibraryModule(project)?.contentScope,
+        ProjectRootManager.getInstance(project).projectSdk?.toKaLibraryModule(project)?.contentScope,
         KotlinSourceFilterScope.libraryClasses(jarsDependenciesScope, project),
         GlobalSearchScope.fileScope(project, file),
       ).toTypedArray()
