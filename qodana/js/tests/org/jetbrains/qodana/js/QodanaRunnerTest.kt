@@ -9,7 +9,7 @@ import com.intellij.util.indexing.FileBasedIndex
 import com.jetbrains.clones.index.HashFragmentIndex
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunnerTestCase
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
 
 @TestDataPath("\$CONTENT_ROOT/testData/QodanaRunnerTest")
@@ -27,6 +27,17 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         profile = QodanaProfileConfig.named("qodana.single:DuplicatedCode"),
         disableSanityInspections = true,
         runPromoInspections = false
+      )
+    }
+    runAnalysis()
+    assertSarifResults()
+  }
+
+  @Test
+  fun `testEmbedded problem`(): Unit = runBlocking {
+    updateQodanaConfig {
+      it.copy(
+        profile = QodanaProfileConfig.named("qodana.single:CssInvalidHtmlTagReference"),
       )
     }
     runAnalysis()

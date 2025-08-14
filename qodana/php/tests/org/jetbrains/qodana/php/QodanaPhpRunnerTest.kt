@@ -3,7 +3,7 @@ package org.jetbrains.qodana.php
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaPhpConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunnerTestCase
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
 
 @TestDataPath("\$CONTENT_ROOT/testData/QodanaPhpRunnerTest")

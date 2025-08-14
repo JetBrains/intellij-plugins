@@ -4,7 +4,7 @@ import com.intellij.testFramework.TestDataPath
 import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.model.SarifReport
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunnerTestCase
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
 import java.nio.file.Files
 import kotlin.io.path.deleteIfExists

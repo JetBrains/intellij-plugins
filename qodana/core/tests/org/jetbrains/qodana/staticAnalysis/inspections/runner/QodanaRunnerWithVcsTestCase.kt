@@ -14,6 +14,7 @@ import com.intellij.util.concurrency.AppExecutorUtil
 import git4idea.GitVcs
 import git4idea.repo.GitRepositoryFiles
 import git4idea.test.createRepository
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import java.io.File
 import java.nio.file.Path
 

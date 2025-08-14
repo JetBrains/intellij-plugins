@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.inspections.config.InspectScope
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.profile.providers.QodanaEmbeddedProfile
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
 import org.junit.Assert
 import org.junit.Test
@@ -128,7 +129,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
   fun `testYaml profile ignore test`(): Unit = runBlocking {
     val testFolder = markTestsFolderAsTestSource()
     val testSource = testFolder.file?.findChild("B.java") ?: throw AssertionError()
-    TestCase.assertTrue(TestSourcesFilter.isTestSources(testSource, project))
+    assertTrue(TestSourcesFilter.isTestSources(testSource, project))
 
     runYamlTest()
   }
@@ -137,7 +138,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
   fun `testYaml profile ignore test 2`(): Unit = runBlocking {
     val testFolder = markTestsFolderAsTestSource()
     val testSource = testFolder.file?.findChild("B.java") ?: throw AssertionError()
-    TestCase.assertTrue(TestSourcesFilter.isTestSources(testSource, project))
+    assertTrue(TestSourcesFilter.isTestSources(testSource, project))
 
     runYamlTest()
   }
@@ -146,7 +147,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
   fun `testYaml profile with inherited ignoring test`(): Unit = runBlocking {
     val testFolder = markTestsFolderAsTestSource()
     val testSource = testFolder.file?.findChild("B.java") ?: throw AssertionError()
-    TestCase.assertTrue(TestSourcesFilter.isTestSources(testSource, project))
+    assertTrue(TestSourcesFilter.isTestSources(testSource, project))
 
     runYamlTest()
   }
@@ -155,7 +156,7 @@ class QodanaYamlProfileTest : QodanaRunnerTestCase() {
   fun `testYaml profile with inherited ignoring test global inspection`(): Unit = runBlocking {
     val testFolder = markTestsFolderAsTestSource()
     val testSource = testFolder.file?.findChild("B.java") ?: throw AssertionError()
-    TestCase.assertTrue(TestSourcesFilter.isTestSources(testSource, project))
+    assertTrue(TestSourcesFilter.isTestSources(testSource, project))
 
     runYamlTest()
   }

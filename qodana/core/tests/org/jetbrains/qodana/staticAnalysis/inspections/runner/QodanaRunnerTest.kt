@@ -51,6 +51,7 @@ import org.jetbrains.qodana.staticAnalysis.script.scoped.STAGE_ARG
 import org.jetbrains.qodana.staticAnalysis.script.scoped.Stage
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionDurationsAggregatorService
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionProblemsFoundAggregatorService
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.withSystemProperty
 import org.junit.Ignore
 import org.junit.Test
@@ -64,7 +65,7 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 /**
- * See [QodanaRunnerTestCase] for basic usage.
+ * See [org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase] for basic usage.
  *
  * To regenerate the baseline tests, see `regenerate-baseline-tests.sh`.
  */
@@ -1155,17 +1156,6 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
         configProfile(profile).second
       )
     }
-  }
-
-  @Test
-  fun `testEmbedded problem`(): Unit = runBlocking {
-    updateQodanaConfig {
-      it.copy(
-        profile = QodanaProfileConfig.named("qodana.single:CssInvalidHtmlTagReference"),
-      )
-    }
-    runAnalysis()
-    assertSarifResults()
   }
 
   @Test

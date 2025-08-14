@@ -7,6 +7,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.FixesStrategy
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.sarif.ALLOW_NON_BATCH_FIXES
 import org.jetbrains.qodana.staticAnalysis.sarif.FixesLogger
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.Test
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -106,12 +107,12 @@ class QodanaQuickFixesLoggingTest: QodanaRunnerTestCase() {
   private fun assertDefaultLogData() {
     val logFile = Path.of(PathManager.getLogPath(), "qodana", "fixes.json").toFile().readText()
     val expectedLogFile = getTestDataPath("expected-fixes.json").toFile().readText()
-    UsefulTestCase.assertSameLines(expectedLogFile, logFile)
+    assertSameLines(expectedLogFile, logFile)
   }
 
   private fun assertDiffLogData() {
     val logFile = Path.of(PathManager.getLogPath(), "qodana", "files-modifications.json").toFile().readText()
     val expectedLogFile = getTestDataPath("expected-diffs.json").toFile().readText()
-    UsefulTestCase.assertSameLines(expectedLogFile, logFile)
+    assertSameLines(expectedLogFile, logFile)
   }
 }

@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.staticAnalysis.inspections.runner
+package org.jetbrains.qodana.staticAnalysis.testFramework
 
 import com.intellij.codeInspection.GlobalInspectionTool
 import com.intellij.codeInspection.InspectionEP
@@ -11,10 +11,10 @@ import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaTestManager
-import com.intellij.testFramework.HeavyTestHelper.createTestProjectStructure
+import com.intellij.testFramework.HeavyTestHelper
 import com.intellij.testFramework.JavaPsiTestCase
 import com.jetbrains.qodana.sarif.model.Result
+import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
@@ -66,7 +66,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
       createTestStructure()
       val managerTestData = QodanaTestManager.TestData(
         project,
-        testRootDisposable,
+        getTestRootDisposable(),
         Paths.get(project.basePath!!),
         outputBasePath,
         ::getTestDataPath
@@ -87,7 +87,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
     Files.createDirectories(dir)
     val sourceRoot = getTestDataPath("sources")
     if (sourceRoot.exists()) {
-      createTestProjectStructure(myModule, sourceRoot.toString(), dir, true)
+      HeavyTestHelper.createTestProjectStructure(myModule, sourceRoot.toString(), dir, true)
     }
     PsiDocumentManager.getInstance(myProject).commitAllDocuments()
   }
@@ -127,7 +127,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
   }
 
   /**
-   * When [QodanaConfig.outputFormat] is set to [OutputFormat.INSPECT_SH_FORMAT],
+   * When [QodanaConfig.outputFormat] is set to [org.jetbrains.qodana.staticAnalysis.inspections.runner.OutputFormat.INSPECT_SH_FORMAT],
    * each inspection creates a separate file for its results, in an IDEA-specific format.
    * The SARIF report is then generated from these files.
    */
@@ -144,7 +144,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
   }
 
   protected fun assertSarifExitCode(expected: Int) {
-    assertEquals(expected, manager.sarifRun.invocations[0].exitCode)
+    TestCase.assertEquals(expected, manager.sarifRun.invocations[0].exitCode)
   }
 
   protected fun assertSarifEnabledRules(vararg expectedRulesIds: String) {
@@ -189,12 +189,12 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
       "$locStr: ${result.message.text}"
     }
 
-    assertEquals(expectedEntries.joinToString("\n"), actualEntries.joinToString("\n"))
+    TestCase.assertEquals(expectedEntries.joinToString("\n"), actualEntries.joinToString("\n"))
   }
 
   protected fun registerTool(tool: InspectionProfileEntry) {
     val inspection = LocalInspectionEP().apply {
-      pluginDescriptor = DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.getClassLoader())
+      pluginDescriptor = DefaultPluginDescriptor(PluginId.Companion.getId("qodanaTest"), javaClass.getClassLoader())
     }
     register(tool, inspection, LocalInspectionEP.LOCAL_INSPECTION.point)
   }
@@ -202,7 +202,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
   protected fun registerGlobalTool(tool: GlobalInspectionTool) {
     val inspection = InspectionEP(
       tool.javaClass.canonicalName,
-      DefaultPluginDescriptor(PluginId.getId("qodanaTest"), javaClass.getClassLoader())
+      DefaultPluginDescriptor(PluginId.Companion.getId("qodanaTest"), javaClass.getClassLoader())
     )
 
     register(tool, inspection, InspectionEP.GLOBAL_INSPECTION.point)
@@ -223,7 +223,7 @@ abstract class QodanaRunnerTestCase : JavaPsiTestCase() {
       groupPath = tool.groupPath.joinToString(",")
     }
 
-    extensionPoint.registerExtension(emptyInspection, testRootDisposable)
+    extensionPoint.registerExtension(emptyInspection, getTestRootDisposable())
   }
 
   fun assertOpenInIdeJson() {

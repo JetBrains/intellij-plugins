@@ -3,7 +3,7 @@ package org.jetbrains.qodana.jvm.kotlin
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunnerTestCase
+import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

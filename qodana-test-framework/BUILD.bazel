@@ -27,6 +27,8 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//platform/testFramework",
     "@community//platform/util/coroutines",
+    "@community//java/testFramework",
+    "@community//platform/core-ui",
   ],
   runtime_deps = [":qodana-testFramework_resources"]
 )
