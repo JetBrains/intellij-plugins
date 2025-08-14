@@ -41,13 +41,13 @@ class TsLintLanguageService(
     config: VirtualFile?,
     content: String?,
     state: TsLintState
-  ): CompletableFuture<MutableList<TsLinterError?>?>? {
+  ): CompletableFuture<List<TsLinterError>>? {
     return createHighlightFuture(virtualFile, config, state) { filePath: LocalFilePath?, configPath: LocalFilePath? ->
       GetErrorsCommand(filePath, configPath, content ?: "")
     }
   }
 
-  fun highlightAndFix(virtualFile: VirtualFile, state: TsLintState): CompletableFuture<MutableList<TsLinterError?>?>? {
+  fun highlightAndFix(virtualFile: VirtualFile, state: TsLintState): CompletableFuture<List<TsLinterError>>? {
     val config = TslintUtil.getConfig(state, myProject, virtualFile)
     //doesn't pass content (file should be saved before)
     return createHighlightFuture(virtualFile, config, state, BiFunction { filePath: LocalFilePath?, configPath: LocalFilePath? ->
@@ -60,13 +60,13 @@ class TsLintLanguageService(
     config: VirtualFile?,
     state: TsLintState,
     commandProvider: BiFunction<LocalFilePath?, LocalFilePath?, BaseCommand>
-  ): CompletableFuture<MutableList<TsLinterError?>?>? {
+  ): CompletableFuture<List<TsLinterError>>? {
     val configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config)
     if (configFilePath == null) {
       if (state.nodePackageRef === AutodetectLinterPackage.INSTANCE) {
-        return CompletableFuture.completedFuture<MutableList<TsLinterError?>?>(ContainerUtil.emptyList<TsLinterError?>())
+        return CompletableFuture.completedFuture(ContainerUtil.emptyList())
       }
-      return CompletableFuture.completedFuture<MutableList<TsLinterError?>?>(mutableListOf(TsLinterError.createGlobalError(
+      return CompletableFuture.completedFuture(listOf(TsLinterError.createGlobalError(
         TsLintBundle.message("tslint.inspection.message.config.file.was.not.found"))))
     }
     val path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile)
@@ -74,18 +74,18 @@ class TsLintLanguageService(
       return null
     }
 
-    val process = process
-    if (process == null) {
-      return CompletableFuture.completedFuture(mutableListOf(
-        TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))))
-    }
-
     //doesn't pass content (file should be saved before)
     val command = commandProvider.apply(LocalFilePath.create(path),
                                         LocalFilePath.create(configFilePath))
     return cs.async {
-      val answer = process.execute(command)?.answer ?: return@async null
-      parseResults(answer, path, JSLanguageServiceUtil.getGson(this@TsLintLanguageService))
+      val process = getProcess()
+      if (process == null) {
+        return@async listOf(
+          TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this@TsLintLanguageService))
+        )
+      }
+      val answer = process.execute(command)?.answer ?: return@async emptyList()
+      parseResults(answer, path, JSLanguageServiceUtil.getGson(this@TsLintLanguageService)) ?: emptyList()
     }.asCompletableFuture()
   }
 
@@ -164,11 +164,11 @@ class TsLintLanguageService(
   companion object {
     private val LOG = Logger.getInstance(TsLintLanguageService::class.java)
 
-    private fun parseResults(answer: JSLanguageServiceAnswer, path: String, gson: Gson): MutableList<TsLinterError?>? {
+    private fun parseResults(answer: JSLanguageServiceAnswer, path: String, gson: Gson): List<TsLinterError>? {
       val element = answer.element
       val error = element.get("error")
       if (error != null) {
-        return mutableListOf(TsLinterError.createGlobalError(error.asString)) //NON-NLS
+        return listOf(TsLinterError.createGlobalError(error.asString)) //NON-NLS
       }
       val body: JsonElement? = parseBody(element)
       if (body == null) return null

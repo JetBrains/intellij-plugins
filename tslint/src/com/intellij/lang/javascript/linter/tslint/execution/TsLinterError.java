@@ -64,7 +64,7 @@ public final class TsLinterError extends JSLinterError {
            '}';
   }
 
-  public static TsLinterError createGlobalError(final @NotNull @InspectionMessage String description) {
+  public static @NotNull TsLinterError createGlobalError(@NotNull @InspectionMessage String description) {
     return new TsLinterError(description);
   }
 }
