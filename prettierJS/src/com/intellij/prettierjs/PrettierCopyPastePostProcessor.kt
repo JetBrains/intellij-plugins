@@ -45,7 +45,6 @@ class PrettierCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransfera
 
     val configuration = PrettierConfiguration.getInstance(project)
     if (!configuration.isRunOnPaste) return
-    if (!PrettierUtil.checkNodeAndPackage(psiFile, null, PrettierUtil.NOOP_ERROR_HANDLER)) return
     if (!PrettierUtil.isFormattingAllowedForFile(project, virtualFile)) return
 
     val service = FormattingServiceUtil.findService(PrettierFormattingService::class.java) ?: return

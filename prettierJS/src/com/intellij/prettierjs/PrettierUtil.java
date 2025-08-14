@@ -8,32 +8,20 @@ import com.google.gson.stream.JsonToken;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
-import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
-import com.intellij.javascript.nodejs.npm.InstallNodeLocalDependenciesAction;
-import com.intellij.javascript.nodejs.npm.NpmManager;
-import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
-import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.GlobPatternUtil;
+import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
+import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -44,12 +32,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.LightweightHint;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
+import icons.JavaScriptLanguageIcons;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.io.IOException;
 import java.io.StringReader;
@@ -68,7 +55,7 @@ import static com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil.findCh
 import static com.intellij.prettierjs.PrettierConfig.createFromMap;
 
 public final class PrettierUtil {
-  public static final Icon ICON = null;
+  public static final Icon ICON = JavaScriptLanguageIcons.FileTypes.Prettier;
   public static final String PACKAGE_NAME = "prettier";
   public static final String CONFIG_SECTION_NAME = PACKAGE_NAME;
   public static final String RC_FILE_NAME = ".prettierrc";
@@ -335,65 +322,6 @@ public final class PrettierUtil {
     return JSProjectUtil.findFileUpToContentRoot(project, fileDir, IGNORE_FILE_NAME);
   }
 
-  public interface ErrorHandler {
-    ErrorHandler DEFAULT = new DefaultErrorHandler();
-
-    void showError(@NotNull Project project,
-                   @Nullable Editor editor,
-                   @NotNull @Nls String text,
-                   @Nullable Runnable onLinkClick);
-
-    default void showErrorWithDetails(@NotNull Project project,
-                                      @Nullable Editor editor,
-                                      @NotNull @Nls String text,
-                                      @NotNull String details) {
-      showError(project, editor, text, () -> showErrorDetails(project, details));
-    }
-  }
-
-  public static final ErrorHandler NOOP_ERROR_HANDLER = new ErrorHandler() {
-    @Override
-    public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull String text, @Nullable Runnable onLinkClick) {
-      // No need to show any notification in case of 'Prettier on save' failure.
-      // Most likely the file is simply not syntactically valid at the moment.
-    }
-  };
-
-  private static class DefaultErrorHandler implements ErrorHandler {
-    @Override
-    public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull @Nls String text, @Nullable Runnable onLinkClick) {
-      if (editor != null) {
-        HyperlinkListener listener = onLinkClick == null ? null : new HyperlinkAdapter() {
-          @Override
-          protected void hyperlinkActivated(@NotNull HyperlinkEvent e) {
-            onLinkClick.run();
-          }
-        };
-        showHintLater(editor, PrettierBundle.message("prettier.formatter.hint.0", text), true, listener);
-      }
-      else {
-        Notification notification =
-          JSLinterGuesser.NOTIFICATION_GROUP.createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text,
-                                                                NotificationType.ERROR);
-        if (onLinkClick != null) {
-          notification.setListener(new NotificationListener.Adapter() {
-            @Override
-            protected void hyperlinkActivated(@NotNull Notification notification1, @NotNull HyperlinkEvent e) {
-              onLinkClick.run();
-            }
-          });
-        }
-        notification.notify(project);
-      }
-    }
-  }
-
-  private static void showErrorDetails(@NotNull Project project, @NotNull String text) {
-    ProcessOutput output = new ProcessOutput();
-    output.appendStderr(text);
-    JsqtProcessOutputViewer
-      .show(project, PrettierBundle.message("prettier.formatter.notification.title"), ICON, null, null, output);
-  }
 
   public static void showHintLater(@NotNull Editor editor,
                                    @NotNull @Nls String text,
@@ -422,53 +350,6 @@ public final class PrettierUtil {
         nodeVersion.compareTo(NODE_MIN_VERSION_FOR_STRIP_TYPES_FLAG) >= 0 &&
         nodeVersion.compareTo(NODE_MAX_VERSION_FOR_STRIP_TYPES_FLAG) < 0) {
       JSLanguageServiceUtil.addNodeProcessArguments(targetRun.getCommandLineBuilder(), serviceName, "--experimental-strip-types");
-    }
-  }
-
-  public static boolean checkNodeAndPackage(@NotNull PsiFile psiFile, @Nullable Editor editor, @NotNull ErrorHandler errorHandler) {
-    Project project = psiFile.getProject();
-    NodeJsInterpreterRef interpreterRef = NodeJsInterpreterRef.createProjectRef();
-    NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage(psiFile);
-
-    NodeJsInterpreter nodeJsInterpreter;
-    try {
-      nodeJsInterpreter = NodeInterpreterUtil.getValidInterpreterOrThrow(interpreterRef.resolve(project));
-    }
-    catch (ExecutionException e1) {
-      errorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
-                             () -> NodeSettingsConfigurable.showSettingsDialog(project));
-      return false;
-    }
-
-    if (nodePackage.isEmptyPath()) {
-      errorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
-                             () -> editSettings(project));
-      return false;
-    }
-    if (!nodePackage.isValid(project, nodeJsInterpreter)) {
-      String message = PrettierBundle.message("error.package.is.not.installed",
-                                              NpmManager.getInstance(project).getNpmInstallPresentableText());
-      errorHandler.showError(project, editor, message, () -> installPackage(project));
-      return false;
-    }
-    SemVer nodePackageVersion = nodePackage.getVersion(project);
-    if (nodePackageVersion != null && nodePackageVersion.compareTo(MIN_VERSION) < 0) {
-      errorHandler.showError(project, editor,
-                             PrettierBundle.message("error.unsupported.version", MIN_VERSION.getRawVersion()), null);
-      return false;
-    }
-
-    return true;
-  }
-
-  private static void editSettings(@NotNull Project project) {
-    ShowSettingsUtil.getInstance().editConfigurable(project, new PrettierConfigurable(project));
-  }
-
-  private static void installPackage(@NotNull Project project) {
-    final VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(project.getBaseDir());
-    if (packageJson != null) {
-      InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJson);
     }
   }
 }

@@ -4,29 +4,39 @@ package com.intellij.prettierjs
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.linter.MultiRootJSLinterLanguageServiceManager
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import kotlinx.coroutines.CoroutineScope
+import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.PROJECT)
 class PrettierLanguageServiceManager(project: Project, internal val cs: CoroutineScope) :
   MultiRootJSLinterLanguageServiceManager<PrettierLanguageServiceImpl>(project, PrettierUtil.PACKAGE_NAME) {
 
+  val inactivityTimeoutMs: Int
+    get() = Registry.intValue("prettier.service.expiration.timeout.ms", TimeUnit.MINUTES.toMillis(5).toInt())
+
   init {
     project.messageBus.connect(this).subscribe<BulkFileListener>(VirtualFileManager.VFS_CHANGES, object : BulkFileListener {
       override fun after(events: List<VFileEvent>) {
-        if (
-          events.any {
-            it !is VFileContentChangeEvent
-            || PrettierUtil.isConfigFileOrPackageJson(it.file)
-            || PrettierUtil.EDITOR_CONFIG_FILE_NAME == it.file.name
-          }
-        ) {
+        val needReload = events.any { ev ->
+          val file = ev.file ?: return@any false
+          val name = file.name
+          (ev is VFileContentChangeEvent || ev is VFileCreateEvent || ev is VFileDeleteEvent || ev is VFilePropertyChangeEvent) &&
+          (PrettierUtil.isConfigFileOrPackageJson(file) || name == PrettierUtil.EDITOR_CONFIG_FILE_NAME)
+        }
+
+        if (needReload) {
           // Prettier configurations loaded via `import` cannot be invalidated dynamically.
           // This limitation arises because Prettier caches configurations internally,
           // and operations like `useCache` or `clearConfigCache` do not fully reload the configurations.
@@ -44,8 +54,15 @@ class PrettierLanguageServiceManager(project: Project, internal val cs: Coroutin
     })
   }
 
-  override fun createServiceInstance(resolvedPackage: NodePackage,
-                                     workingDirectory: VirtualFile): PrettierLanguageServiceImpl {
+  override fun createServiceInstance(
+    resolvedPackage: NodePackage,
+    workingDirectory: VirtualFile,
+  ): PrettierLanguageServiceImpl {
     return PrettierLanguageServiceImpl(myProject, workingDirectory)
+  }
+
+  companion object {
+    @JvmStatic
+    fun getInstance(project: Project): PrettierLanguageServiceManager = project.service()
   }
 }

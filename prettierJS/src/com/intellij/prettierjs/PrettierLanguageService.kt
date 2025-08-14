@@ -4,7 +4,6 @@ package com.intellij.prettierjs
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.javascript.nodejs.util.NodePackageRef
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.BaseProjectDirectories
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -19,12 +18,12 @@ interface PrettierLanguageService {
     prettierPackage: NodePackage,
     range: TextRange?,
     cursorOffset: Int,
-  ): CompletableFuture<FormatResult?>?
+  ): CompletableFuture<FormatResult?>
 
   fun resolveConfig(
     filePath: String,
     prettierPackage: NodePackage,
-  ): CompletableFuture<ResolveConfigResult?>?
+  ): CompletableFuture<ResolveConfigResult?>
 
   companion object {
     @JvmStatic
@@ -37,7 +36,7 @@ interface PrettierLanguageService {
       if (workingDirectory == null) {
         workingDirectory = contextFile.getParent()
       }
-      return project.service<PrettierLanguageServiceManager>()
+      return PrettierLanguageServiceManager.getInstance(project)
         .useService<PrettierLanguageService, Throwable>(workingDirectory, NodePackageRef.create(prettierPackage)) { it }
     }
   }

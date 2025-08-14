@@ -21,6 +21,7 @@ import com.intellij.prettierjs.formatting.PrettierFormattingApplier
 import com.intellij.prettierjs.formatting.PrettierFormattingContext
 import com.intellij.prettierjs.formatting.createFormattingContext
 import com.intellij.prettierjs.formatting.extendRange
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.codeStyle.CoreCodeStyleUtil
 import java.util.concurrent.CountDownLatch
@@ -34,8 +35,7 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
 
   override fun canFormat(psiFile: PsiFile): Boolean =
     Registry.`is`("prettier.use.async.formatting.service") &&
-    isApplicable(psiFile) &&
-    PrettierUtil.checkNodeAndPackage(psiFile, null, PrettierUtil.NOOP_ERROR_HANDLER)
+    isApplicable(psiFile)
 
   override fun createFormattingTask(request: AsyncFormattingRequest): FormattingTask? {
     val context = request.context
@@ -149,7 +149,8 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
 
     private fun moveCursor(psiFile: PsiFile, formattingContext: PrettierFormattingContext) {
       val editor = FileEditorManager.getInstance(psiFile.project).selectedTextEditor ?: return
-      if (!editor.isDisposed && editor.virtualFile == psiFile.virtualFile && formattingContext.cursorOffset >= 0) {
+      val editorPsiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document)
+      if (!editor.isDisposed && editorPsiFile == psiFile && formattingContext.cursorOffset >= 0) {
         editor.caretModel.moveToOffset(formattingContext.cursorOffset)
       }
     }

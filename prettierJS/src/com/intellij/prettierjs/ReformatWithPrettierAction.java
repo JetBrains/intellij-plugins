@@ -38,7 +38,6 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,14 +52,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
   private static final @NotNull Logger LOG = Logger.getInstance(ReformatWithPrettierAction.class);
   private static final long EDT_TIMEOUT_MS = 2000;
 
-  private final PrettierUtil.ErrorHandler myErrorHandler;
-
-  public ReformatWithPrettierAction(@NotNull PrettierUtil.ErrorHandler errorHandler) {
-    myErrorHandler = errorHandler;
-  }
-
   public ReformatWithPrettierAction() {
-    this(PrettierUtil.ErrorHandler.DEFAULT);
   }
 
   @Override
@@ -97,34 +89,23 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     }
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     if (editor != null) {
-      processFileInEditor(project, editor, myErrorHandler, null);
+      processFileInEditor(project, editor, null);
     }
     else {
       VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
       if (!ArrayUtil.isEmpty(virtualFiles)) {
-        processVirtualFiles(project, Arrays.asList(virtualFiles), myErrorHandler);
+        processVirtualFiles(project, Arrays.asList(virtualFiles));
       }
     }
   }
 
-  public static boolean isAvailable(@NotNull Project project, @NotNull Editor editor, @NotNull PrettierUtil.ErrorHandler errorHandler) {
-    PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-    if (file == null) {
-      return false;
-    }
-    return PrettierUtil.checkNodeAndPackage(file, editor, errorHandler);
-  }
-
   public static void processFileInEditor(@NotNull Project project,
                                          @NotNull Editor editor,
-                                         @NotNull PrettierUtil.ErrorHandler errorHandler,
                                          @Nullable TextRange targetRange) {
-    if (!isAvailable(project, editor, errorHandler)) return;
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     if (file == null) {
       return;
     }
-    if (!PrettierUtil.checkNodeAndPackage(file, editor, errorHandler)) return;
 
     VirtualFile vFile = file.getVirtualFile();
     if (ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Collections.singletonList(vFile))
@@ -147,14 +128,8 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     if (result == null) {
       return;
     }
-    if (!StringUtil.isEmpty(result.error)) {
-      errorHandler.showErrorWithDetails(project, editor,
-                                        PrettierBundle.message("error.while.reformatting.message"), result.error);
-    }
-    else if (result.unsupported) {
-      errorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
-    }
-    else if (result.ignored) {
+
+    if (result.ignored) {
       PrettierUtil.showHintLater(editor, PrettierBundle.message("file.was.ignored.hint", file.getName()), false, null);
     }
     else if (result.result != null) {
@@ -190,10 +165,6 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
 
     Project project = file.getProject();
 
-    if (!PrettierUtil.checkNodeAndPackage(file, null, PrettierUtil.NOOP_ERROR_HANDLER)) {
-      return range;
-    }
-
     VirtualFile vFile = file.getVirtualFile();
     ensureConfigsSaved(Collections.singletonList(vFile), project);
     PrettierLanguageService.FormatResult result = performRequestForFile(file, range, null);
@@ -208,8 +179,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
   }
 
   public static void processVirtualFiles(@NotNull Project project,
-                                         @NotNull List<VirtualFile> virtualFiles,
-                                         @NotNull PrettierUtil.ErrorHandler errorHandler) {
+                                         @NotNull List<VirtualFile> virtualFiles) {
     ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFiles);
     if (readonlyStatus.hasReadonlyFiles()) {
       return;
@@ -221,17 +191,16 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
       if (psiDirectory == null) {
         return;
       }
-      processFileIterator(project, new FileTreeIterator(psiDirectory), false, errorHandler);
+      processFileIterator(project, new FileTreeIterator(psiDirectory), false);
     }
     else {
-      processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, virtualFiles)), true, errorHandler);
+      processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, virtualFiles)), true);
     }
   }
 
   private static void processFileIterator(@NotNull Project project,
                                           final @NotNull FileTreeIterator fileIterator,
-                                          boolean reportSkippedFiles,
-                                          @NotNull PrettierUtil.ErrorHandler errorHandler) {
+                                          boolean reportSkippedFiles) {
     Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
       Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
@@ -244,9 +213,6 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
 
       for (PsiFile currentFile : files) {
         indicator.setText(PrettierBundle.message("processing.0.progress", currentFile.getName()));
-        if (!PrettierUtil.checkNodeAndPackage(currentFile, null, errorHandler)) {
-          return Collections.emptyMap();
-        }
 
         PrettierLanguageService.FormatResult result = performRequestForFile(currentFile, null, null);
         // timed out. show notification?
@@ -278,12 +244,6 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
         applyFormatResult(project, virtualFile, entry.getValue());
       }
     });
-    List<String> errors = ContainerUtil.mapNotNull(results.entrySet(), t -> t.getValue().error);
-    if (!errors.isEmpty()) {
-      errorHandler.showErrorWithDetails(project, null,
-                                        PrettierBundle.message("failed.to.reformat.0.files", errors.size()),
-                                        StringUtil.join(errors, "\n"));
-    }
   }
 
   static @Nullable PrettierLanguageService.FormatResult processFileAsFormattingTask(@NotNull PsiFile psiFile, @NotNull String text, @NotNull TextRange range) {

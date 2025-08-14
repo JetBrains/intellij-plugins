@@ -39,7 +39,6 @@ private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
     if (project.isDisposed) return false
     if (!PrettierConfiguration.getInstance(project).codeStyleSettingsModifierEnabled) return false
     if (!PrettierUtil.isFormattingAllowedForFile(project, file)) return false
-    if (!PrettierUtil.checkNodeAndPackage(psiFile, null, PrettierUtil.NOOP_ERROR_HANDLER)) return false
 
     return doModifySettings(settings, psiFile)
   }
@@ -48,8 +47,8 @@ private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
     return PrettierConfiguration.getInstance(project).codeStyleSettingsModifierEnabled
   }
 
-  override fun getDisablingFunction(project: Project): Consumer<CodeStyleSettings?>? {
-    return Consumer { settings: CodeStyleSettings? ->
+  override fun getDisablingFunction(project: Project): Consumer<CodeStyleSettings?> {
+    return Consumer { _: CodeStyleSettings? ->
       PrettierConfiguration.getInstance(project).state.codeStyleSettingsModifierEnabled = false
       DataManager.getInstance().dataContextFromFocusAsync.then { dataContext ->
         val settings = Settings.KEY.getData(dataContext) ?: return@then
@@ -63,7 +62,7 @@ private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
 
   override fun getName(): String = PrettierBundle.message("prettier.code.style.display.name")
 
-  override fun getStatusBarUiContributor(transientSettings: TransientCodeStyleSettings): CodeStyleStatusBarUIContributor? {
+  override fun getStatusBarUiContributor(transientSettings: TransientCodeStyleSettings): CodeStyleStatusBarUIContributor {
     return PrettierCodeStyleStatusBarUIContributor()
   }
 

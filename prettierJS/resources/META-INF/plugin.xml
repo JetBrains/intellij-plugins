@@ -49,6 +49,7 @@
     <actionOnSave id="PrettierActionOnSave"
                   implementation="com.intellij.prettierjs.PrettierActionOnSave"
                   order="after FormatOnSaveAction, after ESLintActionOnSave"/>
+    <platform.lang.lsWidget.itemsProvider implementation="com.intellij.prettierjs.lsWidget.PrettierWidgetItemsProvider"/>
 
     <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
     <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
@@ -62,6 +63,9 @@
                  description="Command line options for the Prettier service process. Separate multiple arguments with a space. If an argument contains a space, wrap the argument in double quotes. To escape a double quote, use the \\&quot; sequence."/>
     <registryKey key="prettier.use.async.formatting.service" defaultValue="true"
                  description="Enable or disable the Prettier asynchronous formatting service. When enabled, the post format processor is disabled."/>
+    <registryKey key="prettier.service.expiration.timeout.ms"
+                 defaultValue="300000"
+                 description="The IDE will stop the Prettier service process if it is not used for the specified period of time (in milliseconds)"/>
     <formattingService id="PrettierFormattingService" implementation="com.intellij.prettierjs.PrettierFormattingService"/>
 
     <notificationGroup id="Prettier"

@@ -9,15 +9,11 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.prettierjs.CONFIGURABLE_ID
-import com.intellij.prettierjs.PrettierBundle
-import com.intellij.prettierjs.PrettierConfiguration
-import com.intellij.prettierjs.PrettierUtil
+import com.intellij.prettierjs.*
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
@@ -29,7 +25,7 @@ import javax.swing.Icon
 
 internal class PrettierCodeStyleStatusBarUIContributor : CodeStyleStatusBarUIContributor {
   private var myIndentOptionsForFileInEditor: CommonCodeStyleSettings.IndentOptions? = null
-  
+
   override fun areActionsAvailable(file: VirtualFile): Boolean = true
 
   override fun getActionGroupTitle(): @NlsContexts.PopupTitle String = PrettierBundle.message("prettier.code.style.status.bar.action.group.title")
@@ -42,7 +38,7 @@ internal class PrettierCodeStyleStatusBarUIContributor : CodeStyleStatusBarUICon
     if (optionsForFileInEditor == null) {
       // not ready yet
       return null
-    } 
+    }
     return IndentStatusBarUIContributor.createTooltip(
       IndentStatusBarUIContributor.getIndentInfo(optionsForFileInEditor),
       getActionGroupTitle())
@@ -56,26 +52,24 @@ internal class PrettierCodeStyleStatusBarUIContributor : CodeStyleStatusBarUICon
     return IndentStatusBarUIContributor.getIndentInfo(optionsForFileInEditor)
   }
 
-  override fun getIcon(): Icon? {
+  override fun getIcon(): Icon {
     val statusBarFriendlyColor = when {
       LafManager.getInstance().currentUIThemeLookAndFeel.isDark -> JBUI.CurrentTheme.StatusBar.Widget.FOREGROUND
       else -> JBUI.CurrentTheme.StatusBar.Widget.FOREGROUND.brighter()
     }
 
-    return PrettierUtil.ICON?.let {
-      IconUtil.colorize(it, statusBarFriendlyColor)
-    }
+    return IconUtil.colorize(PrettierUtil.ICON, statusBarFriendlyColor)
   }
 
   private fun createNavigationActions(file: PsiFile): Array<AnAction> {
     return buildList {
-      add(OpenConfigurationAction(file = file))
+      add(OpenConfigurationAction(file.project, file.virtualFile))
       add(OpenSettingsDialogAction())
     }.toTypedArray()
   }
 
   private fun createDisableCodeStyleModifierAction(project: Project): AnAction {
-    return DumbAwareAction.create(PrettierBundle.message("prettier.action.disable.for.project.label")) { e ->
+    return DumbAwareAction.create(PrettierBundle.message("prettier.action.disable.for.project.label")) { _ ->
       PrettierConfiguration.getInstance(project).state.codeStyleSettingsModifierEnabled = false
       CodeStyleSettingsManager.getInstance(project).notifyCodeStyleSettingsChanged()
 
@@ -108,31 +102,6 @@ internal class PrettierCodeStyleStatusBarUIContributor : CodeStyleStatusBarUICon
   private class OpenSettingsDialogAction() : DumbAwareAction(PrettierBundle.message("prettier.action.open.settings.label")) {
     override fun actionPerformed(e: AnActionEvent) {
       ShowSettingsUtilImpl.showSettingsDialog(e.project, CONFIGURABLE_ID, "Prettier")
-    }
-  }
-
-  private class OpenConfigurationAction(private val file: PsiFile) : DumbAwareAction(PrettierBundle.message("prettier.action.open.configuration.file.label")) {
-    override fun actionPerformed(e: AnActionEvent) {
-      val project = file.project
-      val configFile = PrettierUtil.findFileConfig(project, file.virtualFile)
-
-      if (configFile != null) {
-        val fileEditorManager = FileEditorManager.getInstance(project)
-        if (fileEditorManager.isFileOpen(configFile)) {
-          fileEditorManager.closeFile(configFile)
-        }
-        fileEditorManager.openFile(configFile, true)
-      }
-      else {
-        val notification = JSLinterGuesser
-          .NOTIFICATION_GROUP
-          .createNotification(
-            PrettierBundle.message("prettier.formatter.notification.title"),
-            PrettierBundle.message("prettier.notification.config.not.found"),
-            NotificationType.INFORMATION
-          )
-        notification.notify(project)
-      }
     }
   }
 

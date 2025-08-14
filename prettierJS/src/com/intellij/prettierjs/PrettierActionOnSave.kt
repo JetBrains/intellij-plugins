@@ -37,7 +37,6 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
     val prettierConfiguration = PrettierConfiguration.getInstance(project).takeIf { it.isRunOnSave } ?: return null
     val file = FileDocumentManager.getInstance().getFile(document) ?: return null
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
-    if (!PrettierUtil.checkNodeAndPackage(psiFile, null, PrettierUtil.NOOP_ERROR_HANDLER)) return null
 
     if (prettierConfiguration.isRunOnReformat) {
       val onSaveOptions = FormatOnSaveOptions.getInstance(project)
