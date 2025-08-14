@@ -455,6 +455,7 @@
       implementation="org.angular2.library.forms.quickFixes.Angular2FormsProblemQuickFixProvider"/>
     <annotator language="Angular2Html" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>
     <annotator language="TypeScript" implementationClass="org.angular2.library.forms.Angular2FormsAnnotator"/>
+    <editorFloatingToolbarProvider implementation="org.angular2.navigation.Angular2GotoRelatedToolbarProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.navigation.GotoRelatedItem
 import com.intellij.navigation.GotoRelatedProvider
+import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -29,7 +30,7 @@ class Angular2GotoRelatedProvider : GotoRelatedProvider() {
     }
     val componentClasses: MutableList<TypeScriptClass> = SmartList()
     if (DialectDetector.isTypeScript(file)) {
-      PsiTreeUtil.getParentOfType(psiElement, TypeScriptClass::class.java)?.let { componentClasses.add(it) }
+      PsiTreeUtil.getParentOfType(psiElement, TypeScriptClass::class.java, false)?.let { componentClasses.add(it) }
       if (componentClasses.isEmpty()) {
         for (el in TestFinderHelper.findClassesForTest(file)) {
           if (el is JSFile) {
@@ -50,11 +51,22 @@ class Angular2GotoRelatedProvider : GotoRelatedProvider() {
     }
   }
 
-  private class Angular2GoToRelatedItem(element: PsiElement,
-                                        mnemonic: Int,
-                                        inlineable: Boolean,
-                                        private val myName: @NlsContexts.ListItem String?)
-    : GotoRelatedItem(element, groupName, if (mnemonic > 9) -1 else mnemonic) {
+  internal enum class Angular2GoToRelatedItemKind(val displayName: @ActionText String) {
+    COMPONENT_CLASS(Angular2Bundle.message("angular.entity.component")),
+    TEMPLATE(Angular2Bundle.message("angular.action.goto-related.template")),
+    TEST(Angular2Bundle.message("angular.action.goto-related.tests", "")),
+    STYLES(Angular2Bundle.message("angular.action.goto-related.styles", "")),
+    MODULE(Angular2Bundle.message("angular.entity.module")),
+    ;
+  }
+
+  internal class Angular2GoToRelatedItem(
+    element: PsiElement,
+    mnemonic: Int,
+    inlineable: Boolean,
+    val kind: Angular2GoToRelatedItemKind,
+    private val myName: @NlsContexts.ListItem String?,
+  ) : GotoRelatedItem(element, groupName, if (mnemonic > 9) -1 else mnemonic) {
 
     private val myContainerName: @Nls String? =
       if (inlineable && InjectedLanguageManager.getInstance(element.project).getTopLevelFile(element) !== element.containingFile)
@@ -74,35 +86,70 @@ class Angular2GotoRelatedProvider : GotoRelatedProvider() {
     val result: MutableList<GotoRelatedItem> = SmartList()
     val cls = component.entitySource
     if (cls != null) {
-      result.add(Angular2GoToRelatedItem(cls, COMPONENT_INDEX, false,
-                                         Angular2Bundle.message("angular.action.goto-related.component-class")))
+      result.add(
+        Angular2GoToRelatedItem(
+          cls,
+          COMPONENT_INDEX,
+          false,
+          Angular2GoToRelatedItemKind.COMPONENT_CLASS,
+          Angular2Bundle.message("angular.action.goto-related.component-class"),
+        ),
+      )
     }
     val file = component.templateFile
     if (file != null) {
-      result.add(Angular2GoToRelatedItem(file, TEMPLATE_INDEX, true,
-                                         Angular2Bundle.message("angular.action.goto-related.template")))
+      result.add(
+        Angular2GoToRelatedItem(
+          file,
+          TEMPLATE_INDEX,
+          true,
+          Angular2GoToRelatedItemKind.TEMPLATE,
+          Angular2Bundle.message("angular.action.goto-related.template"),
+        ),
+      )
     }
     var first = true
     var count = 1
     val tests = TestFinderHelper.findTestsForClass(component.sourceElement)
     for (el in tests) {
-      result.add(Angular2GoToRelatedItem(el, if (first) TEST_INDEX else -1, false,
-                                         Angular2Bundle.message("angular.action.goto-related.tests",
-                                                                if (tests.size == 1) "" else " " + count++)))
+      result.add(
+        Angular2GoToRelatedItem(
+          el,
+          if (first) TEST_INDEX else -1,
+          false,
+          Angular2GoToRelatedItemKind.TEST,
+          Angular2Bundle.message("angular.action.goto-related.tests",
+                                 if (tests.size == 1) "" else " " + count++),
+        ),
+      )
       first = false
     }
     val cssFiles = component.cssFiles
     var mnemonic = STYLES_INDEX_START
     count = 1
     for (cssFile in cssFiles) {
-      result.add(Angular2GoToRelatedItem(cssFile, mnemonic++, true,
-                                         Angular2Bundle.message("angular.action.goto-related.styles",
-                                                                if (cssFiles.size == 1) "" else " " + count++)))
+      result.add(
+        Angular2GoToRelatedItem(
+          cssFile,
+          mnemonic++,
+          true,
+          Angular2GoToRelatedItemKind.STYLES,
+          Angular2Bundle.message("angular.action.goto-related.styles",
+                                 if (cssFiles.size == 1) "" else " " + count++),
+        ),
+      )
     }
     first = true
     for (moduleEntitySource in component.allDeclaringModules.mapNotNull { it.entitySource }) {
-      result.add(Angular2GoToRelatedItem(moduleEntitySource, if (first) MODULE_INDEX else -1, false,
-                                         Angular2Bundle.message("angular.action.goto-related.module")))
+      result.add(
+        Angular2GoToRelatedItem(
+          moduleEntitySource,
+          if (first) MODULE_INDEX else -1,
+          false,
+          Angular2GoToRelatedItemKind.MODULE,
+          Angular2Bundle.message("angular.action.goto-related.module"),
+        ),
+      )
       first = false
     }
     return result
