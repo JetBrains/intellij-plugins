@@ -146,7 +146,7 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
     "any" { return CfscriptTokenTypes.ANY_TYPE; }
     "array" { return CfscriptTokenTypes.ARRAY_TYPE; }
     "binary" { return CfscriptTokenTypes.BINARY_TYPE; }
-    "boolean" { return CfscriptTokenTypes.BOOLAEN_TYPE; }
+    "boolean" { return CfscriptTokenTypes.BOOLEAN_TYPE; }
     "date" { return CfscriptTokenTypes.DATE_TYPE; }
     "guid" { return CfscriptTokenTypes.GUID_TYPE; }
     "numeric" { return CfscriptTokenTypes.NUMERIC_TYPE; }
