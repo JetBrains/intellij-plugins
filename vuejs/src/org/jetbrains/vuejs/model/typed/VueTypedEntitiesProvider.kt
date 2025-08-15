@@ -26,7 +26,7 @@ import org.jetbrains.vuejs.model.source.VueEntityDescriptor
 object VueTypedEntitiesProvider {
 
   private val vueComponentTypenameRegex = Regex(
-    """(import\s*\(\s*['"]vue['"]\s*\)\s*\.\s*|vue\s*\.\s*)?(DefineComponent|ComponentOptionsBase|ComponentOptionsMixin|ComponentCustomProps|__VLS_WithTemplateSlots)""")
+    """(import\s*\(\s*['"]vue['"]\s*\)\s*\.\s*|vue\s*\.\s*)?(DefineComponent|ComponentOptionsBase|ComponentOptionsMixin|ComponentCustomProps|__VLS_WithTemplateSlots|__VLS_WithSlots(\$[0-9]+)?)""")
 
   fun isComponentDefinition(definition: JSQualifiedNamedElement): Boolean {
     if (definition.name == null || definition is JSField) return false
