@@ -53,6 +53,9 @@ const val PROPS_REQUIRED_PROP: String = "required"
 const val PROPS_DEFAULT_PROP: String = "default"
 const val EL_PROP: String = "el"
 
+const val DIRECTIVE_MOUNTED_FUN: String = "mounted"
+const val DIRECTIVE_MODIFIERS_PROP: String = "modifiers"
+
 const val INSTANCE_PROPS_PROP: String = "\$props"
 const val INSTANCE_REFS_PROP: String = "\$refs"
 const val INSTANCE_SLOTS_PROP: String = "\$slots"
