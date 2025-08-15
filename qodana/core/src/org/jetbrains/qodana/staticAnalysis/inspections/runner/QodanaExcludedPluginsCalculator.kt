@@ -116,7 +116,7 @@ class QodanaExcludedPluginsCalculator : ApplicationStarter {
     include.add(descriptor)
 
     val required = if (descriptor is IdeaPluginDescriptorImpl) {
-      descriptor.moduleDependencies.plugins.mapNotNull { reference -> if (processed.contains(reference.id.idString)) null else reference.id.idString}
+      descriptor.moduleDependencies.plugins.mapNotNull { reference -> if (processed.contains(reference.idString)) null else reference.idString}
     } else emptyList()
 
     return descriptor.dependencies.mapNotNull {
