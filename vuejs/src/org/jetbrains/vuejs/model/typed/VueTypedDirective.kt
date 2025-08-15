@@ -13,6 +13,8 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.source.DIRECTIVE_MODIFIERS_PROP
+import org.jetbrains.vuejs.model.source.DIRECTIVE_MOUNTED_FUN
 
 class VueTypedDirective(
   override val source: TypeScriptPropertySignature,
@@ -60,7 +62,7 @@ class VueTypedDirective(
                    ?: return emptyList()
 
       val mounted = jsType.asRecordType()
-                      .findPropertySignature("mounted")
+                      .findPropertySignature(DIRECTIVE_MOUNTED_FUN)
                     ?: return emptyList()
 
       val bindingType = mounted.jsType
@@ -71,7 +73,7 @@ class VueTypedDirective(
                         ?: return emptyList()
 
       val modifiers = bindingType.asRecordType()
-                        .findPropertySignature("modifiers")
+                        .findPropertySignature(DIRECTIVE_MODIFIERS_PROP)
                         ?.jsType
                         ?.asRecordType()
                       ?: return emptyList()
