@@ -141,7 +141,7 @@ jvm_library(
     "@ultimate_lib//:angular-tests-oleaster-runner",
     "//plugins/IntelliLang-js:javascript-langInjection",
     "//plugins/IntelliLang-js:javascript-langInjection_test_lib",
-    "@community//plugins/IntelliLang/xml-support:xml-langInjection",
+    "@community//xml/langInjection",
     "//plugins/sass/plugin",
     "//plugins/less",
     "//plugins/less:less_test_lib",
