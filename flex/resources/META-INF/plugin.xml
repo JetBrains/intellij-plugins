@@ -186,6 +186,13 @@
 
     <indexedRootsProvider implementation="com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor"/>
 
+    <lang.importOptimizer language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer"/>
+    <lang.importOptimizer language="Mxml" implementationClass="com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer"/>
+
+    <applicationService serviceInterface="com.intellij.lang.javascript.flex.ActionScriptExtensions"
+                        serviceImplementation="com.intellij.javascript.flex.ActionScriptExtensionsImpl"
+                        overrides="true"/>
+
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassInProductSourceInspection"
                      bundle="messages.FlexBundle"
                      key="flexunit.inspection.testclassinproductsource.displayname" groupKey="flexunit.inspections.group"
