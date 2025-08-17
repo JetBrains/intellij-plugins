@@ -71,7 +71,7 @@ jvm_library(
 jvm_library(
   name = "dart_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
   associates = [":dart"],
   deps = [
     "@community//platform/analysis-api:analysis",

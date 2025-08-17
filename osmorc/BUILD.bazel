@@ -58,7 +58,7 @@ jvm_library(
 jvm_library(
   name = "osgi_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["src_test/**/*.kt", "src_test/**/*.java", "src_test/**/*.form"], allow_empty = True),
+  srcs = glob(["src_test/**/*.kt", "src_test/**/*.java"], allow_empty = True),
   associates = [":osgi"],
   deps = [
     "@community//platform/analysis-api:analysis",

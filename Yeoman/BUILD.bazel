@@ -44,7 +44,7 @@ jvm_library(
 jvm_library(
   name = "yeoman_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
   associates = [":yeoman"],
   deps = [
     "@community//platform/core-api:core",
