@@ -1,8 +1,13 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.actionscript.parsing;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
-import com.intellij.lang.javascript.*;
+import com.intellij.lang.actionscript.ActionScriptInternalElementTypes;
+import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSKeywordSets;
+import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.JavaScriptParserBundle;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -100,5 +105,15 @@ public final class ActionScriptExpressionParser extends ExpressionParser<ActionS
       return 10;
     }
     return super.getCurrentBinarySignPriority(allowIn, advance);
+  }
+
+  @Override
+  protected boolean parseAfterReferenceQualifierSeparator(PsiBuilder.@NotNull Marker expr) {
+    if (builder.getTokenType() != JSTokenTypes.LPAR) return false;
+    var requestedArgumentListMarker = builder.mark();
+    parseArgumentListNoMarker();
+    requestedArgumentListMarker.done(ActionScriptInternalElementTypes.E4X_FILTER_QUERY_ARGUMENT_LIST);
+    expr.done(JSElementTypes.CALL_EXPRESSION);
+    return true;
   }
 }
