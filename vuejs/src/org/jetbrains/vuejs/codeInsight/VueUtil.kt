@@ -66,19 +66,19 @@ import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import java.util.*
 import kotlin.reflect.KClass
 
-const val SETUP_ATTRIBUTE_NAME = "setup"
-const val REF_ATTRIBUTE_NAME = "ref"
-const val MODULE_ATTRIBUTE_NAME = "module"
-const val GENERIC_ATTRIBUTE_NAME = "generic"
-const val ATTR_DIRECTIVE_PREFIX = "v-"
-const val ATTR_EVENT_SHORTHAND = '@'
-const val ATTR_SLOT_SHORTHAND = '#'
-const val ATTR_ARGUMENT_PREFIX = ':'
-const val ATTR_MODIFIER_PREFIX = '.'
+const val SETUP_ATTRIBUTE_NAME: String = "setup"
+const val REF_ATTRIBUTE_NAME: String = "ref"
+const val MODULE_ATTRIBUTE_NAME: String = "module"
+const val GENERIC_ATTRIBUTE_NAME: String = "generic"
+const val ATTR_DIRECTIVE_PREFIX: String = "v-"
+const val ATTR_EVENT_SHORTHAND: Char = '@'
+const val ATTR_SLOT_SHORTHAND: Char = '#'
+const val ATTR_ARGUMENT_PREFIX: Char = ':'
+const val ATTR_MODIFIER_PREFIX: Char = '.'
 
-const val FUNCTIONAL_COMPONENT_TYPE = "FunctionalComponent"
+const val FUNCTIONAL_COMPONENT_TYPE: String = "FunctionalComponent"
 
-const val VITE_PKG = "vite"
+const val VITE_PKG: String = "vite"
 
 val VUE_NOTIFICATIONS: NotificationGroup
   get() = NotificationGroupManager.getInstance().getNotificationGroup("Vue")
@@ -461,7 +461,7 @@ fun resolveLocalComponent(context: VueEntitiesContainer, tagName: String, contai
   return result
 }
 
-fun SemVer.withoutPreRelease() =
+fun SemVer.withoutPreRelease(): SemVer =
   if (this.preRelease != null)
     SemVer("${this.major}.${this.minor}.${this.patch}", this.major, this.minor, this.patch)
   else this
