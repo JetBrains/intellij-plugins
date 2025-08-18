@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -237,10 +237,11 @@ public class ActionScriptImportHandler extends JSImportHandler {
       if (jsClass != null && !resolveProcessor.execute(jsClass, ResolveState.initial())) return false;
 
     }
-    for (JSResolveHelper helper : JSResolveHelper.EP_NAME.getExtensionList()) {
-      if (!helper.resolveTypeNameUsingImports(resolveProcessor, parent)) {
-        return false;
-      }
+    if (parent instanceof XmlBackedJSClassImpl && !FlexResolveHelper.processInlineComponentsInScope(
+      (XmlBackedJSClassImpl)parent,
+      inlineComponent -> resolveProcessor.execute(inlineComponent, ResolveState.initial())
+    )) {
+      return false;
     }
 
     return true;
