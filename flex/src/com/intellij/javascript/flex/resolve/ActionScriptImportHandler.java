@@ -203,7 +203,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
     return result != JSImportedElementResolveResult.EMPTY_RESULT ? result:null;
   }
 
-  private static boolean resolveTypeNameUsingImportsInner(final ResolveProcessor resolveProcessor, final PsiNamedElement parent) {
+  private static boolean resolveTypeNameUsingImportsInner(JSResolveProcessorEx resolveProcessor, final PsiNamedElement parent) {
     final PsiElement element = JSResolveUtil.getClassReferenceForXmlFromContext(parent);
 
     if (!FlexResolveHelper.ourPsiScopedImportSet.tryResolveImportedClass(parent, resolveProcessor)) return false;
@@ -249,7 +249,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
 
   @Override
   public boolean importClass(final PsiScopeProcessor processor, final PsiNamedElement parent) {
-    final ResolveProcessor resolveProcessor = (ResolveProcessor)processor;
+    JSResolveProcessorEx resolveProcessor = (JSResolveProcessorEx)processor;
     if(resolveProcessor.isLocalResolve() || resolveProcessor.needPackages()) return true;
     final String s = resolveProcessor.getName();
 

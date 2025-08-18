@@ -4,8 +4,8 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.psi.resolve.JSImportedElementResolveResult;
+import com.intellij.lang.javascript.psi.resolve.JSResolveProcessorEx;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -66,7 +66,7 @@ public abstract class ScopedImportSet {
     return null;
   }
 
-  public boolean tryResolveImportedClass(PsiNamedElement scope, final ResolveProcessor resolveProcessor) {
+  public boolean tryResolveImportedClass(PsiNamedElement scope, JSResolveProcessorEx resolveProcessor) {
     final String qname = resolveProcessor.getQualifiedNameToImport();
     final Object result = process(resolveProcessor.getName(), qname, scope, new ImportProcessor<>() {
       @Override

@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
@@ -12,12 +12,8 @@ import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JavascriptLanguage;
-import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
-import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
@@ -988,7 +984,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private static Set<String> getNamedElementsVisibleAt(final @NotNull PsiElement context) {
     final Set<String> names = new HashSet<>();
 
-    ResolveProcessor processor = new ResolveProcessor(null) {
+    JSResolveProcessorEx processor = new ResolveProcessor(null) {
       @Override
       public boolean execute(final @NotNull PsiElement element, final @NotNull ResolveState state) {
         if (element instanceof JSNamedElementBase) {

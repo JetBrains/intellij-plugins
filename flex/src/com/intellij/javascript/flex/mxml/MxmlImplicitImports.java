@@ -1,14 +1,14 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.PredefinedImportSet;
 import com.intellij.lang.javascript.flex.ScopedImportSet;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSResolveProcessorEx;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -45,7 +45,7 @@ public final class MxmlImplicitImports {
   private static final @NonNls ScopedImportSet flex4ImplicitImports = new PredefinedImportSet(
     ArrayUtil.mergeArrays(commonImplicitImports, "mx.filters.*", "mx.core.IFlexModuleFactory"));
 
-  public static boolean resolveTypeNameUsingImplicitImports(final ResolveProcessor resolveProcessor, @NotNull PsiNamedElement scope) {
+  public static boolean resolveTypeNameUsingImplicitImports(JSResolveProcessorEx resolveProcessor, @NotNull PsiNamedElement scope) {
     final PsiElement context = scope.getContext();
 
     if (context != null) {

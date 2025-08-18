@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSResolveProcessorEx;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
 import com.intellij.lang.javascript.structureView.JSStructureViewElementBase;
@@ -66,7 +67,7 @@ final class FlexStructureViewProvider implements XmlStructureViewBuilderProvider
                                                                JSQualifiedName ns,
                                                                PsiFile contextFile) {
       List<StructureViewTreeElement> result = new ArrayList<>();
-      ResolveProcessor processor = new ResolveProcessor(null) {
+      JSResolveProcessorEx processor = new ResolveProcessor(null) {
         @Override
         public boolean execute(final @NotNull PsiElement element, final @NotNull ResolveState state) {
           result.add(new JSStructureViewElement(element, true));

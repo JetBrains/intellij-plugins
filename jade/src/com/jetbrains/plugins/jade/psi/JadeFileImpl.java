@@ -3,7 +3,7 @@ package com.jetbrains.plugins.jade.psi;
 
 import com.intellij.lang.html.HtmlCompatibleFile;
 import com.intellij.lang.javascript.psi.JSEmbeddedContent;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSResolveProcessorEx;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.FileViewProvider;
@@ -35,7 +35,7 @@ public class JadeFileImpl extends XmlFileImpl implements HtmlCompatibleFile {
       return false;
     }
 
-    if (!(processor instanceof ResolveProcessor)) {
+    if (!(processor instanceof JSResolveProcessorEx)) {
       return true;
     }
 

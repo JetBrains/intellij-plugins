@@ -1,17 +1,17 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
-import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.JSLanguageDialect;
+import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSFieldImpl;
+import com.intellij.lang.javascript.psi.resolve.JSResolveProcessorEx;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -242,7 +242,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   }
 
   @Override
-  protected boolean resolveViaImplicitImports(ResolveProcessor processor) {
+  protected boolean resolveViaImplicitImports(JSResolveProcessorEx processor) {
     return MxmlImplicitImports.resolveTypeNameUsingImplicitImports(processor, this);
   }
 

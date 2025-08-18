@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve
 
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil
@@ -169,7 +169,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
   private fun configureCurrentClassScope(jsClass: JSClass?) {
     var jsClass = jsClass
     if (jsClass != null) {
-      jsClass = getRealElement<JSClass>(jsClass)
+      jsClass = getRealElement(jsClass)
       myClassScopes = ObjectOpenCustomHashSet<JSClass?>(object : Hash.Strategy<JSClass?> {
         override fun hashCode(`object`: JSClass?): Int {
           if (`object` == null) {
@@ -208,7 +208,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
     myClassDeclarationStarted = parent is JSClass
 
     if (parent is JSClass) {
-      val jsClass: JSClass = getRealElement<JSClass>(parent)
+      val jsClass: JSClass = getRealElement(parent)
       if (!isProcessingInheritedClasses && !myClassScopeExplicitlySet) {
         configureCurrentClassScope(JSResolveUtil.getClassOfContext(place))
       }
@@ -247,20 +247,19 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
 
       if (element !is JSClass) continue
 
-      val b = element.processDeclarations(object : ResolveProcessor(null) {
-        init {
-          isTypeContext = true
-          isToProcessMembers = false
-          isToProcessHierarchy = true
-          isLocalResolve = true
-        }
-
+      val processor = object : ResolveProcessor(null) {
         override fun execute(element: PsiElement, state: ResolveState): Boolean {
           if (element !is JSClass) return true
-
           return !jsClass.isEquivalentTo(element)
         }
-      }, ResolveState.initial(), element, element)
+      }
+      with(processor) {
+        setTypeContext(true)
+        setToProcessMembers(false)
+        setToProcessHierarchy(true)
+        setLocalResolve(true)
+      }
+      val b = element.processDeclarations(processor, ResolveState.initial(), element, element)
 
       acceptProtected = !b
 
@@ -273,7 +272,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
   }
 
   private fun getParentClass(element: PsiElement): JSClass? {
-    return PsiTreeUtil.getParentOfType<JSClass?>(element, JSClass::class.java)
+    return PsiTreeUtil.getParentOfType(element, JSClass::class.java)
   }
 
   companion object {
