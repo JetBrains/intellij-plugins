@@ -2,7 +2,11 @@ package com.intellij.plugins.serialmonitor.ui
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.application.UI
 import com.intellij.openapi.components.service
+import com.intellij.openapi.components.serviceAsync
+import com.intellij.openapi.progress.checkCanceled
+import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.MessageDialogBuilder
 import com.intellij.openapi.util.NlsSafe
@@ -10,6 +14,8 @@ import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.SerialProfileService
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService
+import com.intellij.plugins.serialmonitor.service.SerialPortsListener
+import com.intellij.plugins.serialmonitor.service.SerialPortsListener.Companion.SERIAL_PORTS_TOPIC
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ListSpeedSearch
 import com.intellij.ui.PopupHandler
@@ -17,17 +23,25 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
 import com.intellij.util.application
 import com.intellij.util.asSafely
-import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.intellij.util.ui.launchOnShow
 import icons.SerialMonitorIcons
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
-  abstract inner class Connectable(@NlsSafe val entityName: String, @Volatile var status: PortStatus) {
+internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
+  abstract inner class Connectable(val entityName: @NlsSafe String, @Volatile var status: PortStatus) {
 
-    abstract val selectionKey: Any
+    abstract val selectionKey: Pair<Char, String>
 
     abstract fun actions(): Array<AnAction>
 
@@ -44,13 +58,13 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
     protected val disconnectAction = object : DumbAwareAction(SerialMonitorBundle.message("action.disconnect.text"), null,
                                                               AllIcons.Nodes.Pluginobsolete) {
       override fun actionPerformed(e: AnActionEvent) {
-        parent.disconnectPort(portName())
+        parentPanel.disconnectPort(portName())
       }
     }
     protected val openConsole = object : DumbAwareAction(SerialMonitorBundle.message("action.open.console.text"), null,
                                                          AllIcons.Actions.OpenNewTab) {
       override fun actionPerformed(e: AnActionEvent) {
-        parent.openConsole(portName())
+        parentPanel.openConsole(portName())
       }
     }
 
@@ -71,13 +85,13 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
 
     override fun portName(): String? = application.service<SerialProfileService>().getProfiles()[entityName]?.portName
 
-    override val selectionKey: Any = 'R' to profileName
+    override val selectionKey = createProfileSelectionKey(profileName)
     override fun icon(): Icon = status.icon
     override fun name(): @Nls String = entityName
 
     override fun connect() {
       application.service<SerialProfileService>().getProfiles()[entityName]?.also {
-        parent.connectProfile(it, entityName)
+        parentPanel.connectProfile(it, entityName)
       }
     }
 
@@ -99,13 +113,13 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
 
     override fun portName() = entityName
 
-    override val selectionKey: Any = 'O' to entityName
+    override val selectionKey = createPortSelectionKey(entityName)
     override fun icon(): Icon = status.icon
     override fun name(): @Nls String = entityName
     override fun description(): @Nls String? = service<SerialPortService>().portDescriptiveName(entityName)
 
     override fun connect() {
-      parent.connectProfile(service<SerialProfileService>().copyDefaultProfile(entityName))
+      parentPanel.connectProfile(service<SerialProfileService>().copyDefaultProfile(entityName))
     }
 
     override fun actions(): Array<AnAction> =
@@ -130,41 +144,58 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
     }
   }
 
-  @RequiresEdt
-  fun rescanProfiles(profileToSelect: String? = null) {
-    var savedSelection = selectedValue.asSafely<Connectable>()?.selectionKey
-    val portService = application.service<SerialPortService>()
+  private fun createProfileSelectionKey(profileName: String): Pair<Char, String> = 'R' to profileName
+  private fun createPortSelectionKey(portName: String): Pair<Char, String> = 'O' to portName
+  fun selectProfile(profileName: String) { select(createProfileSelectionKey(profileName)) }
+  fun selectPort(portName: String) { select(createPortSelectionKey(portName)) }
+
+  private fun select(selectionKey: Pair<Char, String>) {
+    for (i in 0..<model.size) {
+      if (model.getElementAt(i).asSafely<Connectable>()?.selectionKey == selectionKey) {
+        selectedIndex = i
+        break
+      }
+    }
+  }
+
+  private val updateFlow = MutableSharedFlow<Unit>(replay = 0)
+  suspend fun awaitModelUpdate(): Unit = updateFlow.first()
+
+  private suspend fun updateModel() {
+    val savedSelection = withContext(Dispatchers.UI) {
+      selectedValue.asSafely<Connectable>()?.selectionKey
+    }
+
+    val portService = application.serviceAsync<SerialPortService>()
     val newModel = DefaultListModel<Any>()
     @Nls val profilesSeparator = SerialMonitorBundle.message("connection.profiles")
     newModel.addElement(profilesSeparator)
-    val profileService = application.service<SerialProfileService>()
+    val profileService = application.serviceAsync<SerialProfileService>()
     profileService.getProfiles().forEach {
-      var status = portService.portStatus(it.value.portName)
+      val status = portService.portStatus(it.value.portName)
 
       val profile = ConnectableProfile(it.key, status)
       newModel.addElement(profile)
-      if (profileToSelect == it.key) {
-        savedSelection = profile.selectionKey
-      }
+      checkCanceled()
     }
     @Nls val portsSeparator = SerialMonitorBundle.message("available.ports")
     newModel.addElement(portsSeparator)
     portService.getPortsNames().forEach {
       val status = portService.portStatus(it)
       newModel.addElement(ConnectablePort(it, status))
+      checkCanceled()
     }
-    model = newModel
-    clearSelection()
-    if (savedSelection != null) {
-      for (i in 0..model.size - 1) {
-        if (model.getElementAt(i).asSafely<Connectable>()?.selectionKey == savedSelection) {
-          selectedIndex = i
-          break
-        }
+
+    withContext(Dispatchers.UI) {
+      model = newModel
+      clearSelection()
+      if (savedSelection != null) {
+        select(savedSelection)
       }
+      PopupHandler.installPopupMenu(this@ConnectableList, toolbarActions, ActionPlaces.POPUP)
+      invalidate()
+      updateFlow.emit(Unit)
     }
-    PopupHandler.installPopupMenu(this, toolbarActions, ActionPlaces.POPUP)
-    invalidate()
   }
 
   init {
@@ -223,13 +254,30 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
                 it.connect()
               }
               else {
-                parent.openConsole(it.portName())
+                parentPanel.openConsole(it.portName())
               }
             }
         }
       }
     })
     ListSpeedSearch.installOn(this) { it.asSafely<Connectable>()?.entityName }
+
+    launchOnShow("Connectable List Model Updater") {
+      val profilesFlow = serviceAsync<SerialProfileService>().profilesFlow
+      val portNamesFlow = serviceAsync<SerialPortService>().portNamesFlow
+      val portStatusFlow = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+
+      application.messageBus.connect(this).subscribe(SERIAL_PORTS_TOPIC, object : SerialPortsListener {
+        override fun portsStatusChanged() {
+          portStatusFlow.tryEmit(Unit)
+        }
+      })
+
+      updateModel()
+      merge(profilesFlow, portNamesFlow, portStatusFlow).collectLatest {
+        updateModel()
+      }
+    }
   }
 
   @NlsSafe
@@ -258,8 +306,6 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
           newProfiles.remove(entityName)
           clearSelection()
           setProfiles(newProfiles)
-          // TODO: this could be in a coroutine
-          application.invokeLater { rescanProfiles() }
         }
       }
     }
@@ -273,7 +319,9 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
     override fun actionPerformed(e: AnActionEvent) {
       val selectedProfile = selectedValue.asSafely<ConnectableProfile>() ?: return
       val entityName = selectedProfile.entityName
-      createNewProfile(entityName)
+      currentThreadCoroutineScope().launch {
+        createNewProfile(entityName)
+      }
     }
   }
 
@@ -284,7 +332,9 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
     }
     override fun actionPerformed(e: AnActionEvent) {
       val portName = getSelectedPortName()
-      createNewProfile(null, portName)
+      currentThreadCoroutineScope().launch {
+        createNewProfile(null, portName)
+      }
     }
   }
 }

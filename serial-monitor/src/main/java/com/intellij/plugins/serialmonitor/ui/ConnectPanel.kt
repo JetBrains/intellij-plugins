@@ -70,16 +70,6 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitt
     }
     ports.addListSelectionListener { selectionChanged() }
     secondComponent = JBPanel<JBPanel<*>>()
-    // TODO: this could be in a coroutine, subscribing to the flow
-    application.messageBus.connect(toolWindow.disposable)
-      .subscribe(SERIAL_PORTS_TOPIC, object : SerialPortsListener {
-        override fun portsStatusChanged() {
-          application.invokeLater({ ports.rescanProfiles() },
-                                  { toolWindow.isDisposed })
-        }
-      })
-    // TODO: this could be in a coroutine, subscribing to the flow
-    ports.rescanProfiles()
   }
 
   private fun contentByPortName(portName: String?): Content? {
@@ -126,6 +116,7 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitt
     contentManager.addContent(content)
     val handler = object : SerialPortsListener {
       override fun portsStatusChanged() {
+        // TODO: do not invoke later, use coroutines?
         application.invokeLater(
           {
             val status = serialMonitor.getStatus()
@@ -134,7 +125,7 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitt
           { toolWindow.isDisposed })
       }
     }
-    application.messageBus.connect(content).subscribe<SerialPortsListener>(SERIAL_PORTS_TOPIC, handler)
+    application.messageBus.connect(content).subscribe(SERIAL_PORTS_TOPIC, handler)
 
     serialMonitor.connect()
     contentManager.setSelectedContent(content, true)

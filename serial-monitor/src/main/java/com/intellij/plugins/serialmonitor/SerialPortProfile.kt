@@ -6,6 +6,7 @@ import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import com.intellij.util.xmlb.annotations.Attribute
 import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.XMap
+import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.PropertyKey
 import java.nio.charset.StandardCharsets
 
@@ -59,9 +60,9 @@ val SerialBits: List<Int> = listOf(8, 7, 6, 5)
 enum class Parity(private val displayKey: @PropertyKey(resourceBundle = SerialMonitorBundle.BUNDLE) String) {
   ODD("uart.parity.odd"), EVEN("uart.parity.even"), NONE("uart.parity.none");
 
-  override fun toString() = SerialMonitorBundle.message(displayKey)
+  override fun toString(): @Nls String = SerialMonitorBundle.message(displayKey)
 
-  fun shortName(): String = toString().substring(0, 1).uppercase()
+  fun shortName(): String = toString()[0].uppercase()
 }
 
 enum class StopBits(private val displayKey: String) {

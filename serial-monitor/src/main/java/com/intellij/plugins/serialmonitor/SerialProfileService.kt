@@ -4,47 +4,53 @@ import com.intellij.openapi.components.*
 import com.intellij.openapi.components.State.NameGetter
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 @Service
 @State(name = "SerialPortProfiles",
        storages = [Storage(value = "serial-port-profiles.xml", roamingType = RoamingType.PER_OS)],
        category = SettingsCategory.TOOLS,
        presentableName = SerialProfileService.PresentableName::class)
-class SerialProfileService : PersistentStateComponent<SerialProfilesState> {
-  private var myState: SerialProfilesState = SerialProfilesState()
+class SerialProfileService(val cs: CoroutineScope) : PersistentStateComponent<SerialProfilesState> {
+  private var myState = MutableStateFlow(SerialProfilesState())
+  val profilesFlow: Flow<Map<String, SerialPortProfile>> = myState.map { it.profiles }.distinctUntilChanged()
 
   override fun getState(): SerialProfilesState {
-    return myState
+    return myState.value
   }
 
   override fun loadState(state: SerialProfilesState) {
-    myState = state
+    myState.value = state
   }
 
   fun setDefaultProfile(defaultProfile: SerialPortProfile) {
-    myState.defaultProfile = defaultProfile
+    myState.value = state.copy(defaultProfile=defaultProfile)
   }
 
   fun setProfiles(profiles: MutableMap<String, SerialPortProfile>) {
-    myState.profiles = profiles
+    myState.value = state.copy(profiles=profiles)
   }
 
-  fun getProfiles(): Map<String, SerialPortProfile> = myState.profiles
+  fun getProfiles(): Map<String, SerialPortProfile> = myState.value.profiles
 
   fun copyDefaultProfile(portName: @NlsSafe String? = null): SerialPortProfile {
-    val profile = myState.defaultProfile.copy()
+    val profile = myState.value.defaultProfile.copy()
     if(portName!=null) profile.portName = portName
     return profile
   }
 
-  fun defaultBaudRate(): Int = myState.defaultProfile.baudRate
+  fun defaultBaudRate(): Int = myState.value.defaultProfile.baudRate
 
   enum class NewLine(private val displayKey: String, val value: String) {
     CR("uart.newline.cr", "\r"),
     LF("uart.newline.lf", "\n"),
     CRLF("uart.newline.crlf", "\r\n");
 
-    override fun toString() = SerialMonitorBundle.message(displayKey)
+    override fun toString(): String = SerialMonitorBundle.message(displayKey)
   }
 
   class PresentableName : NameGetter() {

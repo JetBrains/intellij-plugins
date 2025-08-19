@@ -11,7 +11,6 @@ import jssc.SerialPort.*
 import jssc.SerialPortList
 import org.jetbrains.annotations.Nls
 import java.nio.file.Files
-import java.util.TreeSet
 import java.util.regex.Pattern
 import kotlin.io.path.Path
 import kotlin.io.path.pathString

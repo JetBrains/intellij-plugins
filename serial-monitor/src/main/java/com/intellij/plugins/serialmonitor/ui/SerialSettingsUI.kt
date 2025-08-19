@@ -1,6 +1,7 @@
 package com.intellij.plugins.serialmonitor.ui
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.UiWithModelAccess
 import com.intellij.openapi.components.service
 import com.intellij.openapi.observable.util.whenTextChangedFromUi
 import com.intellij.openapi.ui.ComboBox
@@ -19,6 +20,9 @@ import com.intellij.ui.UIBundle
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValidationInfoBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.nio.charset.Charset
@@ -30,7 +34,7 @@ private val charsets: Collection<String> = Charset.availableCharsets().filter { 
 
 private val namePattern = Regex("(.+)\\((\\d+)\\)\\s*")
 
-internal fun ConnectableList.createNewProfile(oldProfileName: String?, newPortName: String? = null) {
+internal suspend fun ConnectableList.createNewProfile(oldProfileName: String?, newPortName: String? = null) {
 
   val service = service<SerialProfileService>()
   val profiles = service.getProfiles().toMutableMap()
@@ -62,13 +66,16 @@ internal fun ConnectableList.createNewProfile(oldProfileName: String?, newPortNa
       return message("text.profile.already.exists")
     }
   }
-  val finalName = Messages.showInputDialog(this, message("dialog.message.name"), message("dialog.title.new.profile"),
-                                           null, newName, validator)
-  if (finalName != null) {
-    profiles[finalName] = newProfile
-    service.setProfiles(profiles)
-    // TODO: this could be in a coroutine, or just emit to another flow which calls rescan
-    this.rescanProfiles(finalName)
+
+  withContext(Dispatchers.UiWithModelAccess) {
+    val finalName = Messages.showInputDialog(this@createNewProfile, message("dialog.message.name"), message("dialog.title.new.profile"),
+                             null, newName, validator)
+    if (finalName != null) {
+      profiles[finalName] = newProfile
+      service.setProfiles(profiles)
+      awaitModelUpdate()
+      selectProfile(finalName)
+    }
   }
 }
 
@@ -196,6 +203,7 @@ fun Panel.serialSettings(disposable: Disposable,
 
 internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe String, disposable: Disposable): DialogPanel {
   val portStatus = service<SerialPortService>().portStatus(portName)
+  val profileService = service<SerialProfileService>()
   return panel {
     indent {
       row {
@@ -203,37 +211,42 @@ internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe S
         label(portName).label(message("label.port.name"))
       }
 
-      serialSettings(profile = service<SerialProfileService>().copyDefaultProfile(portName),
+      serialSettings(profile = profileService.copyDefaultProfile(portName),
                      readOnly = (portStatus != PortStatus.DISCONNECTED) && (portStatus != PortStatus.READY),
                      disposable = disposable) {
-        service<SerialProfileService>().setDefaultProfile(it)
+        profileService.setDefaultProfile(it)
       }
       row {
         button(message("button.connect")) {
-          val profile = service<SerialProfileService>().copyDefaultProfile(portName)
-          connectableList.parent.connectProfile(profile)
+          val profile = profileService.copyDefaultProfile(portName)
+          connectableList.parentPanel.connectProfile(profile)
         }.visible(portStatus.portConnectVisible)
           .applyToComponent { toolTipText = portStatus.connectTooltip }
 
         button(message("button.disconnect")) {
-          connectableList.parent.disconnectPort(portName)
+          connectableList.parentPanel.disconnectPort(portName)
         }.visible(portStatus.disconnectVisible)
 
         button(message("button.open.console")) {
-          connectableList.parent.openConsole(portName)
+          connectableList.parentPanel.openConsole(portName)
         }.visible(portStatus.openConsoleVisible)
 
-        link(message("link.label.create.profile")) { connectableList.createNewProfile(null, portName) }
+        link(message("link.label.create.profile")) {
+        profileService.cs.launch {
+          connectableList.createNewProfile (null, portName)
+        }
+      }
       }
     }
   }
 }
 
 internal fun profileSettings(connectableList: ConnectableList, disposable: Disposable): DialogPanel? {
-  val (profileName, profile) = connectableList.getSelectedProfile() ?: (null to null)
-  if (profile != null && profileName != null) {
+  val (profileName, profile) = connectableList.getSelectedProfile() ?: return null
+  if (profile == null) return null
     var portCombobox: ComboBox<String>? = null
     val status = service<SerialPortService>().portStatus(profile.portName)
+    val profileService = service<SerialProfileService>()
     return panel {
       indent {
         row {
@@ -264,38 +277,36 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
 
         }.layout(RowLayout.LABEL_ALIGNED)
         serialSettings(disposable = disposable, profile = profile) {
-          val service = service<SerialProfileService>()
-          val profiles = service.getProfiles().toMutableMap()
+          val profiles = profileService.getProfiles().toMutableMap()
           profiles[profileName] = it
-          service.setProfiles(profiles)
-          connectableList.parent.notifyProfileChanged(profile)
+          profileService.setProfiles(profiles)
+          connectableList.parentPanel.notifyProfileChanged(profile)
         }
         row {
           button(message("button.connect")) {
-            connectableList.parent.connectProfile(profile, profileName)
+            connectableList.parentPanel.connectProfile(profile, profileName)
           }.visible(status.profileConnectVisible).enabled(status.connectEnabled)
-            .applyToComponent { toolTipText = status.connectTooltip }
+          .applyToComponent { toolTipText = status.connectTooltip }
 
           button(message("button.disconnect")) {
-            connectableList.parent.disconnectPort(profile.portName)
+            connectableList.parentPanel.disconnectPort(profile.portName)
           }.visible(status.disconnectVisible)
 
           button(message("button.open.console")) {
-            connectableList.parent.openConsole(profile.portName)
+            connectableList.parentPanel.openConsole(profile.portName)
           }.visible(status.openConsoleVisible)
 
-          link(message("link.label.duplicate.profile")) { connectableList.createNewProfile(profileName) }
-        }
-        onApply { //workaround: editable combobox does not send any  events when the text is changed
-          profile.portName = portCombobox?.editor?.item?.toString() ?: ""
+          link(message("link.label.duplicate.profile")) {profileService.cs.launch { connectableList.createNewProfile(profileName) }
         }
       }
-    }.apply {
-      registerValidators(disposable)
-      validateAll()
+      onApply { //workaround: editable combobox does not send any  events when the text is changed
+        profile.portName = portCombobox?.editor?.item?.toString() ?: ""
+      }
     }
+  }.apply {
+    registerValidators(disposable)
+    validateAll()
   }
-  return null
 }
 
 private val PortStatus.profileConnectVisible get() = !this.disconnectVisible

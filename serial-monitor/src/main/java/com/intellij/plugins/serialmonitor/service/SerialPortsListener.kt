@@ -12,7 +12,7 @@ interface SerialPortsListener {
 
   companion object {
     @JvmStatic
-    val SERIAL_PORTS_TOPIC = Topic.create("Serial Monitor Ports", SerialPortsListener::class.java)
+    val SERIAL_PORTS_TOPIC: Topic<SerialPortsListener> = Topic.create("Serial Monitor Ports", SerialPortsListener::class.java)
 
   }
 }

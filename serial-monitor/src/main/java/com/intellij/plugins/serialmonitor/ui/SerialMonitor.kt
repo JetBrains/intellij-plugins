@@ -37,6 +37,7 @@ import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridConstraints.*
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.IconUtil
+import com.intellij.util.application
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import java.awt.Component
@@ -65,10 +66,12 @@ class SerialMonitor(private val project: Project,
   fun getStatus(): PortStatus = duplexConsoleView.status
 
   override fun portsStatusChanged() {
-    // TODO: do this on EDT, API says this is happening on BGT!!!
-    mySend.isEnabled = duplexConsoleView.status == PortStatus.CONNECTED
-    myHardwareStatusComponents.onCTSChanged(duplexConsoleView.connection.cts)
-    myHardwareStatusComponents.onDSRChanged(duplexConsoleView.connection.dsr)
+    // TODO: use coroutine and some usable disposable
+    application.invokeLater {
+      mySend.isEnabled = duplexConsoleView.status == PortStatus.CONNECTED
+      myHardwareStatusComponents.onCTSChanged(duplexConsoleView.connection.cts)
+      myHardwareStatusComponents.onDSRChanged(duplexConsoleView.connection.dsr)
+    }
     ActivityTracker.getInstance().inc()
   }
 
@@ -255,7 +258,7 @@ class SerialMonitor(private val project: Project,
     myTopPanel.isVisible = mySend.isVisible || myCommand.isVisible || myLineEnd.isVisible || myHardwareControls.isVisible
   }
 
-  class HardwareStatusComponents() {
+  class HardwareStatusComponents {
 
     lateinit var cts: JComponent
     lateinit var dsr: JComponent

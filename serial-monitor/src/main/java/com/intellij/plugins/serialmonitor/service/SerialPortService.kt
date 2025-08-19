@@ -17,6 +17,7 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.annotations.Nls
+import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -29,6 +30,8 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
     private set
   private val portNames: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
   private val connections: MutableMap<String, SerialConnection> = ConcurrentHashMap()
+
+  val portNamesFlow: StateFlow<Set<String>> get() = portNames
 
   init {
     cs.launch(CoroutineName("Serial Port Watcher")) {
@@ -55,7 +58,7 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
         mul *= 10
         digitIdx--
       }
-      return s.substring(0, digitIdx + 1) to num
+      return s.take(digitIdx + 1) to num
     }
 
     override fun compare(name1: String, name2: String): Int {
