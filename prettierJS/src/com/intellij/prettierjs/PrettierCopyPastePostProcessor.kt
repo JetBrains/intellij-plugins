@@ -3,15 +3,24 @@ package com.intellij.prettierjs
 
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData
-import com.intellij.formatting.service.FormattingServiceUtil
+import com.intellij.lang.javascript.editor.JSCopyPasteService
+import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.registry.Registry
+import com.intellij.prettierjs.formatting.PrettierFormattingApplier
+import com.intellij.prettierjs.formatting.createFormattingContext
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.withTimeoutOrNull
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
+import kotlin.time.Duration.Companion.milliseconds
 
 class PrettierCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
   private object DumbData : TextBlockTransferableData {
@@ -41,18 +50,48 @@ class PrettierCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransfera
   ) {
     val document = editor.document
     val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document) ?: return
-    val virtualFile = psiFile.virtualFile ?: return
 
-    val configuration = PrettierConfiguration.getInstance(project)
-    if (!configuration.isRunOnPaste) return
-    if (!PrettierUtil.isFormattingAllowedForFile(project, virtualFile)) return
-
-    val service = FormattingServiceUtil.findService(PrettierFormattingService::class.java) ?: return
+    if (!shouldRunPrettierOnPaste(project, psiFile)) return
 
     PsiDocumentManager.getInstance(project).commitDocument(document)
 
-    service.formatElement(psiFile, bounds.textRange, true)
+    val psiPtr = psiFile.createSmartPointer()
+
+    project.service<JSCopyPasteService>().scheduleOnPasteProcessing(
+      psiFile,
+      PrettierBundle.message("progress.title"),
+      PrettierBundle.message("reformat.with.prettier.command.name"),
+      collectChanges = {
+        val psiFile = psiPtr.dereference() ?: return@scheduleOnPasteProcessing emptyList()
+        val response = runBlockingCancellable {
+          val timeout = Registry.intValue("prettier.on.paste.timeout.ms", 500).milliseconds
+          withTimeoutOrNull(timeout) {
+            ReformatWithPrettierAction.performRequestForFileAsync(psiFile, bounds.textRange, psiFile.text)?.await()
+          }
+        } ?: return@scheduleOnPasteProcessing emptyList()
+
+        if (response.result == null) return@scheduleOnPasteProcessing emptyList()
+        val formattingContext = createFormattingContext(
+          document,
+          response.result,
+          response.cursorOffset,
+        )
+
+        listOfNotNull(PrettierFormattingApplier.from(formattingContext))
+      },
+      applyChanges = { waCallbacks ->
+        val psiFile = psiPtr.dereference() ?: return@scheduleOnPasteProcessing
+        waCallbacks.forEach { it.apply(project, psiFile.virtualFile) }
+      }
+    )
   }
 
   override fun requiresAllDocumentsToBeCommitted(editor: Editor, project: Project): Boolean = false
+
+  private fun shouldRunPrettierOnPaste(project: Project, psiFile: PsiFile): Boolean {
+    val configuration = PrettierConfiguration.getInstance(project)
+    if (!configuration.isRunOnPaste) return false
+    val vFile = psiFile.virtualFile ?: return false
+    return PrettierUtil.isFormattingAllowedForFile(project, vFile)
+  }
 }

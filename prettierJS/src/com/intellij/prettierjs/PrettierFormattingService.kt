@@ -141,7 +141,7 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
         .run<RuntimeException> {
           if (document.modificationStamp == initialModificationStamp &&
               request.documentText != formattingContext.formattedContent) {
-            strategy.apply(project, file.virtualFile, formattingContext)
+            strategy.apply(project, file.virtualFile)
             moveCursor(file, formattingContext)
           }
         }

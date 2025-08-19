@@ -1,0 +1,14 @@
+function
+
+
+example(
+
+
+
+) {
+
+}
+
+<caret>
+
+

@@ -68,7 +68,7 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
 
     val strategy = PrettierFormattingApplier.from(formattingContext)
     writeCommandAction(project, PrettierBundle.message("reformat.with.prettier.command.name")) {
-      strategy.apply(project, file, formattingContext)
+      strategy.apply(project, file)
       moveCursor(file, psiFile, formattingContext.cursorOffset)
     }
   }

@@ -57,12 +57,14 @@
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
     <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
     <postFormatProcessor implementation="com.intellij.prettierjs.PrettierPostFormatProcessor"/>
-    <copyPastePostProcessor implementation="com.intellij.prettierjs.PrettierCopyPastePostProcessor"/>
+    <copyPastePostProcessor implementation="com.intellij.prettierjs.PrettierCopyPastePostProcessor" order="last"/>
 
     <registryKey key="prettier.service.node.arguments" defaultValue=""
                  description="Command line options for the Prettier service process. Separate multiple arguments with a space. If an argument contains a space, wrap the argument in double quotes. To escape a double quote, use the \\&quot; sequence."/>
     <registryKey key="prettier.use.async.formatting.service" defaultValue="true"
                  description="Enable or disable the Prettier asynchronous formatting service. When enabled, the post format processor is disabled."/>
+    <registryKey key="prettier.on.paste.timeout.ms" defaultValue="500"
+                 description="Timeout in milliseconds for Prettier formatting during paste"/>
     <registryKey key="prettier.service.expiration.timeout.ms"
                  defaultValue="300000"
                  description="The IDE will stop the Prettier service process if it is not used for the specified period of time (in milliseconds)"/>

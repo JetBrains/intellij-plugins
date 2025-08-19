@@ -8,14 +8,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.LineSeparator
 
 fun interface PrettierFormattingApplier {
-  fun apply(project: Project, virtualFile: VirtualFile, context: PrettierFormattingContext): Boolean
+  fun apply(project: Project, virtualFile: VirtualFile): Boolean
 
   companion object {
     fun from(context: PrettierFormattingContext): PrettierFormattingApplier {
       val diff = computeFormattingDiff(context)
-      return PrettierFormattingApplier { project, virtualFile, formattingContext ->
-        applyTextDifferencesToDocument(formattingContext, diff)
-        updateLineSeparatorIfNeeded(project, virtualFile, formattingContext.detectedLineSeparator)
+      return PrettierFormattingApplier { project, virtualFile ->
+        applyTextDifferencesToDocument(context, diff)
+        updateLineSeparatorIfNeeded(project, virtualFile, context.detectedLineSeparator)
       }
     }
   }

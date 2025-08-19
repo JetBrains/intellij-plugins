@@ -2,9 +2,10 @@
 package com.intellij.prettierjs
 
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest
+import com.intellij.lang.javascript.pasteAndWaitJSCopyPasteService
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.prettierjs.PrettierConfiguration.ConfigurationMode
-import com.intellij.testFramework.EditorTestUtil
 import java.awt.datatransfer.StringSelection
 
 class PasteWithPrettierTest : JSExternalToolIntegrationTest() {
@@ -31,6 +32,20 @@ class PasteWithPrettierTest : JSExternalToolIntegrationTest() {
                           configuration.state.configurationMode = ConfigurationMode.MANUAL
                           configuration.state.runOnReformat = false
                         }) { doTestPasteAction() }
+  }
+
+  fun testRunPrettierOnPasteWithAutoImport() {
+    configureRunOnPaste({
+                          val configuration = PrettierConfiguration.getInstance(project)
+                          configuration.state.configurationMode = ConfigurationMode.AUTOMATIC
+                        }) {
+      val dirName = getTestName(true)
+      myFixture.configureFromTempProjectFile("source.js")
+      myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY)
+      myFixture.configureFromTempProjectFile("toReformat.js")
+      myFixture.pasteAndWaitJSCopyPasteService()
+      myFixture.checkResultByFile("$dirName/toReformat_after.js")
+    }
   }
 
   private fun configureRunOnPaste(configure: Runnable, runnable: Runnable) {
@@ -70,10 +85,7 @@ class PasteWithPrettierTest : JSExternalToolIntegrationTest() {
 
     // Set up clipboard with content to paste
     CopyPasteManager.getInstance().setContents(StringSelection(textToPaste))
-
-    // Perform paste action
-    EditorTestUtil.performPaste(myFixture.getEditor())
-
+    myFixture.pasteAndWaitJSCopyPasteService()
     // Check result
     myFixture.checkResultByFile("$dirName/toReformat_after.js")
   }

@@ -146,7 +146,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
 
       EditorScrollingPositionKeeper.perform(editor, true, () -> {
         runWriteCommandAction(project, () -> {
-          var isLineSeparatorChanged = strategy.apply(project, vFile, formattingContext);
+          var isLineSeparatorChanged = strategy.apply(project, vFile);
           lineSeparatorUpdated.set(isLineSeparatorChanged);
 
           if (!editor.isDisposed() && formattingContext.getCursorOffset() >= 0) {
@@ -271,7 +271,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported && (result.result != null)) {
       var formattingContext = createFormattingContext(document, result.result, result.cursorOffset);
       var strategy = PrettierFormattingApplier.Companion.from(formattingContext);
-      strategy.apply(project, virtualFile, formattingContext);
+      strategy.apply(project, virtualFile);
 
       var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
       if (editor != null &&
@@ -286,16 +286,11 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     return 0;
   }
 
-  static @Nullable PrettierLanguageService.FormatResult performRequestForFile(
+  static @Nullable CompletableFuture<PrettierLanguageService.FormatResult> performRequestForFileAsync(
     @NotNull PsiFile currentFile,
     @Nullable TextRange range,
     @Nullable String forcedInitialText
   ) {
-    boolean edt = ApplicationManager.getApplication().isDispatchThread();
-    if (!edt && ApplicationManager.getApplication().isReadAccessAllowed()) {
-      LOG.error("JSLanguageServiceUtil.awaitFuture() under read action may cause deadlock");
-    }
-
     Project project = currentFile.getProject();
     Ref<String> text = Ref.create();
     Ref<Integer> cursorOffset = Ref.create(-1);
@@ -346,14 +341,26 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     });
 
     if (text.isNull()) {
-      return PrettierLanguageService.FormatResult.UNSUPPORTED;
+      return CompletableFuture.completedFuture(PrettierLanguageService.FormatResult.UNSUPPORTED);
     }
 
     NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage(currentFile);
     PrettierLanguageService service = PrettierLanguageService.getInstance(project, currentFile.getVirtualFile(), nodePackage);
 
-    CompletableFuture<PrettierLanguageService.FormatResult> formatFuture =
-      service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, rangeForRequest.get(), cursorOffset.get());
+    return service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, rangeForRequest.get(), cursorOffset.get());
+  }
+
+  static @Nullable PrettierLanguageService.FormatResult performRequestForFile(
+    @NotNull PsiFile currentFile,
+    @Nullable TextRange range,
+    @Nullable String forcedInitialText
+  ) {
+    boolean edt = ApplicationManager.getApplication().isDispatchThread();
+    if (!edt && ApplicationManager.getApplication().isReadAccessAllowed()) {
+      LOG.error("JSLanguageServiceUtil.awaitFuture() under read action may cause deadlock");
+    }
+
+    CompletableFuture<PrettierLanguageService.FormatResult> formatFuture = performRequestForFileAsync(currentFile, range, forcedInitialText);
     long timeout = edt ? EDT_TIMEOUT_MS : JSLanguageServiceUtil.getTimeout();
     return JSLanguageServiceUtil.awaitFuture(formatFuture, timeout, true, null, edt);
   }
