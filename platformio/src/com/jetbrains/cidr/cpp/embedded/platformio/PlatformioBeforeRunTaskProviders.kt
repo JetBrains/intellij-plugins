@@ -92,7 +92,7 @@ class PlatformioBuildBeforeRunTaskProvider : PlatformioBeforeRunTaskProvider() {
       else {
         PlatformioTargetTask(name, "run")
       }
-    }.apply { isEnabled = true } // Add to all PIO run configurations by default
+    }.apply { isEnabled = runConfiguration is PlatformioDebugConfiguration } // Add to all PIO run configurations by default
 
   override fun getName(): String = ClionEmbeddedPlatformioBundle.message("platformio.build")
 }
