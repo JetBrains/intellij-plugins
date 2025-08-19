@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveProcessorBase;
 import com.intellij.lang.javascript.psi.resolve.JSResolveProcessorEx;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.css.CssClassMarker;
@@ -21,6 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class ActionScriptResolveProcessor extends JSResolveProcessorBase implements JSResolveProcessorEx {
+  public static final Key<String> ASKING_FOR_QUALIFIED_IMPORT = Key.create("asking.for.import.of.qname");
+  public static final Key<Boolean> LOOKING_FOR_USE_NAMESPACES = Key.create("looking.for.use.directive");
   private final Set<JSClass> visitedClasses = new HashSet<>();
   private final Set<JSClass> visitedClassesStatic = new HashSet<>();
 
@@ -196,17 +199,17 @@ public abstract class ActionScriptResolveProcessor extends JSResolveProcessorBas
   }
 
   public boolean specificallyAskingToResolveQualifiedNames() {
-    return getUserData(ResolveProcessor.ASKING_FOR_QUALIFIED_IMPORT) != null;
+    return getUserData(ASKING_FOR_QUALIFIED_IMPORT) != null;
   }
 
   @Override
   public String getQualifiedNameToImport() {
-    return getUserData(ResolveProcessor.ASKING_FOR_QUALIFIED_IMPORT);
+    return getUserData(ASKING_FOR_QUALIFIED_IMPORT);
   }
 
   @Override
   public boolean lookingForUseNamespaces() {
-    return getUserData(ResolveProcessor.LOOKING_FOR_USE_NAMESPACES) != null;
+    return getUserData(LOOKING_FOR_USE_NAMESPACES) != null;
   }
 
   @Override

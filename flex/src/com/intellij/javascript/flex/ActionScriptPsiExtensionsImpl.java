@@ -4,6 +4,7 @@ package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.resolve.ActionScriptFlexPsiImplUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptImportHandler;
+import com.intellij.javascript.flex.resolve.ActionScriptResolveProcessor;
 import com.intellij.javascript.flex.resolve.ActionScriptSinkResolveProcessor;
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.javascript.DialectDetector;
@@ -87,7 +88,7 @@ public class ActionScriptPsiExtensionsImpl implements ActionScriptPsiExtensions 
                 }
               };
 
-            processor.putUserData(ResolveProcessor.ASKING_FOR_QUALIFIED_IMPORT, qName);
+            processor.putUserData(ActionScriptResolveProcessor.ASKING_FOR_QUALIFIED_IMPORT, qName);
             PsiNamedElement importOwner =
               PsiTreeUtil.getParentOfType(placeTopParent, JSFunction.class, JSFile.class, JSPackageStatement.class, JSClass.class);
             if (importOwner != null) { // optimization, start directly from import owner

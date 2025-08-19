@@ -45,7 +45,7 @@ public final class ActionScriptFlexResolveUtil {
 
       MyProcessor() {
         super(null);
-        putUserData(ResolveProcessor.LOOKING_FOR_USE_NAMESPACES, true);
+        putUserData(LOOKING_FOR_USE_NAMESPACES, true);
       }
 
       @Override
