@@ -3,12 +3,16 @@ package com.intellij.javascript.flex.resolve
 
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil
 import com.intellij.lang.javascript.index.JSLocalNamespaceEvaluator
-import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.lang.javascript.psi.JSPsiElementBase
-import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.ecmal4.*
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
-import com.intellij.lang.javascript.psi.resolve.*
+import com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler.Companion.getRealElement
+import com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler.Companion.isParentClassContext
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
@@ -16,7 +20,32 @@ import com.intellij.psi.xml.XmlTag
 import it.unimi.dsi.fastutil.Hash
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet
 
-class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsResolving: Boolean) : AccessibilityProcessingHandler(_place) {
+class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsResolving: Boolean) {
+  var isProcessStatics: Boolean = false
+  protected var allowUnqualifiedStaticsFromInstance: Boolean = false
+
+  protected var myClassDeclarationStarted: Boolean = false
+  protected val place: PsiElement? = if (_place != null) getRealElement(_place) else null
+  var isProcessingInheritedClasses: Boolean = false
+
+  fun accepts(element: PsiElement, resolveProcessor: ActionScriptSinkResolveProcessor<*>): Boolean {
+    if (this.isProcessStatics &&  // ids can not be referenced from static context!
+        myClassDeclarationStarted &&
+        element is JSImplicitElement && element.getType() == JSImplicitElement.Type.Tag
+    ) {
+      return false
+    }
+    else if (element is JSFieldVariable ||
+             element is JSFunction ||
+             element is JSNamespaceDeclaration ||
+             element is JSLocalImplicitElementImpl
+    ) {
+      return acceptsForMembersVisibility(element, resolveProcessor)
+    }
+
+    return true
+  }
+
   private var myTypeName: String? = null
   private var openedNses: MutableMap<String?, String?>? = null
   private var defaultNsIsNotAllowed = false
@@ -36,7 +65,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
 
       // TODO: e.g. protected is also ns
       if (namespace != null) {
-        val ns = if (skipNsResolving) namespace.getText() else ActionScriptPsiImplUtil.calcNamespaceReference(place)
+        val ns = if (skipNsResolving) namespace.getText() else ActionScriptFlexPsiImplUtil.calcNamespaceReference(place)
         if (ns != null) {
           openedNses = HashMap<String?, String?>(1)
           openedNses!!.put(ns, null)
@@ -49,11 +78,11 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
     }
   }
 
-  override fun setTypeName(qualifiedName: String?) {
+  fun setTypeName(qualifiedName: String?) {
     myTypeName = qualifiedName
   }
 
-  override fun acceptsForMembersVisibility(element: JSPsiElementBase, resolveProcessor: SinkResolveProcessor<*>): Boolean {
+  fun acceptsForMembersVisibility(element: JSPsiElementBase, resolveProcessor: ActionScriptSinkResolveProcessor<*>): Boolean {
     if (element !is JSAttributeListOwner) return true
     val attributeList = (element as JSAttributeListOwner).getAttributeList()
 
@@ -66,9 +95,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
       }
 
       if (!acceptProtectedMembers) {
-        if (attributeList != null &&
-            attributeList.getAccessType() == JSAttributeList.AccessType.PROTECTED
-        ) {
+        if (attributeList != null && attributeList.getAccessType() == JSAttributeList.AccessType.PROTECTED) {
           // we are resolving in context of the class or element within context of the class
           if ((myClassScopes != null || isParentClassContext(element))) {
             resolveProcessor.addPossibleCandidateResult(element, JSResolveResult.ProblemKind.PROTECTED_MEMBER_IS_NOT_ACCESSIBLE)
@@ -124,7 +151,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
 
   private fun processActionScriptNotAllowedNsAttributes(
     element: PsiElement,
-    resolveProcessor: SinkResolveProcessor<*>,
+    resolveProcessor: ActionScriptSinkResolveProcessor<*>,
     attributeList: JSAttributeList?
   ): Boolean {
     if (!resolveProcessor.getResultSink().isActionScript) return false
@@ -142,7 +169,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
       if (!anyNsAllowed &&
           place is JSReferenceExpression && !JSResolveUtil.isExprInTypeContext(place as JSReferenceExpression)
       ) {
-        openedNses = ActionScriptResolveUtil.calculateOpenNses(place)
+        openedNses = ActionScriptFlexResolveUtil.calculateOpenNses(place)
       }
     }
 
@@ -157,11 +184,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
     return false
   }
 
-  override fun checkConstructorWithNew(element: PsiElement, resolveProcessor: SinkResolveProcessor<*>): Boolean {
-    return true
-  }
-
-  override fun configureClassScope(jsClass: JSClass?) {
+  fun configureClassScope(jsClass: JSClass?) {
     myClassScopeExplicitlySet = true
     configureCurrentClassScope(jsClass)
   }
@@ -204,7 +227,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
     }
   }
 
-  override fun startingParent(parent: PsiElement?) {
+  fun startingParent(parent: PsiElement?) {
     myClassDeclarationStarted = parent is JSClass
 
     if (parent is JSClass) {
@@ -247,7 +270,7 @@ class ActionScriptAccessibilityProcessingHandler(_place: PsiElement?, skipNsReso
 
       if (element !is JSClass) continue
 
-      val processor = object : ResolveProcessor(null) {
+      val processor = object : ActionScriptResolveProcessor(null) {
         override fun execute(element: PsiElement, state: ResolveState): Boolean {
           if (element !is JSClass) return true
           return !jsClass.isEquivalentTo(element)

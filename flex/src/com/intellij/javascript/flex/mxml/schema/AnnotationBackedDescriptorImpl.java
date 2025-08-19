@@ -11,13 +11,18 @@ import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
+import com.intellij.javascript.flex.resolve.ActionScriptResolveProcessor;
+import com.intellij.javascript.flex.resolve.ActionScriptSinkResolveProcessor;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
-import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveProcessorEx;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.ResolveResultSink;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
@@ -765,7 +770,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
         String propName = attributeListOwner.getName();
         if (grandParent instanceof JSClass && propName != null) {
-          final var processor = new SinkResolveProcessor<>(propName, new ResolveResultSink(null, propName));
+          final var processor = new ActionScriptSinkResolveProcessor<>(propName, new ResolveResultSink(null, propName));
           processor.setToProcessHierarchy(false);
           grandParent.processDeclarations(processor, ResolveState.initial(), grandParent, attributeListOwner);
 
@@ -984,7 +989,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private static Set<String> getNamedElementsVisibleAt(final @NotNull PsiElement context) {
     final Set<String> names = new HashSet<>();
 
-    JSResolveProcessorEx processor = new ResolveProcessor(null) {
+    JSResolveProcessorEx processor = new ActionScriptResolveProcessor(null) {
       @Override
       public boolean execute(final @NotNull PsiElement element, final @NotNull ResolveState state) {
         if (element instanceof JSNamedElementBase) {

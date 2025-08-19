@@ -192,6 +192,9 @@
     <applicationService serviceInterface="com.intellij.lang.javascript.flex.ActionScriptExtensions"
                         serviceImplementation="com.intellij.javascript.flex.ActionScriptExtensionsImpl"
                         overrides="true"/>
+    <applicationService serviceInterface="com.intellij.lang.javascript.flex.ActionScriptPsiExtensions"
+                        serviceImplementation="com.intellij.javascript.flex.ActionScriptPsiExtensionsImpl"
+                        overrides="true"/>
 
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassInProductSourceInspection"
                      bundle="messages.FlexBundle"

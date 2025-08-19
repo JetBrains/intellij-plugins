@@ -5,7 +5,7 @@ import com.intellij.javascript.flex.refactoring.changeSignature.ActionScriptImpo
 import com.intellij.lang.javascript.flex.ActionScriptExtensions;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
-import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatureProcessor;
+import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatureProcessor.RequiredImportProcessor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ActionScriptExtensionsImpl implements ActionScriptExtensions {
   @Override
-  public JSChangeSignatureProcessor.@NotNull RequiredImportProcessor createImportProcessor() {
+  public @NotNull RequiredImportProcessor createImportProcessor() {
     return new ActionScriptImportProcessor();
   }
 

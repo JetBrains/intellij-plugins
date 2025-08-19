@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.psi.*;
@@ -6,7 +6,12 @@ import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
+import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor.TypeResolveState;
+import com.intellij.lang.javascript.psi.resolve.ResultSink;
+import com.intellij.lang.javascript.psi.resolve.processors.JSQualifiedItemProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSContext;
@@ -15,7 +20,6 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSCustomElementType;
 import com.intellij.lang.javascript.psi.types.evaluable.JSTypeOfPsiElementBase;
 import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
@@ -23,9 +27,28 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler.processWithStatic;
 
-public class ActionScriptQualifiedItemProcessor<T extends ResultSink> extends QualifiedItemProcessor<T> {
-  public ActionScriptQualifiedItemProcessor(@NotNull T sink, @NotNull PsiFile containingFile) {
-    super(sink, containingFile);
+public class ActionScriptQualifiedItemProcessor<T extends ResultSink> extends ActionScriptSinkResolveProcessor<T>
+  implements JSQualifiedItemProcessor {
+
+  public ActionScriptQualifiedItemProcessor(@NotNull T sink) {
+    super(sink);
+    setToProcessHierarchy(true);
+  }
+
+  public ActionScriptQualifiedItemProcessor(String name, PsiElement _place, @NotNull T sink) {
+    super(name, _place, sink);
+  }
+
+  public TypeResolveState resolved = TypeResolveState.Unknown;
+
+  protected void forceResolvedState() {
+    resolved = TypeResolveState.Resolved;
+  }
+
+  @Override
+  public void processAdditionalType(@NotNull JSType type,
+                                    @NotNull JSEvaluateContext evaluateContext) {
+    process(type, evaluateContext);
   }
 
   @Override
@@ -163,7 +186,17 @@ public class ActionScriptQualifiedItemProcessor<T extends ResultSink> extends Qu
 
   @Override
   public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
-    boolean b = needPackages() && !(element instanceof JSPackage) || super.execute(element, state);
+    boolean b = needPackages() && !(element instanceof JSPackage);
+    if (!b) {
+      if (resolved == TypeResolveState.PrefixUnknown) {
+        if (myName != null && element instanceof JSFunction && !(place.getParent() instanceof JSCallExpression)) {
+          b = true;
+        }
+      }
+    }
+    if (!b) {
+      b = super.execute(element, state);
+    }
     if (getResult() != null) forceResolvedState();
     return b;
   }

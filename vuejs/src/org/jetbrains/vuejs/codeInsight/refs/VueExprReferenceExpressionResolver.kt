@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.codeInsight.refs
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
@@ -12,8 +12,8 @@ import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.lang.javascript.psi.resolve.JSSinkResolveProcessor
 import com.intellij.lang.javascript.psi.resolve.ResolveResultSink
-import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
@@ -68,16 +68,17 @@ class VueExprReferenceExpressionResolver(
   }
 
   override fun resolveFromIndices(
-    localProcessor: SinkResolveProcessor<ResolveResultSink>,
+    localProcessor: JSSinkResolveProcessor,
+    resultSink: ResolveResultSink,
     excludeGlobalTypeScript: Boolean,
     includeTypeOnlyContextSymbols: Boolean,
   ): Array<ResolveResult> =
     if (myQualifier == null) {
       val processor = WalkUpResolveProcessor(myReferencedName!!, myContainingFile, myRef)
-      processor.addLocalResults(localProcessor)
+      processor.addLocalResults(resultSink)
       getResultsFromProcessor(processor)
     }
-    else super.resolveFromIndices(localProcessor, excludeGlobalTypeScript, includeTypeOnlyContextSymbols)
+    else super.resolveFromIndices(localProcessor, resultSink, excludeGlobalTypeScript, includeTypeOnlyContextSymbols)
 
   private fun resolveFilterNameReference(expression: VueJSFilterReferenceExpression, incompleteCode: Boolean): Array<ResolveResult> {
     if (!incompleteCode) {

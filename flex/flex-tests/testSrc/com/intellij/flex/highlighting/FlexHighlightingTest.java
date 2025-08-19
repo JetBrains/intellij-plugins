@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -23,6 +23,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.javascript.flex.css.FlexCSSDialect;
 import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
+import com.intellij.javascript.flex.resolve.ActionScriptFlexPsiImplUtil;
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.css.CssDialect;
@@ -784,7 +785,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
         final PsiElement resolve = node.resolve();
 
         if (node.getParent() instanceof JSUseNamespaceDirective) {
-          foundConst2.set(ActionScriptPsiImplUtil.calcNamespaceReference(node.getParent()));
+          foundConst2.set(ActionScriptFlexPsiImplUtil.calcNamespaceReference(node.getParent()));
         }
         else if (resolve instanceof JSVariable && ((JSVariable)resolve).isConst()) {
           foundConst.set(StringUtil.stripQuotesAroundValue(((JSVariable)resolve).getInitializer().getText()));

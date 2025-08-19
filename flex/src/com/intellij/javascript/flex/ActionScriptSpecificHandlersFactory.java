@@ -18,9 +18,12 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.BiFunction;
 
 /**
  * @author Konstantin.Ulitin
@@ -81,8 +84,8 @@ public final class ActionScriptSpecificHandlersFactory extends JSDialectSpecific
   }
 
   @Override
-  public @NotNull AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
-    return new ActionScriptAccessibilityProcessingHandler(place, skipNsResolving);
+  public @NotNull JSSinkResolveProcessor createSinkResolveProcessor(@NotNull ResultSink resultSink) {
+    return new ActionScriptSinkResolveProcessor<>(resultSink);
   }
 
   @Override
@@ -94,11 +97,25 @@ public final class ActionScriptSpecificHandlersFactory extends JSDialectSpecific
 
   @Override
   public @NotNull JSQualifiedItemProcessor createJSQualifiedItemProcessor(@NotNull ResultSink sink, @NotNull PsiElement place) {
-    return new ActionScriptQualifiedItemProcessor<>(sink, place.getContainingFile());
+    return new ActionScriptQualifiedItemProcessor<>(sink);
   }
 
   @Override
   public @NotNull JSGenericTypesEvaluator getGenericTypeEvaluator() {
     return JSGenericTypesEvaluator.NO_OP;
+  }
+
+  @Override
+  public @NotNull JSResolveProcessorEx createJSResolveProcessorEx(
+    @Nullable String name,
+    @Nullable PsiElement place,
+    @NotNull BiFunction<? super @NotNull PsiElement, ? super @NotNull ResolveState, Boolean> executeHandler
+  ) {
+    return new ActionScriptResolveProcessor(name, place) {
+      @Override
+      public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
+        return executeHandler.apply(element, state);
+      }
+    };
   }
 }

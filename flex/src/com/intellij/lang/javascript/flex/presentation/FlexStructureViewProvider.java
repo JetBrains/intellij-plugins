@@ -5,12 +5,12 @@ import com.intellij.ide.structureView.*;
 import com.intellij.ide.structureView.impl.xml.XmlStructureViewTreeModel;
 import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
+import com.intellij.javascript.flex.resolve.ActionScriptResolveProcessor;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveProcessorEx;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
 import com.intellij.lang.javascript.structureView.JSStructureViewElementBase;
 import com.intellij.openapi.editor.Editor;
@@ -67,7 +67,7 @@ final class FlexStructureViewProvider implements XmlStructureViewBuilderProvider
                                                                JSQualifiedName ns,
                                                                PsiFile contextFile) {
       List<StructureViewTreeElement> result = new ArrayList<>();
-      JSResolveProcessorEx processor = new ResolveProcessor(null) {
+      JSResolveProcessorEx processor = new ActionScriptResolveProcessor(null) {
         @Override
         public boolean execute(final @NotNull PsiElement element, final @NotNull ResolveState state) {
           result.add(new JSStructureViewElement(element, true));

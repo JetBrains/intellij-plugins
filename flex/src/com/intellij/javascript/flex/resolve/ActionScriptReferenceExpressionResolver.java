@@ -78,10 +78,11 @@ public class ActionScriptReferenceExpressionResolver
       return ResolveResult.EMPTY_ARRAY;
     }
 
-    SinkResolveProcessor<ResolveResultSink> localProcessor;
+    ResolveResultSink resultSink = new ResolveResultSink(myRef, myReferencedName);
+    ActionScriptSinkResolveProcessor<ResolveResultSink> localProcessor;
     if (myUnqualifiedOrLocalResolve) {
       final PsiElement topParent = JSResolveUtil.getTopReferenceParent(myParent);
-      localProcessor = new SinkResolveProcessor<>(myReferencedName, myRef, new ResolveResultSink(myRef, myReferencedName)) {
+      localProcessor = new ActionScriptSinkResolveProcessor<>(myReferencedName, myRef, resultSink) {
         @Override
         public boolean needPackages() {
           if (myParent instanceof JSReferenceExpression && topParent instanceof JSImportStatement) {
@@ -129,9 +130,10 @@ public class ActionScriptReferenceExpressionResolver
         ) {
         return localProcessor.getResultsAsResolveResults();
       }
-    } else {
-      final QualifiedItemProcessor<ResolveResultSink> processor =
-        new ActionScriptQualifiedItemProcessor<>(new ResolveResultSink(myRef, myReferencedName), myContainingFile);
+    }
+    else {
+      ActionScriptQualifiedItemProcessor<ResolveResultSink> processor =
+        new ActionScriptQualifiedItemProcessor<>(resultSink);
       processor.setTypeContext(JSResolveUtil.isExprInTypeContext(myRef));
       JSResolveUtil.evaluateQualifierType(myQualifier, myContainingFile, processor);
 
@@ -148,7 +150,7 @@ public class ActionScriptReferenceExpressionResolver
       }
     }
 
-    ResolveResult[] results = resolveFromIndices(localProcessor);
+    ResolveResult[] results = resolveFromIndices(localProcessor, resultSink, false, true);
 
     if (results.length == 0 && localProcessor.isEncounteredXmlLiteral()) {
       return dummyResult(myRef);
@@ -158,7 +160,7 @@ public class ActionScriptReferenceExpressionResolver
   }
 
   @Override
-  protected boolean prepareProcessor(WalkUpResolveProcessor processor, @NotNull SinkResolveProcessor<ResolveResultSink> localProcessor) {
+  protected boolean prepareProcessor(WalkUpResolveProcessor processor, @NotNull JSSinkResolveProcessor localProcessor) {
     boolean allowOnlyCompleteMatches = false;
 
     PsiElement context = processor.getContext();

@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.PackageIndex;
@@ -261,7 +260,7 @@ public final class FlexResolveHelper implements JSResolveHelper {
 
   public static ImportStatus evaluateImportStatus(String newName, PsiElement context) {
     EvaluateImportStatusProcessor statusProcessor = new EvaluateImportStatusProcessor(newName);
-    ActionScriptResolveUtil.walkOverStructure(context, statusProcessor);
+    ActionScriptFlexResolveUtil.walkOverStructure(context, statusProcessor);
     return statusProcessor.myStatus.get();
   }
 

@@ -63,7 +63,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
     final Ref<JSImportedElementResolveResult> resultRef = new Ref<>();
 
     final String name1 = name;
-    ActionScriptResolveUtil.walkOverStructure(context, context1 -> {
+    ActionScriptFlexResolveUtil.walkOverStructure(context, context1 -> {
       JSImportedElementResolveResult resolved;
 
       if (context1 instanceof XmlBackedJSClassImpl) { // reference list in mxml
@@ -112,7 +112,8 @@ public class ActionScriptImportHandler extends JSImportHandler {
                                        : null;
 
           if (clazz != null) {
-            SinkResolveProcessor<ResolveResultSink> r = new SinkResolveProcessor<>(name1, new ResolveResultSink(null, name1));
+            ActionScriptSinkResolveProcessor<ResolveResultSink> r =
+              new ActionScriptSinkResolveProcessor<>(name1, new ResolveResultSink(null, name1));
             r.setForceImportsForPlace(true);
             boolean b = clazz.doImportFromScripts(r, clazz);
 
@@ -149,7 +150,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
   }
 
   private static JSNamedElement resolveTypeNameInTheSamePackage(@NotNull String str, @NotNull PsiElement context) {
-    JSNamedElement fileLocalElement = JSResolveUtil.findFileLocalElement(str, context);
+    JSNamedElement fileLocalElement = findFileLocalElement(str, context);
     if (fileLocalElement != null) return fileLocalElement;
 
     final String packageQualifierText = JSResolveUtil.findPackageStatementQualifier(context);
@@ -173,6 +174,14 @@ public class ActionScriptImportHandler extends JSImportHandler {
     return null;
   }
 
+  public static JSNamedElement findFileLocalElement(@NotNull String str, @NotNull PsiElement context) {
+    ActionScriptSinkResolveProcessor<?> processor = new ActionScriptSinkResolveProcessor<>(str, new ResolveResultSink(null, str));
+    processor.setTypeContext(true);
+    processor.setToProcessMembers(false);
+    context.getContainingFile().processDeclarations(processor, ResolveState.initial(), null, context);
+    return (JSNamedElement)processor.getResult();
+  }
+
 
   @Override
   public @Nullable JSImportedElementResolveResult resolveTypeNameUsingImports(@NotNull JSReferenceExpression expr) {
@@ -188,7 +197,8 @@ public class ActionScriptImportHandler extends JSImportHandler {
     JSImportedElementResolveResult result = map.get(referencedName);
 
     if (result == null) {
-      SinkResolveProcessor<ResolveResultSink> resolveProcessor = new SinkResolveProcessor<>(referencedName, new ResolveResultSink(null, referencedName));
+      ActionScriptSinkResolveProcessor<ResolveResultSink> resolveProcessor =
+        new ActionScriptSinkResolveProcessor<>(referencedName, new ResolveResultSink(null, referencedName));
       resolveTypeNameUsingImportsInner(resolveProcessor, parent);
       final ResolveResult[] resolveResults = resolveProcessor.getResultsAsResolveResults();
       assert resolveResults.length < 2;
