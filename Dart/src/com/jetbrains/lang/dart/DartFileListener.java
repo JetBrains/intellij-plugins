@@ -38,7 +38,7 @@ import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
-import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
+import com.jetbrains.lang.dart.util.PackageConfigFileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,10 +68,8 @@ public final class DartFileListener implements AsyncFileListener {
 
       if (event instanceof VFilePropertyChangeEvent) {
         if (((VFilePropertyChangeEvent)event).isRename()) {
-          if (DotPackagesFileUtil.PACKAGE_CONFIG_JSON.equals(((VFilePropertyChangeEvent)event).getOldValue()) ||
-              DotPackagesFileUtil.PACKAGE_CONFIG_JSON.equals(((VFilePropertyChangeEvent)event).getNewValue()) ||
-              DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getOldValue()) ||
-              DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getNewValue())) {
+          if (PackageConfigFileUtil.PACKAGE_CONFIG_JSON.equals(((VFilePropertyChangeEvent)event).getOldValue()) ||
+              PackageConfigFileUtil.PACKAGE_CONFIG_JSON.equals(((VFilePropertyChangeEvent)event).getNewValue())) {
             packagesFileEvents.add(event);
           }
 
@@ -82,8 +80,7 @@ public final class DartFileListener implements AsyncFileListener {
         }
       }
       else {
-        if (DotPackagesFileUtil.PACKAGE_CONFIG_JSON.equals(PathUtil.getFileName(event.getPath())) ||
-            DotPackagesFileUtil.DOT_PACKAGES.equals(PathUtil.getFileName(event.getPath()))) {
+        if (PackageConfigFileUtil.PACKAGE_CONFIG_JSON.equals(PathUtil.getFileName(event.getPath()))) {
           packagesFileEvents.add(event);
         }
 
@@ -137,15 +134,9 @@ public final class DartFileListener implements AsyncFileListener {
       if (module == null || !DartSdkLibUtil.isDartSdkEnabled(module)) continue;
 
       Map<String, String> packagesMap = null;
-      VirtualFile packagesFile = DotPackagesFileUtil.findPackageConfigJsonFile(pubspecFile.getParent());
+      VirtualFile packagesFile = PackageConfigFileUtil.findPackageConfigJsonFile(pubspecFile.getParent());
       if (packagesFile != null) {
-        packagesMap = DotPackagesFileUtil.getPackagesMapFromPackageConfigJsonFile(packagesFile);
-      }
-      else {
-        packagesFile = DotPackagesFileUtil.findDotPackagesFile(pubspecFile.getParent());
-        if (packagesFile != null) {
-          packagesMap = DotPackagesFileUtil.getPackagesMap(packagesFile);
-        }
+        packagesMap = PackageConfigFileUtil.getPackagesMapFromPackageConfigJsonFile(packagesFile);
       }
 
       if (packagesMap != null) {
@@ -358,7 +349,7 @@ public final class DartFileListener implements AsyncFileListener {
           if (file == null) continue;
 
           VirtualFile dartRoot = file.getParent();
-          if (dartRoot != null && file.getName().equals(DotPackagesFileUtil.PACKAGE_CONFIG_JSON)) {
+          if (dartRoot != null && file.getName().equals(PackageConfigFileUtil.PACKAGE_CONFIG_JSON)) {
             dartRoot = dartRoot.getParent();
           }
           VirtualFile pubspec = dartRoot == null ? null : dartRoot.findChild(PUBSPEC_YAML);
