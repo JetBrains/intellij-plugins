@@ -11,7 +11,7 @@ jvm_library(
   name = "clion-diagnostics",
   module_name = "intellij.clion.diagnostics",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "//CIDR/cidr-projectModel",
     "//CIDR/cidr-psi-base",

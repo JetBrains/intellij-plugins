@@ -28,7 +28,7 @@ jvm_library(
   name = "qodana",
   module_name = "intellij.qodana",
   visibility = ["//visibility:public"],
-  srcs = glob(["core/src/**/*.kt", "core/src/**/*.java"], allow_empty = True),
+  srcs = glob(["core/src/**/*.kt", "core/src/**/*.java", "core/src/**/*.form"], allow_empty = True),
   kotlinc_opts = ":custom_qodana",
   deps = [
     "@community//platform/analysis-api:analysis",
@@ -118,7 +118,7 @@ jvm_library(
 jvm_library(
   name = "qodana_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["core/tests/**/*.kt", "core/tests/**/*.java"], allow_empty = True),
+  srcs = glob(["core/tests/**/*.kt", "core/tests/**/*.java", "core/tests/**/*.form"], allow_empty = True),
   kotlinc_opts = ":custom_qodana",
   associates = [":qodana"],
   deps = [

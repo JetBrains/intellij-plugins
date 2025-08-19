@@ -45,7 +45,7 @@ jvm_library(
 jvm_library(
   name = "handlebars_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java"], allow_empty = True),
+  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
   associates = [":handlebars"],
   deps = [
     "@community//platform/analysis-api:analysis",

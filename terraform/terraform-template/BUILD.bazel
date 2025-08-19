@@ -17,7 +17,7 @@ jvm_library(
   name = "template",
   module_name = "intellij.terraform.template",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/core-api:core",
     "@community//platform/core-impl",
@@ -37,7 +37,7 @@ jvm_library(
 jvm_library(
   name = "template_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [":template"],
   deps = [
     "@community//platform/core-api:core",

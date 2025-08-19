@@ -17,7 +17,7 @@ jvm_library(
   name = "deno",
   module_name = "intellij.deno",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@lib//:guava",
     "@lib//:gson",
@@ -53,7 +53,7 @@ jvm_library(
 jvm_library(
   name = "deno_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java"], allow_empty = True),
+  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
   associates = [":deno"],
   deps = [
     "@lib//:guava",

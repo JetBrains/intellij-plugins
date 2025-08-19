@@ -17,7 +17,7 @@ jvm_library(
   name = "webassembly",
   module_name = "intellij.webassembly",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/main/gen/**/*.kt", "src/main/gen/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True),
+  srcs = glob(["src/main/gen/**/*.kt", "src/main/gen/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java", "src/main/kotlin/**/*.form"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -37,7 +37,7 @@ jvm_library(
 jvm_library(
   name = "webassembly_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java"], allow_empty = True),
+  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java", "src/test/kotlin/**/*.form"], allow_empty = True),
   associates = [":webassembly"],
   deps = [
     "@community//platform/analysis-api:analysis",

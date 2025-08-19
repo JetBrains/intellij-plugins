@@ -17,7 +17,7 @@ jvm_library(
   name = "tslint",
   module_name = "intellij.tslint",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -51,7 +51,7 @@ jvm_library(
 jvm_library(
   name = "tslint_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java"], allow_empty = True),
+  srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
   associates = [":tslint"],
   deps = [
     "@community//platform/analysis-api:analysis",

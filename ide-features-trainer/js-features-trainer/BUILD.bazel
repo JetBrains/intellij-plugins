@@ -16,7 +16,7 @@ jvm_library(
   name = "javascript-featuresTrainer",
   module_name = "intellij.javascript.featuresTrainer",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@lib//:kotlin-stdlib",
@@ -42,7 +42,7 @@ jvm_library(
 jvm_library(
   name = "javascript-featuresTrainer_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
   associates = [":javascript-featuresTrainer"],
   deps = [
     "//plugins/JavaScriptLanguage/javascript-parser",

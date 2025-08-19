@@ -17,7 +17,7 @@ jvm_library(
   name = "angular",
   module_name = "intellij.angular",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -100,7 +100,7 @@ jvm_library(
   name = "angular-tests_test_lib",
   module_name = "intellij.angular.tests",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java", "test-ex/**/*.kt", "test-ex/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form", "test-ex/**/*.kt", "test-ex/**/*.java", "test-ex/**/*.form"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",

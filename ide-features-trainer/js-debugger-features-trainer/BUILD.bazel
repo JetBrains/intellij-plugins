@@ -21,7 +21,7 @@ jvm_library(
   name = "javascript-debugger-featuresTrainer",
   module_name = "intellij.javascript.debugger.featuresTrainer",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "//plugins/JavaScriptLanguage/javascript-parser",

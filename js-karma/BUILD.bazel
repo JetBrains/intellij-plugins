@@ -23,7 +23,7 @@ jvm_library(
   name = "karma",
   module_name = "intellij.karma",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/util/concurrency",
@@ -64,7 +64,7 @@ jvm_library(
 jvm_library(
   name = "karma_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [":karma"],
   deps = [
     "@community//platform/analysis-api:analysis",

@@ -11,7 +11,7 @@ jvm_library(
   name = "errorProne-jps",
   module_name = "intellij.errorProne.jps",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   kotlinc_opts = "@community//:k11",
   deps = [
     "@community//jps/jps-builders:build",
@@ -26,7 +26,7 @@ jvm_library(
 jvm_library(
   name = "errorProne-jps_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   kotlinc_opts = "@community//:k11",
   associates = [":errorProne-jps"],
   deps = [

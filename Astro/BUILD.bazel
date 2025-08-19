@@ -11,7 +11,7 @@ jvm_library(
   name = "astro",
   module_name = "intellij.astro",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",

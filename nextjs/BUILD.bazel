@@ -17,7 +17,7 @@ jvm_library(
   name = "nextjs",
   module_name = "intellij.nextjs",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -44,7 +44,7 @@ jvm_library(
 jvm_library(
   name = "nextjs_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java"], allow_empty = True),
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
   associates = [":nextjs"],
   deps = [
     "@community//platform/analysis-api:analysis",

@@ -11,7 +11,7 @@ jvm_library(
   name = "osgi-jps",
   module_name = "intellij.osgi.jps",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   kotlinc_opts = "@community//:k11",
   deps = [
     "@community//jps/model-api:model",
@@ -38,7 +38,7 @@ jvm_library(
 jvm_library(
   name = "osgi-jps_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   kotlinc_opts = "@community//:k11",
   associates = [":osgi-jps"],
   deps = [

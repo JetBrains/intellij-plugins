@@ -17,7 +17,7 @@ jvm_library(
   name = "dts",
   module_name = "intellij.dts",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   deps = [
     "//contrib/dts/pp",
     "@community//platform/analysis-api:analysis",
@@ -45,7 +45,7 @@ jvm_library(
 jvm_library(
   name = "dts_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [":dts"],
   deps = [
     "//contrib/dts/pp",

@@ -11,7 +11,7 @@ jvm_library(
   name = "serial-monitor",
   module_name = "intellij.serial.monitor",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java"], allow_empty = True),
+  srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/java/**/*.form"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",

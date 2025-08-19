@@ -17,7 +17,7 @@ jvm_library(
   name = "pp",
   module_name = "intellij.dts.pp",
   visibility = ["//visibility:public"],
-  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -39,7 +39,7 @@ jvm_library(
 jvm_library(
   name = "pp_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java", "testGen/**/*.kt", "testGen/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form", "testGen/**/*.kt", "testGen/**/*.java"], allow_empty = True),
   associates = [":pp"],
   deps = [
     "@community//platform/analysis-api:analysis",

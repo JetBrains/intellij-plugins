@@ -57,7 +57,7 @@ jvm_library(
   name = "vcs-perforce-tests_test_lib",
   module_name = "intellij.vcs.perforce.tests",
   visibility = ["//visibility:public"],
-  srcs = glob(["testSource/**/*.kt", "testSource/**/*.java"], allow_empty = True),
+  srcs = glob(["testSource/**/*.kt", "testSource/**/*.java", "testSource/**/*.form"], allow_empty = True),
   deps = [
     "@lib//:junit4",
     "@community//platform/analysis-api:analysis",

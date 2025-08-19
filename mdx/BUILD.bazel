@@ -11,7 +11,7 @@ jvm_library(
   name = "mdx",
   module_name = "intellij.mdx",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java"], allow_empty = True),
+  srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/java/**/*.form", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java", "src/main/kotlin/**/*.form"], allow_empty = True),
   deps = [
     "@lib//:kotlinx-coroutines-core",
     "//plugins/JavaScriptLanguage/javascript-parser",
@@ -43,7 +43,7 @@ jvm_library(
 jvm_library(
   name = "mdx_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java"], allow_empty = True),
+  srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java", "src/test/kotlin/**/*.form"], allow_empty = True),
   associates = [":mdx"],
   deps = [
     "@lib//:kotlinx-coroutines-core",

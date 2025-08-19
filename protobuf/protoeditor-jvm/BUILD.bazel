@@ -11,7 +11,7 @@ jvm_library(
   name = "protoeditor-jvm",
   module_name = "intellij.protoeditor.jvm",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//java/java-psi-api:psi",
@@ -33,7 +33,7 @@ jvm_library(
 jvm_library(
   name = "protoeditor-jvm_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [":protoeditor-jvm"],
   deps = [
     "@lib//:kotlin-stdlib",

@@ -11,7 +11,7 @@ jvm_library(
   name = "cpp",
   module_name = "intellij.qodana.cpp",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-impl",

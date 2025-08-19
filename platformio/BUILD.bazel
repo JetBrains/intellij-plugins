@@ -17,7 +17,7 @@ jvm_library(
   name = "platformio",
   module_name = "intellij.clion.embedded.platformio",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   deps = [
     "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
     "@lib//:gson",
@@ -70,7 +70,7 @@ jvm_library(
 jvm_library(
   name = "platformio_test_lib",
   visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java"], allow_empty = True),
+  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [":platformio"],
   deps = [
     "@ultimate_lib//:eclipse-lsp4j-jsonrpc",

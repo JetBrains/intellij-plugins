@@ -11,7 +11,7 @@ jvm_library(
   name = "astro-tests_test_lib",
   module_name = "intellij.astro.tests",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src-ext/**/*.kt", "src-ext/**/*.java"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "src-ext/**/*.kt", "src-ext/**/*.java", "src-ext/**/*.form"], allow_empty = True),
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
