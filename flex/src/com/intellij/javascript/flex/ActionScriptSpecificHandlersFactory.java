@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.index.ActionScriptCustomIndexer;
@@ -13,6 +13,8 @@ import com.intellij.lang.javascript.psi.JSExpectedTypeKind;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.processors.JSQualifiedItemProcessor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -85,6 +87,13 @@ public final class ActionScriptSpecificHandlersFactory extends JSDialectSpecific
 
   @Override
   public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
+    Logger.getInstance(ActionScriptSpecificHandlersFactory.class).error(
+      "Use ActionScriptQualifiedItemProcessor directly, or createJSQualifiedItemProcessor");
+    return super.createQualifiedItemProcessor(sink, place);
+  }
+
+  @Override
+  public @NotNull JSQualifiedItemProcessor createJSQualifiedItemProcessor(@NotNull ResultSink sink, @NotNull PsiElement place) {
     return new ActionScriptQualifiedItemProcessor<>(sink, place.getContainingFile());
   }
 
