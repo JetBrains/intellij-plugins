@@ -93,6 +93,7 @@ jvm_library(
     "//plugins/css/backend",
     "//plugins/css/copyright",
   ],
+  exports = ["@community//xml/impl"],
   runtime_deps = [
     ":postcss_resources",
     ":postcss_resources_1",

@@ -61,6 +61,11 @@ jvm_library(
     "@lib//:assert_j",
     "@lib//:hash4j",
   ],
+  exports = [
+    "@ultimate_lib//:osgi-jps-bndlib",
+    "@ultimate_lib//:osgi-jps-bndlib-repository",
+    "@ultimate_lib//:osgi-jps-bndlib-resolve",
+  ],
   runtime_deps = [":osgi-jps_resources"]
 )
 ### auto-generated section `build intellij.osgi.jps` end
