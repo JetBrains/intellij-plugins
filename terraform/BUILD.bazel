@@ -62,6 +62,7 @@ jvm_library(
     "@community//platform/eel-impl",
     "@community//platform/eel-provider",
     "@community//platform/util/progress",
+    "@community//plugins/copyright",
   ],
   runtime_deps = [":terraform_resources"]
 )
@@ -124,6 +125,8 @@ jvm_library(
     "@community//platform/eel-impl",
     "@community//platform/eel-provider",
     "@community//platform/util/progress",
+    "@community//plugins/copyright",
+    "@community//plugins/copyright:copyright_test_lib",
   ],
   runtime_deps = [
     ":terraform_resources",

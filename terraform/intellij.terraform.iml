@@ -73,5 +73,6 @@
     <orderEntry type="module" module-name="intellij.platform.eel.impl" />
     <orderEntry type="module" module-name="intellij.platform.eel.provider" />
     <orderEntry type="module" module-name="intellij.platform.util.progress" />
+    <orderEntry type="module" module-name="intellij.copyright" />
   </component>
 </module>

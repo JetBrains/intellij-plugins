@@ -183,6 +183,7 @@
 
   <content>
     <module name="intellij.terraform/watchers"/>
+    <module name="intellij.terraform/copyright"/>
     <module name="intellij.terraform.template"/>
   </content>
 
