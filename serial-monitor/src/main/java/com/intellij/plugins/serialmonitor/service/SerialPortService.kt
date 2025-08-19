@@ -101,7 +101,7 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
     return serialConnection
   }
 
-  fun portStatus(portName: String?): PortStatus {
+  fun portStatus(portName: String): PortStatus {
     if (!portNames.value.contains(portName)) {
       return if (connections.containsKey(portName)) PortStatus.UNAVAILABLE_DISCONNECTED else PortStatus.UNAVAILABLE
     }
@@ -261,7 +261,12 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
   }
 
   @TestOnly
-  internal suspend fun setPortProvider(provider: SerialPort.SerialPortProvider) {
+  internal suspend fun setPortProvider(provider: SerialPort.SerialPortProvider, disposable: Disposable) {
+    val oldProvider = serialPortProvider
+    Disposer.register(disposable) {
+      serialPortProvider = oldProvider
+    }
+
     serialPortProvider = provider
     rescanPorts()
   }
