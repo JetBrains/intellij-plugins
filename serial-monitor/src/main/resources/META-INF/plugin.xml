@@ -19,7 +19,9 @@
 
     ]]></description>
 
-  <depends>com.intellij.modules.lang</depends>
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+  </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="Serial Monitor" anchor="bottom" icon="SerialMonitorIcons.Toolwindow"
