@@ -568,7 +568,6 @@
 
   <actions>
     <action icon="AllIcons.General.Warning" id="TfInitRequiredAction" class="org.intellij.terraform.config.actions.TfInitRequiredAction"/>
-    <action id="Terraform.InstallTerraform" class="org.intellij.terraform.install.InstallTfAction"/>
 
     <action id="NewTerraformFile" class="org.intellij.terraform.config.actions.TfCreateFileFromTemplateAction"
             icon="org.intellij.terraform.TerraformIcons.Terraform">

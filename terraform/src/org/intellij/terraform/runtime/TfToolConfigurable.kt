@@ -1,11 +1,11 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.fileLogger
-import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.progress.EmptyProgressIndicator
@@ -59,7 +59,7 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
   ) = parent.apply {
     val myRow = row(HCLBundle.message("tool.settings.executable.path.label", type.displayName)) {}
     val executorField = myRow.textFieldWithBrowseButton(
-      fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, false, false),
+      fileChooserDescriptor = FileChooserDescriptorFactory.singleFile(),
       fileChosen = { chosenFile ->
         return@textFieldWithBrowseButton chosenFile.path
       }

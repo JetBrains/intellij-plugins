@@ -6,17 +6,13 @@ import com.google.common.io.MoreFiles
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.SystemInfoRt
@@ -29,7 +25,6 @@ import com.intellij.util.io.RequestBuilder
 import com.sun.jna.platform.win32.*
 import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.runtime.TfProjectSettings
 import org.jetbrains.annotations.Nls
 import java.io.IOException
 import java.nio.file.FileSystems
@@ -406,9 +401,9 @@ internal class TfBinaryInstaller private constructor(
 
       TfBinaryInstaller(binaryNameProvider!!,
                         downloadUrlProvider!!,
-                      checksumProvider ?: { null },
-                      fileToVerifyFilter ?: ::getDefaultFileFilter,
-                      installDirProvider ?: ::getDefaultInstallationDirProvider,
+                        checksumProvider ?: { null },
+                        fileToVerifyFilter ?: ::getDefaultFileFilter,
+                        installDirProvider ?: ::getDefaultInstallationDirProvider,
                         resultHandler,
                         progressIndicator)
         .install(project)
@@ -451,27 +446,3 @@ internal class SuccessfulInstallation(override val binary: Path)
 
 internal class FailedInstallation(override val errorMsg: Supplier<@Nls String>)
   : InstallationResult(null, errorMsg)
-
-internal class InstallTfAction : DumbAwareAction() {
-
-  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-  override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = e.project != null
-  }
-
-  override fun actionPerformed(e: AnActionEvent) {
-    val project = e.project ?: return
-    installTfTool(project, type = TfToolType.TERRAFORM, resultHandler = { result -> handleInstall(project, result) })
-  }
-
-  private fun handleInstall(project: Project, result: InstallationResult) {
-    when (result) {
-      is SuccessfulInstallation -> {
-        project.service<TfProjectSettings>().toolPath = result.binary.toString()
-      }
-      else -> {}
-    }
-
-  }
-}
