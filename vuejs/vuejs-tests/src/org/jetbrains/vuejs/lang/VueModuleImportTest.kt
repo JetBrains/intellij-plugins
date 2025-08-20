@@ -12,44 +12,56 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.webpack.createAndSetWebpackConfig
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedMixinInspection
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 import java.util.function.Consumer
 
 private const val BASE_PATH = "/ts_imports"
 
+@RunWith(JUnit4::class)
 class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
 
   override fun getBasePath(): String = BASE_PATH
   override fun getExtension(): String = "vue"
   override fun getTestDataPath(): String = getVueTestDataPath() + basePath
 
+  @Test
   fun testTypesModule() {
     doTestWithCopyDirectory()
   }
 
+  @Test
   fun testSimpleDeclare() {
     doTestWithCopyDirectory()
   }
 
+  @Test
   fun testReferenceGlobalTyping() {
     doTestWithCopyDirectory()
   }
 
+  @Test
   fun testAutoImportFromTs() {
     doTestAutoImportWithCopyDirectory()
   }
 
+  @Test
   fun testPathMappingResolve() {
     doTestAutoImportWithCopyDirectory()
   }
 
+  @Test
   fun testAutoImportFromVue() {
     doTestAutoImportWithCopyDirectory()
   }
 
+  @Test
   fun testAutoImportVueFileToTs() {
     doTestActionWithCopyDirectory(JSImportTestUtil.getActionName(), "ts", null, null)
   }
 
+  @Test
   fun testAutoImportFromVueWithJs() {
     JavaScriptFormatterTestBase.setTempSettings(project, JavascriptLanguage, Consumer<JSCodeStyleSettings> {
       it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.UseExplicitExtension.ALWAYS_JS
@@ -58,15 +70,18 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     doTestActionWithCopyDirectory("Insert 'import HelloWorld from \"./src/HelloWorld.vue\"'", "vue", null, null)
   }
 
+  @Test
   fun testAmbientTypingsInVue() {
     doTestWithCopyDirectory()
   }
 
+  @Test
   fun testSimpleVarFromES6() {
     doTestWithCopyDirectory()
     checkAfterFile(extension)
   }
 
+  @Test
   fun testSimpleJSConfig() {
     doTestWithCopyDirectory()
     checkAfterFile(extension)
@@ -78,15 +93,18 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     checkAfterFile(extension)
   }
 
+  @Test
   fun testReExportWIthJs() {
     doTestWithCopyDirectory(1, true, "ts")
   }
 
+  @Test
   @JSTestOptions(JSTestOption.WithInfos, JSTestOption.WithSymbolNames)
   fun testCustomComponentHighlighting() {
     doTestWithCopyDirectory()
   }
 
+  @Test
   fun testCssReferencePathMapping() {
     myFixture.enableInspections(CssUnknownTargetInspection())
     myFixture.copyDirectoryToProject(getTestName(false), "")
@@ -94,12 +112,14 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     myFixture.testHighlighting()
   }
 
+  @Test
   @JSTestOptions(selectLookupItem = 0)
   fun testVueFileNameCompletion() {
     doTestWithCopyDirectory()
     checkAfterFile(extension)
   }
 
+  @Test
   fun testStylesResolvePathMapping() {
     //css doesn't have stubs for imports!
     Registry.get("ast.loading.filter").setValue(false, testRootDisposable)
@@ -111,6 +131,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     myFixture.testHighlighting()
   }
 
+  @Test
   fun testStylesResolvePathMappingTilde() {
     //css doesn't have stubs for imports!
     Registry.get("ast.loading.filter").setValue(false, testRootDisposable)
@@ -122,17 +143,27 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     myFixture.testHighlighting()
   }
 
+  @Test
   fun testTSOverVuePriority() {
     doHighlightOnlyTestWithCopyDirectory(extension)
   }
 
+  @Test
   fun testJSOverVuePriority() {
     doHighlightOnlyTestWithCopyDirectory(extension)
   }
 
+  @Test
   fun testAutoImportFromVueWebpack() {
     doTestActionWithCopyDirectory(JSImportTestUtil.getActionName(), "vue", Consumer {
       createAndSetWebpackConfig(project, testRootDisposable, "aliasPath", "src", null, it.path)
+    })
+  }
+
+  @Test
+  fun testAutoImportFromVueWebpackWithExtension() {
+    doTestActionWithCopyDirectory(JSImportTestUtil.getActionName(), "vue", Consumer {
+      createAndSetWebpackConfig(project, testRootDisposable, "aliasPath", "src", listOf(".vue"), it.path)
     })
   }
 }
