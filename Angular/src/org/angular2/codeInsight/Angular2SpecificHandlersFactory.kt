@@ -52,7 +52,7 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
     return Angular2TypeEvaluator(context)
   }
 
-  override fun createAccessibilityProcessingHandler(place: PsiElement?, skipNsResolving: Boolean): AccessibilityProcessingHandler {
+  override fun createAccessibilityProcessingHandler(place: PsiElement?): AccessibilityProcessingHandler {
     return Angular2AccessibilityProcessingHandler(place)
   }
 
