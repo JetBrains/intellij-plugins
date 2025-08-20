@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.install
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -43,7 +43,7 @@ internal enum class TfToolType(@Nls val executableName: String) {
         jsonNode.get("current_version")?.asText()?.removePrefix("v")
       }
       catch (e: Exception) {
-        logger<BinaryInstaller>().error("Failed to fetch the latest stable Terraform version", e)
+        logger<TfBinaryInstaller>().error("Failed to fetch the latest stable Terraform version", e)
         null
       }
     }
@@ -106,7 +106,7 @@ internal fun installTfTool(
   progressIndicator: ProgressIndicator? = null,
   type: TfToolType,
 ) {
-  BinaryInstaller.create(project)
+  TfBinaryInstaller.create(project)
     .withBinaryName { type.getBinaryName() }
     .withDownloadUrl { type.getDownloadUrl() }
     .withProgressIndicator(progressIndicator)

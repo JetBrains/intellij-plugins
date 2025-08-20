@@ -1,7 +1,8 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.install
 
 import com.google.common.hash.Hashing
+import com.google.common.io.MoreFiles
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.notification.NotificationType
@@ -19,7 +20,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.SystemInfoRt
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.NioFiles
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.io.Decompressor
@@ -30,8 +31,8 @@ import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.runtime.TfProjectSettings
 import org.jetbrains.annotations.Nls
-import java.io.File
 import java.io.IOException
+import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -48,7 +49,7 @@ private val SUPPORTED_ARCHIVE_TYPES: List<String> = listOf(".zip", ".tar.gz")
 private const val USER_PATH_SUB_KEY = "Environment"
 private const val USER_PATH_VALUE_NAME = "Path"
 
-internal class BinaryInstaller private constructor(
+internal class TfBinaryInstaller private constructor(
   private val binaryNameProvider: () -> String?,
   private val downloadUrlProvider: (Configuration) -> String?,
   private val checksumProvider: (Configuration) -> String?,
@@ -69,7 +70,7 @@ internal class BinaryInstaller private constructor(
       configuration = configuration.copy(binaryName = it)
     }
     if (binaryName.isNullOrEmpty()) {
-      logger<BinaryInstaller>().error("No binary name provided")
+      logger<TfBinaryInstaller>().error("No binary name provided")
       return FailedInstallation(HCLBundle.messagePointer("binary.installation.failed"))
     }
 
@@ -100,7 +101,7 @@ internal class BinaryInstaller private constructor(
     val installationDir = installDirProvider(configuration)
     if (installationDir == null) {
       cleanup(download, folder)
-      logger<BinaryInstaller>().error("No binary installation dir provided")
+      logger<TfBinaryInstaller>().error("No binary installation dir provided")
       return FailedInstallation(HCLBundle.messagePointer("binary.installation.failed"))
     }
     if (!moveToInstallationDir(binary, installationDir)) {
@@ -133,7 +134,7 @@ internal class BinaryInstaller private constructor(
       configuration = configuration.copy(downloadUrl = it)
     }
     if (downloadUrl.isNullOrEmpty()) {
-      logger<BinaryInstaller>().error("No binary download URL provided")
+      logger<TfBinaryInstaller>().error("No binary download URL provided")
       return null
     }
 
@@ -141,11 +142,10 @@ internal class BinaryInstaller private constructor(
     try {
       progressIndicator.text2 = HCLBundle.message("binary.installation.downloading.binary.progress.title", downloadUrl)
 
-      createRequest(downloadUrl)
-        .saveToFile(file, progressIndicator)
+      createRequest(downloadUrl).saveToFile(file, progressIndicator)
     }
     catch (e: Exception) {
-      logger<BinaryInstaller>().error("Failed to download binary from: $downloadUrl", e)
+      logger<TfBinaryInstaller>().error("Failed to download binary from: $downloadUrl", e)
       return null
     }
     return file
@@ -182,7 +182,7 @@ internal class BinaryInstaller private constructor(
       return archiveContent
     }
     else {
-      logger<BinaryInstaller>().error("Unsupported archive type: $downloadFileName")
+      logger<TfBinaryInstaller>().error("Unsupported archive type: $downloadFileName")
     }
 
     return null
@@ -196,12 +196,12 @@ internal class BinaryInstaller private constructor(
     val actualChecksum = try {
       progressIndicator.text2 = HCLBundle.message("binary.installation.calculating.hash.progress.title")
 
-      com.google.common.io.Files.asByteSource(fileToVerify.toFile())
+      MoreFiles.asByteSource(fileToVerify)
         .hash(Hashing.sha256())
         .toString()
     }
     catch (e: Exception) {
-      logger<BinaryInstaller>().error("Failed to calculate hashcode for binary", e)
+      logger<TfBinaryInstaller>().error("Failed to calculate hashcode for binary", e)
       return false
     }
 
@@ -213,7 +213,7 @@ internal class BinaryInstaller private constructor(
       binary.setPosixFilePermissions(setOf(PosixFilePermission.GROUP_EXECUTE, PosixFilePermission.OWNER_EXECUTE))
     }
     catch (e: Exception) {
-      logger<BinaryInstaller>().error("Failed to make '${binary.absolutePathString()}' executable", e)
+      logger<TfBinaryInstaller>().error("Failed to make '${binary.absolutePathString()}' executable", e)
     }
     return Files.isExecutable(binary)
   }
@@ -233,13 +233,13 @@ internal class BinaryInstaller private constructor(
       }
 
       val output = ExecUtil.execAndGetOutput(commandLine)
-      if (!output.checkSuccess(logger<BinaryInstaller>())) {
-        logger<BinaryInstaller>().error(output.stderr)
+      if (!output.checkSuccess(logger<TfBinaryInstaller>())) {
+        logger<TfBinaryInstaller>().error(output.stderr)
         return false
       }
     }
     catch (e: Exception) {
-      logger<BinaryInstaller>().error(e)
+      logger<TfBinaryInstaller>().error(e)
       return false
     }
 
@@ -251,24 +251,24 @@ internal class BinaryInstaller private constructor(
     val userPath = readPathFromRegistry() ?: ""
     val newUserPath = appendToPath(userPath, locationToAdd)
     if (newUserPath == null) {
-      logger<BinaryInstaller>().debug("The '$locationToAdd' location is already in the user PATH (`$userPath`)")
+      logger<TfBinaryInstaller>().debug("The '$locationToAdd' location is already in the user PATH (`$userPath`)")
       return true
     }
 
     if (!updatePathInRegistry(newUserPath))
       return false
 
-    logger<BinaryInstaller>().debug("The '$locationToAdd' location is added to the user PATH (`$userPath`)")
+    logger<TfBinaryInstaller>().debug("The '$locationToAdd' location is added to the user PATH (`$userPath`)")
     return true
   }
 
   private fun cleanup(download: Path?, folder: Path?) {
     try {
-      if (download != null) FileUtil.delete(download)
-      if (folder != null) FileUtil.delete(folder)
+      if (download != null) NioFiles.deleteRecursively(download)
+      if (folder != null) NioFiles.deleteRecursively(folder)
     }
     catch (e: IOException) {
-      logger<BinaryInstaller>().error("An exception thrown during cleanup after binary installation", e)
+      logger<TfBinaryInstaller>().error("An exception thrown during cleanup after binary installation", e)
     }
   }
 
@@ -292,14 +292,14 @@ internal class BinaryInstaller private constructor(
       }
     }
     catch (t: Win32Exception) {
-      logger<BinaryInstaller>().error(
+      logger<TfBinaryInstaller>().error(
         "Unable to read registry key 'WinReg.HKEY_CURRENT_USER\\$USER_PATH_SUB_KEY' valueName '$USER_PATH_VALUE_NAME': ${t.message}")
       null
     }
   }
 
   private fun appendToPath(oldPath: String, newEntry: String): String? {
-    val pathSeparator = File.pathSeparator
+    val pathSeparator = FileSystems.getDefault().separator
     val pathElements = oldPath.split(pathSeparator)
 
     val alreadyAdded = pathElements.any { it.equals(newEntry, ignoreCase = true) }
@@ -318,7 +318,7 @@ internal class BinaryInstaller private constructor(
       return true
     }
     catch (t: Win32Exception) {
-      logger<BinaryInstaller>().error("Unable to write registry key 'HKEY_CURRENT_USER\\$USER_PATH_SUB_KEY' valueName '$USER_PATH_VALUE_NAME': ${t.message}")
+      logger<TfBinaryInstaller>().error("Unable to write registry key 'HKEY_CURRENT_USER\\$USER_PATH_SUB_KEY' valueName '$USER_PATH_VALUE_NAME': ${t.message}")
       return false
     }
   }
@@ -404,13 +404,13 @@ internal class BinaryInstaller private constructor(
       assert(binaryNameProvider != null)
       assert(downloadUrlProvider != null)
 
-      BinaryInstaller(binaryNameProvider!!,
-                      downloadUrlProvider!!,
+      TfBinaryInstaller(binaryNameProvider!!,
+                        downloadUrlProvider!!,
                       checksumProvider ?: { null },
                       fileToVerifyFilter ?: ::getDefaultFileFilter,
                       installDirProvider ?: ::getDefaultInstallationDirProvider,
-                      resultHandler,
-                      progressIndicator)
+                        resultHandler,
+                        progressIndicator)
         .install(project)
     }
 
@@ -422,12 +422,17 @@ internal class BinaryInstaller private constructor(
       return if (SystemInfoRt.isWindows) {
         val binaryFolderName = configuration.binaryName?.substringBefore('.').takeIf { !it.isNullOrEmpty() } ?: return null
         "${System.getProperty("user.home")}/.jetbrains/$binaryFolderName/"
-          .let(FileUtil::toSystemIndependentName)
+          .let(::toSystemIndependentName)
           .let(Paths::get)
       }
       else {
         Paths.get("/usr/local/bin/")
       }
+    }
+
+    private fun toSystemIndependentName(filePath: String): String {
+      val pathSeparator = FileSystems.getDefault().separator
+      return filePath.replace(pathSeparator, "/")
     }
   }
 
