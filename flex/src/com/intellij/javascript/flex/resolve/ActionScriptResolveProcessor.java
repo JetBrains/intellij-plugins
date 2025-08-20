@@ -268,7 +268,7 @@ public abstract class ActionScriptResolveProcessor extends JSResolveProcessorBas
   }
 
   @Override
-  public void configureClassScope(JSClass clazzOfContext) {
+  public void configureClassScope(@Nullable JSClass clazzOfContext) {
     accessibilityProcessingHandler.configureClassScope(clazzOfContext);
   }
 

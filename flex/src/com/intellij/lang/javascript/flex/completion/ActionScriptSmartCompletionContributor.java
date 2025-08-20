@@ -433,7 +433,7 @@ public final class ActionScriptSmartCompletionContributor extends JSSmartComplet
     }
   }
 
-  private static void processStaticsOf(JSClass parameterClass, JSResolveProcessorEx processor, @Nullable JSClass contextClass) {
+  private static void processStaticsOf(@NotNull JSClass parameterClass, JSResolveProcessorEx processor, @Nullable JSClass contextClass) {
     processor.configureClassScope(contextClass);
 
     processWithStatic(processor, true, () -> {
