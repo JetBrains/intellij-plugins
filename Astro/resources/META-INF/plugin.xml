@@ -121,6 +121,9 @@
     <analysisHandlersFactory language="Astro" implementationClass="org.jetbrains.astro.inspections.AstroAnalysisHandlersFactory"/>
     <elementScopeProvider implementation="org.jetbrains.astro.AstroElementResolveScopeProvider"/>
     <componentUsageProvider language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroComponentUsageProvider"/>
+    <tsImportResolver implementation="org.jetbrains.astro.lang.typescript.AstroTypeScriptImportsResolverProvider"/>
+    <importModulePathStrategy order="after TypeScript"
+                             implementation="org.jetbrains.astro.lang.AstroImportModulePathStrategy"/>
   </extensions>
   <actions resource-bundle="messages.AstroBundle">
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent"
