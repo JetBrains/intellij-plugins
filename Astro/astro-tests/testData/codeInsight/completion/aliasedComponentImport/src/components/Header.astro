@@ -1,0 +1,31 @@
+---
+// File: src/components/Header.astro
+interface Props {
+  title?: string;
+  subtitle?: string;
+  links?: { href: string; label: string }[];
+}
+
+const {
+  title = "My Site",
+  subtitle = "",
+  links = [],
+} = Astro.props;
+---
+
+<header class="site-header">
+  <div class="container">
+    <h1 class="title">{title}</h1>
+    {subtitle && <p class="subtitle">{subtitle}</p>}
+
+    {links.length > 0 && (
+      <nav aria-label="Main">
+        <ul class="nav">
+          {links.map(({ href, label }) => (
+            <li><a href={href}>{label}</a></li>
+          ))}
+        </ul>
+      </nav>
+    )}
+  </div>
+</header>

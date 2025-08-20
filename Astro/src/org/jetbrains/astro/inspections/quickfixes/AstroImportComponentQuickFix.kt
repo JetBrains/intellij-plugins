@@ -2,7 +2,9 @@
 package org.jetbrains.astro.inspections.quickfixes
 
 import com.intellij.codeInsight.intention.FileModifier.SafeFieldForPreview
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -37,4 +39,7 @@ class AstroImportComponentQuickFix(element: PsiElement,
     componentSourceEdit.reformatChanges()
   }
 
+  override fun generatePreview(project: Project, previewDescriptor: ProblemDescriptor): IntentionPreviewInfo {
+    return IntentionPreviewInfo.EMPTY
+  }
 }
