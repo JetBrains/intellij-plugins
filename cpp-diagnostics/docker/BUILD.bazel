@@ -1,0 +1,25 @@
+### auto-generated section `build intellij.clion.diagnostics.docker` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+
+jvm_resources(
+  name = "docker_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "docker",
+  module_name = "intellij.clion.diagnostics.docker",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//CIDR/cidr-util",
+    "//CIDR/cidr-util/execution",
+    "//CIDR/clion-docker",
+    "//contrib/cpp-diagnostics:clion-diagnostics",
+    "//CIDR/clion-toolchains",
+  ],
+  runtime_deps = [":docker_resources"]
+)
+### auto-generated section `build intellij.clion.diagnostics.docker` end

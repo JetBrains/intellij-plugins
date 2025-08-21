@@ -20,6 +20,7 @@ import com.intellij.util.PathMapper
 import com.intellij.util.PathMappingSettings
 import com.intellij.util.io.delete
 import com.intellij.util.io.write
+import com.jetbrains.cidr.cpp.diagnostics.toolchain.ToolchainDescriptionProvider
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
@@ -122,6 +123,8 @@ private fun processCPPEnvironment(log: CdIndenter, environment: CPPEnvironment) 
   log.put("Toolchain: ${toolchain.name}")
   log.scope {
     processGeneralToolchainInfo(log, toolchain)
+
+    ToolchainDescriptionProvider.describe(toolchain, hostMachine, log)
 
     environment.cMake?.let { logTool(it, "cmake", log) }
     environment.make?.let { logTool(it, "make", log) }

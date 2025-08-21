@@ -18,6 +18,7 @@
 
   <content>
     <module name="intellij.clion.diagnostics.cmake"/>
+    <module name="intellij.clion.diagnostics.docker"/>
   </content>
 
   <resource-bundle>messages.CppDiagnosticsBundle</resource-bundle>
@@ -25,6 +26,9 @@
   <extensionPoints>
     <extensionPoint qualifiedName="com.intellij.clion.diagnostics.workspaceDescriptionProvider"
                     interface="com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceDescriptionProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="com.intellij.clion.diagnostics.toolchainDescriptionProvider"
+                    interface="com.jetbrains.cidr.cpp.diagnostics.toolchain.ToolchainDescriptionProvider"
                     dynamic="true"/>
   </extensionPoints>
 
