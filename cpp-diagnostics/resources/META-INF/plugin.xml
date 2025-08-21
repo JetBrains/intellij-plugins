@@ -14,12 +14,23 @@
     <module name="intellij.cidr.util"/>
     <module name="intellij.cidr.util.execution"/>
     <module name="intellij.clion.toolchains"/>
-    <plugin id="com.intellij.clion.cmake"/>
   </dependencies>
 
-  <module value="com.intellij.modules.clion.diagnostics"/>
+  <content>
+    <module name="intellij.clion.diagnostics.cmake"/>
+  </content>
 
   <resource-bundle>messages.CppDiagnosticsBundle</resource-bundle>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.clion.diagnostics.workspaceDescriptionProvider"
+                    interface="com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceDescriptionProvider"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij.clion.diagnostics">
+    <workspaceDescriptionProvider implementation="com.jetbrains.cidr.cpp.diagnostics.workspace.WorkspaceWithEnvironmentDescriptionProvider"/>
+  </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
     <troubleInfoCollector implementation="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction"/>

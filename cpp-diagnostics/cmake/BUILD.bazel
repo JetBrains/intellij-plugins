@@ -1,0 +1,28 @@
+### auto-generated section `build intellij.clion.diagnostics.cmake` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+
+jvm_resources(
+  name = "cmake_resources",
+  files = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "cmake",
+  module_name = "intellij.clion.diagnostics.cmake",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//CIDR/clion-cmake",
+    "//contrib/cpp-diagnostics:clion-diagnostics",
+    "//CIDR/clion-toolchains",
+    "//CIDR/cidr-util/execution",
+    "//CIDR/cidr-workspaceModel",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/util",
+    "@community//platform/util/jdom",
+  ],
+  runtime_deps = [":cmake_resources"]
+)
+### auto-generated section `build intellij.clion.diagnostics.cmake` end

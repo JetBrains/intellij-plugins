@@ -18,7 +18,6 @@ jvm_library(
     "//CIDR/cidr-util",
     "//CIDR/cidr-util/execution",
     "//CIDR/cidr-workspaceModel",
-    "//CIDR/clion-cmake",
     "//CIDR/clion-toolchains",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
