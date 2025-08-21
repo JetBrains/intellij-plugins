@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.emptyText
+import com.intellij.openapi.ui.validation.DialogValidation
 import com.intellij.openapi.ui.validation.validationErrorIf
 import com.intellij.ui.dsl.builder.*
 import org.intellij.terraform.hcl.HCLBundle
@@ -19,6 +20,7 @@ import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.install.installTfTool
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import kotlin.io.path.Path
+import kotlin.io.path.exists
 
 private const val CONFIGURABLE_ID: String = "reference.settings.dialog.project.terraform"
 
@@ -57,11 +59,7 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
       }
     ).bindText(settings::toolPath).applyToComponent {
       emptyText.text = type.getBinaryName()
-    }.trimmedTextValidation(
-      validationErrorIf(HCLBundle.message("tool.executor.invalid.path")) { filePath ->
-        !TfToolPathDetector.getInstance(project).isExecutable(Path(filePath))
-      }
-    ).align(AlignX.FILL)
+    }.trimmedTextValidation(IS_EXIST, CHECK_EXECUTABLE).align(AlignX.FILL)
     val testButton = TfExecutableTestButtonComponent(
       project,
       type,
@@ -83,4 +81,12 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
       testButton.updateTestButton(it.text)
     }
   }
+}
+
+private val IS_EXIST: DialogValidation.WithParameter<() -> String> = validationErrorIf(HCLBundle.message("tool.executor.invalid.path")) { filePath ->
+  !Path(filePath).exists()
+}
+
+private val CHECK_EXECUTABLE: DialogValidation.WithParameter<() -> String> = validationErrorIf(HCLBundle.message("tool.executor.non.executable.path")) { filePath ->
+  !TfToolPathDetector.isExecutable(Path(filePath))
 }

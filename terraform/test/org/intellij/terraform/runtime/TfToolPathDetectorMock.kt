@@ -3,7 +3,7 @@ package org.intellij.terraform.runtime
 
 internal class TfToolPathDetectorMock : TfToolPathDetector {
 
-  override suspend fun detect(path: String): String? {
+  override suspend fun detect(path: String): String {
     return "terraform"
   }
 }

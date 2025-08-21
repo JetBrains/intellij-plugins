@@ -154,21 +154,20 @@ internal class TfExecutableTestButtonComponent(
   }
 
   private suspend fun validateAndTestAction(): String {
-    val pathDetector = TfToolPathDetector.getInstance(project)
     val currentPath = withContext(Dispatchers.EDT) { fieldToUpdate?.text.orEmpty() }
 
-    val validPath = if (currentPath.isNotBlank() && pathDetector.isExecutable(Path(currentPath))) {
+    val validPath = if (currentPath.isNotBlank() && TfToolPathDetector.isExecutable(Path(currentPath))) {
       currentPath
     }
     else {
-      val detectedPath = pathDetector.detect(toolType.executableName).orEmpty()
+      val detectedPath = TfToolPathDetector.getInstance(project).detect(toolType.executableName).orEmpty()
       if (detectedPath.isNotBlank()) {
         withContext(Dispatchers.EDT) { fieldToUpdate?.text = detectedPath }
       }
       detectedPath
     }
 
-    return if (validPath.isNotEmpty() && pathDetector.isExecutable(Path(validPath))) {
+    return if (validPath.isNotEmpty() && TfToolPathDetector.isExecutable(Path(validPath))) {
       val versionLine = getToolVersion(project, toolType, validPath).lineSequence().firstOrNull()?.trim()
       versionLine?.split(" ")?.firstOrNull {
         VERSION_REGEX.matches(StringUtil.newBombedCharSequence(it, PARSE_DELAY))
