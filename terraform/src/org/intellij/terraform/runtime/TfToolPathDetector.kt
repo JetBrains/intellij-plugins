@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.notification.Notification
@@ -40,8 +40,8 @@ internal interface TfToolPathDetector {
 
 internal class TfToolPathDetectorImpl(val project: Project, val coroutineScope: CoroutineScope) : TfToolPathDetector {
 
-  override suspend fun detectAndVerifyTool(toolType: TfToolType, overwriteExistingSettings: Boolean): Boolean {
-    if (overwriteExistingSettings || toolType.getToolSettings(project).toolPath.isBlank()) {
+  override suspend fun detectAndVerifyTool(toolType: TfToolType, overrideExistingValue: Boolean): Boolean {
+    if (overrideExistingValue || toolType.getToolSettings(project).toolPath.isBlank()) {
       withProgressText(HCLBundle.message("progress.title.detecting.terraform.executable", toolType.displayName)) {
         detectToolAndUpdateSettings(toolType)
       }

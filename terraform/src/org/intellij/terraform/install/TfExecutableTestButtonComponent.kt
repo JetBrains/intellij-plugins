@@ -1,15 +1,17 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.runtime
+package org.intellij.terraform.install
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.NlsContexts.ModalProgressTitle
-import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.ide.progress.ModalTaskOwner
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.ui.components.ActionLink
@@ -18,25 +20,26 @@ import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.install.FailedInstallation
-import org.intellij.terraform.install.InstallationResult
-import org.intellij.terraform.install.SuccessfulInstallation
-import org.intellij.terraform.install.TfToolType
+import org.intellij.terraform.runtime.TfToolPathDetector
 import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.SwingConstants
+import kotlin.io.path.Path
 
 private const val ICON_TEXT_HGAP: Int = 4
+private const val PARSE_DELAY = 100L
+private val VERSION_REGEX = Regex("^v*(\\d+)(\\.\\d+)*(\\.\\d+)*-?\\S*$")
 
-internal class ToolExecutableTestButtonComponent(
+internal class TfExecutableTestButtonComponent(
+  private val project: Project,
   private val toolType: TfToolType,
   parentDisposable: Disposable?,
   private val fieldToUpdate: TextFieldWithBrowseButton?,
   private val installAction: ((InstallationResult) -> Unit) -> Unit,
-  private val validateAndTestAction: suspend CoroutineScope.() -> @NlsSafe String,
 ) : JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)) {
 
   private val button = JButton()
@@ -52,7 +55,6 @@ internal class ToolExecutableTestButtonComponent(
     }
 
   init {
-
     resultLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
 
     add(button)
@@ -73,20 +75,21 @@ internal class ToolExecutableTestButtonComponent(
         runTestBlocking(resultLabel.text) to null
       }
       catch (exception: Exception) {
-        logger<ToolExecutableTestButtonComponent>().warnWithDebug(exception)
+        logger<TfExecutableTestButtonComponent>().warnWithDebug(exception)
         null to exception.takeUnless { it is ProcessCanceledException }
       }
 
-      resultLabel.text =
-        if (result.isNullOrEmpty()) HCLBundle.message("tool.testResultLabel.not.found", toolType.displayName)
-        else result
-      resultLabel.icon =
-        if (!result.isNullOrEmpty()) AllIcons.General.InspectionsOK
-        else if (exception != null || result.isNullOrEmpty()) {
+      resultLabel.text = if (result.isNullOrEmpty())
+        HCLBundle.message("tool.testResultLabel.not.found", toolType.displayName)
+      else result
+      resultLabel.icon = when {
+        !result.isNullOrEmpty() -> AllIcons.General.InspectionsOK
+        exception != null || result.isNullOrEmpty() -> {
           installButton.isVisible = true
           AllIcons.General.BalloonWarning
         }
-        else AllIcons.Empty
+        else -> AllIcons.Empty
+      }
 
       spinnerIcon.isVisible = false
       button.isEnabled = true
@@ -96,7 +99,7 @@ internal class ToolExecutableTestButtonComponent(
   }
 
   private fun createSpinnerIcon(parentDisposable: Disposable?): AsyncProcessIcon {
-    return AsyncProcessIcon("TerraformToolInstallationProgress").apply {
+    return AsyncProcessIcon("TfToolInstallationProgress").apply {
       border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
       isVisible = false
       parentDisposable?.let { Disposer.register(it, this) }
@@ -145,9 +148,36 @@ internal class ToolExecutableTestButtonComponent(
     title = title,
   ) {
     val executionResult = validateAndTestAction()
-    updateTestButton(executionResult)
+    withContext(Dispatchers.EDT) {
+      updateTestButton(executionResult)
+    }
   }
 
+  private suspend fun validateAndTestAction(): String {
+    val pathDetector = TfToolPathDetector.getInstance(project)
+    val currentPath = withContext(Dispatchers.EDT) { fieldToUpdate?.text.orEmpty() }
+
+    val validPath = if (currentPath.isNotBlank() && pathDetector.isExecutable(Path(currentPath))) {
+      currentPath
+    }
+    else {
+      val detectedPath = pathDetector.detect(toolType.executableName).orEmpty()
+      if (detectedPath.isNotBlank()) {
+        withContext(Dispatchers.EDT) { fieldToUpdate?.text = detectedPath }
+      }
+      detectedPath
+    }
+
+    return if (validPath.isNotEmpty() && pathDetector.isExecutable(Path(validPath))) {
+      val versionLine = getToolVersion(project, toolType, validPath).lineSequence().firstOrNull()?.trim()
+      versionLine?.split(" ")?.firstOrNull {
+        VERSION_REGEX.matches(StringUtil.newBombedCharSequence(it, PARSE_DELAY))
+      } ?: throw IllegalStateException(HCLBundle.message("tool.executor.unrecognized.version", toolType.executableName))
+    }
+    else ""
+  }
+
+  @RequiresEdt
   fun updateTestButton(toolPath: String?): String {
     installButton.isVisible = false
     this.text =
@@ -164,5 +194,4 @@ internal class ToolExecutableTestButtonComponent(
       }
     return toolPath ?: ""
   }
-
 }
