@@ -47,6 +47,7 @@ enum class VueTestModule(private val location: String, vararg packageNames: Stri
   VUE_3_3_4("vue/3.3.4", "vue"),
   VUE_3_4_0("vue/3.4.0", "vue"),
   VUE_3_5_0("vue/3.5.0", "vue"),
+  VUE_3_6_0("vue/3.6.0", "vue"),
   VUELIDATE_0_7_13("vuelidate", "@types/vuelidate", "vuelidate"),
   VUETIFY_0_17_2("vuetify/0.17.2", "vuetify"),
   VUETIFY_1_2_10("vuetify/1.2.10", "vuetify"),
