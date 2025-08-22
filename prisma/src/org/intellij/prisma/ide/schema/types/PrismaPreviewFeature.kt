@@ -6,8 +6,6 @@ import org.intellij.prisma.ide.schema.types.PrismaDatasourceProviderType.POSTGRE
 
 enum class PrismaPreviewFeature(val datasources: Set<PrismaDatasourceProviderType> = PrismaDatasourceProviderType.ALL) {
   DriverAdapters,
-  Metrics,
-  MultiSchema,
   NativeDistinct,
   PostgresqlExtensions,
   QueryCompiler,
