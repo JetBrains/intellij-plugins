@@ -6,6 +6,8 @@ import com.intellij.formatting.FormatTextRanges
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
+import com.intellij.formatting.FormattingContext
+import com.intellij.openapi.editor.Document
 import com.intellij.lang.javascript.imports.JSModuleImportOptimizerBase
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
@@ -14,9 +16,11 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.prettierjs.formatting.PrettierFormattingApplier
 import com.intellij.prettierjs.formatting.PrettierFormattingContext
 import com.intellij.prettierjs.formatting.createFormattingContext
@@ -29,6 +33,9 @@ import java.util.concurrent.CountDownLatch
 private val LOG = logger<PrettierFormattingService>()
 
 class PrettierFormattingService : AsyncDocumentFormattingService() {
+  // The Prettier API works with content passed as parameters; it doesn't work directly with a file.
+  // We dont need to save the file.
+  override fun prepareForFormatting(document: Document, formattingContext: FormattingContext): Unit = Unit
   override fun getName(): @NlsSafe String = "Prettier"
   override fun getNotificationGroupId(): String = "Prettier"
   override fun getFeatures(): Set<FormattingService.Feature> = setOf(FormattingService.Feature.FORMAT_FRAGMENTS)
@@ -66,8 +73,8 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
   private class PrettierFormattingTask(
     private val request: AsyncFormattingRequest,
     private val file: PsiFile,
-    private val virtualFile: com.intellij.openapi.vfs.VirtualFile,
-    private val project: com.intellij.openapi.project.Project,
+    private val virtualFile: VirtualFile,
+    private val project: Project,
     private val formatterLatch: CountDownLatch,
   ) : FormattingTask {
     private var cancelled = false
