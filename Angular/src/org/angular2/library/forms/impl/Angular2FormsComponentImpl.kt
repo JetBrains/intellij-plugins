@@ -23,7 +23,7 @@ class Angular2FormsComponentImpl(private val componentClass: TypeScriptClass) : 
         if (it.language is Angular2ExprDialect || it.qualifier is JSThisExpression)
           it.resolve()
         else
-          Angular2IndexUtil.resolveLocally(it)
+          Angular2IndexUtil.resolveLocally(it).singleOrNull()
       }
       ?.asSafely<TypeScriptField>()
       ?.let { return getInfo().fields2Symbols[it] }
