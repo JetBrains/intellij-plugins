@@ -97,7 +97,7 @@ class VueSettingsState : BaseState() {
   var packageName by string(defaultPackageKey)
   var useTypesFromServer by property(false)
   var tsPluginPackageName: String? by string(defaultPackageKey)
-  var tsPluginPreviewEnabled: Boolean by property(false)
+  var tsPluginPreviewEnabled: Boolean by property(true)
 }
 
 enum class VueServiceSettings {
