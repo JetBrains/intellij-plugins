@@ -203,7 +203,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
 
   fun testGeneratorPreviewFeaturesNotAfterComma() {
     val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
-    val feature2 = PrismaPreviewFeature.MultiSchema.presentation
+    val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
 
     noCompletion(
       """
@@ -218,7 +218,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
 
   fun testGeneratorPreviewFeaturesBetweenCommaAndValue() {
     val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
-    val feature2 = PrismaPreviewFeature.MultiSchema.presentation
+    val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
     val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
 
     completeSelected(
@@ -242,7 +242,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
 
   fun testGeneratorPreviewFeaturesAtStart() {
     val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
-    val feature2 = PrismaPreviewFeature.MultiSchema.presentation
+    val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
     val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
 
     val lookupElements = completeSelected(
