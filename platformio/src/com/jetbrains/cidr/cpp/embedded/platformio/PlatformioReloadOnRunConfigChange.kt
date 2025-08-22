@@ -1,50 +1,79 @@
 package com.jetbrains.cidr.cpp.embedded.platformio
 
+import com.intellij.execution.RunManager
 import com.intellij.execution.RunManagerListener
 import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.UI
+import com.intellij.openapi.application.asContextElement
 import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.service.internal.ExternalSystemProcessingManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
-import kotlin.concurrent.atomics.AtomicBoolean
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 class PlatformioReloadOnRunConfigChange : ProjectActivity {
 
   override suspend fun execute(project: Project) {
     val platformioService = project.serviceAsync<PlatformioService>()
-    project.messageBus.connect(platformioService).subscribe(RunManagerListener.TOPIC, PlatformioReloadOnRunConfigChangeListener(project))
+    project.messageBus.connect(platformioService).subscribe(RunManagerListener.TOPIC, PlatformioReloadOnRunConfigChangeListener(project, platformioService.cs))
   }
 
+
+  /** We reload on two occasions:
+   * 1. When we change selection from a PIO RC to another PIO RC.
+   *     - Changing from non-PIO to PIO and vice versa is handled by the [ExecutionTargetListener] in [PlatformioManager].
+   * 2. When the currently selected RC is PIO RC and the configuration is changed.
+   *
+   * We reload only when necessary, as defined in [PlatformioDebugConfiguration.shouldChangeCauseReload] based on the change in RC.
+   */
   @OptIn(ExperimentalAtomicApi::class)
-  private class PlatformioReloadOnRunConfigChangeListener(val project: Project) : RunManagerListener {
+  private class PlatformioReloadOnRunConfigChangeListener(val project: Project, cs: CoroutineScope) : RunManagerListener {
 
-    /** [runConfigurationChanged] can get called multiple times in one update, but we want to refresh the project only once. */
-    private val pioConfigChangedInUpdate = AtomicBoolean(false)
+    private val currentRc = AtomicReference<PlatformioDebugConfiguration?>(null)
+    private val nextRcFlow = MutableSharedFlow<PlatformioDebugConfiguration?>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    override fun beginUpdate() {
-      pioConfigChangedInUpdate.store(false)
-    }
-
-    override fun runConfigurationChanged(settings: RunnerAndConfigurationSettings) {
-      if (settings.configuration is PlatformioDebugConfiguration) {
-        pioConfigChangedInUpdate.store(true)
+    init {
+      // We collect the next RC in non-modal state to dedupe multiple Applies in one run config dialog.
+      cs.launch(Dispatchers.UI
+                + ModalityState.nonModal().asContextElement()
+                + CoroutineName("PlatformIO Reload on Run Configuration Change")) {
+        nextRcFlow.collect { next ->
+          val current = currentRc.exchange(next)
+          if (shouldReload(current, next)) {
+            refreshProject()
+          }
+        }
       }
     }
 
-    override fun endUpdate() {
-      if (pioConfigChangedInUpdate.load()) {
-        refreshProject()
-      }
+    override fun endUpdate(){
+      val selectedConfig =  RunManager.getInstance(project)
+        .selectedConfiguration
+        ?.configuration
+        ?.asSafely<PlatformioDebugConfiguration>()
+
+      nextRcFlow.tryEmit(selectedConfig?.clone())
     }
 
     override fun runConfigurationSelected(settings: RunnerAndConfigurationSettings?) {
-      if (settings?.configuration is PlatformioDebugConfiguration) {
-        refreshProject()
-      }
+      val newConfig = settings?.configuration as? PlatformioDebugConfiguration
+      nextRcFlow.tryEmit(newConfig?.clone())
+    }
+
+    private fun shouldReload(prevConfig: PlatformioDebugConfiguration?, newConfig: PlatformioDebugConfiguration?): Boolean {
+      return prevConfig != null && newConfig != null && prevConfig.shouldChangeCauseReload(newConfig)
     }
 
     private fun refreshProject() {

@@ -72,5 +72,11 @@ class PlatformioDebugConfiguration(project: Project, configurationFactory: Confi
   override fun getHelper(): CidrBuildConfigurationHelper<PlatformioBuildConfiguration, PlatformioBuildTarget> =
     PlatformioBuildConfigurationHelper(project)
 
+  fun shouldChangeCauseReload(changed: PlatformioDebugConfiguration): Boolean =
+    changed.envs != envs
+
+  override fun clone(): PlatformioDebugConfiguration {
+    return super.clone() as PlatformioDebugConfiguration
+  }
 }
 
