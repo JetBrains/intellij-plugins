@@ -12,6 +12,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.service.internal.ExternalSystemProcessingManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.platform.util.coroutines.flow.zipWithNext
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
 import kotlinx.coroutines.CoroutineName
@@ -19,9 +20,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import kotlin.concurrent.atomics.AtomicReference
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 class PlatformioReloadOnRunConfigChange : ProjectActivity {
 
@@ -30,7 +30,6 @@ class PlatformioReloadOnRunConfigChange : ProjectActivity {
     project.messageBus.connect(platformioService).subscribe(RunManagerListener.TOPIC, PlatformioReloadOnRunConfigChangeListener(project, platformioService.cs))
   }
 
-
   /** We reload on two occasions:
    * 1. When we change selection from a PIO RC to another PIO RC.
    *     - Changing from non-PIO to PIO and vice versa is handled by the [ExecutionTargetListener] in [PlatformioManager].
@@ -38,23 +37,18 @@ class PlatformioReloadOnRunConfigChange : ProjectActivity {
    *
    * We reload only when necessary, as defined in [PlatformioDebugConfiguration.shouldChangeCauseReload] based on the change in RC.
    */
-  @OptIn(ExperimentalAtomicApi::class)
   private class PlatformioReloadOnRunConfigChangeListener(val project: Project, cs: CoroutineScope) : RunManagerListener {
 
-    private val currentRc = AtomicReference<PlatformioDebugConfiguration?>(null)
-    private val nextRcFlow = MutableSharedFlow<PlatformioDebugConfiguration?>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val runConfigFlow = MutableSharedFlow<PlatformioDebugConfiguration?>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     init {
-      // We collect the next RC in non-modal state to dedupe multiple Applies in one run config dialog.
+      // We collect the RCs in non-modal state to dedupe multiple Applies in one run config dialog.
       cs.launch(Dispatchers.UI
                 + ModalityState.nonModal().asContextElement()
                 + CoroutineName("PlatformIO Reload on Run Configuration Change")) {
-        nextRcFlow.collect { next ->
-          val current = currentRc.exchange(next)
-          if (shouldReload(current, next)) {
-            refreshProject()
-          }
-        }
+        runConfigFlow.zipWithNext()
+          .filter { (prev, next) -> shouldReload(prev, next) }
+          .collect { refreshProject() }
       }
     }
 
@@ -64,12 +58,12 @@ class PlatformioReloadOnRunConfigChange : ProjectActivity {
         ?.configuration
         ?.asSafely<PlatformioDebugConfiguration>()
 
-      nextRcFlow.tryEmit(selectedConfig?.clone())
+      runConfigFlow.tryEmit(selectedConfig?.clone())
     }
 
     override fun runConfigurationSelected(settings: RunnerAndConfigurationSettings?) {
       val newConfig = settings?.configuration as? PlatformioDebugConfiguration
-      nextRcFlow.tryEmit(newConfig?.clone())
+      runConfigFlow.tryEmit(newConfig?.clone())
     }
 
     private fun shouldReload(prevConfig: PlatformioDebugConfiguration?, newConfig: PlatformioDebugConfiguration?): Boolean {

@@ -63,6 +63,7 @@ jvm_library(
     "@community//platform/ui.jcef",
     "@community//platform/util/jdom",
     "//plugins/profiler/clion",
+    "@community//platform/util/coroutines",
   ],
   runtime_deps = [":platformio_resources"]
 )
@@ -131,6 +132,7 @@ jvm_library(
     "@community//platform/util/jdom",
     "//plugins/profiler/clion",
     "//plugins/profiler/clion:clion_test_lib",
+    "@community//platform/util/coroutines",
   ],
   runtime_deps = [
     ":platformio_resources",
