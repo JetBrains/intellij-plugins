@@ -25,8 +25,8 @@ internal enum class TfToolType(@Nls val executableName: String) {
   TERRAFORM("terraform") {
     override val displayName = "Terraform"
     override fun getDownloadUrl(): String {
-      val latestStableVersion = fetchLatestStableVersion(TERRAFORM_VERSION_URL) ?: DEFAULT_TERRAFORM_VERSION
-      return "$downloadServerUrl/$latestStableVersion/terraform_${latestStableVersion}_${getOSName()}_${getArchName()}.zip"
+      val latestTfVersion = fetchTfLatestStableVersion() ?: DEFAULT_TERRAFORM_VERSION
+      return "$downloadServerUrl/$latestTfVersion/terraform_${latestTfVersion}_${getOSName()}_${getArchName()}.zip"
     }
 
     override val downloadServerUrl: String
@@ -36,9 +36,9 @@ internal enum class TfToolType(@Nls val executableName: String) {
       return project.service<TfProjectSettings>()
     }
 
-    private fun fetchLatestStableVersion(apiUrl: String): String? {
+    private fun fetchTfLatestStableVersion(): String? {
       return try {
-        val response = HttpRequests.request(apiUrl).readString()
+        val response = HttpRequests.request(TERRAFORM_VERSION_URL).readString()
         val jsonNode = ObjectMapper().readTree(response)
         jsonNode.get("current_version")?.asText()?.removePrefix("v")
       }
@@ -51,14 +51,27 @@ internal enum class TfToolType(@Nls val executableName: String) {
   OPENTOFU("tofu") {
     override val displayName = "OpenTofu"
     override fun getDownloadUrl(): String {
-      return downloadServerUrl
+      val latestTofuVersion = fetchTofuLatestStableVersion() ?: DEFAULT_OPENTOFU_VERSION
+      return "$downloadServerUrl/v$latestTofuVersion/tofu_${latestTofuVersion}_${getOSName()}_${getArchName()}.zip"
     }
 
     override val downloadServerUrl: String
-      get() = "" //"https://get.opentofu.org/tofu/api.json"
+      get() = "https://github.com/opentofu/opentofu/releases/download/"
 
     override fun getToolSettings(project: Project): TfToolSettings {
       return project.service<OpenTofuProjectSettings>()
+    }
+
+    private fun fetchTofuLatestStableVersion(): String? {
+      return try {
+        val response = HttpRequests.request(OPENTOFU_VERSION_URL).readString()
+        val jsonNode = ObjectMapper().readTree(response)
+        jsonNode.get("versions")?.first()?.get("id")?.asText()
+      }
+      catch (e: Exception) {
+        logger<TfBinaryInstaller>().error("Failed to fetch the latest stable Terraform version", e)
+        null
+      }
     }
   };
 
@@ -134,5 +147,8 @@ internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath:
   return stdout
 }
 
-private const val DEFAULT_TERRAFORM_VERSION: String = "1.10.0"
+private const val DEFAULT_TERRAFORM_VERSION: String = "1.13.0"
 private const val TERRAFORM_VERSION_URL: String = "https://checkpoint-api.hashicorp.com/v1/check/terraform"
+
+private const val DEFAULT_OPENTOFU_VERSION: String = "1.10.5"
+private const val OPENTOFU_VERSION_URL: String = "https://get.opentofu.org/tofu/api.json"
