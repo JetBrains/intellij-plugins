@@ -1011,5 +1011,17 @@ class VueCompletionTest : VueTestCase("completion") {
 
   fun testCompleteComponentWithDefineOptions() =
     doLookupTest(VueTestModule.VUE_3_3_4, configureFileName = "Component.vue", dir = true, typeToFinishLookup = "\n")
+
+  fun testVaporAttribute() {
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<script setup v<caret>a>",
+        "<script setup va<caret>>",
+      ),
+    ) { it.priority >= 10 }
+  }
 }
 

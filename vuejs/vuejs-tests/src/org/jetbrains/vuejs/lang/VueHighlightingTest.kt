@@ -757,6 +757,13 @@ const props = {seeMe: {}}
   fun testTypedMixins() {
     doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_4_0), fileName = "index.js")
   }
+
+  fun testVaporSimpleApplication() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
+    )
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
