@@ -75,8 +75,9 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
                       request.onTextReady(formattedText)
                     }
                     else {
-                      @NlsSafe val errorMessage = process.stderr.readWholeText()
-                      request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), errorMessage)
+                      val errorMessage = process.stderr.readWholeText()
+                      val cleanedMessage = stripAnsiSymbols(errorMessage)
+                      request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), cleanedMessage)
                     }
                   }
                 }
@@ -99,6 +100,14 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
         }
       }
 
+      private fun stripAnsiSymbols(text: String): @NlsSafe String {
+        val cleanedText = text.replace(AnsiRegex, "")
+        return cleanedText.replace("╷", "")
+          .replace("╵", "")
+          .replace("│", "")
+          .trim()
+      }
+
       override fun cancel(): Boolean {
         job?.cancel()
         return true
@@ -110,3 +119,4 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
 }
 
 private const val TestsExtension = "tftest.hcl"
+private val AnsiRegex = Regex("\u001B\\[[;\\d]*[ -/]*[@-~]")
