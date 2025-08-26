@@ -2,26 +2,25 @@
 package org.intellij.terraform.install
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.intellij.execution.process.CapturingProcessAdapter
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfoRt
+import com.intellij.platform.eel.ExecuteProcessException
+import com.intellij.platform.eel.provider.getEelDescriptor
+import com.intellij.platform.eel.provider.utils.readWholeText
+import com.intellij.platform.eel.spawnProcess
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.system.CpuArch
-import kotlinx.coroutines.ensureActive
-import org.intellij.terraform.config.util.TfExecutor
-import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import org.intellij.terraform.runtime.TfProjectSettings
 import org.intellij.terraform.runtime.TfToolSettings
 import org.jetbrains.annotations.Nls
-import kotlin.coroutines.coroutineContext
 
-internal enum class TfToolType(@Nls val executableName: String) {
+internal enum class TfToolType(@param:Nls val executableName: String) {
   TERRAFORM("terraform") {
     override val displayName = "Terraform"
     override fun getDownloadUrl(): String {
@@ -69,7 +68,7 @@ internal enum class TfToolType(@Nls val executableName: String) {
         jsonNode.get("versions")?.first()?.get("id")?.asText()
       }
       catch (e: Exception) {
-        logger<TfBinaryInstaller>().error("Failed to fetch the latest stable Terraform version", e)
+        logger<TfBinaryInstaller>().error("Failed to fetch the latest stable OpenTofu version", e)
         null
       }
     }
@@ -82,27 +81,20 @@ internal enum class TfToolType(@Nls val executableName: String) {
   abstract fun getToolSettings(project: Project): TfToolSettings
   abstract val displayName: String
 
-  protected fun getOSName(): String? {
-    return when {
-      SystemInfoRt.isWindows -> "windows"
-      SystemInfoRt.isLinux -> "linux"
-      SystemInfoRt.isMac -> "darwin"
-      else -> null
-    }
+  protected fun getOSName(): String = when {
+    SystemInfoRt.isWindows -> "windows"
+    SystemInfoRt.isLinux -> "linux"
+    SystemInfoRt.isMac -> "darwin"
+    SystemInfoRt.isFreeBSD -> "freebsd"
+    else -> ""
   }
 
-  protected fun getArchName(): String {
-    /**
-     * TODO
-     * terraform_1.8.0_linux_386.zip
-     * terraform_1.8.0_linux_amd64.zip
-     * terraform_1.8.0_linux_arm.zip
-     * terraform_1.8.0_linux_arm64.zip
-     */
-    return if (CpuArch.isArm64())
-      "arm64"
-    else
-      "amd64"
+  protected fun getArchName(): String = when (CpuArch.CURRENT) {
+    CpuArch.X86 -> "386"
+    CpuArch.X86_64 -> "amd64"
+    CpuArch.ARM32 -> "arm"
+    CpuArch.ARM64 -> "arm64"
+    else -> ""
   }
 }
 
@@ -127,24 +119,20 @@ internal fun installTfTool(
     .install()
 }
 
-internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath: String? = tool.executableName): @NlsSafe String {
-  val capturingProcessAdapter = CapturingProcessAdapter()
+internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath: String): @NlsSafe String {
+  val eelApi = project.getEelDescriptor().toEelApi()
+  val processBuilder = eelApi.exec.spawnProcess(exePath).args("version")
 
-  val success = TfExecutor.`in`(project, tool)
-    .withExePath(exePath)
-    .withPresentableName(HCLBundle.message("tool.executor.version", tool.displayName))
-    .withParameters("version")
-    .withPassParentEnvironment(true)
-    .withProcessListener(capturingProcessAdapter)
-    .executeSuspendable()
-
-  coroutineContext.ensureActive()
-
-  val stdout = capturingProcessAdapter.output.stdout
-  if (!success || stdout.isEmpty()) {
-    throw RuntimeException("Couldn't get version of ${tool.displayName}")
+  val version = try {
+    processBuilder.eelIt().stdout.readWholeText()
   }
-  return stdout
+  catch (e: ExecuteProcessException) {
+    throw e
+  }
+
+  if (version.isEmpty())
+    throw RuntimeException(HCLBundle.message("tool.executor.version.error", tool.displayName))
+  return version
 }
 
 private const val DEFAULT_TERRAFORM_VERSION: String = "1.13.0"
