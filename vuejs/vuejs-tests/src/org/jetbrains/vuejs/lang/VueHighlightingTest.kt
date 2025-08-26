@@ -687,10 +687,24 @@ const props = {seeMe: {}}
     )
   }
 
+  fun testComponentFromFunctionPlugin_vapor() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
+    )
+  }
+
   fun testComponentFromNestedFunctionPlugin() {
     doDirTest(
       fileName = "App.vue",
       addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedFunctionPlugin_vapor() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -701,10 +715,24 @@ const props = {seeMe: {}}
     )
   }
 
+  fun testComponentFromNestedFunctionPluginWithCycle_vapor() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
+    )
+  }
+
   fun testComponentFromObjectPlugin() {
     doDirTest(
       fileName = "App.vue",
       addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromObjectPlugin_vapor() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
@@ -715,10 +743,24 @@ const props = {seeMe: {}}
     )
   }
 
+  fun testComponentFromNestedObjectPlugin_vapor() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
+    )
+  }
+
   fun testComponentFromNestedObjectPluginWithCycle() {
     doDirTest(
       fileName = "App.vue",
       addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
+  }
+
+  fun testComponentFromNestedObjectPluginWithCycle_vapor() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_6_0),
     )
   }
 
