@@ -706,9 +706,27 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+    fun testComponentFromFunctionPlugin_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
   fun testComponentFromNestedFunctionPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+    fun testComponentFromNestedFunctionPlugin_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
       dir = true,
       configureFileName = "App.vue",
       locations = listOf("<<caret>MyButton", "<My<caret>Label"),
@@ -724,9 +742,27 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+    fun testComponentFromNestedFunctionPluginWithCycle_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
   fun testComponentFromObjectPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+    fun testComponentFromObjectPlugin_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
       dir = true,
       configureFileName = "App.vue",
       locations = listOf("<<caret>MyButton", "<My<caret>Label"),
@@ -742,9 +778,27 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+    fun testComponentFromNestedObjectPlugin_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
   fun testComponentFromNestedObjectPluginWithCycle() =
     doLookupTest(
       VueTestModule.VUE_3_4_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<<caret>MyButton", "<My<caret>Label"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+    fun testComponentFromNestedObjectPluginWithCycle_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
       dir = true,
       configureFileName = "App.vue",
       locations = listOf("<<caret>MyButton", "<My<caret>Label"),
