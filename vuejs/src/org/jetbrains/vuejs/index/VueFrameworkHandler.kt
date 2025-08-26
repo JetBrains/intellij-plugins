@@ -243,7 +243,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
 
     val arguments = callExpression.arguments
-    if (arguments.isEmpty() && referenceName != CREATE_APP_FUN) return
+    if (arguments.isEmpty()
+        && referenceName != CREATE_APP_FUN
+        && referenceName != CREATE_VAPOR_APP_FUN
+    ) return
 
     if (VueStaticMethod.Component.matches(reference)) {
       if (arguments.size >= 2) {
@@ -319,7 +322,15 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             this, VUE_COMPOSITION_APP_INDEX_JS_KEY,
             // Store reference name for resolution
             callExpression.arguments
-              .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == USE_FUN || referenceName == MIXIN_FUN || referenceName == PROVIDE_FUN) 0 else 1)
+              .getOrNull(
+                when (referenceName) {
+                  CREATE_APP_FUN, CREATE_VAPOR_APP_FUN,
+                  USE_FUN, MIXIN_FUN, PROVIDE_FUN,
+                    -> 0
+
+                  else -> 1
+                }
+              )
               .asSafely<JSReferenceExpression>()
               ?.takeIf { it.qualifier == null }
               ?.referenceName
@@ -490,9 +501,11 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     checkCallExpression(callNode) { refName, hasQualifier ->
       if (!hasQualifier)
         refName == CREATE_APP_FUN
+        || refName == CREATE_VAPOR_APP_FUN
       else {
-        refName == CREATE_APP_FUN || refName == MOUNT_FUN || refName == USE_FUN || refName == MIXIN_FUN ||
-        ((refName == COMPONENT_FUN || refName == FILTER_FUN || refName == DIRECTIVE_FUN || refName == PROVIDE_FUN)
+        refName == CREATE_APP_FUN || refName == CREATE_VAPOR_APP_FUN
+        || refName == MOUNT_FUN || refName == USE_FUN || refName == MIXIN_FUN
+        || ((refName == COMPONENT_FUN || refName == FILTER_FUN || refName == DIRECTIVE_FUN || refName == PROVIDE_FUN)
          && callNode.findChildByType(JSElementTypes.ARGUMENT_LIST)?.getChildren(JSElementTypes.EXPRESSIONS)?.size == 2)
       }
     }

@@ -177,6 +177,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
         .plus(
           resolve(CREATE_APP_FUN, scope, VUE_COMPOSITION_APP_INDEX_KEY)
             .asSequence()
+            .plus(resolve(CREATE_VAPOR_APP_FUN, scope, VUE_COMPOSITION_APP_INDEX_KEY))
             .filter(VueComponents.Companion::isNotInLibrary)
             .mapNotNull { (it.context as? JSCallExpression)?.let { call -> VueCompositionApp(call) } }
         )
