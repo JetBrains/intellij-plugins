@@ -28,6 +28,7 @@ abstract class VueLspServiceTestBase : BaseLspTypeScriptServiceTest() {
     TypeScriptLanguageServiceUtil.setUseService(true)
     TypeScriptExternalDefinitionsRegistry.testTypingsRootPath = TypeScriptDefinitionFilesDirectory.getGlobalAutoDownloadTypesDirectoryPath()
     vueSettings.serviceType = VueServiceSettings.VOLAR
+    vueSettings.tsPluginPreviewEnabled = false
 
     ensureServerDownloaded(VueLspServerLoader)
   }
