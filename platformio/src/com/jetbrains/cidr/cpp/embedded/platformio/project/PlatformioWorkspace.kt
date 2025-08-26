@@ -31,7 +31,9 @@ import kotlin.io.path.isDirectory
 @State(name = "PlatformIOWorkspace")
 @Service(Service.Level.PROJECT)
 class PlatformioWorkspace(project: Project) : ExternalWorkspace(project), WorkspaceWithEnvironment {
-  override fun getClientKey(): String = ID.id
+  override val clientKey: String
+    get() = ID.id
+
   class PlatformioStartupActivity : ProjectActivity {
 
     override suspend fun execute(project: Project) {
