@@ -7,31 +7,19 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
-import org.jetbrains.annotations.TestOnly
 
 private class NuxtFolderLibraryStartupActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
-    NuxtFolderModelSynchronizer(
-      project = project,
-      workspaceModel = project.serviceAsync<WorkspaceModel>(),
-      nuxtFolderManager = project.serviceAsync<NuxtFolderManager>(),
-    ).sync()
+    NuxtFolderModelSynchronizer.create(project).sync()
   }
 }
 
 internal class NuxtFolderModelSynchronizer internal constructor(
-  private val project: Project,
   private val workspaceModel: WorkspaceModel,
-  nuxtFolderManager: NuxtFolderManager,
+  private val nuxtFolderManager: NuxtFolderManager,
 ) {
-  private val libraries: List<NuxtFolderLibrary> = nuxtFolderManager.nuxtFolders.map {
-    NuxtFolderLibrary(it)
-  }
 
-  @TestOnly
-  constructor(project: Project) : this(project, WorkspaceModel.getInstance(project), NuxtFolderManager.getInstance(project))
-
-  fun sync() {
+  suspend fun sync() {
     val actualEntities: List<NuxtFolderEntity.Builder> = buildActualEntities()
     val workspaceModelEntities: List<NuxtFolderEntity> = getWorkspaceModelEntities()
     if (areEntitiesOutdated(actualEntities, workspaceModelEntities)) {
@@ -40,7 +28,10 @@ internal class NuxtFolderModelSynchronizer internal constructor(
     }
   }
 
-  private fun buildActualEntities(): List<NuxtFolderEntity.Builder> {
+  private suspend fun buildActualEntities(): List<NuxtFolderEntity.Builder> {
+    val libraries = nuxtFolderManager.nuxtFolders.map {
+      NuxtFolderReadyLibrary.create(it)
+    }
     return libraries.map {
       NuxtFolderManager.createEntity(it, workspaceModel.getVirtualFileUrlManager())
     }
@@ -60,11 +51,18 @@ internal class NuxtFolderModelSynchronizer internal constructor(
     return workspaceModel.currentSnapshot.entities(NuxtFolderEntity::class.java).toList()
   }
 
-  private fun updateEntities(actualEntities: List<NuxtFolderEntity.Builder>) {
+  private suspend fun updateEntities(actualEntities: List<NuxtFolderEntity.Builder>) {
     val entitiesStorage = createStorageFrom(actualEntities)
-    NuxtFolderManager.getInstance(project).updateWorkspaceModel("sync outdated .nuxt/") { _, storage ->
+    nuxtFolderManager.updateWorkspaceModel("sync outdated .nuxt/") { _, storage ->
       storage.replaceBySource({ it === NuxtFolderEntity.MyEntitySource }, entitiesStorage)
     }
+  }
+
+  companion object {
+    suspend fun create(project: Project): NuxtFolderModelSynchronizer = NuxtFolderModelSynchronizer(
+      project.serviceAsync<WorkspaceModel>(),
+      NuxtFolderManager.serviceAsync(project),
+    )
   }
 }
 

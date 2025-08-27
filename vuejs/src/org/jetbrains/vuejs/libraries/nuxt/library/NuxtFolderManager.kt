@@ -29,8 +29,7 @@ import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.containers.nullize
 import com.intellij.util.xmlb.annotations.XCollection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
 import java.util.concurrent.ConcurrentHashMap
@@ -48,6 +47,8 @@ internal class NuxtFolderManager(
 
   private val nextUpdateId: AtomicInteger = AtomicInteger()
   private val updatesInProgress: MutableSet<String> = ConcurrentHashMap.newKeySet()
+  private val libraryUpdateLimit: CoroutineDispatcher = Dispatchers.Default.limitedParallelism(1)
+  private val libraryUpdateJobs: MutableMap<VirtualFile, Job> = HashMap()
 
   init {
     VirtualFileManager.getInstance().addAsyncFileListener(NuxtFileListener(), this)
@@ -86,8 +87,10 @@ internal class NuxtFolderManager(
   fun addIfMissing(nuxtFolder: VirtualFile) {
     if (!folders.contains(nuxtFolder) && isAccepted(nuxtFolder, true) && folders.add(nuxtFolder)) {
       LOG.info("Added .nuxt/ folder (${nuxtFolder.path}), total folders: ${folders.size}")
-      addExcludeEntity(nuxtFolder)
-      addOrUpdateLibraryEntity(nuxtFolder)
+      coroutineScope.launch {
+        excludeFolder(nuxtFolder)
+        scheduleLibraryUpdate(nuxtFolder)
+      }
     }
   }
 
@@ -99,36 +102,48 @@ internal class NuxtFolderManager(
    * [WorkspaceFileIndex][com.intellij.workspaceModel.core.fileIndex.WorkspaceFileIndex] to be updated,
    * but not for the file index, use `IndexingTestUtil.waitUntilIndexesAreReady(project)` for that.
    */
-  internal fun updateWorkspaceModel(description: String, action: (WorkspaceModel, MutableEntityStorage) -> Unit) {
+  internal suspend fun updateWorkspaceModel(description: String, action: (WorkspaceModel, MutableEntityStorage) -> Unit) {
     val update = "#${nextUpdateId.incrementAndGet()}: $description"
     updatesInProgress.add(update)
-
     LOG.debug { "Starting workspace model update: '$update', total updates running (${updatesInProgress.size}): $updatesInProgress" }
-    coroutineScope.launch {
-      val workspaceModel = project.workspaceModel
-      workspaceModel.update(description) { storage ->
-        action(workspaceModel, storage)
-        updatesInProgress.remove(update)
-        LOG.debug { "Finished workspace model update: '$update', total updates running: ${updatesInProgress.size}" }
+    val workspaceModel = project.workspaceModel
+    workspaceModel.update(description) { storage ->
+      action(workspaceModel, storage)
+      updatesInProgress.remove(update)
+      LOG.debug { "Finished workspace model update: '$update', total updates running: ${updatesInProgress.size}" }
+    }
+  }
+
+  private suspend fun excludeFolder(nuxtFolder: VirtualFile) {
+    addOrUpdateEntity("Exclude .nuxt/ for " + nuxtFolder.path, NuxtFolderNotReadyLibrary(nuxtFolder))
+  }
+
+  private suspend fun addOrUpdateLibraryEntity(nuxtFolder: VirtualFile) {
+    val library = NuxtFolderReadyLibrary.create(nuxtFolder)
+    addOrUpdateEntity("Include library files from .nuxt/ for " + nuxtFolder.path, library)
+  }
+
+  private fun scheduleLibraryUpdate(nuxtFolder: VirtualFile) {
+    val job = synchronized(libraryUpdateJobs) {
+      // synchronize to ensure that no multiple jobs are scheduled concurrently for the same `nuxtFolder`
+      libraryUpdateJobs[nuxtFolder]?.cancel()
+      coroutineScope.launch(libraryUpdateLimit) {
+        addOrUpdateLibraryEntity(nuxtFolder)
+      }.also {
+        libraryUpdateJobs[nuxtFolder] = it
+      }
+    }
+    job.invokeOnCompletion {
+      synchronized(libraryUpdateJobs) {
+        libraryUpdateJobs.remove(nuxtFolder, job)
       }
     }
   }
 
-  private fun addExcludeEntity(nuxtFolder: VirtualFile) {
-    updateWorkspaceModel("Exclude .nuxt/ for " + nuxtFolder.path) { workspaceModel, storage ->
+  private suspend fun addOrUpdateEntity(description: String, library: NuxtFolderLibrary) {
+    updateWorkspaceModel(description) { workspaceModel, storage ->
       val virtualFileUrlManager = workspaceModel.getVirtualFileUrlManager()
-      val nuxtFolderUrl = nuxtFolder.toVirtualFileUrl(virtualFileUrlManager)
-      val entities = findEntities(storage, nuxtFolderUrl)
-      entities.forEach(storage::removeEntity)
-      storage.addEntity(NuxtFolderEntity(nuxtFolderUrl, emptyList(), NuxtFolderEntity.MyEntitySource))
-    }
-  }
-
-  private fun addOrUpdateLibraryEntity(nuxtFolder: VirtualFile) {
-    val library = NuxtFolderLibrary(nuxtFolder)
-    updateWorkspaceModel("Include library files from .nuxt/ for " + nuxtFolder.path) { workspaceModel, storage ->
-      val virtualFileUrlManager = workspaceModel.getVirtualFileUrlManager()
-      val nuxtFolderUrl = nuxtFolder.toVirtualFileUrl(virtualFileUrlManager)
+      val nuxtFolderUrl = library.nuxtFolder.toVirtualFileUrl(virtualFileUrlManager)
       val entities = findEntities(storage, nuxtFolderUrl)
       entities.forEach(storage::removeEntity)
       storage.addEntity(createEntity(library, virtualFileUrlManager))
@@ -147,6 +162,7 @@ internal class NuxtFolderManager(
   companion object {
     @RequiresBlockingContext
     fun getInstance(project: Project): NuxtFolderManager = project.service<NuxtFolderManager>()
+    suspend fun serviceAsync(project: Project): NuxtFolderManager = project.serviceAsync<NuxtFolderManager>()
 
     private fun isNuxtFolder(file: VirtualFile): Boolean = file.isDirectory && file.name == NUXT_OUTPUT_FOLDER
 
@@ -165,7 +181,7 @@ internal class NuxtFolderManager(
             when (event) {
               is VFileCreateEvent -> {
                 findNuxtFolder(event.parent)?.let {
-                  addOrUpdateLibraryEntity(it)
+                  scheduleLibraryUpdate(it)
                 }
               }
             }
@@ -208,7 +224,9 @@ internal val LOG: Logger = logger<NuxtFolderManager>()
 @TestOnly
 fun resetDotNuxtFolderManager(project: Project) {
   NuxtFolderManager.getInstance(project).setFolders(emptyList())
-  NuxtFolderModelSynchronizer(project).sync()
+  getDotNuxtFolderManagerCoroutineScope(project).launch {
+    NuxtFolderModelSynchronizer.create(project).sync()
+  }
 }
 
 @TestOnly
