@@ -28,7 +28,8 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   private static final String[] CUCUMBER_ANNOTATION_NAMES = {
     "io.cucumber.java.en.Given",
     "io.cucumber.java.en.When",
-    "io.cucumber.java.en.Then"
+    "io.cucumber.java.en.Then",
+    "io.cucumber.java.en.And",
   };
 
   @Override
