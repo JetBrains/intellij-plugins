@@ -371,10 +371,11 @@ public final class CucumberJavaUtil {
   }
 
   /**
-   * Looks for Parameter Type defined by Type Registry and stores Parameter Type's name, value in {@code values}
+   * Looks for Parameter Types defined by {@code TypeRegistry}
+   * and stores the Parameter Type's name and value in {@code values}
    * and its SmartPointer in {@code declarations}.
    * <p>
-   * For example, the code below defines Parameter Type called "iso-date" that matches expression "\d{4}-\d{2}-\d{2}"
+   * For example, the code below defines a Parameter Type called "iso-date" that matches expression {@code \d{4}-\d{2}-\d{2}}:
    * <pre>{@code
    *     typeRegistry.defineParameterType(new ParameterType<>(
    *       "iso-date",
@@ -383,6 +384,12 @@ public final class CucumberJavaUtil {
    *       (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
    *     ));
    * }</pre>
+   *
+   * <h3>Note</h3>
+   * {@code TypeRegistry} has been deprecated since cucumber-jvm v7.1.0.
+   * New Cucumber users should use the {@code @ParameterType} annotation instead.
+   *
+   * @see #processParameterTypesDefinedByAnnotation
    */
   private static void processParameterTypesDefinedByTypeRegistry(@NotNull Module module,
                                                                  @NotNull GlobalSearchScope scope,
@@ -420,16 +427,19 @@ public final class CucumberJavaUtil {
   }
 
   /**
-   * Looks for Parameter Type defined by annotation {@code @ParameterType}
-   * and stores Parameter Type's name, value in {@code values} and its SmartPointer in {@code declarations}
+   * Looks for Parameter Types defined by annotation {@code @ParameterType}
+   * and stores the Parameter Type's name and value in {@code values}
+   * and its SmartPointer in {@code declarations}.
    * <p>
-   * For example, the code below defines Parameter Type called "color" that matches expression {@code "red|blue|yellow"}
+   * For example, the code below defines a Parameter Type called "color" that matches cukex {@code "red|blue|yellow"}:
    * <pre>{@code
    *     @ParameterType("red|blue|yellow")
    *     public String color(String color) {
    *         return "Text with color: " + color;
    *     }
    * }</pre>
+   *
+   * @see #processParameterTypesDefinedByTypeRegistry
    */
   private static void processParameterTypesDefinedByAnnotation(@NotNull Module module,
                                                                @NotNull GlobalSearchScope scope,
