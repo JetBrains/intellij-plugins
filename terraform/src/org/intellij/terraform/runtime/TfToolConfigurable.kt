@@ -2,11 +2,9 @@
 package org.intellij.terraform.runtime
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.options.SearchableConfigurable
-import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.emptyText
@@ -14,10 +12,8 @@ import com.intellij.openapi.ui.validation.DialogValidation
 import com.intellij.openapi.ui.validation.validationErrorIf
 import com.intellij.ui.dsl.builder.*
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.install.FailedInstallation
-import org.intellij.terraform.install.TfExecutableTestButtonComponent
+import org.intellij.terraform.install.TfExecutableTestButton
 import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.install.installTfTool
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import kotlin.io.path.Path
 import kotlin.io.path.exists
@@ -60,20 +56,7 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
     ).bindText(settings::toolPath).applyToComponent {
       emptyText.text = type.getBinaryName()
     }.trimmedTextValidation(IS_EXIST, CHECK_EXECUTABLE).align(AlignX.FILL)
-    val testButton = TfExecutableTestButtonComponent(
-      project,
-      type,
-      parentDisposable,
-      executorField.component
-    ) { resultHandler ->
-      try {
-        installTfTool(project, resultHandler, EmptyProgressIndicator(), type)
-      }
-      catch (ex: Exception) {
-        fileLogger().warnWithDebug("Failed to install ${type.displayName}", ex)
-        resultHandler(FailedInstallation { ex.message ?: HCLBundle.message("tool.executor.unknown.error") })
-      }
-    }
+    val testButton = TfExecutableTestButton(project, type, executorField.component, parentDisposable)
     row {
       cell(testButton)
     }

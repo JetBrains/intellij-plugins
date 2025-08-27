@@ -4,7 +4,6 @@ package org.intellij.terraform.install
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfoRt
@@ -19,6 +18,9 @@ import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import org.intellij.terraform.runtime.TfProjectSettings
 import org.intellij.terraform.runtime.TfToolSettings
 import org.jetbrains.annotations.Nls
+import java.nio.file.FileSystems
+import java.nio.file.Path
+import java.nio.file.Paths
 
 internal enum class TfToolType(@param:Nls val executableName: String) {
   TERRAFORM("terraform") {
@@ -28,12 +30,12 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
       return "$downloadServerUrl/$latestTfVersion/terraform_${latestTfVersion}_${getOSName()}_${getArchName()}.zip"
     }
 
-    override val downloadServerUrl: String
-      get() = "https://releases.hashicorp.com/terraform"
-
     override fun getToolSettings(project: Project): TfToolSettings {
       return project.service<TfProjectSettings>()
     }
+
+    private val downloadServerUrl: String
+      get() = "https://releases.hashicorp.com/terraform"
 
     private fun fetchTfLatestStableVersion(): String? {
       return try {
@@ -54,12 +56,12 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
       return "$downloadServerUrl/v$latestTofuVersion/tofu_${latestTofuVersion}_${getOSName()}_${getArchName()}.zip"
     }
 
-    override val downloadServerUrl: String
-      get() = "https://github.com/opentofu/opentofu/releases/download/"
-
     override fun getToolSettings(project: Project): TfToolSettings {
       return project.service<OpenTofuProjectSettings>()
     }
+
+    private val downloadServerUrl: String
+      get() = "https://github.com/opentofu/opentofu/releases/download/"
 
     private fun fetchTofuLatestStableVersion(): String? {
       return try {
@@ -76,10 +78,9 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
 
   fun getBinaryName(): String = getBinaryName(executableName)
 
-  abstract fun getDownloadUrl(): String
-  abstract val downloadServerUrl: String
-  abstract fun getToolSettings(project: Project): TfToolSettings
   abstract val displayName: String
+  abstract fun getDownloadUrl(): String
+  abstract fun getToolSettings(project: Project): TfToolSettings
 
   protected fun getOSName(): String = when {
     SystemInfoRt.isWindows -> "windows"
@@ -96,6 +97,23 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
     CpuArch.ARM64 -> "arm64"
     else -> ""
   }
+
+  open fun getInstallationDirectory(): Path? {
+    return if (SystemInfoRt.isWindows) {
+      val binaryFolderName = getBinaryName().substringBefore('.').takeIf { it.isNotEmpty() } ?: return null
+      "${System.getProperty("user.home")}/.jetbrains/$binaryFolderName/"
+        .let(::toSystemIndependentName)
+        .let(Paths::get)
+    }
+    else {
+      Paths.get("/usr/local/bin/")
+    }
+  }
+
+  private fun toSystemIndependentName(filePath: String): String {
+    val pathSeparator = FileSystems.getDefault().separator
+    return filePath.replace(pathSeparator, "/")
+  }
 }
 
 internal fun getBinaryName(executableName: String): String {
@@ -103,20 +121,6 @@ internal fun getBinaryName(executableName: String): String {
     "$executableName.exe"
   else
     executableName
-}
-
-internal fun installTfTool(
-  project: Project,
-  resultHandler: (InstallationResult) -> Unit = {},
-  progressIndicator: ProgressIndicator? = null,
-  type: TfToolType,
-) {
-  TfBinaryInstaller.create(project)
-    .withBinaryName { type.getBinaryName() }
-    .withDownloadUrl { type.getDownloadUrl() }
-    .withProgressIndicator(progressIndicator)
-    .withResultHandler { result -> resultHandler(result) }
-    .install()
 }
 
 internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath: String): @NlsSafe String {
