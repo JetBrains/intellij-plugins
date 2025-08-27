@@ -21,6 +21,12 @@ public class CucumberJava5_5ResolveTest extends BaseCucumberJavaResolveTest {
     doTest("optionalsWithCyrillic", "суфф<caret>икс", "cucumberExpressionWithOptional");
   }
 
+  // Test for IDEA-295155
+  public void testOtherLanguages() {
+    doTest("frenchLongWord", "sim<caret>ple", "Quand");
+    checkReference("com<caret>plex", "Etantdonnéque");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber5_5ProjectDescriptor();

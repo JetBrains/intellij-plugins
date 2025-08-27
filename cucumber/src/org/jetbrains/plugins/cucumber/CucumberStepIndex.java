@@ -4,6 +4,7 @@ package org.jetbrains.plugins.cucumber;
 import com.intellij.lang.LighterAST;
 import com.intellij.lang.LighterASTNode;
 import com.intellij.openapi.util.io.DataInputOutputUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.DataIndexer;
 import com.intellij.util.indexing.FileBasedIndexExtension;
 import com.intellij.util.indexing.FileContent;
@@ -18,9 +19,10 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Stream;
 
 public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean, List<Integer>> {
-  private static final List<String> STEP_KEYWORDS = Arrays.asList("Әмма", "Нәтиҗәдә", "Вә", "Әйтик", "Һәм", "Ләкин", "Әгәр",  "Und",
+  private static final List<String> STEP_KEYWORDS = Stream.of("Әмма", "Нәтиҗәдә", "Вә", "Әйтик", "Һәм", "Ләкин", "Әгәр",  "Und",
                                                                   "Angenommen", "Gegeben seien",  "Dann", "Aber", "Wenn", "Gegeben sei",
                                                                   "यदि", "तदा", "अगर", "और", "कदा", "परन्तु", "चूंकि", "जब", "किन्तु", "तथा", "पर", 
                                                                   "तब", "Dados", "Entao", "Dada", "Então", "Mas", "Dadas", "Dado",  
@@ -53,7 +55,8 @@ public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean,
                                                                   "Допустим", "К тому же", "То", "Дано", "Когда", "Но", "Тогда", "Если", 
                                                                   "И",  "А", "Также", "Дадено", "И",  "То", "Когато", "Но", "Maka", 
                                                                   "Apabila", "Tapi", "Kemudian", "Dan", "Tetapi", "Diberi", "Bagi", 
-                                                                  "Etant donnés", "Alors", "Étant données", "Etant donné", "Étant donnée", 
+                                                                  "Etant donnés", "Alors", "Étant données", "Etant donné", "Étant donnée",
+                                                                  "Etant donné que",
                                                                   "Lorsqu'", "Etant donnée", "Et", "Étant donné", "Quand", "Lorsque", 
                                                                   "Mais", "Soit", "Etant données",  "Étant donnés", "Njuk", "Tapi", 
                                                                   "Menawa", "Nalika", "Ananging", "Lan",  "Nanging", "Manawa", "Nalikaning", 
@@ -79,8 +82,8 @@ public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean,
                                                                    "Men", "Givet", "כאשר", "וגם", "אז",  "בהינתן", "אבל", "אזי",
                                                                   "Ond", "Ðurh", "Ða", "Ða ðe", "Ac", "Thurh", "Þa", "7", "Þa þe", "Tha",
                                                                   "Þurh",  "Tha the", "Ama", "Fakat", "O zaman",  "Ve", "Eğer ki",
-                                                                  "Diyelim ki");
-  
+                                                                  "Diyelim ki").map(str -> str.replace(" ", "")).toList();
+
   @Override
   public @NotNull DataIndexer<Boolean, List<Integer>, FileContent> getIndexer() {
     return inputData -> {
@@ -125,7 +128,8 @@ public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean,
   }
 
   protected static boolean isStepDefinitionCall(@NotNull LighterASTNode methodName, @NotNull CharSequence text) {
-    return STEP_KEYWORDS.contains(text.subSequence(methodName.getStartOffset(), methodName.getEndOffset()).toString());
+    String actualMethodName = text.subSequence(methodName.getStartOffset(), methodName.getEndOffset()).toString();
+    return STEP_KEYWORDS.contains(actualMethodName);
   }
 
   protected static boolean isStringLiteral(@NotNull LighterASTNode element, @NotNull CharSequence text) {
