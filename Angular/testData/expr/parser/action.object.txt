@@ -189,3 +189,18 @@ JSFile:test.object.action
             JSLiteralExpression
               PsiElement(JS:NUMERIC_LITERAL)('12')
           PsiElement(JS:RBRACE)('}')
+------
+JSFile:test.object.action
+  Angular2Action
+    JSExpressionStatement
+      JSObjectLiteralExpression
+        PsiElement(JS:LBRACE)('{')
+        PsiWhiteSpace(' ')
+        JSProperty
+          PsiElement(JS:IDENTIFIER)('void')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('12')
+        PsiElement(JS:RBRACE)('}')

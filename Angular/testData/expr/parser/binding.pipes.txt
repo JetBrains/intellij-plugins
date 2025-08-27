@@ -1,4 +1,4 @@
-JSFile:test.filters.binding
+JSFile:test.pipes.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -10,7 +10,7 @@ JSFile:test.filters.binding
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('nonexistent')
 ------
-JSFile:test.filters.binding
+JSFile:test.pipes.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -29,7 +29,7 @@ JSFile:test.filters.binding
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('offset')
 ------
-JSFile:test.filters.binding
+JSFile:test.pipes.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -55,7 +55,7 @@ JSFile:test.filters.binding
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('uppercase')
 ------
-JSFile:test.filters.binding
+JSFile:test.pipes.binding
   Angular2Binding
     JSAssignmentExpression
       JSDefinitionExpression
@@ -79,7 +79,7 @@ JSFile:test.filters.binding
             PsiElement(JS:IDENTIFIER)('lowercase')
         PsiElement(JS:RPAR)(')')
 ------
-JSFile:test.filters.binding
+JSFile:test.pipes.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -94,7 +94,7 @@ JSFile:test.filters.binding
       PsiErrorElement:Expression expected
         <empty list>
 ------
-JSFile:test.filters.binding
+JSFile:test.pipes.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -115,7 +115,7 @@ JSFile:test.filters.binding
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('translate')
 ------
-JSFile:test.filters.binding
+JSFile:test.pipes.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -135,7 +135,7 @@ JSFile:test.filters.binding
   PsiWhiteSpace(' ')
   PsiComment(JS:C_STYLE_COMMENT)('//comment')
 ------
-JSFile:test.filters.binding
+JSFile:test.pipes.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -162,7 +162,7 @@ JSFile:test.filters.binding
   PsiWhiteSpace(' ')
   PsiComment(JS:C_STYLE_COMMENT)('//comment')
 ------
-JSFile:test.filters.binding
+JSFile:test.pipes.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -191,3 +191,21 @@ JSFile:test.filters.binding
           PsiElement(JS:RPAR)(')')
   PsiWhiteSpace(' ')
   PsiComment(JS:C_STYLE_COMMENT)('//comment')
+------
+JSFile:test.pipes.binding
+  Angular2Binding
+    Angular2PipeExpression
+      Angular2PipeLeftSideArgument
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('12')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      Angular2PipeReferenceExpression
+        PsiElement(JS:IDENTIFIER)('void')
+      PsiWhiteSpace(' ')
+      Angular2PipeArgumentsList
+        PsiElement(JS:COLON)(':')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('12')

@@ -17,7 +17,7 @@ object Angular2Language : Angular2ExprDialect("Angular2", Angular2Dialect()) {
     get() = Angular2TemplateSyntax.V_2
 
   override fun getKeywords(): TokenSet =
-    Angular2TokenTypes.KEYWORDS
+    Angular2TokenTypes.KEYWORDS_2
 
   private class Angular2Dialect : DialectOptionHolder("ANGULAR2", true) {
     override fun defineFeatures(): Set<JSLanguageFeature> {
