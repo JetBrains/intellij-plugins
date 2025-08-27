@@ -2,6 +2,7 @@
 package org.angular2.lang.html
 
 import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.html.highlighting.Angular2HtmlSyntaxHighlighterFactoryBase
 import org.angular2.lang.html.index.Angular2HtmlIdIndexer
 import org.angular2.lang.html.index.Angular2HtmlTodoIndexer
 import org.angular2.lang.html.parser.Angular2TemplateParserDefinitionBase
@@ -26,6 +27,8 @@ object Angular20HtmlFileType : Angular2TemplateFileTypeBase(Angular20HtmlLanguag
 }
 
 open class Angular20HtmlParserDefinition : Angular2TemplateParserDefinitionBase(Angular20HtmlLanguage)
+
+class Angular20HtmlSyntaxHighlighterFactory : Angular2HtmlSyntaxHighlighterFactoryBase(Angular20HtmlLanguage)
 
 internal class Angular20HtmlIdIndexer : Angular2HtmlIdIndexer(Angular20HtmlLanguage)
 

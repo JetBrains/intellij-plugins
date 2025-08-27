@@ -267,6 +267,8 @@
                                    implementationClass="org.angular2.lang.html.Angular17HtmlSyntaxHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="Angular181Html"
                                    implementationClass="org.angular2.lang.html.Angular181HtmlSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="Angular20Html"
+                                   implementationClass="org.angular2.lang.html.Angular20HtmlSyntaxHighlighterFactory"/>
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2HtmlCompletionContributor"
                             id="Angular2HtmlCompletionContributor"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
