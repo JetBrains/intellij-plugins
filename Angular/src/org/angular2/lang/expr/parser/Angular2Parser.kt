@@ -29,7 +29,7 @@ import org.angular2.templateBindingVarToDirectiveInput
 import org.jetbrains.annotations.NonNls
 
 class Angular2Parser private constructor(
-  language: Angular2ExprDialect,
+  private val language: Angular2ExprDialect,
   builder: PsiBuilder,
   private val myIsAction: Boolean,
   private val myIsSimpleBinding: Boolean,
@@ -47,6 +47,11 @@ class Angular2Parser private constructor(
 
   override fun isIdentifierToken(tokenType: IElementType?): Boolean {
     return JSKeywordSets.TS_IDENTIFIERS_TOKENS_SET.contains(tokenType)
+  }
+
+  private fun isAngularIdentifierToken(tokenType: IElementType?): Boolean {
+    return tokenType === JSTokenTypes.IDENTIFIER
+           || language.getKeywords().contains(tokenType)
   }
 
   inner class Angular2StatementParser(parser: Angular2Parser) : StatementParser<Angular2Parser>(parser) {
@@ -122,8 +127,7 @@ class Angular2Parser private constructor(
 
     fun parseQuote(): Boolean {
       val quote = builder.mark()
-      if (!(builder.tokenType === JSTokenTypes.IDENTIFIER
-            || Angular2TokenTypes.KEYWORDS.contains(builder.tokenType))
+      if (!isAngularIdentifierToken(builder.tokenType)
           || builder.lookAhead(1) !== JSTokenTypes.COLON) {
         quote.drop()
         return false
@@ -262,10 +266,11 @@ class Angular2Parser private constructor(
         }
         firstParam.done(Angular2ElementTypes.PIPE_LEFT_SIDE_ARGUMENT)
         builder.advanceLexer()
-        if (builder.tokenType === JSTokenTypes.IDENTIFIER
-            || Angular2TokenTypes.KEYWORDS.contains(builder.tokenType)) {
+        if (isAngularIdentifierToken(builder.tokenType)) {
           val pipeName = builder.mark()
+          val pipeIdentifier = builder.mark()
           builder.advanceLexer()
+          pipeIdentifier.collapse(JSTokenTypes.IDENTIFIER)
           pipeName.done(Angular2ElementTypes.PIPE_REFERENCE_EXPRESSION)
         }
         else {
@@ -364,9 +369,8 @@ class Angular2Parser private constructor(
     }
 
     override fun isPropertyStart(elementType: IElementType?): Boolean {
-      if (elementType !== JSTokenTypes.IDENTIFIER
-          && elementType !== JSTokenTypes.STRING_LITERAL
-          && !Angular2TokenTypes.KEYWORDS.contains(elementType)) {
+      if (!isAngularIdentifierToken(elementType)
+          && elementType !== JSTokenTypes.STRING_LITERAL) {
         builder.error(Angular2Bundle.message("angular.parse.expression.expected-identifier-keyword-or-string"))
         return false
       }

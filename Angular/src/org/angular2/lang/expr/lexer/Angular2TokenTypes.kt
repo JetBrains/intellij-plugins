@@ -23,14 +23,14 @@ interface Angular2TokenTypes {
     val BLOCK_PARAMETER_PREFIX: IElementType = Angular2TokenType("NG:BLOCK_PARAMETER_PREFIX")
 
     @JvmField
-    val KEYWORDS: TokenSet = TokenSet.create(JSTokenTypes.VAR_KEYWORD, JSTokenTypes.LET_KEYWORD, JSTokenTypes.AS_KEYWORD, JSTokenTypes.NULL_KEYWORD,
-                                             JSTokenTypes.UNDEFINED_KEYWORD, JSTokenTypes.TRUE_KEYWORD, JSTokenTypes.FALSE_KEYWORD,
-                                             JSTokenTypes.IF_KEYWORD,
-                                             JSTokenTypes.ELSE_KEYWORD, JSTokenTypes.THIS_KEYWORD, BLOCK_PARAMETER_NAME,
-                                             JSTokenTypes.TYPE_KEYWORD, JSTokenTypes.IN_KEYWORD)
+    val KEYWORDS_2: TokenSet = TokenSet.create(JSTokenTypes.VAR_KEYWORD, JSTokenTypes.LET_KEYWORD, JSTokenTypes.AS_KEYWORD, JSTokenTypes.NULL_KEYWORD,
+                                               JSTokenTypes.UNDEFINED_KEYWORD, JSTokenTypes.TRUE_KEYWORD, JSTokenTypes.FALSE_KEYWORD,
+                                               JSTokenTypes.IF_KEYWORD,
+                                               JSTokenTypes.ELSE_KEYWORD, JSTokenTypes.THIS_KEYWORD, BLOCK_PARAMETER_NAME,
+                                               JSTokenTypes.TYPE_KEYWORD, JSTokenTypes.IN_KEYWORD)
 
     @JvmField
-    val KEYWORDS_20: TokenSet = TokenSet.orSet(KEYWORDS, TokenSet.create(JSTokenTypes.VOID_KEYWORD))
+    val KEYWORDS_20: TokenSet = TokenSet.orSet(KEYWORDS_2, TokenSet.create(JSTokenTypes.VOID_KEYWORD))
 
     @JvmField
     val ASSIGNMENT_OPERATORS: TokenSet = TokenSet.create(
