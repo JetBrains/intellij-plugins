@@ -18,27 +18,41 @@ import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 //@formatter:off Temporarily disable formatter because of bug IDEA-371809
-/// A reference from a parameter inside a [Cucumber Expression](https://github.com/cucumber/cucumber-expressions) to its definition.
+/// A reference from a parameter type used inside a [Cucumber Expression](https://github.com/cucumber/cucumber-expressions) definition
+/// to the parameter type's definition.
 /// 
 /// ### Example
 /// 
 /// For example, we provide a reference from the "iso-date" parameter in step definition:
 ///
 /// ```
-/// @Given("today is {iso-date}")
+/// @Given("today is {isoDate}")
 /// public void todayIs(Date date) throws Throwable {
 ///   // ...
 /// }
 /// ```
-/// to the expression definition:
+/// to the parameter type definition.
+/// 
+/// A parameter type (the thing this reference points to) can be defined in 2 ways:
+/// 
+/// First, using Cucumber's old, deprecated `TypeRegistry` API:
 /// ```
 /// typeRegistry.defineParameterType(new ParameterType<>(
-///   "iso-date",
+///   "isoDate",
 ///   "\\d{4}-\\d{2}-\\d{2}",
 ///   Date.class,
 ///   (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
 /// ));
 /// ```
+///  Second, using Cucumber's new `@ParameterType` annotation:
+/// ```
+/// @ParameterType("\\d{4}-\\d{2}-\\d{2}")
+/// public Date isoDate(String input) {
+///   return new SimpleDateFormat("yyyy-MM-dd").parse(input);
+/// }
+/// ```
+/// @see CucumberJavaUtil#processParameterTypesDefinedByAnnotation
+/// @see CucumberJavaUtil#processParameterTypesDefinedByTypeRegistry
 //@formatter:on
 public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElement> {
   public CucumberJavaParameterTypeReference(@NotNull PsiElement element, @NotNull TextRange range) {

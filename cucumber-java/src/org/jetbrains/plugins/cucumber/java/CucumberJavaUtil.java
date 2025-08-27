@@ -38,10 +38,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
-import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
-import static org.jetbrains.plugins.cucumber.MapParameterTypeManager.DEFAULT;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_1_1;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_4_5;
 import static org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationProducer.CONFIGURATION_ANNOTATION_NAMES;
@@ -278,9 +275,9 @@ public final class CucumberJavaUtil {
   public static @NotNull String getPackageOfStepDef(final PsiElement element) {
     PsiFile file = element.getContainingFile();
     if (file instanceof GherkinFile) {
-      GherkinFeature feature = getChildOfType(file, GherkinFeature.class);
+      GherkinFeature feature = PsiTreeUtil.getChildOfType(file, GherkinFeature.class);
       if (feature != null) {
-        List<GherkinScenario> scenarioList = getChildrenOfTypeAsList(feature, GherkinScenario.class);
+        List<GherkinScenario> scenarioList = PsiTreeUtil.getChildrenOfTypeAsList(feature, GherkinScenario.class);
         for (GherkinScenario scenario : scenarioList) {
           String result = getPackageOfStepDef(scenario.getSteps());
           if (result != null) {
@@ -288,7 +285,7 @@ public final class CucumberJavaUtil {
           }
         }
 
-        List<GherkinScenarioOutline> scenarioOutlineList = getChildrenOfTypeAsList(feature, GherkinScenarioOutline.class);
+        List<GherkinScenarioOutline> scenarioOutlineList = PsiTreeUtil.getChildrenOfTypeAsList(feature, GherkinScenarioOutline.class);
         for (GherkinScenarioOutline scenario : scenarioOutlineList) {
           String result = getPackageOfStepDef(scenario.getSteps());
           if (result != null) {
@@ -342,6 +339,7 @@ public final class CucumberJavaUtil {
     return false;
   }
 
+  /// Gathers all Parameter Types in a module and returns a manager object holding them.
   public static MapParameterTypeManager getAllParameterTypes(@NotNull Module module) {
     Project project = module.getProject();
     PsiManager manager = PsiManager.getInstance(project);
@@ -353,7 +351,7 @@ public final class CucumberJavaUtil {
         CachedValueProvider.Result.create(doGetAllParameterTypes(module), PsiModificationTracker.MODIFICATION_COUNT));
     }
 
-    return DEFAULT;
+    return MapParameterTypeManager.DEFAULT;
   }
 
   private static @NotNull MapParameterTypeManager doGetAllParameterTypes(@NotNull Module module) {
