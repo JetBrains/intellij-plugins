@@ -295,7 +295,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         name: String,
         sourceElement: PsiElement,
         hasOuterDefault: Boolean = false,
-      ): VueSourceInputProperty<*> =
+      ): VueSourceInputProperty<*>? =
         when (sourceElement) {
           is JSLiteralExpression if sourceElement.isQuotedLiteral ->
             VueStringLiteralInputProperty(name, sourceElement, hasOuterDefault)
@@ -303,7 +303,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
             VuePsiNamedElementInputProperty(name, sourceElement, hasOuterDefault)
           is JSImplicitElement if sourceElement.context is JSProperty ->
             VuePsiNamedElementInputProperty(name, sourceElement, hasOuterDefault)
-          else -> throw IllegalArgumentException("Unsupported source element $sourceElement (${sourceElement.javaClass.name})")
+          else -> null
         }
     }
 

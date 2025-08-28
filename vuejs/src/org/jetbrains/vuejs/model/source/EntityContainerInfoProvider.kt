@@ -76,11 +76,11 @@ interface EntityContainerInfoProvider<T> {
 
     class SimpleMemberAccessor<T>(
       private val memberReader: MemberReader,
-      private val provider: (String, JSElement) -> T,
+      private val provider: (String, JSElement) -> T?,
     ) : ListAccessor<T>() {
 
       override fun build(declaration: JSElement): List<T> {
-        return memberReader.readMembers(declaration).map { (name, element) -> provider(name, element) }
+        return memberReader.readMembers(declaration).mapNotNull { (name, element) -> provider(name, element) }
       }
     }
 
