@@ -43,30 +43,32 @@ class PlatformioProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<
                                     callback: AbstractNewProjectStep.AbstractCallback<Ref<BoardInfo?>>) :
   PlatformioProjectSettingsStepBase(projectGenerator, callback) {
 
-  private val myTree: Tree = Tree(EMPTY_TREE_MODEL)
+  private val myTree: Tree by lazy {
+    EDT.assertIsEdt()
 
-  init {
-    myTree.cellRenderer = object : ColoredTreeCellRenderer() {
-      override fun customizeCellRenderer(tree: JTree, value: Any, selected: Boolean, expanded: Boolean,
-                                         leaf: Boolean, row: Int, hasFocus: Boolean) {
-        val node = value as DeviceTreeNode
-        append(node.name)
-        icon = node.type.icon
+    Tree(EMPTY_TREE_MODEL).apply {
+      cellRenderer = object : ColoredTreeCellRenderer() {
+        override fun customizeCellRenderer(tree: JTree, value: Any, selected: Boolean, expanded: Boolean,
+                                           leaf: Boolean, row: Int, hasFocus: Boolean) {
+          val node = value as DeviceTreeNode
+          append(node.name)
+          icon = node.type.icon
+        }
       }
-    }
-    myTree.isRootVisible = false
-    myTree.addTreeSelectionListener { e: TreeSelectionEvent ->
-      val selectionPath = e.newLeadSelectionPath
-      val boardInfo = selectionPath?.lastPathComponent.asSafely<DeviceTreeNode>()?.boardInfo ?: SourceTemplate.EMPTY_BOARD_INFO
-      userSelected(boardInfo)
-    }
-    myTree.emptyText.setText(ClionEmbeddedPlatformioBundle.message("gathering.info"))
-    TreeSpeedSearch.installOn(myTree, true) { obj: TreePath ->
-      with(obj.lastPathComponent.asSafely<DeviceTreeNode>()) {
-        if (this?.type != DeviceTreeNode.TYPE.FRAMEWORK)
-          obj.path.joinToString(" ")
-        else {
-          this.toString()
+      isRootVisible = false
+      addTreeSelectionListener { e: TreeSelectionEvent ->
+        val selectionPath = e.newLeadSelectionPath
+        val boardInfo = selectionPath?.lastPathComponent.asSafely<DeviceTreeNode>()?.boardInfo ?: SourceTemplate.EMPTY_BOARD_INFO
+        userSelected(boardInfo)
+      }
+      emptyText.text = ClionEmbeddedPlatformioBundle.message("gathering.info")
+      TreeSpeedSearch.installOn(this, true) { obj: TreePath ->
+        with(obj.lastPathComponent.asSafely<DeviceTreeNode>()) {
+          if (this?.type != DeviceTreeNode.TYPE.FRAMEWORK)
+            obj.path.joinToString(" ")
+          else {
+            this.toString()
+          }
         }
       }
     }
