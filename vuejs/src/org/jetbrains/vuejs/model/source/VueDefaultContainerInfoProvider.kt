@@ -88,7 +88,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     val PROVIDES = ProvidesAccessor()
     val INJECTS = SimpleMemberAccessor(ContainerMember.Injects, ::VueSourceInject)
     val PROPS = SimpleMemberAccessor(ContainerMember.Props, VueSourceInputProperty.Companion::create)
-      .toSafeAccessor()
     val DATA = SimpleMemberAccessor(ContainerMember.Data, ::VueSourceDataProperty)
     val COMPUTED = SimpleMemberAccessor(ContainerMember.Computed, ::VueSourceComputedProperty)
     val METHODS = SimpleMemberAccessor(ContainerMember.Methods, ::VueSourceMethod)
