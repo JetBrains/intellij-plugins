@@ -10,13 +10,13 @@ import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.PolySymbolModifier
+import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
-import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.withoutPreRelease
@@ -37,13 +37,13 @@ fun isVueContext(contextFile: VirtualFile, project: Project): Boolean = vueFrame
 fun hasVueFiles(project: Project): Boolean =
   hasFilesOfType(project, VueFileType)
 
-fun hasPinia(context: PsiElement) =
+fun hasPinia(context: PsiElement): Boolean =
   PolyContext.get(KIND_VUE_STORE, context) == VUE_STORE_PINIA
 
-fun hasVuex(context: PsiElement) =
+fun hasVuex(context: PsiElement): Boolean =
   PolyContext.get(KIND_VUE_STORE, context) == VUE_STORE_VUEX
 
-fun hasNuxt(context: PsiElement) =
+fun hasNuxt(context: PsiElement): Boolean =
   PolyContext.get(KIND_VUE_SSR_FRAMEWORK, context) == VUE_FRAMEWORK_NUXT
 
 fun supportsDefineComponent(context: PsiElement): Boolean =
@@ -71,8 +71,10 @@ fun supportsScriptSetup(context: PsiElement?): Boolean =
   context
     ?.let { PolySymbolQueryExecutorFactory.create(it, false) }
     ?.takeIf { it.framework == VueFramework.ID }
-    ?.nameMatchQuery(listOf(VUE_TOP_LEVEL_ELEMENTS.withName(HtmlUtil.SCRIPT_TAG_NAME),
-                               HTML_ATTRIBUTES.withName(SETUP_ATTRIBUTE_NAME)))
+    ?.nameMatchQuery(listOf(
+      VUE_TOP_LEVEL_ELEMENTS.withName(HtmlUtil.SCRIPT_TAG_NAME),
+      HTML_ATTRIBUTES.withName(SETUP_ATTRIBUTE_NAME),
+    ))
     ?.exclude(PolySymbolModifier.ABSTRACT)
     ?.run()
     ?.firstOrNull() != null
