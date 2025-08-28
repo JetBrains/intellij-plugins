@@ -156,6 +156,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     override val findReferencesCustomizer = LspFindReferencesDisabled
     override val foldingRangeCustomizer = LspFoldingRangeDisabled
     override val inlayHintCustomizer: LspInlayHintCustomizer = LspInlayHintDisabled
+    override val workspaceSymbolCustomizer: LspWorkspaceSymbolCustomizer = LspWorkspaceSymbolDisabled
 
     override val formattingCustomizer = object : LspFormattingSupport() {
       override fun shouldFormatThisFileExclusivelyByServer(file: VirtualFile, ideCanFormatThisFileItself: Boolean, serverExplicitlyWantsToFormatThisFile: Boolean): Boolean {
