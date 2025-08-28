@@ -6,9 +6,7 @@ import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiSymbolService
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.typed.VueTypedDirective
@@ -35,16 +33,6 @@ class VueGlobalDirectiveSymbol(
     return super.isEquivalentTo(symbol)
   }
 
-  override fun getMatchingSymbols(
-    qualifiedName: PolySymbolQualifiedName,
-    params: PolySymbolNameMatchQueryParams,
-    stack: PolySymbolQueryStack,
-  ): List<PolySymbol> =
-    if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
-      listOf(VueAnySymbol(this.origin, qualifiedName.qualifiedKind, qualifiedName.name))
-    }
-    else emptyList()
-
   override fun getSymbols(
     qualifiedKind: PolySymbolQualifiedKind,
     params: PolySymbolListSymbolsQueryParams,
@@ -52,12 +40,14 @@ class VueGlobalDirectiveSymbol(
   ): List<PolySymbol> =
     when (qualifiedKind) {
       VUE_DIRECTIVE_ARGUMENT -> {
-        listOf(VueAnySymbol(this.origin, qualifiedKind, "Vue directive argument"))
+        listOf(VueAnySymbol(origin, qualifiedKind, "Vue directive argument"))
       }
 
       VUE_DIRECTIVE_MODIFIERS -> {
         item.modifiers.map { modifier ->
-          VueGlobalDirectiveModifierSymbol(modifier, this.vueProximity)
+          VueGlobalDirectiveModifierSymbol(modifier, vueProximity)
+        }.ifEmpty {
+          listOf(VueAnySymbol(origin, qualifiedKind, "Vue directive modifier"))
         }
       }
 
