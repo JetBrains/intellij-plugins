@@ -22,6 +22,12 @@ class AstroServiceConfigurable(val project: Project) : UiDslUnnamedConfigurable.
           .bind(settings::lspServerPackageRef)
       }
 
+      row(AstroBundle.message("astro.service.configurable.service.tsPluginPackage")) {
+        cell(org.jetbrains.astro.service.AstroTSPluginLoader.createNodePackageField(project))
+          .align(AlignX.FILL)
+          .bind(settings::tsPluginPackageRef)
+      }
+
       buttonsGroup {
         row {
           radioButton(AstroBundle.message("astro.service.configurable.service.disabled"), AstroServiceMode.DISABLED)

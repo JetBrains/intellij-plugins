@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.context.PolyContext
 import org.jetbrains.astro.AstroFramework
+import org.jetbrains.astro.astroFramework
 import org.jetbrains.astro.lang.AstroFileType
 
 private const val KIND_ASTRO_PROJECT = "astro-project"
@@ -18,10 +19,10 @@ fun isAstroProject(contextFile: VirtualFile, project: Project): Boolean =
   PolyContext.get(KIND_ASTRO_PROJECT, contextFile, project).let { it == "astro" || it == "true"}
 
 fun isAstroFrameworkContext(context: PsiElement): Boolean =
-  PolyContext.get(PolyContext.KIND_FRAMEWORK, context) == AstroFramework.ID
+  astroFramework.isInContext(context)
 
 fun isAstroFrameworkContext(contextFile: VirtualFile, project: Project): Boolean =
-  PolyContext.get(PolyContext.KIND_FRAMEWORK, contextFile, project) == AstroFramework.ID
+  astroFramework.isInContext(contextFile, project)
 
 fun hasAstroFiles(project: Project): Boolean =
   hasFilesOfType(project, AstroFileType)

@@ -8,17 +8,25 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.astro.context.isAstroFrameworkContext
 import org.jetbrains.astro.lang.AstroFileType
 import org.jetbrains.astro.service.settings.AstroServiceMode
 import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
 
-private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor(
-  "@astrojs/language-server",
-  PackageVersion.bundled<AstroLspServerPackageDescriptor>("2.10.0", "Astro", "astro-language-server") {
+private val astroLspServerPackageVersion = PackageVersion.bundled<AstroLspServerPackageDescriptor>(
+  version = "2.10.0",
+  pluginPath = "Astro",
+  localPath = "astro-language-server",
+  isBundledEnabled = {
     Registry.`is`("astro.language.server.bundled.enabled")
-  },
-  "/bin/nodeServer.js"
+  }
+)
+
+private object AstroLspServerPackageDescriptor : LspServerPackageDescriptor(
+  name = "@astrojs/language-server",
+  defaultVersion = astroLspServerPackageVersion,
+  defaultPackageRelativePath = "/bin/nodeServer.js"
 ) {
   override val registryVersion: String get() = Registry.stringValue("astro.language.server.default.version")
 }
@@ -33,13 +41,38 @@ object AstroLspServerLoader : LspServerLoader(AstroLspServerPackageDescriptor) {
 object AstroLspServerActivationRule : LspServerActivationRule(AstroLspServerLoader, AstroActivationHelper) {
   override fun isFileAcceptable(file: VirtualFile): Boolean {
     if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
-    return file.fileType == AstroFileType || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
+    return file.fileType == AstroFileType
   }
 }
 
+private val astroTSPluginPackageVersion = PackageVersion.bundled<AstroTSPluginPackageDescriptor>(
+  version = "1.10.4",
+  pluginPath = "Astro",
+  localPath = "typescript-astro-plugin",
+  isBundledEnabled = { Registry.`is`("astro.ts.plugin.bundled.enabled") },
+)
+
+private object AstroTSPluginPackageDescriptor : LspServerPackageDescriptor(
+  name = "@astrojs/ts-plugin",
+  defaultVersion = astroTSPluginPackageVersion,
+  defaultPackageRelativePath = "",
+) {
+  override val registryVersion: String
+    get() = Registry.stringValue("astro.ts.plugin.default.version")
+}
+
+@ApiStatus.Experimental
+object AstroTSPluginLoader : TSPluginLoader(AstroTSPluginPackageDescriptor) {
+  override fun getSelectedPackageRef(project: Project): NodePackageRef {
+    return getAstroServiceSettings(project).tsPluginPackageRef
+  }
+}
+
+object AstroTSPluginActivationRule : TSPluginActivationRule(AstroTSPluginLoader, AstroActivationHelper)
+
 object AstroActivationHelper : ServiceActivationHelper {
   override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
-    return context.fileType == AstroFileType
+    return context.fileType is AstroFileType || isAstroFrameworkContext(context, project)
   }
 
   override fun isEnabledInSettings(project: Project): Boolean {

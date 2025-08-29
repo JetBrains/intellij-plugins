@@ -14,9 +14,10 @@ import org.jetbrains.astro.lang.AstroFileType
 
 internal class AstroLanguageServiceProvider(project: Project) : TypeScriptServiceProvider() {
   private val lspService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<AstroServiceWrapper>() }
+  private val tsService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<AstroPluginTypeScriptServiceWrapper>() }
 
   override val allServices: List<TypeScriptService>
-    get() = listOf(lspService.service)
+    get() = listOf(lspService.service, tsService.service)
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean =
     TypeScriptLanguageServiceUtil.isJavaScriptOrTypeScriptFileType(file.fileType)
@@ -26,6 +27,15 @@ internal class AstroLanguageServiceProvider(project: Project) : TypeScriptServic
 @Service(Service.Level.PROJECT)
 private class AstroServiceWrapper(project: Project) : Disposable {
   val service = AstroLspTypeScriptService(project)
+
+  override fun dispose() {
+    Disposer.dispose(service)
+  }
+}
+
+@Service(Service.Level.PROJECT)
+private class AstroPluginTypeScriptServiceWrapper(project: Project) : Disposable {
+  val service = AstroPluginTypeScriptService(project)
 
   override fun dispose() {
     Disposer.dispose(service)
