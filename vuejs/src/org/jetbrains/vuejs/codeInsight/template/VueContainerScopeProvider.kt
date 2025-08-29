@@ -10,17 +10,22 @@ import java.util.function.Consumer
 
 class VueContainerScopeProvider : VueTemplateScopesProvider() {
 
-  override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<VueTemplateScope> {
-    return VueModelManager.findEnclosingContainer(hostElement ?: element)
-             ?.let { listOf(VueContainerScope(it)) }
-           ?: emptyList()
+  override fun getScopes(
+    element: PsiElement,
+    hostElement: PsiElement?,
+  ): List<VueTemplateScope> {
+    val container = VueModelManager.findEnclosingContainer(hostElement ?: element)
+    return listOf(VueContainerScope(container))
   }
 
-  private class VueContainerScope(private val myEntitiesContainer: VueEntitiesContainer)
-    : VueTemplateScope(null) {
+  private class VueContainerScope(
+    private val container: VueEntitiesContainer,
+  ) : VueTemplateScope(null) {
 
-    override fun resolve(consumer: Consumer<in ResolveResult>) {
-      myEntitiesContainer.thisType
+    override fun resolve(
+      consumer: Consumer<in ResolveResult>,
+    ) {
+      container.thisType
         .asRecordType()
         .properties
         .asSequence()
