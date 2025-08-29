@@ -36,6 +36,7 @@
     <registryKey defaultValue="" description="Astro TypeScript plugin version for downloading" key="astro.ts.plugin.default.version"/>
     <registryKey defaultValue="" description="Astro service version for downloading" key="astro.language.server.default.version"/>
     <registryKey description="Limit of Astro LS completion items" key="astro.language.server.completion.serviceItemsLimit" defaultValue="2000"/>
+    <registryKey defaultValue="false" description="Enable find usages via TypeScript service in astro" key="astro.ts.find.usages.enabled"/>
     <dependencySupport kind="javascript" coordinate="npm:astro" displayName="Astro"/>
 
     <internalFileTemplate name="Astro Component"/>

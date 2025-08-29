@@ -2,7 +2,6 @@
 package org.jetbrains.astro.service
 
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.frameworks.DownloadableTypeScriptServicePlugin
 import com.intellij.lang.typescript.compiler.languageService.frameworks.PluggableTypeScriptService
@@ -53,4 +52,5 @@ internal class AstroPluginTypeScriptService(project: Project) : PluggableTypeScr
 
   override fun isTypeEvaluationEnabled(): Boolean = false
 
+  override fun isFindUsagesEnabled(): Boolean = Registry.`is`("astro.ts.find.usages.enabled")
 }

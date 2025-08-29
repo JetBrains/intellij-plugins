@@ -1,0 +1,8 @@
+{
+  "name": "astro-find-usages-tsx-default",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "astro": "4.5.12"
+  }
+}

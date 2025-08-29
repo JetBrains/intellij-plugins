@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.context.PolyContext
-import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.astroFramework
 import org.jetbrains.astro.lang.AstroFileType
 

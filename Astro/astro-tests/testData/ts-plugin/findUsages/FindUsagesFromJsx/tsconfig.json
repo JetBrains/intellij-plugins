@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "moduleDetection": "force",
+    "strict": false,
+    "jsx": "preserve",
+    "allowJs": true
+  },
+  "include": ["**/*.astro", "*.astro", "**/*.tsx", "*.tsx", "**/*.jsx", "*.jsx", "**/*.ts", "*.ts", "**/*.js", "*.js"]
+}
