@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor
@@ -90,11 +91,13 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
       rawJsType
 
   val attributeValue: PolySymbolHtmlAttributeValue?
-    get() = if (TypeScriptSymbolTypeSupport.isBoolean(type, sourceElement) != ThreeState.NO) {
-      PolySymbolHtmlAttributeValue.create(null, null, false, null, null)
-    }
-    else {
-      null
+    get() = JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(sourceElement) {
+      if (TypeScriptSymbolTypeSupport.isBoolean(type) != ThreeState.NO) {
+        PolySymbolHtmlAttributeValue.create(null, null, false, null, null)
+      }
+      else {
+        null
+      }
     }
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
