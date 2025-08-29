@@ -240,6 +240,7 @@ class VueAttributeNameParser private constructor() {
     SCRIPT_SRC(SRC_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
     SCRIPT_LANG(LANG_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
     SCRIPT_SETUP(SETUP_ATTRIBUTE_NAME, injectJS = false, requiresValue = false, requiresTag = SCRIPT_TAG_NAME),
+    SCRIPT_VAPOR(VAPOR_ATTRIBUTE_NAME, injectJS = false, requiresValue = false, requiresTag = SCRIPT_TAG_NAME),
     SCRIPT_GENERIC(GENERIC_ATTRIBUTE_NAME, injectJS = true, requiresValue = true, requiresTag = SCRIPT_TAG_NAME,
                    onlyTopLevelTag = false)
     ;
