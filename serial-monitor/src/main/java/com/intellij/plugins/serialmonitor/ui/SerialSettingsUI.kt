@@ -274,40 +274,19 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
           connectableList.parent.notifyProfileChanged(profile)
         }
         row {
-          when (status) {
-            PortStatus.DISCONNECTED -> {
-              button(message("button.connect")) {
-                connectableList.parent.connectProfile(profile, profileName)
-              }
-              button(message("button.open.console")) {
-                connectableList.parent.openConsole(profile.portName)
-              }
-            }
-            PortStatus.CONNECTED -> {
-              button(message("button.disconnect")) {
-                connectableList.parent.disconnectPort(profile.portName)
-              }
-              button(message("button.open.console")) {
-                connectableList.parent.openConsole(profile.portName)
-              }
-            }
-            PortStatus.BUSY,
-            PortStatus.CONNECTING,
-            PortStatus.UNAVAILABLE_DISCONNECTED
-              -> {
-              button(message("button.open.console")) {
-                connectableList.parent.openConsole(profile.portName)
-              }
-            }
-            PortStatus.UNAVAILABLE -> {}
+          button(message("button.connect")) {
+            connectableList.parent.connectProfile(profile, profileName)
+          }.visible(status.connectVisible).enabled(status.connectEnabled)
 
-            PortStatus.READY -> button(message("button.connect")) {
-              connectableList.parent.connectProfile(profile, profileName)
-            }
+          button(message("button.disconnect")) {
+            connectableList.parent.disconnectPort(profile.portName)
+          }.visible(status.disconnectVisible)
 
-          }
-          link(
-            message("link.label.duplicate.profile")) { connectableList.createNewProfile(profileName) }
+          button(message("button.open.console")) {
+            connectableList.parent.openConsole(profile.portName)
+          }.visible(status.openConsoleVisible)
+
+          link(message("link.label.duplicate.profile")) { connectableList.createNewProfile(profileName) }
         }
         onApply { //workaround: editable combobox does not send any  events when the text is changed
           profile.portName = portCombobox?.editor?.item?.toString() ?: ""
@@ -319,5 +298,12 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
     }
   }
   return null
-
 }
+
+private val PortStatus.connectVisible get() = !this.disconnectVisible
+
+private val PortStatus.connectEnabled get() = this == PortStatus.READY || this == PortStatus.DISCONNECTED
+
+private val PortStatus.disconnectVisible get() = this == PortStatus.CONNECTED
+
+private val PortStatus.openConsoleVisible get() = this != PortStatus.UNAVAILABLE && this != PortStatus.READY
