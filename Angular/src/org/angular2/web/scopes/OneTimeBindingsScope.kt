@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.scopes
 
+import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.polySymbols.html.StandardHtmlSymbol
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.polySymbols.js.jsType
@@ -178,7 +179,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
           )
         }
         else {
-          val isBoolean = TypeScriptSymbolTypeSupport.isBoolean(jsType, psiContext)
+          val isBoolean = TypeScriptSymbolTypeSupport.isBoolean(jsType)
           when {
             isBoolean != ThreeState.NO -> {
               PolySymbolHtmlAttributeValue.create(
