@@ -13,7 +13,7 @@ import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener.Companion.SERIAL_PORTS_TOPIC
-import com.intellij.ui.JBSplitter
+import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.Content
@@ -21,13 +21,14 @@ import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.dsl.builder.Align.Companion.FILL
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.application
+import com.intellij.util.ui.JBUI
 import org.jetbrains.annotations.Nls
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 
 internal val SERIAL_MONITOR = Key<SerialMonitor>(SerialMonitor::javaClass.name)
 
-internal class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(false, 0.4f, 0.1f, 0.9f) {
+internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitter(false, 0.4f, 0.1f, 0.9f) {
 
   private val ports = ConnectableList(this)
   private var disposable: Disposable = Disposer.newDisposable()
@@ -50,17 +51,24 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(fal
         profileSettings(ports, disposable)
 
     if (panel != null) {
-      secondComponent = JBScrollPane(panel)
+      secondComponent = JBScrollPane(panel).apply { border = JBUI.Borders.empty() }
       invalidate()
     }
   }
 
   init {
+    setAndLoadSplitterProportionKey("ConnectPanel.splitterProportionKey")
     firstComponent = panel {
       row {
         cell(listToolbar.component)
       }
-      row { scrollCell(ports).align(FILL) }.resizableRow()
+      row {
+        cell(JBScrollPane(ports))
+          .align(FILL)
+          .applyToComponent {
+            border = JBUI.Borders.empty()
+          }
+      }.resizableRow()
       ports.rescanProfiles()
     }
     ports.addListSelectionListener(object : ListSelectionListener {
@@ -112,7 +120,7 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : JBSplitter(fal
                      name: @Nls String = profile.defaultName()) {
     val contentManager = toolWindow.getContentManager()
     val panel = SimpleToolWindowPanel(false, true)
-    var content = ContentFactory.getInstance().createContent(panel, name, true)
+    val content = ContentFactory.getInstance().createContent(panel, name, true)
     content.putUserData(ToolWindow.SHOW_CONTENT_ICON, true)
     val serialMonitor = SerialMonitor(toolWindow.getProject(), name, profile)
     content.putUserData(SERIAL_MONITOR, serialMonitor)

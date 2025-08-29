@@ -2,6 +2,7 @@ package com.intellij.plugins.serialmonitor.ui
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
+import com.intellij.openapi.observable.util.whenTextChangedFromUi
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.InputValidatorEx
@@ -14,17 +15,15 @@ import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle.message
 import com.intellij.ui.ComboboxSpeedSearch
+import com.intellij.ui.UIBundle
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.UnscaledGapsY
 import com.intellij.ui.layout.ValidationInfoBuilder
 import org.jetbrains.annotations.NonNls
 import java.nio.charset.Charset
 import javax.swing.JComponent
-import kotlin.reflect.KMutableProperty1
-import com.intellij.openapi.observable.util.whenTextChangedFromUi
-import com.intellij.ui.UIBundle
 import javax.swing.text.JTextComponent
+import kotlin.reflect.KMutableProperty1
 
 private val charsets: Collection<String> = Charset.availableCharsets().filter { it.value.canEncode() }.keys
 
@@ -138,7 +137,7 @@ fun Panel.serialSettings(disposable: Disposable,
     this.widthGroup("portControl")
 
   row {
-    customize(UnscaledGapsY(top = 20))
+    topGap(TopGap.MEDIUM)
     comboBox(StandardBauds)
       .applyToComponent { isEditable = true }
       .changesIntBind(SerialPortProfile::baudRate)
@@ -188,45 +187,46 @@ fun Panel.serialSettings(disposable: Disposable,
     checkBox("")
       .changesBind(SerialPortProfile::showHardwareControls)
       .label(message("label.show.hardware.flow.control"))
-
-    customize(UnscaledGapsY(bottom = 20))
   }.layout(RowLayout.PARENT_GRID)
 }
+
 
 internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe String, disposable: Disposable): DialogPanel {
   val portStatus = service<SerialPortService>().portStatus(portName)
   return panel {
-    row {
-      customize(UnscaledGapsY(top = 10))
-      label(portName).label(message("label.port.name"))
-    }.layout(RowLayout.PARENT_GRID)
-
-    serialSettings(profile = service<SerialProfileService>().copyDefaultProfile(portName),
-                   readOnly = (portStatus != PortStatus.DISCONNECTED) && (portStatus != PortStatus.READY),
-                   disposable = disposable) {
-      service<SerialProfileService>().setDefaultProfile(it)
-    }
-    row {
-
-      if (portStatus == PortStatus.READY) {
-        button(message("button.connect")) {
-          val profile = service<SerialProfileService>().copyDefaultProfile(portName)
-          connectableList.parent.connectProfile(profile)
-        }
+    indent {
+      row {
+        topGap(TopGap.MEDIUM)
+        label(portName).label(message("label.port.name"))
       }
 
-      if (portStatus == PortStatus.CONNECTED) {
-        button(message("button.disconnect")) {
-          connectableList.parent.disconnectPort(portName)
-        }
+      serialSettings(profile = service<SerialProfileService>().copyDefaultProfile(portName),
+                     readOnly = (portStatus != PortStatus.DISCONNECTED) && (portStatus != PortStatus.READY),
+                     disposable = disposable) {
+        service<SerialProfileService>().setDefaultProfile(it)
       }
+      row {
 
-      if (portStatus != PortStatus.READY && portStatus != PortStatus.BUSY) {
-        button(message("button.open.console")) {
-          connectableList.parent.openConsole(portName)
+        if (portStatus == PortStatus.READY) {
+          button(message("button.connect")) {
+            val profile = service<SerialProfileService>().copyDefaultProfile(portName)
+            connectableList.parent.connectProfile(profile)
+          }
         }
+
+        if (portStatus == PortStatus.CONNECTED) {
+          button(message("button.disconnect")) {
+            connectableList.parent.disconnectPort(portName)
+          }
+        }
+
+        if (portStatus != PortStatus.READY && portStatus != PortStatus.BUSY) {
+          button(message("button.open.console")) {
+            connectableList.parent.openConsole(portName)
+          }
+        }
+        link(message("link.label.create.profile")) { connectableList.createNewProfile(null, portName) }
       }
-      link(message("link.label.create.profile")) { connectableList.createNewProfile(null, portName) }
     }
   }
 }
@@ -237,79 +237,81 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
     var portCombobox: ComboBox<String>? = null
     val status = service<SerialPortService>().portStatus(profile.portName)
     return panel {
-      row {
-        label(profileName).label(message("label.profile"))
-        customize(UnscaledGapsY(top = 10))
-      }.layout(RowLayout.PARENT_GRID)
-      row {
-        val portNames = service<SerialPortService>().getPortsNames()
-        val portValidation = DialogValidation.WithParameter<ComboBox<String>> {
-          DialogValidation {
-            val text = it.editor.item?.toString()
-            return@DialogValidation when {
-              text.isNullOrBlank() -> ValidationInfoBuilder(it).error(message("dialog.message.port.name"))
-              !portNames.contains(text) -> ValidationInfoBuilder(it).warning(message("dialog.message.port.does.not.exists"))
-              else -> null
+      indent {
+        row {
+          topGap(TopGap.MEDIUM)
+          label(profileName).label(message("label.profile"))
+        }
+        row {
+          val portNames = service<SerialPortService>().getPortsNames()
+          val portValidation = DialogValidation.WithParameter<ComboBox<String>> {
+            DialogValidation {
+              val text = it.editor.item?.toString()
+              return@DialogValidation when {
+                text.isNullOrBlank() -> ValidationInfoBuilder(it).error(message("dialog.message.port.name"))
+                !portNames.contains(text) -> ValidationInfoBuilder(it).warning(message("dialog.message.port.does.not.exists"))
+                else -> null
+              }
             }
           }
+
+          comboBox(portNames).label(message("label.port"))
+            .validationOnInput(portValidation)
+            .resizableColumn()
+            .applyToComponent {
+              isEditable = true
+              editor.item = profile.portName
+              portCombobox = this
+            }
+
+        }.layout(RowLayout.LABEL_ALIGNED)
+        serialSettings(disposable = disposable, profile = profile) {
+          val service = service<SerialProfileService>()
+          val profiles = service.getProfiles().toMutableMap()
+          profiles[profileName] = it
+          service.setProfiles(profiles)
+          connectableList.parent.notifyProfileChanged(profile)
         }
+        row {
+          when (status) {
+            PortStatus.DISCONNECTED -> {
+              button(message("button.connect")) {
+                connectableList.parent.connectProfile(profile, profileName)
+              }
+              button(message("button.open.console")) {
+                connectableList.parent.openConsole(profile.portName)
+              }
+            }
+            PortStatus.CONNECTED -> {
+              button(message("button.disconnect")) {
+                connectableList.parent.disconnectPort(profile.portName)
+              }
+              button(message("button.open.console")) {
+                connectableList.parent.openConsole(profile.portName)
+              }
+            }
+            PortStatus.BUSY,
+            PortStatus.CONNECTING,
+            PortStatus.UNAVAILABLE_DISCONNECTED
+              -> {
+              button(message("button.open.console")) {
+                connectableList.parent.openConsole(profile.portName)
+              }
+            }
+            PortStatus.UNAVAILABLE -> {}
 
-        comboBox(portNames).label(message("label.port"))
-          .validationOnInput(portValidation)
-          .resizableColumn()
-          .applyToComponent {
-            isEditable = true
-            editor.item = profile.portName
-            portCombobox = this
-          }
-
-      }.layout(RowLayout.LABEL_ALIGNED)
-      serialSettings(disposable = disposable, profile = profile) {
-        val service = service<SerialProfileService>()
-        val profiles = service.getProfiles().toMutableMap()
-        profiles[profileName] = it
-        service.setProfiles(profiles)
-        connectableList.parent.notifyProfileChanged(profile)
-      }
-      row {
-        when (status) {
-          PortStatus.DISCONNECTED -> {
-            button(message("button.connect")) {
+            PortStatus.READY -> button(message("button.connect")) {
               connectableList.parent.connectProfile(profile, profileName)
             }
-            button(message("button.open.console")) {
-              connectableList.parent.openConsole(profile.portName)
-            }
-          }
-          PortStatus.CONNECTED -> {
-            button(message("button.disconnect")) {
-              connectableList.parent.disconnectPort(profile.portName)
-            }
-            button(message("button.open.console")) {
-              connectableList.parent.openConsole(profile.portName)
-            }
-          }
-          PortStatus.BUSY,
-          PortStatus.CONNECTING,
-          PortStatus.UNAVAILABLE_DISCONNECTED -> {
-            button(message("button.open.console")) {
-              connectableList.parent.openConsole(profile.portName)
-            }
-          }
-          PortStatus.UNAVAILABLE -> {}
 
-          PortStatus.READY -> button(message("button.connect")) {
-            connectableList.parent.connectProfile(profile, profileName)
           }
-
+          link(
+            message("link.label.duplicate.profile")) { connectableList.createNewProfile(profileName) }
         }
-        link(
-          message("link.label.duplicate.profile")) { connectableList.createNewProfile(profileName) }
+        onApply { //workaround: editable combobox does not send any  events when the text is changed
+          profile.portName = portCombobox?.editor?.item?.toString() ?: ""
+        }
       }
-      onApply { //workaround: editable combobox does not send any  events when the text is changed
-        profile.portName = portCombobox?.editor?.item?.toString() ?: ""
-      }
-
     }.apply {
       registerValidators(disposable)
       validateAll()
