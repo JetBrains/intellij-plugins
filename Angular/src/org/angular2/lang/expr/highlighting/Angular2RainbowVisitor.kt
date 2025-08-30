@@ -59,7 +59,7 @@ class Angular2RainbowVisitor : RainbowVisitor() {
     Angular2HighlightDescriptor.getFor(element, element)
       ?.let { return it.attributesKey }
     return if (element is JSVariable) {
-      if (JSSemanticHighlightingVisitor.isLocalVariable(element, element))
+      if (JSSemanticHighlightingVisitor.isLocalVariable(element))
         JSHighlighter.JS_LOCAL_VARIABLE
       else
         JSHighlighter.JS_GLOBAL_VARIABLE
