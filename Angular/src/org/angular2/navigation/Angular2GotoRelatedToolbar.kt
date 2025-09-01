@@ -1,5 +1,6 @@
 package org.angular2.navigation
 
+import com.intellij.ide.browsers.actions.OpenInBrowserBaseGroupAction.OpenInBrowserFloatingToolbarSuppressor
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.navigation.GotoRelatedItem
 import com.intellij.openapi.Disposable
@@ -12,7 +13,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorKind
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
-import com.intellij.openapi.editor.toolbar.floating.*
+import com.intellij.openapi.editor.toolbar.floating.FloatingToolbarComponent
+import com.intellij.openapi.editor.toolbar.floating.FloatingToolbarProvider
+import com.intellij.openapi.editor.toolbar.floating.isInsideMainEditor
 import com.intellij.openapi.keymap.KeymapUtil.getShortcutText
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
@@ -60,13 +63,12 @@ internal class Angular2GotoRelatedToolbarProvider : FloatingToolbarProvider {
 /**
  * Should suppress [com.intellij.ide.browsers.actions.OpenInBrowserBaseGroupAction.OpenInBrowserEditorContextBarGroupAction]
  */
-internal class BrowsersToolbarSuppressor : EditorFloatingToolbarSuppressor {
+internal class BrowsersToolbarSuppressor : OpenInBrowserFloatingToolbarSuppressor {
   override fun isSuppressed(
     provider: FloatingToolbarProvider,
     dataContext: DataContext,
   ): Boolean {
-    return provider is DefaultFloatingToolbarProvider // this one is used for browsers
-           && angular2GTRToolbarCanBeShown(dataContext)
+    return angular2GTRToolbarCanBeShown(dataContext)
   }
 }
 
