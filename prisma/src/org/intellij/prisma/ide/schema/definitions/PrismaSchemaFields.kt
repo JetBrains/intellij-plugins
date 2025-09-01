@@ -218,11 +218,6 @@ val PRISMA_SCHEMA_FIELDS = schema {
         type = PrimitiveTypes.STRING
       }
       variant {
-        label = "node"
-        documentation = "Alias for `nodejs`."
-        type = PrimitiveTypes.STRING
-      }
-      variant {
         label = "deno"
         documentation = "Deno runtime."
         type = PrimitiveTypes.STRING
@@ -230,11 +225,6 @@ val PRISMA_SCHEMA_FIELDS = schema {
       variant {
         label = "bun"
         documentation = "Bun runtime."
-        type = PrimitiveTypes.STRING
-      }
-      variant {
-        label = "deno-deploy"
-        documentation = "Deno Deploy runtime."
         type = PrimitiveTypes.STRING
       }
       variant {
@@ -249,11 +239,11 @@ val PRISMA_SCHEMA_FIELDS = schema {
       }
       variant {
         label = "edge-light"
-        documentation = "Vercel Edge runtime."
+        documentation = "Alias for `vercel-edge`."
         type = PrimitiveTypes.STRING
       }
       variant {
-        label = "vercel"
+        label = "vercel-edge"
         documentation = "Alias for `edge-light`."
         type = PrimitiveTypes.STRING
       }
