@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 
 plugins {
     id("java")
@@ -43,14 +42,14 @@ dependencies {
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+      sourceCompatibility = "21"
+      targetCompatibility = "21"
     }
 
     withType<KotlinCompile> {
         dependsOn(generateParser)
 
-        kotlinOptions.jvmTarget = "17"
+      kotlinOptions.jvmTarget = "21"
         kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
     }
 

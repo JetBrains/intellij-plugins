@@ -37,14 +37,14 @@ sourceSets {
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+      sourceCompatibility = "21"
+      targetCompatibility = "21"
     }
 
     withType<KotlinCompile> {
         dependsOn(generateParser)
 
-        kotlinOptions.jvmTarget = "17"
+      kotlinOptions.jvmTarget = "21"
         kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
     }
 
