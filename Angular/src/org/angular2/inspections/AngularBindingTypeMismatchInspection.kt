@@ -94,6 +94,8 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
     holder: ProblemsHolder, attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor,
     value: String?, bindingsTypeResolver: BindingsTypeResolver, reportOnValue: Boolean,
   ) {
+    val highlightType = Angular2InspectionUtils.getTypeScriptInspectionHighlightType(attribute)
+    if (highlightType == ProblemHighlightType.INFORMATION && !holder.isOnTheFly) return
     withTypeEvaluationLocation(attribute) {
       val valueType = if (value != null)
         JSStringLiteralTypeImpl(value, true, JSTypeSource.EMPTY_TS_EXPLICITLY_DECLARED)
@@ -103,8 +105,6 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
         descriptor.sourceDirectives.firstOrNull(),
         descriptor.symbol.jsType
       )
-
-      val highlightType = Angular2InspectionUtils.getTypeScriptInspectionHighlightType(attribute)
 
       JSTypeChecker.getErrorMessageIfTypeNotAssignableToType(attribute, symbolType, valueType,
                                                              Angular2ExprDialect.forContext(attribute).optionHolder,
