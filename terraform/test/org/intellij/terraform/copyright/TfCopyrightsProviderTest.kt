@@ -1,14 +1,21 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.copyright
 
+import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.maddyhome.idea.copyright.CopyrightProfile
 import com.maddyhome.idea.copyright.psi.UpdateCopyrightFactory
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.opentofu.OpenTofuFileType
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-internal class TfCopyrightsProviderTest : BasePlatformTestCase() {
-  fun testEmptyTfFile() {
+@RunWith(Parameterized::class)
+internal class TfCopyrightsProviderTest(private val fileType: LanguageFileType) : BasePlatformTestCase() {
+
+  @Test
+  fun testEmptyFile() {
     checkCopyright(
       """
       """.trimIndent(),
@@ -17,12 +24,12 @@ internal class TfCopyrightsProviderTest : BasePlatformTestCase() {
         # Use of this source code is governed by the Apache 2.0 license.
         
         
-      """.trimIndent(),
-      TerraformFileType.defaultExtension
+      """.trimIndent()
     )
   }
 
-  fun testLineCommentInTofu() {
+  @Test
+  fun testLineComment() {
     checkCopyright(
       """
         resource "null_resource" "example" {
@@ -34,12 +41,12 @@ internal class TfCopyrightsProviderTest : BasePlatformTestCase() {
 
         resource "null_resource" "example" {
         }
-      """.trimIndent(),
-      OpenTofuFileType.DEFAULT_EXTENSION
+      """.trimIndent()
     )
   }
 
-  fun testTfFileWithComment() {
+  @Test
+  fun testFileWithComment() {
     checkCopyright(
       """
         # Some serious comment
@@ -69,12 +76,12 @@ internal class TfCopyrightsProviderTest : BasePlatformTestCase() {
             }
           }
         }
-      """.trimIndent(),
-      TerraformFileType.DEFAULT_EXTENSION
+      """.trimIndent()
     )
   }
 
-  fun testOutdatedVersionInTofu() {
+  @Test
+  fun testOutdatedVersion() {
     checkCopyright(
       """
         # Copyright 2000-2023 JetBrains s.r.o. and contributors.
@@ -91,14 +98,13 @@ internal class TfCopyrightsProviderTest : BasePlatformTestCase() {
         resource "aws_instance" "test" {
           id = "some_id"
         }
-      """.trimIndent(),
-      OpenTofuFileType.DEFAULT_EXTENSION
+      """.trimIndent()
     )
   }
 
-  private fun checkCopyright(before: String, after: String, extension: String) {
+  private fun checkCopyright(before: String, after: String) {
     val testName = getTestName(true)
-    myFixture.configureByText("$testName.$extension", before)
+    myFixture.configureByText("$testName.${fileType.defaultExtension}", before)
 
     val profile = CopyrightProfile()
     profile.notice = "Copyright 2000-2025 JetBrains s.r.o. and contributors.\nUse of this source code is governed by the Apache 2.0 license."
@@ -109,5 +115,11 @@ internal class TfCopyrightsProviderTest : BasePlatformTestCase() {
     updateCopyright?.prepare()
     updateCopyright?.complete()
     myFixture.checkResult(after)
+  }
+
+  companion object {
+    @JvmStatic
+    @Parameterized.Parameters(name = "{0}")
+    fun testData(): List<LanguageFileType> = listOf(TerraformFileType, OpenTofuFileType)
   }
 }

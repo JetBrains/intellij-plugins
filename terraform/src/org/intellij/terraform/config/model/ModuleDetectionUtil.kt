@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -21,11 +21,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileSystemItem
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.applyIf
@@ -35,12 +31,8 @@ import org.intellij.terraform.config.model.version.Version
 import org.intellij.terraform.config.model.version.VersionConstraint
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.psi.HCLBlock
-import org.intellij.terraform.hcl.psi.HCLElement
-import org.intellij.terraform.hcl.psi.HCLProperty
+import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getReferencesSelectAware
-import org.intellij.terraform.hcl.psi.HCLStringLiteral
-import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.hil.psi.HCLElementLazyReference
 import org.intellij.terraform.hil.psi.ILPsiFile
 import org.intellij.terraform.hil.psi.ILRecursiveVisitor
@@ -545,7 +537,7 @@ object ModuleDetectionUtil {
       it.children.asSequence()
         .mapNotNull { it.extension?.lowercase() }
         .any {
-          it == TerraformFileType.DEFAULT_EXTENSION ||
+          it == TerraformFileType.defaultExtension ||
           it == "tofu" ||
           it == "hcl"
         }

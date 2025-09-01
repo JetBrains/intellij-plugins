@@ -23,6 +23,7 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
+import org.intellij.terraform.config.TFVARS_EXTENSION
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.hcl.HCLElementTypes
@@ -36,7 +37,7 @@ object TfPsiPatterns {
 
   val TerraformVariablesFile: PsiFilePattern.Capture<HCLFile> = PlatformPatterns.psiFile(HCLFile::class.java)
     .withLanguage(TerraformLanguage)
-    .inVirtualFile(PlatformPatterns.virtualFile().withExtension(TerraformFileType.TFVARS_EXTENSION))
+    .inVirtualFile(PlatformPatterns.virtualFile().withExtension(TFVARS_EXTENSION))
 
   val TerraformConfigFile: PsiFilePattern.Capture<HCLFile> = PlatformPatterns.psiFile(HCLFile::class.java)
     .withLanguage(TerraformLanguage)
@@ -47,7 +48,7 @@ object TfPsiPatterns {
     .inVirtualFile(
       PlatformPatterns.virtualFile().withName(StandardPatterns.string().with(object : PatternCondition<String?>("Terraform override file name") {
         override fun accepts(t: String, context: ProcessingContext?): Boolean {
-          val suffix = "override." + TerraformFileType.DEFAULT_EXTENSION
+          val suffix = "override." + TerraformFileType.defaultExtension
           if (!t.endsWith(suffix)) return false
           // previous line enforces t.length >= suffix.length
           return t.length == suffix.length || t[t.length - suffix.length - 1] == '_'

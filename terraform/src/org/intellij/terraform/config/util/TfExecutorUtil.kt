@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.util
 
 import com.intellij.execution.ExecutionModes
@@ -50,7 +50,7 @@ internal suspend fun TfExecutor.executeSuspendable(): Boolean {
 internal fun getApplicableToolType(file: VirtualFile): TfToolType {
   val moduleFolder = if (file.isFile) file.parent else file
   val moduleFiles = moduleFolder?.children?.asList()?.takeIf { it.isNotEmpty() } ?: listOf(file)
-  return if (moduleFiles.any {it.isFile && FileUtilRt.extensionEquals(it.name, OpenTofuFileType.DEFAULT_EXTENSION) })
+  return if (moduleFiles.any { it.isFile && FileUtilRt.extensionEquals(it.name, OpenTofuFileType.defaultExtension) })
     TfToolType.OPENTOFU
   else {
     TfToolType.TERRAFORM
