@@ -15,6 +15,7 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.jetbrains.lang.manifest.ManifestFileType;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osgi.framework.Constants;
@@ -33,8 +34,9 @@ public final class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<O
     return OsmorcFacetType.getInstance();
   }
 
+  @VisibleForTesting
   @Override
-  protected OsmorcFacetConfiguration createConfiguration(Collection<? extends VirtualFile> files) {
+  public OsmorcFacetConfiguration createConfiguration(Collection<? extends VirtualFile> files) {
     OsmorcFacetConfiguration osmorcFacetConfiguration = getFacetType().createDefaultConfiguration();
     osmorcFacetConfiguration.setManifestGenerationMode(ManifestGenerationMode.Manually);
     osmorcFacetConfiguration.setManifestLocation(ContainerUtil.getFirstItem(files).getPath());

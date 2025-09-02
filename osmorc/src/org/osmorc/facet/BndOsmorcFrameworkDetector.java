@@ -14,6 +14,7 @@ import com.intellij.patterns.PatternCondition;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.jetbrains.osgi.bnd.BndFileType;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 
@@ -34,8 +35,9 @@ public class BndOsmorcFrameworkDetector extends FacetBasedFrameworkDetector<Osmo
     return OsmorcFacetType.getInstance();
   }
 
+  @VisibleForTesting
   @Override
-  protected OsmorcFacetConfiguration createConfiguration(Collection<? extends VirtualFile> files) {
+  public OsmorcFacetConfiguration createConfiguration(Collection<? extends VirtualFile> files) {
     var facetConfiguration = getFacetType().createDefaultConfiguration();
     facetConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bnd);
     facetConfiguration.setBndFileLocation(files.iterator().next().getPath());
