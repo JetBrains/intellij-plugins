@@ -1,5 +1,5 @@
 count (typeText='UnwrapRef<number>'; priority=101.0; bold)
-double (typeText='UnwrapRef<ComputedRef<unknown>>'; priority=101.0; bold)
+double (typeText=null; priority=101.0; bold)
 constructor (typeText='Function'; priority=98.0)
 hasOwnProperty (typeText='boolean'; priority=98.0)
 isPrototypeOf (typeText='boolean'; priority=98.0)
