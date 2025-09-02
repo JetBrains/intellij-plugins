@@ -24,6 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.util.Set;
@@ -86,7 +87,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   protected abstract @Nullable VirtualFile getFileToRun(ConfigurationContext context);
 
   @Override
-  protected boolean setupConfigurationFromContext(@NotNull CucumberJavaRunConfiguration configuration,
+  @VisibleForTesting
+  public boolean setupConfigurationFromContext(@NotNull CucumberJavaRunConfiguration configuration,
                                                   @NotNull ConfigurationContext context,
                                                   @NotNull Ref<PsiElement> sourceElement) {
     final VirtualFile virtualFile = getFileToRun(context);
