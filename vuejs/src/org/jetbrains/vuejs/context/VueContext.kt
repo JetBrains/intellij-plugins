@@ -19,6 +19,7 @@ import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.VAPOR_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.withoutPreRelease
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -68,12 +69,21 @@ fun isVue3(context: PsiElement): Boolean =
   }
 
 fun supportsScriptSetup(context: PsiElement?): Boolean =
+  supportsScriptAttribute(context, SETUP_ATTRIBUTE_NAME)
+
+fun supportsScriptVapor(context: PsiElement?): Boolean =
+  supportsScriptAttribute(context, VAPOR_ATTRIBUTE_NAME)
+
+private fun supportsScriptAttribute(
+  context: PsiElement?,
+  attributeName: String,
+): Boolean =
   context
     ?.let { PolySymbolQueryExecutorFactory.create(it, false) }
     ?.takeIf { it.framework == VueFramework.ID }
     ?.nameMatchQuery(listOf(
       VUE_TOP_LEVEL_ELEMENTS.withName(HtmlUtil.SCRIPT_TAG_NAME),
-      HTML_ATTRIBUTES.withName(SETUP_ATTRIBUTE_NAME),
+      HTML_ATTRIBUTES.withName(attributeName),
     ))
     ?.exclude(PolySymbolModifier.ABSTRACT)
     ?.run()
