@@ -46,11 +46,7 @@ import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.codeInsight.VAPOR_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
-import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.isVueFile
@@ -80,15 +76,16 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     createIndexRecord(VUE_ID_INDEX_KEY),
     createIndexRecord(VUE_GLOBAL_FILTERS_INDEX_KEY)
   )
-  private val expectedLiteralOwnerExpressions = TokenSet.create(JSElementTypes.CALL_EXPRESSION,
-                                                                JSElementTypes.NEW_EXPRESSION,
-                                                                JSElementTypes.ASSIGNMENT_EXPRESSION,
-                                                                JSElementTypes.EXPORT_DEFAULT_ASSIGNMENT)
-
+  private val expectedLiteralOwnerExpressions = TokenSet.create(
+    JSElementTypes.CALL_EXPRESSION,
+    JSElementTypes.NEW_EXPRESSION,
+    JSElementTypes.ASSIGNMENT_EXPRESSION,
+    JSElementTypes.EXPORT_DEFAULT_ASSIGNMENT,
+  )
 
   companion object {
 
-    const val TYPED_COMPONENT_MARKER = "Vue Typed Component"
+    const val TYPED_COMPONENT_MARKER: String = "Vue Typed Component"
 
   }
 
@@ -507,7 +504,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         refName == CREATE_APP_FUN || refName == CREATE_VAPOR_APP_FUN
         || refName == MOUNT_FUN || refName == USE_FUN || refName == MIXIN_FUN
         || ((refName == COMPONENT_FUN || refName == FILTER_FUN || refName == DIRECTIVE_FUN || refName == PROVIDE_FUN)
-         && callNode.findChildByType(JSElementTypes.ARGUMENT_LIST)?.getChildren(JSElementTypes.EXPRESSIONS)?.size == 2)
+            && callNode.findChildByType(JSElementTypes.ARGUMENT_LIST)?.getChildren(JSElementTypes.EXPRESSIONS)?.size == 2)
       }
     }
 
