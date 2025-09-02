@@ -19,4 +19,6 @@ public final class TerraformIcons {
   /** 16x16 */ public static final @NotNull Icon CollectionKey = load("icons/collectionKey.svg", 412033564, 2);
   /** 16x16 */ public static final @NotNull Icon Opentofu = load("icons/opentofu.svg", -1454201568, 0);
   /** 16x16 */ public static final @NotNull Icon Terraform = load("icons/newui/terraform.svg", "icons/terraform.svg", -828836963, 2);
+  /** 16x16 */ public static final @NotNull Icon Terragrunt = load("icons/newui/terragrunt.svg", -1419677701, 2);
+  /** 14x14 */ public static final @NotNull Icon Terragrunt_14x14 = load("icons/newui/terragrunt@14x14.svg", -1587821230, 2);
 }
