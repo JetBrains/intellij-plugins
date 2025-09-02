@@ -149,8 +149,7 @@
     <projectTemplatesFactory implementation="org.angular2.AngularProjectTemplatesFactory"/>
     <!-- works in new IDEA wizard -->
     <moduleBuilder builderClass="org.angular2.AngularCLIModuleBuilder"/>
-    <directoryProjectConfigurator implementation="org.angular2.cli.Angular2ProjectConfigurator"
-                                  order="after PlatformProjectConfigurator"/>
+    <directoryProjectConfigurator implementation="org.angular2.cli.Angular2ProjectConfigurator"/>
     <framework.detector implementation="org.angular2.cli.Angular2CliFrameworkDetector"/>
     <registryKey key="angular.detect.cli.configuration" defaultValue="false" description="Enables framework detection for Angular CLI"/>
 
