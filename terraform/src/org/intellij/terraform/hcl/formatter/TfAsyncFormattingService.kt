@@ -15,6 +15,7 @@ import com.intellij.platform.eel.provider.utils.readWholeText
 import com.intellij.platform.eel.provider.utils.sendWholeText
 import com.intellij.platform.eel.spawnProcess
 import com.intellij.psi.PsiFile
+import com.intellij.util.AnsiCsiUtil
 import kotlinx.coroutines.*
 import org.intellij.terraform.config.Constants.TF_FMT
 import org.intellij.terraform.config.TerraformFileType
@@ -76,7 +77,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
                     }
                     else {
                       val errorMessage = process.stderr.readWholeText()
-                      val cleanedMessage = stripAnsiSymbols(errorMessage)
+                      @NlsSafe val cleanedMessage = normalizeAnsiText(errorMessage)
                       request.onError(HCLBundle.message("terraform.formatter.error.title", toolType.executableName), cleanedMessage)
                     }
                   }
@@ -100,14 +101,6 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
         }
       }
 
-      private fun stripAnsiSymbols(text: String): @NlsSafe String {
-        val cleanedText = text.replace(AnsiRegex, "")
-        return cleanedText.replace("╷", "")
-          .replace("╵", "")
-          .replace("│", "")
-          .trim()
-      }
-
       override fun cancel(): Boolean {
         job?.cancel()
         return true
@@ -118,5 +111,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   }
 }
 
+internal fun normalizeAnsiText(text: String): String = AnsiCsiUtil.stripAnsi(text).replace(BoxDrawingRegex, "").trim()
+
 private const val TestsExtension = "tftest.hcl"
-private val AnsiRegex = Regex("\u001B\\[[;\\d]*[ -/]*[@-~]")
+private val BoxDrawingRegex: Regex = Regex("[\u2500-\u257F]")

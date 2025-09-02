@@ -73,7 +73,7 @@ internal abstract class TfToolsRunConfigurationBase(
   }
 
   private fun checkExecutableAndThrow() {
-    if (TfToolPathDetector.isExecutable(Path(toolPath))) {
+    if (!TfToolPathDetector.isExecutable(Path(toolPath))) {
       val exception = RuntimeConfigurationException(
         HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
         CommonBundle.getErrorTitle()
