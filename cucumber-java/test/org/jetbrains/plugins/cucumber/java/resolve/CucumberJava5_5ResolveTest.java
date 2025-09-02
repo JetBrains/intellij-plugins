@@ -22,9 +22,14 @@ public class CucumberJava5_5ResolveTest extends BaseCucumberJavaResolveTest {
   }
 
   // Test for IDEA-295155
-  public void testOtherLanguages() {
+  public void testOtherLanguagesWithConcatenatedWords() {
     doTest("frenchLongWord", "sim<caret>ple", "Quand");
     checkReference("com<caret>plex", "Etantdonnéque");
+  }
+
+  public void testOtherLanguagesWithRemovedPunctuation() {
+    doTest("australianWeirdWord", "Australian<caret>IsDifferent", "Yknow");
+    checkReference("we have to<caret> support it anyway", "ButattheendofthedayIreckon");
   }
 
   @Override
