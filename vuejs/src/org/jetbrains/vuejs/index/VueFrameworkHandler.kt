@@ -47,6 +47,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.VAPOR_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -704,6 +705,12 @@ fun findModule(element: PsiElement?, setup: Boolean): JSExecutionScope? =
 fun findScriptTag(xmlFile: XmlFile, setup: Boolean): XmlTag? =
   findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME) {
     setup xor (it.stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) == null)
+  }
+
+@StubSafe
+internal fun findScriptVaporTag(xmlFile: XmlFile): XmlTag? =
+  findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME) {
+    it.stubSafeGetAttribute(VAPOR_ATTRIBUTE_NAME) != null
   }
 
 @StubSafe

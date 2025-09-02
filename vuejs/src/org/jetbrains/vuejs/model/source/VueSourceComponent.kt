@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
@@ -22,6 +23,7 @@ import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.VueIndexData
 import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.index.findScriptVaporTag
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueSourceSlotScopeType
@@ -32,6 +34,11 @@ class VueSourceComponent(
   private val indexData: VueIndexData?,
 ) : VueSourceContainer(sourceElement, descriptor),
     VueRegularComponent {
+
+  override val vapor: Boolean
+    get() = descriptor.source
+      .asSafely<XmlFile>()
+      ?.let { findScriptVaporTag(it) } != null
 
   override val nameElement: PsiElement?
     get() = descriptor.initializer
