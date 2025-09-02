@@ -3,12 +3,14 @@ package org.angular2
 
 import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.HybridTestMode
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.runInEdtAndWait
 import org.angular2.lang.expr.service.Angular2TypeScriptService
@@ -45,7 +47,14 @@ abstract class Angular2TestCase(
       }
       (service as TypeScriptServerServiceImpl).assertProcessStarted()
       runInEdtAndWait {
-        waitEmptyServiceQueueForService(service)
+        val newDisposable = Disposer.newDisposable()
+        try {
+          JSLanguageServiceUtil.setTimeout(-1, newDisposable)
+          waitEmptyServiceQueueForService(service)
+        }
+        finally {
+          Disposer.dispose(newDisposable)
+        }
       }
 
       if (configuration.configurators.any { it is Angular2TsConfigFile }) {
