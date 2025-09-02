@@ -203,7 +203,7 @@ public class P4OutputParserTest extends TestCase {
       ... //IDEA/testData/codeInsight/completion/smartType/IDEADEV2626-out.java#1 add
       ... //IDEA/testData/codeInsight/completion/smartType/IDEADEV2626.java#1 add
       ... //IDEA/testSource/com/intellij/codeInsight/completion/SmartTypeCompletion15Test.java#5 edit""";
-    final ChangeListData changeList = new OutputMessageParser(changeDescription).loadChangeListDescription();
+    final ChangeListData changeList = OutputMessageParser.loadChangeListDescription(changeDescription);
     assertNotNull(changeList);
     assertEquals(104643, changeList.NUMBER);
     assertEquals("5.0", changeList.CLIENT);

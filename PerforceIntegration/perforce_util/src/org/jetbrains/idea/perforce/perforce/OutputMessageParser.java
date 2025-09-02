@@ -20,10 +20,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.VisibleForTesting;
+import org.jetbrains.annotations.*;
 import org.jetbrains.idea.perforce.ChangeListData;
 import org.jetbrains.idea.perforce.ClientVersion;
 import org.jetbrains.idea.perforce.ServerVersion;
@@ -439,8 +436,12 @@ Rev. P4/NTX86/2004.2/68597 (2004/09/03).
     return null;
   }
 
-  @VisibleForTesting
-  public @Nullable ChangeListData loadChangeListDescription() {
+  private @Nullable ChangeListData loadChangeListDescription() {
     return readNextChange(new ChangeReadingPolicy(ChangeReadingPolicy.CHANGE_DESCRIPTION_PATTERN, 4, 8));
+  }
+
+  @TestOnly
+  public static @Nullable ChangeListData loadChangeListDescription(String changeDescription) {
+    return new OutputMessageParser(changeDescription).loadChangeListDescription();
   }
 }
