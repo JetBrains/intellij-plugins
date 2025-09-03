@@ -1,8 +1,8 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
 import com.intellij.codeInspection.InspectionsBundle
-import com.intellij.openapi.application.readActionBlocking
 import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.readActionBlocking
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBlockingCancellable
@@ -33,7 +33,6 @@ import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.staticAnalysis.vcs.git.getStatus
 import org.jetbrains.qodana.staticAnalysis.vcs.git.restoreTrackedFiles
-import java.lang.Runnable
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 import kotlin.time.Duration.Companion.seconds
@@ -174,7 +173,7 @@ open class LocalChangesScript(
 
   private suspend fun runAnalysisOnCodeWithoutChanges(project: Project, analysisRunner: suspend () -> Unit): QodanaAnalysisScope {
     val timeout = if (application.isUnitTestMode) 1L else 60L
-    if (ProjectLevelVcsManager.getInstance(project).allVcsRoots.isEmpty()) {
+    if (ProjectLevelVcsManager.getInstance(project).getAllVcsRoots().isEmpty()) {
       try {
         withTimeout(timeout.seconds) {
           isMappingLoaded.asDeferred().await()

@@ -92,7 +92,7 @@ class PerforceIntegrateTest(private val myInMain: Boolean,
     assertNotNull(environment)
 
     environment!!.fillGroups(files)
-    val root = VcsUtil.getFilePath(ProjectLevelVcsManager.getInstance(myProject).allVcsRoots[0].path)
+    val root = VcsUtil.getFilePath(ProjectLevelVcsManager.getInstance(myProject).getAllVcsRoots()[0].path)
 
     val session = environment.updateDirectories(arrayOf(root), files, EmptyProgressIndicator(), Ref.create(null))
     assertTrue(session.exceptions.isEmpty())

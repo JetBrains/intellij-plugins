@@ -30,7 +30,7 @@ abstract class LocalChangesScriptBaseTest: QodanaRunnerTestCase() {
       PsiDocumentManager.getInstance(myProject).commitAllDocuments()
       // attach repo to project
       val vcsManager = ProjectLevelVcsManager.getInstance(project)
-      vcsManager.directoryMappings = listOf(VcsDirectoryMapping(project.basePath!!, "Git"))
+      vcsManager.setDirectoryMappings(listOf(VcsDirectoryMapping(project.basePath!!, "Git")))
       ChangeListManagerImpl.getInstanceImpl(project).waitUntilRefreshed()
       // await for the distribution
       val dirtyScopeManager = VcsDirtyScopeManager.getInstance(project)
