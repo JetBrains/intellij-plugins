@@ -31,7 +31,8 @@ internal class TfRunConfigurationTest : TfBaseRunConfigurationTest() {
 
   fun testGlobalOptionsEditor() {
     val toolType = TfToolType.TERRAFORM
-    val initFactory = tfRunConfigurationType(toolType).initFactory
+    val configurationType = tfRunConfigurationType(toolType) ?: return
+    val initFactory = configurationType.initFactory
 
     val runManager = RunManager.getInstance(project)
     val settings = runManager.createConfiguration("Test 'global option'", initFactory)

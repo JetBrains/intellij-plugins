@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.execution.configurations.ConfigurationFactory
@@ -52,9 +52,8 @@ internal abstract class TfToolConfigurationTypeBase : ConfigurationType, DumbAwa
   protected abstract fun ConfigurationFactory.createConfiguration(project: Project): TfToolsRunConfigurationBase
 }
 
-internal fun tfRunConfigurationType(toolType: TfToolType): TfToolConfigurationTypeBase {
-  return when (toolType) {
-    TfToolType.TERRAFORM -> return runConfigurationType<TfConfigurationType>()
-    TfToolType.OPENTOFU -> return runConfigurationType<OpenTofuConfigurationType>()
-  }
+internal fun tfRunConfigurationType(toolType: TfToolType): TfToolConfigurationTypeBase? = when (toolType) {
+  TfToolType.TERRAFORM -> runConfigurationType<TfConfigurationType>()
+  TfToolType.OPENTOFU -> runConfigurationType<OpenTofuConfigurationType>()
+  else -> null
 }

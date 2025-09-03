@@ -46,10 +46,11 @@ internal class TfBinaryInstaller(val scope: CoroutineScope) {
 
     val download = download(urlProvider)
                    ?: return FailedInstallation(HCLBundle.messagePointer("binary.installation.download.failed", binaryName))
-    val (folder, binary) = findBinary(download, binaryName)
-                           ?: return FailedInstallation(HCLBundle.messagePointer("binary.installation.search.failed", binaryName))
+    val (folder, binaryPath) = findBinary(download, binaryName)
+                               ?: return FailedInstallation(HCLBundle.messagePointer("binary.installation.search.failed", binaryName))
+    val normalizedBinary = if (binaryName != binaryPath.name) normalizeBinaryPath(binaryName, binaryPath) else binaryPath
 
-    if (!SystemInfoRt.isWindows && !makeExecutable(binary)) {
+    if (!SystemInfoRt.isWindows && !makeExecutable(normalizedBinary)) {
       cleanup(download, folder)
       return FailedInstallation(HCLBundle.messagePointer("binary.installation.make.executable.failed", binaryName))
     }
@@ -59,7 +60,7 @@ internal class TfBinaryInstaller(val scope: CoroutineScope) {
       logger<TfBinaryInstaller>().error("No binary installation dir provided")
       return FailedInstallation(HCLBundle.messagePointer("binary.installation.failed"))
     }
-    if (!moveToInstallationDir(binary, installDirectory)) {
+    if (!moveToInstallationDir(normalizedBinary, installDirectory)) {
       cleanup(download, folder)
       return FailedInstallation(HCLBundle.messagePointer("binary.installation.move.to.installation.dir.failed", installDirectory))
     }
@@ -95,12 +96,7 @@ internal class TfBinaryInstaller(val scope: CoroutineScope) {
                          .findFirst()
                          .getOrNull() ?: return null
 
-    return if (binary.name != binaryName) {
-      val normalizedBinaryPath = binary.parent.resolve(binaryName)
-      Files.move(binary, normalizedBinaryPath)
-      folder to normalizedBinaryPath
-    }
-    else folder to binary
+    return folder to binary
   }
 
   private fun unpackArchiveIfNeeded(download: Path): Path? {
@@ -126,6 +122,12 @@ internal class TfBinaryInstaller(val scope: CoroutineScope) {
     }
 
     return null
+  }
+
+  private fun normalizeBinaryPath(binaryName: String, binaryPath: Path): Path {
+    val normalizedBinaryPath = binaryPath.parent.resolve(binaryName)
+    Files.move(binaryPath, normalizedBinaryPath)
+    return normalizedBinaryPath
   }
 
   private fun makeExecutable(binary: Path): Boolean {

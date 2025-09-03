@@ -1,5 +1,5 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.intellij.terraform.opentofu.runtime
+package org.intellij.terraform.terragrunt.runtime
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
@@ -7,8 +7,8 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 import org.intellij.terraform.runtime.TfToolSettings
 
 @Service(Service.Level.PROJECT)
-@State(name = "OpenTofuProjectSettings", storages = [Storage("opentofu_settings.xml")])
-internal class OpenTofuProjectSettings : PersistentStateComponent<OpenTofuProjectSettings>, TfToolSettings {
+@State(name = "TerragruntProjectSettings", storages = [Storage("terragrunt.xml")])
+internal class TerragruntProjectSettings : PersistentStateComponent<TerragruntProjectSettings>, TfToolSettings {
 
   @Volatile
   override var toolPath: String = ""
@@ -18,13 +18,13 @@ internal class OpenTofuProjectSettings : PersistentStateComponent<OpenTofuProjec
 
   var isFormattedBeforeCommit: Boolean = false
 
-  override fun getState(): OpenTofuProjectSettings = this
+  override fun getState(): TerragruntProjectSettings = this
 
-  override fun loadState(state: OpenTofuProjectSettings) {
+  override fun loadState(state: TerragruntProjectSettings) {
     XmlSerializerUtil.copyBean(state, this)
   }
 
   companion object {
-    fun getInstance(project: Project): OpenTofuProjectSettings = project.service()
+    fun getInstance(project: Project): TerragruntProjectSettings = project.service()
   }
 }

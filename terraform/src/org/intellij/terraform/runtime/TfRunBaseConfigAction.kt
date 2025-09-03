@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.execution.ProgramRunnerUtil
@@ -52,16 +52,22 @@ internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
     val configurationName = getConfigurationName(rootModule)
 
     val runManager: RunManager = RunManager.getInstance(project)
-    val existingConfiguration = runManager.findConfigurationByTypeAndName(tfRunConfigurationType(toolType), configurationName)
-    val settings = existingConfiguration ?: createAndConfigureSettings(runManager, configurationName, rootModule.path, toolType)
+    val configurationType = tfRunConfigurationType(toolType) ?: return
+    val existingConfiguration = runManager.findConfigurationByTypeAndName(configurationType, configurationName)
+    val settings = existingConfiguration ?: createAndConfigureSettings(runManager, configurationName, rootModule.path, configurationType)
 
     runManager.selectedConfiguration = settings
     ProgramRunnerUtil.executeConfiguration(settings, DefaultRunExecutor.getRunExecutorInstance())
   }
 
-  private fun createAndConfigureSettings(runManager: RunManager, suggestName: String, modulePath: String, toolType: TfToolType): RunnerAndConfigurationSettings {
-    val configurationName = runManager.suggestUniqueName(suggestName, tfRunConfigurationType(toolType))
-    val settings = runManager.createConfiguration(configurationName, getConfigurationFactory(toolType))
+  private fun createAndConfigureSettings(
+    runManager: RunManager,
+    suggestName: String,
+    modulePath: String,
+    configurationType: TfToolConfigurationTypeBase,
+  ): RunnerAndConfigurationSettings {
+    val configurationName = runManager.suggestUniqueName(suggestName, configurationType)
+    val settings = runManager.createConfiguration(configurationName, getConfigurationFactory(configurationType))
 
     settings.isTemporary = true
     (settings.configuration as? TfToolsRunConfigurationBase)?.let {
@@ -73,19 +79,16 @@ internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
   }
 
   internal fun getConfigurationName(rootModule: RootModulePath): @Nls String {
-    return "${HCLBundle.message("terraform.run.configuration."+command.command+".name.suffix")} ${rootModule.name}"
+    return "${HCLBundle.message("terraform.run.configuration.${command.command}.name.suffix")} ${rootModule.name}"
   }
 
-  private fun getConfigurationFactory(toolType: TfToolType): ConfigurationFactory {
-    val configurationType = tfRunConfigurationType(toolType)
-    return when (command) {
-      TfCommand.INIT -> configurationType.initFactory
-      TfCommand.VALIDATE -> configurationType.validateFactory
-      TfCommand.PLAN -> configurationType.planFactory
-      TfCommand.APPLY -> configurationType.applyFactory
-      TfCommand.DESTROY -> configurationType.destroyFactory
-      else -> configurationType.baseFactory
-    }
+  private fun getConfigurationFactory(configurationType: TfToolConfigurationTypeBase): ConfigurationFactory = when (command) {
+    TfCommand.INIT -> configurationType.initFactory
+    TfCommand.VALIDATE -> configurationType.validateFactory
+    TfCommand.PLAN -> configurationType.planFactory
+    TfCommand.APPLY -> configurationType.applyFactory
+    TfCommand.DESTROY -> configurationType.destroyFactory
+    else -> configurationType.baseFactory
   }
 
   companion object {
@@ -104,7 +107,7 @@ internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
   }
 }
 
-internal data class RootModulePath(val path: String, @NlsSafe val name: String)
+internal data class RootModulePath(val path: String, @param:NlsSafe val name: String)
 
 internal class InitAction : TfRunBaseConfigAction() {
   override val command = TfCommand.INIT

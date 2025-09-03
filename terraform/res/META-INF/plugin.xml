@@ -196,7 +196,8 @@
   <resource-bundle>messages.HCLBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileType name="HCL" language="HCL" extensions="hcl;nomad" implementationClass="org.intellij.terraform.hcl.HCLFileType" fieldName="INSTANCE"/>
+    <fileType name="HCL" language="HCL" extensions="hcl;nomad" implementationClass="org.intellij.terraform.hcl.HCLFileType"
+              fieldName="INSTANCE"/>
     <lang.parserDefinition language="HCL" implementationClass="org.intellij.terraform.hcl.HCLParserDefinition"/>
 
     <lang.syntaxHighlighterFactory language="HCL" implementationClass="org.intellij.terraform.hcl.HCLSyntaxHighlighterFactory"/>
@@ -216,7 +217,8 @@
 
     <codeInsight.typeInfo language="HIL" implementationClass="org.intellij.terraform.hcl.codeinsight.hint.HCL2TypeProvider"/>
     <codeInsight.typeInfo language="HCL" implementationClass="org.intellij.terraform.hcl.codeinsight.hint.HCL2TypeProvider" id="hcl2"/>
-    <codeInsight.typeInfo language="HCL" implementationClass="org.intellij.terraform.hcl.codeinsight.hint.HCLTypeProvider" order="after hcl2"/>
+    <codeInsight.typeInfo language="HCL" implementationClass="org.intellij.terraform.hcl.codeinsight.hint.HCLTypeProvider"
+                          order="after hcl2"/>
 
     <!-- Annotators -->
     <annotator language="HCL" implementationClass="org.intellij.terraform.hcl.codeinsight.HCLLiteralAnnotator"/>
@@ -290,7 +292,8 @@
     <languageInjector implementation="org.intellij.terraform.hil.ILLanguageInjector"/>
 
     <!-- Terraform Config language -->
-    <fileType name="Terraform" language="HCL-Terraform" extensions="tf;tfvars" implementationClass="org.intellij.terraform.config.TerraformFileType" fieldName="INSTANCE"/>
+    <fileType name="Terraform" language="HCL-Terraform" extensions="tf;tfvars"
+              implementationClass="org.intellij.terraform.config.TerraformFileType" fieldName="INSTANCE"/>
     <lang.parserDefinition language="HCL-Terraform" implementationClass="org.intellij.terraform.config.TfParserDefinition"/>
     <lang.syntaxHighlighterFactory language="HCL-Terraform" implementationClass="org.intellij.terraform.config.TfSyntaxHighlighterFactory"/>
 
@@ -298,7 +301,8 @@
     <lang.foldingBuilder language="HCL-Terraform" implementationClass="org.intellij.terraform.hcl.editor.HCLFoldingBuilder"/>
     <lang.commenter language="HCL-Terraform" implementationClass="org.intellij.terraform.hcl.editor.HCLCommenter"/>
     <!-- TODO: Better structure view provider-->
-    <lang.psiStructureViewFactory language="HCL-Terraform" implementationClass="org.intellij.terraform.hcl.structureView.HCLStructureViewFactory"/>
+    <lang.psiStructureViewFactory language="HCL-Terraform"
+                                  implementationClass="org.intellij.terraform.hcl.structureView.HCLStructureViewFactory"/>
     <lang.braceMatcher language="HCL-Terraform" implementationClass="org.intellij.terraform.hcl.codeinsight.HCLBraceMatcher"/>
     <lang.findUsagesProvider language="HCL-Terraform" implementationClass="org.intellij.terraform.config.findUsages.TfFindUsagesProvider"/>
     <useScopeEnlarger implementation="org.intellij.terraform.config.TfOutputsAndVariablesUseScopeEnlarger"/>
@@ -513,7 +517,8 @@
     <checkinHandlerFactory implementation="org.intellij.terraform.config.actions.TfFmtCheckinFactory" order="last"/>
     <macro implementation="org.intellij.terraform.macros.TfExecutableMacro"/>
 
-    <notificationGroup id="Terraform Execution" displayType="TOOL_WINDOW" toolWindowId="Run" bundle="messages.HCLBundle" key="notification.group.terraform.execution"/>
+    <notificationGroup id="Terraform Execution" displayType="TOOL_WINDOW" toolWindowId="Run" bundle="messages.HCLBundle"
+                       key="notification.group.terraform.execution"/>
 
     <dependencySupport kind="executable" coordinate="terraform"/>
 
@@ -523,7 +528,8 @@
     <internalFileTemplate name="Variables"/>
 
     <!--OpenTofu support-->
-    <fileType name="OpenTofu" language="HCL-Terraform" extensions="tofu" implementationClass="org.intellij.terraform.opentofu.OpenTofuFileType" fieldName="INSTANCE"/>
+    <fileType name="OpenTofu" language="HCL-Terraform" extensions="tofu"
+              implementationClass="org.intellij.terraform.opentofu.OpenTofuFileType" fieldName="INSTANCE"/>
 
     <fileTypeUsageSchemaDescriptor schema="OpenTofu"
                                    implementationClass="org.intellij.terraform.config.editor.OpenTofuJsonFileTypeUsageSchemaDescriptor"/>
@@ -560,6 +566,9 @@
                      enabledByDefault="true" level="ERROR"
     />
 
+    <!--Terragrunt support-->
+    <fileType name="Terragrunt" language="HCL" extensions="hcl" fileNames="terragrunt.hcl;terragrunt.stack.hcl"
+              implementationClass="org.intellij.terraform.terragrunt.TerragruntFileType" fieldName="INSTANCE"/>
   </extensions>
 
   <projectListeners>

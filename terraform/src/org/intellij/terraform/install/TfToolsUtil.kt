@@ -17,6 +17,7 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import org.intellij.terraform.runtime.TfProjectSettings
 import org.intellij.terraform.runtime.TfToolSettings
+import org.intellij.terraform.terragrunt.runtime.TerragruntProjectSettings
 import org.jetbrains.annotations.Nls
 import java.nio.file.FileSystems
 import java.nio.file.Path
@@ -61,7 +62,7 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
     }
 
     private val downloadServerUrl: String
-      get() = "https://github.com/opentofu/opentofu/releases/download/"
+      get() = "https://github.com/opentofu/opentofu/releases/download"
 
     private fun fetchTofuLatestStableVersion(): String? {
       return try {
@@ -71,6 +72,32 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
       }
       catch (e: Exception) {
         logger<TfBinaryInstaller>().error("Failed to fetch the latest stable OpenTofu version", e)
+        null
+      }
+    }
+  },
+  TERRAGRUNT("terragrunt") {
+    override val displayName: String = "Terragrunt"
+    override fun getDownloadUrl(): String {
+      val latestTerragruntVersion = fetchTerragruntStableVersion() ?: DEFAULT_TERRAGRUNT_VERSION
+      return "$downloadServerUrl/$latestTerragruntVersion/terragrunt_${getOSName()}_${getArchName()}${if (getOSName() == "windows") ".exe" else ""}"
+    }
+
+    override fun getToolSettings(project: Project): TfToolSettings {
+      return project.service<TerragruntProjectSettings>()
+    }
+
+    private val downloadServerUrl: String
+      get() = "https://github.com/gruntwork-io/terragrunt/releases/download"
+
+    private fun fetchTerragruntStableVersion(): String? {
+      return try {
+        val response = HttpRequests.request(TERRAGRUNT_VERSION_URL).readString()
+        val jsonNode = ObjectMapper().readTree(response)
+        jsonNode.get("tag_name")?.asText()
+      }
+      catch (e: Exception) {
+        logger<TfBinaryInstaller>().error("Failed to fetch the latest stable Terragrunt version", e)
         null
       }
     }
@@ -125,7 +152,7 @@ internal fun getBinaryName(executableName: String): String {
 
 internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath: String): @NlsSafe String {
   val eelApi = project.getEelDescriptor().toEelApi()
-  val processBuilder = eelApi.exec.spawnProcess(exePath).args("version")
+  val processBuilder = eelApi.exec.spawnProcess(exePath).args("--version")
 
   val version = try {
     processBuilder.eelIt().stdout.readWholeText()
@@ -144,3 +171,6 @@ private const val TERRAFORM_VERSION_URL: String = "https://checkpoint-api.hashic
 
 private const val DEFAULT_OPENTOFU_VERSION: String = "1.10.5"
 private const val OPENTOFU_VERSION_URL: String = "https://get.opentofu.org/tofu/api.json"
+
+private const val DEFAULT_TERRAGRUNT_VERSION: String = "v0.86.2"
+private const val TERRAGRUNT_VERSION_URL: String = "https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest"

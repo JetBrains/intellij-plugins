@@ -15,6 +15,7 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfExecutableTestButton
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
+import org.intellij.terraform.terragrunt.runtime.TerragruntProjectSettings
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 
@@ -26,6 +27,7 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
 
   private val terraformConfig = TfProjectSettings.getInstance(project)
   private val openTofuConfig = OpenTofuProjectSettings.getInstance(project)
+  private val terragruntConfig = TerragruntProjectSettings.getInstance(project)
 
   override fun getId(): String = CONFIGURABLE_ID
   override fun getHelpTopic(): String = "terraform"
@@ -37,6 +39,9 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
       }
       group(HCLBundle.message("opentofu.name")) {
         executableToolSettingsPanel(this, openTofuConfig, TfToolType.OPENTOFU, disposable)
+      }
+      group(HCLBundle.message("terragrunt.name")) {
+        executableToolSettingsPanel(this, terragruntConfig, TfToolType.TERRAGRUNT, disposable)
       }
     }
   }

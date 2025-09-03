@@ -74,7 +74,7 @@ internal class TfExecutableTestButton(
     add(button)
     add(spinnerIcon)
     add(resultLabel)
-    if (!toolType.getDownloadUrl().isEmpty()) {
+    if (toolType.getDownloadUrl().isNotEmpty()) {
       add(installButton)
     }
 
