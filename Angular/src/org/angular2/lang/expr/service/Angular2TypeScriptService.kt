@@ -27,7 +27,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.R
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptTypeRequestKind
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintItem
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.InlayHintKind
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptInlayHintsResponse
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptInlayHintsResult
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
@@ -129,13 +129,13 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
 
 
   @RequiresReadLock
-  override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResponse? = withScopedServiceTraceSpan("getInlayHintsAngular", myLifecycleSpan) {
+  override suspend fun getInlayHints(file: PsiFile, textRange: TextRange): TypeScriptInlayHintsResult? = withScopedServiceTraceSpan("getInlayHintsAngular", myLifecycleSpan) {
     val hasTranspiledTemplate = refreshTranspiledTemplateIfNeeded(file.virtualFile
                                                                   ?: return@withScopedServiceTraceSpan null) != null
     val result = super.getInlayHints(file, textRange) ?: return@withScopedServiceTraceSpan null
 
     if (hasTranspiledTemplate)
-      repositionInlayHints(file, result)
+      TypeScriptInlayHintsResult(repositionInlayHints(file, result.items), result.isSuccess)
     else
       result
   }
