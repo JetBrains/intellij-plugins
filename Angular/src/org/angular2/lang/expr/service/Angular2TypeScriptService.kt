@@ -322,8 +322,8 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       )
 
       val args = Angular2GetGeneratedElementTypeRequestArgs(filePath, projectFileName, range)
-      return@withServiceTraceSpan sendGetElementTypeCommandAndDeserializeToTSType(
-        transpiledFile.originalFile, null, Angular2GetGeneratedElementTypeCommand(args))?.asJSType()
+      return@withServiceTraceSpan sendGetElementTypeCommandAndDeserialize(
+        transpiledFile.originalFile, null, Angular2GetGeneratedElementTypeCommand(args))?.toTSType()?.asJSType()
     }
 
     override fun isEnabledInUsageContext(usageContext: JSServicePoweredTypeEngineUsageContext): Boolean = true
