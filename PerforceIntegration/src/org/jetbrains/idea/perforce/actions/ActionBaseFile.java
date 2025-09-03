@@ -70,7 +70,7 @@ public abstract class ActionBaseFile extends DumbAwareAction {
     }
 
     VirtualFile[] vFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
-    if (ArrayUtil.isEmpty(vFiles) ||
+    if (vFiles == null || ArrayUtil.isEmpty(vFiles) ||
         !ProjectLevelVcsManager.getInstance(project).checkAllFilesAreUnder(PerforceVcs.getInstance(project), vFiles)) {
       presentation.setEnabled(false);
       return;
