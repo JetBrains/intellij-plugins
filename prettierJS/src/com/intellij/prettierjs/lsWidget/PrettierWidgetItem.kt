@@ -20,7 +20,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServicePopupSection
 import com.intellij.platform.lang.lsWidget.LanguageServicePopupSection.ForCurrentFile
@@ -46,7 +45,7 @@ class PrettierWidgetItem(
 
   override val widgetActionLocation: LanguageServicePopupSection by lazy {
     if (currentFile == null) return@lazy Other
-    if (!VfsUtil.isAncestor(location.workingDirectory, currentFile, true)) return@lazy Other
+    if (!PrettierUtil.isFormattingAllowedForFile(project, currentFile)) return@lazy Other
     else ForCurrentFile
   }
 
