@@ -257,7 +257,7 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
           }
 
           comboBox(portNames).label(message("label.port"))
-            .validationOnInput(portValidation)
+            .validation(portValidation)
             .resizableColumn()
             .applyToComponent {
               isEditable = true
