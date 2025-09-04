@@ -2512,7 +2512,7 @@ private open class TcbExpressionTranslator(
     }
   }
 
-  private fun emitMethodSafeAccess(node: PsiElement, methodExpression: JSExpression) {
+  private fun emitMethodSafeAccess(node: JSCallExpression, methodExpression: JSExpression) {
     result.withSourceSpan(node.textRange, supportTypes = true) {
       if (tcb.env.config.strictSafeNavigationTypes) {
         // Basically, the return here is either the type of the complete expression with a null-safe
@@ -2526,7 +2526,8 @@ private open class TcbExpressionTranslator(
           removeMappings(methodExpression.textRange)
           append(")!")
         }
-        append("() : undefined)")
+        node.argumentList?.accept(this@TcbExpressionTranslator) ?: run { append("()") }
+        append(" : undefined)")
       }
       else if (VeSafeLhsInferenceBugDetector().veWillInferAnyFor(node)) {
         // Emulate a View Engine bug where 'any' is inferred for the left-hand side of the safe
@@ -2540,7 +2541,7 @@ private open class TcbExpressionTranslator(
           removeMappings(methodExpression.textRange)
           append(") as any)")
         }
-        append("()")
+        node.argumentList?.accept(this@TcbExpressionTranslator) ?: run { append("()") }
       }
       else {
         // The View Engine bug isn't active, so check the entire type of the expression, but the final
@@ -2553,7 +2554,8 @@ private open class TcbExpressionTranslator(
           removeMappings(methodExpression.textRange)
           append(")!")
         }
-        append("() as any)")
+        node.argumentList?.accept(this@TcbExpressionTranslator) ?: run { append("()") }
+        append("as any)")
       }
     }
   }
