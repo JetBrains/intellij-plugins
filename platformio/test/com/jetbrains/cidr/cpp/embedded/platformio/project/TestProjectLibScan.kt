@@ -11,6 +11,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.asSafely
 import com.intellij.util.system.OS
 import com.jetbrains.cidr.cpp.CPPTestUtil
+import com.jetbrains.cidr.cpp.embedded.platformio.project.TestUtils.findExternalModule
 import com.jetbrains.cidr.cpp.execution.manager.CLionRunConfigurationManager
 import com.jetbrains.cidr.external.system.model.ExternalModule
 import org.junit.Assume
@@ -52,8 +53,7 @@ class TestProjectLibScan : LightPlatformTestCase() {
       listener = testListener,
       resolverPolicy = null
     )!!
-    val actualSourceFiles = projectNode.children.first().children.first()
-      .data.asSafely<ExternalModule>()!!
+    val actualSourceFiles = projectNode.findExternalModule().data
       .resolveConfigurations.first()
       .fileConfigurations
       .associate {
