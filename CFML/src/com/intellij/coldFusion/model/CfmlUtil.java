@@ -268,7 +268,7 @@ public final class CfmlUtil {
   }
 
   public static void showCompletion(Editor editor) {
-    AutoPopupController.getInstance(editor.getProject()).scheduleAutoPopup(editor, null);
+    AutoPopupController.getInstance(editor.getProject()).scheduleAutoPopup(editor);
   }
 
   public static @Nullable VirtualFile getRealVirtualFile(PsiFile psiFile) {
