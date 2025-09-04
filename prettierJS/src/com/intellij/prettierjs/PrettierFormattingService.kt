@@ -3,16 +3,15 @@ package com.intellij.prettierjs
 
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.formatting.FormatTextRanges
+import com.intellij.formatting.FormattingContext
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.FormattingService
-import com.intellij.formatting.FormattingContext
-import com.intellij.openapi.editor.Document
 import com.intellij.lang.javascript.imports.JSModuleImportOptimizerBase
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
@@ -22,8 +21,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.prettierjs.formatting.PrettierFormattingApplier
-import com.intellij.prettierjs.formatting.PrettierFormattingContext
-import com.intellij.prettierjs.formatting.createFormattingContext
 import com.intellij.prettierjs.formatting.extendRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.codeStyle.CoreCodeStyleUtil
@@ -106,7 +103,7 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
         acc.apply { add(range, true) }
       }
 
-      ApplicationManager.getApplication().runReadAction {
+      runReadAction {
         val infos = CoreCodeStyleUtil.getRangeFormatInfoList(file, formatRanges)
         CoreCodeStyleUtil.postProcessRanges(infos) { range: TextRange? ->
           range?.let { extendedRanges.add(extendRange(file, it)) }
@@ -132,33 +129,23 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
         if (cancelled) return
 
         text = formatted.result ?: return
-        cursorOffset = formatted.cursorOffset
+        if (formatted.cursorOffset >= 0 && cursorOffset < 0) {
+          cursorOffset = formatted.cursorOffset
+        }
       }
 
-      val formattingContext = createFormattingContext(
-        document,
-        text,
-        cursorOffset,
-      )
-      val strategy = PrettierFormattingApplier.from(formattingContext)
+      val strategy = runReadAction {
+        PrettierFormattingApplier.from(document, file, text)
+      }
 
       WriteCommandAction.writeCommandAction(project, request.context.containingFile)
         .withName(PrettierBundle.message("reformat.with.prettier.command.name"))
         .shouldRecordActionForActiveDocument(false)
         .run<RuntimeException> {
-          if (document.modificationStamp == initialModificationStamp &&
-              request.documentText != formattingContext.formattedContent) {
-            strategy.apply(project, file.virtualFile, formattingContext)
-            moveCursor(file, formattingContext)
+          if (document.modificationStamp == initialModificationStamp) {
+            strategy.apply(project, file)
           }
         }
-    }
-
-    private fun moveCursor(psiFile: PsiFile, formattingContext: PrettierFormattingContext) {
-      val editor = FileEditorManager.getInstance(psiFile.project).selectedTextEditor ?: return
-      if (!editor.isDisposed && editor.virtualFile == psiFile.virtualFile && formattingContext.cursorOffset >= 0) {
-        editor.caretModel.moveToOffset(formattingContext.cursorOffset)
-      }
     }
   }
 }

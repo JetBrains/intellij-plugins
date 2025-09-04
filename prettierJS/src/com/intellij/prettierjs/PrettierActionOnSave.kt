@@ -10,12 +10,10 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.prettierjs.formatting.PrettierFormattingApplier
-import com.intellij.prettierjs.formatting.createFormattingContext
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.annotations.RequiresReadLock
@@ -60,24 +58,9 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
 
     val result = ReformatWithPrettierAction.performRequestForFile(psiFile, null, null) ?: return
     val formattedContent = result.result ?: return
-
-    val formattingContext = createFormattingContext(
-      document,
-      formattedContent,
-      result.cursorOffset,
-    )
-
-    val strategy = PrettierFormattingApplier.from(formattingContext)
+    val strategy = readAction { PrettierFormattingApplier.from(document, psiFile, formattedContent) }
     writeCommandAction(project, PrettierBundle.message("reformat.with.prettier.command.name")) {
-      strategy.apply(project, file, formattingContext)
-      moveCursor(file, psiFile, formattingContext.cursorOffset)
-    }
-  }
-
-  private fun moveCursor(file: VirtualFile, psiFile: PsiFile, cursorOffset: Int) {
-    val editor = FileEditorManager.getInstance(psiFile.project).selectedTextEditor ?: return
-    if (!editor.isDisposed && editor.virtualFile == file && cursorOffset >= 0) {
-      editor.caretModel.moveToOffset(cursorOffset)
+      strategy.apply(project, psiFile)
     }
   }
 }

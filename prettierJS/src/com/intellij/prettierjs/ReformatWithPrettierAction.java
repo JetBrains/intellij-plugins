@@ -47,7 +47,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static com.intellij.prettierjs.PrettierConfigUtilKt.ensureConfigsSaved;
-import static com.intellij.prettierjs.formatting.PrettierFormattingContextKt.createFormattingContext;
 
 public final class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static final @NotNull Logger LOG = Logger.getInstance(ReformatWithPrettierAction.class);
@@ -166,17 +165,12 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
        * this is enough to detect if separators were changed by the external process
        */
       Ref<Boolean> lineSeparatorUpdated = new Ref<>(Boolean.FALSE);
-      var formattingContext = createFormattingContext(document, newContent, result.cursorOffset);
-      var strategy = PrettierFormattingApplier.Companion.from(formattingContext);
+      var strategy = PrettierFormattingApplier.Companion.from(document, file, newContent);
 
       EditorScrollingPositionKeeper.perform(editor, true, () -> {
         runWriteCommandAction(project, () -> {
-          var isLineSeparatorChanged = strategy.apply(project, vFile, formattingContext);
+          var isLineSeparatorChanged = strategy.apply(project, file);
           lineSeparatorUpdated.set(isLineSeparatorChanged);
-
-          if (!editor.isDisposed() && formattingContext.getCursorOffset() >= 0) {
-            editor.getCaretModel().moveToOffset(formattingContext.getCursorOffset());
-          }
         });
       });
 
@@ -198,7 +192,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     ensureConfigsSaved(Collections.singletonList(vFile), project);
     PrettierLanguageService.FormatResult result = performRequestForFile(file, range, null);
     if (result != null) {
-      int delta = applyFormatResult(project, vFile, result);
+      int delta = applyFormatResult(project, file, result);
       if (delta < 0 && range.getLength() < Math.abs(delta)) {
         return TextRange.from(range.getStartOffset(), 0);
       }
@@ -275,7 +269,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
         if (virtualFile == null) {
           continue;
         }
-        applyFormatResult(project, virtualFile, entry.getValue());
+        applyFormatResult(project, entry.getKey(), entry.getValue());
       }
     });
     List<String> errors = ContainerUtil.mapNotNull(results.entrySet(), t -> t.getValue().error);
@@ -305,23 +299,14 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
    * @param result (new text length) - (old text length)
    */
   static int applyFormatResult(@NotNull Project project,
-                               @NotNull VirtualFile virtualFile,
+                               @NotNull PsiFile file,
                                @NotNull PrettierLanguageService.FormatResult result) {
-    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    Document document = FileDocumentManager.getInstance().getDocument(file.getVirtualFile());
     if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported && (result.result != null)) {
-      var formattingContext = createFormattingContext(document, result.result, result.cursorOffset);
-      var strategy = PrettierFormattingApplier.Companion.from(formattingContext);
-      strategy.apply(project, virtualFile, formattingContext);
-
-      var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-      if (editor != null &&
-          !editor.isDisposed() &&
-          Objects.equals(editor.getVirtualFile(), virtualFile) &&
-          formattingContext.getCursorOffset() >= 0) {
-        editor.getCaretModel().moveToOffset(formattingContext.getCursorOffset());
-      }
-
-      return formattingContext.getContentLengthDelta();
+      var strategy = PrettierFormattingApplier.Companion.from(document, file, result.result);
+      var diff = result.result.length() - document.getTextLength();
+      strategy.apply(project, file);
+      return diff;
     }
     return 0;
   }
@@ -338,7 +323,6 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
 
     Project project = currentFile.getProject();
     Ref<String> text = Ref.create();
-    Ref<Integer> cursorOffset = Ref.create(-1);
     Ref<String> filePath = Ref.create();
     Ref<String> ignoreFilePath = Ref.create();
     Ref<TextRange> rangeForRequest = Ref.create(range);
@@ -374,10 +358,6 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
       }
       var convertedText = JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile, offsetsToKeep);
 
-      if (offsetsToKeep != null && PrettierUtil.isSafeToFormatWithCursor(currentVFile)) {
-        cursorOffset.set(offsetsToKeep[0]);
-      }
-
       text.set(convertedText.toString());
       VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(project, currentVFile);
       if (ignoreVFile != null) {
@@ -393,7 +373,7 @@ public final class ReformatWithPrettierAction extends AnAction implements DumbAw
     PrettierLanguageService service = PrettierLanguageService.getInstance(project, currentFile.getVirtualFile(), nodePackage);
 
     CompletableFuture<PrettierLanguageService.FormatResult> formatFuture =
-      service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, rangeForRequest.get(), cursorOffset.get());
+      service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, rangeForRequest.get());
     long timeout = edt ? EDT_TIMEOUT_MS : JSLanguageServiceUtil.getTimeout();
     return JSLanguageServiceUtil.awaitFuture(formatFuture, timeout, true, null, edt);
   }

@@ -374,6 +374,10 @@ public class ReformatWithPrettierTest extends ReformatWithPrettierBaseTest {
     configureRunOnReformat(() -> doTestEditorReformat(""));
   }
 
+  public void testCaretPositionReformatParenthesis() {
+    configureRunOnReformat(() -> doTestEditorReformat(""));
+  }
+
   public void testCrlfCaretPositionReformat() {
     configureRunOnReformat(() -> {
       doTestEditorReformat("", () -> {
@@ -386,6 +390,10 @@ public class ReformatWithPrettierTest extends ReformatWithPrettierBaseTest {
     doReformatFile("toReformat", "svelte", () -> {
       performNpmInstallForPackageJson("package.json");
     });
+  }
+
+  public void testCaretPositionEndFileReformat() {
+    configureRunOnReformat(() -> doTestEditorReformat(""));
   }
 
   public void testCommentAfterImports() {
