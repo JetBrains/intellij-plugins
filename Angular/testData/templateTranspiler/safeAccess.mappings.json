@@ -12,13 +12,30 @@
       "«data?.icon?.toString()» [314] => «(0 as any ? ((0 as any ? ((0 as any ? (this.data)!.icon : undefined))!.toString : undefined))!() : undefined)» [186]}",
       "«icon» [320] => «icon» [237]}",
       "«toString» [326] => «toString» [257]}",
+      "«(» [334] => «(» [280]}",
+      "«()» [334] => «()» [280]}",
+      "«)» [335] => «)» [281]}",
       "«i» [361] => «_t3» [302]} (no diagnostics) (no semantic)",
       "«data» [375] => «data» [374]} (no types)",
       "«data» [375] => «this.data» [369]}",
       "«data?.check» [375] => «((0 as any ? (this.data)!.check : undefined))!» [355]}",
       "«data?.check?.()» [375] => «(0 as any ? ((0 as any ? (this.data)!.check : undefined))!() : undefined)» [343]}",
       "«check» [381] => «check» [381]}",
-      "420:567 => 420:567 (source)"
+      "«(» [388] => «(» [401]}",
+      "«()» [388] => «()» [401]}",
+      "«)» [389] => «)» [402]}",
+      "«text» [417] => «text» [456]} (no types)",
+      "«text» [417] => «this.text» [451]}",
+      "«text?.replace» [417] => «((0 as any ? (this.text)!.replace : undefined))!» [437]}",
+      "«text?.replace('a', 'b')» [417] => «(0 as any ? ((0 as any ? (this.text)!.replace : undefined))!('a', 'b') : undefined)» [425]}",
+      "«replace» [423] => «replace» [463]}",
+      "«(» [430] => «(» [485]}",
+      "«('a', 'b')» [430] => «('a', 'b')» [485]}",
+      "«'a'» [431] => «'a'» [486]}",
+      "«,» [434] => «,» [489]}",
+      "«'b'» [436] => «'b'» [491]}",
+      "«)» [439] => «)» [494]}",
+      "461:624 => 461:624 (source)"
     ]
   }
 ]

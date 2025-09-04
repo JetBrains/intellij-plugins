@@ -12,12 +12,14 @@ interface IData {
       <div>
           <i class="i-{{ data?.icon?.toString() }}">data</i>
           <i class="i-{{ data?.check?.() }}">data</i>
+          {{ text?.replace('a', 'b') }} 
       </div>
   `,
  standalone: true
 })
 export class AppComponent {
   data: IData;
+  text: string;
 
   constructor() {
     this.data = {}
