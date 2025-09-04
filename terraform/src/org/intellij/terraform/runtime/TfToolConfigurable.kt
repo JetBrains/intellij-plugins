@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.BoundConfigurable
@@ -10,6 +11,7 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.emptyText
 import com.intellij.openapi.ui.validation.DialogValidation
 import com.intellij.openapi.ui.validation.validationErrorIf
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.*
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.install.TfExecutableTestButton
@@ -40,7 +42,10 @@ internal class TfToolConfigurable(private val project: Project) : BoundConfigura
       group(HCLBundle.message("opentofu.name")) {
         executableToolSettingsPanel(this, openTofuConfig, TfToolType.OPENTOFU, disposable)
       }
-      group(HCLBundle.message("terragrunt.name")) {
+      group(JBLabel(HCLBundle.message("terragrunt.name")).apply {
+        icon = AllIcons.General.Beta
+        horizontalTextPosition = JBLabel.LEFT
+      }) {
         executableToolSettingsPanel(this, terragruntConfig, TfToolType.TERRAGRUNT, disposable)
       }
     }

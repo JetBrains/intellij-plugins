@@ -295,7 +295,7 @@ fun Type.isConvertibleTo(other: Type): Boolean {
 
 open class BaseModelType(
   val description: String? = null,
-  val description_kind: String? = null,
+  val descriptionKind: String? = null,
   val optional: Boolean = false,
   val required: Boolean = false,
   val computed: Boolean = false,
@@ -346,8 +346,8 @@ open class PropertyType(
   val sensitive: Boolean = false,
   deprecated: String? = null,
   conflictsWith: List<String>? = null,
-  val has_default: Boolean = false,
-) : BaseModelType(description = description, description_kind = description_kind,
+  val hasDefault: Boolean = false,
+) : BaseModelType(description = description, descriptionKind = description_kind,
                   optional = optional && !required, required = required, computed = computed,
                   deprecated = deprecated, conflictsWith = conflictsWith), PropertyOrBlockType {
 
@@ -366,7 +366,7 @@ open class PropertyType(
     if (type != other.type) return false
     if (hint != other.hint) return false
     if (injectionAllowed != other.injectionAllowed) return false
-    if (has_default != other.has_default) return false
+    if (hasDefault != other.hasDefault) return false
 
     return true
   }
@@ -377,7 +377,7 @@ open class PropertyType(
     result = 31 * result + type.hashCode()
     result = 31 * result + (hint?.hashCode() ?: 0)
     result = 31 * result + injectionAllowed.hashCode()
-    result = 31 * result + has_default.hashCode()
+    result = 31 * result + hasDefault.hashCode()
     return result
   }
 
@@ -416,7 +416,7 @@ open class BlockType(
   conflictsWith: List<String>? = null,
   val nesting: NestingInfo? = null,
   val properties: Map<String, PropertyOrBlockType> = emptyMap(),
-) : BaseModelType(description = description, description_kind = description_kind,
+) : BaseModelType(description = description, descriptionKind = description_kind,
                   optional = optional && !required, required = required, computed = computed,
                   deprecated = deprecated, conflictsWith = conflictsWith), PropertyOrBlockType, ObjectType {
   override val name: String
@@ -534,7 +534,7 @@ class ResourceType(
 ) : BlockType(literal = HCL_RESOURCE_IDENTIFIER,
               args = 2,
               description = blockType?.description,
-              description_kind = blockType?.description_kind,
+              description_kind = blockType?.descriptionKind,
               optional = blockType?.optional == true,
               required = blockType?.required == true,
               computed = blockType?.computed == true,
@@ -557,7 +557,7 @@ class EphemeralType(
 ) : BlockType(literal = HCL_EPHEMERAL_IDENTIFIER,
               args = 2,
               description = blockType?.description,
-              description_kind = blockType?.description_kind,
+              description_kind = blockType?.descriptionKind,
               optional = blockType?.optional == true,
               required = blockType?.required == true,
               computed = blockType?.computed == true,
@@ -576,7 +576,7 @@ class DataSourceType(
   BlockType(literal = HCL_DATASOURCE_IDENTIFIER,
             args = 2,
             description = blockType?.description,
-            description_kind = blockType?.description_kind,
+            description_kind = blockType?.descriptionKind,
             optional = blockType?.optional == true,
             required = blockType?.required == true,
             computed = blockType?.computed == true,
@@ -602,7 +602,7 @@ class ProviderType(
 ) : BlockType(literal = HCL_PROVIDER_IDENTIFIER,
               args = 1,
               description = blockType?.description,
-              description_kind = blockType?.description_kind,
+              description_kind = blockType?.descriptionKind,
               optional = blockType?.optional == true,
               required = blockType?.required == true,
               computed = blockType?.computed == true,

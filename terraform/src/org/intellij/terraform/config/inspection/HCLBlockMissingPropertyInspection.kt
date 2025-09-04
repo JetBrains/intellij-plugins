@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInsight.intention.FileModifier.SafeFieldForPreview
@@ -116,7 +116,7 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
     val obj = block.`object` ?: return
     ProgressIndicatorProvider.checkCanceled()
 
-    val candidates = ArrayList(properties.values.filter { it.required && !(it is PropertyType && it.has_default) })
+    val candidates = ArrayList(properties.values.filter { it.required && !(it is PropertyType && it.hasDefault) })
     if (candidates.isEmpty()) return
     val all = ArrayList<String>()
     all.addAll(obj.propertyList.map { it.name })

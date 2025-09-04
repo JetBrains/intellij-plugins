@@ -486,7 +486,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
         .filter { it.configurable }
         .map { property ->
           when {
-            (property is BaseModelType && property.description_kind != null) -> {
+            (property is BaseModelType && property.descriptionKind != null) -> {
               val hclBlock = parent.parentOfType<HCLBlock>()
               val hclProperty = hclBlock?.let { fakeHCLPsiFactory.createFakeHCLProperty(hclBlock, property) }
               createPropertyOrBlockType(property, property.name, hclProperty)

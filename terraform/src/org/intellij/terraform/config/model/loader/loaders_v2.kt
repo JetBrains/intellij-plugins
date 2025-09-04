@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -96,7 +96,7 @@ object BaseLoaderV2 : BaseLoader {
           }
 
           // null due to omitempty, means no arguments in block
-          innerTypeProperties = o?.fields()?.asSequence()?.map { parseSchemaElement(context, it, fqn) }?.toList() ?: emptyList()
+          innerTypeProperties = o?.properties()?.asSequence()?.map { parseSchemaElement(context, it, fqn) }?.toList() ?: emptyList()
 
           // TODO: Set type as List/Set/Map type with innerTypeProperties
           //  Convert innerTypeProperties to parts of ObjectType
@@ -162,13 +162,13 @@ object BaseLoaderV2 : BaseLoader {
           properties = properties).pool(context)
     }
     return PropertyType(name.pool(context), type, hint = additional.hint,
-        description = description?.pool(context),
-        optional = optional,
-        required = required,
-        computed = computed,
-        deprecated = deprecated?.pool(context),
-        conflictsWith = conflicts,
-        has_default = has_default || has_default_function).pool(context)
+                        description = description?.pool(context),
+                        optional = optional,
+                        required = required,
+                        computed = computed,
+                        deprecated = deprecated?.pool(context),
+                        conflictsWith = conflicts,
+                        hasDefault = has_default || has_default_function).pool(context)
   }
 
   override fun parseType(context: LoadContext, string: String?): Type {
@@ -282,7 +282,7 @@ class FunctionsLoaderV2 : VersionedMetadataLoader {
       return
     }
     model.loaded["functions"] = fileName
-    for ((name, v) in functions.fields()) {
+    for ((name, v) in functions.properties()) {
       if (v !is ObjectNode) continue
       val returnType = base.parseType(context, v.string("ReturnType")!!)
       val parameters: List<ObjectNode> = v.array("Parameters")?.mapNotNull { it as? ObjectNode } ?: emptyList()
