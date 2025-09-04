@@ -54,13 +54,12 @@ class PrettierLanguageServiceImpl(
     text: String,
     prettierPackage: NodePackage,
     range: TextRange?,
-    cursorOffset: Int,
   ): CompletableFuture<PrettierLanguageService.FormatResult?> { // Prettier may remove a trailing line break in Vue (WEB-56144, WEB-52196, https://github.com/prettier/prettier/issues/13399),
     // even if the range doesn't include that line break. `forceLineBreakAtEof` helps to work around the problem.
     val forceLineBreakAtEof = range != null && range.endOffset < text.length && text.endsWith("\n")
 
     return withServiceAndEnv(prettierPackage, { msg -> PrettierLanguageService.FormatResult.error(msg) }) { process ->
-      val command = ReformatFileCommand(project, filePath, prettierPackage, ignoreFilePath, text, range, false, cursorOffset)
+      val command = ReformatFileCommand(project, filePath, prettierPackage, ignoreFilePath, text, range, false, -1)
       val answer = process.execute(command)?.answer ?: return@withServiceAndEnv null
       val res = parseReformatResponse(answer, forceLineBreakAtEof)
       val newError = when {

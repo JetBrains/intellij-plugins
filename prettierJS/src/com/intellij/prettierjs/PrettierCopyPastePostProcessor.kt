@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.prettierjs.formatting.PrettierFormattingApplier
-import com.intellij.prettierjs.formatting.createFormattingContext
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
@@ -66,22 +65,20 @@ class PrettierCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransfera
         val response = runBlockingCancellable {
           val timeout = Registry.intValue("prettier.on.paste.timeout.ms", 500).milliseconds
           withTimeoutOrNull(timeout) {
-            ReformatWithPrettierAction.performRequestForFileAsync(psiFile, bounds.textRange, psiFile.text)?.await()
+            ReformatWithPrettierAction.performRequestForFileAsync(psiFile, bounds.textRange, psiFile.text).await()
           }
         } ?: return@scheduleOnPasteProcessing emptyList()
 
         if (response.result == null) return@scheduleOnPasteProcessing emptyList()
-        val formattingContext = createFormattingContext(
+        listOfNotNull(PrettierFormattingApplier.from(
           document,
+          psiFile,
           response.result,
-          response.cursorOffset,
-        )
-
-        listOfNotNull(PrettierFormattingApplier.from(formattingContext))
+        ))
       },
       applyChanges = { waCallbacks ->
         val psiFile = psiPtr.dereference() ?: return@scheduleOnPasteProcessing
-        waCallbacks.forEach { it.apply(project, psiFile.virtualFile) }
+        waCallbacks.forEach { it.apply(project, psiFile) }
       }
     )
   }

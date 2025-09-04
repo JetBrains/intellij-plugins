@@ -120,11 +120,6 @@ public final class PrettierUtil {
     return virtualFile != null && CONFIG_FILE_NAMES.contains(virtualFile.getName());
   }
 
-  public static boolean isSafeToFormatWithCursor(@NotNull VirtualFile virtualFile) {
-    // Don't use cursorOffset for Svelte files WEB-73860
-    return !"svelte".equalsIgnoreCase(virtualFile.getExtension());
-  }
-
   public static @NotNull Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull List<VirtualFile> from, @NotNull Project project) {
     HashSet<VirtualFile> results = new HashSet<>();
     VirtualFile baseDir = project.getBaseDir();
@@ -205,7 +200,7 @@ public final class PrettierUtil {
       return null;
     }
     List<VirtualFile> configs = ContainerUtil.mapNotNull(CONFIG_FILE_NAMES, name -> dir.findChild(name));
-    return configs.size() == 1 ? configs.get(0) : null;
+    return configs.size() == 1 ? configs.getFirst() : null;
   }
 
   public static @Nullable VirtualFile findFileConfig(@NotNull Project project, @NotNull VirtualFile from) {

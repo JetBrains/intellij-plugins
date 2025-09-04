@@ -17,7 +17,6 @@ interface PrettierLanguageService {
     text: String,
     prettierPackage: NodePackage,
     range: TextRange?,
-    cursorOffset: Int,
   ): CompletableFuture<FormatResult?>
 
   fun resolveConfig(
