@@ -9,7 +9,7 @@ public class JsonGherkinKeywordProviderTest extends AbstractGherkinKeywordProvid
   @Override
   protected GherkinKeywordProvider buildKeywordProvider() {
     ClassLoader classLoader = JsonGherkinKeywordProvider.class.getClassLoader();
-    InputStream inputStream = classLoader.getResourceAsStream("i18n.json");
+    InputStream inputStream = classLoader.getResourceAsStream("gherkin-languages.json");
     return new JsonGherkinKeywordProvider(inputStream);
   }
 }

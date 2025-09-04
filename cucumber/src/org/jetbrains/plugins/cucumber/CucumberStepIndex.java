@@ -29,12 +29,14 @@ public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean,
   /// Regenerate it with:
   ///
   /// ```
-  /// cat ./contrib/cucumber/resources/i18n.json \
+  /// cat ./contrib/cucumber/resources/gherkin-languages.json \
   ///   | jq '(map_values(([.and, .but, .given, .then, .when] | flatten | [.[] | select(. != "* ") | gsub("\\s+|'\''"; "")])))' \
   ///   > ./contrib/cucumber/resources/step_keywords.json
   /// ```
   ///
   /// The keywords are generated with spaces and punctuation removed for reasons described in IDEA-295155.
+  /// 
+  /// @see org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider to s
   private static final List<String> STEP_KEYWORDS = loadStepKeywords();
 
   private static List<String> loadStepKeywords() {

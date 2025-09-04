@@ -22,10 +22,13 @@ import java.util.*;
 
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 
-/// The canonical source of truth is the [gherkin-languages.json](https://github.com/cucumber/gherkin/blob/main/gherkin-languages.json)
-/// file, with one modification from us: "Значения" (see RUBY-29359).
+/// Provides Gherkin keywords from the upstream [`gherkin-languages.json`](https://github.com/cucumber/gherkin/blob/main/gherkin-languages.json) file,
+/// with one modification from us: "Значения" (see RUBY-29359).
 ///
-/// Our `i18n.json` file has to be manually updated to keep track of upstream changes.
+/// Our `gherkin-languages.json` file is vendored and must be manually updated to keep track of upstream changes.
+/// 
+/// There is also the `step_keywords.json` file which is generated from `gherkin-languages.json`.
+/// See [CucumberStepIndex][org.jetbrains.plugins.cucumber.CucumberStepIndex] to learn more.
 public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
 
   private static final class Lazy {
@@ -41,7 +44,7 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
 
   public static GherkinKeywordProvider getKeywordProvider() {
     if (myKeywordProvider == null) {
-      myKeywordProvider = createKeywordProviderFromJson("i18n_old.json");
+      myKeywordProvider = createKeywordProviderFromJson("gherkin-languages-old.json");
     }
     return myKeywordProvider;
   }
@@ -51,7 +54,7 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
       return getKeywordProvider();
     }
     if (myGherkin6KeywordProvider == null) {
-      myGherkin6KeywordProvider = createKeywordProviderFromJson("i18n.json");
+      myGherkin6KeywordProvider = createKeywordProviderFromJson("gherkin-languages.json");
     }
     return myGherkin6KeywordProvider;
   }
@@ -76,7 +79,8 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   public JsonGherkinKeywordProvider(@NotNull InputStream inputStream) {
     Map<String, Map<String, Object>> fromJson;
     try (Reader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-      fromJson = new Gson().fromJson(in, new TypeToken<Map<String, HashMap<String, Object>>>() {}.getType());
+      fromJson = new Gson().fromJson(in, new TypeToken<Map<String, HashMap<String, Object>>>() {
+      }.getType());
 
       for (Map.Entry<String, Map<String, Object>> entry : fromJson.entrySet()) {
         Map<String, Object> translation = entry.getValue();
