@@ -1,7 +1,6 @@
 package com.intellij.dts.completion.insert
 
 import com.intellij.codeInsight.AutoPopupController
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.dts.util.DtsUtil
 import com.intellij.psi.PsiElement
@@ -73,7 +72,7 @@ private class InsertBackendImpl(val context: InsertionContext) : DtsInsertBacken
   }
 
   override fun openAutocomplete() {
-    AutoPopupController.getInstance(context.project).scheduleAutoPopup(context.editor, CompletionType.BASIC, null)
+    AutoPopupController.getInstance(context.project).scheduleAutoPopup(context.editor)
   }
 }
 

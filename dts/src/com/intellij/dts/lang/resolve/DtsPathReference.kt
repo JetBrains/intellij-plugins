@@ -1,7 +1,6 @@
 package com.intellij.dts.lang.resolve
 
 import com.intellij.codeInsight.AutoPopupController
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.dts.DtsIcons
@@ -35,7 +34,7 @@ class DtsPathReference(
 
       val element = file.findElementAt(max(editor.caretModel.offset - 1, 0))
       if (element?.parent is DtsPHandle) {
-        AutoPopupController.getInstance(project).scheduleAutoPopup(editor, CompletionType.BASIC, null)
+        AutoPopupController.getInstance(project).scheduleAutoPopup(editor)
       }
 
       return Result.CONTINUE

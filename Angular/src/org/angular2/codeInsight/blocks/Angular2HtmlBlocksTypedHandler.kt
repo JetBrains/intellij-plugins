@@ -2,7 +2,6 @@
 package org.angular2.codeInsight.blocks
 
 import com.intellij.codeInsight.AutoPopupController
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
@@ -33,7 +32,7 @@ private class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
           (at.parent.let { it is XmlDocument || it is XmlText }
            || at.elementType == XmlTokenType.XML_END_TAG_START)) {
         AutoPopupController.getInstance(project)
-          .scheduleAutoPopup(editor, CompletionType.BASIC, null)
+          .scheduleAutoPopup(editor)
       }
     }
     else if (charTyped == ' ') {
@@ -42,7 +41,7 @@ private class Angular2HtmlBlocksTypedHandler : TypedHandlerDelegate() {
                          || afterVarDefinitionInForBlock(at) || afterOfKeywordInForBlock(at)
                          || afterEqInForBlock(at))) {
         AutoPopupController.getInstance(project)
-          .scheduleAutoPopup(editor, CompletionType.BASIC, null)
+          .scheduleAutoPopup(editor)
       }
     }
     return Result.CONTINUE

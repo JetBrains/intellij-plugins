@@ -16,7 +16,7 @@ class DtsCompletionContributor : CompletionContributor() {
     override fun checkAutoPopup(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
       if (file !is DtsFile || c != '/') return Result.CONTINUE
 
-      AutoPopupController.getInstance(project).scheduleAutoPopup(editor, CompletionType.BASIC, null)
+      AutoPopupController.getInstance(project).scheduleAutoPopup(editor)
 
       return Result.CONTINUE
     }
