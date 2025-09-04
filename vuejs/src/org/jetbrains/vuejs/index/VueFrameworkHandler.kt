@@ -701,7 +701,10 @@ fun findModule(element: PsiElement?, setup: Boolean): JSExecutionScope? =
 @StubSafe
 fun findScriptTag(xmlFile: XmlFile, setup: Boolean): XmlTag? =
   findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME) {
-    setup xor (it.stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) == null)
+    val isSetupScript = it.stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) != null
+                        || it.stubSafeGetAttribute(VAPOR_ATTRIBUTE_NAME) != null
+
+    setup == isSetupScript
   }
 
 @StubSafe
@@ -716,7 +719,10 @@ fun XmlTag?.isScriptSetupTag(): Boolean {
   contract {
     returns(true) implies (this@isScriptSetupTag != null)
   }
-  return this != null && name == SCRIPT_TAG_NAME && stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) != null
+  return this != null
+         && name == SCRIPT_TAG_NAME
+         && (stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) != null
+             || stubSafeGetAttribute(VAPOR_ATTRIBUTE_NAME) != null)
 }
 
 @StubSafe

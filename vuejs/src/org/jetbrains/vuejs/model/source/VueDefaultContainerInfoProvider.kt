@@ -181,7 +181,10 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                 ?.find { it is JSEmbeddedContent }
                 ?.context
                 ?.asSafely<XmlTag>()
-                ?.takeIf { hasAttribute(it, SETUP_ATTRIBUTE_NAME) }
+                ?.takeIf {
+                  hasAttribute(it, SETUP_ATTRIBUTE_NAME)
+                  || hasAttribute(it, VAPOR_ATTRIBUTE_NAME)
+                }
                 ?.containingFile
                 ?.let { VueModelManager.getComponent(it) }
             is HtmlFileImpl ->
