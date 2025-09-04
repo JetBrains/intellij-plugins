@@ -119,7 +119,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         && attributeInfo.directiveKind == VueAttributeNameParser.VueDirectiveKind.PRE) {
       (peekTagInfo() as VueHtmlTagInfo).hasVPre = true
     }
-    else if (attributeInfo.kind == SCRIPT_SETUP) {
+    else if (attributeInfo.kind == SCRIPT_SETUP || attributeInfo.kind == SCRIPT_VAPOR) {
       (peekTagInfo() as VueHtmlTagInfo).hasScriptSetup = true
     }
     if (token() === XmlTokenType.XML_EQ) {
