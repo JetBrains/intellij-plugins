@@ -26,8 +26,9 @@ import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement
 /// with one modification from us: "Значения" (see RUBY-29359).
 ///
 /// Our `gherkin-languages.json` file is vendored and must be manually updated to keep track of upstream changes.
-/// 
-/// There is also the `step_keywords.json` file which is generated from `gherkin-languages.json`.
+///
+/// There is also the `step-keywords.json` file which is generated from `gherkin-languages.json`.
+/// It must also be updated manually whenever `gherkin-languages.json` changes.
 /// See [CucumberStepIndex][org.jetbrains.plugins.cucumber.CucumberStepIndex] to learn more.
 public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
 

@@ -26,24 +26,26 @@ import java.util.Map;
 
 public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean, List<Integer>> {
 
+  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
   /// Regenerate it with:
   ///
   /// ```
   /// cat ./contrib/cucumber/resources/gherkin-languages.json \
   ///   | jq '(map_values(([.and, .but, .given, .then, .when] | flatten | [.[] | select(. != "* ") | gsub("\\s+|'\''"; "")])))' \
-  ///   > ./contrib/cucumber/resources/step_keywords.json
+  ///   > ./contrib/cucumber/resources/step-keywords.json
   /// ```
   ///
   /// The keywords are generated with spaces and punctuation removed for reasons described in IDEA-295155.
   /// 
-  /// @see org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider to s
+  /// @see org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider JsonGherkinKeywordProvider
+  //@formatter:on
   private static final List<String> STEP_KEYWORDS = loadStepKeywords();
 
   private static List<String> loadStepKeywords() {
     ClassLoader classLoader = CucumberStepIndex.class.getClassLoader();
     if (classLoader == null) throw new IllegalStateException("ClassLoader not available");
 
-    String filename = "step_keywords.json";
+    String filename = "step-keywords.json";
     InputStream stream = classLoader.getResourceAsStream(filename);
     if (stream == null) throw new IllegalStateException("Could not load " + filename);
 
