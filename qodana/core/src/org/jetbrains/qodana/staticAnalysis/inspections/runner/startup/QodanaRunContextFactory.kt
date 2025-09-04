@@ -38,7 +38,6 @@ internal class DefaultRunContextFactory(
     val loadedProfile = LoadedProfile.load(config, project, reporter)
     reportUsage(loadedProfile, project)
     reporter.reportMessage(1, InspectionsBundle.message("inspection.application.chosen.profile.log.message", loadedProfile.profile.name))
-
     scope.launch {
       try {
         awaitCancellation()

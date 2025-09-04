@@ -221,6 +221,18 @@ class QodanaConfigTest {
   }
 
   @Test
+  fun `yaml root java projects`() {
+    val config = load("""
+      version: "1.0"
+      rootJavaProjects:
+        - "/absolute/path"
+        - "relative/path" 
+      """.trimIndent())
+
+    assertEquals(listOf(Path.of("/absolute/path"), Path.of("relative/path")), config.rootJavaProjects)
+  }
+
+  @Test
   fun `yaml failThreshold`() {
     val config = load("""
       version: "1.0"

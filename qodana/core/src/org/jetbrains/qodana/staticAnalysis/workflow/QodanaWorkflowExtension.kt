@@ -16,6 +16,12 @@ interface QodanaWorkflowExtension {
 
     suspend fun callBeforeProjectOpened(config: QodanaConfig) = invokeAllWorkflowExtensions { beforeProjectOpened(config) }
 
+    suspend fun callManualProjectsImport(config: QodanaConfig, project: Project) =
+      invokeAllWorkflowExtensions { manualProjectsImport(project) }
+
+    suspend fun callAutomaticProjectsImport(config: QodanaConfig, project: Project) =
+      invokeAllWorkflowExtensions { automaticProjectsImport(project) }
+
     suspend fun callAfterConfiguration(config: QodanaConfig, project: Project) =
       invokeAllWorkflowExtensions { afterConfiguration(config, project) }
 
@@ -40,6 +46,10 @@ interface QodanaWorkflowExtension {
   val requireHeadless: Boolean get() = false
 
   suspend fun beforeProjectOpened(config: QodanaConfig) {}
+
+  suspend fun manualProjectsImport(project: Project) {}
+
+  suspend fun automaticProjectsImport(project: Project) {}
 
   suspend fun afterConfiguration(config: QodanaConfig, project: Project) {}
 

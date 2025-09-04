@@ -24,6 +24,9 @@ jvm_library(
     "//contrib/qodana",
     "@community//platform/backend/observation",
     "//contrib/qodana/jvm/java",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/external-system-impl:externalSystem-impl",
+    "@community//platform/core-impl",
   ]
 )
 ### auto-generated section `build intellij.qodana.jvm.gradle` end

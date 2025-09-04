@@ -5,6 +5,7 @@
   </dependencies>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <projectDescriber implementation="org.jetbrains.qodana.jvm.gradle.GradleProjectDescriber"/>
+    <workflowExtension implementation="org.jetbrains.qodana.jvm.gradle.QodanaGradleProjectsImporter" />
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <projectResolve implementation="org.jetbrains.qodana.jvm.gradle.QodanaGradleProjectResolver"/>
