@@ -2,6 +2,7 @@
 package org.angular2.codeInsight
 
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 
@@ -37,6 +38,18 @@ class Angular2EditorTest : Angular2TestCase("editor", false) {
       type("\b\b\b")
     }
 
+  fun testIfBlockExtendSelection() =
+    doWordSelectionTest()
 
+  fun testIfElseBlockExtendSelection() =
+    doWordSelectionTest()
+
+  fun testSwitchBlockExtendSelection() =
+    doWordSelectionTest()
+
+  private fun doWordSelectionTest() =
+    doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0, configureFile = false) {
+      CodeInsightTestUtil.doWordSelectionTestOnDirectory(myFixture, getTestName(true), "html")
+    }
 
 }
