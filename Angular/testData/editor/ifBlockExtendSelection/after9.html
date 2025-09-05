@@ -1,0 +1,24 @@
+<div>
+  <div>
+    @if (a + b) <selection>{
+      <b>foo</b>
+      <div>
+        <div>
+          foo
+          @if (a<caret> + b) {
+            <div></div>
+            @if(true) {}
+          }
+          <div></div>
+        </div>
+      </div>
+    }
+</selection>    @else if (a + b) {
+      <div></div>
+    }
+    @else {
+      <div></div>
+    }
+    foo
+  </div>
+</div>

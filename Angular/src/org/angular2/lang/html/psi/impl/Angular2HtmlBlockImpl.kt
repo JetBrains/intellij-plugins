@@ -53,6 +53,7 @@ internal class Angular2HtmlBlockImpl(type: Angular2HtmlElementTypes.Angular2Elem
 
   override val primaryBlock: Angular2HtmlBlock?
     get() {
+      if (isPrimary) return this
       val primaryBlockDefinition = primaryBlockDefinition
       return if (primaryBlockDefinition?.hasNestedSecondaryBlocks == true)
         parent.asSafely<Angular2HtmlBlockContents>()

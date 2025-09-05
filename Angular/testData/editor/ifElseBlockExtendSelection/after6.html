@@ -1,0 +1,15 @@
+<div>
+  <div>
+    @if (a + b) {
+      <b>foo</b>
+      <div>
+      </div>
+    } <selection>@else if (a + b) {
+    <div><caret></div>
+    }
+</selection>    @else {
+    <div></div>
+    }
+    foo
+  </div>
+</div>
