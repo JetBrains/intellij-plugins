@@ -9,5 +9,8 @@ public class FrenchSteps implements Fr {
 
     Etantdonnéque("complex", () -> {
     });
+
+    Etantdonné("complex2", () -> {
+    });
   }
 }

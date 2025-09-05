@@ -31,7 +31,7 @@ public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean,
   ///
   /// ```
   /// cat ./contrib/cucumber/resources/gherkin-languages.json \
-  ///   | jq '(map_values(([.and, .but, .given, .then, .when] | flatten | [.[] | select(. != "* ") | gsub("\\s+|'\''"; "")])))' \
+  ///   | jq '(map_values(([.and, .but, .given, .then, .when] | flatten | [.[] | select(. != "* ") | gsub("\\s+|'|,\''"; "")])))' \
   ///   > ./contrib/cucumber/resources/step-keywords.json
   /// ```
   ///

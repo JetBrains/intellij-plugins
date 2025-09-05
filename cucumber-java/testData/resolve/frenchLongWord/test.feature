@@ -4,3 +4,4 @@ Fonctionnalité: Name
   Scénario: noop
     Et simple
     Etant donné que complex
+    Etant donné qu'complex2

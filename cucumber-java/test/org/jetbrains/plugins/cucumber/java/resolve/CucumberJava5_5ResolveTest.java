@@ -25,11 +25,17 @@ public class CucumberJava5_5ResolveTest extends BaseCucumberJavaResolveTest {
   public void testOtherLanguagesWithConcatenatedWords() {
     doTest("frenchLongWord", "sim<caret>ple", "Quand");
     checkReference("com<caret>plex", "Etantdonnéque");
+    checkReference("<caret>complex2", "Etantdonné");
   }
 
   public void testOtherLanguagesWithRemovedPunctuation() {
     doTest("australianWeirdWord", "Australian<caret>IsDifferent", "Yknow");
     checkReference("we have to<caret> support it anyway", "ButattheendofthedayIreckon");
+  }
+
+  public void testPolishWithConcatenatedWord() {
+    doTest("polishConcatenatedWord", "jestem<caret> głodny", "Zakładającże");
+    checkReference("je<caret>m ciastko", "Wtedy");
   }
 
   @Override
