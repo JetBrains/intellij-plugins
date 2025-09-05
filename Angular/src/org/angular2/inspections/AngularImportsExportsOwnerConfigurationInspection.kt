@@ -16,6 +16,7 @@ import com.intellij.psi.XmlRecursiveElementWalkingVisitor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
@@ -29,6 +30,7 @@ import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.MODULE_DEC
 import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.Angular2DecoratorUtil.isForwardRefCall
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlClassName
 import org.angular2.codeInsight.Angular2HighlightingUtils.htmlLabel
@@ -108,6 +110,8 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
 
     override fun processAcceptableEntity(entity: Angular2Entity) {
       if (entity is Angular2Declaration && entity.isStandalone && !usedEntities.contains(entity)) {
+        // If we are going through an array literal, we can't be sure that we've correctly processed all variants.
+        if (backtrace().any { it is JSArrayLiteralExpression && it.parents(false).none { p -> p == decorator } }) return
         registerProblem(ProblemType.UNUSED_IMPORT,
                         Angular2Bundle.htmlMessage("angular.inspection.unused-component-import.declaration.message", entity.htmlLabel),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
@@ -210,6 +214,9 @@ abstract class AngularImportsExportsOwnerConfigurationInspection protected const
         )
       }
     }
+
+    private fun hasForwardRefCall(): Boolean =
+      backtrace().any { isForwardRefCall(it) }
   }
 
   private class ExportsValidator(
