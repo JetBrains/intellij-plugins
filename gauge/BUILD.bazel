@@ -49,13 +49,10 @@ jvm_library(
     "@lib//:protobuf",
     "@lib//:commons-io",
     "@community//platform/util/jdom",
+    "@community//libraries/grpc",
+    "@community//libraries/grpc-netty-shaded",
   ],
-  runtime_deps = [
-    ":gauge_resources",
-    "@lib//:grpc-stub",
-    "@lib//:grpc-core",
-    "@lib//:grpc-netty-shaded",
-  ]
+  runtime_deps = [":gauge_resources"]
 )
 
 jvm_library(
@@ -105,6 +102,8 @@ jvm_library(
     "@lib//:protobuf",
     "@lib//:commons-io",
     "@community//platform/util/jdom",
+    "@community//libraries/grpc",
+    "@community//libraries/grpc-netty-shaded",
   ],
   runtime_deps = [":gauge_resources"]
 )

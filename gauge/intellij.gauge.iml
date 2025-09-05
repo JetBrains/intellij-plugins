@@ -95,12 +95,11 @@
     <orderEntry type="module" module-name="intellij.maven" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
-    <orderEntry type="library" scope="RUNTIME" name="grpc-stub" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="grpc-core" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="grpc-netty-shaded" level="project" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="library" name="protobuf" level="project" />
     <orderEntry type="library" name="commons-io" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
+    <orderEntry type="module" module-name="intellij.libraries.grpc" />
+    <orderEntry type="module" module-name="intellij.libraries.grpc.netty.shaded" />
   </component>
 </module>
