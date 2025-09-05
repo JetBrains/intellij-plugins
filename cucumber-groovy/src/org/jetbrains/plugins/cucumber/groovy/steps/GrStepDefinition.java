@@ -38,8 +38,8 @@ public class GrStepDefinition extends AbstractStepDefinition implements PomNamed
   @Override
   public List<String> getVariableNames() {
     PsiElement element = getElement();
-    if (element instanceof GrMethodCall) {
-      GrClosableBlock[] closures = ((GrMethodCall)element).getClosureArguments();
+    if (element instanceof GrMethodCall call) {
+      GrClosableBlock[] closures = call.getClosureArguments();
       assert closures.length == 1;
       GrParameter[] parameters = closures[0].getParameterList().getParameters();
       ArrayList<String> result = new ArrayList<>();
@@ -54,10 +54,10 @@ public class GrStepDefinition extends AbstractStepDefinition implements PomNamed
 
   @Override
   protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
-    if (!(element instanceof GrMethodCall)) {
+    if (!(element instanceof GrMethodCall call)) {
       return null;
     }
-    return GrCucumberUtil.getStepDefinitionPatternText((GrMethodCall)element);
+    return GrCucumberUtil.getStepDefinitionPatternText(call);
   }
 
   @Override

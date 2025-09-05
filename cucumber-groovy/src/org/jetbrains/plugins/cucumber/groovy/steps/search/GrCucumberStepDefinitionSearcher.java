@@ -39,10 +39,10 @@ public final class GrCucumberStepDefinitionSearcher implements QueryExecutor<Psi
       return element;
     }
 
-    if (element instanceof PomTargetPsiElement) {
-      final PomTarget target = ((PomTargetPsiElement)element).getTarget();
-      if (target instanceof GrStepDefinition) {
-        return ((GrStepDefinition)target).getElement();
+    if (element instanceof PomTargetPsiElement psiElement) {
+      final PomTarget target = psiElement.getTarget();
+      if (target instanceof GrStepDefinition definition) {
+        return definition.getElement();
       }
     }
 

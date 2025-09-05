@@ -29,14 +29,14 @@ public final class GrCucumberUtil {
   public static final String[] HOOKS = new String[]{"Before", "After"};
 
   public static boolean isStepDefinition(PsiElement element) {
-    return element instanceof GrMethodCall &&
-           getCucumberStepRef((GrMethodCall)element) != null &&
-           getStepDefinitionPatternText((GrMethodCall)element) != null;
+    return element instanceof GrMethodCall call &&
+           getCucumberStepRef(call) != null &&
+           getStepDefinitionPatternText(call) != null;
   }
 
   public static @Nullable GrReferenceExpression getCucumberStepRef(final GrMethodCall stepDefinition) {
     final GrExpression ref = stepDefinition.getInvokedExpression();
-    if (!(ref instanceof GrReferenceExpression)) return null;
+    if (!(ref instanceof GrReferenceExpression expression)) return null;
 
     final PsiMethod method = stepDefinition.resolveMethod();
     if (method == null) return null;
@@ -51,7 +51,7 @@ public final class GrCucumberUtil {
 
     if (!GrCucumberCommonClassNames.isCucumberRuntimeGroovyPackage(packageName)) return null;
 
-    return (GrReferenceExpression)ref;
+    return expression;
   }
 
   public static @Nullable String getStepDefinitionPatternText(final GrMethodCall stepDefinition) {
@@ -59,7 +59,7 @@ public final class GrCucumberUtil {
       GrLiteral pattern = getStepDefinitionPattern(stepDefinition);
       if (pattern == null) return null;
       Object value = pattern.getValue();
-      return value instanceof String ? (String)value : null;
+      return value instanceof String s ? s : null;
     });
   }
 
@@ -71,23 +71,23 @@ public final class GrCucumberUtil {
       if (arguments.length == 0 || arguments.length > 2) return null;
 
       GroovyPsiElement arg = arguments[0];
-      if (!(arg instanceof GrUnaryExpression && ((GrUnaryExpression)arg).getOperationTokenType() == GroovyTokenTypes.mBNOT)) return null;
+      if (!(arg instanceof GrUnaryExpression expression && expression.getOperationTokenType() == GroovyTokenTypes.mBNOT)) return null;
 
-      GrExpression operand = ((GrUnaryExpression)arg).getOperand();
-      if (!(operand instanceof GrLiteral)) return null;
+      GrExpression operand = expression.getOperand();
+      if (!(operand instanceof GrLiteral literal)) return null;
 
-      Object value = ((GrLiteral)operand).getValue();
-      return value instanceof String ? ((GrLiteral)operand) : null;
+      Object value = literal.getValue();
+      return value instanceof String ? literal : null;
     });
   }
 
   public static boolean isHook(GrMethodCall methodCall) {
     PsiMethod method = methodCall.resolveMethod();
-    if (method instanceof PsiMirrorElement) {
-      final PsiElement prototype = ((PsiMirrorElement)method).getPrototype();
-      if (!(prototype instanceof PsiMethod)) return false;
+    if (method instanceof PsiMirrorElement element) {
+      final PsiElement prototype = element.getPrototype();
+      if (!(prototype instanceof PsiMethod psiMethod)) return false;
 
-      method = (PsiMethod)prototype;
+      method = psiMethod;
     }
 
     if (method == null) return false;

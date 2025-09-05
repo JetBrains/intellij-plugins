@@ -27,7 +27,7 @@ import java.util.List;
 public final class GrCucumberExtension extends AbstractCucumberJavaExtension {
   @Override
   public boolean isStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
-    return child instanceof GroovyFile && ((GroovyFile)child).getName().endsWith(".groovy");
+    return child instanceof GroovyFile file && file.getName().endsWith(".groovy");
   }
 
   @Override

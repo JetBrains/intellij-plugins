@@ -30,8 +30,8 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
                                      @NotNull PsiScopeProcessor processor,
                                      @NotNull PsiElement place,
                                      @NotNull ResolveState state) {
-    if (qualifierType instanceof CustomWorldType) {
-      doProcessDynamicMethods(processor, place, state, ((CustomWorldType)qualifierType).getStepFile());
+    if (qualifierType instanceof CustomWorldType type) {
+      doProcessDynamicMethods(processor, place, state, type.getStepFile());
     }
   }
 
@@ -39,8 +39,8 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
                                               @NotNull PsiElement place,
                                               @NotNull ResolveState state,
                                               final PsiFile stepFile) {
-    if (stepFile instanceof GroovyFile) {
-      final PsiType worldType = getWorldType((GroovyFile)stepFile);
+    if (stepFile instanceof GroovyFile groovyStepFile) {
+      final PsiType worldType = getWorldType(groovyStepFile);
       if (worldType != null) {
         ResolveUtil.processAllDeclarations(worldType, processor, state, place);
       }
@@ -49,8 +49,8 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
                                                                                   GroovyFileType.getGroovyEnabledFileTypes());
         PsiFile[] files = CacheManager.getInstance(place.getProject()).getFilesWithWord("World", UsageSearchContext.IN_CODE, scope, true);
         for (PsiFile file : files) {
-          if (file instanceof GroovyFile) {
-            final PsiType type = getWorldType((GroovyFile)file);
+          if (file instanceof GroovyFile groovyFile) {
+            final PsiType type = getWorldType(groovyFile);
             if (type != null) {
               if (!ResolveUtil.processAllDeclarations(type, processor, state, place)) {
                 return;
@@ -65,8 +65,8 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
   private static @Nullable PsiType getWorldType(final @NotNull GroovyFile stepFile) {
     return CachedValuesManager.getCachedValue(stepFile, () -> {
       for (GrStatement statement : stepFile.getStatements()) {
-        if (statement instanceof GrMethodCall && isWorldDeclaration((GrMethodCall)statement)) {
-          final GrClosableBlock closure = getClosureArg((GrMethodCall)statement);
+        if (statement instanceof GrMethodCall call && isWorldDeclaration(call)) {
+          final GrClosableBlock closure = getClosureArg(call);
           return CachedValueProvider.Result.create(closure == null ? null : closure.getReturnType(), stepFile);
         }
       }
@@ -81,8 +81,8 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
     final GrExpression[] args = methodCall.getExpressionArguments();
     if (args.length == 0) return null;
     final GrExpression last = DefaultGroovyMethods.last(args);
-    if (last instanceof GrClosableBlock) {
-      return (GrClosableBlock)last;
+    if (last instanceof GrClosableBlock block) {
+      return block;
     }
 
     return null;

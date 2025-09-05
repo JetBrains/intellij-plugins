@@ -186,8 +186,8 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   @Override
   public @NotNull String getStepDefinitionFilePath(@NotNull PsiFile file) {
     final VirtualFile vFile = file.getVirtualFile();
-    if (file instanceof GroovyFile && vFile != null) {
-      String packageName = ((GroovyFile)file).getPackageName();
+    if (file instanceof GroovyFile groovyFile && vFile != null) {
+      String packageName = groovyFile.getPackageName();
       if (StringUtil.isEmptyOrSpaces(packageName)) {
         return vFile.getNameWithoutExtension();
       }
