@@ -48,9 +48,9 @@ public final class CucumberConfigUtil {
 
   private static @Nullable String getCucumberCoreVersionImpl(Module module) {
     for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-      if (orderEntry instanceof LibraryOrderEntry) {
-        final String libraryName = ((LibraryOrderEntry)orderEntry).getLibraryName();
-        final Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
+      if (orderEntry instanceof LibraryOrderEntry libraryOrderEntry) {
+        final String libraryName = libraryOrderEntry.getLibraryName();
+        final Library library = libraryOrderEntry.getLibrary();
 
         //libraryName is null for simple jar entries
         if ((libraryName == null || StringUtil.toLowerCase(libraryName).contains("cucumber")) && library != null) {

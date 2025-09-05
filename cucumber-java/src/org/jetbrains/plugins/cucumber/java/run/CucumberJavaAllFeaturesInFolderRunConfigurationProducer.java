@@ -12,8 +12,8 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 public final class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
   protected CucumberGlueProvider getGlueProvider(final @NotNull PsiElement element) {
-    if (element instanceof PsiDirectory) {
-      return new CucumberJavaAllFeaturesInFolderGlueProvider((PsiDirectory) element);
+    if (element instanceof PsiDirectory directory) {
+      return new CucumberJavaAllFeaturesInFolderGlueProvider(directory);
     }
     return null;
   }
@@ -27,8 +27,8 @@ public final class CucumberJavaAllFeaturesInFolderRunConfigurationProducer exten
   @Override
   protected @Nullable VirtualFile getFileToRun(ConfigurationContext context) {
     final PsiElement element = context.getPsiLocation();
-    if (element instanceof PsiDirectory) {
-      return ((PsiDirectory) element).getVirtualFile();
+    if (element instanceof PsiDirectory directory) {
+      return directory.getVirtualFile();
     }
     return null;
   }

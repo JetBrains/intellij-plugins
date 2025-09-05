@@ -179,8 +179,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   @Override
   public @NotNull String getStepDefinitionFilePath(final @NotNull PsiFile file) {
     final VirtualFile vFile = file.getVirtualFile();
-    if (file instanceof PsiClassOwner && vFile != null) {
-      String packageName = ((PsiClassOwner)file).getPackageName();
+    if (file instanceof PsiClassOwner owner && vFile != null) {
+      String packageName = owner.getPackageName();
       if (StringUtil.isEmptyOrSpaces(packageName)) {
         return vFile.getNameWithoutExtension();
       }

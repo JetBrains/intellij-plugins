@@ -83,15 +83,15 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
 
   @Override
   public boolean isReferenceTo(@NotNull PsiElement element) {
-    if (!(element instanceof PsiNamedElement) || !(element instanceof PomTargetPsiElement)) {
+    if (!(element instanceof PsiNamedElement namedElement) || !(element instanceof PomTargetPsiElement psiElement)) {
       return false;
     }
-    PomTarget pomTarget = ((PomTargetPsiElement)element).getTarget();
+    PomTarget pomTarget = psiElement.getTarget();
     if (!(pomTarget instanceof CucumberJavaParameterPomTarget)) {
       return false;
     }
     String parameterTypeName = getParameterTypeName();
-    if (!StringUtil.equals(((PsiNamedElement)element).getName(), parameterTypeName)) {
+    if (!StringUtil.equals(namedElement.getName(), parameterTypeName)) {
       return false;
     }
     PsiElement resolved = resolve();

@@ -23,18 +23,17 @@ final class CucumberJUnitRunConfigurationExtension extends RunConfigurationExten
   public <T extends RunConfigurationBase<?>> void updateJavaParameters(@NotNull T configuration,
                                                                     @NotNull JavaParameters params,
                                                                     RunnerSettings runnerSettings) {
-    if (!(configuration instanceof JUnitConfiguration)) {
+    if (!(configuration instanceof JUnitConfiguration unitConfiguration)) {
       return;
     }
 
-    Module module = ((JUnitConfiguration)configuration).getConfigurationModule().getModule();
-    GlobalSearchScope scope;
+    Module module = unitConfiguration.getConfigurationModule().getModule();
     if (module == null) {
       return;
     }
-    scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
+    GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
 
-    String mainClassName = ((JUnitConfiguration)configuration).getPersistentData().MAIN_CLASS_NAME;
+    String mainClassName = unitConfiguration.getPersistentData().MAIN_CLASS_NAME;
     DumbService.getInstance(module.getProject()).runWithAlternativeResolveEnabled(() -> {
       PsiClass mainClass =  mainClassName != null
                             ? JavaPsiFacade.getInstance(configuration.getProject()).findClass(mainClassName, scope)

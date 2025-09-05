@@ -22,7 +22,7 @@ public final class CucumberJavaInjector implements MultiHostInjector {
     if (regexpLanguage == null) {
       return;
     }
-    if (element instanceof PsiLiteralExpression && element instanceof PsiLanguageInjectionHost && element.getTextLength() > 2) {
+    if (element instanceof PsiLiteralExpression && element instanceof PsiLanguageInjectionHost injectionHost && element.getTextLength() > 2) {
       final PsiElement firstChild = element.getFirstChild();
       if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL) {
         PsiAnnotation annotation = PsiTreeUtil.getParentOfType(element, PsiAnnotation.class);
@@ -31,7 +31,7 @@ public final class CucumberJavaInjector implements MultiHostInjector {
           final TextRange range = new TextRange(1, element.getTextLength() - 1);
           Module module = ModuleUtilCore.findModuleForPsiElement(element);
           if (module != null && !CucumberJavaVersionUtil.isCucumber3OrMore(module)) {
-            registrar.startInjecting(regexpLanguage).addPlace(null, null, (PsiLanguageInjectionHost)element, range).doneInjecting();
+            registrar.startInjecting(regexpLanguage).addPlace(null, null, injectionHost, range).doneInjecting();
           } 
         }
       }
