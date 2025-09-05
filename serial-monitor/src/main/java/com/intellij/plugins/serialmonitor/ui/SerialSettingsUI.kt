@@ -19,6 +19,7 @@ import com.intellij.ui.UIBundle
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValidationInfoBuilder
+import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.nio.charset.Charset
 import javax.swing.JComponent
@@ -207,25 +208,20 @@ internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe S
         service<SerialProfileService>().setDefaultProfile(it)
       }
       row {
+        button(message("button.connect")) {
+          val profile = service<SerialProfileService>().copyDefaultProfile(portName)
+          connectableList.parent.connectProfile(profile)
+        }.visible(portStatus.portConnectVisible)
+          .applyToComponent { toolTipText = portStatus.connectTooltip }
 
-        if (portStatus == PortStatus.READY) {
-          button(message("button.connect")) {
-            val profile = service<SerialProfileService>().copyDefaultProfile(portName)
-            connectableList.parent.connectProfile(profile)
-          }
-        }
+        button(message("button.disconnect")) {
+          connectableList.parent.disconnectPort(portName)
+        }.visible(portStatus.disconnectVisible)
 
-        if (portStatus == PortStatus.CONNECTED) {
-          button(message("button.disconnect")) {
-            connectableList.parent.disconnectPort(portName)
-          }
-        }
+        button(message("button.open.console")) {
+          connectableList.parent.openConsole(portName)
+        }.visible(portStatus.openConsoleVisible)
 
-        if (portStatus != PortStatus.READY && portStatus != PortStatus.BUSY) {
-          button(message("button.open.console")) {
-            connectableList.parent.openConsole(portName)
-          }
-        }
         link(message("link.label.create.profile")) { connectableList.createNewProfile(null, portName) }
       }
     }
@@ -276,7 +272,8 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
         row {
           button(message("button.connect")) {
             connectableList.parent.connectProfile(profile, profileName)
-          }.visible(status.connectVisible).enabled(status.connectEnabled)
+          }.visible(status.profileConnectVisible).enabled(status.connectEnabled)
+            .applyToComponent { toolTipText = status.connectTooltip }
 
           button(message("button.disconnect")) {
             connectableList.parent.disconnectPort(profile.portName)
@@ -300,10 +297,18 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
   return null
 }
 
-private val PortStatus.connectVisible get() = !this.disconnectVisible
+private val PortStatus.profileConnectVisible get() = !this.disconnectVisible
+private val PortStatus.portConnectVisible get() = this == PortStatus.READY
 
 private val PortStatus.connectEnabled get() = this == PortStatus.READY || this == PortStatus.DISCONNECTED
 
 private val PortStatus.disconnectVisible get() = this == PortStatus.CONNECTED
 
 private val PortStatus.openConsoleVisible get() = this != PortStatus.UNAVAILABLE && this != PortStatus.READY
+
+private val PortStatus.connectTooltip: @Nls String? get() = when (this) {
+  PortStatus.UNAVAILABLE, PortStatus.UNAVAILABLE_DISCONNECTED -> message("tooltip.port.unavailable")
+  PortStatus.BUSY -> message("tooltip.port.busy")
+  PortStatus.CONNECTING -> message("tooltip.port.connecting")
+  else -> null
+}
