@@ -54,7 +54,7 @@ internal fun HCLBlock.getProviderFQName(): String? {
   }
 }
 
-internal fun BaseExpression?.getType(): Type? {
+internal fun BaseExpression?.getType(): HclType? {
   if (this == null) return null
   return TypeCachedValueProvider.getType(this)
 }

@@ -14,7 +14,7 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.actions.AddProviderAction
 import org.intellij.terraform.config.actions.TfInitAction
 import org.intellij.terraform.config.model.BlockType
-import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -62,7 +62,7 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
     }
   }
 
-  private fun getTypeForBlock(blockType: String, identifier: String, block: HCLBlock, model: TypeModel): BlockType? = when (blockType) {
+  private fun getTypeForBlock(blockType: String, identifier: String, block: HCLBlock, model: TfTypeModel): BlockType? = when (blockType) {
     HCL_RESOURCE_IDENTIFIER -> model.getResourceType(identifier, block)
     HCL_DATASOURCE_IDENTIFIER -> model.getDataSourceType(identifier, block)
     HCL_PROVIDER_IDENTIFIER -> model.getProviderType(identifier, block)

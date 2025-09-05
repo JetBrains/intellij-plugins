@@ -361,7 +361,7 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
       file.acceptChildren(object : HCLElementVisitor() {
         override fun visitBlock(o: HCLBlock) {
           if (!TfPsiPatterns.TerraformRootBlock.accepts(o)) return
-          val value = o.`object`?.findProperty(TypeModel.TerraformRequiredVersion.name)?.value ?: return
+          val value = o.`object`?.findProperty(TfTypeModel.TerraformRequiredVersion.name)?.value ?: return
           if (value is LiteralExpression) {
             found.add(value.unquotedText)
           }
@@ -376,7 +376,7 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return CachedValuesManager.getCachedValue(this.moduleRoot, IsHCL2SupportedCachedValueProvider(this))
   }
 
-  val model: TypeModel
+  val model: TfTypeModel
     get() = TypeModelProvider.globalModel
 
   override fun equals(other: Any?): Boolean {
@@ -390,8 +390,8 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return (moduleRoot.virtualFile ?: moduleRoot).hashCode()
   }
 
-  fun getType(): Type {
-    val result = HashMap<String, Type?>()
+  fun getType(): HclType {
+    val result = HashMap<String, HclType?>()
 
     val outputs = getDefinedOutputs()
     for (output in outputs) {

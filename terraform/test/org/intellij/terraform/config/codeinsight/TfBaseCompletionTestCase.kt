@@ -4,15 +4,15 @@ package org.intellij.terraform.config.codeinsight
 import com.intellij.lang.Language
 import org.intellij.terraform.config.CompletionTestCase
 import org.intellij.terraform.config.TerraformLanguage
-import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.model.TfTypeModel
 
 internal abstract class TfBaseCompletionTestCase : CompletionTestCase() {
 
-  val commonResourceProperties: List<String> = TypeModel.AbstractResource.properties.values
+  val commonResourceProperties: List<String> = TfTypeModel.AbstractResource.properties.values
     .filter { it.configurable }
     .map { it.name }
 
-  val commonDataSourceProperties: List<String> = TypeModel.AbstractDataSource.properties.values
+  val commonDataSourceProperties: List<String> = TfTypeModel.AbstractDataSource.properties.values
     .filter { it.configurable }
     .map { it.name }
 

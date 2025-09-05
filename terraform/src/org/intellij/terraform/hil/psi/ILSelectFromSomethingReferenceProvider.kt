@@ -348,7 +348,7 @@ object ILSelectFromSomethingReferenceProvider : PsiReferenceProvider() {
   }
 
   @Suppress("NAME_SHADOWING")
-  private fun resolveInType(type: Type?, context: PsiElement, name: String): HCLElement? {
+  private fun resolveInType(type: HclType?, context: PsiElement, name: String): HCLElement? {
     // TODO: Use not FakeProperty but actual PSI element from Type declaration
     return when (type) {
       is ObjectType -> type.elements?.get(name)?.let { type -> FakeTypeProperty(name, context, type, true) }

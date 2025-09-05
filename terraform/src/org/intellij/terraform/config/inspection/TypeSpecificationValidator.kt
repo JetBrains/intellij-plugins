@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.ProblemsHolder
@@ -13,12 +13,12 @@ import org.jetbrains.annotations.Nls
 open class TypeSpecificationValidator(private val holder: ProblemsHolder?,
                                       private val constraint: Boolean,
                                       private val supportArglessTypes: Boolean = false) {
-  protected open fun error(element: PsiElement, @Nls description: String, range: TextRange? = null): Type? {
+  protected open fun error(element: PsiElement, @Nls description: String, range: TextRange? = null): HclType? {
     holder?.registerProblem(element, range, description)
     return null
   }
 
-  fun getType(e: HCLExpression): Type? {
+  fun getType(e: HCLExpression): HclType? {
     return when (e) {
       is HCLIdentifier -> checkIdentifier(e)
       is HCLMethodCallExpression -> checkMethodCallExpression(e)
@@ -26,7 +26,7 @@ open class TypeSpecificationValidator(private val holder: ProblemsHolder?,
     }
   }
 
-  private fun checkIdentifier(o: HCLIdentifier): Type? {
+  private fun checkIdentifier(o: HCLIdentifier): HclType? {
     return when (val kw = o.id) {
       "bool" -> Types.Boolean
       "string" -> Types.String
@@ -66,7 +66,7 @@ open class TypeSpecificationValidator(private val holder: ProblemsHolder?,
     }
   }
 
-  private fun checkMethodCallExpression(e: HCLMethodCallExpression): Type? {
+  private fun checkMethodCallExpression(e: HCLMethodCallExpression): HclType? {
     // In case of error fail-fast, do not descend
     val method = e.callee
     val methodName = method.id

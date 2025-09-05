@@ -318,7 +318,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       LOG.debug { "TF.BlockTypeOrNameCompletionProvider{position=$position, parent=$parent, obj=$obj, lnws=$leftNWS}" }
       val type = getClearTextValue(leftNWS) ?: return true
       val typeModel = TypeModelProvider.getModel(position)
-      val localProviders = TypeModel.collectProviderLocalNames(position)
+      val localProviders = TfTypeModel.collectProviderLocalNames(position)
       val tiers = ProviderTier.PreferedProviders
       if (parameters.invocationCount == 1) {
         val message = HCLBundle.message("popup.advertisement.press.to.show.partner.community.providers", KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CODE_COMPLETION))
@@ -369,7 +369,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
     }
 
     private fun buildResourceOrDataLookupElement(it: ResourceOrDataSourceType, position: PsiElement): LookupElementBuilder {
-      val providerLocalNamesReversed = TypeModel.collectProviderLocalNames(position).entries.associateBy({ it.value }) { it.key }
+      val providerLocalNamesReversed = TfTypeModel.collectProviderLocalNames(position).entries.associateBy({ it.value }) { it.key }
       return create(it, it.type)
         .withRenderer(object : LookupElementRenderer<LookupElement>() {
           override fun renderElement(element: LookupElement, presentation: LookupElementPresentation) {
@@ -394,7 +394,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
       var parent: PsiElement? = position.parent
-      var right: Type? = null
+      var right: HclType? = null
       var isProperty = false
       var isBlock = false
       val original = parameters.originalPosition ?: return
@@ -463,7 +463,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
       isProperty: Boolean,
       parent: HCLObject,
       result: CompletionResultSet,
-      right: Type?,
+      right: HclType?,
       parameters: CompletionParameters,
       properties: Map<String, PropertyOrBlockType>,
     ) {
@@ -499,7 +499,7 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
         .toList())
     }
 
-    private fun isRightOfPropertyWithCompatibleType(isProperty: Boolean, it: PropertyOrBlockType, right: Type?): Boolean {
+    private fun isRightOfPropertyWithCompatibleType(isProperty: Boolean, it: PropertyOrBlockType, right: HclType?): Boolean {
       if (!isProperty) return false
       if (it !is PropertyType) return false
       if (right == Types.StringWithInjection) {

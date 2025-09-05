@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.local
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -41,7 +41,7 @@ import org.intellij.terraform.LatestInvocationRunner
 import org.intellij.terraform.config.Constants.PROVIDER_VERSION
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.ProviderTier
-import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.getVFSParents
 import org.intellij.terraform.config.model.loader.TfMetadataLoader
@@ -70,10 +70,10 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   private val modelBuildScope = scope.childScope()
 
-  private val modelComputationCache = VirtualFileMap<Deferred<TypeModel>>(project)
+  private val modelComputationCache = VirtualFileMap<Deferred<TfTypeModel>>(project)
 
   @OptIn(ExperimentalCoroutinesApi::class)
-  fun getModel(virtualFile: VirtualFile): TypeModel? {
+  fun getModel(virtualFile: VirtualFile): TfTypeModel? {
     val lock = findLockFile(virtualFile) ?: return null
     val myDeferred = modelComputationCache[lock]
 
@@ -155,8 +155,8 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }.toSet()
   }
 
-  fun scheduleModelRebuild(virtualFiles: Set<VirtualFile>, explicitlyAllowRunningProcess: Boolean = false): SuspendingLazy<List<TypeModel>> {
-    val scheduled = mutableListOf<Deferred<TypeModel>>()
+  fun scheduleModelRebuild(virtualFiles: Set<VirtualFile>, explicitlyAllowRunningProcess: Boolean = false): SuspendingLazy<List<TfTypeModel>> {
+    val scheduled = mutableListOf<Deferred<TfTypeModel>>()
     val locks = virtualFiles.mapNotNullTo(mutableSetOf()) { findLockFile(it) }
     for (lock in locks) {
       modelComputationCache[lock]?.cancel()
@@ -182,7 +182,7 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
     modelBuildScope.coroutineContext.job.children.filter { it.isActive }.forEach { it.join() }
   }
 
-  private val batchModelBuilder = BatchAsyncProcessor<Pair<VirtualFile, Boolean>, TypeModel>(scope) { batch ->
+  private val batchModelBuilder = BatchAsyncProcessor<Pair<VirtualFile, Boolean>, TfTypeModel>(scope) { batch ->
     withBackgroundProgress(project, HCLBundle.message("rebuilding.local.schema"), true) {
       val parallelism = RegistryManager.getInstance().intValue("terraform.registry.metadata.parallelism", 4)
       batch.completeByMapping(parallelism) { (lock, explicitlyAllowRunningProcess) ->
@@ -210,7 +210,7 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
     return mapper.writeValueAsString(metadataNode)
   }
 
-  private fun buildModel(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): Deferred<TypeModel> {
+  private fun buildModel(lock: VirtualFile, explicitlyAllowRunningProcess: Boolean): Deferred<TfTypeModel> {
     val startMode = if (buildLocalMetadataEagerly || explicitlyAllowRunningProcess) CoroutineStart.DEFAULT else CoroutineStart.LAZY
     return modelBuildScope.async(start = startMode) {
       batchModelBuilder.submit(coroutineContext, lock to explicitlyAllowRunningProcess).await()
@@ -344,7 +344,7 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
     }
   }
 
-  private fun buildModelFromJson(json: String): TypeModel {
+  private fun buildModelFromJson(json: String): TfTypeModel {
     val loader = TfMetadataLoader()
     json.byteInputStream().use { input ->
       loader.loadOne("local-schema.json", input)

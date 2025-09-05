@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
 import com.intellij.openapi.util.TextRange
@@ -43,10 +43,10 @@ class TfTypesPresentationTest : LightPlatformTestCase() {
     doTest(ObjectType(mapOf("a" to Types.Any)), "object({a=any})")
   }
 
-  private fun doTest(type: Type, expected: String) {
+  private fun doTest(type: HclType, expected: String) {
     Assert.assertEquals(expected, type.presentableText)
     val validator: TypeSpecificationValidator = object : TypeSpecificationValidator(null, true, true) {
-      override fun error(element: PsiElement, description: String, range: TextRange?): Type? {
+      override fun error(element: PsiElement, description: String, range: TextRange?): HclType? {
         Assert.fail("Error at element '" + element.text + "': " + description)
         return null
       }

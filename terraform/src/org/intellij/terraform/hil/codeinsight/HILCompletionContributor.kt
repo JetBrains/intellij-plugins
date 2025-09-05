@@ -431,7 +431,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
         return
       }
       else if (TfPsiPatterns.OutputRootBlock.accepts(r)) {
-        val outputValue = r.`object`?.findProperty(TypeModel.ValueProperty.name)?.value
+        val outputValue = r.`object`?.findProperty(TfTypeModel.ValueProperty.name)?.value
         if (outputValue is HCLObject) {
           handleHCLObject(outputValue, found)
         }
@@ -454,7 +454,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
       names.mapTo(found) { create(it) }
     }
 
-    private fun collectTypeVariants(type: Type?, found: ArrayList<LookupElement>) {
+    private fun collectTypeVariants(type: HclType?, found: ArrayList<LookupElement>) {
       if (type is ObjectType) {
         type.elements?.keys?.mapTo(found) { create(it) }
       }

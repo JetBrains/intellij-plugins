@@ -66,8 +66,8 @@ internal object TfCompletionUtil {
     HCL_EPHEMERAL_IDENTIFIER
   ) + OpenTofuScopes).toSortedSet()
 
-  val RootBlockKeywords: Set<String> = TypeModel.RootBlocksMap.keys
-  val RootBlockSorted: List<BlockType> = TypeModel.RootBlocks.sortedBy { it.literal }
+  val RootBlockKeywords: Set<String> = TfTypeModel.RootBlocksMap.keys
+  val RootBlockSorted: List<BlockType> = TfTypeModel.RootBlocks.sortedBy { it.literal }
 
   fun createPropertyOrBlockType(value: PropertyOrBlockType, lookupString: String? = null, psiElement: PsiElement? = null): LookupElementBuilder {
     val elementBuilder = when {
@@ -115,7 +115,7 @@ internal object TfCompletionUtil {
         PsiDocumentManager.getInstance(project).commitDocument(document)
 
         val psiFile = context.file
-        val terraformBlock = TypeModel.getTerraformBlock(psiFile) ?: return@withInsertHandler
+        val terraformBlock = TfTypeModel.getTerraformBlock(psiFile) ?: return@withInsertHandler
         CodeStyleManager.getInstance(project).reformatText(psiFile, listOf(terraformBlock.textRange))
       }
 
@@ -158,7 +158,7 @@ internal object TfCompletionUtil {
     return when (block) {
       is ResourceOrDataSourceType -> {
         val providerLocalName = providerLocalNames[block.provider.fullName] ?: return block.type
-        return "${providerLocalName}_${TypeModel.getResourceName(block.type)}"
+        return "${providerLocalName}_${TfTypeModel.getResourceName(block.type)}"
       }
       is ProviderType -> {
         val providerLocalName = providerLocalNames[block.fullName] ?: return block.type

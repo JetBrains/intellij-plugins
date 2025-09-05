@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.refactoring
 
 import com.intellij.codeInsight.CodeInsightUtilCore
@@ -19,7 +19,7 @@ import com.intellij.refactoring.introduce.inplace.OccurrencesChooser
 import com.intellij.refactoring.listeners.RefactoringEventData
 import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import org.intellij.terraform.config.model.Type
+import org.intellij.terraform.config.model.HclType
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getType
 import org.intellij.terraform.config.psi.TfElementGenerator
@@ -300,7 +300,7 @@ open class ILIntroduceVariableHandler : BaseIntroduceVariableHandler<ILExpressio
   private fun createDeclaration(operation: IntroduceOperation): PsiElement? {
     val expr = operation.initializer ?: return null
     val name = operation.name ?: return null
-    val type: Type = expr.getType() ?: Types.String
+    val type: HclType = expr.getType() ?: Types.String
     return TfElementGenerator(operation.project).createVariable(name, type, expr)
   }
 

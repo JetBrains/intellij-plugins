@@ -10,8 +10,8 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.config.TerraformFileType
+import org.intellij.terraform.config.model.HclType
 import org.intellij.terraform.config.model.ProviderType
-import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.hil.psi.ILLiteralExpression
@@ -75,7 +75,7 @@ class TfElementGenerator(val project: Project) : HCLElementGenerator(project) {
     return createObjectProperty(provider.type, providerObject.text)
   }
 
-  fun createVariable(name: String, type: Type?, initializer: ILExpression): HCLBlock {
+  fun createVariable(name: String, type: HclType?, initializer: ILExpression): HCLBlock {
     // TODO: Improve
     val value = when (initializer) {
       is ILLiteralExpression -> initializer.text
@@ -84,7 +84,7 @@ class TfElementGenerator(val project: Project) : HCLElementGenerator(project) {
     return createVariable(name, type, value)
   }
 
-  fun createVariable(name: String, type: Type?, value: String): HCLBlock {
+  fun createVariable(name: String, type: HclType?, value: String): HCLBlock {
     val content = buildString {
       append("variable \"").append(name).append("\" {")
       val typeName = when (type) {
@@ -100,7 +100,7 @@ class TfElementGenerator(val project: Project) : HCLElementGenerator(project) {
     return file.firstChild as HCLBlock
   }
 
-  fun createVariable(name: String, type: Type?, initializer: HCLElement): PsiElement {
+  fun createVariable(name: String, type: HclType?, initializer: HCLElement): PsiElement {
     // TODO: Improve
     val value = when (initializer) {
       is HCLLiteral -> initializer.text

@@ -7,24 +7,24 @@ import com.intellij.util.lazyPub
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLExpression
 
-class Variable(val declaration: HCLBlock) : Block(TypeModel.Variable) {
+class Variable(val declaration: HCLBlock) : Block(TfTypeModel.Variable) {
   val name: String by lazyPub { declaration.name }
   val nameIdentifier: PsiElement get() = declaration.nameIdentifier!!
 
   fun getDefault(): HCLExpression? {
-    return declaration.`object`?.findProperty(TypeModel.VariableDefault.name)?.value
+    return declaration.`object`?.findProperty(TfTypeModel.VariableDefault.name)?.value
   }
 
   fun getTypeExpression(): HCLExpression? {
-    return declaration.`object`?.findProperty(TypeModel.VariableType.name)?.value
+    return declaration.`object`?.findProperty(TfTypeModel.VariableType.name)?.value
   }
 
-  fun getType(): Type? {
+  fun getType(): HclType? {
     val expression = getTypeExpression() ?: return null
     return CachedValuesManager.getManager(declaration.project).getCachedValue(expression, VariableTypeCachedValueProvider(expression))
   }
 
-  fun getCombinedType(): Type? {
+  fun getCombinedType(): HclType? {
     val typeType = getType()
     val defType = getDefault().getType() ?: return typeType
     if (typeType == null) return defType
@@ -32,7 +32,7 @@ class Variable(val declaration: HCLBlock) : Block(TypeModel.Variable) {
   }
 
   fun getDescription(): HCLExpression? {
-    return declaration.`object`?.findProperty(TypeModel.DescriptionProperty.name)?.value
+    return declaration.`object`?.findProperty(TfTypeModel.DescriptionProperty.name)?.value
   }
 
   override fun equals(other: Any?): Boolean {

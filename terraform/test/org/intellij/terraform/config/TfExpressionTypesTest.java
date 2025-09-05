@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config;
 
 import com.intellij.lang.ASTNode;
@@ -17,7 +17,7 @@ import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.KeyedLazyInstance;
 import org.intellij.terraform.TfTestUtils;
-import org.intellij.terraform.config.model.Type;
+import org.intellij.terraform.config.model.HclType;
 import org.intellij.terraform.config.psi.TfReferenceContributor;
 import org.intellij.terraform.hcl.HCLParserDefinition;
 import org.intellij.terraform.hcl.HCLTokenTypes;
@@ -148,7 +148,7 @@ public abstract class TfExpressionTypesTest extends ParsingTestCase {
         buffer.append(root).append("('").append(text).append("')");
       }
       if (psiElement instanceof BaseExpression && !(psiElement instanceof ParameterList)) {
-        Type type = TypeCachedValueProvider.Companion.getType((BaseExpression) psiElement);
+        HclType type = TypeCachedValueProvider.Companion.getType((BaseExpression)psiElement);
         if (type != null) {
           buffer.append(" - ").append(type.getPresentableText());
         }

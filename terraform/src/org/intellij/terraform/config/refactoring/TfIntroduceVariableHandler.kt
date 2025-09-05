@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.refactoring
 
 import com.intellij.codeInsight.CodeInsightUtilCore
@@ -22,8 +22,8 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PairProcessor
 import com.intellij.util.SmartList
 import org.intellij.terraform.config.codeinsight.TfModelHelper
+import org.intellij.terraform.config.model.HclType
 import org.intellij.terraform.config.model.PropertyType
-import org.intellij.terraform.config.model.Type
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getType
 import org.intellij.terraform.config.psi.TfElementGenerator
@@ -271,7 +271,7 @@ class TfIntroduceVariableHandler : BaseIntroduceVariableHandler<HCLElement>() {
   private fun createDeclaration(operation: IntroduceOperation): PsiElement? {
     val expr = operation.initializer ?: return null
     val name = operation.name ?: return null
-    val type: Type = expr.getExpectedType() ?: (expr as? BaseExpression)?.getType() ?: Types.String
+    val type: HclType = expr.getExpectedType() ?: (expr as? BaseExpression)?.getType() ?: Types.String
     return TfElementGenerator(operation.project).createVariable(name, type, expr)
   }
 
@@ -392,7 +392,7 @@ class TfIntroduceVariableHandler : BaseIntroduceVariableHandler<HCLElement>() {
     if (text != null) {
       candidates.addAll(ILRefactoringUtil.generateNames(text))
     }
-    val type: Type? = expression.getExpectedType() ?: (expression as? BaseExpression)?.getType()
+    val type: HclType? = expression.getExpectedType() ?: (expression as? BaseExpression)?.getType()
     if (type != null) {
       candidates.addAll(ILRefactoringUtil.generateNamesByType(type.presentableText))
     }
@@ -400,7 +400,7 @@ class TfIntroduceVariableHandler : BaseIntroduceVariableHandler<HCLElement>() {
   }
 }
 
-private fun HCLElement.getExpectedType(): Type? {
+private fun HCLElement.getExpectedType(): HclType? {
   if (this is HCLProperty) {
     val pp = parent?.parent
     if (pp is HCLBlock) {

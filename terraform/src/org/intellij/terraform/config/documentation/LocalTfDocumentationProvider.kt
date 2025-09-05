@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.documentation
 
 import com.intellij.openapi.util.text.StringUtil
@@ -8,11 +8,7 @@ import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfModelHelper
-import org.intellij.terraform.config.model.BaseModelType
-import org.intellij.terraform.config.model.PropertyType
-import org.intellij.terraform.config.model.TypeModel
-import org.intellij.terraform.config.model.TypeModelProvider
-import org.intellij.terraform.config.model.Variable
+import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.psi.TfDocumentPsi
 import org.intellij.terraform.hcl.HCLBundle
@@ -86,7 +82,7 @@ internal object LocalTfDocumentationProvider {
 
   @Nls
   private fun getTypedBlockDocumentation(element: HCLBlock, bundleKey: String): String? {
-    val block = TypeModel.RootBlocks.firstOrNull { it.literal == element.getNameElementUnquoted(0) }
+    val block = TfTypeModel.RootBlocks.firstOrNull { it.literal == element.getNameElementUnquoted(0) }
     val resourceType = element.getNameElementUnquoted(0)?.lowercase() ?: return null
     val identifier = element.getNameElementUnquoted(1) ?: return null
 

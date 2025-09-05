@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.lookup.LookupElement
@@ -28,11 +28,11 @@ class TfLookupElementRenderer : LookupElementRenderer<LookupElement>() {
     }
   }
 
-  private fun trimType(type: Type): String {
+  private fun trimType(type: HclType): String {
     return StringUtil.shortenTextWithEllipsis(type.toString(), 30, 0)
   }
 
-  private fun getTypeIcon(type: Type): Icon? {
+  private fun getTypeIcon(type: HclType): Icon? {
     when {
       isObjectType(type) -> Icons.Object
       isListType(type)-> Icons.Array

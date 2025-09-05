@@ -133,7 +133,7 @@ object BaseLoaderV1 : BaseLoader {
                         hasDefault = has_default || has_default_function).pool(context)
   }
 
-  override fun parseType(context: LoadContext, string: String?): Type {
+  override fun parseType(context: LoadContext, string: String?): HclType {
     /*
     From  terraform/helper/schema/valuetype.go
     const (

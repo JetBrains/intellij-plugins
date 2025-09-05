@@ -34,7 +34,7 @@ class TfMetadataLoader {
     FunctionsLoaderV1()
   )
 
-  fun loadDefaults(): TypeModel? {
+  fun loadDefaults(): TfTypeModel? {
     try {
       model.external.putAll(loadExternalInformation())
       loadExternal()
@@ -48,7 +48,7 @@ class TfMetadataLoader {
     }
   }
 
-  fun loadFrom(another: TypeModel) {
+  fun loadFrom(another: TfTypeModel) {
     val tmp = buildModel()
     model.resources.addAll(another.allResources().filter { tmp.getResourceType(it.type) == null })
     model.dataSources.addAll(another.allDataSources().filter { tmp.getDataSourceType(it.type) == null })
@@ -60,8 +60,8 @@ class TfMetadataLoader {
     model.providerDefinedFunctions.addAll(another.providerDefinedFunctions.filter { tmp.getFunction(it.name) == null })
   }
 
-  fun buildModel(): TypeModel {
-    return TypeModel(
+  fun buildModel(): TfTypeModel {
+    return TfTypeModel(
       model.resources,
       model.dataSources,
       model.providers,

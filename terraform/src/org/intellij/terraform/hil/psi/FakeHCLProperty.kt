@@ -1,9 +1,9 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.psi
 
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.PsiElement
-import org.intellij.terraform.config.model.Type
+import org.intellij.terraform.config.model.HclType
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.impl.HCLPsiImplUtilJ
@@ -50,7 +50,7 @@ open class FakeHCLProperty(private val _name: String, _parent: PsiElement, val d
 /**
  * Wrapper for the FakeHCLProperty for type declaration, it is a workaround until the resolve to type declaration directly will be implemented
  */
-class FakeTypeProperty(name: String, parent: PsiElement, val type: Type?, dynamic: Boolean = false) :
+class FakeTypeProperty(name: String, parent: PsiElement, val type: HclType?, dynamic: Boolean = false) :
   FakeHCLProperty(name, parent, dynamic) {
   override fun isEquivalentTo(another: PsiElement?): Boolean {
     if (another !is FakeTypeProperty) return super.isEquivalentTo(another)

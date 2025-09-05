@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
 import com.intellij.testFramework.UsefulTestCase
@@ -160,7 +160,7 @@ class TfTypesConvertibilityTest : UsefulTestCase() {
     doTest(ObjectType(mapOf("x" to String, "y" to OptionalType(String))), ObjectType(mapOf("x" to String, "z" to OptionalType(String))), true)
   }
 
-  private fun doTest(from: Type, to: Type, expected: Boolean) {
+  private fun doTest(from: HclType, to: HclType, expected: Boolean) {
     // self check
     assertTrue(from.isConvertibleTo(from))
     assertTrue(to.isConvertibleTo(to))

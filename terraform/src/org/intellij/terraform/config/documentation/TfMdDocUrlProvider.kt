@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.documentation
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import org.intellij.terraform.config.Constants.LATEST_VERSION
 import org.intellij.terraform.config.Constants.REGISTRY_DOMAIN
-import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.model.TfTypeModel
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -44,7 +44,7 @@ internal class TfMdDocUrlProvider(private val coroutineScope: CoroutineScope) : 
     return when (context) {
       PROVIDER -> providerData.docs.firstOrNull { it.category == "overview" }
       RESOURCES, DATASOURCES -> providerData.docs.firstOrNull {
-        it.category == context && (it.title == blockData.identifier?.let { TypeModel.getResourceName(it) } || it.title == blockData.identifier)
+        it.category == context && (it.title == blockData.identifier?.let { TfTypeModel.getResourceName(it) } || it.title == blockData.identifier)
       }
       FUNCTION -> providerData.docs.firstOrNull { it.category == FUNCTION && it.title == blockData.identifier }
       else -> null

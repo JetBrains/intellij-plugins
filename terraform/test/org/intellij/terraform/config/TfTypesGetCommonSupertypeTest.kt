@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
 import com.intellij.openapi.util.TextRange
@@ -7,7 +7,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
 import org.intellij.terraform.config.inspection.TypeSpecificationValidator
-import org.intellij.terraform.config.model.Type
+import org.intellij.terraform.config.model.HclType
 import org.intellij.terraform.config.model.getCommonSupertype
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.common.BaseExpression
@@ -53,9 +53,9 @@ class TfTypesGetCommonSupertypeTest : LightPlatformTestCase() {
     assertEquals(getTypeFromString(expected), actual)
   }
 
-  private fun getTypeFromString(input: String): Type {
+  private fun getTypeFromString(input: String): HclType {
     val validator: TypeSpecificationValidator = object : TypeSpecificationValidator(null, true, true) {
-      override fun error(element: PsiElement, description: String, range: TextRange?): Type? {
+      override fun error(element: PsiElement, description: String, range: TextRange?): HclType? {
         fail("Error at element '" + element.text + "': " + description)
         return null
       }

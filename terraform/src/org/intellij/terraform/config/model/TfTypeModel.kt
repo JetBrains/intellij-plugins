@@ -31,6 +31,7 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_REMOVED_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.Constants.HCL_VALIDATION_IDENTIFIER
@@ -61,7 +62,7 @@ enum class ProviderTier(val label: String) {
   }
 }
 
-class TypeModel(
+class TfTypeModel(
   resources: List<ResourceType> = emptyList(),
   dataSources: List<DataSourceType> = emptyList(),
   providers: List<ProviderType> = emptyList(),
@@ -115,7 +116,7 @@ class TypeModel(
     val Atlas: BlockType = BlockType(HCL_ATLAS_IDENTIFIER, 0, properties = listOf(
       PropertyType("name", Types.String, injectionAllowed = false, required = true)).toMap())
     val Module: BlockType = BlockType(HCL_MODULE_IDENTIFIER, 1, properties = listOf(
-      PropertyType("source", Types.String, hint = SimpleHint("Url"), required = true),
+      PropertyType(HCL_SOURCE_IDENTIFIER, Types.String, hint = SimpleHint("Url"), required = true),
       VersionProperty,
       DependsOnProperty,
       CountProperty,

@@ -93,7 +93,7 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
     // TODO: Generify
     if (ModuleWithEmptySource.accepts(block)) {
       // Check 'source' and report missing one
-      doCheck(block, holder, TypeModel.Module.properties)
+      doCheck(block, holder, TfTypeModel.Module.properties)
       return
     }
     if (ConfigOverrideFile.accepts(block.containingFile)) return

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.intellij.openapi.components.Service
@@ -6,11 +6,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import org.intellij.terraform.TfUsageTriggerCollector
 import org.intellij.terraform.config.model.loader.TfMetadataLoader
 import org.intellij.terraform.config.model.local.TfLocalSchemaService
@@ -19,7 +15,7 @@ import org.intellij.terraform.config.model.local.TfLocalSchemaService
 internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
 
   private val _model = this.coroutineScope.async(context = Dispatchers.IO, start = CoroutineStart.LAZY) {
-    TfMetadataLoader().loadDefaults() ?: TypeModel()
+    TfMetadataLoader().loadDefaults() ?: TfTypeModel()
   }
 
   val ignoredReferences: Set<String> by lazy { loadIgnoredReferences() }
@@ -28,7 +24,7 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
 
     @JvmStatic
     @OptIn(ExperimentalCoroutinesApi::class)
-    val globalModel: TypeModel
+    val globalModel: TfTypeModel
       get() {
         val asyncModelLoadTask = service<TypeModelProvider>()._model
         return if (asyncModelLoadTask.isCompleted) {
@@ -40,7 +36,7 @@ internal class TypeModelProvider(private val coroutineScope: CoroutineScope) {
       }
 
     @RequiresBackgroundThread(generateAssertion = true)
-    fun getModel(psiElement: PsiElement): TypeModel {
+    fun getModel(psiElement: PsiElement): TfTypeModel {
       val virtualFile = getContainingFile(psiElement)?.virtualFile ?: return globalModel
       return psiElement.containingFile.project.service<TfLocalSchemaService>().getModel(virtualFile) ?: globalModel
     }

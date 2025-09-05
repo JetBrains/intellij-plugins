@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.loader
 
 import com.fasterxml.jackson.databind.JsonNode
@@ -57,7 +57,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
 
     val fqn = "$fqnPrefix.$name"
 
-    val type: Type
+    val type: HclType
     val rawType = value.get("type")
     if (rawType != null) {
       type = parseType(context, rawType)
@@ -82,7 +82,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       return BlockType(
         name.pool(context),
         description = description?.pool(context),
-        description_kind = description_kind.pool(context),
+        descriptionKind = description_kind.pool(context),
         optional = optional,
         required = required,
         computed = computed,
@@ -96,7 +96,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
     return PropertyType(
       name.pool(context), type, hint = additional?.hint,
       description = description?.pool(context),
-      description_kind = description_kind.pool(context),
+      descriptionKind = description_kind.pool(context),
       optional = optional,
       required = required,
       computed = computed,
@@ -106,7 +106,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
   }
 
   // https://developer.hashicorp.com/terraform/language/attr-as-blocks
-  private fun isAttributeAsBlock(type: Type): Boolean {
+  private fun isAttributeAsBlock(type: HclType): Boolean {
     if (type !is ContainerType<*>) return false
     if (type !is SetType && type !is ListType) return false
     return type.elements is ObjectType || type.elements == null
@@ -168,13 +168,13 @@ Sensitive           bool            `json:"sensitive,omitempty"`
 
     return BlockType(name.pool(context),
                      description = description?.pool(context),
-                     description_kind = description_kind.pool(context),
+                     descriptionKind = description_kind.pool(context),
                      deprecated = if (deprecated) "DEPRECATED" else null,
                      nesting = nesting,
                      properties = (attrs + blocks).associateBy { it.name }).pool(context)
   }
 
-  private fun parseType(context: LoadContext, node: JsonNode): Type {
+  private fun parseType(context: LoadContext, node: JsonNode): HclType {
     if (node.isTextual) {
       val string = node.asText()
       return when (string?.lowercase(Locale.getDefault())) {
@@ -245,7 +245,7 @@ MinItems    uint64                `json:"min_items,omitempty"`
 MaxItems    uint64                `json:"max_items,omitempty"`
 }
    */
-  private fun parseAttrNestedType(context: LoadContext, node: ObjectNode, fqnPrefix: String): Type {
+  private fun parseAttrNestedType(context: LoadContext, node: ObjectNode, fqnPrefix: String): HclType {
     val attributes = node.obj("attributes")
 
     val nesting_mode = node.string("nesting_mode")
@@ -273,7 +273,7 @@ MaxItems    uint64                `json:"max_items,omitempty"`
 
 }
 
-private fun PropertyOrBlockType.asType(): Type? {
+private fun PropertyOrBlockType.asType(): HclType? {
   return when (this) {
     is PropertyType -> this.type
     is BlockType -> this
@@ -365,12 +365,12 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
     val returnType = objectNode.string("return_type").orEmpty()
     val parameters = objectNode.array("parameters")
       ?.mapNotNull { it as? ObjectNode }
-      ?.map { Argument(TypeImpl(it.string("type").orEmpty()), it.string("name")) }
+      ?.map { Argument(HclTypeImpl(it.string("type").orEmpty()), it.string("name")) }
       ?.toTypedArray().orEmpty()
 
     return TfFunction(
       name,
-      TypeImpl(returnType),
+      HclTypeImpl(returnType),
       arguments = parameters,
       description = description,
       providerType = info.type

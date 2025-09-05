@@ -171,7 +171,7 @@ object BaseLoaderV2 : BaseLoader {
                         hasDefault = has_default || has_default_function).pool(context)
   }
 
-  override fun parseType(context: LoadContext, string: String?): Type {
+  override fun parseType(context: LoadContext, string: String?): HclType {
     if (string == null) return Types.Invalid
     val paren = string.indexOf('(')
     if (paren == -1) {
@@ -186,7 +186,7 @@ object BaseLoaderV2 : BaseLoader {
     return type ?: Types.Object
   }
 
-  private fun parseSimpleType(string: String?): Type {
+  private fun parseSimpleType(string: String?): HclType {
     /*
     From  terraform/helper/schema/valuetype.go
     const (

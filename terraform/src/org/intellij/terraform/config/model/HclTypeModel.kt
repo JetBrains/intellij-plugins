@@ -17,13 +17,13 @@ import org.intellij.terraform.config.Constants.REGISTRY_DOMAIN
 
 // Model for element types
 
-interface Type {
+interface HclType {
   val presentableText: String
   val suggestedValues: List<String>
     get() = emptyList()
 }
 
-open class TypeImpl(protected val baseName: String) : Type {
+open class HclTypeImpl(protected val baseName: String) : HclType {
   override val presentableText: String
     get() = baseName
 
@@ -33,7 +33,7 @@ open class TypeImpl(protected val baseName: String) : Type {
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    if (other !is TypeImpl) return false
+    if (other !is HclTypeImpl) return false
 
     return presentableText == other.presentableText
   }
@@ -43,17 +43,17 @@ open class TypeImpl(protected val baseName: String) : Type {
   }
 }
 
-open class PrimitiveType(name: String, override val suggestedValues: List<String> = emptyList()) : TypeImpl(name)
+open class PrimitiveType(name: String, override val suggestedValues: List<String> = emptyList()) : HclTypeImpl(name)
 
 // HCL2 expression types, from github.com/hashicorp/hcl2/typeexpr and github.com/zclconf/go-cty/cty
 // null as inner type means error in type definition
-abstract class ContainerType<T>(name: String, val elements: T) : TypeImpl(name) {
+abstract class ContainerType<T>(name: String, val elements: T) : HclTypeImpl(name) {
   override val presentableText: String
     get() {
       if (elements == null) {
         return baseName
       }
-      if (elements is Type) {
+      if (elements is HclType) {
         return "${baseName}(${elements.presentableText})"
       }
       return "${baseName}(${elements})"
@@ -76,35 +76,35 @@ abstract class ContainerType<T>(name: String, val elements: T) : TypeImpl(name) 
 
 // List is a sequence of values identified by consecutive whole numbers starting with zero.
 // E.g. `list(number)` will match `[10, 20, 42]`
-open class ListType(elements: Type?) : ContainerType<Type?>("list", elements)
+open class ListType(elements: HclType?) : ContainerType<HclType?>("list", elements)
 
 // Set is a collection of unique values that do not have any secondary identifiers or ordering.
-open class SetType(elements: Type?) : ContainerType<Type?>("set", elements)
+open class SetType(elements: HclType?) : ContainerType<HclType?>("set", elements)
 
 // Map is a collection of values where each is identified by a string label.
 // E.g. `map(number)` will match `{a=10, b=20}`
-open class MapType(elements: Type?) : ContainerType<Type?>("map", elements)
+open class MapType(elements: HclType?) : ContainerType<HclType?>("map", elements)
 
 // Tuple is a sequence of elements identified by consecutive whole numbers starting with zero,
 // where each element has its own type.
 // E.g. `tuple([string, number, bool])` would match a value like `["a", 15, true]`
-open class TupleType(elements: List<Type?>) : ContainerType<List<Type?>>("tuple", elements) {
+open class TupleType(elements: List<HclType?>) : ContainerType<List<HclType?>>("tuple", elements) {
   override val presentableText: String
     get() = "${baseName}([${elements.joinToString(", ")}])"
 }
 
-open class OptionalType(nested: Type?) : ContainerType<Type?>("optional", nested)
+open class OptionalType(nested: HclType?) : ContainerType<HclType?>("optional", nested)
 
 // Object is a collection of named attributes that each have their own type.
 // Extra fields allowed.
 // E.g. `object({ name=string, age=number })` will match `{ name = "John", age = 52 }` and `{ name = "John", age = 52, extra = true }`
-interface ObjectType : Type {
-  val elements: Map<String, Type?>?
+interface ObjectType : HclType {
+  val elements: Map<String, HclType?>?
 }
 
-fun ObjectType(elements: Map<String, Type?>?, optional: Set<String>? = null): ObjectType = ObjectTypeImpl(elements, optional)
+fun ObjectType(elements: Map<String, HclType?>?, optional: Set<String>? = null): ObjectType = ObjectTypeImpl(elements, optional)
 
-private open class ObjectTypeImpl(elements: Map<String, Type?>?, val optional: Set<String>? = null) : ContainerType<Map<String, Type?>?>(
+private open class ObjectTypeImpl(elements: Map<String, HclType?>?, val optional: Set<String>? = null) : ContainerType<Map<String, HclType?>?>(
   "object", elements), ObjectType {
   override val presentableText: String
     get() {
@@ -115,14 +115,14 @@ private open class ObjectTypeImpl(elements: Map<String, Type?>?, val optional: S
     }
 }
 
-fun isListType(type: Type?): Boolean {
+fun isListType(type: HclType?): Boolean {
   return when (type) {
     is ListType, is SetType, is TupleType -> true
     else -> false
   }
 }
 
-fun isObjectType(type: Type?): Boolean {
+fun isObjectType(type: HclType?): Boolean {
   return when (type) {
     is MapType, is ObjectType -> true
     else -> false
@@ -134,7 +134,7 @@ fun isObjectType(type: Type?): Boolean {
  *
  * Note, it returns null if cannot find common type, not Any
  */
-fun getCommonSupertype(input: Collection<Type?>): Type? {
+fun getCommonSupertype(input: Collection<HclType?>): HclType? {
   if (input.isEmpty()) return null
   for (type in input) {
     when (type) {
@@ -157,7 +157,7 @@ fun getCommonSupertype(input: Collection<Type?>): Type? {
   }
 
   if (set.all { isListType(it) }) {
-    val innerTypes = HashSet<Type>(set.size)
+    val innerTypes = HashSet<HclType>(set.size)
     for (t in set) {
       when (t) {
         is ListType -> innerTypes.add(t.elements ?: Types.Any)
@@ -170,7 +170,7 @@ fun getCommonSupertype(input: Collection<Type?>): Type? {
   }
 
   if (set.all { it is ObjectType }) {
-    val common = HashMap<String, MutableList<Type?>>()
+    val common = HashMap<String, MutableList<HclType?>>()
     val maps = set.filterIsInstance<ObjectType>().mapNotNull { it.elements }
     for (map in maps) {
       for ((k, v) in map) {
@@ -181,7 +181,7 @@ fun getCommonSupertype(input: Collection<Type?>): Type? {
   }
 
   if (set.all { isObjectType(it) }) {
-    val innerTypes = HashSet<Type>(set.size)
+    val innerTypes = HashSet<HclType>(set.size)
     for (t in set) {
       when (t) {
         is MapType -> innerTypes.add(t.elements ?: Types.Any)
@@ -203,7 +203,7 @@ fun getCommonSupertype(input: Collection<Type?>): Type? {
 
 // Based on getConversionKnown from
 // github.com/zclconf/go-cty/cty/convert/conversion.go
-fun Type.isConvertibleTo(other: Type): Boolean {
+fun HclType.isConvertibleTo(other: HclType): Boolean {
   if (this == other) return true
 
   if (other == Types.Any) return true
@@ -337,17 +337,17 @@ open class SimpleValueHint(vararg hint: String) : SimpleHint(*hint)
 //endregion hints
 
 open class PropertyType(
-  override val name: String, val type: Type,
+  override val name: String, val type: HclType,
   val hint: Hint? = null,
   val injectionAllowed: Boolean = true,
   description: String? = null,
-  description_kind: String? = null,
+  descriptionKind: String? = null,
   optional: Boolean = true, required: Boolean = false, computed: Boolean = false,
   val sensitive: Boolean = false,
   deprecated: String? = null,
   conflictsWith: List<String>? = null,
   val hasDefault: Boolean = false,
-) : BaseModelType(description = description, descriptionKind = description_kind,
+) : BaseModelType(description = description, descriptionKind = descriptionKind,
                   optional = optional && !required, required = required, computed = computed,
                   deprecated = deprecated, conflictsWith = conflictsWith), PropertyOrBlockType {
 
@@ -410,19 +410,19 @@ data class NestingInfo(val type: NestingType, val mix: Int?, val max: Int?)
 open class BlockType(
   val literal: String, val args: Int = 0,
   description: String? = null,
-  description_kind: String? = null,
+  descriptionKind: String? = null,
   optional: Boolean = true, required: Boolean = false, computed: Boolean = false,
   deprecated: String? = null,
   conflictsWith: List<String>? = null,
   val nesting: NestingInfo? = null,
   val properties: Map<String, PropertyOrBlockType> = emptyMap(),
-) : BaseModelType(description = description, descriptionKind = description_kind,
+) : BaseModelType(description = description, descriptionKind = descriptionKind,
                   optional = optional && !required, required = required, computed = computed,
                   deprecated = deprecated, conflictsWith = conflictsWith), PropertyOrBlockType, ObjectType {
   override val name: String
     get() = literal
 
-  override val elements: Map<String, Type?>
+  override val elements: Map<String, HclType?>
     get() = properties.mapValues {
       when (val value = it.value) {
         is PropertyType -> value.type
@@ -495,7 +495,7 @@ interface PropertyOrBlockType {
 }
 
 object Types {
-  val Identifier: Type = TypeImpl("identifier")
+  val Identifier: HclType = HclTypeImpl("identifier")
 
   val String: PrimitiveType = PrimitiveType("string")
   val Number: PrimitiveType = PrimitiveType("number")
@@ -505,7 +505,7 @@ object Types {
 
   val Array: ListType = ListType(null)
   val Object: ObjectType = ObjectType(null)
-  val Invalid: Type = TypeImpl("invalid") // special value for parsing errors, unsupported types, etc
+  val Invalid: HclType = HclTypeImpl("invalid") // special value for parsing errors, unsupported types, etc
 
 
   // Separate, as could be used as String, Number, Boolean, etc
@@ -514,7 +514,7 @@ object Types {
   val SimpleValueTypes: Set<PrimitiveType> = setOf(String, Number, Boolean)
 
   // cty types
-  val Expression: Type = TypeImpl("expression")
+  val Expression: HclType = HclTypeImpl("expression")
 }
 
 interface NamedType {
@@ -534,14 +534,14 @@ class ResourceType(
 ) : BlockType(literal = HCL_RESOURCE_IDENTIFIER,
               args = 2,
               description = blockType?.description,
-              description_kind = blockType?.descriptionKind,
+              descriptionKind = blockType?.descriptionKind,
               optional = blockType?.optional == true,
               required = blockType?.required == true,
               computed = blockType?.computed == true,
               deprecated = blockType?.deprecated,
               conflictsWith = blockType?.conflictsWith,
               nesting = blockType?.nesting,
-              properties = withDefaults(properties, TypeModel.AbstractResource.properties)), ResourceOrDataSourceType {
+              properties = withDefaults(properties, TfTypeModel.AbstractResource.properties)), ResourceOrDataSourceType {
   override fun toString(): String {
     return "ResourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -557,14 +557,14 @@ class EphemeralType(
 ) : BlockType(literal = HCL_EPHEMERAL_IDENTIFIER,
               args = 2,
               description = blockType?.description,
-              description_kind = blockType?.descriptionKind,
+              descriptionKind = blockType?.descriptionKind,
               optional = blockType?.optional == true,
               required = blockType?.required == true,
               computed = blockType?.computed == true,
               deprecated = blockType?.deprecated,
               conflictsWith = blockType?.conflictsWith,
               nesting = blockType?.nesting,
-              properties = withDefaults(blockType?.properties, TypeModel.AbstractEphemeralResource.properties)
+              properties = withDefaults(blockType?.properties, TfTypeModel.AbstractEphemeralResource.properties)
 ), ResourceOrDataSourceType
 
 class DataSourceType(
@@ -572,18 +572,17 @@ class DataSourceType(
   override val provider: ProviderType,
   properties: List<PropertyOrBlockType>,
   blockType: BlockType? = null,
-) :
-  BlockType(literal = HCL_DATASOURCE_IDENTIFIER,
-            args = 2,
-            description = blockType?.description,
-            description_kind = blockType?.descriptionKind,
-            optional = blockType?.optional == true,
-            required = blockType?.required == true,
-            computed = blockType?.computed == true,
-            deprecated = blockType?.deprecated,
-            conflictsWith = blockType?.conflictsWith,
-            nesting = blockType?.nesting,
-            properties = withDefaults(properties, TypeModel.AbstractDataSource.properties)), ResourceOrDataSourceType {
+) : BlockType(literal = HCL_DATASOURCE_IDENTIFIER,
+              args = 2,
+              description = blockType?.description,
+              descriptionKind = blockType?.descriptionKind,
+              optional = blockType?.optional == true,
+              required = blockType?.required == true,
+              computed = blockType?.computed == true,
+              deprecated = blockType?.deprecated,
+              conflictsWith = blockType?.conflictsWith,
+              nesting = blockType?.nesting,
+              properties = withDefaults(properties, TfTypeModel.AbstractDataSource.properties)), ResourceOrDataSourceType {
   override fun toString(): String {
     return "DataSourceType (type='$type', provider='${provider.presentableText}')"
   }
@@ -602,14 +601,14 @@ class ProviderType(
 ) : BlockType(literal = HCL_PROVIDER_IDENTIFIER,
               args = 1,
               description = blockType?.description,
-              description_kind = blockType?.descriptionKind,
+              descriptionKind = blockType?.descriptionKind,
               optional = blockType?.optional == true,
               required = blockType?.required == true,
               computed = blockType?.computed == true,
               deprecated = blockType?.deprecated,
               conflictsWith = blockType?.conflictsWith,
               nesting = blockType?.nesting,
-              properties = withDefaults(properties, TypeModel.AbstractProvider.properties)), NamedType {
+              properties = withDefaults(properties, TfTypeModel.AbstractProvider.properties)), NamedType {
   val fullName: String = "$namespace/$type"
   val tier: ProviderTier = if (tier == ProviderTier.TIER_NONE && OfficialProvidersNamespace.contains(namespace)) ProviderTier.TIER_OFFICIAL else tier
 
@@ -635,7 +634,7 @@ class ProviderType(
   internal data class ProviderCoordinates(val registryUrl: String, val namespace: String, val name: String)
 }
 
-class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_PROVISIONER_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractResourceProvisioner.properties)) {
+class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_PROVISIONER_IDENTIFIER, 1, properties = withDefaults(properties, TfTypeModel.AbstractResourceProvisioner.properties)) {
   override fun toString(): String {
     return "ProvisionerType (type='$type')"
   }
@@ -644,7 +643,7 @@ class ProvisionerType(val type: String, properties: List<PropertyOrBlockType>) :
     get() = "$literal ($type)"
 }
 
-class BackendType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_BACKEND_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.AbstractBackend.properties)) {
+class BackendType(val type: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_BACKEND_IDENTIFIER, 1, properties = withDefaults(properties, TfTypeModel.AbstractBackend.properties)) {
   override fun toString(): String {
     return "BackendType (type='$type')"
   }
@@ -653,7 +652,7 @@ class BackendType(val type: String, properties: List<PropertyOrBlockType>) : Blo
     get() = "$literal ($type)"
 }
 
-class ModuleType(override val name: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_MODULE_IDENTIFIER, 1, properties = withDefaults(properties, TypeModel.Module.properties)) {
+class ModuleType(override val name: String, properties: List<PropertyOrBlockType>) : BlockType(HCL_MODULE_IDENTIFIER, 1, properties = withDefaults(properties, TfTypeModel.Module.properties)) {
   override fun toString(): String {
     return "ModuleType (name='$name')"
   }

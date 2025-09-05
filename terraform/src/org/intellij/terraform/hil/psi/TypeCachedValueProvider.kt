@@ -18,21 +18,21 @@ import org.intellij.terraform.hil.patterns.HILPatterns
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import java.util.*
 
-class TypeCachedValueProvider private constructor(private val e: BaseExpression) : CachedValueProvider<Type?> {
+class TypeCachedValueProvider private constructor(private val e: BaseExpression) : CachedValueProvider<HclType?> {
 
   companion object {
-    fun getType(e: BaseExpression): Type? {
+    fun getType(e: BaseExpression): HclType? {
       return CachedValuesManager.getCachedValue(e, TypeCachedValueProvider(e))
     }
 
     private val LOG = Logger.getInstance(TypeCachedValueProvider::class.java)
 
-    private fun doGetType(e: ParenthesizedExpression<*>): Type? {
+    private fun doGetType(e: ParenthesizedExpression<*>): HclType? {
       val expression = e.expression ?: return Types.Any
       return expression.getType()
     }
 
-    private fun doGetType(e: LiteralExpression): Type? {
+    private fun doGetType(e: LiteralExpression): HclType? {
       return when (e) {
         is ILLiteralExpression -> when {
           e.doubleQuotedString != null -> Types.String
@@ -59,7 +59,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       HCLElementTypes.OP_NOT
     )
 
-    private fun doGetType(e: UnaryExpression<*>): Type? {
+    private fun doGetType(e: UnaryExpression<*>): HclType? {
       return when (val sign = e.operationSign) {
         in UnaryNumberOps -> Types.Number
         in UnaryBooleanOps -> Types.Boolean
@@ -81,7 +81,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       HCLElementTypes.BINARY_AND_EXPRESSION, HCLElementTypes.BINARY_OR_EXPRESSION
     )
 
-    private fun doGetType(e: BinaryExpression<*>): Type? {
+    private fun doGetType(e: BinaryExpression<*>): HclType? {
       return when (val et = e.node.elementType) {
         in BinaryNumberOps -> Types.Number
         in BinaryBooleanOps -> Types.Boolean
@@ -92,7 +92,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       }
     }
 
-    private fun doGetType(e: ConditionalExpression<*>): Type? {
+    private fun doGetType(e: ConditionalExpression<*>): HclType? {
       val first = e.then
       val second = e.otherwise
       val l = first.getType()
@@ -109,7 +109,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       return l
     }
 
-    private fun doGetType(e: CollectionExpression<*>): Type? {
+    private fun doGetType(e: CollectionExpression<*>): HclType? {
       return when (e) {
         is ParameterList<*> -> doGetType(e)
         is HCLArray, is ILArray -> {
@@ -121,7 +121,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
           }
         }
         is HCLObject -> {
-          val result: MutableMap<String, Type?> = TreeMap()
+          val result: MutableMap<String, HclType?> = TreeMap()
           // TODO: Consider using TF model instead
           for (prop in e.propertyList) {
             result[prop.name] = prop.value.getType()
@@ -132,7 +132,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
           ObjectType(result)
         }
         is ILObject -> {
-          val result: MutableMap<String, Type?> = TreeMap()
+          val result: MutableMap<String, HclType?> = TreeMap()
           // TODO: Consider using TF model instead
           for (prop in e.propertyList) {
             result[prop.name] = prop.value.getType()
@@ -146,12 +146,12 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       }
     }
 
-    private fun doGetType(e: ParameterList<*>): Type? {
+    private fun doGetType(e: ParameterList<*>): HclType? {
       LOG.error("#getType should not be called for ILParameterList", (e as PsiElement).text)
       return null
     }
 
-    private fun doGetType(e: SelectExpression<*>): Type? {
+    private fun doGetType(e: SelectExpression<*>): HclType? {
       // TODO: Implement
       // Possible cases:
       // * for variable reference
@@ -276,7 +276,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       return Types.Any
     }
 
-    private fun selectFromMapType(fromType: Type?, name: String?): Type? {
+    private fun selectFromMapType(fromType: HclType?, name: String?): HclType? {
       if (fromType is ObjectType) {
         val elements = fromType.elements ?: return Types.Any
         return elements[name] ?: Types.Invalid
@@ -295,14 +295,14 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       return false
     }
 
-    private fun doGetType(e: MethodCallExpression<*>): Type? {
+    private fun doGetType(e: MethodCallExpression<*>): HclType? {
       if (e.isInTerraformFile()) {
         return FunctionsReturnTypeHelper.getType(e)
       }
       return Types.Any
     }
 
-    private fun doGetType(e: ProviderDefinedFunction<*>): Type? {
+    private fun doGetType(e: ProviderDefinedFunction<*>): HclType? {
       val providerName = e.provider.getNameOrText()
       val functionName = e.function.getNameOrText()
 
@@ -310,7 +310,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       return model.getProviderFunction(providerName, functionName)?.returnType ?: return Types.Any
     }
 
-    private fun doGetType(e: HCLForExpression): Type? {
+    private fun doGetType(e: HCLForExpression): HclType? {
       return when (e) {
         is HCLForObjectExpression -> {
           val valueType = e.value.getType() ?: Types.Any
@@ -332,7 +332,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
       }
     }
 
-    private fun doGetType(e: Identifier): Type? {
+    private fun doGetType(e: Identifier): HclType? {
       // TODO: Implement
       // Possible cases:
       // * dynamic block iterator
@@ -373,7 +373,7 @@ class TypeCachedValueProvider private constructor(private val e: BaseExpression)
   }
 
 
-  override fun compute(): CachedValueProvider.Result<Type?>? {
+  override fun compute(): CachedValueProvider.Result<HclType?>? {
     return when (e) {
       is ParenthesizedExpression<*> -> doGetType(e)?.let { CachedValueProvider.Result.create(it, e) }
       is LiteralExpression -> doGetType(e)?.let { CachedValueProvider.Result.create(it, e) }

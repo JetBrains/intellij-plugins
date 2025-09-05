@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.application.options.CodeStyle
@@ -9,7 +9,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.ProviderTier
-import org.intellij.terraform.config.model.TypeModel
+import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.getProviderForBlockType
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.formatter.HclCodeStyleSettings
@@ -83,7 +83,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
     val settings = CodeStyle.getCustomSettings(file, HclCodeStyleSettings::class.java)
     if (settings.IMPORT_PROVIDERS_AUTOMATICALLY) {
       val provider = getProviderForBlockType(type)
-      if (provider != null && provider.tier !in tiersNotToInsert && !TypeModel.collectProviderLocalNames(file).containsValue(provider.fullName)) {
+      if (provider != null && provider.tier !in tiersNotToInsert && !TfTypeModel.collectProviderLocalNames(file).containsValue(provider.fullName)) {
         TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(provider, file)
       }
     }

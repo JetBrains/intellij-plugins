@@ -1,11 +1,11 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.testFramework.LightPlatformTestCase;
-import org.intellij.terraform.config.model.Type;
+import org.intellij.terraform.config.model.HclType;
 import org.intellij.terraform.config.model.Types;
 import org.intellij.terraform.hil.psi.ILExpression;
 import org.intellij.terraform.hil.psi.TypeCachedValueProvider;
@@ -122,7 +122,7 @@ public class HILTypesResolvingTest extends LightPlatformTestCase {
     doTypeResolveTest("(true || false)", Types.INSTANCE.getBoolean());
   }
 
-  private void doTypeResolveTest(@NotNull String text, @Nullable final Type expected) {
+  private void doTypeResolveTest(@NotNull String text, @Nullable final HclType expected) {
     if (!text.startsWith("${") && !text.endsWith("}")) {
       text = "${" + text + "}";
     }
@@ -131,7 +131,7 @@ public class HILTypesResolvingTest extends LightPlatformTestCase {
     PsiElement root = psiFile.getFirstChild();
     assertNotNull(root);
     assertInstanceOf(root, ILExpression.class);
-    Type type = TypeCachedValueProvider.Companion.getType((ILExpression) root);
+    HclType type = TypeCachedValueProvider.Companion.getType((ILExpression)root);
     assertEquals(type, expected);
   }
 }
