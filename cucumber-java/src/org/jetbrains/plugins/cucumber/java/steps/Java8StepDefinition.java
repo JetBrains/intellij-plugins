@@ -26,4 +26,15 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition {
 
     return null;
   }
+
+  @Override
+  public void setValue(@NotNull String newValue) {
+    if (!(getElement() instanceof PsiMethodCallExpression methodCallExpression)) return;
+    final PsiExpressionList argumentList = methodCallExpression.getArgumentList();
+    if (argumentList.getExpressions().length <= 1) return;
+    final PsiExpression stepExpression = argumentList.getExpressions()[0];
+    final PsiElementFactory factory = JavaPsiFacade.getElementFactory(getElement().getProject());
+    PsiExpression newFirstArgument = factory.createExpressionFromText("\"" + newValue + "\"", null);
+    stepExpression.replace(newFirstArgument);
+  }
 }

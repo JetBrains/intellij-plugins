@@ -62,7 +62,7 @@ public abstract class AbstractStepDefinition {
     return myElementPointer.getElement();
   }
 
-  /// @return regexp pattern for step or null if regexp is malformed
+  /// @return Regex pattern for the step or null if the regexp is malformed.
   public @Nullable Pattern getPattern() {
     try {
       final String cucumberRegex = getCucumberRegex();
@@ -122,16 +122,16 @@ public abstract class AbstractStepDefinition {
   /// Sets the new value for this step definition (either a regex or a cukex).
   ///
   /// What the value exactly is depends on the particular Cucumber implementation in some programming language.
-  /// For example, it could be a string inside the annotation `@When` or a method name. 
+  /// For example, it could be a string inside the annotation `@When` or a method name.
   public void setValue(@NotNull String newValue) { }
 
   /// @return True if this step definition supports some certain `step` (e.g., some step definitions do not support some keywords).
   public boolean supportsStep(@NotNull PsiElement step) {
     return true;
   }
-  
+
   /// If `newName` is not null, it returns true if this step definition can be renamed to this specific new name.
-  /// 
+  ///
   /// If `newName` is null, it returns true if this step definition can be renamed at all.
   public boolean supportsRename(@Nullable String newName) {
     return true;
@@ -159,6 +159,9 @@ public abstract class AbstractStepDefinition {
   }
 
   /// Returns either a regex or cukex associated with this step.
+  ///
+  /// If the step is defined with a cukex, it returns this cukex.
+  /// If the step is defined with a regex, it returns this regex.
   public @Nullable String getExpression() {
     return getCucumberRegexFromElement(getElement());
   }
