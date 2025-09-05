@@ -29,6 +29,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.createVueFileFromText
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.getVueClassComponentDecoratorName
@@ -142,11 +143,14 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     val project = context.project
 
     val hasScriptSetup = supportsScriptSetup(file)
-
     val hasTypeScript = TypeScriptServiceHolder.getForFile(context.project, context.virtualFile) != null
-    val langText = if (hasTypeScript) " lang=\"ts\"" else ""
-    val setupText = if (hasScriptSetup) " setup" else ""
-    val text = "<script$setupText$langText>\n</script>"
+
+    val setupAttribute = if (hasScriptSetup) SETUP_ATTRIBUTE_NAME else null
+    val langAttribute = if (hasTypeScript) """lang="ts"""" else null
+    val attributes = listOfNotNull(setupAttribute, langAttribute)
+      .joinToString("") { " $it" }
+
+    val text = "<script$attributes>\n</script>"
     val dummyFile = createVueFileFromText(project, text)
     return PsiTreeUtil.findChildOfType(dummyFile, XmlTag::class.java)!!
       .also { reformat(it) }
