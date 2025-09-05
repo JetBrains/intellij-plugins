@@ -29,6 +29,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
+import org.jetbrains.vuejs.VueProjects.isTypeScriptProjectFile
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.createVueFileFromText
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -143,7 +144,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     val project = context.project
 
     val hasScriptSetup = supportsScriptSetup(file)
-    val hasTypeScript = TypeScriptServiceHolder.getForFile(context.project, context.virtualFile) != null
+    val hasTypeScript = isTypeScriptProjectFile(file)
 
     val setupAttribute = if (hasScriptSetup) SETUP_ATTRIBUTE_NAME else null
     val langAttribute = if (hasTypeScript) """lang="ts"""" else null
