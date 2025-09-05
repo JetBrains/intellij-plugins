@@ -82,6 +82,6 @@ public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
       // There is GherkinParameterRenameHandler that should handle rename inside parameter usages or definitions
       return null;
     }
-    return element instanceof GherkinStep ? (GherkinStep)element : PsiTreeUtil.getParentOfType(element, GherkinStep.class);
+    return element instanceof GherkinStep step ? step : PsiTreeUtil.getParentOfType(element, GherkinStep.class);
   }
 }

@@ -20,8 +20,8 @@ public final class GherkinElementFactory {
   public static GherkinFeature createFeatureFromText(final Project project, final @NotNull String text) {
     final PsiElement[] list = getTopLevelElements(project, text);
     for (PsiElement psiElement : list) {
-      if (psiElement instanceof GherkinFeature) {
-        return (GherkinFeature)psiElement;
+      if (psiElement instanceof GherkinFeature feature) {
+        return feature;
       }
     }
 

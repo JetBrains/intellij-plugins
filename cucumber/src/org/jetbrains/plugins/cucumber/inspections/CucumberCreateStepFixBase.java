@@ -188,9 +188,9 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     Map<BDDFrameworkType, String> supportedFileTypesAndDefaultFileNames = new HashMap<>();
     Map<BDDFrameworkType, String> fileTypeToDefaultDirectoryMap = new HashMap<>();
     for (CucumberJvmExtensionPoint e : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
-      if (e instanceof OptionalStepDefinitionExtensionPoint) {
+      if (e instanceof OptionalStepDefinitionExtensionPoint point) {
         // Skip if framework file creation support is optional
-        if (!((OptionalStepDefinitionExtensionPoint)e).participateInStepDefinitionCreation(step)) {
+        if (!point.participateInStepDefinitionCreation(step)) {
           continue;
         }
       }

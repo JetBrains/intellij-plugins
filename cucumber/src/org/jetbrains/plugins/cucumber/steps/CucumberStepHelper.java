@@ -136,8 +136,8 @@ public final class CucumberStepHelper {
     Set<CucumberStepDefinitionCreationContext> result = new HashSet<>();
     for (CucumberJvmExtensionPoint ep : getCucumberExtensions()) {
       // Skip if framework file creation support is optional
-      if ((ep instanceof OptionalStepDefinitionExtensionPoint) &&
-          !((OptionalStepDefinitionExtensionPoint)ep).participateInStepDefinitionCreation(featureFile)) {
+      if ((ep instanceof OptionalStepDefinitionExtensionPoint point) &&
+          !point.participateInStepDefinitionCreation(featureFile)) {
         continue;
       }
       final Collection<? extends PsiFile> psiFiles = ep.getStepDefinitionContainers(featureFile);

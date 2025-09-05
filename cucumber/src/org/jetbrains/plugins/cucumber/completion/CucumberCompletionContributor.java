@@ -79,11 +79,11 @@ public final class CucumberCompletionContributor extends CompletionContributor {
                                     @NotNull ProcessingContext context,
                                     @NotNull CompletionResultSet result) {
         final PsiFile psiFile = parameters.getOriginalFile();
-        if (psiFile instanceof GherkinFile) {
+        if (psiFile instanceof GherkinFile file) {
           Module module = findModuleForPsiElement(psiFile);
           boolean gherkin6Enabled = module != null && CucumberStepHelper.isGherkin6Supported(module);
           GherkinKeywordProvider keywordProvider = JsonGherkinKeywordProvider.getKeywordProvider(gherkin6Enabled);
-          final String language = GherkinUtil.getFeatureLanguage((GherkinFile)psiFile);
+          final String language = GherkinUtil.getFeatureLanguage(file);
           GherkinKeywordTable gherkinKeywordTable = keywordProvider.getKeywordsTable(language);
 
           final PsiElement position = parameters.getPosition();

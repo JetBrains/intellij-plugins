@@ -53,8 +53,8 @@ public final class GherkinStepParameterSelectioner extends AbstractWordSelection
     final PsiElement parent = e.getParent();
     if (parent instanceof GherkinStep step) {
       for (final PsiReference reference : step.getReferences()) {
-        if (reference instanceof CucumberStepReference && !DumbService.isDumb(step.getProject())) {
-          final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
+        if (reference instanceof CucumberStepReference stepReference && !DumbService.isDumb(step.getProject())) {
+          final AbstractStepDefinition definition = stepReference.resolveToDefinition();
           if (definition != null) {
             final List<TextRange> ranges =
               GherkinPsiUtil.buildParameterRanges(step, definition, step.getTextOffset() + reference.getRangeInElement().getStartOffset());

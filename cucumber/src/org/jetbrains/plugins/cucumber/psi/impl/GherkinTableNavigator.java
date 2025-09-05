@@ -14,6 +14,6 @@ public final class GherkinTableNavigator {
 
   public static @Nullable GherkinTableImpl getTableByRow(final GherkinTableRow row) {
     final PsiElement element = row.getParent();
-    return element instanceof GherkinTableImpl ? (GherkinTableImpl)element : null;
+    return element instanceof GherkinTableImpl table ? table : null;
   }
 }

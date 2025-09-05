@@ -29,7 +29,7 @@ public final class GherkinPsiUtil {
       return null;
     }
     final PsiFile containingFile = element.getContainingFile();
-    return containingFile instanceof GherkinFileImpl ? (GherkinFileImpl)containingFile : null;
+    return containingFile instanceof GherkinFileImpl file ? file : null;
   }
 
   public static @Nullable List<TextRange> buildParameterRanges(@NotNull GherkinStep step,

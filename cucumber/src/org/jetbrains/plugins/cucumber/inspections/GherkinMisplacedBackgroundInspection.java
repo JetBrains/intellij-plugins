@@ -21,8 +21,8 @@ public final class GherkinMisplacedBackgroundInspection extends GherkinInspectio
           PsiElement element = scenario.getPrevSibling();
 
           while (element != null) {
-            if (element instanceof GherkinScenario) {
-              if (!((GherkinScenario)element).isBackground()) {
+            if (element instanceof GherkinScenario gherkinScenario) {
+              if (!gherkinScenario.isBackground()) {
                 holder.registerProblem(scenario.getFirstChild(), CucumberBundle.message("inspection.gherkin.background.after.scenario.error.message"), ProblemHighlightType.ERROR);
                 break;
               }

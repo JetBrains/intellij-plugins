@@ -59,9 +59,9 @@ public interface CucumberJvmExtensionPoint {
   }
   
   default @Nullable String getStepName(@NotNull PsiElement step) {
-    if (!(step instanceof GherkinStepImpl)) {
+    if (!(step instanceof GherkinStepImpl gherkinStep)) {
       return null;
     }
-    return ((GherkinStepImpl)step).getSubstitutedName();
+    return gherkinStep.getSubstitutedName();
   }
 }

@@ -51,11 +51,11 @@ public final class GherkinSuppressionUtil {
   private static @Nullable PsiComment getSuppressionComment(@NotNull String toolId,
                                                             @NotNull PsiElement element) {
     final PsiElement comment = PsiTreeUtil.skipWhitespacesBackward(element);
-    if (comment instanceof PsiComment) {
+    if (comment instanceof PsiComment psiComment) {
       String text = comment.getText();
       Matcher matcher = SUPPRESS_IN_LINE_COMMENT_PATTERN.matcher(text);
       if (matcher.matches() && SuppressionUtil.isInspectionToolIdMentioned(matcher.group(1), toolId)) {
-        return (PsiComment)comment;
+        return psiComment;
       }
     }
     return null;

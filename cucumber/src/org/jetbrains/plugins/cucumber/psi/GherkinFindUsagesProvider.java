@@ -42,7 +42,7 @@ public final class GherkinFindUsagesProvider implements FindUsagesProvider {
 
   @Override
   public @NotNull String getDescriptiveName(@NotNull PsiElement element) {
-    return element instanceof PsiNamedElement ? ((PsiNamedElement)element).getName() : "";
+    return element instanceof PsiNamedElement namedElement ? namedElement.getName() : "";
   }
 
   @Override

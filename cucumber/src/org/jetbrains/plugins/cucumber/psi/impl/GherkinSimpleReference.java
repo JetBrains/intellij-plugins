@@ -39,8 +39,8 @@ public class GherkinSimpleReference implements PsiReference {
 
   @Override
   public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
-    if (myElement instanceof PsiNamedElement) {
-      ((PsiNamedElement) myElement).setName(newElementName);
+    if (myElement instanceof PsiNamedElement element) {
+      element.setName(newElementName);
     }
     return myElement;
   }

@@ -10,6 +10,6 @@ import org.jetbrains.annotations.Nullable;
 public final class GherkinExamplesNavigator {
   public static @Nullable GherkinExamplesBlockImpl getExamplesByTable(final GherkinTableImpl table) {
     final PsiElement element = table.getParent();
-    return element instanceof GherkinExamplesBlockImpl ? (GherkinExamplesBlockImpl)element : null;
+    return element instanceof GherkinExamplesBlockImpl block ? block : null;
   }
 }
