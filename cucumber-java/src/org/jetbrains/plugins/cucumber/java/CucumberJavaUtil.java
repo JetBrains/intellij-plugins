@@ -590,4 +590,27 @@ public final class CucumberJavaUtil {
     }
     return CUCUMBER_1_0_MAIN_CLASS;
   }
+
+  /// Returns all [PsiClass]es annotated with `@io.cucumber.java.StepDefinitionAnnotation` (or similar).
+  ///
+  /// In practice, this method returns a single list of all language-specific step definition annotations
+  /// - English: `@io.cucumber.java.en.Given`, `@io.cucumber.java.en.When`, `@io.cucumber.java.en.Then`
+  /// - Polish: `@io.cucumber.java.pl.Zakładając`, `@io.cucumber.java.pl.Jeżeli`, `@io.cucumber.java.pl.Wtedy`
+  /// - and so on
+  public static Collection<PsiClass> getAllStepAnnotationClasses(Module module, GlobalSearchScope scope) {
+    final String[] cucumberStepAnnotationClasses = new String[]{
+      "io.cucumber.java.StepDefinitionAnnotation", "cucumber.runtime.java.StepDefAnnotation"
+    };
+
+    // Find the first StepDefinitionAnnotation class that exists in the project.
+    PsiClass stepDefinitionAnnotationClass = Arrays.stream(cucumberStepAnnotationClasses)
+      .map((className) -> JavaPsiFacade.getInstance(module.getProject()).findClass(className, scope))
+      .filter(Objects::nonNull)
+      .findFirst()
+      .orElse(null);
+
+    if (stepDefinitionAnnotationClass == null) return Collections.emptyList();
+    final Query<PsiClass> query = AnnotatedElementsSearch.searchPsiClasses(stepDefinitionAnnotationClass, scope);
+    return query.findAll();
+  }
 }

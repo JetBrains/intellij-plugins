@@ -49,6 +49,12 @@ public class CucumberStepRenameTest extends BaseCucumberJavaResolveTest {
     doTest("i_am_happy", "Me be satisfied");
   }
 
+  /// Test renaming of `jestem głodny` ("I am hungry") to `teraz jestem bardzo głodny` ("I am very hungry now")
+  @SuppressWarnings("NonAsciiCharacters")
+  public void testCukexSimpleInPolish() {
+    doTest("jestemGłodny", "teraz jestem bardzo głodny");
+  }
+
   /// Test renaming of `I have {int} EUR on my account` -> `I possess the amount of {int} USD on my acc`
   public void testCukexWithArgument() {
     doTest("i_have_EUR_on_my_account", "I possess the amount of {int} USD on my acc");

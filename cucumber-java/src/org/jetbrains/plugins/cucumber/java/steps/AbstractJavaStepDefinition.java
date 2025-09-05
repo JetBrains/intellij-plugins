@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition {
-  private final Module module;
+  protected final @NotNull Module module;
 
   public AbstractJavaStepDefinition(@NotNull PsiElement element, @NotNull Module module) {
     super(element);

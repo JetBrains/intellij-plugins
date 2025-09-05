@@ -3,10 +3,7 @@ package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiCheckedRenameElement;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.TokenType;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.CachedValueProvider;
@@ -154,7 +151,19 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
 
   @Override
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-    GherkinStep newStep = GherkinChangeUtil.createStep(getKeyword().getText() + " " + name, getProject());
+    PsiFile containingFile = getContainingFile();
+    if (containingFile == null) {
+      throw new IllegalStateException("Cannot rename step whose containing file is null");
+    }
+    if (!(containingFile instanceof GherkinFile gherkinFile)) {
+      throw new IllegalStateException("Cannot rename step whose containing file isn't GherkinFile");
+    }
+    ASTNode keyword = getKeyword();
+    if (keyword == null) {
+      throw new IllegalStateException("Cannot rename step whose keyword is null");
+    }
+
+    GherkinStep newStep = GherkinChangeUtil.createStep(keyword.getText() + " " + name, gherkinFile, getProject());
     replace(newStep);
     return newStep;
   }

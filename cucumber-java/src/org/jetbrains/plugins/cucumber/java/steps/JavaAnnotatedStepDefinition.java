@@ -3,9 +3,13 @@ package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   private final @NotNull String myAnnotationValue;
@@ -25,28 +29,21 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
     return null;
   }
 
-  private static final String[] CUCUMBER_ANNOTATION_NAMES = {
-    "io.cucumber.java.en.Given",
-    "io.cucumber.java.en.When",
-    "io.cucumber.java.en.Then",
-    "io.cucumber.java.en.And",
-  };
-
   @Override
   public void setValue(@NotNull String newValue) {
-    if (!(getElement() instanceof PsiMethod method)) return;
-    final PsiAnnotation[] annotations = method.getAnnotations();
+    if (!(getElement() instanceof PsiMethod method)) {
+      return;
+    }
+    final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
+    final Set<PsiClass> allStepAnnotations = new HashSet<>(CucumberJavaUtil.getAllStepAnnotationClasses(module, dependenciesScope));
 
-    for (PsiAnnotation annotation : annotations) {
-      String qualifiedName = annotation.getQualifiedName();
-      if (qualifiedName != null) {
-        for (String cucumberAnnotation : CUCUMBER_ANNOTATION_NAMES) {
-          if (qualifiedName.equals(cucumberAnnotation)) {
-            PsiElementFactory factory = JavaPsiFacade.getElementFactory(getElement().getProject());
-            String newValueEscaped = CucumberJavaUtil.unescapeCucumberRegex(newValue);
-            annotation.setDeclaredAttributeValue("value", factory.createExpressionFromText("\"" + newValueEscaped + "\"", null));
-          }
-        }
+    for (PsiAnnotation annotation : method.getAnnotations()) {
+      PsiClass annotationClass = annotation.resolveAnnotationType();
+      if (annotationClass == null) continue;
+      if (allStepAnnotations.contains(annotationClass)) {
+        PsiElementFactory factory = JavaPsiFacade.getElementFactory(method.getProject());
+        String newValueEscaped = CucumberJavaUtil.unescapeCucumberRegex(newValue);
+        annotation.setDeclaredAttributeValue("value", factory.createExpressionFromText("\"" + newValueEscaped + "\"", null));
       }
     }
   }
