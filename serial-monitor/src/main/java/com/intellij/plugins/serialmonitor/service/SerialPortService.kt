@@ -2,48 +2,47 @@ package com.intellij.plugins.serialmonitor.service
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.UI
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.diagnostic.getOrHandleException
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.plugins.serialmonitor.Parity
 import com.intellij.plugins.serialmonitor.SerialMonitorCollector
 import com.intellij.plugins.serialmonitor.SerialMonitorException
-import com.intellij.plugins.serialmonitor.StopBits
-import com.intellij.plugins.serialmonitor.service.SerialPortService.HardwareLinesStatus.Companion.hardwareLinesStatus
+import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener.Companion.SERIAL_PORTS_TOPIC
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
-import com.intellij.util.ConcurrencyUtil
-import com.intellij.util.application
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import jssc.SerialPort
-import jssc.SerialPort.*
-import jssc.SerialPortEvent
-import jssc.SerialPortEventListener
-import jssc.SerialPortException
-import jssc.SerialPortList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.nio.file.Files
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.TestOnly
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
-import java.util.regex.Pattern
-import kotlin.io.path.Path
-import kotlin.io.path.pathString
 
 @Service
-class SerialPortService(val cs: CoroutineScope) : Disposable {
+class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
 
-  private val portWatcher: ScheduledExecutorService = ConcurrencyUtil.newSingleScheduledThreadExecutor("Serial Port Watcher")
-    .apply { scheduleWithFixedDelay({ rescanPorts() }, 0, 500, TimeUnit.MILLISECONDS) }
-
-  @Volatile
-  private var portNames: Set<String> = emptySet()
+  @Volatile var serialPortProvider: SerialPort.SerialPortProvider = JsscSerialPort.Provider
+    private set
+  private val portNames: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
   private val connections: MutableMap<String, SerialConnection> = ConcurrentHashMap()
+
+  init {
+    cs.launch(CoroutineName("Serial Port Watcher")) {
+      while(true) {
+        rescanPorts()
+        delay(500)
+      }
+    }
+    cs.launch {
+      portNames.collect {
+        portMessageTopic().portsStatusChanged()
+      }
+    }
+  }
 
   private val NAME_COMPARATOR = object : Comparator<String> {
 
@@ -67,51 +66,30 @@ class SerialPortService(val cs: CoroutineScope) : Disposable {
     }
   }
 
-  private val MATCH_ALL_PATTERN = Pattern.compile(".*")
+  private suspend fun scanPorts(): Set<String> = withContext(Dispatchers.IO) {
+    serialPortProvider.scanAvailablePorts().toCollection(TreeSet(NAME_COMPARATOR))
+  }
 
-  private fun scanPorts(): Set<String> =
-    TreeSet(NAME_COMPARATOR).apply {
-      // Get devices which SerialPortList recognizes as serial ports
-      addAll(SerialPortList.getPortNames())
-      // Include symlinks to known ports
-      addAll(SerialPortList.getPortNames(MATCH_ALL_PATTERN)
-        .filter {
-          runCatching {
-            val path = Path(it)
-            if (!Files.isSymbolicLink(path)) return@filter false
-            this.contains(path.toRealPath().pathString)
-          }.getOrDefault(false)
-        }
-      )
-    }
-
-  private fun rescanPorts() {
+  private suspend fun rescanPorts() {
     val portList = scanPorts()
-    var changeDetected = portList != portNames
-    if (changeDetected) {
-      for (name in portNames) {
-        if (!portList.contains(name)) {
-          //port disappeared
-          connections[name]?.closeSilently(false)
-        }
+    for (name in portNames.value) {
+      if (!portList.contains(name)) {
+        //port disappeared
+        connections[name]?.closeSilently(false)
       }
     }
     for (name in portList) {
       if (connections[name]?.getStatus() == PortStatus.UNAVAILABLE_DISCONNECTED) {
         connections[name]?.setStatus(PortStatus.DISCONNECTED)
-        changeDetected = true
       }
     }
-    portNames = portList
-    if (changeDetected) {
-      portMessageTopic().portsStatusChanged()
-    }
+    portNames.emit(portList)
   }
 
   private fun portMessageTopic(): SerialPortsListener =
     ApplicationManager.getApplication().messageBus.syncPublisher(SERIAL_PORTS_TOPIC)
 
-  fun getPortsNames(): Set<String> = portNames
+  fun getPortsNames(): Set<String> = portNames.value
 
   fun newConnection(portName: String): SerialConnection {
     connections[portName]?.also { Disposer.dispose(it) }
@@ -120,31 +98,27 @@ class SerialPortService(val cs: CoroutineScope) : Disposable {
     return serialConnection
   }
 
-  fun portStatus(name: String?): PortStatus {
-    if (!portNames.contains(name)) {
-      return if (connections.containsKey(name)) PortStatus.UNAVAILABLE_DISCONNECTED else PortStatus.UNAVAILABLE
+  fun portStatus(portName: String?): PortStatus {
+    if (!portNames.value.contains(portName)) {
+      return if (connections.containsKey(portName)) PortStatus.UNAVAILABLE_DISCONNECTED else PortStatus.UNAVAILABLE
     }
-    return connections[name]?.getStatus() ?: PortStatus.READY
+    return connections[portName]?.getStatus() ?: PortStatus.READY
   }
 
-  data class HardwareLinesStatus(val cts: Boolean, val dsr: Boolean) {
-    companion object {
-      val EMPTY = HardwareLinesStatus(false, false)
-      fun SerialPort.hardwareLinesStatus(): HardwareLinesStatus {
-        val lines = this.linesStatus
-        return HardwareLinesStatus(
-          lines[0] == 1,
-          lines[1] == 1
-        )
-      }
-    }
+  fun portDescriptiveName(portName: String): @Nls String? {
+    @NlsSafe val description = runCatching {
+      serialPortProvider.createPort(portName).getDescriptiveName()
+    }.getOrNull()
+    return description
   }
+
 
   inner class SerialConnection(val portName: @NlsSafe String) : Disposable {
 
     var dataListener: Consumer<ByteArray>? = null
 
-    var eventListener: ((SerialPortEvent)->Unit)? = null
+    var dsrListener: ((Boolean)->Unit)? = null
+    var ctsListener: ((Boolean)->Unit)? = null
 
     @Volatile
     private var port: SerialPort? = null
@@ -157,41 +131,42 @@ class SerialPortService(val cs: CoroutineScope) : Disposable {
     var rts: Boolean = true
       @Throws(SerialMonitorException::class)
       set(value) {
-        runWithExceptionWrapping(value) {
+        runCatching {
           port?.setRTS(value)
-          field = value
+        }.onFailure {
+          throw SerialMonitorException(SerialMonitorBundle.message("port.modify.error", portName, it.message))
         }
+        field = value
       }
 
     var dtr: Boolean = true
       @Throws(SerialMonitorException::class)
       set(value) {
-        runWithExceptionWrapping(value) {
+        runCatching {
           port?.setDTR(value)
-          field = value
+        }.onFailure {
+          throw SerialMonitorException(SerialMonitorBundle.message("port.modify.error", portName, it.message))
         }
+        field = value
       }
 
-    val hardwareLinesStatus: HardwareLinesStatus
-      get() = port?.takeIf{ status == PortStatus.CONNECTED }?.hardwareLinesStatus() ?: HardwareLinesStatus.EMPTY
+    val cts: Boolean
+      get() = runCatching {
+        port?.getCTS()
+      }.getOrHandleException(thisLogger()::info) ?: false
 
-    @Throws(SerialMonitorException::class)
-    private fun <T> runWithExceptionWrapping(value: T, func: (T)->Unit) {
-      try {
-        func(value)
-      }
-      catch (e: SerialPortException) {
-        throw SerialMonitorException(SerialMonitorBundle.message("port.modify.error", e.port.portName, e.exceptionType))
-      }
-      catch (e: Exception) {
-        throw SerialMonitorException(portName, e)
-      }
-    }
+
+    val dsr: Boolean
+      get() = runCatching {
+        port?.getDSR()
+      }.getOrHandleException(thisLogger()::info) ?: false
 
     override fun dispose() {
       closeSilently(true)
       connections.remove(portName, this)
-      application.executeOnPooledThread(::rescanPorts)
+      cs.launch {
+        rescanPorts()
+      }
     }
 
     fun getStatus(): PortStatus = status
@@ -202,13 +177,10 @@ class SerialPortService(val cs: CoroutineScope) : Disposable {
     @Throws(SerialMonitorException::class)
     fun close(portAvailable: Boolean) {
       try {
-        port?.closePort()
+        port?.disconnect()
       }
       catch (e: SerialPortException) {
-        throw SerialMonitorException(SerialMonitorBundle.message("port.close.error", e.port.portName, e.exceptionType))
-      }
-      catch (e: Throwable) {
-        throw SerialMonitorException(portName, e)
+        throw SerialMonitorException(SerialMonitorBundle.message("port.close.error", portName, e.message))
       }
       finally {
         status = if (portAvailable) PortStatus.DISCONNECTED else PortStatus.UNAVAILABLE_DISCONNECTED
@@ -221,81 +193,73 @@ class SerialPortService(val cs: CoroutineScope) : Disposable {
       try {
         close(portAvailable)
       }
-      catch (_: Throwable) {
+      catch (_: SerialMonitorException) {
       }
     }
 
-    private val listener: SerialPortEventListener = SerialPortEventListener { event ->
-      if (event.eventType and MASK_RXCHAR != 0) {
-        val readBytes = port?.readBytes()
-        if (readBytes?.isNotEmpty() == true) {
-          dataListener?.accept(readBytes)
+    private val listener = object : SerialPort.SerialPortListener {
+      override fun onDataReceived(data: ByteArray) {
+        dataListener?.accept(data)
+      }
+
+      override fun onCTSChanged(state: Boolean) {
+        cs.launch(Dispatchers.UI) {
+          ctsListener?.invoke(state)
         }
       }
-      this@SerialPortService.cs.launch(Dispatchers.EDT) {
-        eventListener?.invoke(event)
+
+      override fun onDSRChanged(state: Boolean) {
+        cs.launch(Dispatchers.UI) {
+          dsrListener?.invoke(state)
+        }
       }
     }
 
     @RequiresBackgroundThread
     @Throws(SerialMonitorException::class)
-    fun connect(baudRate: Int, bits: Int, stopBits: StopBits, parity: Parity, localEcho: Boolean) {
+    fun connect(profile: SerialPortProfile) {
       this.status = PortStatus.CONNECTING
-      this.localEcho = localEcho
-      val newPort = SerialPort(portName)
-      portMessageTopic().portsStatusChanged()
-      try {
-        val portStopBits = when (stopBits) {
-          StopBits.BITS_2 -> STOPBITS_2
-          StopBits.BITS_1_5 -> STOPBITS_1_5
-          else -> STOPBITS_1
-        }
-        val portParity = when (parity) {
-          Parity.EVEN -> PARITY_EVEN
-          Parity.ODD -> PARITY_ODD
-          else -> PARITY_NONE
-        }
-        newPort.openPort()
-        newPort.addEventListener(listener, MASK_RXCHAR or MASK_ERR or MASK_CTS or MASK_DSR)
+      this.localEcho = profile.localEcho
 
-        if (!newPort.setParams(baudRate, bits, portStopBits, portParity, rts, dtr)) {
-          SerialMonitorCollector.logConnect(baudRate, false)
-          throw SerialMonitorException(SerialMonitorBundle.message("serial.port.parameters.wrong"))
-        }
+      lateinit var newPort: SerialPort
+      try {
+        newPort = serialPortProvider.createPort(portName)
+        portMessageTopic().portsStatusChanged()
+
+        newPort.connect(profile, listener, rts, dtr)
+
         port = newPort
-        SerialMonitorCollector.logConnect(baudRate, true)
+        SerialMonitorCollector.logConnect(profile.baudRate, true)
         status = PortStatus.CONNECTED
         portMessageTopic().portsStatusChanged()
       }
-      catch (e: Throwable) {
-        SerialMonitorCollector.logConnect(baudRate, false)
+      catch (e: Exception) {
+        SerialMonitorCollector.logConnect(profile.baudRate, false)
+
         try {
-          newPort.closePort()
+          newPort.disconnect()
         }
-        catch (_: Throwable) {
+        catch (_: SerialPortException) {
         }
+
         status = PortStatus.UNAVAILABLE_DISCONNECTED
         portMessageTopic().portsStatusChanged()
-        if (e is SerialPortException) {
-          throw SerialMonitorException(SerialMonitorBundle.message("port.connect.error", e.port.portName, e.exceptionType))
-        }
-        else {
-          throw SerialMonitorException(newPort.portName, e)
-        }
+
+        throw SerialMonitorException(SerialMonitorBundle.message("port.connect.error", portName, e.message))
       }
     }
 
     fun write(data: ByteArray) {
-      port?.writeBytes(data)
+      port?.write(data)
       if (localEcho) {
         dataListener?.accept(data)
       }
     }
   }
 
-  override fun dispose() {
-    portWatcher.shutdown()
+  @TestOnly
+  internal suspend fun setPortProvider(provider: SerialPort.SerialPortProvider) {
+    serialPortProvider = provider
+    rescanPorts()
   }
-
 }
-

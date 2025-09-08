@@ -19,7 +19,6 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.plugins.serialmonitor.SerialMonitorException
 import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.service.PortStatus
-import com.intellij.plugins.serialmonitor.service.SerialPortService.HardwareLinesStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService.SerialConnection
 import com.intellij.plugins.serialmonitor.service.SerialPortsListener
 import com.intellij.plugins.serialmonitor.ui.actions.EditSettingsAction
@@ -40,8 +39,6 @@ import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.IconUtil
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
-import jssc.SerialPort
-import jssc.SerialPortEvent
 import java.awt.Component
 import java.awt.event.ActionListener
 import java.awt.event.KeyAdapter
@@ -68,8 +65,10 @@ class SerialMonitor(private val project: Project,
   fun getStatus(): PortStatus = duplexConsoleView.status
 
   override fun portsStatusChanged() {
+    // TODO: do this on EDT, API says this is happening on BGT!!!
     mySend.isEnabled = duplexConsoleView.status == PortStatus.CONNECTED
-    myHardwareStatusComponents.updateFromLinesStatus(duplexConsoleView.connection.hardwareLinesStatus)
+    myHardwareStatusComponents.onCTSChanged(duplexConsoleView.connection.cts)
+    myHardwareStatusComponents.onDSRChanged(duplexConsoleView.connection.dsr)
     ActivityTracker.getInstance().inc()
   }
 
@@ -210,8 +209,9 @@ class SerialMonitor(private val project: Project,
     }
     myHardwareControls.border = JBUI.Borders.emptyRight(10)
 
-    connection.eventListener = myHardwareStatusComponents::updateFromEvent
-    ApplicationManager.getApplication().messageBus.connect().subscribe(SerialPortsListener.SERIAL_PORTS_TOPIC, this)
+    connection.dsrListener = myHardwareStatusComponents::onDSRChanged
+    connection.ctsListener = myHardwareStatusComponents::onCTSChanged
+    ApplicationManager.getApplication().messageBus.connect(this).subscribe(SerialPortsListener.SERIAL_PORTS_TOPIC, this)
 
     myTopPanel.add(myCommand,
                    GridConstraints(0, 0, 1, 1, ANCHOR_WEST, FILL_HORIZONTAL, SIZE_POLICY_RESIZEABLE, SIZEPOLICY_FIXED, null, null, null))
@@ -229,7 +229,6 @@ class SerialMonitor(private val project: Project,
 
     myPanel.add(myTopPanel,
                 GridConstraints(0, 1, 1, 1, ANCHOR_NORTH, FILL_HORIZONTAL, SIZE_POLICY_RESIZEABLE, SIZEPOLICY_FIXED, null, null, null))
-
     myPanel.add(consoleComponent,
                 GridConstraints(1, 1, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZE_POLICY_RESIZEABLE, SIZE_POLICY_RESIZEABLE, null, null, null))
 
@@ -262,19 +261,13 @@ class SerialMonitor(private val project: Project,
     lateinit var dsr: JComponent
 
     @RequiresEdt
-    fun updateFromLinesStatus(status: HardwareLinesStatus) {
-      this.cts.isEnabled = status.cts
-      this.dsr.isEnabled = status.dsr
+    fun onCTSChanged(state: Boolean) {
+      cts.isEnabled = state
     }
 
     @RequiresEdt
-    fun updateFromEvent(event: SerialPortEvent) {
-      val eventComponent = when (event.eventType) {
-        SerialPort.MASK_CTS -> cts
-        SerialPort.MASK_DSR -> dsr
-        else -> return
-      }
-     eventComponent.isEnabled = event.eventValue == 1
+    fun onDSRChanged(state: Boolean) {
+      dsr.isEnabled = state
     }
   }
 

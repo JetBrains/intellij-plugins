@@ -67,6 +67,7 @@ internal fun ConnectableList.createNewProfile(oldProfileName: String?, newPortNa
   if (finalName != null) {
     profiles[finalName] = newProfile
     service.setProfiles(profiles)
+    // TODO: this could be in a coroutine, or just emit to another flow which calls rescan
     this.rescanProfiles(finalName)
   }
 }

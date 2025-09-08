@@ -10,14 +10,14 @@ import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.SerialProfileService
 import com.intellij.plugins.serialmonitor.service.PortStatus
 import com.intellij.plugins.serialmonitor.service.SerialPortService
+import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ListSpeedSearch
 import com.intellij.ui.PopupHandler
-import com.intellij.ui.components.JBLabel
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBList
 import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.intellij.util.concurrency.annotations.RequiresEdt
-import com.intellij.util.ui.NamedColorUtil
 import icons.SerialMonitorIcons
 import org.jetbrains.annotations.Nls
 import java.awt.event.MouseAdapter
@@ -33,9 +33,13 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
 
     abstract fun connect()
 
-    abstract fun portName(): String?
+    abstract fun portName(): @NlsSafe String?
 
-    abstract fun icon(): Icon?
+    abstract fun icon(): Icon
+
+    abstract fun name(): @Nls String
+
+    open fun description(): @Nls String? = null
 
     protected val disconnectAction = object : DumbAwareAction(SerialMonitorBundle.message("action.disconnect.text"), null,
                                                               AllIcons.Nodes.Pluginobsolete) {
@@ -68,7 +72,8 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
     override fun portName(): String? = application.service<SerialProfileService>().getProfiles()[entityName]?.portName
 
     override val selectionKey: Any = 'R' to profileName
-    override fun icon(): Icon? = status.icon
+    override fun icon(): Icon = status.icon
+    override fun name(): @Nls String = entityName
 
     override fun connect() {
       application.service<SerialProfileService>().getProfiles()[entityName]?.also {
@@ -91,10 +96,13 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
   }
 
   inner class ConnectablePort(portName: String, status: PortStatus) : Connectable(portName, status) {
+
     override fun portName() = entityName
 
     override val selectionKey: Any = 'O' to entityName
-    override fun icon(): Icon? = status.icon
+    override fun icon(): Icon = status.icon
+    override fun name(): @Nls String = entityName
+    override fun description(): @Nls String? = service<SerialPortService>().portDescriptiveName(entityName)
 
     override fun connect() {
       parent.connectProfile(service<SerialProfileService>().copyDefaultProfile(entityName))
@@ -180,20 +188,20 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
         }
       }
     }
-    installCellRenderer { value ->
-      when (value) {
-        is Connectable -> {
-          JBLabel(value.entityName, value.icon() ?: AllIcons.Nodes.EmptyNode, JLabel.LEADING)
-        }
-        else -> {
-          @NlsSafe val label: String = value.asSafely<String>() ?: ""
-          JBLabel(label).apply {
-            font = font.deriveFont(font.size * 0.7f)
-            foreground = NamedColorUtil.getInactiveTextColor()
+
+    cellRenderer = object : ColoredListCellRenderer<Any>() {
+      override fun customizeCellRenderer(list: JList<out Any>, value: Any, index: Int, selected: Boolean, hasFocus: Boolean) {
+        when(value) {
+          is Connectable -> {
+            icon = value.icon()
+            append(value.name())
+          }
+          else -> {
+            @NlsSafe val label: String = value as? String ?: ""
+            append(label, SimpleTextAttributes.GRAY_SMALL_ATTRIBUTES)
           }
         }
       }
-
     }
     addMouseListener(object : MouseAdapter() {
       override fun mousePressed(e: MouseEvent) {
@@ -250,6 +258,7 @@ internal class ConnectableList(val parent: ConnectPanel) : JBList<Any>() {
           newProfiles.remove(entityName)
           clearSelection()
           setProfiles(newProfiles)
+          // TODO: this could be in a coroutine
           application.invokeLater { rescanProfiles() }
         }
       }

@@ -23,8 +23,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.application
 import com.intellij.util.ui.JBUI
 import org.jetbrains.annotations.Nls
-import javax.swing.event.ListSelectionEvent
-import javax.swing.event.ListSelectionListener
 
 internal val SERIAL_MONITOR = Key<SerialMonitor>(SerialMonitor::javaClass.name)
 
@@ -69,14 +67,10 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitt
             border = JBUI.Borders.empty()
           }
       }.resizableRow()
-      ports.rescanProfiles()
     }
-    ports.addListSelectionListener(object : ListSelectionListener {
-      override fun valueChanged(e: ListSelectionEvent?) {
-        selectionChanged()
-      }
-    })
+    ports.addListSelectionListener { selectionChanged() }
     secondComponent = JBPanel<JBPanel<*>>()
+    // TODO: this could be in a coroutine, subscribing to the flow
     application.messageBus.connect(toolWindow.disposable)
       .subscribe(SERIAL_PORTS_TOPIC, object : SerialPortsListener {
         override fun portsStatusChanged() {
@@ -84,6 +78,8 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitt
                                   { toolWindow.isDisposed })
         }
       })
+    // TODO: this could be in a coroutine, subscribing to the flow
+    ports.rescanProfiles()
   }
 
   private fun contentByPortName(portName: String?): Content? {

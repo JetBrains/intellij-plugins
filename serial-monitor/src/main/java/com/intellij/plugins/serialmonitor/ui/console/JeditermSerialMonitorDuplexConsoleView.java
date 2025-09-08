@@ -146,8 +146,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
         if (myConnection.getStatus() == PortStatus.DISCONNECTED || myConnection.getStatus() == PortStatus.READY) {
           // try to connect only when settings are known to be valid
           getPrimaryConsoleView().reconnect(getCharset(), myPortProfile.getNewLine(), myPortProfile.getLocalEcho());
-          myConnection.connect(myPortProfile.getBaudRate(), myPortProfile.getBits(), myPortProfile.getStopBits(),
-                               myPortProfile.getParity(), myPortProfile.getLocalEcho());
+          myConnection.connect(myPortProfile);
         }
         else {
           throw new SerialMonitorException(SerialMonitorBundle.message("serial.port.not.found", myPortProfile.getPortName()));
@@ -300,11 +299,7 @@ public class JeditermSerialMonitorDuplexConsoleView extends DuplexConsoleView<Je
     super.dispose();
     Application application = ApplicationManager.getApplication();
     application.executeOnPooledThread(() -> {
-      try {
-        myConnection.close(true);
-      }
-      catch (SerialMonitorException ignored) {
-      }
+      myConnection.closeSilently(true);
     });
   }
 }
