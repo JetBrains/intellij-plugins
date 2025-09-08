@@ -96,8 +96,8 @@ class TfTypeModel(
 
   companion object {
 
-    private val VersionProperty = PropertyType("version", Types.String, hint = SimpleHint("VersionRange"), injectionAllowed = false)
-    val TerraformRequiredVersion: PropertyType = PropertyType("required_version", Types.String, hint = SimpleHint("VersionRange"),
+    private val VersionProperty = PropertyType("version", Types.String, hint = SimpleValueHint("VersionRange"), injectionAllowed = false)
+    val TerraformRequiredVersion: PropertyType = PropertyType("required_version", Types.String, hint = SimpleValueHint("VersionRange"),
                                                               injectionAllowed = false)
 
     private val DependsOnProperty: PropertyType = PropertyType(
@@ -116,7 +116,7 @@ class TfTypeModel(
     val Atlas: BlockType = BlockType(HCL_ATLAS_IDENTIFIER, 0, properties = listOf(
       PropertyType("name", Types.String, injectionAllowed = false, required = true)).toMap())
     val Module: BlockType = BlockType(HCL_MODULE_IDENTIFIER, 1, properties = listOf(
-      PropertyType(HCL_SOURCE_IDENTIFIER, Types.String, hint = SimpleHint("Url"), required = true),
+      PropertyType(HCL_SOURCE_IDENTIFIER, Types.String, hint = SimpleValueHint("Url"), required = true),
       VersionProperty,
       DependsOnProperty,
       CountProperty,

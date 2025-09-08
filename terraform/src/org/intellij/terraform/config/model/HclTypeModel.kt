@@ -328,12 +328,11 @@ open class BaseModelType(
 
 //region hints
 interface Hint
-open class SimpleHint(vararg val hint: String) : Hint
 
 // TODO: Use some 'Reference' class
-open class ReferenceHint(vararg val hint: String) : Hint
+internal class ReferenceHint(vararg val hint: String) : Hint
 
-open class SimpleValueHint(vararg hint: String) : SimpleHint(*hint)
+internal class SimpleValueHint(vararg val hint: String) : Hint
 //endregion hints
 
 open class PropertyType(

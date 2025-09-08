@@ -567,7 +567,7 @@
     />
 
     <!--Terragrunt support-->
-    <fileType name="Terragrunt" language="HCL" patterns="*terragrunt.hcl;*terragrunt.stack.hcl"
+    <fileType name="Terragrunt" language="HCL" patterns="*terragrunt.hcl;*root.hcl;*terragrunt.stack.hcl"
               implementationClass="org.intellij.terraform.terragrunt.TerragruntFileType" fieldName="INSTANCE"/>
   </extensions>
 
