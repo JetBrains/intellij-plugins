@@ -26,6 +26,14 @@ class VueNewComponentTest : VueTestCase("new_component") {
     doNewComponentCheck(componentName = "MyTsLabel")
   }
 
+  fun testVaporComponentWithJsLang() {
+    doNewComponentCheck(componentName = "MyVaporJsLabel")
+  }
+
+  fun testVaporComponentWithTsLang() {
+    doNewComponentCheck(componentName = "MyVaporTsLabel")
+  }
+
   private fun doNewComponentCheck(
     componentName: String,
   ) {
