@@ -15,17 +15,17 @@ import javax.swing.JComponent
 class QodanaGithubCIPromoNotificationProvider: EditorNotificationProvider, DumbAware {
 
   override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
+    if (!isGithubActionsFile(file)) return null
     return Function { fileEditor ->
-      when {
-        fileEditor !is UserDataHolderEx -> null
-        !isGithubActionsFile(file) -> null
-        else -> {
-          val newViewModel = lazy { GithubPromoEditorViewModelImpl(project, fileEditor) }
-          val viewModel = fileEditor.putUserDataIfAbsent(GITHUB_PROMO_EDITOR_VIEW_MODEL_KEY, newViewModel).value
-          viewModel.getNotificationBannerViewModel()
-            ?.let { GithubPromoNotificationBanner(it) }
-            ?.also { logGithubPromoNotificationShown(project) }
-        }
+      if (fileEditor !is UserDataHolderEx) {
+        null
+      }
+      else {
+        val newViewModel = lazy { GithubPromoEditorViewModelImpl(project, fileEditor) }
+        val viewModel = fileEditor.putUserDataIfAbsent(GITHUB_PROMO_EDITOR_VIEW_MODEL_KEY, newViewModel).value
+        viewModel.getNotificationBannerViewModel()
+          ?.let { GithubPromoNotificationBanner(it) }
+          ?.also { logGithubPromoNotificationShown(project) }
       }
     }
   }
