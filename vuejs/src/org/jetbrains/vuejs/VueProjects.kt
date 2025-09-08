@@ -5,6 +5,7 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfigServiceImpl.Compani
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.vuejs.model.VueGlobalImpl
 
 @ApiStatus.Internal
 object VueProjects {
@@ -24,5 +25,13 @@ object VueProjects {
                     ?: return false
 
     return isTypeScriptProjectDirectory(directory)
+  }
+
+  fun isVaporProjectDirectory(
+    directory: PsiDirectory,
+  ): Boolean {
+    val apps = VueGlobalImpl.get(directory).apps
+    return apps.isNotEmpty() &&
+           apps.all { it.vapor }
   }
 }
