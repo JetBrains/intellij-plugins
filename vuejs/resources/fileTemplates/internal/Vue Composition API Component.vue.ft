@@ -1,4 +1,4 @@
-<script setup${SCRIPT_LANG_ATTR}>
+<script ${SCRIPT_SETUP_ATTR}${SCRIPT_LANG_ATTR}>
 
 </script>
 

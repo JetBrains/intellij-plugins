@@ -9,6 +9,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileBasedIndexEx
 import org.jetbrains.vuejs.VueProjects.isTypeScriptProjectDirectory
+import org.jetbrains.vuejs.VueProjects.isVaporProjectDirectory
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.VAPOR_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.context.*
 import org.jetbrains.vuejs.index.VUE_COMPONENT_STYLES_INDEX_KEY
 import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
@@ -18,6 +21,8 @@ private class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesPr
   override fun fillProperties(directory: PsiDirectory, props: Properties) {
     if (!hasVueFiles(directory.project) && !isVueContext(directory))
       return
+
+    props["SCRIPT_SETUP_ATTR"] = if (isVaporProjectDirectory(directory)) VAPOR_ATTRIBUTE_NAME else SETUP_ATTRIBUTE_NAME
 
     if (isTypeScriptProjectDirectory(directory)) {
       props["SCRIPT_LANG_ATTR"] = " lang=\"ts\""
