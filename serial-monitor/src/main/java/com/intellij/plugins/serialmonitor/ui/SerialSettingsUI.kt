@@ -110,25 +110,6 @@ fun Panel.serialSettings(disposable: Disposable,
     return this
   }
 
-  fun Cell<ComboBox<Int>>.changesIntBind(prop: KMutableProperty1<SerialPortProfile, Int>): Cell<ComboBox<Int>> {
-    component.selectedItem = prop.get(profile)
-
-    val setter: (Int?) -> Unit = { value ->
-      if (value != null && value != prop.get(profile)) {
-        prop.set(profile, value)
-        save(profile)
-      }
-    }
-
-    whenItemSelectedFromUi(disposable, setter)
-    val textEditorComponent = component.editor.editorComponent as JTextComponent
-    textEditorComponent.whenTextChangedFromUi(disposable) {
-      setter(it.toIntOrNull())
-    }
-
-    return this
-  }
-
   fun Cell<ComboBox<Int>>.intValidationOnInput(): Cell<ComboBox<Int>> = validationOnInput {
     val number = when(val item = it.editor.item) {
       is Int -> item
@@ -149,7 +130,7 @@ fun Panel.serialSettings(disposable: Disposable,
     topGap(TopGap.MEDIUM)
     comboBox(StandardBauds)
       .applyToComponent { isEditable = true }
-      .changesIntBind(SerialPortProfile::baudRate)
+      .editableChangesBind(profile::baudRate.toMutableProperty(), String::toIntOrNull, disposable)
       .speedSearch()
       .label(message("label.baud"))
       .enabled(!readOnly)
@@ -244,69 +225,81 @@ internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe S
 internal fun profileSettings(connectableList: ConnectableList, disposable: Disposable): DialogPanel? {
   val (profileName, profile) = connectableList.getSelectedProfile() ?: return null
   if (profile == null) return null
-    var portCombobox: ComboBox<String>? = null
-    val status = service<SerialPortService>().portStatus(profile.portName)
-    val profileService = service<SerialProfileService>()
-    return panel {
-      indent {
-        row {
-          topGap(TopGap.MEDIUM)
-          label(profileName).label(message("label.profile"))
-        }
-        row {
-          val portNames = service<SerialPortService>().getPortsNames()
-          val portValidation = DialogValidation.WithParameter<ComboBox<String>> {
-            DialogValidation {
-              val text = it.editor.item?.toString()
-              return@DialogValidation when {
-                text.isNullOrBlank() -> ValidationInfoBuilder(it).error(message("dialog.message.port.name"))
-                !portNames.contains(text) -> ValidationInfoBuilder(it).warning(message("dialog.message.port.does.not.exists"))
-                else -> null
-              }
+  val status = service<SerialPortService>().portStatus(profile.portName)
+  val profileService = service<SerialProfileService>()
+  return panel {
+    indent {
+      row {
+        topGap(TopGap.MEDIUM)
+        label(profileName).label(message("label.profile"))
+      }
+      row {
+        val portNames = service<SerialPortService>().getPortsNames()
+        val portValidation = DialogValidation.WithParameter<ComboBox<String>> {
+          DialogValidation {
+            val text = it.editor.item?.toString()
+            return@DialogValidation when {
+              text.isNullOrBlank() -> ValidationInfoBuilder(it).error(message("dialog.message.port.name"))
+              !portNames.contains(text) -> ValidationInfoBuilder(it).warning(message("dialog.message.port.does.not.exists"))
+              else -> null
             }
           }
-
-          comboBox(portNames).label(message("label.port"))
-            .validation(portValidation)
-            .resizableColumn()
-            .applyToComponent {
-              isEditable = true
-              editor.item = profile.portName
-              portCombobox = this
-            }
-
-        }.layout(RowLayout.LABEL_ALIGNED)
-        serialSettings(disposable = disposable, profile = profile) {
-          val profiles = profileService.getProfiles().toMutableMap()
-          profiles[profileName] = it
-          profileService.setProfiles(profiles)
-          connectableList.parentPanel.notifyProfileChanged(profile)
         }
-        row {
-          button(message("button.connect")) {
-            connectableList.parentPanel.connectProfile(profile, profileName)
-          }.visible(status.profileConnectVisible).enabled(status.connectEnabled)
-          .applyToComponent { toolTipText = status.connectTooltip }
 
-          button(message("button.disconnect")) {
-            connectableList.parentPanel.disconnectPort(profile.portName)
-          }.visible(status.disconnectVisible)
+        comboBox(portNames).label(message("label.port"))
+          .validation(portValidation)
+          .resizableColumn()
+          .applyToComponent {
+            isEditable = true
+            editor.item = profile.portName
+          }
+          .editableChangesBind(profile::portName.toMutableProperty(), {it}, disposable)
 
-          button(message("button.open.console")) {
-            connectableList.parentPanel.openConsole(profile.portName)
-          }.visible(status.openConsoleVisible)
-
-          link(message("link.label.duplicate.profile")) {profileService.cs.launch { connectableList.createNewProfile(profileName) }
-        }
+      }.layout(RowLayout.LABEL_ALIGNED)
+      serialSettings(disposable = disposable, profile = profile) {
+        val profiles = profileService.getProfiles().toMutableMap()
+        profiles[profileName] = it
+        profileService.setProfiles(profiles)
+        connectableList.parentPanel.notifyProfileChanged(profile)
       }
-      onApply { //workaround: editable combobox does not send any  events when the text is changed
-        profile.portName = portCombobox?.editor?.item?.toString() ?: ""
+      row {
+        button(message("button.connect")) {
+          connectableList.parentPanel.connectProfile(profile, profileName)
+        }.visible(status.profileConnectVisible).enabled(status.connectEnabled)
+        .applyToComponent { toolTipText = status.connectTooltip }
+
+        button(message("button.disconnect")) {
+          connectableList.parentPanel.disconnectPort(profile.portName)
+        }.visible(status.disconnectVisible)
+
+        button(message("button.open.console")) {
+          connectableList.parentPanel.openConsole(profile.portName)
+        }.visible(status.openConsoleVisible)
+
+        link(message("link.label.duplicate.profile")) {profileService.cs.launch { connectableList.createNewProfile(profileName) } }
       }
     }
   }.apply {
     registerValidators(disposable)
     validateAll()
   }
+}
+
+private fun <T> Cell<ComboBox<T>>.editableChangesBind(prop: MutableProperty<T>, parser: (String)->T?, disposable: Disposable): Cell<ComboBox<T>> {
+  component.selectedItem = prop.get()
+
+  val setter: (T?) -> Unit = { value ->
+    if (value != null && value != prop.get()) {
+      prop.set(value)
+    }
+  }
+
+  whenItemSelectedFromUi(disposable, setter)
+  val textEditorComponent = component.editor.editorComponent as JTextComponent
+  textEditorComponent.whenTextChangedFromUi(disposable) {
+    setter(parser(it))
+  }
+  return this
 }
 
 private val PortStatus.profileConnectVisible get() = !this.disconnectVisible
