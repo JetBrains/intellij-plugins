@@ -3,6 +3,9 @@ package org.jetbrains.vuejs.model
 
 interface VueApp : VueContainer {
 
+  val vapor: Boolean
+    get() = false
+
   val rootComponent: VueComponent? get() = null
 
   fun getProximity(library: VueLibrary): VueModelVisitor.Proximity

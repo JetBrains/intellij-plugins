@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
+import com.intellij.psi.PsiQualifiedReference
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -16,6 +17,11 @@ data class VueCompositionApp(
   override val source: JSCallExpression,
 ) : VueCompositionContainer(),
     VueApp {
+
+  override val vapor: Boolean
+    get() = source.methodExpression
+      ?.asSafely<PsiQualifiedReference>()
+      ?.referenceName == CREATE_VAPOR_APP_FUN
 
   override val rootComponent: VueComponent?
     get() = delegate.asSafely<VueComponent>()
