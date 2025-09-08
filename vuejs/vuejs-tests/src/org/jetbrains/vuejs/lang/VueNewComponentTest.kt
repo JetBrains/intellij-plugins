@@ -20,7 +20,7 @@ class VueNewComponentTest : VueTestCase("new_component") {
     isTypeScript: Boolean,
   ) {
     doLookupTest(
-      VueTestModule.VUE_3_4_0,
+      VueTestModule.VUE_3_6_0,
       dir = true,
       configureFileName = "index.html",
       lookupItemFilter = filterOutStandardHtmlSymbols,
