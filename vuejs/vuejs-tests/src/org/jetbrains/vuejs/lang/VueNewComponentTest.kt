@@ -1,11 +1,13 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.javascript.testFramework.web.filterOutStandardHtmlSymbols
+import com.intellij.ide.IdeView
+import com.intellij.ide.actions.TestDialogBuilder.TestAnswers
+import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.psi.PsiDirectory
-import com.intellij.psi.util.PsiUtilCore
-import org.jetbrains.vuejs.VueProjects.isTypeScriptProjectDirectory
+import org.jetbrains.vuejs.VueCreateFromTemplateHandler.Companion.VUE_COMPOSITION_API_TEMPLATE_NAME
 import org.jetbrains.vuejs.VueTestCase
 
 class VueNewComponentTest : VueTestCase("new_component") {
@@ -16,33 +18,64 @@ class VueNewComponentTest : VueTestCase("new_component") {
     this.enableIdempotenceChecksOnEveryCache()
   }
 
-  private fun doProjectLanguageCheck(
-    isTypeScript: Boolean,
+  fun testCompositionComponentWithJsLang() {
+    doNewComponentCheck(componentName = "MyJsLabel")
+  }
+
+  fun testCompositionComponentWithTsLang() {
+    doNewComponentCheck(componentName = "MyTsLabel")
+  }
+
+  private fun doNewComponentCheck(
+    componentName: String,
   ) {
-    doLookupTest(
+    doConfiguredTest(
       VueTestModule.VUE_3_6_0,
       dir = true,
-      configureFileName = "index.html",
-      lookupItemFilter = filterOutStandardHtmlSymbols,
-    )
-
-    val componentsDirectory = PsiUtilCore.findFileSystemItem(
-      myFixture.project,
-      myFixture.findFileInTempDir("core/components"),
-    ) as PsiDirectory
-
-    assertEquals(
-      isTypeScript,
-      isTypeScriptProjectDirectory(componentsDirectory),
-    )
+      checkResult = true,
+      configureFileName = "App.vue",
+    ) {
+      createNewComponent(
+        name = componentName,
+        directory = psiManager.findDirectory(findFileInTempDir("core/components"))!!,
+      )
+    }
   }
 
-  fun testProjectLanguageIsJavaScript() {
-    doProjectLanguageCheck(isTypeScript = false)
+  private fun createNewComponent(
+    name: String,
+    directory: PsiDirectory,
+  ) {
+    val action = ActionManager.getInstance()
+      .getAction("CreateVueSingleFileComp")
+
+    val event = AnActionEvent.createEvent(
+      action,
+      createDataContext(name, directory),
+      null,
+      ActionPlaces.PROJECT_VIEW_POPUP,
+      ActionUiKind.POPUP,
+      null,
+    )
+
+    action.actionPerformed(event)
   }
 
-  fun testProjectLanguageIsTypeScript() {
-    doProjectLanguageCheck(isTypeScript = true)
+  fun createDataContext(
+    name: String,
+    directory: PsiDirectory,
+  ): DataContext {
+    return SimpleDataContext.builder()
+      .add(CommonDataKeys.PROJECT, project)
+      .add(TestAnswers.KEY, TestAnswers(name, VUE_COMPOSITION_API_TEMPLATE_NAME))
+      .add(LangDataKeys.IDE_VIEW, object : IdeView {
+        override fun getDirectories(): Array<out PsiDirectory> =
+          arrayOf(directory)
+
+        override fun getOrChooseDirectory(): PsiDirectory =
+          directory
+      })
+      .build()
   }
 }
 

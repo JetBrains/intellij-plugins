@@ -64,6 +64,7 @@ jvm_library(
     "//plugins/webpack",
     "//plugins/webpack:webpack_test_lib",
     "//platform/lsp",
+    "@community//platform/lang-core",
     "@community//platform/polySymbols",
     "//platform/lsp/testFramework",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web-tests_test_lib",

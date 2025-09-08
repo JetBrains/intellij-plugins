@@ -47,6 +47,7 @@
     <orderEntry type="module" module-name="intellij.javascript.web" scope="TEST" />
     <orderEntry type="module" module-name="intellij.webpack" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lsp" />
+    <orderEntry type="module" module-name="intellij.platform.lang.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lsp.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.web.tests" scope="TEST" />
