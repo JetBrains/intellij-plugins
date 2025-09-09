@@ -21,7 +21,7 @@ class BuildProcessClasspathTest : BareTestFixtureTestCase() {
     val module = "intellij.osgi.jps"
     val mapping = PathManager.getArchivedCompiledClassesMapping()
     if (mapping != null) {
-      assertThat(classpath.toSet()).contains(mapping["production/$module"])
+      assertThat(classpath.toSet()).containsAll(mapping["production/$module"])
     }
     else {
       assertThat(libs).contains(module)
