@@ -21,7 +21,7 @@ jvm_library(
     "@community//platform/core-impl",
     "@community//platform/analysis-api:analysis",
     "//contrib/qodana",
-    "@lib//:kotlinc-kotlin-compiler-common-provided",
+    "@ultimate_lib//:kotlinc-kotlin-compiler-common-provided",
     "@community//platform/util-class-loader:util-classLoader",
   ],
   runtime_deps = [
@@ -54,7 +54,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "//contrib/qodana",
     "//contrib/qodana:qodana_test_lib",
-    "@lib//:kotlinc-kotlin-compiler-common-provided",
+    "@ultimate_lib//:kotlinc-kotlin-compiler-common-provided",
     "@community//platform/util-class-loader:util-classLoader",
   ],
   runtime_deps = [":kotlin_resources"]
