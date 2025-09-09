@@ -12,9 +12,9 @@ internal object TfWebDocUrlProvider : BaseTfDocUrlProvider() {
     val (org, provider, version) = blockData.provider ?: return null
     val baseDocUrl = "$PROVIDERS_WEB_DOCS/${org}/${provider}/${version}/docs"
     return when (context) {
-      PROVIDER -> "$baseDocUrl${blockData.parameter?.let { "#$it" } ?: ""}"
+      PROVIDER -> "$baseDocUrl${blockData.parameter?.let { "#$it-1" } ?: ""}"
       RESOURCES, DATASOURCES -> "$baseDocUrl/$context/${blockData.identifier?.let { TfTypeModel.getResourceName(it) } ?: return null}" +
-                                (blockData.parameter?.let { "#$it" } ?: "")
+                                (blockData.parameter?.let { "#$it-1" } ?: "")
       FUNCTION -> "$baseDocUrl/$context/${blockData.identifier}"
       else -> null
     }

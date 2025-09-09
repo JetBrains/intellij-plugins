@@ -41,19 +41,19 @@ internal abstract class TfBaseDocumentationProvider {
       return pointer.element?.let { LocalTfDocumentationProvider.fetchLocalDescription(it) } ?: NO_DOC
     }
 
-    override fun computeDocumentation(): DocumentationResult? {
+    override fun computeDocumentation(): DocumentationResult {
       val project = pointer.project
       val remoteDocProvider = project.service<RemoteTfDocumentationProvider>()
       val mdDocUrlProvider = project.service<TfMdDocUrlProvider>()
 
-      return DocumentationResult.Companion.asyncDocumentation {
+      return DocumentationResult.asyncDocumentation {
         val urlString = if (shouldDownloadDocs) mdDocUrlProvider.getDocumentationUrl(pointer).firstOrNull() else null
         val docText = urlString?.let { remoteDocProvider.getDoc(urlString) }
                       ?: readAction { LocalTfDocumentationProvider.fetchLocalDescription(pointer.element) }
 
         DocumentationResult.documentation(docText ?: NO_DOC).applyIf(docText != null) {
           val externalUrl = TfWebDocUrlProvider.getDocumentationUrl(pointer).firstOrNull()
-          val docAnchor = externalUrl?.substringAfterLast("#", ROOT_DOC_ANCHOR)
+          val docAnchor = externalUrl?.substringAfterLast("#", ROOT_DOC_ANCHOR)?.removeSuffix("-1")
           externalUrl(externalUrl).anchor(docAnchor)
         }
       }
