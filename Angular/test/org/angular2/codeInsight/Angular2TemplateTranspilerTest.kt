@@ -31,6 +31,12 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_CORE_16_2_8,
   )
 
+  fun testNgAcceptInputTypeOverrideGenericDirectives() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_20_1_4,
+    dir = true,
+    configureFileName = "app.component.ts"
+  )
+
   fun testHostDirectives() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_16_2_8,
     dir = true,

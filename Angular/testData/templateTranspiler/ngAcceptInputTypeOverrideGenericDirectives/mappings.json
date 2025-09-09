@@ -1,0 +1,20 @@
+[
+  {
+    "file-name": "app.component.html",
+    "mappings": [
+      "«sbb-date-input» [1] => «_t1» [557]} (no diagnostics) (no semantic)",
+      "«sbb-date-input» [1] => «_t2» [609]} (ignored)",
+      "«required» [16] => «_t4» [1000]} (no types)",
+      "«disabled» [25] => «_t5» [1081]} (no types)",
+      "«[readOnly]» [34] => «_t3» [917]} (no types)",
+      "«true» [46] => «true» [635]} (only reverse types)",
+      "«true» [46] => «true» [923]}"
+    ]
+  },
+  {
+    "file-name": "app.component.ts",
+    "mappings": [
+      "0:220 => 0:220 (source)"
+    ]
+  }
+]

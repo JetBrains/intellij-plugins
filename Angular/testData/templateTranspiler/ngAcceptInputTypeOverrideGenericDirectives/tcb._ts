@@ -1,0 +1,22 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "./date-input";
+/* Directives */
+const _ctor1: <T = Date>(init: Pick<_i1.SbbDateInput<T>, "value" | "valueAsDate" | "min" | "max" | "dateFilter" | "weekdayStyle" | "placeholder" | "name"> & {
+readOnly: typeof _i1.SbbDateInput.ngAcceptInputType_readOnly;
+disabled: typeof _i1.SbbDateInput.ngAcceptInputType_disabled;
+required: typeof _i1.SbbDateInput.ngAcceptInputType_required;
+}) => _i1.SbbDateInput<T> = null!;
+
+/* TCB for app.component.html */
+
+function _tcb1(this: AppComponent) {
+var _t1 = document.createElement("sbb-date-input");
+var _t2 = _ctor1({"readOnly": true, "required": "", "disabled": "", "value": 0 as any, "valueAsDate": 0 as any, "min": 0 as any, "max": 0 as any, "dateFilter": 0 as any, "weekdayStyle": 0 as any, "placeholder": 0 as any, "name": 0 as any});
+var _t3 = null! as typeof _i1.SbbDateInput.ngAcceptInputType_readOnly;
+_t3 = true;
+var _t4 = null! as typeof _i1.SbbDateInput.ngAcceptInputType_required;
+_t4 = "";
+var _t5 = null! as typeof _i1.SbbDateInput.ngAcceptInputType_disabled;
+_t5 = "";
+}

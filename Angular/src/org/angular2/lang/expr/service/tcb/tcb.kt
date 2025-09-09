@@ -713,8 +713,8 @@ private class TcbDirectiveInputsOp(
             // expression into the input field directly. To achieve this, a variable is declared
             // with a type of `typeof Directive.ngAcceptInputType_fieldName` which is then used as
             // target of the assignment.
-            val dirTypeRef: JSType = dir.entityJsType!!
-            type = tsCreateTypeQueryForCoercedInput(tcb.env.referenceType(dirTypeRef), fieldName!!)
+            val dirTypeRef = tcb.env.reference(dir.typeScriptClass!!)
+            type = tsCreateTypeQueryForCoercedInput(dirTypeRef, fieldName!!)
           }
 
           val id = this.tcb.allocateId()
