@@ -207,7 +207,7 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
   fun testInaccessibleSymbolInlineAot() {
     doTest(inspections = listOf(AngularInaccessibleSymbolInspection::class.java),
            dependencies = listOf(ANGULAR_CORE_13_3_5, TS_LIB),
-           configurators = listOf(Angular2TsConfigFile(strict = false,)),
+           configurators = listOf(Angular2TsConfigFile(strict = false)),
            files = listOf("private-inline.ts"))
   }
 
@@ -335,6 +335,28 @@ class Angular2TemplateInspectionsTest : Angular2TestCase("inspections/template",
       files = listOf("model-input-required.ts")
     )
   }
+
+  fun testUncalledSignalLengthPropertyAccess1() =
+    doTest(
+      testNr = 1,
+      location = "{{ this.test.le<caret>ngth }}",
+      quickFixName = Angular2Bundle.message("angular.inspection.uncalled-signal-length-property-access.quick-fix.message"),
+      inspections = listOf(AngularUncalledSignalLengthPropertyAccessInspection::class.java),
+      dependencies = listOf(ANGULAR_CORE_20_1_4),
+      files = listOf("uncalled-signal-length-property-access.html", "uncalled-signal-length-property-access.ts"),
+      configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
+    )
+
+  fun testUncalledSignalLengthPropertyAccess2() =
+    doTest(
+      testNr = 2,
+      location = "{{ this.bar().le<caret>ngth }}",
+      quickFixName = Angular2Bundle.message("angular.inspection.uncalled-signal-length-property-access.quick-fix.message"),
+      inspections = listOf(AngularUncalledSignalLengthPropertyAccessInspection::class.java),
+      dependencies = listOf(ANGULAR_CORE_20_1_4),
+      files = listOf("uncalled-signal-length-property-access.html", "uncalled-signal-length-property-access.ts"),
+      configurators = listOf(Angular2TsConfigFile(strictNullChecks = true)),
+    )
 
   private fun doTestNoFix(
     location: String,
