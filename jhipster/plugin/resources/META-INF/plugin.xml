@@ -13,11 +13,11 @@
       <li>Options completion for all supported JHipster parameters</li>
       <li>Go to declaration and Find usages for entities and enums</li>
       <li>Structure view, UML preview and quick navigation</li>
-      <li>Run configuration to start generator with a single click</li>
+      <li>Run configuration to start the generator with a single click</li>
       <li>Rename refactor</li>
     </ul>
     <br/>
-    Use live templates to speed-up JDL editing:
+    Use live templates to speed up JDL editing:
     <ul>
       <li><b>jh-app</b> - Adds a new application declaration</li>
       <li><b>jh-entity</b> - Adds a new entity declaration</li>

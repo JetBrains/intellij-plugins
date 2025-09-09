@@ -26,5 +26,7 @@
     <langCodeStyleSettingsProvider implementation="com.intellij.jhipster.JdlLanguageCodeStyleSettingsProvider"/>
 
     <colorSettingsPage implementation="com.intellij.jhipster.JdlColorSettingsPage"/>
+
+    <internalFileTemplate name="JHipster JDL File"/>
   </extensions>
 </idea-plugin>
