@@ -111,6 +111,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularInaccessibleSymbolInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" level="ERROR"
                      key="angular.inspection.inaccessible-symbol.name" bundle="messages.Angular2Bundle"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularUncalledSignalLengthPropertyAccessInspection"
+                     groupKey="angular.inspection.group.name" enabledByDefault="true" level="WARNING" language="TypeScript"
+                     key="angular.inspection.uncalled-signal-length-property-access.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularUnusedComponentImportInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" level="ERROR" language="TypeScript"
                      key="angular.inspection.unused-component-import.name" bundle="messages.Angular2Bundle"/>

@@ -1,0 +1,6 @@
+{{ this.test.<warning descr="Accessing length property of an uncalled signal. Did you mean to call the signal first?">length</warning> }}
+{{ this.test().length }}
+{{ this.bar().<warning descr="Accessing length property of an uncalled signal. Did you mean to call the signal first?">length</warning> }}
+{{ this.bar()().length }}
+
+{{ this.<error descr="TS2339: Property 'foo' does not exist on type 'AppComponent'.">foo</error> }}

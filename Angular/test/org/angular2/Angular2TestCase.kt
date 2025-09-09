@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
+import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.typescript.compiler.TypeScriptService
@@ -62,5 +63,18 @@ abstract class Angular2TestCase(
     finally {
       expectedServerClass = Angular2TypeScriptService::class
     }
+  }
+
+  protected fun checkHighlightingAndQuickFix(
+    vararg modules: Angular2TestModule,
+    quickFixName: String,
+    dir: Boolean = false,
+    extension: String = "ts",
+    configureFileName: String = "$testName.$extension",
+    inspections: Collection<Class<out LocalInspectionTool>> = emptyList(),
+  ) = doConfiguredTest(*modules, dir = dir, extension = extension, configureFileName = configureFileName, checkResult = true) {
+    enableInspections(inspections)
+    this.checkHighlighting(true, false, true)
+    this.launchAction(findSingleIntention(quickFixName))
   }
 }
