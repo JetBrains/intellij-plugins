@@ -48,16 +48,20 @@ class JsscSerialPort : SerialPort {
     }
     runWithExceptionWrapping(SerialMonitorBundle.message("serial.port.listener.failed")) {
       port.addEventListener({ event ->
-        bitFlagSwitch(event.eventType, sequenceOf(
-          MASK_RXCHAR to {
+        bitFlagSwitch(event.eventType) {
+          case(MASK_RXCHAR) {
             val readBytes = port.readBytes()
             if (readBytes?.isNotEmpty() == true) {
               listener.onDataReceived(readBytes)
             }
-          },
-          MASK_CTS to { listener.onCTSChanged(event.eventValue != 0) },
-          MASK_DSR to { listener.onDSRChanged(event.eventValue != 0) }
-        ))
+          }
+          case(MASK_CTS) {
+            listener.onCTSChanged(event.eventValue != 0)
+          }
+          case(MASK_DSR) {
+            listener.onDSRChanged(event.eventValue != 0)
+          }
+        }
       }, MASK_RXCHAR or MASK_CTS or MASK_DSR)
     }
   }
@@ -117,6 +121,12 @@ private fun <T> runWithExceptionWrapping(errorMessage: @Nls String = "", action:
   throw SerialPortException(errorMessage)
 }!!
 
-private fun bitFlagSwitch(value: Int, cases: Sequence<Pair<Int, ()->Unit>>) = cases.forEach { (bitMask, action) ->
-  if (value and bitMask != 0) action()
+private class BitFlagSwitchContext(private val value: Int) {
+  fun case(bitMask: Int, action: ()->Unit) {
+    if (value and bitMask != 0) action()
+  }
+}
+
+private fun bitFlagSwitch(value: Int, cases: BitFlagSwitchContext.()->Unit){
+  BitFlagSwitchContext(value).cases()
 }
