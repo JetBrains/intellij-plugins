@@ -49,16 +49,16 @@ class JsscSerialPort : SerialPort {
     runWithExceptionWrapping(SerialMonitorBundle.message("serial.port.listener.failed")) {
       port.addEventListener({ event ->
         bitFlagSwitch(event.eventType) {
-          case(MASK_RXCHAR) {
+          whenSet(MASK_RXCHAR) {
             val readBytes = port.readBytes()
             if (readBytes?.isNotEmpty() == true) {
               listener.onDataReceived(readBytes)
             }
           }
-          case(MASK_CTS) {
+          whenSet(MASK_CTS) {
             listener.onCTSChanged(event.eventValue != 0)
           }
-          case(MASK_DSR) {
+          whenSet(MASK_DSR) {
             listener.onDSRChanged(event.eventValue != 0)
           }
         }
@@ -122,7 +122,7 @@ private fun <T> runWithExceptionWrapping(errorMessage: @Nls String = "", action:
 }!!
 
 private class BitFlagSwitchContext(private val value: Int) {
-  fun case(bitMask: Int, action: ()->Unit) {
+  fun whenSet(bitMask: Int, action: ()->Unit) {
     if (value and bitMask != 0) action()
   }
 }
