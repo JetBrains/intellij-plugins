@@ -51,14 +51,16 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
 
     private fun splitName(s: String): Pair<String, Int> {
       var digitIdx = s.length - 1
-      var num = 0
+      var num: Int? = null
       var mul = 1
       while (digitIdx >= 0 && s[digitIdx].isDigit()) {
-        num += mul * (s[digitIdx] - '0')
+        num = (num ?: 0) + mul * (s[digitIdx] - '0')
         mul *= 10
         digitIdx--
       }
-      return s.take(digitIdx + 1) to num
+
+      // Order entries without a number before ones with a number
+      return s.take(digitIdx + 1) to (num ?: -1)
     }
 
     override fun compare(name1: String, name2: String): Int {
