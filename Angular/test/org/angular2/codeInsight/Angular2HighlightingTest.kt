@@ -410,6 +410,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
                       configurators = listOf(Angular2TsConfigFile(strictTemplates = true)),
                       configureFileName = "app.component.html", dir = true)
 
+  fun testDirectiveWithExportDefault() =
+    checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html", dir = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
