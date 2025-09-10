@@ -10,6 +10,36 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterPomTarget;
 
+//@formatter:off Temporarily disable formatter because of bug IDEA-371809
+/// Provides "Find Usages" functionality for the definition of a Cucumber `ParameterType`.
+/// 
+/// ### Example
+/// 
+/// To see this in action, run "Find Usages" on the first argument of the `ParameterType` constructor (`"isoDate"`)":
+/// 
+/// ```
+/// ParameterType<Date> parameterType = new ParameterType<>(
+///         "isoDate",
+///         "\\d{4}-\\d{2}-\\d{2}",
+///         Date.class,
+///         (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
+/// );
+/// ```
+/// 
+/// Assuming the following step definitions were in the project: 
+/// 
+/// ```
+/// public class Steps
+///   @And("today is {isoDate}")
+///   public void today(Date arg1) {}
+///
+///   @And("yeserday was {isoDate}, and tomorrow will be {isoDate}")
+///   public void yesterday_and_tomorrow(Date yesterday, Date tomorrow) {}
+/// } 
+/// ```
+///
+/// we would find *three* usages of the `"isoDate"` parameter.
+//@formatter:on
 public final class CucumberJavaPomDeclarationSearcher extends PomDeclarationSearcher {
   @Override
   public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, @NotNull Consumer<? super PomTarget> consumer) {
@@ -17,12 +47,12 @@ public final class CucumberJavaPomDeclarationSearcher extends PomDeclarationSear
     final Object value = literalExpression.getValue();
     if (!(value instanceof String stringValue)) return;
 
-    final PsiNewExpression newExp = PsiTreeUtil.getParentOfType(element, PsiNewExpression.class);
-    if (newExp != null) {
-      if (!isFirstConstructorArgument(element, newExp)) {
+    final PsiNewExpression newExpression = PsiTreeUtil.getParentOfType(element, PsiNewExpression.class);
+    if (newExpression != null) {
+      if (!isFirstConstructorArgument(element, newExpression)) {
         return;
       }
-      final PsiJavaCodeReferenceElement classReference = newExp.getClassReference();
+      final PsiJavaCodeReferenceElement classReference = newExpression.getClassReference();
       if (classReference != null) {
         final String fqn = classReference.getQualifiedName();
         if (CucumberJavaUtil.PARAMETER_TYPE_CLASS.equals(fqn)) {

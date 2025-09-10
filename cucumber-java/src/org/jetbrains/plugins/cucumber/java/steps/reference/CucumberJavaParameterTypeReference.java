@@ -23,7 +23,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 /// 
 /// ### Example
 /// 
-/// For example, we provide a reference from the "iso-date" parameter in step definition:
+/// For example, we provide a reference from the `"iso-date"` parameter in the step definition:
 ///
 /// ```
 /// @Given("today is {isoDate}")

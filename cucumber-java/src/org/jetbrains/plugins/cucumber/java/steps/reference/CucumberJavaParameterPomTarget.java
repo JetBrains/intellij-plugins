@@ -5,20 +5,24 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.PomRenameableTarget;
 import com.intellij.pom.PsiDeclaredTarget;
 import com.intellij.psi.*;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
+/// Represents a navigation target from a Cucumber `ParameterType` declaration.
+///
+/// @see org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaPomDeclarationSearcher CucumberJavaPomDeclarationSearcher
+@NotNullByDefault
 public class CucumberJavaParameterPomTarget extends DelegatePsiTarget implements PomRenameableTarget, PsiDeclaredTarget {
-  private final @NotNull String myName;
+  private final String name;
 
-  public CucumberJavaParameterPomTarget(@NotNull PsiElement element, @NotNull String name) {
+  public CucumberJavaParameterPomTarget(PsiElement element, String name) {
     super(element);
-    myName = name;
+    this.name = name;
   }
 
   @Override
-  public @NotNull String getName() {
-    return myName;
+  public String getName() {
+    return name;
   }
 
   @Override
@@ -38,7 +42,7 @@ public class CucumberJavaParameterPomTarget extends DelegatePsiTarget implements
   }
 
   @Override
-  public Object setName(@NotNull String newName) {
+  public Object setName(String newName) {
     PsiElement element = getNavigationElement();
     if (element instanceof PsiLiteralExpression) {
       PsiManager manager = element.getManager();
