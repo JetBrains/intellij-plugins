@@ -6,13 +6,29 @@ import com.intellij.usages.Usage;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-import java.util.Collection;
-
 public class CucumberJavaFindUsagesTest extends CucumberJavaCodeInsightTestCase {
   public void testStepUsages() {
     myFixture.copyDirectoryToProject(getTestName(true), "");
-    Collection<Usage> usages = myFixture.testFindUsagesUsingAction("Steps.java", "test.feature");
-    assertEquals(3, usages.size());
+    String[] usages = myFixture.testFindUsagesUsingAction("Steps.java").stream().map(Usage::toString).toArray(String[]::new);
+    assertEquals(3, usages.length);
+    String[] expectedUsages = new String[]{
+      "4|Given| |I am happy",
+      "6|Then| |I am happy",
+      "9|Given| |I am happy"
+    };
+    assertSameElements(expectedUsages, usages);
+  }
+
+  public void testParameterTypeUsages() {
+    myFixture.copyDirectoryToProject(getTestName(true), "");
+    String[] usages = myFixture.testFindUsagesUsingAction("Steps.java").stream().map(Usage::toString).toArray(String[]::new);
+    assertEquals(3, usages.length); // Should actually be 4. See IDEA-379147.
+    String[] expectedUsages = new String[]{
+      "", // Because of 2 usages on line 23
+      "19|@And(|\"today is {|isoDate|}\"|)",
+      "23|@And(|\"yesterday was {|isoDate|}, before was {|isoDate|}\"|)"
+    };
+    assertSameElements(expectedUsages, usages);
   }
 
   @Override
