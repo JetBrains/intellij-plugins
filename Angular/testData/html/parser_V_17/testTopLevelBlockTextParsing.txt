@@ -1,0 +1,53 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlToken:XML_DATA_CHARACTERS('foo')
+    PsiWhiteSpace('\n')
+    Angular2HtmlBlock (@if)
+      PsiElement(NG:BLOCK_NAME)('@if')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockParameters
+        PsiElement(JS:LPAR)('(')
+        ASTWrapperPsiElement(NG:BLOCK_PARAMETER (if:0))
+          Angular2BlockParameter
+            JSLiteralExpression
+              PsiElement(JS:TRUE_KEYWORD)('true')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      Angular2HtmlBlockContents
+        PsiElement(NG:BLOCK_START)('{')
+        XmlText
+          PsiWhiteSpace('\n  ')
+          XmlToken:XML_DATA_CHARACTERS('test')
+          PsiWhiteSpace('\n  ')
+        HtmlTag:div
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('div')
+          XmlToken:XML_TAG_END('>')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('div')
+          XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n  ')
+          XmlToken:XML_DATA_CHARACTERS('test')
+          PsiWhiteSpace('\n  ')
+        HtmlTag:div
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('div')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n')
+          PsiErrorElement:Element div is not closed
+            <empty list>
+        PsiElement(NG:BLOCK_END)('}')
+    PsiWhiteSpace('\n')
+    XmlToken:XML_DATA_CHARACTERS('foo')
+    PsiWhiteSpace('\n')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')

@@ -50,5 +50,6 @@ HtmlFile:test.html
       PsiWhiteSpace(' ')
       Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')
-        PsiWhiteSpace('\n')
+        XmlText
+          PsiWhiteSpace('\n')
         PsiElement(NG:BLOCK_END)('}')

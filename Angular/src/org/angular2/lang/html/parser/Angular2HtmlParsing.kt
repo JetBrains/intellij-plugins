@@ -34,51 +34,8 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
           parseTag()
           flushIncompleteStackItemsWhile { it is HtmlTagInfo }
         }
-        XmlTokenType.XML_PI_START -> {
-          xmlText = terminateText(xmlText)
-          parseProcessingInstruction()
-        }
-        XmlTokenType.XML_CHAR_ENTITY_REF, XmlTokenType.XML_ENTITY_REF_TOKEN -> {
-          xmlText = startText(xmlText)
-          parseReference()
-        }
-        XmlTokenType.XML_CDATA_START -> {
-          xmlText = startText(xmlText)
-          parseCData()
-        }
-        XmlTokenType.XML_COMMENT_START -> {
-          xmlText = startText(xmlText)
-          parseComment()
-        }
-        XmlTokenType.XML_BAD_CHARACTER -> {
-          xmlText = startText(xmlText)
-          val error = mark()
-          advance()
-          error.error(XmlParserBundle.message("xml.parsing.unescaped.ampersand.or.nonterminated.character.entity.reference"))
-        }
-        XmlTokenType.XML_END_TAG_START -> {
-          val tagEndError = mark()
-          advance()
-          if (token() === XmlTokenType.XML_NAME) {
-            advance()
-            if (token() === XmlTokenType.XML_TAG_END) {
-              advance()
-            }
-          }
-          tagEndError.error(XmlParserBundle.message("xml.parsing.closing.tag.matches.nothing"))
-        }
-        is ICustomParsingType, is ILazyParseableElementType -> {
-          xmlText = terminateText(xmlText)
-          advance()
-        }
         else -> {
-          if (hasCustomTagContent()) {
-            xmlText = parseCustomTagContent(xmlText)
-          }
-          else {
-            xmlText = startText(xmlText)
-            advance()
-          }
+          xmlText = defaultParseTopLevelTokenWithText(xmlText)
         }
       }
     }
@@ -92,6 +49,83 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
 
   override fun hasCustomTagContent(): Boolean {
     return CUSTOM_CONTENT.contains(token())
+  }
+
+  private fun parseTopLevelBlock() {
+    parseBlockStart()
+    if (stackSize() == 0) return
+    var xmlText: Marker? = null
+    while (!eof()) {
+      when (token()) {
+        XmlTokenType.XML_START_TAG_START -> {
+          xmlText = terminateText(xmlText)
+          parseTag()
+        }
+        Angular2HtmlTokenTypes.BLOCK_END -> {
+          xmlText = parseCustomTagContent(xmlText)
+          if (!hasAngularBlockOnStack) {
+            break
+          }
+        }
+        else -> {
+          xmlText = defaultParseTopLevelTokenWithText(xmlText)
+        }
+      }
+    }
+    terminateText(xmlText)
+  }
+
+  private fun defaultParseTopLevelTokenWithText(xmlText: Marker?): Marker? {
+    var xmlText = xmlText
+    when (token()) {
+      XmlTokenType.XML_PI_START -> {
+        xmlText = terminateText(xmlText)
+        parseProcessingInstruction()
+      }
+      XmlTokenType.XML_CHAR_ENTITY_REF, XmlTokenType.XML_ENTITY_REF_TOKEN -> {
+        xmlText = startText(xmlText)
+        parseReference()
+      }
+      XmlTokenType.XML_CDATA_START -> {
+        xmlText = startText(xmlText)
+        parseCData()
+      }
+      XmlTokenType.XML_COMMENT_START -> {
+        xmlText = startText(xmlText)
+        parseComment()
+      }
+      XmlTokenType.XML_BAD_CHARACTER -> {
+        xmlText = startText(xmlText)
+        val error = mark()
+        advance()
+        error.error(XmlParserBundle.message("xml.parsing.unescaped.ampersand.or.nonterminated.character.entity.reference"))
+      }
+      XmlTokenType.XML_END_TAG_START -> {
+        val tagEndError = mark()
+        advance()
+        if (token() === XmlTokenType.XML_NAME) {
+          advance()
+          if (token() === XmlTokenType.XML_TAG_END) {
+            advance()
+          }
+        }
+        tagEndError.error(XmlParserBundle.message("xml.parsing.closing.tag.matches.nothing"))
+      }
+      is ICustomParsingType, is ILazyParseableElementType -> {
+        xmlText = terminateText(xmlText)
+        advance()
+      }
+      else -> {
+        if (hasCustomTagContent()) {
+          xmlText = parseCustomTagContent(xmlText)
+        }
+        else {
+          xmlText = startText(xmlText)
+          advance()
+        }
+      }
+    }
+    return xmlText
   }
 
   private val hasAngularBlockOnStack: Boolean
@@ -162,8 +196,8 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
       Angular2HtmlTokenTypes.BLOCK_END -> {
         result = terminateText(result)
         if (hasAngularBlockOnStack) {
-          advance()
           flushIncompleteStackItemsWhile { it !is AngularBlock }
+          advance()
           completeTopStackItem()
         }
         else {
@@ -257,7 +291,10 @@ open class Angular2HtmlParsing(private val templateSyntax: Angular2TemplateSynta
 
   override fun parseCustomTopLevelContent(error: Marker?): Marker? {
     val result = flushError(error)
-    terminateText(parseCustomTagContent(null))
+    if (token() == Angular2HtmlTokenTypes.BLOCK_NAME)
+      parseTopLevelBlock()
+    else
+      terminateText(parseCustomTagContent(null))
     return result
   }
 

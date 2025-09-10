@@ -18,10 +18,11 @@ HtmlFile:test.html
       Angular2HtmlBlockContents
         PsiErrorElement:Incomplete block - missing }
           PsiElement(NG:BLOCK_START)('{')
-        XmlToken:XML_DATA_CHARACTERS('this')
-        PsiWhiteSpace(' ')
-        XmlToken:XML_DATA_CHARACTERS('is')
-        PsiWhiteSpace(' ')
-        XmlToken:XML_DATA_CHARACTERS('not')
-        PsiWhiteSpace(' ')
-        XmlToken:XML_DATA_CHARACTERS('finished')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('this')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('is')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('not')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('finished')

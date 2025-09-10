@@ -102,4 +102,37 @@ open class Angular17HtmlParsingTest : Angular2HtmlParsingTest() {
     """.trimIndent())
   }
 
+  fun testTopLevelBlockTextParsing() {
+    doTestHtml("""
+      foo
+      @if (true) {
+        test
+        <div></div>
+        test
+        <div>
+      }
+      foo
+      <div></div>
+    """.trimIndent()
+    )
+  }
+
+  fun testNestedBlockTextParsing() {
+    doTestHtml("""
+      foo
+      <div>
+        @if (true) {
+          test
+          <div></div>
+          test
+          <div>
+        }
+        foo
+        <div></div>
+      </div>
+      foo  
+    """.trimIndent()
+    )
+  }
+
 }

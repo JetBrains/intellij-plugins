@@ -24,7 +24,8 @@ HtmlFile:test.html
       PsiWhiteSpace(' ')
       Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')
-        PsiWhiteSpace('\n  ')
+        XmlText
+          PsiWhiteSpace('\n  ')
         PsiElement(NG:INTERPOLATION_START)('{{')
         ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
           Angular2Interpolation
@@ -34,7 +35,8 @@ HtmlFile:test.html
               PsiElement(JS:DOT)('.')
               PsiElement(JS:IDENTIFIER)('length')
         PsiElement(NG:INTERPOLATION_END)('}}')
-        PsiWhiteSpace('\n')
+        XmlText
+          PsiWhiteSpace('\n')
         PsiElement(NG:BLOCK_END)('}')
     PsiWhiteSpace(' ')
     Angular2HtmlBlock (@else)
@@ -42,12 +44,14 @@ HtmlFile:test.html
       PsiWhiteSpace(' ')
       Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')
-        PsiWhiteSpace('\n  ')
+        XmlText
+          PsiWhiteSpace('\n  ')
         PsiElement(NG:INTERPOLATION_START)('{{')
         ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
           Angular2Interpolation
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('value')
         PsiElement(NG:INTERPOLATION_END)('}}')
-        PsiWhiteSpace('\n')
+        XmlText
+          PsiWhiteSpace('\n')
         PsiElement(NG:BLOCK_END)('}')

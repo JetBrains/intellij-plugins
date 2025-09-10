@@ -18,7 +18,8 @@ HtmlFile:test.html
       PsiWhiteSpace(' ')
       Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')
-        PsiWhiteSpace('\n    ')
+        XmlText
+          PsiWhiteSpace('\n    ')
         Angular2HtmlBlock (@c)
           PsiElement(NG:BLOCK_NAME)('@c')
           PsiErrorElement:Incomplete block - missing {

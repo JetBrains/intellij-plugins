@@ -20,7 +20,8 @@ HtmlFile:test.html
       PsiWhiteSpace(' ')
       Angular2HtmlBlockContents
         PsiElement(NG:BLOCK_START)('{')
-        PsiWhiteSpace('\n  ')
+        XmlText
+          PsiWhiteSpace('\n  ')
         HtmlTag:human-profile
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('human-profile')
@@ -99,4 +100,4 @@ HtmlFile:test.html
             PsiWhiteSpace(' ')
             XmlToken:XML_DATA_CHARACTERS('unknown!')
             PsiWhiteSpace('\n')
-          PsiElement(NG:BLOCK_END)('}')
+        PsiElement(NG:BLOCK_END)('}')
