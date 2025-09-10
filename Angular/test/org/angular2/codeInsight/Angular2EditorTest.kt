@@ -47,6 +47,11 @@ class Angular2EditorTest : Angular2TestCase("editor", false) {
   fun testSwitchBlockExtendSelection() =
     doWordSelectionTest()
 
+  fun testTopLevelBlockEmmetExpansion() =
+    doCompletionAutoPopupTest(checkResult = true, extension = "html") {
+      type("\t")
+    }
+
   private fun doWordSelectionTest() =
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_17_3_0, configureFile = false) {
       CodeInsightTestUtil.doWordSelectionTestOnDirectory(myFixture, getTestName(true), "html")
