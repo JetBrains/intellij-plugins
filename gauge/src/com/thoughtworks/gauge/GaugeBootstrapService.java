@@ -112,7 +112,7 @@ public final class GaugeBootstrapService implements Disposable {
 
     ApplicationManager.getApplication().invokeLater(() -> {
       WriteAction.run(() -> {
-        DaemonCodeAnalyzer.getInstance(myProject).restart();
+        DaemonCodeAnalyzer.getInstance(myProject).restart(this);
       });
     }, myProject.getDisposed());
   }

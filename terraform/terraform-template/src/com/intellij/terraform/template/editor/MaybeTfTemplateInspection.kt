@@ -74,7 +74,7 @@ internal class TfIgnoreTemplateCandidateFix(private val filePointer: SmartPsiEle
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     val psiFile = filePointer.dereference() ?: return
     TfProjectSettings.getInstance(project).addIgnoredTemplateCandidate(psiFile.virtualFile.url)
-    DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
+    DaemonCodeAnalyzer.getInstance(project).restart(psiFile, this)
   }
 
   override fun generatePreview(project: Project, previewDescriptor: ProblemDescriptor): IntentionPreviewInfo {

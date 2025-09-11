@@ -84,7 +84,7 @@ internal class QodanaReportHighlightingPass(
           else {
             putRevisionData(revisionIds)
           }
-          DaemonCodeAnalyzer.getInstance(myProject).restart(myFile)
+          DaemonCodeAnalyzer.getInstance(myProject).restart(myFile, this)
         }
       }
       return

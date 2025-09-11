@@ -78,7 +78,7 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
           if (file.getFileType() == PbFileType.INSTANCE) {
             PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
             if (psiFile != null) {
-              DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
+              DaemonCodeAnalyzer.getInstance(project).restart(psiFile, "PbProjectSettings.notifyUpdated");
             }
           }
         }

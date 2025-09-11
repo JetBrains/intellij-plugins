@@ -28,7 +28,7 @@ class DtsInspectionsRestarter(
           .map { it.file }
           .filter { it.fileType == DtsFileType }
           .mapNotNull { psiManger.findFile(it) }
-          .forEach { codeAnalyzer.restart(it) }
+          .forEach { codeAnalyzer.restart(it, this) }
       }
     }
   }

@@ -184,7 +184,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
               FileDocumentManager.getInstance().saveDocument(newDocument);
             }
 
-            DaemonCodeAnalyzer.getInstance(project).restart();
+            DaemonCodeAnalyzer.getInstance(project).restart(this);
           }, project.getDisposed());
         }
 

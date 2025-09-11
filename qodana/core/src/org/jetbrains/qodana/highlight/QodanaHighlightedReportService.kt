@@ -218,7 +218,7 @@ class QodanaHighlightedReportService(private val project: Project, private val s
     supervisorScope {
       launch {
         highlightedReportState.collect {
-          DaemonCodeAnalyzer.getInstance(project).restart()
+          DaemonCodeAnalyzer.getInstance(project).restart("QodanaHighlightedReportService.highlightedReportState")
         }
       }
       launch {

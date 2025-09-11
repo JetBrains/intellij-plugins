@@ -72,7 +72,7 @@ public class TsLintErrorFixAction extends JSLinterFixSingleErrorBaseAction imple
       PsiDocumentManager.getInstance(project).commitDocument(document);
     });
 
-    DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
+    DaemonCodeAnalyzer.getInstance(project).restart(psiFile, this);
   }
 
   private static boolean applyReplacements(@NotNull Document document,

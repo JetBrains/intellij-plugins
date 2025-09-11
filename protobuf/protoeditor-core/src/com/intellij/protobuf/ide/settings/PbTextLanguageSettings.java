@@ -56,7 +56,7 @@ public final class PbTextLanguageSettings
 
   public static void notifyUpdated(Project project) {
     getInstance(project).state.incModificationCount();
-    DaemonCodeAnalyzer.getInstance(project).restart();
+    DaemonCodeAnalyzer.getInstance(project).restart("PbTextLanguageSettingsForm.apply");
   }
 
   @Override

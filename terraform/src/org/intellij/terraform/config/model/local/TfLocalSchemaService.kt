@@ -140,7 +140,7 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
       val openTerraformFiles = getOpenTerraformFiles()
       logger<TfLocalSchemaService>().info("openTerraformFiles to restart: $openTerraformFiles")
       for (openTerraformFile in openTerraformFiles) {
-        DaemonCodeAnalyzer.getInstance(openTerraformFile.project).restart(openTerraformFile)
+        DaemonCodeAnalyzer.getInstance(openTerraformFile.project).restart(openTerraformFile, this)
       }
     }
   }

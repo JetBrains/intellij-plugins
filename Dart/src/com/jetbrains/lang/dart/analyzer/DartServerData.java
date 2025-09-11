@@ -405,7 +405,7 @@ public final class DartServerData {
       // DartAnalysisServerService.myProject will be leaked in tests
       ApplicationManager.getApplication()
         .invokeLater(() -> {
-                       DaemonCodeAnalyzer.getInstance(project).restart();
+                       DaemonCodeAnalyzer.getInstance(project).restart(this);
                      },
                      ModalityState.nonModal(),
                      myService.getDisposedCondition());

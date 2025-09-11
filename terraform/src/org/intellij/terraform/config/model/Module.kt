@@ -433,7 +433,7 @@ internal fun createDisableDeepVariableSearchQuickFix(): LocalQuickFix? {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
       AdvancedSettings.setBoolean("org.intellij.terraform.config.variables.deep.search", false)
-      DaemonCodeAnalyzer.getInstance(project).restart()
+      DaemonCodeAnalyzer.getInstance(project).restart("createDisableDeepVariableSearchQuickFix")
     }
 
   }

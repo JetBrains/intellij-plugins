@@ -184,7 +184,7 @@ class DenoSettings(private val project: Project) : PersistentStateComponent<Deno
         val newRoots = libraryProvider.getRootsToWatch(project)
         AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
 
-        DaemonCodeAnalyzer.getInstance(project).restart()
+        DaemonCodeAnalyzer.getInstance(project).restart("DenoSettings.setUseDenoAndReload")
       })
   }
 

@@ -28,6 +28,6 @@ private class TfRunManagerListener(val project: Project) : RunManagerListener {
     FileEditorManager.getInstance(project).allEditors
       .mapNotNull { it.file?.takeIf { file -> isTerraformCompatibleExtension(file.extension) } }
       .mapNotNull { psiManager.findFile(it) }
-      .forEach { daemonAnalyzer.restart(it) }
+      .forEach { daemonAnalyzer.restart(it, this) }
   }
 }

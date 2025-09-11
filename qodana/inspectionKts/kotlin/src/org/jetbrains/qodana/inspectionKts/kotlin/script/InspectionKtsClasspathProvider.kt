@@ -15,7 +15,7 @@ import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.impl.PsiManagerEx
+import com.intellij.psi.impl.PsiManagerEx.getInstanceEx
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.application
 import com.intellij.util.io.URLUtil
@@ -84,15 +84,12 @@ private class InspectionKtsClasspathProviderServiceImpl(private val project: Pro
   init {
     scope.launch(QodanaDispatchers.Default) {
       appLevelClasspathHolder.dependenciesScopeWasUpdated.collect {
-        rehighlightProjectsFiles()
+        getInstanceEx(project).dropResolveCaches()
+        DaemonCodeAnalyzer.getInstance(project).restart("InspectionKtsClasspathProviderServiceImpl.dependenciesScopeWasUpdated")
       }
     }
   }
 
-  private fun rehighlightProjectsFiles() {
-    PsiManagerEx.getInstanceEx(project).dropResolveCaches()
-    DaemonCodeAnalyzer.getInstance(project).restart()
-  }
 }
 
 @Service(Service.Level.APP)

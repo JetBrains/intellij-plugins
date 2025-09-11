@@ -194,7 +194,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
               ApplicationManager.getApplication().invokeLater(Runnable {
                 DenoSettings.getService(project).updateLibraries()
                 TypeScriptServiceRestarter.restartServices(project)
-                DaemonCodeAnalyzer.getInstance(project).restart()
+                DaemonCodeAnalyzer.getInstance(project).restart("DenoLspSupportProvider.processTerminated")
               }, project.disposed)
             }
           })
