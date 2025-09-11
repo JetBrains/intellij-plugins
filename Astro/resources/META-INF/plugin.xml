@@ -32,7 +32,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <registryKey defaultValue="false" description="Use bundled Astro service" key="astro.language.server.bundled.enabled"/>
-    <registryKey defaultValue="true" description="Use bundled Astro TypeScript plugin" key="astro.ts.plugin.bundled.enabled"/>
     <registryKey defaultValue="" description="Astro TypeScript plugin version for downloading" key="astro.ts.plugin.default.version"/>
     <registryKey defaultValue="" description="Astro service version for downloading" key="astro.language.server.default.version"/>
     <registryKey description="Limit of Astro LS completion items" key="astro.language.server.completion.serviceItemsLimit" defaultValue="2000"/>

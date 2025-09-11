@@ -49,7 +49,7 @@ private val astroTSPluginPackageVersion = PackageVersion.bundled<AstroTSPluginPa
   version = "1.10.4",
   pluginPath = "Astro",
   localPath = "typescript-astro-plugin",
-  isBundledEnabled = { Registry.`is`("astro.ts.plugin.bundled.enabled") },
+  isBundledEnabled = { Registry.`is`("astro.language.server.bundled.enabled") },
 )
 
 private object AstroTSPluginPackageDescriptor : LspServerPackageDescriptor(
