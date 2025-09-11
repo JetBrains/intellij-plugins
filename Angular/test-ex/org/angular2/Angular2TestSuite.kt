@@ -91,6 +91,7 @@ import org.junit.runners.Suite
   Angular2GotoSymbolTest::class,
   Angular2GotoRelatedTest::class,
   Angular2GotoDeclarationTest::class,
+  Angular2RearrangerTest::class,
   Angular2CssClassTest::class,
   Angular2CssCompletionTest::class,
   Angular2CssInspectionsTest::class,
