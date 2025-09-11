@@ -1,8 +1,10 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.service
 
+import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
+import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -22,15 +24,13 @@ class AstroPluginTypeScriptServiceFindUsagesTest : TypeScriptServiceTestBase() {
       return TypeScriptServiceHolder.getForFile(project, file.virtualFile) as TypeScriptServerServiceImpl
     }
 
-  private var oldFindUsagesEnabled: Boolean = false
-
 
   override fun setUp() {
     super.setUp()
     // Enable Astro TS find usages bridge for the TS service
-    val reg = RegistryManager.getInstance().get("astro.ts.find.usages.enabled")
-    oldFindUsagesEnabled = reg.asBoolean()
-    reg.setValue(true, testRootDisposable)
+    TypeScriptExternalDefinitionsRegistry.testTypingsRootPath = TypeScriptDefinitionFilesDirectory.getGlobalAutoDownloadTypesDirectoryPath()
+    RegistryManager.getInstance().get("astro.ts.find.usages.enabled").setValue(true, testRootDisposable)
+    RegistryManager.getInstance().get("astro.language.server.bundled.enabled").setValue(true, testRootDisposable)
   }
 
   private fun assertUsagesAt(usages: Collection<UsageInfo>, expectedAbsRanges: Set<Pair<Int, Int>>) {
