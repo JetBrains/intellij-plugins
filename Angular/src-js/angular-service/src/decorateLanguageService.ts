@@ -78,9 +78,12 @@ export function createUnboundReverseMapper(language: Language<string>, languageS
 
 export function decorateIdeLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService, unboundReverseMapper: UnboundReverseMapper) {
 
-  let {webStormGetElementType, webStormGetTypeProperties, webStormGetSymbolType} = languageService
+  let {webStormGetElementType, webStormGetTypeProperties, webStormGetTypeProperty, webStormGetSymbolType} = languageService
 
-  if (webStormGetElementType === undefined || webStormGetElementType === undefined || webStormGetSymbolType === undefined)
+  if (webStormGetElementType === undefined ||
+    webStormGetElementType === undefined ||
+    webStormGetTypeProperty === undefined ||
+    webStormGetSymbolType === undefined)
     return
 
   languageService.webStormGetElementType = (
@@ -132,6 +135,15 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     return webStormGetTypeProperties(ts, typeId, cancellationToken, unboundReverseMapper.bind(null, ts))
   }
 
+  languageService.webStormGetTypeProperty = (
+    ts,
+    typeId: number,
+    propertyName: string,
+    cancellationToken: TS.CancellationToken,
+    _reverseMapper?: ReverseMapper,
+  ) => {
+    return webStormGetTypeProperty(ts, typeId, propertyName, cancellationToken, unboundReverseMapper.bind(null, ts))
+  }
 }
 
 export function decorateNgLanguageServiceExtensions(
