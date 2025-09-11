@@ -104,5 +104,4 @@ internal class PrettierCodeStyleStatusBarUIContributor : CodeStyleStatusBarUICon
       ShowSettingsUtilImpl.showSettingsDialog(e.project, CONFIGURABLE_ID, "Prettier")
     }
   }
-
 }

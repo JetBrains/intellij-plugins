@@ -16,7 +16,7 @@ internal suspend fun resolveConfigForFile(file: PsiFile): PrettierLanguageServic
 
   val nodePackage = PrettierConfiguration.getInstance(project).getPackage(file)
   val service = PrettierLanguageService.getInstance(project, file.virtualFile, nodePackage)
-  val future = service.resolveConfig(filePath, nodePackage) ?: return null
+  val future = service.resolveConfig(filePath, nodePackage)
 
   return future.await()
 }
