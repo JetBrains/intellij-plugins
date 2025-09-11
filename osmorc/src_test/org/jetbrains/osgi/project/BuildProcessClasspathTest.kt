@@ -2,7 +2,7 @@
 package org.jetbrains.osgi.project
 
 import com.intellij.compiler.server.impl.BuildProcessClasspathManager
-import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.application.ArchivedCompilationContextUtil
 import com.intellij.openapi.project.DefaultProjectFactory
 import com.intellij.psi.impl.light.LightJavaModule
 import com.intellij.testFramework.fixtures.BareTestFixtureTestCase
@@ -19,7 +19,7 @@ class BuildProcessClasspathTest : BareTestFixtureTestCase() {
     assertThat(libs).contains("biz.aQute.bndlib", "biz.aQute.repository", "biz.aQute.resolve", "plexus.utils")
 
     val module = "intellij.osgi.jps"
-    val mapping = PathManager.getArchivedCompiledClassesMapping()
+    val mapping = ArchivedCompilationContextUtil.getArchivedCompiledClassesMapping()
     if (mapping != null) {
       assertThat(classpath.toSet()).containsAll(mapping["production/$module"])
     }
