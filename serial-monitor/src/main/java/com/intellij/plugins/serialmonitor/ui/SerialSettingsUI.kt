@@ -43,7 +43,7 @@ internal suspend fun ConnectableList.createNewProfile(oldProfileName: String?, n
       service.copyDefaultProfile(newPortName)
     }
     else {
-      profiles.getOrElse(oldProfileName) { service.copyDefaultProfile(newPortName) }
+      profiles[oldProfileName]?.copy() ?: service.copyDefaultProfile(newPortName)
     }
   var i = 0
   var nameBase = oldProfileName ?: newProfile.defaultName()
