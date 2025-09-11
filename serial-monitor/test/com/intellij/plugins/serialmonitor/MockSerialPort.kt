@@ -3,13 +3,14 @@ package com.intellij.plugins.serialmonitor
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.plugins.serialmonitor.service.SerialPort
 import com.intellij.plugins.serialmonitor.service.SerialPortException
+import com.intellij.plugins.serialmonitor.service.SerialPortProvider
 import com.intellij.plugins.serialmonitor.service.SerialPortService
 import kotlinx.coroutines.flow.first
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
-class MockSerialPortProvider : SerialPort.SerialPortProvider {
+class MockSerialPortProvider : SerialPortProvider {
   private val ports = AtomicReference<List<String>>(emptyList())
   private val created = mutableMapOf<String, MockSerialPort>()
   val failCreateFor = mutableSetOf<String>()
@@ -18,11 +19,21 @@ class MockSerialPortProvider : SerialPort.SerialPortProvider {
     ports.store(listOf(*portNames))
   }
 
-  override fun scanAvailablePorts(): List<String> = ports.load()
+  override suspend fun scanAvailablePorts(): List<String> = ports.load()
 
   override fun createPort(portName: String): MockSerialPort {
     if (failCreateFor.contains(portName)) throw SerialPortException("create failed for $portName")
     return created.getOrPut(portName) { MockSerialPort(portName) }
+  }
+
+  /**
+   * Suspends until the ports reported by [SerialPortService] match ports of this provider.
+   */
+  suspend fun awaitScan() {
+    val portNames = ports.load()
+    serviceAsync<SerialPortService>().portNamesFlow.first {
+      it == portNames.toSet()
+    }
   }
 
   suspend fun changePortsAndAwaitScan(action: MutableList<String>.()->Unit) {
@@ -36,10 +47,7 @@ class MockSerialPortProvider : SerialPort.SerialPortProvider {
     // Listen until the names update to our expected state asynchronously
     // State flow also emits the current value to new collectors, then it emits changes; so unless a full update to another value which
     // propagates to the service sneaks in here, we are safe.
-
-    serviceAsync<SerialPortService>().portNamesFlow.first {
-      it == newPorts.toSet()
-    }
+    awaitScan()
   }
 }
 

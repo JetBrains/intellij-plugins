@@ -4,6 +4,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.UI
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
+import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.diagnostic.getOrHandleException
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.Disposer
@@ -18,7 +20,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.annotations.Nls
 import kotlinx.coroutines.flow.StateFlow
-import org.jetbrains.annotations.TestOnly
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
@@ -26,8 +27,6 @@ import java.util.function.Consumer
 @Service
 class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
 
-  @Volatile var serialPortProvider: SerialPort.SerialPortProvider = JsscSerialPort.Provider
-    private set
   private val portNames: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
   private val connections: MutableMap<String, SerialConnection> = ConcurrentHashMap()
 
@@ -71,8 +70,9 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
     }
   }
 
-  private suspend fun scanPorts(): Set<String> = withContext(Dispatchers.IO) {
-    serialPortProvider.scanAvailablePorts().toCollection(TreeSet(NAME_COMPARATOR))
+  private suspend fun scanPorts(): Set<String> {
+    val portProvider = serviceAsync<SerialPortProvider>()
+    return portProvider.scanAvailablePorts().toCollection(TreeSet(NAME_COMPARATOR))
   }
 
   private suspend fun rescanPorts() {
@@ -112,7 +112,7 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
 
   fun portDescriptiveName(portName: String): @Nls String? {
     @NlsSafe val description = runCatching {
-      serialPortProvider.createPort(portName).getDescriptiveName()
+      service<SerialPortProvider>().createPort(portName).getDescriptiveName()
     }.getOrNull()
     return description
   }
@@ -228,7 +228,7 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
 
       lateinit var newPort: SerialPort
       try {
-        newPort = serialPortProvider.createPort(portName)
+        newPort = service<SerialPortProvider>().createPort(portName)
         portMessageTopic().portsStatusChanged()
 
         newPort.connect(profile, listener, rts, dtr)
@@ -260,16 +260,5 @@ class SerialPortService(val cs: CoroutineScope) : Disposable.Default {
         dataListener?.accept(data)
       }
     }
-  }
-
-  @TestOnly
-  internal suspend fun setPortProvider(provider: SerialPort.SerialPortProvider, disposable: Disposable) {
-    val oldProvider = serialPortProvider
-    Disposer.register(disposable) {
-      serialPortProvider = oldProvider
-    }
-
-    serialPortProvider = provider
-    rescanPorts()
   }
 }

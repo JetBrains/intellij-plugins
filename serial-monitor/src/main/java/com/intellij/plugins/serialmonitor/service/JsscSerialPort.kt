@@ -9,6 +9,8 @@ import com.intellij.plugins.serialmonitor.StopBits
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle
 import jssc.SerialPort.*
 import jssc.SerialPortList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import java.nio.file.Files
 import java.util.regex.Pattern
@@ -16,9 +18,32 @@ import kotlin.io.path.Path
 import kotlin.io.path.pathString
 import kotlin.jvm.Throws
 
-class JsscSerialPort : SerialPort {
+class JsscSerialPortProvider : SerialPortProvider {
 
-  private constructor(port: jssc.SerialPort) {
+  private val MATCH_ALL_PATTERN = Pattern.compile(".*")
+
+  override suspend fun scanAvailablePorts(): List<String> = withContext(Dispatchers.IO) { buildList {
+    addAll(SerialPortList.getPortNames())
+
+    val symLinks = SerialPortList.getPortNames(MATCH_ALL_PATTERN).filter {
+      runCatching {
+        val path = Path(it)
+        if (!Files.isSymbolicLink(path)) return@filter false
+        this.contains(path.toRealPath().pathString)
+      }.getOrDefault(false)
+    }
+    addAll(symLinks)
+  } }
+
+  @Throws(SerialPortException::class)
+  override fun createPort(portName: String): SerialPort = runWithExceptionWrapping {
+    JsscSerialPort(jssc.SerialPort(portName))
+  }
+}
+
+internal class JsscSerialPort : SerialPort {
+
+  internal constructor(port: jssc.SerialPort) {
     this.port = port
   }
 
@@ -91,25 +116,6 @@ class JsscSerialPort : SerialPort {
 
   override fun getDSR(): Boolean = runWithExceptionWrapping(SerialMonitorBundle.message("serial.port.dsr.read.failed")) {
     port.isDSR
-  }
-
-  object Provider : SerialPort.SerialPortProvider {
-
-    private val MATCH_ALL_PATTERN = Pattern.compile(".*")
-
-    override fun scanAvailablePorts(): List<String> = buildList {
-      addAll(SerialPortList.getPortNames())
-
-      val symLinks = SerialPortList.getPortNames(MATCH_ALL_PATTERN).filter {
-        runCatching {
-          val path = Path(it)
-          if (!Files.isSymbolicLink(path)) return@filter false
-          this.contains(path.toRealPath().pathString)
-        }.getOrDefault(false)
-      }
-      addAll(symLinks)
-    }
-    override fun createPort(portName: String): SerialPort = JsscSerialPort(jssc.SerialPort(portName))
   }
 }
 

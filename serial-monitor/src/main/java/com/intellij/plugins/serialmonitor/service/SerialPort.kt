@@ -37,11 +37,4 @@ interface SerialPort {
     fun onCTSChanged(state: Boolean) {}
     fun onDSRChanged(state: Boolean) {}
   }
-
-  interface SerialPortProvider {
-    fun scanAvailablePorts(): List<String>
-
-    @Throws(SerialPortException::class)
-    fun createPort(portName: String): SerialPort
-  }
 }

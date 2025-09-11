@@ -4,16 +4,20 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.util.Disposer
 import com.intellij.plugins.serialmonitor.service.PortStatus
+import com.intellij.plugins.serialmonitor.service.SerialPortProvider
 import com.intellij.plugins.serialmonitor.service.SerialPortService
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.TestDisposable
+import com.intellij.testFramework.replaceService
+import com.intellij.util.application
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.util.function.Consumer
+import kotlin.String
 
 @TestApplication
 class TestSerialMonitor {
@@ -25,14 +29,13 @@ class TestSerialMonitor {
 
   suspend fun simpleTestCase(vararg ports: String) {
     provider = MockSerialPortProvider(*ports)
-    val service = serviceAsync<SerialPortService>()
-    service.setPortProvider(provider, disposable)
+    application.replaceService(SerialPortProvider::class.java, provider, disposable)
+    provider.awaitScan()
   }
 
   suspend fun failingConnectTestCase(vararg ports: String) {
-    provider = MockSerialPortProvider(*ports)
+    simpleTestCase(*ports)
     provider.failCreateFor.addAll(ports)
-    serviceAsync<SerialPortService>().setPortProvider(provider, disposable)
   }
 
   suspend fun serialConnectionTestCase(portName: String, profile: SerialPortProfile): SerialPortService.SerialConnection {
