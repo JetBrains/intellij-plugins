@@ -81,12 +81,17 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
     }
   }
 
-  inner class ConnectableProfile(@NlsSafe profileName: String, status: PortStatus) : Connectable(profileName, status) {
+  inner class ConnectableProfile(@NlsSafe profileName: String, status: PortStatus, val isUsed: Boolean) : Connectable(profileName, status) {
 
     override fun portName(): String? = application.service<SerialProfileService>().getProfiles()[entityName]?.portName
 
     override val selectionKey = createProfileSelectionKey(profileName)
-    override fun icon(): Icon = status.icon
+    override fun icon(): Icon = when (status) {
+      PortStatus.CONNECTED if !isUsed -> AllIcons.Nodes.EmptyNode
+      PortStatus.DISCONNECTED if !isUsed -> AllIcons.Nodes.EmptyNode
+      else -> status.icon
+    }
+
     override fun name(): @Nls String = entityName
 
     override fun connect() {
@@ -171,10 +176,11 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
     @Nls val profilesSeparator = SerialMonitorBundle.message("connection.profiles")
     newModel.addElement(profilesSeparator)
     val profileService = application.serviceAsync<SerialProfileService>()
-    profileService.getProfiles().forEach {
-      val status = portService.portStatus(it.value.portName)
+    profileService.getProfiles().forEach { (profileName, profile) ->
 
-      val profile = ConnectableProfile(it.key, status)
+      val status = portService.portStatus(profile.portName)
+      val isUsed = parentPanel.getOpenedProfile(profile.portName) === profile
+      val profile = ConnectableProfile(profileName, status, isUsed)
       newModel.addElement(profile)
       checkCanceled()
     }
