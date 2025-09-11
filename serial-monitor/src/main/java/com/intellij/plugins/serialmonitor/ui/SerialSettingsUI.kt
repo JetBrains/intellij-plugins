@@ -1,12 +1,15 @@
 package com.intellij.plugins.serialmonitor.ui
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.UiWithModelAccess
 import com.intellij.openapi.components.service
 import com.intellij.openapi.observable.util.whenTextChangedFromUi
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.DoNotAskOption
 import com.intellij.openapi.ui.InputValidatorEx
+import com.intellij.openapi.ui.MessageDialogBuilder
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.validation.DialogValidation
 import com.intellij.openapi.util.NlsContexts.DetailedDescription
@@ -25,6 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
+import java.awt.Component
 import java.nio.charset.Charset
 import javax.swing.JComponent
 import javax.swing.text.JTextComponent
@@ -225,7 +229,11 @@ internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe S
 internal fun profileSettings(connectableList: ConnectableList, disposable: Disposable): DialogPanel? {
   val (profileName, profile) = connectableList.getSelectedProfile() ?: return null
   if (profile == null) return null
-  val status = service<SerialPortService>().portStatus(profile.portName)
+  val portStatus = service<SerialPortService>().portStatus(profile.portName)
+
+  val openedProfile = connectableList.parentPanel.getOpenedProfile(profile.portName)
+  val isOpenedProfile = openedProfile === profile
+
   val profileService = service<SerialProfileService>()
   return panel {
     indent {
@@ -265,16 +273,22 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
       row {
         button(message("button.connect")) {
           connectableList.parentPanel.connectProfile(profile, profileName)
-        }.visible(status.profileConnectVisible).enabled(status.connectEnabled)
-        .applyToComponent { toolTipText = status.connectTooltip }
+        }.visible(portStatus.profileConnectVisible).enabled(portStatus.connectEnabled)
+        .applyToComponent { toolTipText = portStatus.connectTooltip }
+
+        button(message("button.reconnect")) {
+          if (showReconnectDialog(profile, profileName, connectableList.parentPanel)) {
+            connectableList.parentPanel.reconnectProfile(profile, profileName)
+          }
+        }.visible(!portStatus.profileConnectVisible && !isOpenedProfile )
 
         button(message("button.disconnect")) {
           connectableList.parentPanel.disconnectPort(profile.portName)
-        }.visible(status.disconnectVisible)
+        }.visible(portStatus.disconnectVisible && isOpenedProfile)
 
         button(message("button.open.console")) {
           connectableList.parentPanel.openConsole(profile.portName)
-        }.visible(status.openConsoleVisible)
+        }.visible(portStatus.openConsoleVisible && isOpenedProfile)
 
         link(message("link.label.duplicate.profile")) {profileService.cs.launch { connectableList.createNewProfile(profileName) } }
       }
@@ -283,6 +297,23 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
     registerValidators(disposable)
     validateAll()
   }
+}
+
+private const val RECONNECT_PROFILE_DIALOG_KEY = "com.intellij.plugins.serialmonitor.reconnect.dialog.dont.show.again"
+
+private fun showReconnectDialog(profile: SerialPortProfile, profileName: String, parentComponent: Component?): Boolean {
+  val doNotShowDialog = PropertiesComponent.getInstance().getBoolean(RECONNECT_PROFILE_DIALOG_KEY)
+  if (doNotShowDialog) return true
+  val title = message("dialog.title.reconnect.to.port", profile.portName)
+  val description = message("dialog.message.reconnect.to.port", profile.portName, profileName)
+  return MessageDialogBuilder.okCancel(title, description)
+    .yesText(message("button.reconnect"))
+    .icon(Messages.getQuestionIcon())
+    .doNotAsk(object : DoNotAskOption.Adapter() {
+      override fun rememberChoice(isSelected: Boolean, exitCode: Int) {
+        PropertiesComponent.getInstance().setValue(RECONNECT_PROFILE_DIALOG_KEY, isSelected)
+      }
+    }).ask(parentComponent)
 }
 
 private fun <T> Cell<ComboBox<T>>.editableChangesBind(prop: MutableProperty<T>, parser: (String)->T?, disposable: Disposable): Cell<ComboBox<T>> {

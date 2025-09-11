@@ -89,6 +89,13 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitt
       }
   }
 
+  /**
+   * Return the profile with which the port is currently configured, if any.
+   */
+  fun getOpenedProfile(portName: String): SerialPortProfile? {
+    return contentByPortName(portName)?.getUserData(SERIAL_MONITOR)?.portProfile
+  }
+
   fun openConsole(portName: String?) {
     val content = contentByPortName(portName)
     toolWindow.getContentManager().setSelectedContent(content ?: return)
@@ -100,6 +107,15 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitt
 
   fun notifyProfileChanged(profile: SerialPortProfile) {
     monitorByProfile(profile)?.notifyProfileChanged()
+  }
+
+  fun reconnectProfile(profile: SerialPortProfile,
+                       name: @Nls String = profile.defaultName()) {
+    val openedTab = contentByPortName(profile.portName)
+    if (openedTab != null) {
+      toolWindow.getContentManager().removeContent(openedTab, true)
+    }
+    connectProfile(profile, name)
   }
 
   fun connectProfile(profile: SerialPortProfile,
