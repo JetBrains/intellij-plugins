@@ -333,10 +333,10 @@ private fun <T> Cell<ComboBox<T>>.editableChangesBind(prop: MutableProperty<T>, 
   return this
 }
 
-private val PortStatus.profileConnectVisible get() = !this.disconnectVisible
+private val PortStatus.profileConnectVisible get() = this != PortStatus.CONNECTED && this != PortStatus.DISCONNECTED
 private val PortStatus.portConnectVisible get() = this == PortStatus.READY
 
-private val PortStatus.connectEnabled get() = this == PortStatus.READY || this == PortStatus.DISCONNECTED
+private val PortStatus.connectEnabled get() = this == PortStatus.READY
 
 private val PortStatus.disconnectVisible get() = this == PortStatus.CONNECTED
 
