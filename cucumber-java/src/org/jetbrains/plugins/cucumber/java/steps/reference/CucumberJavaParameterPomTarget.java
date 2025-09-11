@@ -12,7 +12,8 @@ import org.jetbrains.annotations.Nullable;
 ///
 /// @see org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaPomDeclarationSearcher CucumberJavaPomDeclarationSearcher
 @NotNullByDefault
-public class CucumberJavaParameterPomTarget extends DelegatePsiTarget implements PomRenameableTarget, PsiDeclaredTarget {
+public class CucumberJavaParameterPomTarget extends DelegatePsiTarget
+  implements PomRenameableTarget<PsiLiteralExpression>, PsiDeclaredTarget {
   private final String name;
 
   public CucumberJavaParameterPomTarget(PsiElement element, String name) {
@@ -42,13 +43,13 @@ public class CucumberJavaParameterPomTarget extends DelegatePsiTarget implements
   }
 
   @Override
-  public Object setName(String newName) {
+  public @Nullable PsiLiteralExpression setName(String newName) {
     PsiElement element = getNavigationElement();
     if (element instanceof PsiLiteralExpression) {
       PsiManager manager = element.getManager();
       PsiElementFactory factory = JavaPsiFacade.getInstance(manager.getProject()).getElementFactory();
       PsiElement newLiteral = factory.createExpressionFromText("\"" + newName + "\"", element);
-      return element.replace(newLiteral);
+      return (PsiLiteralExpression)element.replace(newLiteral);
     }
     return null;
   }

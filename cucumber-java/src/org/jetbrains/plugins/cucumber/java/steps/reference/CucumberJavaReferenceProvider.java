@@ -6,21 +6,22 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.manipulators.StringLiteralManipulator;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NotNullByDefault
 public final class CucumberJavaReferenceProvider extends PsiReferenceProvider {
   @Override
-  public boolean acceptsTarget(@NotNull PsiElement target) {
+  public boolean acceptsTarget(PsiElement target) {
     return target instanceof PomTargetPsiElement pomTarget && pomTarget.getTarget() instanceof CucumberJavaParameterPomTarget;
   }
 
   @Override
-  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference[] getReferencesByElement(PsiElement element, ProcessingContext context) {
     if (!(element instanceof PsiLiteralExpression literalExpression)) {
       return PsiReference.EMPTY_ARRAY;
     }

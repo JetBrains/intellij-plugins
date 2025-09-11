@@ -12,7 +12,7 @@ import com.intellij.pom.references.PomService;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReferenceBase;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
@@ -54,8 +54,9 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 /// @see CucumberJavaUtil#processParameterTypesDefinedByAnnotation
 /// @see CucumberJavaUtil#processParameterTypesDefinedByTypeRegistry
 //@formatter:on
+@NotNullByDefault
 public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElement> {
-  public CucumberJavaParameterTypeReference(@NotNull PsiElement element, @NotNull TextRange range) {
+  public CucumberJavaParameterTypeReference(PsiElement element, TextRange range) {
     // Exclude { and }
     super(element, TextRange.create(range.getStartOffset() + 1, range.getEndOffset() - 1), false);
   }
@@ -77,12 +78,12 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
   }
 
   @Override
-  public @NotNull String getCanonicalText() {
+  public String getCanonicalText() {
     return getParameterTypeName();
   }
 
   @Override
-  public boolean isReferenceTo(@NotNull PsiElement element) {
+  public boolean isReferenceTo(PsiElement element) {
     if (!(element instanceof PsiNamedElement namedElement) || !(element instanceof PomTargetPsiElement psiElement)) {
       return false;
     }
@@ -98,7 +99,7 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
     return resolved != null && resolved.equals(element);
   }
 
-  private @NotNull String getParameterTypeName() {
+  private String getParameterTypeName() {
     return getRangeInElement().substring(myElement.getText());
   }
 }
