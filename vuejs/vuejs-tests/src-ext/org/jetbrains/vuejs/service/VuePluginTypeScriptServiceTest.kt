@@ -170,6 +170,7 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
       </script>
     """)
 
+    myFixture.doHighlighting()
     checkDoc()
   }
 
@@ -186,6 +187,5 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
         expectedFilePath = expectedDocFilePath,
       )
     }
-    assertEquals(File(expectedDocFilePath).readText(), actualDocText)
   }
 }
