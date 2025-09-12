@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@angular/core": "^20.0.0",
+    "@tanstack/angular-table": "^8.21.3"
+  }
+}

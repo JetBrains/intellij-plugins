@@ -1,0 +1,44 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "./flex-render";
+/* Directives */
+const _ctor1: <TProps extends NonNullable<unknown> = any>(init: Pick<_i1.FlexRenderDirective<TProps>, "content" | "props" | "injector">) => _i1.FlexRenderDirective<TProps> = null!;
+
+/* TCB for genericDirectiveWithExtendsNonNullable.ts */
+
+function _tcb1(this: App) {
+var _t1 = document.createElement("table");
+var _t2 = document.createElement("thead");
+for (const _t3 of (this.table.getHeaderGroups())!) {
+var _t4 = null! as boolean;
+var _t5 = null! as boolean;
+var _t6 = null! as boolean;
+var _t7 = null! as number;
+var _t8 = null! as boolean;
+var _t9 = null! as number;
+var _t10 = document.createElement("tr");
+for (const _t11 of (_t3.headers)!) {
+var _t12 = null! as boolean;
+var _t13 = null! as boolean;
+var _t14 = null! as boolean;
+var _t15 = null! as number;
+var _t16 = null! as boolean;
+var _t17 = null! as number;
+var _t18 = document.createElement("th");
+var _t19 = _ctor1({"content": _t11.column.columnDef.header, "props": _t11.getContext(), "injector": 0 as any});
+_t19.content = _t11.column.columnDef.header;
+_t19.props = _t11.getContext();
+var _t20 = null! as any;
+{
+_t20;
+var _t21 = _t20.$implicit;
+var _t22 = document.createElement("ng-container");
+var _t23 = document.createElement("div");
+(_t21);
+}
+(_t11.id);
+}
+(_t3.id);
+}
+var _t24 = document.createElement("tbody");
+}

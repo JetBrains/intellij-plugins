@@ -161,6 +161,12 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_CORE_20_1_4
   )
 
+  fun testGenericDirectiveWithExtendsNonNullable() =
+    checkTranspilation(
+      Angular2TestModule.ANGULAR_CORE_20_1_4,
+      dir = true,
+    )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
