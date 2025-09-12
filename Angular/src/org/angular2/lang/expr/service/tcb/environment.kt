@@ -5,6 +5,9 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier.ImportExportSpecifierKind
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
+import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
@@ -12,13 +15,15 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import com.intellij.util.containers.sequenceOfNotNull
 import org.angular2.codeInsight.Angular2HighlightingUtils.TextAttributesKind
@@ -93,7 +98,7 @@ internal class Environment(
 
   private fun reference(element: JSQualifiedNamedElement, kind: ImportExportSpecifierKind): String =
     importCache.computeIfAbsent(element) {
-      if (element.containingFile == file) {
+      if (element.containingFile == file || isBuiltIn(element)) {
         return@computeIfAbsent element.qualifiedName ?: element.name!!
       }
       val importDescriptor = ES6CreateImportUtil.getImportDescriptor(
@@ -118,6 +123,16 @@ internal class Environment(
         return@computeIfAbsent importName + "." + importDescriptor.effectiveName
       }
     }
+
+  private fun isBuiltIn(element: PsiElement) =
+    element.containingFile.let { JSResolveUtil.isFromPredefinedFile(it) }
+    || PsiUtilCore.getVirtualFile(element.containingFile)?.let {
+      JSCorePredefinedLibrariesProvider.isCoreLibraryFile(it) || isFromTypeScriptPackage(it)
+    } != false
+
+  private fun isFromTypeScriptPackage(file: VirtualFile): Boolean =
+    PackageJsonUtil.findUpPackageJson(file)
+      ?.let { NodeModuleUtil.inferNodeModulePackageName(it) } == "typescript"
 
   private fun getModuleImportName(
     moduleName: String,
