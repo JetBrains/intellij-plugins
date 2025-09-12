@@ -34,6 +34,7 @@
     <multiHostInjector implementation="org.jetbrains.plugins.cucumber.java.CucumberJavaInjector"/>
     <psi.referenceContributor implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaReferenceContributor" language="JAVA"/>
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaPomDeclarationSearcher"/>
+    <elementDescriptionProvider implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterPomTargetDescriptionProvider"/>
     <fileBasedIndex implementation="org.jetbrains.plugins.cucumber.java.CucumberJava8StepIndex"/>
     <runConfigurationExtension implementation="org.jetbrains.plugins.cucumber.java.run.CucumberJUnitRunConfigurationExtension"/>
 

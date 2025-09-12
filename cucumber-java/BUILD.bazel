@@ -44,6 +44,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@lib//:cucumber-core-1",
+    "@community//platform/usageView",
   ],
   runtime_deps = [":cucumber-java_resources"]
 )
