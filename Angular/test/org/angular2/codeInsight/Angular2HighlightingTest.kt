@@ -158,6 +158,8 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
 
   fun testBlockIf() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
+  fun testBlockIfNg20_2() = checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts")
+
   fun testBlockSwitch() = checkHighlighting(ANGULAR_CORE_17_3_0, extension = "ts")
 
   fun testInterpolationStrictMode() = checkHighlighting(ANGULAR_CORE_16_2_8, strictTemplates = true, extension = "ts")

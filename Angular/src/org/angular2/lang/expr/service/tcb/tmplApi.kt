@@ -29,7 +29,9 @@ import org.angular2.codeInsight.template.Angular2TemplateScope
 import org.angular2.codeInsight.template.getTemplateElementsScopeFor
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.*
+import org.angular2.lang.Angular2LangUtil.AngularVersion
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
+import org.angular2.lang.Angular2LangUtil.isAtLeastAngularVersion
 import org.angular2.lang.expr.psi.*
 import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 import org.angular2.lang.html.Angular2HtmlFile
@@ -903,7 +905,8 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
     BLOCK_ELSE_IF -> TmplAstIfBlockBranch(
       nameSpan = nameElement.textRange,
       expression = parameters.firstOrNull()?.expression,
-      expressionAlias = null,
+      expressionAlias = parameters.takeIf { isAtLeastAngularVersion(this, AngularVersion.V_20_2)}
+        ?.getOrNull(1)?.variables?.firstOrNull()?.toTmplAstVariable(referenceResolver),
       children = contents.mapChildren(referenceResolver)
     )
     BLOCK_ELSE -> TmplAstIfBlockBranch(

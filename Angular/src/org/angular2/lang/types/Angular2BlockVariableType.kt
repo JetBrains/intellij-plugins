@@ -8,6 +8,8 @@ import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.util.parentOfType
 import org.angular2.codeInsight.blocks.*
+import org.angular2.lang.Angular2LangUtil.AngularVersion
+import org.angular2.lang.Angular2LangUtil.isAtLeastAngularVersion
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.impl.Angular2BlockParameterVariableImpl
 import org.angular2.lang.html.psi.Angular2HtmlBlock
@@ -26,8 +28,10 @@ class Angular2BlockVariableType : Angular2BaseType<Angular2BlockParameterVariabl
     val block = parameter.parentOfType<Angular2HtmlBlock>() ?: return null
 
     return when (block.getName()) {
-      BLOCK_IF ->
-        if (parameter.name == PARAMETER_AS) {
+      BLOCK_IF, BLOCK_ELSE_IF ->
+        if (parameter.name == PARAMETER_AS
+            && (block.getName() == BLOCK_IF || isAtLeastAngularVersion(parameter, AngularVersion.V_20_2))
+        ) {
           block.parameters.firstOrNull()
             ?.takeIf { it.isPrimaryExpression }
             ?.expression

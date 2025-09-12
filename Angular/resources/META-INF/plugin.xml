@@ -362,6 +362,7 @@
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@19.2.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@20.0.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="false" source="web-types/angular@20.1.0.web-types.json"/>
+    <polySymbols.webTypes enableByDefault="false" source="web-types/angular@20.2.0.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <polySymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
 
@@ -468,7 +469,7 @@
     <dialectSpecificHandlersFactory language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
 
     <!-- Angular 2 Expression language contributions -->
-    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="24"/>
+    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="25"/>
     <frameworkSpecificHandler language="Angular2" implementationClass="org.angular2.lang.expr.Angular2JSFrameworkSpecificHandler"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
