@@ -77,9 +77,33 @@ internal val IncludeBlock: BlockType = BlockType(
 
 internal val LocalsTerragrunt: BlockType = BlockType(HCL_LOCALS_IDENTIFIER)
 
+internal val DependencyBlock: BlockType = BlockType(
+  "dependency", args = 1,
+  properties = listOf(
+    PropertyType("config_path", Types.String, required = true, optional = false),
+    // TODO: default value is "true"
+    PropertyType("enabled", Types.Boolean),
+    PropertyType("skip_outputs", Types.Boolean),
+    BlockType("mock_outputs"),
+    PropertyType("mock_outputs_allowed_terraform_commands", ListType(Types.String)),
+    PropertyType("mock_outputs_merge_strategy_with_state", Types.String, hint = SimpleValueHint("no_merge", "shallow", "deep_map_only"))
+  ).toMap()
+)
+
+internal val DependenciesBlock: BlockType = BlockType(
+  "dependencies",
+  properties = listOf(
+    PropertyType("paths", ListType(Types.String), required = true, optional = false),
+  ).toMap()
+)
+
 internal val TerragruntRootBlocks: List<BlockType> = listOf(
   TfBlockInTerragrunt,
   RemoteStateBlock,
   IncludeBlock,
-  LocalsTerragrunt
+  LocalsTerragrunt,
+  DependencyBlock,
+  DependenciesBlock
 )
+
+internal val StackRootBlocks: List<BlockType> = listOf()

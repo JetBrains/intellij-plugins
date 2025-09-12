@@ -276,7 +276,7 @@
     <lang.foldingBuilder language="HIL" implementationClass="org.intellij.terraform.hil.formatter.HILFoldingBuilder"/>
     <psi.referenceContributor language="HIL" implementation="org.intellij.terraform.hil.psi.ILReferenceContributor"/>
     <psi.referenceContributor language="HCL" implementation="org.intellij.terraform.hil.psi.ILReferenceContributor"/>
-    <completion.contributor language="HIL" implementationClass="org.intellij.terraform.hil.codeinsight.HILCompletionContributor"/>
+    <completion.contributor language="HIL" implementationClass="org.intellij.terraform.hil.codeinsight.HilCompletionContributor"/>
     <lang.elementManipulator forClass="org.intellij.terraform.hil.psi.ILVariable"
                              implementationClass="org.intellij.terraform.hil.psi.ILVariableManipulator"/>
     <lang.elementManipulator forClass="org.intellij.terraform.hil.psi.ILLiteralExpression"
@@ -569,6 +569,8 @@
     <!--Terragrunt support-->
     <fileType name="Terragrunt" language="HCL" patterns="*terragrunt.hcl;*root.hcl;*terragrunt.stack.hcl"
               implementationClass="org.intellij.terraform.terragrunt.TerragruntFileType" fieldName="INSTANCE"/>
+
+    <completion.contributor language="HCL" implementationClass="org.intellij.terraform.terragrunt.codeinsight.TerragruntCompletionContributor"/>
   </extensions>
 
   <projectListeners>

@@ -10,7 +10,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.patterns.PlatformPatterns.not
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
@@ -30,11 +29,9 @@ import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockSorted
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.buildLookupForProviderBlock
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.buildLookupForRequiredProvider
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.dumpPsiFileModel
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getClearTextValue
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getLookupIcon
@@ -49,7 +46,11 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformVariablesFi
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
-import org.intellij.terraform.hcl.codeinsight.HCLCompletionContributor
+import org.intellij.terraform.hcl.codeinsight.AfterCommaOrBracketPattern
+import org.intellij.terraform.hcl.codeinsight.HclKeywordsCompletionProvider
+import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
+import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createRootBlockPattern
+import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createBlockHeaderPattern
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Array
 import org.intellij.terraform.hcl.patterns.HCLPatterns.AtLeastOneEOL
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Block
@@ -65,6 +66,7 @@ import org.intellij.terraform.hcl.patterns.HCLPatterns.WhiteSpace
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getPrevSiblingNonWhiteSpace
 import org.intellij.terraform.hil.HILFileType
+import org.intellij.terraform.hil.codeinsight.HilCompletionContributor
 import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQNRef
 import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK
@@ -72,21 +74,12 @@ import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER
 import org.intellij.terraform.opentofu.model.encryptionKeyProviders
 import org.intellij.terraform.opentofu.model.encryptionMethods
 
-class TfConfigCompletionContributor : HCLCompletionContributor() {
+class TfConfigCompletionContributor : HilCompletionContributor() {
   init {
-    // Block first word
-    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-      .inFile(TerraformConfigFile)
-      .withParent(File)
-      .andNot(psiElement().afterSiblingSkipping2(WhiteSpace, IdentifierOrStringLiteralOrSimple)),
-           BlockKeywordCompletionProvider)
-    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-      .inFile(TerraformConfigFile)
-      .withParent(IdentifierOrStringLiteral)
-      .withSuperParent(2, Block)
-      .withSuperParent(3, File)
-      .withParent(not(psiElement().and(IdentifierOrStringLiteral).afterSiblingSkipping2(WhiteSpace, IdentifierOrStringLiteralOrSimple))),
-           BlockKeywordCompletionProvider)
+    extend(CompletionType.BASIC, AfterCommaOrBracketPattern, HclKeywordsCompletionProvider)
+
+    extend(CompletionType.BASIC, createRootBlockPattern(TerraformConfigFile), HclRootBlockCompletionProvider)
+    extend(CompletionType.BASIC, createBlockHeaderPattern(TerraformConfigFile), HclRootBlockCompletionProvider)
 
     // Block type or name
     extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
@@ -243,21 +236,6 @@ class TfConfigCompletionContributor : HCLCompletionContributor() {
 
       val hint = (TfModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
       return hint is SimpleValueHint || hint is ReferenceHint
-    }
-  }
-
-  private object BlockKeywordCompletionProvider : TfCompletionProvider() {
-    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      val position = parameters.position
-      val parent = position.parent
-      val leftNWS = position.getPrevSiblingNonWhiteSpace()
-      LOG.debug { "TF.BlockKeywordCompletionProvider{position=$position, parent=$parent, left=${position.prevSibling}, lnws=$leftNWS}" }
-      assert(getClearTextValue(leftNWS) == null, dumpPsiFileModel(position))
-
-      val fileType = position.containingFile.originalFile.fileType
-      RootBlockSorted.asSequence().filter { it.canBeUsedIn(fileType) }.map { createPropertyOrBlockType(it) }.forEach {
-        result.addElement(it)
-      }
     }
   }
 

@@ -25,3 +25,5 @@ object TerragruntFileType : LanguageFileType(HCLLanguage) {
 
   override fun getDisplayName(): @Nls String = HCLBundle.message("terragrunt.filetype.display.name")
 }
+
+internal const val TERRAGRUNT_STACK_EXTENSION = "terragrunt.stack.hcl"

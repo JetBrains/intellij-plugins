@@ -16,7 +16,7 @@ import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.hil.codeinsight.HILCompletionContributor.SelectFromScopeCompletionProvider
+import org.intellij.terraform.hil.codeinsight.HilCompletionContributor.SelectFromScopeCompletionProvider
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_PROPERTY
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER

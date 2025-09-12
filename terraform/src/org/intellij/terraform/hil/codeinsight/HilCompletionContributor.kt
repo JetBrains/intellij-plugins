@@ -59,7 +59,7 @@ import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.IlseOpenTofuEnc
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.IlseOpenTofuKeyProvider
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.KeyProviderBlock
 
-open class HILCompletionContributor : CompletionContributor(), DumbAware {
+open class HilCompletionContributor : CompletionContributor(), DumbAware {
   private val scopeProviders = listOf(
     CountCompletionProvider,
     DataSourceCompletionProvider,
@@ -84,7 +84,6 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
       .withParent(Identifier::class.java).withSuperParent(2, IlseNotFromKnownScope), SelectCompletionProvider)
 
     extend(CompletionType.BASIC, VariableTypePosition, VariableTypeCompletionProvider)
-
     extend(CompletionType.BASIC, ForEachIteratorPosition, ForEachIteratorCompletionProvider)
     extend(CompletionType.BASIC, InsideForExpressionBody, ForVariableCompletion)
   }
@@ -108,7 +107,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
       val parent = position.parent as? Identifier ?: return
       val pp = parent.parent as? SelectExpression<*> ?: return
       val from = pp.from as? Identifier ?: return
-      val provider = this@HILCompletionContributor.scopeProviders[from.name] ?: return
+      val provider = this@HilCompletionContributor.scopeProviders[from.name] ?: return
       LOG.debug { "HIL.SelectFromScopeCompletionProvider(${from.name}){position=$position, parent=$parent, pp=$pp}" }
       provider.doAddCompletions(parent, parameters, context, result)
     }
@@ -510,7 +509,7 @@ open class HILCompletionContributor : CompletionContributor(), DumbAware {
   }
 
   companion object {
-    private val LOG = Logger.getInstance(HILCompletionContributor::class.java)
+    private val LOG = Logger.getInstance(HilCompletionContributor::class.java)
   }
 }
 
