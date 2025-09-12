@@ -6,8 +6,10 @@ import com.intellij.pom.PomTarget;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
+import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterPomTarget;
 
 //@formatter:off Temporarily disable formatter because of bug IDEA-371809
@@ -43,6 +45,31 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameter
 public final class CucumberJavaPomDeclarationSearcher extends PomDeclarationSearcher {
   @Override
   public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, @NotNull Consumer<? super PomTarget> consumer) {
+    handleJava8StepDeclaration(element, consumer);
+    handleParameterTypeDeclaration(element, consumer);
+  }
+
+  private static void handleJava8StepDeclaration(@NotNull PsiElement element, @NotNull Consumer<? super PomTarget> consumer) {
+    if (!(element instanceof PsiLiteralExpression literalExpression)) return;
+    final PsiMethodCallExpression methodCallExpression = PsiTreeUtil.getParentOfType(literalExpression, PsiMethodCallExpression.class);
+    if (methodCallExpression != null) {
+      PsiExpressionList argumentList = methodCallExpression.getArgumentList();
+      if (argumentList.getExpressionCount() != 2) return;
+      // Optimization to avoid resolve(): must have 2 arguments, first argument must be a String
+      final PsiMethod method = methodCallExpression.resolveMethod();
+      if (method == null) return;
+      final PsiClass classOfMethod = method.getContainingClass();
+      if (classOfMethod == null) return;
+      final boolean isCucumberLambdaMethod = ContainerUtil.exists(classOfMethod.getInterfaces(), psiClass -> {
+        final String fqn = psiClass.getQualifiedName();
+        return fqn != null && fqn.equals("io.cucumber.java8.LambdaGlue"); // TODO(bartekpacia): Handle older cucumber-java versions
+      });
+      if (!isCucumberLambdaMethod) return;
+      consumer.consume(Java8StepDefinition.create(methodCallExpression));
+    }
+  }
+
+  private static void handleParameterTypeDeclaration(@NotNull PsiElement element, @NotNull Consumer<? super PomTarget> consumer) {
     if (!(element instanceof PsiLiteralExpression literalExpression)) return;
     final Object value = literalExpression.getValue();
     if (!(value instanceof String stringValue)) return;

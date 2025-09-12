@@ -1,42 +1,57 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps.search;
 
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
+import com.intellij.openapi.application.QueryExecutorBase;
+import com.intellij.pom.PomTargetPsiElement;
+import com.intellij.psi.*;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
-import com.intellij.util.QueryExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
+import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
 
 import java.util.List;
 
 /// Handles [ReferencesSearch] requests made by [CucumberJavaMethodUsageSearcher].
-public final class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiReference, ReferencesSearch.SearchParameters> {
+public final class CucumberJavaStepDefinitionSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
+  public CucumberJavaStepDefinitionSearch() {
+    super(true);
+  }
+
   @Override
-  public boolean execute(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<? super PsiReference> consumer) {
+  public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<? super PsiReference> consumer) {
     final PsiElement elementToSearch = queryParameters.getElementToSearch();
-    if (!(elementToSearch instanceof PsiMethod method)) return true;
-    final boolean isStepDefinition = ReadAction.compute(() -> CucumberJavaUtil.isStepDefinition(method));
-    if (!isStepDefinition) {
-      return true;
-    }
-    final List<PsiAnnotation> stepAnnotations = ReadAction.compute(() -> CucumberJavaUtil.getCucumberStepAnnotations(method));
-    for (final PsiAnnotation stepAnnotation : stepAnnotations) {
-      final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
-      if (regexp == null) {
-        continue;
+    final SearchScope searchScope = queryParameters.getEffectiveSearchScope();
+
+    if (elementToSearch instanceof PsiMethod method) {
+      final boolean isStepDefinition = CucumberJavaUtil.isStepDefinition(method);
+      if (!isStepDefinition) {
+        return;
       }
-      var found = CucumberUtil.findGherkinReferencesToElement(elementToSearch, regexp, consumer, queryParameters.getEffectiveSearchScope());
-      if (!found) {
-        return false;
+      final List<PsiAnnotation> stepAnnotations = CucumberJavaUtil.getCucumberStepAnnotations(method);
+      for (final PsiAnnotation stepAnnotation : stepAnnotations) {
+        final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
+        if (regexp == null) {
+          continue;
+        }
+        CucumberUtil.findGherkinReferencesToElement(method, regexp, consumer, searchScope);
       }
     }
 
-    return true;
+    if (elementToSearch instanceof PomTargetPsiElement pomTargetPsiElement) {
+      if (pomTargetPsiElement.getTarget() instanceof Java8StepDefinition stepDefinition) {
+        final String regexp = stepDefinition.getExpression();
+        if (regexp == null) {
+          return;
+        }
+        final PsiMethodCallExpression methodCallExpression = stepDefinition.getElement();
+        if (methodCallExpression == null) {
+          return;
+        }
+        CucumberUtil.findGherkinReferencesToElement(methodCallExpression, regexp, consumer, searchScope);
+      }
+    }
   }
 }

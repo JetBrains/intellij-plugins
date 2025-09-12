@@ -19,6 +19,18 @@ public class CucumberJavaFindUsagesTest extends CucumberJavaCodeInsightTestCase 
     assertSameElements(expectedUsages, usages);
   }
 
+  public void testStepUsagesJava8() {
+    myFixture.copyDirectoryToProject(getTestName(true), "");
+    String[] usages = myFixture.testFindUsagesUsingAction("Steps.java").stream().map(Usage::toString).toArray(String[]::new);
+    assertEquals(3, usages.length);
+    String[] expectedUsages = new String[]{
+      "4|Given| |I am happy",
+      "6|Then| |I am happy",
+      "9|Given| |I am happy"
+    };
+    assertSameElements(expectedUsages, usages);
+  }
+
   public void testParameterTypeUsages() {
     myFixture.copyDirectoryToProject(getTestName(true), "");
     String[] usages = myFixture.testFindUsagesUsingAction("Steps.java").stream().map(Usage::toString).toArray(String[]::new);
