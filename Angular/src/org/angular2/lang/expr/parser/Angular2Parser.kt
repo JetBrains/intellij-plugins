@@ -529,11 +529,11 @@ class Angular2Parser private constructor(
     fun parseBlockParameter(templateSyntax: Angular2TemplateSyntax, builder: PsiBuilder, root: IElementType, blockName: String, parameterIndex: Int) {
       parseRoot(templateSyntax, builder, root, Angular2ElementTypes.BLOCK_PARAMETER_STATEMENT, false, false) { parser ->
         when (blockName) {
-          BLOCK_IF -> when (parameterIndex) {
+          BLOCK_IF, BLOCK_ELSE_IF -> when (parameterIndex) {
             0 -> parser.parseChain(allowEmpty = false)
             else -> parseAliasAsVariable(builder)
           }
-          BLOCK_ELSE_IF, BLOCK_SWITCH, BLOCK_CASE -> when (parameterIndex) {
+          BLOCK_SWITCH, BLOCK_CASE -> when (parameterIndex) {
             0 -> parser.parseChain(allowEmpty = false)
             else -> skipContents(builder)
           }

@@ -1,0 +1,375 @@
+{
+  "$schema": "../../../../community/platform/polySymbols/web-types-gen/resources/web-types.json",
+  "name": "@angular/core",
+  "framework": "angular",
+  "version": "20.2.0-next.1",
+  "description-markup": "markdown",
+  "default-icon": "icons/angular2.svg",
+  "contexts-config": {
+    "angular-template-syntax": {
+      "V_20": {
+        "enable-when": {
+          "node-packages": [
+            "@angular/core"
+          ]
+        }
+      }
+    },
+    "angular-version": {
+      "V_20_2": {
+        "enable-when": {
+          "node-packages": [
+            "@angular/core"
+          ]
+        }
+      }
+    }
+  },
+  "contributions": {
+    "html": {
+      "attributes": [
+        {
+          "name": "ngCspNonce",
+          "doc-url": "https://angular.dev/best-practices/security#content-security-policy",
+          "description": "Use the ngCspNonce attribute on the root application element as `<app ngCspNonce=\"randomNonceGoesHere\"></app>`. The attribute should be used if you have access to server-side templating that can add the nonce both to the header and the index.html when constructing the response.",
+          "value": {
+            "required": true,
+            "kind": "plain"
+          },
+          "ng-host-binding": false
+        },
+        {
+          "name": "ngSkipHydration",
+          "doc-url": "https://angular.dev/guide/hydration#how-to-skip-hydration-for-particular-components",
+          "description": "You can add the `ngSkipHydration` attribute to a component's tag in order to skip hydrating the entire component. This is useful for component, which may not work properly with hydration enabled due to issues, like [Direct DOM Manipulation](https://angular.dev/guide/hydration#direct-dom-manipulation).",
+          "value": {
+            "kind": "no-value"
+          },
+          "ng-host-binding": false
+        }
+      ],
+      "ng-blocks": [
+        {
+          "name": "defer",
+          "doc-url": "https://angular.dev/guide/defer#defer",
+          "description": "The content of the main `@defer` block is the section of content that is lazily loaded. It will not be rendered initially, and all of the content will appear once the specified trigger or `when` condition is met and the dependencies have been fetched. By default, a `@defer` block is triggered when the browser state becomes idle.",
+          "is-primary": true,
+          "ng-block-parameter-prefixes": [
+            {
+              "name": "prefetch",
+              "doc-url": "https://angular.dev/guide/defer#prefetching",
+              "description": "`@defer` allows to specify conditions when prefetching of the dependencies should be triggered. The `prefetch` syntax works similarly to the main defer conditions, and accepts `when` or `on` to declare the trigger."
+            },
+            {
+              "name": "hydrate",
+              "doc-url": "https://angular.dev/guide/defer",
+              "description": "A `@defer` block becomes a incremental hydration boundary by adding a `hydrate on`, `hydrate when`, or `hydrate never` condition.",
+              "ng-block-parameters": [
+                {
+                  "name": "never",
+                  "doc-url": "https://angular.dev/guide/defer",
+                  "description": "`hydrate never` tells Angular to leave your component dehydrated indefinitely, effectively treating it as static content. Note that this is not the same as a server-only component. When a `@defer` block is instantiated during normal client-side rendering, the content is still fetched and rendered normally.",
+                  "no-content": true,
+                  "unique": true
+                },
+                {
+                  "name": "when",
+                  "doc-url": "https://angular.dev/guide/defer",
+                  "description": "`hydrate when` specifies an imperative condition as an expression that returns a `boolean`. When this expression becomes truthy, the block will be hydrated."
+                }
+              ]
+            }
+          ],
+          "ng-block-parameters": [
+            {
+              "name": "when",
+              "doc-url": "https://angular.dev/guide/defer#triggers",
+              "description": "`when` specifies an imperative condition as an expression that returns a `boolean`. When this expression becomes truthy, the placeholder is swapped with the lazily loaded content (which may be an asynchronous operation if the dependencies need to be fetched)."
+            },
+            {
+              "name": "on",
+              "doc-url": "https://angular.dev/guide/defer#triggers",
+              "description": "`on` specifies a trigger condition using one of available triggers. An example would be `on interaction` or `on viewport`. Multiple event triggers can be defined at once.",
+              "exclusive-contributions": [
+                "/js/symbols",
+                "/js/keywords"
+              ],
+              "js": {
+                "symbols": [
+                  {
+                    "name": "Angular @defer on trigger",
+                    "pattern": {
+                      "items": "ng-defer-on-triggers"
+                    }
+                  }
+                ],
+                "ng-defer-on-triggers": [
+                  {
+                    "name": "idle",
+                    "doc-url": "https://angular.dev/guide/defer#on-idle",
+                    "description": "`idle` will trigger the deferred loading once the browser has reached an idle state (detected using the `requestIdleCallback` API under the hood). This is the default behavior with a defer block.",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "viewport",
+                    "doc-url": "https://angular.dev/guide/defer#on-viewport",
+                    "description": "`viewport` would trigger the deferred block when the specified content enters the viewport using the `IntersectionObserver` API. This could be the placeholder content or an element reference.\n\nBy default, the placeholder will act as the element watched for entering viewport as long as it is a single root element node. Alternatively, you can specify a template reference variable in the same template as the `@defer` block as the element that is watched to enter the viewport.",
+                    "parameter": "template-reference-variable",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "interaction",
+                    "doc-url": "https://angular.dev/guide/defer#on-interaction",
+                    "description": "`interaction` will trigger the deferred block when the user interacts with the specified element through click or keydown events.\n\nBy default, the placeholder will act as the interaction element as long as it is a single root element node. Alternatively, you can specify a template reference variable as the element that triggers interaction.",
+                    "parameter": "template-reference-variable",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "hover",
+                    "doc-url": "https://angular.dev/guide/defer#on-hover",
+                    "description": "`hover` triggers deferred loading when the mouse has hovered over the trigger area. Events used for this are `mouseenter` and `focusin`.\n\nBy default, the placeholder will act as the hover element as long as it is a single root element node. Alternatively, you can specify a template reference variable as the hover element.",
+                    "parameter": "template-reference-variable",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "immediate",
+                    "doc-url": "https://angular.dev/guide/defer#on-immediate",
+                    "description": "`immediate` triggers the deferred load immediately, meaning once the client has finished rendering, the defer chunk would then start fetching right away.",
+                    "js-symbol-kind": "Function"
+                  },
+                  {
+                    "name": "timer",
+                    "doc-url": "https://angular.dev/guide/defer#on-timer",
+                    "description": "`timer(x)` would trigger after a specified duration. The duration is required and can be specified in `ms` or `s`.",
+                    "parameter-required": true,
+                    "parameter": "time-duration",
+                    "js-symbol-kind": "Function"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "placeholder",
+          "doc-url": "https://angular.dev/guide/defer#placeholder",
+          "description": "By default, defer blocks do not render any content before they are triggered. The `@placeholder` is an optional block that declares content to show before the defer block is triggered. This placeholder content is replaced with the main content once the loading is complete. You can use any content in the placeholder section including plain HTML, components, directives, and pipes; however keep in mind the dependencies of the placeholder block are eagerly loaded.\n\n**Note:** For the best user experience, you should always specify a `@placeholder` block.",
+          "primary-block": "defer",
+          "unique": true,
+          "ng-block-parameters": [
+            {
+              "name": "minimum",
+              "doc-url": "https://angular.dev/guide/defer#loading",
+              "description": "The minimum amount of time that the `@placeholder` content should be shown in milliseconds (ms) or seconds (s). If time unit is not specified, milliseconds are assumed.\n\nThis parameter exists to prevent fast flickering of `@placeholder` content in the case that the deferred dependencies are fetched quickly.",
+              "unique": true
+            }
+          ]
+        },
+        {
+          "name": "loading",
+          "doc-url": "https://angular.dev/guide/defer#loading",
+          "description": "The `@loading` block is an optional block that allows you to declare content that will be shown during the loading of any deferred dependencies. For example, you could show a loading spinner. Similar to `@placeholder`, the dependencies of the `@loading` block are eagerly loaded.",
+          "primary-block": "defer",
+          "unique": true,
+          "ng-block-parameters": [
+            {
+              "name": "minimum",
+              "doc-url": "https://angular.dev/guide/defer#loading",
+              "description": "The minimum amount of time that `@loading` content should be shown in milliseconds (ms) or seconds (s). If time unit is not specified, milliseconds are assumed.\n\nThis parameter exists to prevent fast flickering of `@loading` content in the case that the deferred dependencies are fetched quickly.",
+              "unique": true
+            },
+            {
+              "name": "after",
+              "doc-url": "https://angular.dev/guide/defer#loading",
+              "description": "The amount of time to wait after loading begins before showing the `@loading` content in milliseconds (ms) or seconds (s). If time unit is not specified, milliseconds are assumed.\n\nThis parameter exists to prevent fast flickering of `@loading` content in the case that the deferred dependencies are fetched quickly.",
+              "unique": true
+            }
+          ]
+        },
+        {
+          "name": "error",
+          "doc-url": "https://angular.dev/guide/defer#error",
+          "description": "The `@error` block allows you to declare content that will be shown if deferred loading fails. Similar to `@placeholder` and `@loading`, the dependencies of the `@error` block are eagerly loaded. The `@error` block is optional.",
+          "primary-block": "defer",
+          "unique": true
+        },
+        {
+          "name": "for",
+          "is-primary": true,
+          "doc-url": "https://angular.dev/guide/templates/control-flow#for-block---repeaters",
+          "description": "The `@for` repeatedly renders content of a block for each item in a collection. The collection can be represented as any JavaScript iterable but there are performance advantages of using a regular `Array`. A basic `@for` loop looks like:\n```Angular17Html\n@for (item of items; track item.id) {\n  {{ item.name }}\n}\n```",
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true
+            },
+            {
+              "name": "let",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+              "description": "Allows to alias one of the implicit variables: `$count`, `$index`, `$first`, `$last`, `$even` or `$odd`:\n```Angular17Html\n      \n@for (item of items; track item.id; let idx = $index, e = $even) {\n  Item #{{ idx }}: {{ item.name }}\n}\n```"
+            },
+            {
+              "name": "track",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#track-for-calculating-difference-of-two-collections",
+              "description": "The value of the `track` expression determines a key used to associate array items with the views in the DOM. Having clear indication of the item identity allows Angular to execute a minimal set of DOM operations as items are added, removed or moved in a collection.\n\nLoops over immutable data without `trackBy` as one of the most common causes for performance issues across Angular applications. Because of the potential for poor performance, the `track` expression is required for the `@for` loops. When in doubt, using `track $index` is a good default.",
+              "priority": "highest",
+              "required": true,
+              "unique": true
+            }
+          ],
+          "exclusive-contributions": [
+            "/js/symbols",
+            "/js/keywords"
+          ],
+          "js": {
+            "symbols": [
+              {
+                "name": "$count",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Number of items in a collection iterated over",
+                "type": "number"
+              },
+              {
+                "name": "$index",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Index of the current row",
+                "type": "number"
+              },
+              {
+                "name": "$first",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row is the first row",
+                "type": "boolean"
+              },
+              {
+                "name": "$last",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row is the last row",
+                "type": "boolean"
+              },
+              {
+                "name": "$even",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row index is even",
+                "type": "boolean"
+              },
+              {
+                "name": "$odd",
+                "doc-url": "https://angular.dev/guide/templates/control-flow#index-and-other-contextual-variables",
+                "description": "Whether the current row index is odd",
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        {
+          "name": "empty",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#empty-block",
+          "description": "You can optionally include an `@empty` section immediately after the `@for` block content. The content of the `@empty` block displays when there are no items:\n```Angular17Html\n@for (item of items; track item.name) {\n  <li> {{ item.name }} </li>\n} @empty {\n  <li> There are no items. </li>\n}\n```",
+          "primary-block": "for",
+          "unique": true
+        },
+        {
+          "name": "if",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
+          "description": "The `@if` block conditionally displays its content when its condition expression is truthy:\n```Angular17Html\n@if (a > b) {\n   {{a}} is greater than {{b}}\n}\n```\nThe `@if` block might have one or more associated `@else` blocks. Immediately after an `@if` block, you can optionally specify any number of `@else if` blocks and one `@else` block.",
+          "is-primary": true,
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true
+            },
+            {
+              "name": "as",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#referencing-the-conditional-expressions-result",
+              "description": "Use `as` parameter to reference conditional expression results:\n```Angular17Html\n@if (users$ | async; as users) {\n  {{ users.length }}\n}\n```",
+              "unique": true
+            }
+          ]
+        },
+        {
+          "name": "else if",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
+          "description": "The `@else if` block conditionally displays its content when its condition expression is truthy and all previous `@if` and `@if else` conditions were falsy.",
+          "primary-block": "if",
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true
+            },
+            {
+              "name": "as",
+              "doc-url": "https://angular.dev/guide/templates/control-flow#referencing-the-conditional-expressions-result",
+              "description": "Use `as` parameter to reference conditional expression results:\n```Angular17Html\n@if ($admins | async; as admins) {\n  {{ admins.length }}\n} @else if ($users | async; as users) {\n  {{ users.length }}\n}\n```",
+              "unique": true
+            }
+          ]
+        },
+        {
+          "name": "else",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#if-block-conditionals",
+          "description": "The `@else` block conditionally displays its content when all of previous `@if` and `@if else` conditions were falsy.",
+          "primary-block": "if",
+          "order": "last",
+          "unique": true
+        },
+        {
+          "name": "switch",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
+          "description": "The syntax for `@switch` is very similar to `@if`, and is inspired by the JavaScript `switch` statement:\n```Angular17Html\n@switch (condition) {\n  @case (caseA) {\n    Case A.\n  }\n  @case (caseB) {\n    Case B.\n  }\n  @default {\n    Default case.\n  }\n}\n```\nThe value of the conditional expression is compared to the case expression using the `===` operator.\n\n`@switch` does not have fallthrough, so you do not need an equivalent to a `break` or `return` statement.\n\nThe `@default` block is optional and can be omitted. If no `@case` matches the expression and there is no `@default` block, nothing is shown.",
+          "is-primary": true,
+          "nested-secondary-blocks": true,
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true,
+              "prefix": ""
+            }
+          ]
+        },
+        {
+          "name": "case",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
+          "description": "The value of the conditional expression is compared to the case expression using the `===` operator.\n\n`@switch` does not have fallthrough, so you do not need an equivalent to a `break` or `return` statement.",
+          "primary-block": "switch",
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "default",
+          "doc-url": "https://angular.dev/guide/templates/control-flow#switch-block---selection",
+          "description": "The `@default` block is optional and can be omitted. If no `@case` matches the expression and there is no `@default` block, nothing is shown.",
+          "primary-block": "switch",
+          "order": "preferred-last",
+          "unique": true
+        },
+        {
+          "name": "let",
+          "doc-url": "https://angular.dev/guide/templates/let-template-variables",
+          "description": "Angular's `@let` syntax allows you to define a local variable and re-use it across the template.\n\n`@let` declarations are similar to JavaScript's let and their values can be any valid Angular expression. The expressions will be re-evaluated any time the template is executed.",
+          "is-primary": true,
+          "ng-block-parameters": [
+            {
+              "name": "$primary-expression",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    "css": {
+      "pseudo-elements": [
+        {
+          "name": "ng-deep",
+          "doc-url": "https://v19.angular.dev/guide/components/styling#ng-deep",
+          "description": "Angular's emulated encapsulation mode supports a custom pseudo class, `::ng-deep`. Applying this pseudo class to a CSS rule disables encapsulation for that rule, effectively turning it into a global style.\n\n**The Angular team strongly discourages new use of `::ng-deep`.** These APIs remain exclusively for backwards compatibility.",
+          "ij-text-attributes-key": "NG.DEEP_PSEUDO"
+        }
+      ]
+    }
+  }
+}
