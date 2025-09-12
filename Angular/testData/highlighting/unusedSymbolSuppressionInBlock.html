@@ -1,0 +1,11 @@
+@for (_ of [1, 2, 3]; track $index) {
+  <div></div>
+}
+
+@for (<warning descr="Unused constant foo">foo</warning> of [1, 2, 3]; track $index) {
+  <div></div>
+}
+
+@if (true; as <warning descr="Unused constant _">_</warning>) {
+
+}

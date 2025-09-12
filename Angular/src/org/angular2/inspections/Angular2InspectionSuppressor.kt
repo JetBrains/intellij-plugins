@@ -7,6 +7,8 @@ import com.intellij.codeInspection.SuppressQuickFix
 import com.intellij.codeInspection.SuppressionUtil.SUPPRESS_IN_LINE_COMMENT_PATTERN
 import com.intellij.codeInspection.SuppressionUtil.isInspectionToolIdMentioned
 import com.intellij.codeInspection.SuppressionUtilCore
+import com.intellij.lang.javascript.psi.JSVarStatement
+import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiComment
@@ -14,8 +16,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
+import com.intellij.util.asSafely
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.expr.Angular2ExprDialect
+import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.Angular2PipeArgumentsList
 import org.jetbrains.annotations.NonNls
@@ -24,6 +28,7 @@ object Angular2InspectionSuppressor : InspectionSuppressor {
 
   override fun isSuppressedFor(element: PsiElement, toolId: String): Boolean {
     return isSuppressedInStatement(element, stripToolIdPrefix(toolId))
+           || isUnusedLocalSymbolInNgBlockPrimaryExpression(element, toolId)
   }
 
   override fun getSuppressActions(element: PsiElement?, toolId: String): Array<SuppressQuickFix> {
@@ -97,4 +102,14 @@ object Angular2InspectionSuppressor : InspectionSuppressor {
     }
     return toolId
   }
+
+  private fun isUnusedLocalSymbolInNgBlockPrimaryExpression(place: PsiElement, toolId: String): Boolean =
+    "JSUnusedLocalSymbols" == toolId
+    && (place.parent as? JSVariable)
+      ?.takeIf { it.name?.startsWith("_") == true }
+      ?.parent
+      ?.asSafely<JSVarStatement>()
+      ?.parent
+      ?.asSafely<Angular2BlockParameter>()
+      ?.isPrimaryExpression == true
 }
