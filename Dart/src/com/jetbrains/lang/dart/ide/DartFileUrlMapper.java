@@ -16,7 +16,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.SmartList;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.pubServer.PubServerManager;
@@ -163,8 +162,14 @@ final class DartFileUrlMapper extends FileUrlMapper {
 
     final String authority = url.getAuthority();
     if (authority != null && !BuiltInServerManagerImpl.isOnBuiltInWebServerByAuthority(authority)) {
-      return ReadAction.compute(() -> ContainerUtil
-        .getFirstItem(FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(project))));
+      return ReadAction.compute(
+        () -> FilenameIndex.firstVirtualFileWithName(
+          PUBSPEC_YAML,
+          /*caseSensitive: */true,
+          GlobalSearchScope.projectScope(project),
+          null
+        )
+      );
     }
 
     return null;
