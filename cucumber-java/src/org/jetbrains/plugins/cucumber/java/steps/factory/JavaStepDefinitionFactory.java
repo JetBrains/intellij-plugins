@@ -3,19 +3,20 @@ package org.jetbrains.plugins.cucumber.java.steps.factory;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil;
 import org.jetbrains.plugins.cucumber.java.steps.AbstractJavaStepDefinition;
 
+@NotNullByDefault
 public abstract class JavaStepDefinitionFactory {
-  public static JavaStepDefinitionFactory getInstance(@NotNull Module module) {
+  public static JavaStepDefinitionFactory getInstance(Module module) {
     if (!CucumberJavaVersionUtil.isCucumber2OrMore(module)) {
       return new JavaStep1xDefinitionFactory();
     }
     return new JavaStep2xDefinitionFactory();
   }
-  
-  public abstract AbstractJavaStepDefinition buildStepDefinition(@NotNull PsiElement element,
-                                                                 @NotNull Module module,
-                                                                 @NotNull String annotationClassName);
+
+  public abstract AbstractJavaStepDefinition buildStepDefinition(PsiElement element,
+                                                                 Module module,
+                                                                 String annotationClassName);
 }

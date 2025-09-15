@@ -3,15 +3,16 @@ package org.jetbrains.plugins.cucumber.java.steps.factory;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.java.steps.AbstractJavaStepDefinition;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStep1xDefinition;
 
+@NotNullByDefault
 public class JavaStep1xDefinitionFactory extends JavaStepDefinitionFactory {
   @Override
-  public AbstractJavaStepDefinition buildStepDefinition(@NotNull PsiElement element,
-                                                        @NotNull Module module,
-                                                        @NotNull String annotationClassName) {
+  public AbstractJavaStepDefinition buildStepDefinition(PsiElement element,
+                                                        Module module,
+                                                        String annotationClassName) {
     return new JavaStep1xDefinition(element, module, annotationClassName);
   }
 }
