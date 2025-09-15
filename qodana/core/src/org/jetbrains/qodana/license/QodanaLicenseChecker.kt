@@ -129,8 +129,7 @@ object QodanaLicenseChecker {
     if (cstamp == null) {
       //QDJVM, QDPY could be executed in community mode
       if (ApplicationInfo.getInstance().build.productCode !in listOf("QDJVM", "QDPY")) {
-        println("""No valid license found""")
-        exitProcess(7)
+        return QodanaLicense(NONE, false, null)
       }
       val expirationDate = checkCommunityEapLicense()
       return QodanaLicense(COMMUNITY, false, expirationDate)

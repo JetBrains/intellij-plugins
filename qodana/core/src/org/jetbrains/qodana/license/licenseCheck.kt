@@ -11,7 +11,12 @@ import kotlin.system.exitProcess
  */
 fun checkLicense(): QodanaLicense {
   try {
-    return QodanaLicenseChecker.getLicenseType()
+    val license = QodanaLicenseChecker.getLicenseType()
+    if (license.type == QodanaLicenseType.NONE) {
+      println("""No valid license found""")
+      exitProcess(7)
+    }
+    return license
   }
   catch (e: QodanaException) {
     e.printStackTrace()
