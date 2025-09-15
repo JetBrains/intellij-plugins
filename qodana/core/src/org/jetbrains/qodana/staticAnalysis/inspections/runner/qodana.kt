@@ -4,8 +4,6 @@ package org.jetbrains.qodana.staticAnalysis.inspections.runner
 import com.intellij.openapi.application.ApplicationInfo
 import java.io.File
 
-val COMMUNITY_PRODUCT_CODES = listOf("QDJVMC", "QDPYC", "QDANDC")
-
 fun getQodanaProductName(): String {
   val buildNumber = ApplicationInfo.getInstance().build
   return when (buildNumber.productCode) {

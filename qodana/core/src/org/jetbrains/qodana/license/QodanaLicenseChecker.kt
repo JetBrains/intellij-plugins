@@ -3,6 +3,7 @@ package org.jetbrains.qodana.license
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.LicensingFacade
 import org.jetbrains.qodana.license.QodanaLicenseType.*
@@ -14,6 +15,9 @@ import java.security.cert.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.system.exitProcess
+
+internal const val EAP_LICENSE_DURATION = 60
 
 data class QodanaLicense(val type: QodanaLicenseType, val trial: Boolean, val expirationDate: Date?)
 
@@ -35,10 +39,13 @@ object QodanaLicenseChecker {
   ////// License check inlined magic
   @PublishedApi
   internal inline val PRODUCT_CODE get() = "QDL"
+
   @PublishedApi
   internal inline val KEY_PREFIX get() = "key:"
+
   @PublishedApi
   internal inline val EVAL_PREFIX get() = "eval:"
+
   /**
    * Public root certificates needed to verify JetBrains-signed licenses
    */
@@ -113,10 +120,23 @@ object QodanaLicenseChecker {
       })
     }
 
-  // Qodana license are passed as ENV variable or offline activation code.
+  // Qodana license is passed as an ENV variable or offline activation code.
   @PublishedApi
   internal inline fun getLicenseType(): QodanaLicense {
-    val cstamp = LicensingFacade.getInstance()?.getConfirmationStamp(PRODUCT_CODE) ?: throw QodanaException("Incorrect license")
+
+    val cstamp = LicensingFacade.getInstance()?.getConfirmationStamp(PRODUCT_CODE)
+
+    if (cstamp == null) {
+      //QDJVM, QDPY could be executed in community mode
+      if (ApplicationInfo.getInstance().build.productCode !in listOf("QDJVM", "QDPY")) {
+        println("""No valid license found""")
+        exitProcess(7)
+      }
+      val expirationDate = checkCommunityEapLicense()
+      return QodanaLicense(COMMUNITY, false, expirationDate)
+    }
+
+
     return when {
       // the license is obtained via JetBrainsAccount or entered as an activation code
       cstamp.startsWith(KEY_PREFIX) -> getLicenseType(cstamp.substring(KEY_PREFIX.length))
@@ -245,5 +265,38 @@ object QodanaLicenseChecker {
       }
     }
     throw Exception("Certificate used to sign the license is not signed by JetBrains root certificate")
+  }
+
+  // LicenseManager can't set expiration date on community builds.
+  // Release builds should have perpetual license and EAP's 30-days limit.
+  // So method duplicates logic of HeadlessLicense for checking community EAP's.
+
+  @PublishedApi
+  internal fun checkCommunityEapLicense(): Date? {
+    if (!isEapLicensing()) return null
+    val calendar = ApplicationInfo.getInstance().buildDate.clone() as Calendar
+    val buildDate = calendar.time
+
+    calendar.add(Calendar.DAY_OF_MONTH, EAP_LICENSE_DURATION)
+    val expirationDate = calendar.time
+
+
+    val tomorrowCalendar = Calendar.getInstance()
+    tomorrowCalendar.setTime(Date())
+    tomorrowCalendar.add(Calendar.DAY_OF_MONTH, 1)
+    val tomorrow = tomorrowCalendar.time
+
+    if (tomorrow.before(buildDate) || expirationDate.before(Date())) {
+      println("""EAP license of this Qodana image is expired. Please use "docker pull" to update image.""")
+      exitProcess(7)
+    }
+
+    return expirationDate
+  }
+
+
+  internal fun isEapLicensing(): Boolean {
+    // eap.require.license is only for test purposes. It changes behavior of LicenseManager and qodana output.
+    return ApplicationInfo.getInstance().isEAP && System.getProperty("eap.require.license") != "release"
   }
 }
