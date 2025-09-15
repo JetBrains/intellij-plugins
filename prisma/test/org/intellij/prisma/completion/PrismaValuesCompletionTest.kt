@@ -1,8 +1,8 @@
 package org.intellij.prisma.completion
 
-import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.PrismaSchemaProvider
+import org.intellij.prisma.ide.schema.builder.PrismaSchemaEvaluationContext
 import org.intellij.prisma.ide.schema.types.PrismaPreviewFeature
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.PrismaConstants.Functions
@@ -135,7 +135,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeatures() {
-    val feature = PrismaPreviewFeature.DriverAdapters.presentation
+    val feature = PrismaPreviewFeature.RelationJoins.presentation
 
     completeSelected(
       """
@@ -153,7 +153,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeaturesLastItem() {
-    val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
+    val feature1 = PrismaPreviewFeature.ShardKeys.presentation
     val feature2 = PrismaPreviewFeature.RelationJoins.presentation
 
     val lookupElements = completeSelected(
@@ -174,12 +174,12 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeaturesCompleteUnquoted() {
-    val feature = PrismaPreviewFeature.DriverAdapters.presentation
+    val feature = PrismaPreviewFeature.RelationJoins.presentation
 
     completeSelected(
       """
           generator client {
-            previewFeatures = [drive<caret>]
+            previewFeatures = [relat<caret>]
           }
       """.trimIndent(),
       """
@@ -202,7 +202,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeaturesNotAfterComma() {
-    val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
+    val feature1 = PrismaPreviewFeature.RelationJoins.presentation
     val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
 
     noCompletion(
@@ -217,7 +217,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeaturesBetweenCommaAndValue() {
-    val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
+    val feature1 = PrismaPreviewFeature.RelationJoins.presentation
     val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
     val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
 
@@ -241,7 +241,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase("completion/values")
   }
 
   fun testGeneratorPreviewFeaturesAtStart() {
-    val feature1 = PrismaPreviewFeature.DriverAdapters.presentation
+    val feature1 = PrismaPreviewFeature.RelationJoins.presentation
     val feature2 = PrismaPreviewFeature.PostgresqlExtensions.presentation
     val featureToComplete = PrismaPreviewFeature.NativeDistinct.presentation
 
