@@ -64,10 +64,9 @@ public final class DartHierarchyUtil {
   public static boolean isExecutable(@NotNull PsiElement component) {
     if (component instanceof DartComponentName) return false;
     final DartComponentType componentType = DartComponentType.typeOf(component);
-    if (componentType == null) return false;
     return switch (componentType) {
       case CONSTRUCTOR, FUNCTION, METHOD, OPERATOR -> true;
-      default -> false;
+      case null, default -> false;
     };
   }
 
