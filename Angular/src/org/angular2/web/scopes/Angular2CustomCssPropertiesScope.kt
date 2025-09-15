@@ -48,34 +48,26 @@ class Angular2CustomCssPropertiesScope(file: PsiFile) :
 
     val scope = CssUtil.getCompletionAndResolvingScopeForElement(dataHolder)
 
-    StubIndex.getInstance().processAllKeys(
-      Angular2CustomCssPropertyInJsIndexKey,
-      { name ->
-        StubIndex.getInstance().processElements(Angular2CustomCssPropertyInJsIndexKey, name, project, scope,
-                                                JSImplicitElementProvider::class.java) {
-          when (it) {
-            is JSProperty -> createCustomCssProperty(it)?.let(consumer)
-            is ES6Decorator -> it.stubSafeCallArguments.firstOrNull()?.asSafely<JSLiteralExpression>()
-              ?.let { createCustomCssProperty(it) }
-              ?.let(consumer)
-          }
-          true
+    StubIndex.getInstance().getAllKeys(Angular2CustomCssPropertyInJsIndexKey, project).forEach { name ->
+      StubIndex.getInstance().processElements(Angular2CustomCssPropertyInJsIndexKey, name, project, scope,
+                                              JSImplicitElementProvider::class.java) {
+        when (it) {
+          is JSProperty -> createCustomCssProperty(it)?.let(consumer)
+          is ES6Decorator -> it.stubSafeCallArguments.firstOrNull()?.asSafely<JSLiteralExpression>()
+            ?.let { createCustomCssProperty(it) }
+            ?.let(consumer)
         }
-      },
-      scope
-    )
+        true
+      }
+    }
 
-    StubIndex.getInstance().processAllKeys(
-      Angular2CustomCssPropertyInHtmlAttributeIndexKey,
-      { name ->
-        StubIndex.getInstance().processElements(Angular2CustomCssPropertyInHtmlAttributeIndexKey, name, project, scope,
-                                                Angular2HtmlBoundAttribute::class.java) {
-          createCustomCssProperty(it)?.let(consumer)
-          true
-        }
-      },
-      scope
-    )
+    StubIndex.getInstance().getAllKeys(Angular2CustomCssPropertyInHtmlAttributeIndexKey, project).forEach { name ->
+      StubIndex.getInstance().processElements(Angular2CustomCssPropertyInHtmlAttributeIndexKey, name, project, scope,
+                                              Angular2HtmlBoundAttribute::class.java) {
+        createCustomCssProperty(it)?.let(consumer)
+        true
+      }
+    }
   }
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
