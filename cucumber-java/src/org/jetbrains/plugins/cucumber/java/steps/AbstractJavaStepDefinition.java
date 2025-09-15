@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
@@ -17,11 +18,8 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition {
-  protected final @NotNull Module module;
-
-  public AbstractJavaStepDefinition(@NotNull PsiElement element, @NotNull Module module) {
+  public AbstractJavaStepDefinition(@NotNull PsiElement element) {
     super(element);
-    this.module = module;
   }
 
   @Override
@@ -32,6 +30,7 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
     if (element == null) return null;
 
     if (CucumberUtil.isCucumberExpression(definitionText)) {
+      Module module = ModuleUtilCore.findModuleForPsiElement(element);
       ParameterTypeManager parameterTypes = CucumberJavaUtil.getAllParameterTypes(module);
       return CucumberUtil.buildRegexpFromCucumberExpression(definitionText, parameterTypes);
     }

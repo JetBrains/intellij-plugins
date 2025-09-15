@@ -15,6 +15,7 @@ import com.intellij.psi.PsiReferenceBase;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
+import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 //@formatter:off Temporarily disable formatter because of bug IDEA-371809
@@ -71,7 +72,7 @@ public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElem
     String parameterTypeName = getParameterTypeName();
     final Module module = ModuleUtilCore.findModuleForPsiElement(myElement);
     if (module != null) {
-      MapParameterTypeManager manager = CucumberJavaUtil.getAllParameterTypes(module);
+      ParameterTypeManager manager = CucumberJavaUtil.getAllParameterTypes(module);
 
       PsiElement declaration = manager.getParameterTypeDeclaration(parameterTypeName);
       if (declaration != null) {

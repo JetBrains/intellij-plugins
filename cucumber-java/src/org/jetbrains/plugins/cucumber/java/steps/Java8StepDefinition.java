@@ -1,14 +1,13 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps;
 
-import com.intellij.openapi.module.Module;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Java8StepDefinition extends AbstractJavaStepDefinition {
-  public Java8StepDefinition(@NotNull PsiElement element, @NotNull Module module) {
-    super(element, module);
+  public Java8StepDefinition(@NotNull PsiElement element) {
+    super(element);
   }
 
   @Override

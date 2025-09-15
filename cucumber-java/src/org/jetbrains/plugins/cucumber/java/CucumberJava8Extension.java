@@ -55,7 +55,7 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
                                      final PsiMethodCallExpression methodCallExpression =
                                        PsiTreeUtil.getParentOfType(element, PsiMethodCallExpression.class);
                                      if (methodCallExpression != null) {
-                                       result.add(new Java8StepDefinition(methodCallExpression, module));
+                                       result.add(new Java8StepDefinition(methodCallExpression));
                                      }
                                    }
                                    return true;

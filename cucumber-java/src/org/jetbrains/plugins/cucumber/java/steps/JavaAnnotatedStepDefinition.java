@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -14,8 +15,8 @@ import java.util.Set;
 public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   private final @NotNull String myAnnotationValue;
 
-  public JavaAnnotatedStepDefinition(@NotNull PsiElement stepDef, @NotNull Module module, @NotNull String annotationValue) {
-    super(stepDef, module);
+  public JavaAnnotatedStepDefinition(@NotNull PsiElement stepDef, @NotNull String annotationValue) {
+    super(stepDef);
     myAnnotationValue = annotationValue;
   }
 
@@ -32,6 +33,10 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   @Override
   public void setValue(@NotNull String newValue) {
     if (!(getElement() instanceof PsiMethod method)) {
+      return;
+    }
+    final Module module = ModuleUtilCore.findModuleForPsiElement(method);
+    if (module == null) {
       return;
     }
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);

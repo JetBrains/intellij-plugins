@@ -17,6 +17,5 @@ public abstract class JavaStepDefinitionFactory {
   }
 
   public abstract AbstractJavaStepDefinition buildStepDefinition(PsiElement element,
-                                                                 Module module,
                                                                  String annotationClassName);
 }

@@ -47,7 +47,7 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
         for (PsiMethod stepDefMethod : javaStepDefinitions.findAll()) {
           List<String> annotationValues = CucumberJavaUtil.getStepAnnotationValues(stepDefMethod, annotationClassName);
           for (String annotationValue : annotationValues) {
-            result.add(stepDefinitionFactory.buildStepDefinition(stepDefMethod, module, annotationValue));
+            result.add(stepDefinitionFactory.buildStepDefinition(stepDefMethod, annotationValue));
           }
         }
       }

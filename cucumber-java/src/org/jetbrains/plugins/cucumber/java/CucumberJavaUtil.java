@@ -31,6 +31,7 @@ import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
+import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.cucumber.psi.*;
 
@@ -50,7 +51,6 @@ public final class CucumberJavaUtil {
 
   public static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
 
-  private static final Map<String, String> JAVA_PARAMETER_TYPES;
   public static final String CUCUMBER_EXPRESSIONS_CLASS_MARKER = "io.cucumber.cucumberexpressions.CucumberExpressionGenerator";
 
   public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
@@ -66,6 +66,8 @@ public final class CucumberJavaUtil {
   public static final Set<String> STEP_MARKERS = Set.of("Given", "Then", "And", "But", "When");
   public static final Set<String> HOOK_MARKERS = Set.of("Before", "After");
 
+  private static final Map<String, String> JAVA_PARAMETER_TYPES;
+
   static {
     Map<String, String> javaParameterTypes = new HashMap<>();
     javaParameterTypes.put("short", STANDARD_PARAMETER_TYPES.get("int"));
@@ -76,6 +78,15 @@ public final class CucumberJavaUtil {
     javaParameterTypes.put("long", STANDARD_PARAMETER_TYPES.get("int"));
 
     JAVA_PARAMETER_TYPES = Collections.unmodifiableMap(javaParameterTypes);
+  }
+
+  private static final ParameterTypeManager DEFAULT_JAVA_PARAMETER_TYPE_MANAGER;
+
+  static {
+    Map<String, String> defaultAndJavaParameterTypes = new HashMap<>();
+    defaultAndJavaParameterTypes.putAll(STANDARD_PARAMETER_TYPES);
+    defaultAndJavaParameterTypes.putAll(JAVA_PARAMETER_TYPES);
+    DEFAULT_JAVA_PARAMETER_TYPE_MANAGER = new MapParameterTypeManager(defaultAndJavaParameterTypes);
   }
 
   /// - Backslashes become `\\\\`
@@ -340,7 +351,10 @@ public final class CucumberJavaUtil {
   }
 
   /// Gathers all Parameter Types in a module and returns a manager object holding them.
-  public static MapParameterTypeManager getAllParameterTypes(@NotNull Module module) {
+  public static ParameterTypeManager getAllParameterTypes(@Nullable Module module) {
+    if (module == null) {
+      return DEFAULT_JAVA_PARAMETER_TYPE_MANAGER;
+    }
     Project project = module.getProject();
     PsiManager manager = PsiManager.getInstance(project);
 
@@ -351,7 +365,7 @@ public final class CucumberJavaUtil {
         CachedValueProvider.Result.create(doGetAllParameterTypes(module), PsiModificationTracker.MODIFICATION_COUNT));
     }
 
-    return MapParameterTypeManager.DEFAULT;
+    return DEFAULT_JAVA_PARAMETER_TYPE_MANAGER;
   }
 
   private static @NotNull MapParameterTypeManager doGetAllParameterTypes(@NotNull Module module) {
