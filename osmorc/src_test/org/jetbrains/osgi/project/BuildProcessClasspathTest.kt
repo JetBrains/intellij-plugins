@@ -19,7 +19,7 @@ class BuildProcessClasspathTest : BareTestFixtureTestCase() {
     assertThat(libs).contains("biz.aQute.bndlib", "biz.aQute.repository", "biz.aQute.resolve", "plexus.utils")
 
     val module = "intellij.osgi.jps"
-    val mapping = ArchivedCompilationContextUtil.getArchivedCompiledClassesMapping()
+    val mapping = ArchivedCompilationContextUtil.archivedCompiledClassesMapping
     if (mapping != null) {
       assertThat(classpath.toSet()).containsAll(mapping["production/$module"])
     }
