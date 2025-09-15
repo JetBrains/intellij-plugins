@@ -2,6 +2,7 @@
   library: cucumber-core-1
   files:
   - name: $MAVEN_REPOSITORY$/io/cucumber/cucumber-core/1/cucumber-core-1.jar
+  - name: $MAVEN_REPOSITORY$/info/cukes/gherkin/2/gherkin-2.jar
   reason: <- intellij.cucumber.java
 - name: lib/cucumber-expressions.jar
   library: cucumber-expressions
@@ -26,8 +27,3 @@
 - name: lib/cucumber-jvmFormatter5.jar
   modules:
   - name: intellij.cucumber.jvmFormatter5
-- name: lib/gherkin.jar
-  library: gherkin
-  files:
-  - name: $MAVEN_REPOSITORY$/info/cukes/gherkin/2/gherkin-2.jar
-  reason: <- intellij.cucumber.java
