@@ -2,6 +2,8 @@
 package org.intellij.terraform.opentofu
 
 import org.intellij.terraform.config.codeinsight.TfBaseCompletionTestCase
+import org.intellij.terraform.terragrunt.StackBlockKeywords
+import org.intellij.terraform.terragrunt.TerragruntBlockKeywords
 
 internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
 
@@ -13,6 +15,26 @@ internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
       """)
     myFixture.testCompletionVariants(file.virtualFile.name, "backend", "cloud", "encryption", "experiments", "provider_meta",
                                      "required_providers", "required_version")
+  }
+
+  fun testNotAllowedRootBlockInTofu() {
+    val file = myFixture.configureByText("main.tofu", "<caret>")
+    val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name)
+      ?.filterNot { it == "terraform" || it == "locals" }
+      .orEmpty()
+    assertNotEmpty(completionVariants)
+
+    val unexpectedTerragruntBlocks = TerragruntBlockKeywords.filter { it in completionVariants }
+    assertTrue(
+      "These Terragrunt-only root blocks should not appear in a Tofu file: $unexpectedTerragruntBlocks",
+      unexpectedTerragruntBlocks.isEmpty()
+    )
+
+    val unexpectedStackBlocks = StackBlockKeywords.filter { it in completionVariants }
+    assertTrue(
+      "These Terragrunt Stack-only root blocks should not appear in a Tofu file: $unexpectedStackBlocks",
+      unexpectedStackBlocks.isEmpty()
+    )
   }
 
   fun testTofuEncryptionBlockPropertiesCompletion() {
@@ -318,10 +340,10 @@ internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
     myFixture.testCompletionVariants(file.virtualFile.name, "some_method_name", "some_method_name2")
   }
 
-   fun testNoEphemeralResourcesAtTopLevel() {
-     val file = myFixture.configureByText("main.tofu", """
+  fun testNoEphemeralResourcesAtTopLevel() {
+    val file = myFixture.configureByText("main.tofu", """
        ephem<caret>
      """.trimIndent())
-     myFixture.testCompletionVariants(file.virtualFile.name)
-   }
+    myFixture.testCompletionVariants(file.virtualFile.name)
+  }
 }

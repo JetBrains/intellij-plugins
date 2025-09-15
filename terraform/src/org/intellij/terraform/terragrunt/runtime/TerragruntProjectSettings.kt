@@ -16,8 +16,6 @@ internal class TerragruntProjectSettings : PersistentStateComponent<TerragruntPr
       field = value.trim()
     }
 
-  var isFormattedBeforeCommit: Boolean = false
-
   override fun getState(): TerragruntProjectSettings = this
 
   override fun loadState(state: TerragruntProjectSettings) {

@@ -8,8 +8,6 @@ import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.model.PropertyType
-import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.hcl.HCL_DEFAULT_EXTENSION
 import org.intellij.terraform.terragrunt.TERRAGRUNT_COMMANDS
 import org.intellij.terraform.terragrunt.TERRAGRUNT_EXECUTE
@@ -165,7 +163,10 @@ internal val TerragruntRootBlocks: List<BlockType> = listOf(
   ErrorsBlock
 )
 
-internal val StackRootBlocks: List<BlockType> = listOf()
+internal val UnitBlock: BlockType = BlockType("unit", args = 1, properties = createStacksProperties())
+internal val StackBlock: BlockType = BlockType("stack", args = 1, properties = createStacksProperties())
+
+internal val StackRootBlocks: List<BlockType> = listOf(UnitBlock, StackBlock)
 
 private fun createHooksProperties(): Map<String, PropertyOrBlockType> = listOf(
   PropertyType(TERRAGRUNT_COMMANDS, ListType(Types.String), required = true, optional = false),
@@ -182,3 +183,11 @@ private fun createIfExistsProperty(isRequired: Boolean = false, isOptional: Bool
   hint = SimpleValueHint("overwrite", "overwrite_terragrunt", "skip", "error"),
   required = isRequired, optional = isOptional
 )
+
+private fun createStacksProperties(): Map<String, PropertyOrBlockType> = listOf(
+  PropertyType(HCL_SOURCE_IDENTIFIER, Types.String, required = true, optional = false),
+  PropertyType(HCL_PATH_IDENTIFIER, Types.String, required = true, optional = false),
+  PropertyType("values", Types.Object),
+  PropertyType("no_dot_terragrunt_stack", Types.Boolean),
+  PropertyType("no_validation", Types.Boolean)
+).toMap()

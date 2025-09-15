@@ -6,6 +6,8 @@ import com.intellij.openapi.util.registry.Registry.Companion.get
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.model.TypeModelProvider.Companion.globalModel
+import org.intellij.terraform.terragrunt.StackBlockKeywords
+import org.intellij.terraform.terragrunt.TerragruntBlockKeywords
 
 internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
 
@@ -38,6 +40,26 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
 
   fun testNoBlockKeywordCompletion() {
     doBasicCompletionTest("a={\n<caret>\n}", 0)
+  }
+
+  fun testNotAllowedRootBlockInTerraform() {
+    val file = myFixture.configureByText("test.tf", "<caret>")
+    val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name)
+      ?.filterNot { it == "terraform" || it == "locals" }
+      .orEmpty()
+    assertNotEmpty(completionVariants)
+
+    val unexpectedTerragruntBlocks = TerragruntBlockKeywords.filter { it in completionVariants }
+    assertTrue(
+      "These Terragrunt-only root blocks should not appear in a Terraform file: $unexpectedTerragruntBlocks",
+      unexpectedTerragruntBlocks.isEmpty()
+    )
+
+    val unexpectedStackBlocks = StackBlockKeywords.filter { it in completionVariants }
+    assertTrue(
+      "These Terragrunt Stack-only root blocks should not appear in a Terraform file: $unexpectedStackBlocks",
+      unexpectedStackBlocks.isEmpty()
+    )
   }
 
   fun testResourceTypeCompletion() {
