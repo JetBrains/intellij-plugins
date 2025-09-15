@@ -2,6 +2,7 @@
 package org.intellij.terraform.opentofu.model
 
 import com.intellij.openapi.fileTypes.FileType
+import org.intellij.terraform.config.Constants.HCL_DEFAULT_IDENTIFIER
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -122,7 +123,7 @@ internal val RemoteStateDataSource: BlockType = BlockType("remote_state_data_sou
   PropertyType(name = "method", type = Types.String)
 ).toMap())
 
-internal val DefaultDataSource: BlockType = BlockType("default", properties = listOf(
+internal val DefaultDataSource: BlockType = BlockType(HCL_DEFAULT_IDENTIFIER, properties = listOf(
   PropertyType(name = "method", type = Types.String)
 ).toMap())
 

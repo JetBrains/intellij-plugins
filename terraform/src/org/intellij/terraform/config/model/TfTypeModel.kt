@@ -16,6 +16,7 @@ import org.intellij.terraform.config.Constants.HCL_CLOUD_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_DEFAULT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
@@ -127,7 +128,7 @@ class TfTypeModel(
     val ErrorMessageProperty: PropertyType = PropertyType("error_message", Types.String)
     val ConditionProperty: PropertyType = PropertyType("condition", Types.Boolean, injectionAllowed = false)
     val VariableType: PropertyType = PropertyType("type", Types.Any, injectionAllowed = false)
-    val VariableDefault: PropertyType = PropertyType("default", Types.Any)
+    val VariableDefault: PropertyType = PropertyType(HCL_DEFAULT_IDENTIFIER, Types.Any)
     val VariableValidation: BlockType = BlockType(HCL_VALIDATION_IDENTIFIER, 0, properties = listOf(
       ConditionProperty,
       ErrorMessageProperty

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.SyntaxTraverser
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.LATEST_VERSION
-import org.intellij.terraform.config.Constants.PROVIDER_VERSION
+import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.model.ProviderType
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
@@ -31,7 +31,7 @@ internal class ProviderInfo(block: HCLBlock) {
     this.namespace = coordinates.namespace
     fullName = "$namespace/$name"
     version = if (block.`object` != null && block.`object` is HCLObject) {
-      val providerVersion = (block.`object` as HCLObject).propertyList.firstOrNull { it.name == PROVIDER_VERSION }?.value?.text
+      val providerVersion = (block.`object` as HCLObject).propertyList.firstOrNull { it.name == HCL_VERSION_IDENTIFIER }?.value?.text
       StringUtil.unquoteString(providerVersion ?: LATEST_VERSION)
     }
     else {

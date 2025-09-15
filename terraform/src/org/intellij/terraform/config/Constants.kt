@@ -40,11 +40,11 @@ internal object Constants {
   const val HCL_VAR_IDENTIFIER: String = "var"
   const val HCL_COUNT_IDENTIFIER: String = "count"
   const val HCL_SOURCE_IDENTIFIER: String = "source"
+  const val HCL_VERSION_IDENTIFIER: String = "version"
+  const val HCL_DEFAULT_IDENTIFIER: String = "default"
 
   const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   const val LATEST_VERSION: String = "latest"
-
-  const val PROVIDER_VERSION: String = "version"
 
   const val TF_FMT: @NlsSafe String = "Terraform/OpenTofu format"
 

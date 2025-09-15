@@ -109,10 +109,6 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       .withSuperParent(2, Block)
       .withSuperParent(3, Object)
       .withSuperParent(4, Block), BlockPropertiesCompletionProvider)
-
-    extend(CompletionType.BASIC, TfPsiPatterns.RequiredProviderIdentifier, RequiredProviderCompletion)
-    extend(CompletionType.BASIC, TfPsiPatterns.IdentifierOfRequiredProviderProperty, RequiredProviderCompletion)
-
     //```
     //resource "X" "Y" {
     //  count<caret>
@@ -126,6 +122,9 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       .withSuperParent(3, Object)
       .withSuperParent(4, Block), BlockPropertiesCompletionProvider)
     //endregion
+
+    extend(CompletionType.BASIC, TfPsiPatterns.RequiredProviderIdentifier, RequiredProviderCompletion)
+    extend(CompletionType.BASIC, TfPsiPatterns.IdentifierOfRequiredProviderProperty, RequiredProviderCompletion)
 
     //region InBlock Property value
     extend(null, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)

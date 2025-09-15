@@ -38,7 +38,7 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.intellij.util.suspendingLazy
 import kotlinx.coroutines.*
 import org.intellij.terraform.LatestInvocationRunner
-import org.intellij.terraform.config.Constants.PROVIDER_VERSION
+import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.TfTypeModel
@@ -203,7 +203,7 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
       attributes.put("namespace", providerInfo.namespace)
       attributes.put("full-name", providerInfo.fullName)
       attributes.put("tier", ProviderTier.TIER_LOCAL.label)
-      attributes.put(PROVIDER_VERSION, providerInfo.version)
+      attributes.put(HCL_VERSION_IDENTIFIER, providerInfo.version)
       info.set<ObjectNode>("attributes", attributes)
       metadataNode.set<ObjectNode>(providerInfo.fullName.lowercase(), info)
     }
