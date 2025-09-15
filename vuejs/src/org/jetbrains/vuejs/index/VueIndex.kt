@@ -47,10 +47,9 @@ private const val DELIMITER = ';'
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
   if (DumbService.isDumb(scope.project!!)) return emptySequence()
   val result = SmartList<JSImplicitElement>()
-  StubIndex.getInstance().processAllKeys(key, scope.project!!) {
+  StubIndex.getInstance().getAllKeys(key, scope.project!!).forEach {
     ProgressManager.checkCanceled()
     result.addAll(resolve(it, scope, key))
-    true
   }
   return result.asSequence()
 }
