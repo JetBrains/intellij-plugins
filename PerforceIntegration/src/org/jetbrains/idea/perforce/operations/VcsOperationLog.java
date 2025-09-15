@@ -241,7 +241,7 @@ public final class VcsOperationLog implements PersistentStateComponent<VcsOperat
         }
       }
 
-      if (myRemaining.iterator().next() instanceof P4RevertOperation) {
+      if (myRemaining.getFirst() instanceof P4RevertOperation) {
         for (final P4Connection connection : byConnection.keySet()) {
           mergeRevert(result, connection, byConnection.get(connection));
         }
