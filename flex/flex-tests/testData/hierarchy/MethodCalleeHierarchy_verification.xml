@@ -1,7 +1,7 @@
 <node text="Class1.someFunction() (pack.subpack)" base="true">
   <node text="Button.Button() (mypackage)"/>
   <node text="Class1.getButton() (pack.subpack)"/>
-  <node text="MethodCalleeHierarchy.bar(*) ()"/>
+  <node text="MethodCalleeHierarchy.bar(*)"/>
   <node text="IEventDispatcher.addEventListener(String, Function, Boolean, int, Boolean) (flash.events)">
     <any/>
   </node>
@@ -11,7 +11,7 @@
     </node>
   </node>
   <node text="Interface1.foo() (pack2)">
-    <node text="MethodCalleeHierarchy.foo() ()">
+    <node text="MethodCalleeHierarchy.foo()">
       <node text="Class2.foo() (pack.subpack)">
         <node text="Class3.foo() (pack2)">
           <any/>
