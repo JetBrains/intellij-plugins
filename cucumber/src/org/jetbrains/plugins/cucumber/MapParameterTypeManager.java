@@ -3,39 +3,63 @@ package org.jetbrains.plugins.cucumber;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.SmartPsiElementPointer;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
 
+@NotNullByDefault
 public class MapParameterTypeManager implements ParameterTypeManager {
   public static final MapParameterTypeManager DEFAULT = new MapParameterTypeManager(STANDARD_PARAMETER_TYPES);
 
-  private final Map<String, String> myParameterTypes;
-  private final Map<String, SmartPsiElementPointer<PsiElement>> myParameterTypeDeclarations;
+  private final Map<String, String> parameterTypesValues;
+  private final @Nullable Map<String, SmartPsiElementPointer<PsiElement>> parameterTypesDeclarations;
 
-  public MapParameterTypeManager(Map<String, String> parameterTypes) {
-    this(parameterTypes, null);
+  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
+  /// Creates a new [MapParameterTypeManager] that only holds parameter types that have a value
+  /// (see doc of [ParameterTypeManager] for terminology).
+  ///
+  /// Sample value of `parameterTypesValues`:
+  ///
+  /// ```
+  /// "" -> "(.*)"
+  /// "float" -> "-?\d*[.,]?\d+"
+  /// "word" -> "[^\s]+"
+  /// "int" -> "-?\d+"
+  /// ```
+  //@formatter:off
+  public MapParameterTypeManager(Map<String, String> parameterTypesValues) {
+    this(parameterTypesValues, null);
   }
 
-  public MapParameterTypeManager(Map<String, String> parameterTypes, Map<String, SmartPsiElementPointer<PsiElement>> parameterTypeDeclarations) {
-    myParameterTypes = parameterTypes;
-    myParameterTypeDeclarations = parameterTypeDeclarations;
+  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
+  /// Creates a new [MapParameterTypeManager] that holds parameter types that have a value and parameter type that have a declaration.
+  /// (see doc of [ParameterTypeManager] for terminology).
+  ///
+  /// Sample value of `parameterTypeDeclarations`:
+  /// ```
+  /// isoDate -> SmartPointer to PsiIdentifier:isoDate (getNameIdentifier() of PsiMethod:isoDate)
+  /// ```
+  //@formatter:off
+  public MapParameterTypeManager(Map<String, String> parameterTypesValues,
+                                 @Nullable Map<String, SmartPsiElementPointer<PsiElement>> parameterTypeDeclarations) {
+    this.parameterTypesValues = parameterTypesValues;
+    parameterTypesDeclarations = parameterTypeDeclarations;
   }
 
   @Override
-  public @Nullable String getParameterTypeValue(@NotNull String name) {
-    return myParameterTypes.get(name);
+  public @Nullable String getParameterTypeValue(String name) {
+    return parameterTypesValues.get(name);
   }
 
   @Override
-  public PsiElement getParameterTypeDeclaration(@NotNull String name) {
-    if (myParameterTypeDeclarations == null) {
+  public @Nullable PsiElement getParameterTypeDeclaration(String name) {
+    if (parameterTypesDeclarations == null) {
       return null;
     }
-    SmartPsiElementPointer<PsiElement> smartPointer = myParameterTypeDeclarations.get(name);
+    SmartPsiElementPointer<PsiElement> smartPointer = parameterTypesDeclarations.get(name);
     return smartPointer != null ? smartPointer.getElement() : null;
   }
 }
