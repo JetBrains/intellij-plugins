@@ -3,8 +3,8 @@
     <node text="global(Array)">
       <any/>
     </node>
-    <node text="&lt;anonymous&gt;()"/>
-    <node text="Class2.&lt;anonymous&gt;() (pack)"/>
+    <node text='callback for a.addEventListener("someEvent", ...)'/>
+    <node text='callback for a.addEventListener("someEvent", ...) (pack)'/>
   </node>
   <node text="Class2.foo()(2 usages) (pack)">
     <node text="global(Array)(2 usages)">
