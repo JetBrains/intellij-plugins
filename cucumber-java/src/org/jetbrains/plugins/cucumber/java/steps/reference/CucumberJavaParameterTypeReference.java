@@ -18,11 +18,12 @@ import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 //@formatter:off Temporarily disable formatter because of bug IDEA-371809
-/// A reference from a parameter type used inside a [Cucumber Expression](https://github.com/cucumber/cucumber-expressions) definition
+/// A reference from a [parameter type](https://cucumber.io/docs/cucumber/configuration#parameter-types) usage inside
+/// a definition of a [Cucumber Expression](https://github.com/cucumber/cucumber-expressions)
 /// to the parameter type's definition.
-/// 
+///
 /// ### Example
-/// 
+///
 /// For example, we provide a reference from the `"iso-date"` parameter in the step definition:
 ///
 /// ```
@@ -32,10 +33,11 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 /// }
 /// ```
 /// to the parameter type definition.
-/// 
+///
 /// A parameter type (the thing this reference points to) can be defined in 2 ways:
-/// 
+///
 /// First, using Cucumber's old, deprecated `TypeRegistry` API:
+///
 /// ```
 /// typeRegistry.defineParameterType(new ParameterType<>(
 ///   "isoDate",
@@ -44,7 +46,9 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 ///   (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
 /// ));
 /// ```
-///  Second, using Cucumber's new `@ParameterType` annotation:
+///
+/// Second, using Cucumber's new `@ParameterType` annotation:
+///
 /// ```
 /// @ParameterType("\\d{4}-\\d{2}-\\d{2}")
 /// public Date isoDate(String input) {
