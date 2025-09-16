@@ -2,19 +2,18 @@
 package org.intellij.terraform.terragrunt.model
 
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_DEFAULT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LOCALS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PATH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.hcl.HCL_DEFAULT_EXTENSION
-import org.intellij.terraform.terragrunt.TERRAGRUNT_COMMANDS
-import org.intellij.terraform.terragrunt.TERRAGRUNT_EXECUTE
+import org.intellij.terraform.terragrunt.*
 
 // Terragrunt `terraform` block schema based on Terragrunt documentation
 // https://terragrunt.gruntwork.io/docs/reference/config-blocks-and-attributes/#terraform
-internal val TfBlockInTerragrunt: BlockType = BlockType(
+internal val TfBlockType: BlockType = BlockType(
   literal = HCL_TERRAFORM_IDENTIFIER,
   properties = listOf(
     PropertyType(HCL_SOURCE_IDENTIFIER, Types.String),
@@ -43,8 +42,8 @@ internal val TfBlockInTerragrunt: BlockType = BlockType(
   ).toMap()
 )
 
-internal val RemoteStateBlock: BlockType = BlockType(
-  literal = "remote_state",
+internal val RemoteStateBlockType: BlockType = BlockType(
+  literal = TERRAGRUNT_REMOTE_STATE,
   properties = listOf(
     PropertyType(HCL_BACKEND_IDENTIFIER, Types.String, required = true, optional = false),
     PropertyType("disable_init", Types.Boolean),
@@ -58,8 +57,8 @@ internal val RemoteStateBlock: BlockType = BlockType(
   ).toMap()
 )
 
-internal val IncludeBlock: BlockType = BlockType(
-  literal = "include", args = 1,
+internal val IncludeBlockType: BlockType = BlockType(
+  literal = TERRAGRUNT_INCLUDE, args = 1,
   properties = listOf(
     PropertyType(HCL_PATH_IDENTIFIER, Types.String, required = true, optional = false),
     PropertyType("expose", Types.Boolean),
@@ -67,10 +66,10 @@ internal val IncludeBlock: BlockType = BlockType(
   ).toMap()
 )
 
-internal val LocalsTerragrunt: BlockType = BlockType(HCL_LOCALS_IDENTIFIER)
+internal val LocalsBlockType: BlockType = BlockType(HCL_LOCALS_IDENTIFIER)
 
-internal val DependencyBlock: BlockType = BlockType(
-  "dependency", args = 1,
+internal val DependencyBlockType: BlockType = BlockType(
+  TERRAGRUNT_DEPENDENCY, args = 1,
   properties = listOf(
     PropertyType("config_path", Types.String, required = true, optional = false),
     // TODO: default value is "true"
@@ -82,13 +81,13 @@ internal val DependencyBlock: BlockType = BlockType(
   ).toMap()
 )
 
-internal val DependenciesBlock: BlockType = BlockType(
-  "dependencies",
+internal val DependenciesBlockType: BlockType = BlockType(
+  TERRAGRUNT_DEPENDENCIES,
   properties = listOf(PropertyType("paths", ListType(Types.String), required = true, optional = false)).toMap()
 )
 
-internal val GenerateBlock: BlockType = BlockType(
-  "generate", args = 1,
+internal val GenerateBlockType: BlockType = BlockType(
+  TERRAGRUNT_GENERATE, args = 1,
   properties = listOf(
     PropertyType(HCL_PATH_IDENTIFIER, Types.String, required = true, optional = false),
     PropertyType("contents", Types.String, required = true, optional = false),
@@ -104,8 +103,8 @@ internal val GenerateBlock: BlockType = BlockType(
   ).toMap()
 )
 
-internal val EngineBlock: BlockType = BlockType(
-  "engine",
+internal val EngineBlockType: BlockType = BlockType(
+  TERRAGRUNT_ENGINE,
   properties = listOf(
     PropertyType(HCL_SOURCE_IDENTIFIER, Types.String, required = true, optional = false),
     PropertyType(HCL_VERSION_IDENTIFIER, Types.String),
@@ -114,13 +113,13 @@ internal val EngineBlock: BlockType = BlockType(
   ).toMap()
 )
 
-internal val FeatureBlock: BlockType = BlockType(
-  "feature", args = 1,
-  properties = listOf(PropertyType(HCL_DEFAULT_EXTENSION, Types.String, required = true, optional = false)).toMap()
+internal val FeatureBlockType: BlockType = BlockType(
+  TERRAGRUNT_FEATURE, args = 1,
+  properties = listOf(PropertyType(HCL_DEFAULT_IDENTIFIER, Types.String, required = true, optional = false)).toMap()
 )
 
-internal val ExcludeBlock: BlockType = BlockType(
-  "exclude",
+internal val ExcludeBlockType: BlockType = BlockType(
+  TERRAGRUNT_EXCLUDE,
   properties = listOf(
     PropertyType("if", Types.Boolean),
     PropertyType("actions", ListType(Types.String), hint = SimpleValueHint("plan", "apply", "all", "all_except_output")),
@@ -129,8 +128,8 @@ internal val ExcludeBlock: BlockType = BlockType(
   ).toMap()
 )
 
-internal val ErrorsBlock: BlockType = BlockType(
-  "errors",
+internal val ErrorsBlockType: BlockType = BlockType(
+  TERRAGRUNT_ERRORS,
   properties = listOf(
     BlockType(
       "retry", args = 1,
@@ -150,23 +149,25 @@ internal val ErrorsBlock: BlockType = BlockType(
 )
 
 internal val TerragruntRootBlocks: List<BlockType> = listOf(
-  TfBlockInTerragrunt,
-  RemoteStateBlock,
-  IncludeBlock,
-  LocalsTerragrunt,
-  DependencyBlock,
-  DependenciesBlock,
-  GenerateBlock,
-  EngineBlock,
-  FeatureBlock,
-  ExcludeBlock,
-  ErrorsBlock
+  TfBlockType,
+  RemoteStateBlockType,
+  IncludeBlockType,
+  LocalsBlockType,
+  DependencyBlockType,
+  DependenciesBlockType,
+  GenerateBlockType,
+  EngineBlockType,
+  FeatureBlockType,
+  ExcludeBlockType,
+  ErrorsBlockType
 )
+internal val TerragruntRootBlocksMap: Map<String, BlockType> = TerragruntRootBlocks.associateBy { it.literal }
 
-internal val UnitBlock: BlockType = BlockType("unit", args = 1, properties = createStacksProperties())
-internal val StackBlock: BlockType = BlockType("stack", args = 1, properties = createStacksProperties())
+internal val UnitBlockType: BlockType = BlockType(TERRAGRUNT_UNIT, args = 1, properties = createStacksProperties())
+internal val StackBlockType: BlockType = BlockType(TERRAGRUNT_STACK, args = 1, properties = createStacksProperties())
 
-internal val StackRootBlocks: List<BlockType> = listOf(UnitBlock, StackBlock)
+internal val StackRootBlocks: List<BlockType> = listOf(UnitBlockType, StackBlockType)
+internal val StackRootBlocksMap: Map<String, BlockType> = StackRootBlocks.associateBy { it.literal }
 
 private fun createHooksProperties(): Map<String, PropertyOrBlockType> = listOf(
   PropertyType(TERRAGRUNT_COMMANDS, ListType(Types.String), required = true, optional = false),

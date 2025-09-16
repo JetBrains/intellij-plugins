@@ -23,6 +23,8 @@ import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.opentofu.model.getEncryptionKeyProviderProperties
 import org.intellij.terraform.opentofu.model.getEncryptionMethodProperties
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns
+import org.intellij.terraform.terragrunt.TerragruntFileType
+import org.intellij.terraform.terragrunt.codeinsight.TerragruntUnitHelper
 import java.util.*
 
 internal object TfModelHelper {
@@ -30,7 +32,8 @@ internal object TfModelHelper {
 
   fun getBlockProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val fileType = block.containingFile.originalFile.fileType
-    return getBlockPropertiesInternal(block).filter { it.value.canBeUsedIn(fileType) }
+    val blockProperties = if (fileType == TerragruntFileType) TerragruntUnitHelper.getBlockProperties(block) else getBlockPropertiesInternal(block)
+    return blockProperties.filter { it.value.canBeUsedIn(fileType) }
   }
 
   private fun getBlockPropertiesInternal(block: HCLBlock): Map<String, PropertyOrBlockType> {

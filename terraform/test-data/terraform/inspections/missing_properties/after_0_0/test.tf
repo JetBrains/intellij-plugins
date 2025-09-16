@@ -1,4 +1,4 @@
-# intention: "HCLBlockMissingProperty"
+# intention: "HclBlockMissingProperty"
 # fix: "Add missing properties"
 # position: 19: ""test-module""
 #

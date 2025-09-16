@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <problems>
   <problem>
-    <file>test.tf</file>
-    <line>20</line>
-    <module>0</module>
-    <package>&lt;default&gt;</package>
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
-    <description>Missing required properties: source</description>
-  </problem>
-  <problem>
     <file>dynamic.tf</file>
     <line>8</line>
     <module>1</module>
@@ -23,5 +15,34 @@
     <package>&lt;default&gt;</package>
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
     <description>Missing required properties: caching</description>
+  </problem>
+  <problem>
+    <file>terragrunt.hcl</file>
+    <line>1</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
+    <description>Missing required properties: backend</description>
+  </problem>
+  <problem>
+    <file>terragrunt.stack.hcl</file>
+    <line>10</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
+    <description>Missing required properties: path, source</description>
+  </problem>
+  <problem>
+    <file>terragrunt.stack.hcl</file>
+    <line>19</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
+    <description>Missing required properties: source</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>20</line>
+    <module>0</module>
+    <package>&lt;default&gt;</package>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
+    <description>Missing required properties: source</description>
   </problem>
 </problems>

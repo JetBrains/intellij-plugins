@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -11,15 +12,15 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.virtualFile
 import com.intellij.testFramework.common.timeoutRunBlocking
+import com.intellij.testFramework.common.waitUntil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.testFramework.waitUntil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
-import org.intellij.terraform.config.model.local.TfLocalSchemaService
+import org.intellij.terraform.config.inspection.HclBlockMissingPropertyInspection
 import org.intellij.terraform.config.model.local.TERRAFORM_LOCK_FILE_NAME
 import org.intellij.terraform.config.model.local.TfLocalMetaEntity
+import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.config.util.TfCommandLineServiceMock
 import org.intellij.terraform.install.TfToolType
 import org.intellij.terraform.runtime.TfProjectSettings
@@ -156,7 +157,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
 
     myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
 
-    myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
+    myFixture.enableInspections(HclBlockMissingPropertyInspection::class.java)
     myFixture.configureByText("main.tf", genInspectedMain(dummyPropName))
     myFixture.doHighlighting() // to trigger model building
     timeoutRunBlocking {
@@ -207,7 +208,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
           testRootDisposable)
 
         myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
-        myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
+        myFixture.enableInspections(HclBlockMissingPropertyInspection::class.java)
         myFixture.configureByText("main.tf", genInspectedMain("dummyProp1"))
         withContext(Dispatchers.EDT) {
           writeIntentReadAction {
@@ -227,7 +228,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
 
     val lockFile = myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
 
-    myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
+    myFixture.enableInspections(HclBlockMissingPropertyInspection::class.java)
     timeoutRunBlocking {
       tfLocalSchemaService.awaitModelsReady()
       readAction {
@@ -240,7 +241,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
   fun testNewLockNotPickedUpIfLazy() = withAdvancedSettingValue("org.intellij.terraform.config.build.metadata.eagerly", false) {
     val lock = myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
 
-    myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
+    myFixture.enableInspections(HclBlockMissingPropertyInspection::class.java)
     timeoutRunBlocking {
       tfLocalSchemaService.awaitModelsReady()
       readAction {
@@ -260,7 +261,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
 
     myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
 
-    myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
+    myFixture.enableInspections(HclBlockMissingPropertyInspection::class.java)
     myFixture.configureByText("main.tf", genInspectedMain("dummyProp"))
     myFixture.doHighlighting()
     timeoutRunBlocking {
@@ -276,7 +277,7 @@ open class TfLocalMetadataTest : BasePlatformTestCase() {
       testRootDisposable)
 
     myFixture.configureByText(TERRAFORM_LOCK_FILE_NAME, MY_DO_LOCK)
-    myFixture.enableInspections(HCLBlockMissingPropertyInspection::class.java)
+    myFixture.enableInspections(HclBlockMissingPropertyInspection::class.java)
     myFixture.configureByText("main.tf", genInspectedMain("dummyProp"))
     myFixture.doHighlighting()
     timeoutRunBlocking {
@@ -308,8 +309,8 @@ class TfEagerLocalMetadataTest : TfLocalMetadataTest() {
     Assume.assumeFalse(currentValue)
     AdvancedSettings.setBoolean("org.intellij.terraform.config.build.metadata.eagerly", true)
 
-    Disposer.register(testRootDisposable, {
+    Disposer.register(testRootDisposable) {
       AdvancedSettings.setBoolean("org.intellij.terraform.config.build.metadata.eagerly", currentValue)
-    })
+    }
   }
 }

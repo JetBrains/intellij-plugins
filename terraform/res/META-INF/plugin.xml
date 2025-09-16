@@ -343,14 +343,15 @@
     <vfs.asyncListener implementation="org.intellij.terraform.config.model.local.LocalSchemaVfsListener"/>
     <projectFileScanner implementation="org.intellij.terraform.config.model.local.LocalSchemaIndexableFileScanner"/>
 
-    <!-- Code Inspections -->
-    <!-- HCL used instead HCL-Terraform, to apply to all psi elements. .hcl files filtered out in #buildVisito method -->
     <lang.inspectionSuppressor language="HCL" implementationClass="org.intellij.terraform.config.inspection.HCLInspectionSuppressor"/>
-    <localInspection language="HCL" applyToDialects="true" shortName="HCLBlockMissingProperty" bundle="messages.HCLBundle"
+    <!-- HCL compatible inspections: Terraform, OpenTofu and Terragrunt -->
+    <localInspection language="HCL" applyToDialects="true" shortName="HclBlockMissingProperty" bundle="messages.HCLBundle"
                      key="missing.resource.property.inspection.display.name"
-                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
+                     groupKey="hcl.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
                      suppressId="MissingProperty"
-                     implementationClass="org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection"/>
+                     implementationClass="org.intellij.terraform.config.inspection.HclBlockMissingPropertyInspection"/>
+
+    <!-- Terraform/OpenTofu inspections -->
     <localInspection language="HCL" applyToDialects="true" shortName="HCLBlockConflictingProperties" bundle="messages.HCLBundle"
                      key="conflicting.resource.property.inspection.display.name"
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
@@ -405,26 +406,22 @@
                      groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="WARNING"
                      implementationClass="org.intellij.terraform.config.inspection.TfUnusedElementsInspection"/>
 
-    <!--region Tf Duplicates-->
+    <!--region Duplicates-->
     <localInspection language="HCL" applyToDialects="true" shortName="TfDuplicatedProvider" bundle="messages.HCLBundle"
                      key="duplicated.provider.inspection.display.name"
-                     groupPath="Terraform"
-                     groupKey="terraform.files.duplicates.inspection.group.display.name" enabledByDefault="true" level="ERROR"
+                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.TfDuplicatedProviderInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TfDuplicatedVariable" bundle="messages.HCLBundle"
                      key="duplicated.variable.inspection.display.name"
-                     groupPath="Terraform"
-                     groupKey="terraform.files.duplicates.inspection.group.display.name" enabledByDefault="true" level="ERROR"
+                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.TfDuplicatedVariableInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TfDuplicatedOutput" bundle="messages.HCLBundle"
                      key="duplicated.output.inspection.display.name"
-                     groupPath="Terraform"
-                     groupKey="terraform.files.duplicates.inspection.group.display.name" enabledByDefault="true" level="ERROR"
+                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.TfDuplicatedOutputInspection"/>
     <localInspection language="HCL" applyToDialects="true" shortName="TfDuplicatedBlockProperty" bundle="messages.HCLBundle"
                      key="duplicated.block.property.inspection.display.name"
-                     groupPath="Terraform"
-                     groupKey="terraform.files.duplicates.inspection.group.display.name" enabledByDefault="true" level="ERROR"
+                     groupKey="terraform.files.inspection.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.terraform.config.inspection.TfDuplicatedBlockPropertyInspection"/>
     <!--endregion Duplicates-->
 

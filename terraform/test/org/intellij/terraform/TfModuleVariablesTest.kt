@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform
 
 import com.intellij.codeInsight.codeVision.CodeVisionHost
@@ -12,7 +13,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.intellij.terraform.config.inspection.HCLBlockMissingPropertyInspection
+import org.intellij.terraform.config.inspection.HclBlockMissingPropertyInspection
 import org.intellij.terraform.config.inspection.TfDuplicatedVariableInspection
 import org.intellij.terraform.config.inspection.TfVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.TypeModelProvider
@@ -96,7 +97,7 @@ abstract class TfModuleVariablesTestBase(private val testDataRoot: String) : Bas
     myFixture.enableInspections(
       TfVARSIncorrectElementInspection::class.java,
       TfDuplicatedVariableInspection::class.java,
-      HCLBlockMissingPropertyInspection::class.java,
+      HclBlockMissingPropertyInspection::class.java,
     )
     runWriteActionAndWait {
       myFixture.copyDirectoryToProject(testDataRoot, ".")
