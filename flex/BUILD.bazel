@@ -78,6 +78,7 @@ jvm_library(
     "//plugins/css/common/psi",
     "//plugins/css/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "@community//platform/workspace/storage",
   ],
   runtime_deps = [
     ":flex_resources",
