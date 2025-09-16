@@ -1,7 +1,9 @@
 package org.jetbrains.plugins.cucumber.injector;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
+import org.jetbrains.annotations.NotNullByDefault;
 
+@NotNullByDefault
 public interface GherkinInjectorExtensionPoint {
   ExtensionPointName<GherkinInjectorExtensionPoint> EP_NAME =
     ExtensionPointName.create("org.jetbrains.plugins.cucumber.injector.injectorExtensionPoint");

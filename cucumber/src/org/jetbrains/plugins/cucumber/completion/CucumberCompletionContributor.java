@@ -21,7 +21,8 @@ import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
@@ -37,6 +38,7 @@ import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 
+@NotNullByDefault
 public final class CucumberCompletionContributor extends CompletionContributor {
   private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<>();
   private static final Map<String, String> PARAMETERS_MAP = new HashMap<>();
@@ -75,9 +77,9 @@ public final class CucumberCompletionContributor extends CompletionContributor {
 
     extend(CompletionType.BASIC, psiElement().inFile(psiElement(GherkinFile.class)).andNot(inTable), new CompletionProvider<>() {
       @Override
-      protected void addCompletions(@NotNull CompletionParameters parameters,
-                                    @NotNull ProcessingContext context,
-                                    @NotNull CompletionResultSet result) {
+      protected void addCompletions(CompletionParameters parameters,
+                                    ProcessingContext context,
+                                    CompletionResultSet result) {
         final PsiFile psiFile = parameters.getOriginalFile();
         if (psiFile instanceof GherkinFile file) {
           Module module = findModuleForPsiElement(psiFile);
@@ -110,30 +112,30 @@ public final class CucumberCompletionContributor extends CompletionContributor {
 
     extend(CompletionType.BASIC, inScenario.andNot(inStep), new CompletionProvider<>() {
       @Override
-      protected void addCompletions(@NotNull CompletionParameters parameters,
-                                    @NotNull ProcessingContext context,
-                                    @NotNull CompletionResultSet result) {
+      protected void addCompletions(CompletionParameters parameters,
+                                    ProcessingContext context,
+                                    CompletionResultSet result) {
         addStepKeywords(result, parameters.getOriginalFile());
       }
     });
 
     extend(CompletionType.BASIC, inStep, new CompletionProvider<>() {
       @Override
-      protected void addCompletions(@NotNull CompletionParameters parameters,
-                                    @NotNull ProcessingContext context,
-                                    @NotNull CompletionResultSet result) {
+      protected void addCompletions(CompletionParameters parameters,
+                                    ProcessingContext context,
+                                    CompletionResultSet result) {
         addStepDefinitions(result, parameters.getOriginalFile());
       }
     });
   }
 
-  private static void addRuleKeyword(@NotNull CompletionResultSet result,
-                                     @NotNull GherkinKeywordTable gherkinKeywordTable) {
+  private static void addRuleKeyword(CompletionResultSet result,
+                                     GherkinKeywordTable gherkinKeywordTable) {
     addKeywordsToResult(gherkinKeywordTable.getRuleKeywords(), result, true);
   }
 
-  private static void addScenarioKeywords(@NotNull CompletionResultSet result, @NotNull PsiFile originalFile,
-                                          @NotNull PsiElement originalPosition, @NotNull GherkinKeywordTable table) {
+  private static void addScenarioKeywords(CompletionResultSet result, PsiFile originalFile,
+                                          PsiElement originalPosition, GherkinKeywordTable table) {
     final List<String> keywords = new ArrayList<>();
 
     if (!haveBackground(originalFile)) {
@@ -171,7 +173,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
     addKeywordsToResult(keywords, result, true);
   }
 
-  private static PsiElement getPreviousElement(PsiElement element) {
+  private static @Nullable PsiElement getPreviousElement(PsiElement element) {
     PsiElement prevElement = element.getPrevSibling();
     if (prevElement instanceof PsiWhiteSpace) {
       prevElement = prevElement.getPrevSibling();
@@ -179,7 +181,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
     return prevElement;
   }
 
-  private static void addFeatureKeywords(@NotNull CompletionResultSet result, @NotNull GherkinKeywordTable gherkinKeywordTable) {
+  private static void addFeatureKeywords(CompletionResultSet result, GherkinKeywordTable gherkinKeywordTable) {
     final Collection<String> keywords = gherkinKeywordTable.getFeaturesSectionKeywords();
     // add to result
     addKeywordsToResult(keywords, result, true);
@@ -236,7 +238,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
   }
 
 
-  private static void addStepDefinitions(@NotNull CompletionResultSet result, @NotNull PsiFile file) {
+  private static void addStepDefinitions(CompletionResultSet result, PsiFile file) {
     final List<AbstractStepDefinition> definitions = CucumberStepHelper.getAllStepDefinitions(file);
     for (AbstractStepDefinition definition : definitions) {
       String expression = definition.getExpression();
@@ -291,7 +293,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
    *
    * @return set of steps accepted by step definition regexp
    */
-  private static Set<String> parseVariationsIntoBrackets(@NotNull String cucumberRegex) {
+  private static Set<String> parseVariationsIntoBrackets(String cucumberRegex) {
     List<Pair<String, List<String>>> insertions = new ArrayList<>();
     Matcher m = ARGS_INTO_BRACKETS_PATTERN.matcher(cucumberRegex);
     String mainSample = cucumberRegex;
@@ -354,7 +356,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void handleInsert(final @NotNull InsertionContext context, @NotNull LookupElement item) {
+    public void handleInsert(final InsertionContext context, LookupElement item) {
       if (!ranges.isEmpty()) {
         final PsiElement element = context.getFile().findElementAt(context.getStartOffset());
         final GherkinStep step = PsiTreeUtil.getParentOfType(element, GherkinStep.class);

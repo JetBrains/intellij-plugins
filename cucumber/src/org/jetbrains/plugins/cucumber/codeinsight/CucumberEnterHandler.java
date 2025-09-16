@@ -5,28 +5,30 @@ import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorModificationUtil;
+import com.intellij.openapi.editor.EditorModificationUtilEx;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.text.CharArrayUtil;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
 
+@NotNullByDefault
 public final class CucumberEnterHandler implements EnterHandlerDelegate {
   public static final String PYSTRING_QUOTES = "\"\"\"";
 
   @Override
-  public Result preprocessEnter(@NotNull PsiFile file,
-                                @NotNull Editor editor,
-                                @NotNull Ref<Integer> caretOffset,
-                                @NotNull Ref<Integer> caretAdvance,
-                                @NotNull DataContext dataContext,
-                                EditorActionHandler originalHandler) {
+  public Result preprocessEnter(PsiFile file,
+                                Editor editor,
+                                Ref<Integer> caretOffset,
+                                Ref<Integer> caretAdvance,
+                                DataContext dataContext,
+                                @Nullable EditorActionHandler originalHandler) {
     if (!(file instanceof GherkinFile)) {
       return Result.Continue;
     }
@@ -48,7 +50,7 @@ public final class CucumberEnterHandler implements EnterHandlerDelegate {
         final String space = docText.subSequence(lineStart, textStart).toString();
 
         // insert closing triple quote
-        EditorModificationUtil.insertStringAtCaret(editor, "\n" + space + "\n" + space + PYSTRING_QUOTES);
+        EditorModificationUtilEx.insertStringAtCaret(editor, "\n" + space + "\n" + space + PYSTRING_QUOTES);
         editor.getCaretModel().moveCaretRelatively(-3, -1, false, false, true);
         return Result.Stop;
       }
