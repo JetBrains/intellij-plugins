@@ -49,6 +49,7 @@ private class JsPsiViewerApiMethodProvider : PsiViewerApiMethod.Provider {
     return PsiViewerApiMethod(
       "resolveJsType",
       PsiViewerApiMethod.ReturnType(JSType::class.java, returnedCollectionType = null),
+      false,
     ) {
       return@PsiViewerApiMethod readAction {
         (instance as? PsiElement)?.resolveJsType()
@@ -60,6 +61,7 @@ private class JsPsiViewerApiMethodProvider : PsiViewerApiMethod.Provider {
     return PsiViewerApiMethod(
       "resolveExpressionJsType",
       PsiViewerApiMethod.ReturnType(JSType::class.java, returnedCollectionType = null),
+      false
     ) {
       return@PsiViewerApiMethod readAction {
         (instance as? JSExpression)?.resolveExpressionJsType()

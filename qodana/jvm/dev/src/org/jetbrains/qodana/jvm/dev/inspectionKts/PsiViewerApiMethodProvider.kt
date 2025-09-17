@@ -35,7 +35,8 @@ private inline fun <reified T> ifExactClass(clazz: Class<*>, instance: Any, acti
 private fun pathRelativeToProjectPsiViewerApiMethod(): PsiViewerApiMethod {
   return PsiViewerApiMethod(
     "getPathRelativeToProject",
-    PsiViewerApiMethod.ReturnType(String::class.java, null)
+    PsiViewerApiMethod.ReturnType(String::class.java, null),
+    false,
   ) {
     "file/path/relative/to/project (not displayed in PSI Viewer)"
   }
