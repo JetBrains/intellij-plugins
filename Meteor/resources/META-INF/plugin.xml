@@ -22,6 +22,7 @@
   <depends>JavaScriptDebugger</depends>
   <depends>com.dmarcotte.handlebars</depends>
   <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.scriptDebugger.ui</depends>
   <depends optional="true" config-file="meteor-live-edit.xml">com.intellij.plugins.html.instantEditing</depends>
   <depends optional="true" config-file="meteor-file-watcher.xml">com.intellij.plugins.watcher</depends>

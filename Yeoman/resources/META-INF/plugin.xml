@@ -14,6 +14,7 @@
     ]]>
   </description>
   <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.ultimate</depends>
   <depends>JavaScript</depends>
 
   <resource-bundle>messages.YeomanBundle</resource-bundle>

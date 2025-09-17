@@ -20,6 +20,7 @@
   <vendor>JetBrains</vendor>
 
   <depends>JavaScript</depends>
+  <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends>HtmlTools</depends>
   <depends optional="true" config-file="angularjs-css-support.xml">com.intellij.css</depends>

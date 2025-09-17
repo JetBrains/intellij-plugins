@@ -19,6 +19,7 @@
   <depends>JavaScript</depends>
   <depends>com.intellij.css</depends>
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.ultimate</depends>
   <depends>JavaScriptDebugger</depends>
   <resource-bundle>messages.DenoBundle</resource-bundle>
 

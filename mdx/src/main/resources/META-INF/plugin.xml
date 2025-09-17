@@ -12,6 +12,7 @@
     ]]>
   </description>
 
+  <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends>org.intellij.plugins.markdown</depends>
   <depends>com.intellij.modules.lang</depends>

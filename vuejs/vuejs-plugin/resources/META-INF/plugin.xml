@@ -25,6 +25,7 @@
 
   <dependencies>
     <plugin id="JavaScript"/>
+    <plugin id="com.intellij.modules.ultimate"/>
   </dependencies>
 
   <content namespace="jetbrains">

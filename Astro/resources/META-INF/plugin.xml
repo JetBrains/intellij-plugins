@@ -26,6 +26,7 @@
     <plugin id="com.intellij.css"/>
     <plugin id="org.intellij.plugins.postcss"/>
     <module name="intellij.xml.emmet"/>
+    <plugin id="com.intellij.modules.ultimate"/>
     <module name="intellij.javascript.ultimate"/>
   </dependencies>
 

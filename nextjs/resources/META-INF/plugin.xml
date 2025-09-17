@@ -16,6 +16,7 @@
   ]]></description>
 
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.ultimate</depends>
   <depends>JavaScript</depends>
   <extensions defaultExtensionNs="com.intellij">
     <directoryProjectGenerator implementation="com.intellij.lang.javascript.frameworks.nextjs.generator.NextJsProjectGenerator"/>

@@ -10,6 +10,7 @@ Note that this plugin is not actively maintained and may stop working in future 
   ]]></description>
 
   <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.ultimate</depends>
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.json</depends>
   <depends>com.intellij.modules.spellchecker</depends>
