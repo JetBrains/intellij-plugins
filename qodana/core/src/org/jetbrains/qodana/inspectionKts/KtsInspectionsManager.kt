@@ -29,7 +29,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
-import kotlin.io.path.Path
 
 internal const val FORCE_DISABLE_INSPECTION_KTS = "inspection.kts.disabled"
 
@@ -119,7 +118,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
       return emptyFlow()
     }
 
-    val projectDirectory = project.basePath?.let { Path(it) } ?: project.guessProjectDir()?.toNioPath() ?: return flowOf(emptySet())
+    val projectDirectory = project.basePath?.let { Path.of(it) } ?: project.guessProjectDir()?.toNioPath() ?: return flowOf(emptySet())
 
     val inspectionFiles = inspectionFilesFlow(scriptDirectory = projectDirectory.resolve(INSPECTIONS_KTS_DIRECTORY))
     return compiledInspectionsFilesFlow(inspectionFiles)
