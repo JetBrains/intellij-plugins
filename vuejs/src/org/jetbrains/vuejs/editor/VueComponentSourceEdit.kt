@@ -136,7 +136,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
 
   private fun createScriptTag(file: XmlFile): XmlTag {
     val dummyScript = createEmptyScript(file)
-    return file.document!!.let { it.addAfter(dummyScript, it.lastChild) as XmlTag }
+    return file.document!!.let { it.addBefore(dummyScript, it.firstChild) as XmlTag }
   }
 
   private fun createEmptyScript(context: XmlFile): XmlTag {

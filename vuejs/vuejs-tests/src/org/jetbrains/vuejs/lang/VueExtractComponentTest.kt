@@ -1051,15 +1051,15 @@ header {
   @import './stylus/main'
 </style>""",
 
-    """<template>
+    """<script setup>
+import NewComponent from "./NewComponent.vue";
+</script>
+<template>
     <NewComponent/>
 </template>
 <style lang="stylus">
   @import './stylus/main'
-</style>
-<script setup>
-import NewComponent from "./NewComponent.vue";
-</script>""",
+</style>""",
 
     """<template>
     <p>Paragraph!</p>
