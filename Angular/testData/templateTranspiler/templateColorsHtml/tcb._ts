@@ -13,14 +13,14 @@ function _tcb1(this: AppComponent) {
 var _t1 = _ctor1({"ngForOf": this.heroes, "ngForTrackBy": 0 as any, "ngForTemplate": 0 as any});
 _t1.ngForOf = this.heroes;
 var _t2 = null! as any;
-if (_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)) {
+if ((_i1.NgForOf.ngTemplateContextGuard(_t1, _t2))) {
 _t2;
 var _t3 = _t2.$implicit;
 var _t4 = _t2.ngForOf;
 var _t5 = document.createElement("li");
 (_t3 === this.selectedHero);
 _t5.addEventListener("click", ($event): any => {
-if (_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)){
+if (((_i1.NgForOf.ngTemplateContextGuard(_t1, _t2)))){
 this.onSelect(_t3);
 }
 });
@@ -46,7 +46,7 @@ var _t11 = _ctor2({"ngIf": true, "ngIfElse": _t12, "ngIfThen": 0 as any});
 _t11.ngIf = true;
 _t11.ngIfElse = _t12;
 var _t14 = null! as any;
-if (_i1.NgIf.ngTemplateContextGuard(_t11, _t14) && true) {
+if ((_i1.NgIf.ngTemplateContextGuard(_t11, _t14)) && (true)) {
 _t14;
 var _t15 = document.createElement("span");
 }

@@ -14,7 +14,7 @@ var _t1 = _ctor1({"ngIf": this.test, "ngIfElse": _t2, "ngIfThen": 0 as any});
 _t1.ngIf = this.test;
 _t1.ngIfElse = _t2;
 var _t4 = null! as any;
-if (_i2.NgIf.ngTemplateContextGuard(_t1, _t4) && this.test) {
+if ((_i2.NgIf.ngTemplateContextGuard(_t1, _t4)) && (this.test)) {
 _t4;
 var _t5 = _t4.ngIf;
 var _t6 = null! as any;

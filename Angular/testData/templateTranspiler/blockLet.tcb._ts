@@ -22,7 +22,7 @@ if (this.condition) {
 var _t5 = _ctor1({"ngIf": this.condition, "ngIfThen": 0 as any, "ngIfElse": 0 as any});
 _t5.ngIf = this.condition;
 var _t6 = null! as any;
-if (_i1.NgIf.ngTemplateContextGuard(_t5, _t6) && this.condition) {
+if ((_i1.NgIf.ngTemplateContextGuard(_t5, _t6)) && (this.condition)) {
 _t6;
 var _t7 = document.createElement("div");
 "" + (_t1 + _t3);
@@ -30,7 +30,7 @@ const _t8 = this.value;
 var _t9 = _ctor1({"ngIf": this.condition, "ngIfThen": 0 as any, "ngIfElse": 0 as any});
 _t9.ngIf = this.condition;
 var _t10 = null! as any;
-if (_i1.NgIf.ngTemplateContextGuard(_t9, _t10) && this.condition) {
+if ((_i1.NgIf.ngTemplateContextGuard(_t9, _t10)) && (this.condition)) {
 _t10;
 var _t11 = document.createElement("div");
 "" + (_t1 + _t3 + _t8);

@@ -8,7 +8,7 @@ case "foo":
 "" + (this.user.name);
 var _t1 = document.createElement("a");
 _t1.addEventListener("click", ($event): any => {
-if (this.user.name === "foo"){
+if ((this.user.name === "foo")){
 this.use(this.user.name);
 }
 });
@@ -17,7 +17,7 @@ case "bar":
 "" + (this.user.name);
 var _t2 = document.createElement("a");
 _t2.addEventListener("click", ($event): any => {
-if (this.user.name === "bar"){
+if ((this.user.name === "bar")){
 this.use(this.user.name);
 }
 });
@@ -26,7 +26,7 @@ default:
 "" + (this.user.name);
 var _t3 = document.createElement("a");
 _t3.addEventListener("click", ($event): any => {
-if (this.user.name !== "foo" && this.user.name !== "bar"){
+if ((this.user.name !== "foo" && this.user.name !== "bar")){
 this.use(this.user.name);
 }
 });

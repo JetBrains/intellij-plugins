@@ -9,7 +9,7 @@ if ((this.user.isRobot) && _t1) {
 "" + (this.user.name);
 var _t2 = document.createElement("a");
 _t2.addEventListener("click", ($event): any => {
-if ((this.user.isRobot) && _t1){
+if (((this.user.isRobot) && _t1)){
 this.use(this.user.isRobot);
 }
 });
@@ -19,7 +19,7 @@ else if (this.user.isHuman) {
 "" + (this.user.name);
 var _t3 = document.createElement("a");
 _t3.addEventListener("click", ($event): any => {
-if (!((this.user.isRobot) && _t1) && this.user.isHuman){
+if (((!((this.user.isRobot) && _t1)) && (this.user.isHuman))){
 this.use(this.user.isHuman);
 }
 });
