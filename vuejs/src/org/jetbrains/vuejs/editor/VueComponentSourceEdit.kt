@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil
-import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
