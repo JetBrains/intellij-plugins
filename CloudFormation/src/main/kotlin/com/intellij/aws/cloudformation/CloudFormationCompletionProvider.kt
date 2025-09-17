@@ -9,7 +9,6 @@ import com.intellij.aws.cloudformation.model.CfnScalarValueNode
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.icons.AllIcons
 import com.intellij.json.JsonLanguage
 import com.intellij.json.psi.JsonReferenceExpression
 import com.intellij.json.psi.JsonStringLiteral
@@ -154,14 +153,14 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
 
   private fun createLookupElement(value: String, quote: String): LookupElement {
     val id = "$quote$value$quote"
-    return LookupElementBuilder.create(id).withIcon(AllIcons.Providers.Aws)
+    return LookupElementBuilder.create(id).withIcon(CloudFormationIcons.Aws)
   }
 
   private fun createLookupElement(value: String, quote: String, type: String?): LookupElement {
     val id = "$quote$value$quote"
     return LookupElementBuilder.create(id)
       .withTypeText(type)
-      .withIcon(AllIcons.Providers.Aws)
+      .withIcon(CloudFormationIcons.Aws)
   }
 
   private fun convertTypeFromHtml(type: String): String? {
