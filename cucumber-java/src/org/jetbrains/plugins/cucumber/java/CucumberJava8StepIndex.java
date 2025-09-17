@@ -82,9 +82,12 @@ public final class CucumberJava8StepIndex extends CucumberStepIndex {
                   if (isNumber(stepDefImplementationArgument, text)) {
                     stepDefImplementationArgument = expressionListChildren.get(2);
                   }
-                  IElementType type = stepDefImplementationArgument.getTokenType();
-                  if (type == METHOD_REF_EXPRESSION || type == LOCAL_VARIABLE || type == LAMBDA_EXPRESSION) {
-                    result.add(expressionParameter.getStartOffset());
+                  stepDefImplementationArgument = JavaLightTreeUtil.skipParenthesesCastsDown(lighterAst, stepDefImplementationArgument);
+                  if (stepDefImplementationArgument != null) {
+                    IElementType type = stepDefImplementationArgument.getTokenType();
+                    if (type == METHOD_REF_EXPRESSION || type == LOCAL_VARIABLE || type == LAMBDA_EXPRESSION) {
+                      result.add(expressionParameter.getStartOffset());
+                    }
                   }
                 }
               }

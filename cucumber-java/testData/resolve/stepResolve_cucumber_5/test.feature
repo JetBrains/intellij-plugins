@@ -4,6 +4,9 @@ Feature: Shopping
     Given my step definition
     Given my java8 step
 
+  Scenario: Fix resolve bug
+    When my java8 step with cast
+
 
   Scenario: my test
     Given first regex

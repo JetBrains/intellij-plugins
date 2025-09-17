@@ -20,6 +20,11 @@ public class CucumberJava5_0ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("my jav<caret>a8 step", "Given");
   }
 
+  public void testResolveToJava8StepDefinitionsWithCast() {
+    init("stepResolve_cucumber_5");
+    checkReference("my jav<caret>a8 step with cast", "And");
+  }
+
   public void testResolveToMethodWithColon() {
     init("stepResolve_cucumber_5");
     checkReference("step <caret><color>:", "my_step_with_colon");

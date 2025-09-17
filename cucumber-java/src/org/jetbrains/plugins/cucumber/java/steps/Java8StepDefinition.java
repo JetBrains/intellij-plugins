@@ -84,4 +84,9 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition implements P
   public boolean canNavigateToSource() {
     return canNavigate();
   }
+
+  @Override
+  public String toString() {
+    return "Java8StepDefinition{element: " + getElement() + "}";
+  }
 }
