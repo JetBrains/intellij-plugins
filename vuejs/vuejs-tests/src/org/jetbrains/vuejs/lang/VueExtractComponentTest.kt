@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
 import org.jetbrains.vuejs.intentions.extractComponent.getContextForExtractComponentIntention
 import org.jetbrains.vuejs.lang.html.VueLanguage
@@ -1089,10 +1088,10 @@ export default {
       myFixture.configureByText(getTestName(false) + ".vue", existing)
 
       val element = myFixture.file.findElementAt(myFixture.editor.caretModel.currentCaret.offset)
-      TestCase.assertNotNull(element)
+      assertNotNull(element)
       val context = getContextForExtractComponentIntention(myFixture.editor, element!!)
-      TestCase.assertNotNull(context)
-      TestCase.assertEquals(numTags, context!!.size)
+      assertNotNull(context)
+      assertEquals(numTags, context!!.size)
 
       VueExtractComponentRefactoring(myFixture.project, context,
                                      myFixture.editor).perform(newCompName)
@@ -1102,7 +1101,7 @@ export default {
       if (newText != null) {
         FileDocumentManager.getInstance().saveAllDocuments()
         val created = myFixture.file.parent!!.findFile("NewComponent.vue")
-        TestCase.assertNotNull(created)
+        assertNotNull(created)
         myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
         myFixture.checkResult(newText)
       }
