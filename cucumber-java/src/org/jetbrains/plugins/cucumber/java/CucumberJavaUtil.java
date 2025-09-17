@@ -23,6 +23,7 @@ import com.intellij.psi.util.*;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Query;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.VersionComparatorUtil;
 import com.siyeh.ig.callMatcher.CallMatcher;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
@@ -175,9 +176,35 @@ public final class CucumberJavaUtil {
     return HOOK_MARKERS.contains(annotationSuffix);
   }
 
-  public static boolean isStepDefinition(final @NotNull PsiMethod method) {
+  /// Returns true if `method` has at least one valid Cucumber step annotation.
+  ///
+  /// @see #isJava8StepDefinition
+  public static boolean isAnnotationStepDefinition(final @NotNull PsiMethod method) {
     List<PsiAnnotation> stepAnnotations = getCucumberStepAnnotations(method);
-    return !stepAnnotations.isEmpty();
+    for (PsiAnnotation stepAnnotation : stepAnnotations) {
+      if (getAnnotationValue(stepAnnotation) != null) return true;
+    }
+    return false;
+  }
+
+  /// Returns true if `methodCallExpression` is a valid call to one of Cucumber methods that define steps in "Java 8" style.
+  ///
+  /// @see #isAnnotationStepDefinition
+  public static boolean isJava8StepDefinition(@NotNull PsiMethodCallExpression methodCallExpression) {
+    PsiExpressionList argumentList = methodCallExpression.getArgumentList();
+    if (argumentList.getExpressionCount() != 2) return false;
+    final PsiMethod method = methodCallExpression.resolveMethod();
+    if (method == null) return false;
+
+    final PsiClass classOfMethod = method.getContainingClass();
+    if (classOfMethod == null) return false;
+
+    final boolean isCucumberLambdaMethod = ContainerUtil.exists(classOfMethod.getInterfaces(), psiClass -> {
+      final String fqn = psiClass.getQualifiedName();
+      return fqn != null && (fqn.equals("cucumber.api.java8.LambdaGlue") || fqn.equals("io.cucumber.java8.LambdaGlue"));
+    });
+
+    return isCucumberLambdaMethod;
   }
 
   public static boolean isHook(final @NotNull PsiMethod method) {

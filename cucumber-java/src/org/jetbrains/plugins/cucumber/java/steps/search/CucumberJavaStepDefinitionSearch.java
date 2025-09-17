@@ -26,7 +26,7 @@ public final class CucumberJavaStepDefinitionSearch extends QueryExecutorBase<Ps
     final SearchScope searchScope = queryParameters.getEffectiveSearchScope();
 
     if (elementToSearch instanceof PsiMethod method) {
-      final boolean isStepDefinition = CucumberJavaUtil.isStepDefinition(method);
+      final boolean isStepDefinition = CucumberJavaUtil.isAnnotationStepDefinition(method);
       if (!isStepDefinition) {
         return;
       }

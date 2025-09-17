@@ -20,7 +20,7 @@ public final class CucumberJavaImplicitUsageProvider implements ImplicitUsagePro
     }
     else if (element instanceof PsiMethod method) {
       if (CucumberJavaUtil.isHook(method) || CucumberJavaUtil.isParameterType(method)) return true;
-      if (CucumberJavaUtil.isStepDefinition(method)) {
+      if (CucumberJavaUtil.isAnnotationStepDefinition(method)) {
         final List<PsiAnnotation> stepAnnotations = CucumberJavaUtil.getCucumberStepAnnotations(method);
         for (final PsiAnnotation stepAnnotation : stepAnnotations) {
           final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);

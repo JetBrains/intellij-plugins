@@ -28,7 +28,7 @@ public final class CucumberJavaFindUsagesHandlerFactory extends FindUsagesHandle
     }
 
     if (element instanceof PsiMethod method) {
-      return CucumberJavaUtil.isStepDefinition(method) ? method : null;
+      return CucumberJavaUtil.isAnnotationStepDefinition(method) ? method : null;
     }
 
     return null;

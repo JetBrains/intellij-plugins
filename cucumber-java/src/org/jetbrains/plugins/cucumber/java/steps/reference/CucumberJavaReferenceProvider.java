@@ -6,7 +6,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.manipulators.StringLiteralManipulator;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
@@ -27,13 +26,14 @@ public final class CucumberJavaReferenceProvider extends PsiReferenceProvider {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    if (!(literalExpression.getValue() instanceof String)) {
+    if (!(literalExpression.getValue() instanceof String literalValue) || !CucumberUtil.isCucumberExpression(literalValue)) {
+      // Custom `ParameterType`s can only be used in Cucumber expressions.
       return PsiReference.EMPTY_ARRAY;
     }
 
-    if (isCucumberAnnotationStep(literalExpression) || isCucumberLambdaStep(literalExpression)) {
+    if (isAnnotationStep(literalExpression) || isJava8Step(literalExpression)) {
       final List<CucumberJavaParameterTypeReference> result = new ArrayList<>();
-      CucumberUtil.processParameterTypesInCucumberExpression(literalExpression.getValue().toString(), range -> {
+      CucumberUtil.processParameterTypesInCucumberExpression(literalValue, range -> {
         // Skip " at the beginning of the string literal
         range = range.shiftRight(StringLiteralManipulator.getValueRange(literalExpression).getStartOffset());
         result.add(new CucumberJavaParameterTypeReference(literalExpression, range));
@@ -45,33 +45,15 @@ public final class CucumberJavaReferenceProvider extends PsiReferenceProvider {
     return PsiReference.EMPTY_ARRAY;
   }
 
-  private static boolean isCucumberAnnotationStep(PsiLiteralExpression literalExpression) {
-    final PsiAnnotation annotation = PsiTreeUtil.getParentOfType(literalExpression, PsiAnnotation.class);
-    if (annotation == null) return false;
-    if (!CucumberJavaUtil.isCucumberStepAnnotation(annotation)) return false;
-    final String cucumberExpression = CucumberJavaUtil.getAnnotationValue(annotation);
-    if (cucumberExpression == null) return false;
-    return true;
+  private static boolean isAnnotationStep(PsiLiteralExpression literalExpression) {
+    final PsiMethod method = PsiTreeUtil.getParentOfType(literalExpression, PsiMethod.class);
+    if (method == null) return false;
+    return CucumberJavaUtil.isAnnotationStepDefinition(method);
   }
 
-  private static boolean isCucumberLambdaStep(PsiLiteralExpression literalExpression) {
+  private static boolean isJava8Step(PsiLiteralExpression literalExpression) {
     final PsiMethodCallExpression methodCallExpression = PsiTreeUtil.getParentOfType(literalExpression, PsiMethodCallExpression.class);
     if (methodCallExpression == null) return false;
-    PsiExpressionList argumentList = methodCallExpression.getArgumentList();
-    if (argumentList.getExpressionCount() != 2) return false;
-    // Optimization to avoid resolve(): must have 2 arguments, first argument must be a String
-    final PsiMethod method = methodCallExpression.resolveMethod();
-    if (method == null) return false;
-
-    final PsiClass classOfMethod = method.getContainingClass();
-    if (classOfMethod == null) return false;
-
-    final boolean isCucumberLambdaMethod = ContainerUtil.exists(classOfMethod.getInterfaces(), psiClass -> {
-      final String fqn = psiClass.getQualifiedName();
-      return fqn != null && (fqn.equals("cucumber.api.java8.LambdaGlue") || fqn.equals("io.cucumber.java8.LambdaGlue"));
-    });
-
-    if (!isCucumberLambdaMethod) return false;
-    return true;
+    return CucumberJavaUtil.isJava8StepDefinition(methodCallExpression);
   }
 }
