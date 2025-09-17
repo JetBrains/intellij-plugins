@@ -167,6 +167,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
       dir = true,
     )
 
+  fun testListenerInNestedIfBlocks() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_20_1_4
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
@@ -196,42 +200,43 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
 
           fun rangeToText(text: String, offset: Int, length: Int, offsetPrefix: Int = 0) =
             "«${text.substring(offset, offset + length)}» [${offset - offsetPrefix}]"
+
           val result = mutableMapOf<String, Any>()
           result["file-name"] = fileInfo.sourceFile.name
           if (fileInfo.externalFile)
             result["external-file"] = true
           result["mappings"] = fileInfo.sourceMappings
-                  .map { mapping ->
-                    val result = StringBuilder()
-                    if (mapping.generatedOffset >= prefixLength)
-                      result.append(rangeToText(sourceFileText, mapping.sourceOffset, mapping.sourceLength))
-                        .append(" => ")
-                        .append(rangeToText(transpiledFile.generatedCode, mapping.generatedOffset, mapping.generatedLength, prefixLength))
-                        .append("}")
-                    else
-                      result.append(mapping.sourceOffset).append(":").append(mapping.sourceOffset + mapping.sourceLength).append(" => ")
-                        .append(mapping.generatedOffset).append(":").append(mapping.generatedOffset + mapping.generatedLength).append(" (source)")
+            .map { mapping ->
+              val result = StringBuilder()
+              if (mapping.generatedOffset >= prefixLength)
+                result.append(rangeToText(sourceFileText, mapping.sourceOffset, mapping.sourceLength))
+                  .append(" => ")
+                  .append(rangeToText(transpiledFile.generatedCode, mapping.generatedOffset, mapping.generatedLength, prefixLength))
+                  .append("}")
+              else
+                result.append(mapping.sourceOffset).append(":").append(mapping.sourceOffset + mapping.sourceLength).append(" => ")
+                  .append(mapping.generatedOffset).append(":").append(mapping.generatedOffset + mapping.generatedLength).append(" (source)")
 
-                    if (mapping.flags.contains(SourceMappingFlag.REVERSE_TYPES) && mapping.flags.size == 1) {
-                      result.append(" (only reverse types)")
-                    }
-                    else {
-                      result.append(
-                        when {
-                          mapping.diagnosticsOffset == mapping.sourceOffset && mapping.diagnosticsLength == mapping.diagnosticsLength -> ""
-                          mapping.ignored -> " (ignored)"
-                          mapping.diagnosticsOffset == null -> " (no diagnostics)"
-                          else -> " (diagnostics: " + rangeToText(sourceFileText, mapping.diagnosticsOffset!!, mapping.diagnosticsLength!!) + ")"
-                        })
-                      if (!mapping.flags.contains(SourceMappingFlag.TYPES) && !mapping.ignored)
-                        result.append(" (no types)")
-                      if (!mapping.flags.contains(SourceMappingFlag.SEMANTIC) && !mapping.ignored)
-                        result.append(" (no semantic)")
-                      if (mapping.flags.contains(SourceMappingFlag.REVERSE_TYPES) && !mapping.flags.contains(SourceMappingFlag.TYPES))
-                        result.append(" (reverse types)")
-                    }
-                    result.toString()
-                  }
+              if (mapping.flags.contains(SourceMappingFlag.REVERSE_TYPES) && mapping.flags.size == 1) {
+                result.append(" (only reverse types)")
+              }
+              else {
+                result.append(
+                  when {
+                    mapping.diagnosticsOffset == mapping.sourceOffset && mapping.diagnosticsLength == mapping.diagnosticsLength -> ""
+                    mapping.ignored -> " (ignored)"
+                    mapping.diagnosticsOffset == null -> " (no diagnostics)"
+                    else -> " (diagnostics: " + rangeToText(sourceFileText, mapping.diagnosticsOffset!!, mapping.diagnosticsLength!!) + ")"
+                  })
+                if (!mapping.flags.contains(SourceMappingFlag.TYPES) && !mapping.ignored)
+                  result.append(" (no types)")
+                if (!mapping.flags.contains(SourceMappingFlag.SEMANTIC) && !mapping.ignored)
+                  result.append(" (no semantic)")
+                if (mapping.flags.contains(SourceMappingFlag.REVERSE_TYPES) && !mapping.flags.contains(SourceMappingFlag.TYPES))
+                  result.append(" (reverse types)")
+              }
+              result.toString()
+            }
           result
         }),
         if (dir) "${testName}/mappings.json" else "$testName.mappings.json"

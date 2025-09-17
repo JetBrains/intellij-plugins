@@ -46,7 +46,6 @@ import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Companion.createElementCssSelector
 import org.angular2.lang.selector.Angular2SelectorMatcher
-import org.angular2.web.Angular2SymbolDelegate
 import org.angular2.web.scopes.INPUT_BINDING_FUN
 import org.angular2.web.scopes.OUTPUT_BINDING_FUN
 import org.angular2.web.scopes.TWO_WAY_BINDING_FUN
@@ -327,14 +326,16 @@ private class TcbTemplateBodyOp(private val tcb: Context, private val scope: Sco
     var guard: Expression? = null
 
     // If there are any guards from directives, use them instead.
-    if (directiveGuards.size > 0) {
+    if (directiveGuards.isNotEmpty()) {
       // Pop the first value and use it as the initializer to reduce(). This way, a single guard
       // will be used on its own, but two or more will be combined into binary AND expressions.
       guard = Expression {
         directiveGuards.reversed().forEachIndexed { index, expression ->
           if (index > 0)
             append(" && ")
+          append("(")
           append(expression)
+          append(")")
         }
       }
     }
@@ -678,7 +679,7 @@ private class TcbDirectiveInputsOp(
       // For bound inputs, the property is assigned the binding expression.
       val expr =
         if (isDynamicDirective)
-          // Custom WebStorm code to support dynamic bindings in createComponent calls
+        // Custom WebStorm code to support dynamic bindings in createComponent calls
           Expression((attr.attribute as TmplAstBoundAttribute).value!!.text)
         else
           widenBinding(translateInput(attr.attribute, this.tcb, this.scope), this.tcb)
@@ -773,7 +774,8 @@ private class TcbDirectiveInputsOp(
         // Two-way bindings accept `T | WritableSignal<T>` so we have to unwrap the value.
         if (input.isTwoWayBinding && this.tcb.env.config.allowSignalsInTwoWayBindings) {
           assignment = unwrapWritableSignal(assignment, this.tcb)
-        } else if (isDynamicDirective) {
+        }
+        else if (isDynamicDirective) {
           // Custom WebStorm code to support dynamic bindings in createComponent calls
           assignment = Expression { append("(").append(assignment).append(")()") }
         }
@@ -1134,7 +1136,7 @@ private class TcbDynamicDirectiveOutputsOp(
         append(outputField).append(".subscribe((\$event) => ")
         codeBlock {
           appendStatement {
-            append("\$event",output.keySpan).append(" = null! as (").append(handler.text).append(")")
+            append("\$event", output.keySpan).append(" = null! as (").append(handler.text).append(")")
           }
         }
         append(")")
@@ -1407,7 +1409,7 @@ private class TcbIfOp(
         comparisonExpression
       else
         Expression {
-          append(guard!!).append(" && ").append(comparisonExpression)
+          append("(").append(guard!!).append(") && (").append(comparisonExpression).append(")")
         }
     }
 
@@ -1613,7 +1615,7 @@ internal class Context(
  *
  * If a `TcbOp` requires the output of another, it can call `resolve()`.
  */
-internal class Scope(private val tcb: Context, private val parent: Scope? = null, private val guard: Expression? = null) {
+internal class Scope constructor(private val tcb: Context, private val parent: Scope? = null, private val guard: Expression? = null) {
   /**
    * A queue of operations which need to be performed to generate the TCB code for this scope.
    *
@@ -1702,7 +1704,7 @@ internal class Scope(private val tcb: Context, private val parent: Scope? = null
       scopedNode: `TmplAstTemplate|TmplAstIfBlockBranch|TmplAstForLoopBlock`?,
       children: List<TmplAstNode>, guard: Expression?,
     ): Scope {
-      val scope = Scope(tcb, parentScope, guard)
+      val scope = Scope(tcb, parentScope, guard?.let { Expression { append("(").append(guard).append(")") } })
 
       // If given an actual `TmplAstTemplate` instance, then process any additional information it
       // has.

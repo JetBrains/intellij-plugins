@@ -1,0 +1,26 @@
+/* Angular type checking code */
+
+/* TCB for listenerInNestedIfBlocks.ts */
+
+function _tcb1(this: App) {
+for (const _t1 of (this.items)!) {
+var _t2 = null! as boolean;
+var _t3 = null! as boolean;
+var _t4 = null! as boolean;
+var _t5 = null! as number;
+var _t6 = null! as boolean;
+var _t7 = null! as number;
+if (_t1.media === undefined || _t1.media === this.media) {
+if (!this.isTemplate(_t1) && _t1.link && _t1.value) {
+var _t8 = document.createElement("a");
+_t8.addEventListener("click", ($event): any => {
+if ((_t1.media === undefined || _t1.media === this.media) && (!this.isTemplate(_t1) && _t1.link && _t1.value)){
+_t1.link($event);
+}
+});
+"" + (_t1.value);
+}
+}
+(_t1);
+}
+}

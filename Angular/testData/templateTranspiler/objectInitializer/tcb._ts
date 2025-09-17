@@ -15,7 +15,7 @@ function _tcb2(this: TestComponent) {
 var _t1 = _ctor1({"ngrxLet": { number1: this.number$, number2: this.numberOrNot$ }, "suspenseTemplateRef": 0 as any});
 _t1.ngrxLet = { number1: this.number$, number2: this.numberOrNot$ };
 var _t2 = null! as any;
-if (_i1.LetDirective.ngTemplateContextGuard(_t1, _t2)) {
+if ((_i1.LetDirective.ngTemplateContextGuard(_t1, _t2))) {
 _t2;
 var _t3 = _t2.ngrxLet;
 var _t4 = document.createElement("ng-container");

@@ -418,6 +418,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testUnusedSymbolSuppressionInBlock() =
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html")
 
+  fun testListenerInNestedIfBlocks() =
+    checkHighlighting(ANGULAR_CORE_20_1_4, extension = "ts")
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
