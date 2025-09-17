@@ -6,17 +6,18 @@ import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.pom.PomTarget;
 import com.intellij.pom.PomTargetPsiElement;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
 
-public class CucumberJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
+@NotNullByDefault
+public final class CucumberJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
   @Override
-  public boolean canFindUsages(@NotNull PsiElement element) {
+  public boolean canFindUsages(PsiElement element) {
     return getStepDefinition(element) != null;
   }
 
-  private static PsiElement getStepDefinition(PsiElement element) {
+  private static @Nullable PsiElement getStepDefinition(PsiElement element) {
     if (element instanceof PomTargetPsiElement pomTargetPsiElement) {
       final PomTarget target = pomTargetPsiElement.getTarget();
       if (target instanceof Java8StepDefinition stepDefinition) {
@@ -28,7 +29,7 @@ public class CucumberJavaFindUsagesHandlerFactory extends FindUsagesHandlerFacto
   }
 
   @Override
-  public @Nullable FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
+  public FindUsagesHandler createFindUsagesHandler(PsiElement element, boolean forHighlightUsages) {
     return new FindUsagesHandler(element) {
     };
   }
