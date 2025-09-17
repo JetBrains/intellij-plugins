@@ -6,8 +6,10 @@ import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.pom.PomTarget;
 import com.intellij.pom.PomTargetPsiElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
 
 @NotNullByDefault
@@ -24,7 +26,11 @@ public final class CucumberJavaFindUsagesHandlerFactory extends FindUsagesHandle
         return stepDefinition.getElement();
       }
     }
-    // TODO(bartekpacia): Handle finding usages for annotation-based step definitions here too. See IDEA-379408.
+
+    if (element instanceof PsiMethod method) {
+      return CucumberJavaUtil.isStepDefinition(method) ? method : null;
+    }
+
     return null;
   }
 

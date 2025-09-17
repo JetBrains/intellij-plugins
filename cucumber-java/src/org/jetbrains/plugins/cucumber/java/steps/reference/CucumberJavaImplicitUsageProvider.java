@@ -4,18 +4,17 @@ import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import com.intellij.util.Processor;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
-import org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaMethodUsageSearcher;
 
 import java.util.List;
 
-/// Implementation is copied in large part from [CucumberJavaMethodUsageSearcher].
+@NotNullByDefault
 public final class CucumberJavaImplicitUsageProvider implements ImplicitUsageProvider {
   @Override
-  public boolean isImplicitUsage(@NotNull PsiElement element) {
+  public boolean isImplicitUsage(PsiElement element) {
     if (element instanceof PsiClass psiClass) {
       return CucumberJavaUtil.isStepDefinitionClass(psiClass);
     }
@@ -27,7 +26,7 @@ public final class CucumberJavaImplicitUsageProvider implements ImplicitUsagePro
           final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
           if (regexp == null) continue;
           final Ref<@Nullable PsiReference> psiReferenceRef = new Ref<>(null);
-          Processor<PsiReference> processor = (PsiReference psiReference) -> {
+          Processor<@Nullable PsiReference> processor = (PsiReference psiReference) -> {
             if (psiReference == null) return true;
             psiReferenceRef.set(psiReference);
             return false;
@@ -42,12 +41,12 @@ public final class CucumberJavaImplicitUsageProvider implements ImplicitUsagePro
   }
 
   @Override
-  public boolean isImplicitRead(@NotNull PsiElement element) {
+  public boolean isImplicitRead(PsiElement element) {
     return false;
   }
 
   @Override
-  public boolean isImplicitWrite(@NotNull PsiElement element) {
+  public boolean isImplicitWrite(PsiElement element) {
     return false;
   }
 }

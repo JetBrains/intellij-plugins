@@ -7,21 +7,21 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
 
 import java.util.List;
 
-/// Handles [ReferencesSearch] requests made by [CucumberJavaMethodUsageSearcher].
+@NotNullByDefault
 public final class CucumberJavaStepDefinitionSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   public CucumberJavaStepDefinitionSearch() {
     super(true);
   }
 
   @Override
-  public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<? super PsiReference> consumer) {
+  public void processQuery(ReferencesSearch.SearchParameters queryParameters, Processor<? super PsiReference> consumer) {
     final PsiElement elementToSearch = queryParameters.getElementToSearch();
     final SearchScope searchScope = queryParameters.getEffectiveSearchScope();
 
