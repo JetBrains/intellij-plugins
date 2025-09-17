@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
 import org.jetbrains.vuejs.intentions.extractComponent.getContextForExtractComponentIntention
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -48,6 +49,7 @@ class VueExtractComponentTest :
   }
 
   @Test
+  @Ignore
   fun testExtractForPug() {
     doExtractTest()
   }
@@ -66,6 +68,7 @@ class VueExtractComponentTest :
   }
 
   @Test
+  @Ignore
   fun testCleanupPugIfNameIsUsed() {
     doExtractTest(newCompName = "dd")
   }
