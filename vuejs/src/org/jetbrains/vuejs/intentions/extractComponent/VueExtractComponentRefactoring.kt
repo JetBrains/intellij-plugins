@@ -8,11 +8,11 @@ import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PathUtilRt
-import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
