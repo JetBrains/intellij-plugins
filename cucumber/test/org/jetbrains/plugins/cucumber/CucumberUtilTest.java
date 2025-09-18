@@ -146,7 +146,7 @@ public class CucumberUtilTest {
     String actual6 = buildRegexpFromCucumberExpression("I have one/few/many cucumber(s) in my be||y");
     assertEquals("^I have (one|few|many) cucumber(s)? in my be\\\\|\\\\|y$", actual6);
 
-    // FIXME: Does not support escaping for now
+    // FIXME: Does not support escaping parameters for now. See IDEA-375195.
     // String actual7 = buildRegexpFromCucumberExpression("I have \\{int} {int} feeling(s)");
     // assertEquals("^I have \\{int} (-?\\d+) feeling(s)$", actual7);
   }
