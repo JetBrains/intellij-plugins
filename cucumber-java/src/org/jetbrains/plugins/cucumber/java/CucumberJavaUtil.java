@@ -108,7 +108,7 @@ public final class CucumberJavaUtil {
     try {
       ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.getDefault());
       CucumberExpressionGenerator generator = new CucumberExpressionGenerator(registry);
-      GeneratedExpression result = generator.generateExpressions(step).get(0);
+      GeneratedExpression result = generator.generateExpressions(step).getFirst();
       if (result != null) {
         String cucumberExpression = unescapeCucumberRegex(result.getSource());
         String[] lines = snippet.split("\n");

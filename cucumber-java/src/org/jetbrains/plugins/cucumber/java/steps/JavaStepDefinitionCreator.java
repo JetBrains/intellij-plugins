@@ -231,7 +231,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
                                                            @NotNull GherkinStep step,
                                                            @NotNull JVMElementFactory factory) {
     List<PsiAnnotation> annotationsFromSnippetMethod = getCucumberStepAnnotations(methodFromSnippet);
-    PsiAnnotation cucumberStepAnnotation = annotationsFromSnippetMethod.get(0);
+    PsiAnnotation cucumberStepAnnotation = annotationsFromSnippetMethod.getFirst();
     String regexp = CucumberJavaUtil.getPatternFromStepDefinition(cucumberStepAnnotation);
     String stepAnnotationName = cucumberStepAnnotation.getQualifiedName();
     if (stepAnnotationName == null) {
