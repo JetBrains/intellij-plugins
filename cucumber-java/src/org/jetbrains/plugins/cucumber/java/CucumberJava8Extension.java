@@ -60,10 +60,6 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
                                    }
                                    return true;
                                  }, scope);
-    System.out.println("CucumberJava8Extension.loadStepsFor: found " + result.size() + " step definitions");
-    for (AbstractStepDefinition stepDef : result) {
-      System.out.println(" -> " + stepDef);
-    }
     return result;
   }
 }
