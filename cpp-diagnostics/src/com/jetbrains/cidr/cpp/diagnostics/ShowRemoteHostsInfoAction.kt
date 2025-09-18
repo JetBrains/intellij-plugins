@@ -34,7 +34,7 @@ private class ShowRemoteHostsInfoAction : CidrProjectAction() {
     }
 
     val log = CdIndenter(indentSize = 4)
-    processSystemInfo(log)
+    processSystemInfo().appendTo(log)
     log.put()
 
     val hosts = HashSet<String>()

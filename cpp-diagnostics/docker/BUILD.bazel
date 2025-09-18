@@ -19,6 +19,8 @@ jvm_library(
     "//CIDR/clion-docker",
     "//contrib/cpp-diagnostics:clion-diagnostics",
     "//CIDR/clion-toolchains",
+    "@lib//:kotlinx-serialization-core",
+    "@lib//:kotlinx-serialization-json",
   ],
   runtime_deps = [":docker_resources"]
 )

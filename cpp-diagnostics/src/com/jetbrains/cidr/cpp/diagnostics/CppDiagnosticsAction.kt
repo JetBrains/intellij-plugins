@@ -76,19 +76,19 @@ class CppDiagnosticsAction : DumbAwareAction(), TroubleInfoCollector {
   private fun collectData(indicator: ProgressIndicator?,
                           project: Project): List<FilenameAndContent> {
     val toolchains = readActionWithText(indicator, CppDiagnosticsBundle.message("cpp.diagnostics.progress.toolchains")) {
-      collectToolchains(project)
+      collectToolchains(project).toText()
     }
 
     val cidrWorkspaces = readActionWithText(indicator, CppDiagnosticsBundle.message("cpp.diagnostics.progress.workspace")) {
-      collectCidrWorkspaces(project)
+      collectCidrWorkspaces(project).toText()
     }
 
     val ocWorkspace = readActionWithText(indicator, CppDiagnosticsBundle.message("cpp.diagnostics.progress.ocWorkspace")) {
-      collectOCWorkspace(project)
+      collectOCWorkspace(project).toText()
     }
 
     val ocWorkspaceEvents = readActionWithText(indicator, CppDiagnosticsBundle.message("cpp.diagnostics.progress.ocWorkspaceEvents")) {
-      collectOCWorkspaceEvents(project)
+      collectOCWorkspaceEvents(project).toText()
     }
 
     val files = listOf(

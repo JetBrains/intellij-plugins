@@ -1,6 +1,6 @@
 package com.intellij.clion.diagnostics.docker.toolchain
 
-import com.jetbrains.cidr.cpp.diagnostics.CdIndenter
+import com.jetbrains.cidr.cpp.diagnostics.model.LinesSection
 import com.jetbrains.cidr.cpp.diagnostics.toolchain.ToolchainDescriptionProvider
 import com.jetbrains.cidr.cpp.toolchains.CPPToolSet
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
@@ -9,9 +9,9 @@ import com.jetbrains.cidr.cpp.toolchains.docker.host.DockerHostBase
 import com.jetbrains.cidr.system.HostMachine
 
 class DockerToolchainDescriptionProvider: ToolchainDescriptionProvider {
-  override fun describe(toolchain: CPPToolchains.Toolchain, host: HostMachine, log: CdIndenter): Boolean {
+  override fun describe(toolchain: CPPToolchains.Toolchain, host: HostMachine): LinesSection? {
     if (toolchain.toolSetKind != CPPToolSet.Kind.DOCKER) {
-      return false
+      return null
     }
 
     if (host !is DockerHostBase<*>) {
@@ -20,8 +20,6 @@ class DockerToolchainDescriptionProvider: ToolchainDescriptionProvider {
 
     val id = host.getDockerServerTypeId()
 
-    log.put("Docker Server Type: ${id ?: "(null)"}")
-
-    return true
+    return LinesSection(listOf("Docker Server Type: ${id ?: "(null)"}"))
   }
 }

@@ -19,10 +19,52 @@ jvm_library(
     "//CIDR/clion-toolchains",
     "//CIDR/cidr-util/execution",
     "//CIDR/cidr-workspaceModel",
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/util",
     "@community//platform/util/jdom",
+    "@lib//:kotlinx-serialization-core",
+    "@lib//:kotlinx-serialization-json",
   ],
   runtime_deps = [":cmake_resources"]
 )
+
+jvm_library(
+  name = "cmake_test_lib",
+  visibility = ["//visibility:public"],
+  srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
+  associates = [":cmake"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//CIDR/clion-cmake",
+    "//contrib/cpp-diagnostics:clion-diagnostics",
+    "//CIDR/clion-toolchains",
+    "//CIDR/cidr-util/execution",
+    "//CIDR/cidr-util/execution:execution_test_lib",
+    "//CIDR/cidr-workspaceModel",
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/util",
+    "@community//platform/util/jdom",
+    "@lib//:kotlinx-serialization-core",
+    "@lib//:kotlinx-serialization-json",
+    "//CIDR/cidr-common-testFramework/core",
+    "//CIDR/cidr-common-testFramework/nolang",
+    "//CIDR/clion-testFramework",
+    "//CIDR/clion-testFramework-nolang",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+  ]
+)
 ### auto-generated section `build intellij.clion.diagnostics.cmake` end
+
+### auto-generated section `test intellij.clion.diagnostics.cmake` start
+load("@community//build:tests-options.bzl", "jps_test")
+
+jps_test(
+  name = "cmake_test",
+  runtime_deps = [":cmake_test_lib"]
+)
+### auto-generated section `test intellij.clion.diagnostics.cmake` end

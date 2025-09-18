@@ -30,6 +30,8 @@ jvm_library(
     "//platform/ssh-ui",
     "@community//platform/util-ex",
     "@community//platform/util/jdom",
+    "@lib//:kotlinx-serialization-core",
+    "@lib//:kotlinx-serialization-json",
   ],
   runtime_deps = [":clion-diagnostics_resources"]
 )

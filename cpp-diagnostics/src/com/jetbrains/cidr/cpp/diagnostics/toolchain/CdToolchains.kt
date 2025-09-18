@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.diagnostic.logger
@@ -20,6 +21,10 @@ import com.intellij.util.PathMapper
 import com.intellij.util.PathMappingSettings
 import com.intellij.util.io.delete
 import com.intellij.util.io.write
+import com.jetbrains.cidr.cpp.diagnostics.model.CppEnvironmentInfo
+import com.jetbrains.cidr.cpp.diagnostics.model.ExecutableToolInfo
+import com.jetbrains.cidr.cpp.diagnostics.model.PathMappingItem
+import com.jetbrains.cidr.cpp.diagnostics.model.ToolchainsSection
 import com.jetbrains.cidr.cpp.diagnostics.toolchain.ToolchainDescriptionProvider
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
@@ -37,55 +42,75 @@ import java.io.StringWriter
 import java.nio.file.Files
 import java.util.concurrent.CancellationException
 import kotlin.io.path.readText
+import com.jetbrains.cidr.cpp.diagnostics.model.DevOptions as ModelDevOptions
+import com.jetbrains.cidr.cpp.diagnostics.model.SystemInfo as ModelSystemInfo
 
 private val LOGGER = logger<CppDiagnosticsAction>()
 
-fun collectToolchains(project: Project?): String {
-  val log = CdIndenter(indentSize = 4)
-  processSystemInfo(log)
-  log.put()
+fun collectToolchains(project: Project?): ToolchainsSection {
+  val system = processSystemInfo()
+  val envs = mutableListOf<CppEnvironmentInfo>()
   getAllEnvironments(project).forEach {
     try {
-      processCPPEnvironment(log, it)
-    } catch (e: CancellationException) {
-      throw e
-    } catch (e: Exception) {
-      log.put("Failed to get CPPEnvironment to process ${it.toolchain.name}: ", e.localizedMessage)
-      log.put("Please, see logs for details.")
-      LOGGER.warn("Failed to get CPPEnvironment to process ${it.toolchain.name}", e)
+      envs.add(processCPPEnvironment(it))
     }
-    log.put()
+    catch (e: CancellationException) {
+      throw e
+    }
+    catch (e: Exception) {
+      LOGGER.warn("Failed to get CPPEnvironment to process ${it.toolchain.name}", e)
+      val tc = it.toolchain
+      envs.add(
+        CppEnvironmentInfo(
+          toolchainName = tc.name,
+          osType = tc.osType.toString(),
+          kind = tc.toolSetKind.toString(),
+          toolSetPath = tc.toolSetPath,
+          options = tc.toolSetOptions.map { opt -> opt.uniqueID },
+          customCCompilerPath = tc.customCCompilerPath,
+          customCXXCompilerPath = tc.customCXXCompilerPath,
+          descriptionExtras = listOf(
+            "Failed to get CPPEnvironment to process ${it.toolchain.name}: ${e.localizedMessage}",
+            "Please, see logs for details."
+          ),
+          tools = emptyList(),
+          pathMappings = emptyList(),
+          rootPath = null,
+          headerRootsCache = null
+        )
+      )
+    }
   }
-  return log.result
+  return ToolchainsSection(system, envs)
 }
 
-fun processSystemInfo(log: CdIndenter) {
+fun processSystemInfo(): ModelSystemInfo {
   val appInfo = ApplicationInfo.getInstance()
   val namesInfo = ApplicationNamesInfo.getInstance()
-  log.put("IDE: ${namesInfo.fullProductName} (build #${appInfo.build.asString()})")
-  log.put("OS: ${SystemInfo.OS_NAME} (${SystemInfo.OS_VERSION}, ${SystemInfo.OS_ARCH})")
-
   val cppToolchains = CPPToolchains.getInstance()
-  log.put("Default toolchain: ${cppToolchains.defaultToolchain?.name ?: "UNKNOWN"}")
-
-  processDevOptions(log)
+  return ModelSystemInfo(
+    ideFullProductName = namesInfo.fullProductName,
+    ideBuild = appInfo.build.asString(),
+    osName = SystemInfo.OS_NAME,
+    osVersion = SystemInfo.OS_VERSION,
+    osArch = SystemInfo.OS_ARCH,
+    defaultToolchainName = cppToolchains.defaultToolchain?.name,
+    devOptions = processDevOptions()
+  )
 }
 
-private fun processDevOptions(log: CdIndenter) {
-  fun logOption(option: String, defaultValue: Boolean) =
-    log.put("${option} = ${Registry.`is`(option, defaultValue)}")
-
-  fun logIntOption(option: String, defaultValue: Int) =
-    log.put("${option} = ${Registry.intValue(option, defaultValue)}")
-
-  log.put("Options:")
-  log.scope {
-    // Note: keep default values in sync with actual values
-    logOption("clion.remote.compress.tar", defaultValue = true)
-    logIntOption("clion.remote.tar.timeout", defaultValue = 240000)
-    logOption("clion.remote.resync.system.cache", defaultValue = false)
-    logOption("clion.remote.upload.external.changes", defaultValue = true)
-  }
+private fun processDevOptions(): ModelDevOptions {
+  // Note: keep default values in sync with actual values
+  val compressTar = Registry.`is`("clion.remote.compress.tar", true)
+  val tarTimeout = Registry.intValue("clion.remote.tar.timeout", 240000)
+  val resyncSystemCache = Registry.`is`("clion.remote.resync.system.cache", false)
+  val uploadExternalChanges = Registry.`is`("clion.remote.upload.external.changes", true)
+  return ModelDevOptions(
+    compressTar = compressTar,
+    tarTimeoutMs = tarTimeout,
+    resyncSystemCache = resyncSystemCache,
+    uploadExternalChanges = uploadExternalChanges
+  )
 }
 
 fun processRemoteHost(log: CdIndenter, environment: CidrToolEnvironment) {
@@ -100,86 +125,90 @@ fun processRemoteHost(log: CdIndenter, environment: CidrToolEnvironment) {
     testRemoteHost(log, remoteHost)
 
     if (environment is CPPEnvironment) {
-      processCPPEnvironment(log, environment)
+      val envInfo = processCPPEnvironment(environment)
+      envInfo.appendTo(log)
     }
   }
 }
 
-private fun logTool(tool: CidrExecutableTool, toolName: String, log: CdIndenter) {
-  val version = try {
-    tool.readVersion()
-  } catch (e: ExecutionException) {
-    null
-  }
-
-  log.put("$toolName ($version): ${tool.executablePath}")
-}
-
-private fun processCPPEnvironment(log: CdIndenter, environment: CPPEnvironment) {
+private fun processCPPEnvironment(environment: CPPEnvironment): CppEnvironmentInfo {
   ProgressManager.checkCanceled()
   val toolchain = environment.toolchain
   val hostMachine = environment.hostMachine
 
-  log.put("Toolchain: ${toolchain.name}")
-  log.scope {
-    processGeneralToolchainInfo(log, toolchain)
+  val descriptionExtras = mutableListOf<String>()
+  ToolchainDescriptionProvider.describe(toolchain, hostMachine)?.let { section ->
+    descriptionExtras += section.toText().lines()
+  }
 
-    ToolchainDescriptionProvider.describe(toolchain, hostMachine, log)
-
-    environment.cMake?.let { logTool(it, "cmake", log) }
-    environment.make?.let { logTool(it, "make", log) }
-    environment.gdb?.let { logTool(it, "cmake", log) }
-
-    try {
-      if (hostMachine is MappedHost) {
-        log.put("Path Mappings:")
-
-        var pathMapper: PathMapper = hostMachine.pathMapper
-        if (pathMapper is PathMapperWrapper) pathMapper = pathMapper.original
-
-        log.scope {
-          if (pathMapper is PathMappingSettings) {
-            pathMapper.pathMappings.forEach { log.put("${it.localRoot} -> ${it.remoteRoot}") }
-          }
-        }
-      }
-    } catch (e: CancellationException) {
-      throw e
-    } catch (e: Exception) {
-      log.put("Failed to get path mappings: ", e.localizedMessage)
-      log.put("Please, see logs for details.")
-      LOGGER.warn("Failed to get path mappings", e)
+  fun toolInfo(tool: CidrExecutableTool?, name: String): ExecutableToolInfo? {
+    if (tool == null) return null
+    val version = if (ApplicationManager.getApplication()?.isUnitTestMode == true) {
+      null
     }
-
-    if (serviceOrNull<RemoteDeployment>() != null) {
-      var rootPath = RemoteDeploymentHelper.getRootPath(hostMachine.hostId)
-      if (rootPath.isEmpty()) {
-        rootPath = "not specified"
+    else {
+      try {
+        tool.readVersion()
       }
-      log.put("Root Path: ${rootPath}")
+      catch (_: ExecutionException) {
+        null
+      }
+    }
+    return ExecutableToolInfo(name, version, tool.executablePath)
+  }
 
-      if (hostMachine is RemoteHost) {
-        log.put("Header-roots cache: ${hostMachine.cacheDirectory.absolutePath}")
+  val tools = buildList {
+    toolInfo(environment.cMake, "cmake")?.let { add(it) }
+    toolInfo(environment.make, "make")?.let { add(it) }
+    toolInfo(environment.gdb, "cmake")?.let { add(it) } // TODO questionable. Why cmake?
+  }
+
+  var pathMappings: List<PathMappingItem>? = null
+  try {
+    if (hostMachine is MappedHost) {
+      var pathMapper: PathMapper = hostMachine.pathMapper
+      if (pathMapper is PathMapperWrapper) pathMapper = pathMapper.original
+      if (pathMapper is PathMappingSettings) {
+        pathMappings = pathMapper.pathMappings.map { PathMappingItem(it.localRoot, it.remoteRoot) }
       }
     }
   }
-}
+  catch (e: CancellationException) {
+    throw e
+  }
+  catch (e: Exception) {
+    descriptionExtras += listOf("Failed to get path mappings: ${e.localizedMessage}", "Please, see logs for details.")
+    LOGGER.warn("Failed to get path mappings", e)
+  }
 
-private fun processGeneralToolchainInfo(log: CdIndenter, toolchain: CPPToolchains.Toolchain) {
-  log.put("OS: ${toolchain.osType}")
-  log.put("Kind: ${toolchain.toolSetKind}")
-  log.put("Path: ${toolchain.toolSetPath}")
+  var rootPath: String? = null
+  var headerRootsCache: String? = null
+  if (serviceOrNull<RemoteDeployment>() != null) {
+    var root = RemoteDeploymentHelper.getRootPath(hostMachine.hostId)
+    if (root.isEmpty()) {
+      root = "not specified"
+    }
+    rootPath = root
 
-  val options = toolchain.toolSetOptions
-  if (options.isNotEmpty()) {
-    log.put("Options:")
-    log.scope {
-      options.forEach { log.put(it.uniqueID) }
+    if (hostMachine is RemoteHost) {
+      headerRootsCache = hostMachine.cacheDirectory.absolutePath
     }
   }
 
-  toolchain.customCCompilerPath?.let { log.put("c: ${it}") }
-  toolchain.customCXXCompilerPath?.let { log.put("cxx: ${it}") }
+  return CppEnvironmentInfo(
+    toolchainName = toolchain.name,
+    osType = toolchain.osType.toString(),
+    kind = toolchain.toolSetKind.toString(),
+    toolSetPath = toolchain.toolSetPath,
+    options = toolchain.toolSetOptions.map { it.uniqueID },
+    customCCompilerPath = toolchain.customCCompilerPath,
+    customCXXCompilerPath = toolchain.customCXXCompilerPath,
+    descriptionExtras = descriptionExtras,
+    tools = tools,
+    pathMappings = pathMappings,
+    rootPath = rootPath,
+    headerRootsCache = headerRootsCache
+  )
 }
 
 private fun testRemoteHost(log: CdIndenter, remoteHost: HostMachine) {
@@ -257,11 +286,13 @@ private fun checkRsyncDownload(remoteHost: HostMachine): Boolean {
   }
 }
 
-private fun test(log: CdIndenter,
-                 host: HostMachine,
-                 @NonNls testName: String,
-                 check: (host: HostMachine) -> Boolean,
-                 failStatusMsg: String = "[FAILED]"): Boolean {
+private fun test(
+  log: CdIndenter,
+  host: HostMachine,
+  @NonNls testName: String,
+  check: (host: HostMachine) -> Boolean,
+  failStatusMsg: String = "[FAILED]",
+): Boolean {
   ProgressManager.checkCanceled()
   var status = false
   try {
@@ -288,7 +319,8 @@ private fun getAllEnvironments(project: Project?): List<CPPEnvironment> {
   // get project environments first - they should be initialized with correct path mapping
   val projectEnvironments = if (project == null) {
     emptyList()
-  } else {
+  }
+  else {
     getAllProjectEnvironments(project)
   }
 
