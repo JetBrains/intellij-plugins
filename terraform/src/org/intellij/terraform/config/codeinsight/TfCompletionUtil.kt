@@ -16,7 +16,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.impl.DebugUtil
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
@@ -124,8 +123,6 @@ internal object TfCompletionUtil {
       .withTailText(" ${provider.fullName}")
       .withTypeText(provider.version)
       .withIcon(getLookupIcon(element))
-
-  fun dumpPsiFileModel(element: PsiElement): () -> String = { DebugUtil.psiToString(element.containingFile, true) }
 
   fun getOriginalObject(parameters: CompletionParameters, obj: HCLObject): HCLObject {
     val originalObject = parameters.originalFile.findElementAt(obj.textRange.startOffset)?.parent

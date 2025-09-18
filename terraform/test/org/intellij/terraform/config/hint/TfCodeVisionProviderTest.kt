@@ -1,11 +1,25 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.hint
 
+import com.intellij.codeInsight.codeVision.CodeVisionAnchorKind
+import com.intellij.codeInsight.codeVision.settings.CodeVisionSettings
+import com.intellij.openapi.options.advanced.AdvancedSettings
+import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.utils.codeVision.CodeVisionTestCase
+import org.intellij.terraform.config.hints.TF_USAGES_LIMIT_ID
 import org.intellij.terraform.config.hints.TfReferencesCodeVisionProvider
 
 internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
 
-  fun testBaseRootBlocks() = doTest("""
+  private val usagesLimit = 4
+
+  override fun setUp() {
+    super.setUp()
+    CodeVisionSettings.getInstance().defaultPosition = CodeVisionAnchorKind.Right
+    setUpAdvancedSettings()
+  }
+
+  fun testHintsForVariousBlocks() = testUsageHints($$"""
     provider "aws" {
       region = "us-west-2"
     }
@@ -50,7 +64,7 @@ internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
       instance_type = each.value.instance_type
 
       tags = {
-        Name = "${Dollar}{each.key}-${Dollar}{local.tag_suffix}"
+        Name = "${each.key}-${local.tag_suffix}"
       }
     }
 
@@ -91,11 +105,48 @@ internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
         Name = "ExampleInstance"
       }
     }
-  """.trimIndent(), TfReferencesCodeVisionProvider().groupId)
+  """.trimIndent()
+  )
 
-  private fun doTest(text: String, vararg enabledProviderGroupIds: String) {
-    testProviders(text, "main.tf", *enabledProviderGroupIds)
+  fun testCodeVisionLimit() = testUsageHints($$"""
+    variable "region" {/*<# [4+ usages] #>*/
+      description = "AWS region to deploy resources in"
+      type        = string
+      default     = "us-east-1"
+    }
+
+    provider "aws" {
+      region = var.region
+    }
+
+    resource "aws_s3_bucket" "bucket1" {/*<# [no usages] #>*/
+      bucket = "example-bucket-1-${var.region}"
+    }
+
+    resource "aws_s3_bucket" "bucket2" {/*<# [no usages] #>*/
+      bucket = "example-bucket-2-${var.region}"
+    }
+
+    resource "aws_s3_bucket" "bucket3" {/*<# [no usages] #>*/
+      bucket = "example-bucket-3-${var.region}"
+    }
+
+    resource "aws_s3_bucket" "bucket4" {/*<# [no usages] #>*/
+      bucket = "example-bucket-4-${var.region}"
+    }
+  """.trimIndent()
+  )
+
+  private fun testUsageHints(text: String) {
+    testProviders(text, "main.tf", TfReferencesCodeVisionProvider().groupId)
+  }
+
+  private fun setUpAdvancedSettings() {
+    val prevValue = AdvancedSettings.getInt(TF_USAGES_LIMIT_ID)
+    AdvancedSettings.setInt(TF_USAGES_LIMIT_ID, usagesLimit)
+
+    Disposer.register(testRootDisposable) {
+      AdvancedSettings.setInt(TF_USAGES_LIMIT_ID, prevValue)
+    }
   }
 }
-
-private const val Dollar = '$'
