@@ -14,7 +14,7 @@ import com.jetbrains.cidr.external.system.fus.CidrExternalUsageUtil
 class PlatformioProjectOpenProcessor : CidrProjectOpenProcessor(PlatformioProjectOpenHelper) {
   override val name: String = "PlatformIO"
 
-  override fun doOpenProject(virtualFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
+  override suspend fun openProjectAsync(virtualFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
     val platformioIniFile = PlatformioProjectOpenHelper.findSupportedSubFile(virtualFile) ?: return null
 
     // CPP-16000 - don't re-create project from specified file there's already valid project there
