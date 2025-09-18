@@ -14,97 +14,99 @@ class VueExtractComponentTest :
   VueTestCase("extract_component") {
 
   @Test
-  fun testExtractSingleTag() {
+  fun testExtractSingleTag__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractSingleTagWithName() {
+  fun testExtractSingleTagWithName__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractTwoTagsWithProp() {
+  fun testExtractTwoTagsWithProp__options() {
     doExtractTest(numTags = 2)
   }
 
   @Test
-  fun testExtractTagWithAttributeAndMethodCall() {
+  fun testExtractTagWithAttributeAndMethodCall__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractComponentWithOtherComponentInside() {
+  fun testExtractComponentWithOtherComponentInside__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractComponentWithOtherComponentInsideTS() {
+  fun testExtractComponentWithOtherComponentInsideTS__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractWithVFor() {
+  fun testExtractWithVFor__options() {
     doExtractTest()
   }
 
   @Test
   @Ignore
-  fun testExtractForPug() {
+  fun testExtractForPug__options() {
     doExtractTest()
   }
 
   @Test
-  fun testSameNamedFunctionCalls() = doExtractTest(
-    4)
+  fun testSameNamedFunctionCalls__options() {
+    doExtractTest(numTags = 4)
+  }
 
   @Test
-  fun testSameNamedProps() = doExtractTest(
-    2)
+  fun testSameNamedProps__options() {
+    doExtractTest(numTags = 2)
+  }
 
   @Test
-  fun testCleanupIfNameIsUsed() {
+  fun testCleanupIfNameIsUsed__options() {
     doExtractTest(newCompName = "dd")
   }
 
   @Test
   @Ignore
-  fun testCleanupPugIfNameIsUsed() {
+  fun testCleanupPugIfNameIsUsed__options() {
     doExtractTest(newCompName = "dd")
   }
 
   @Test
-  fun testFindImport() {
+  fun testFindImport__options() {
     doExtractTest()
   }
 
   @Test
-  fun testFindNonExistingImport() {
+  fun testFindNonExistingImport__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractWithMemberAccess() {
+  fun testExtractWithMemberAccess__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractWithStyle() {
+  fun testExtractWithStyle__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractWithStylusStyle() {
+  fun testExtractWithStylusStyle__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractWithScss() {
+  fun testExtractWithScss__options() {
     doExtractTest()
   }
 
   @Test
-  fun testExtractSingleTagWithImportInStyle() {
+  fun testExtractSingleTagWithImportInStyle__options() {
     doExtractTest()
   }
 
