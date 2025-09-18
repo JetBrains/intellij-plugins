@@ -18,10 +18,10 @@ import java.util.List;
 
 public final class GherkinSpellcheckerStrategy extends SpellcheckingStrategy implements DumbAware {
   @Override
-  public @NotNull Tokenizer getTokenizer(final PsiElement element) {
+  public @NotNull Tokenizer<?> getTokenizer(final PsiElement element) {
     if (element instanceof LeafElement) {
       final ASTNode node = element.getNode();
-      if (node != null && node.getElementType() instanceof GherkinElementType){
+      if (node != null && node.getElementType() instanceof GherkinElementType) {
         return TEXT_TOKENIZER;
       }
     }

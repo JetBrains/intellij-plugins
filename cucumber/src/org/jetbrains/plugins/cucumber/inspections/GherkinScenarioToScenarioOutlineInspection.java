@@ -9,13 +9,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 import java.util.Collection;
-import java.util.stream.Stream;
 
 import static org.jetbrains.plugins.cucumber.psi.GherkinElementTypes.EXAMPLES_BLOCK;
 
@@ -36,7 +36,7 @@ public final class GherkinScenarioToScenarioOutlineInspection extends GherkinIns
           return;
         }
 
-        if (Stream.of(scenario.getChildren()).anyMatch(p -> PsiUtilCore.getElementType(p) == EXAMPLES_BLOCK)) {
+        if (ContainerUtil.or(scenario.getChildren(), p -> PsiUtilCore.getElementType(p) == EXAMPLES_BLOCK)) {
           holder.registerProblem(scenario, scenario.getFirstChild().getTextRangeInParent(),
                                  CucumberBundle.message("inspection.gherkin.scenario.with.examples.section.error.message"),
                                  Holder.CONVERT_SCENARIO_TO_OUTLINE_FIX);

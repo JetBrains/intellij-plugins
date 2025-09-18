@@ -37,7 +37,7 @@ public final class CucumberStepHelper {
                                                  final @NotNull BDDFrameworkType frameworkType) {
     final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
     if (ep == null) {
-      LOG.error(String.format("Unsupported step definition file type %s", frameworkType.toString()));
+      LOG.error(String.format("Unsupported step definition file type %s", frameworkType));
       return null;
     }
 

@@ -42,6 +42,6 @@ public class GherkinSyntaxHighlighter extends SyntaxHighlighterBase {
 
   @Override
   public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
-    return SyntaxHighlighterBase.pack(ATTRIBUTES.get(tokenType));
+    return pack(ATTRIBUTES.get(tokenType));
   }
 }

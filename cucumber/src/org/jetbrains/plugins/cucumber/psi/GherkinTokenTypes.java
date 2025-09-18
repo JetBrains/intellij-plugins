@@ -30,5 +30,5 @@ public interface GherkinTokenTypes {
 
   TokenSet SCENARIOS_KEYWORDS = TokenSet.create(SCENARIO_KEYWORD, SCENARIO_OUTLINE_KEYWORD, EXAMPLE_KEYWORD);
 
-  TokenSet COMMENTS = TokenSet.create(GherkinTokenTypes.COMMENT);
+  TokenSet COMMENTS = TokenSet.create(COMMENT);
 }

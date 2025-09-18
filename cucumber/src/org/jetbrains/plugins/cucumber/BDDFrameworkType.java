@@ -5,6 +5,8 @@ import com.intellij.openapi.fileTypes.FileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * Type of BDD framework. Cucumber, behave etc
  *
@@ -59,7 +61,7 @@ public class BDDFrameworkType {
     if (this == o) return true;
     if (!(o instanceof BDDFrameworkType type)) return false;
 
-    if (myAdditionalInfo != null ? !myAdditionalInfo.equals(type.myAdditionalInfo) : type.myAdditionalInfo != null) return false;
+    if (!Objects.equals(myAdditionalInfo, type.myAdditionalInfo)) return false;
     if (!myFileType.equals(type.myFileType)) return false;
 
     return true;
