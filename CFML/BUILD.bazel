@@ -84,6 +84,7 @@ jvm_library(
     "//idea-tests:ultimate-tests_test_lib",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
+    "@community//plugins/grazie/src:core",
     "@community//platform/testFramework/extensions:testExtensions",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",

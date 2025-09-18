@@ -1,7 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config;
 
-import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.ui.RenameDialogInterceptor;
 import com.intellij.ui.UiInterceptors;
 import org.intellij.terraform.TfTestUtils;
@@ -142,19 +142,19 @@ public class TfInspectionsTest extends TfInspectionFixtureTestCase {
   }
 
   public void testSpellchecking() {
-    doTest("spellchecking", new SpellCheckingInspection());
+    doTest("spellchecking", new GrazieSpellCheckingInspection());
   }
 
   public void testSpellcheckingInDependsOn() {
-    doTest("spellchecking_depends_on", new SpellCheckingInspection());
+    doTest("spellchecking_depends_on", new GrazieSpellCheckingInspection());
   }
 
   public void testSpellcheckingInHashesProperty() {
-    doTest("spellchecking_hashes_property", new SpellCheckingInspection());
+    doTest("spellchecking_hashes_property", new GrazieSpellCheckingInspection());
   }
 
   public void testSpellcheckingForBlockIdentifiers() {
-    doTest("spellchecking_block_identifiers", new SpellCheckingInspection());
+    doTest("spellchecking_block_identifiers", new GrazieSpellCheckingInspection());
   }
 
   public void testUnknownResourceType() {

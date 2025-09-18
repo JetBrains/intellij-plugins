@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.ide.spelling;
 
-import com.intellij.psi.PsiFile;
-import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.psi.PsiFile;
 
 /** Tests for {@link PbTextSpellcheckingStrategy}. */
 public class PbTextSpellcheckingStrategyTest extends PbCodeInsightFixtureTestCase {
@@ -25,7 +25,7 @@ public class PbTextSpellcheckingStrategyTest extends PbCodeInsightFixtureTestCas
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(new SpellCheckingInspection());
+    myFixture.enableInspections(new GrazieSpellCheckingInspection());
   }
 
   public void testSpellchecker() {

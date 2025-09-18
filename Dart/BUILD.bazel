@@ -105,6 +105,7 @@ jvm_library(
     "@community//plugins/copyright:copyright_test_lib",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
+    "@community//plugins/grazie/src:core",
     "@community//plugins/coverage-common:coverage",
     "@community//plugins/coverage-common:coverage_test_lib",
     "@community//xml/tests:tests_test_lib",

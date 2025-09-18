@@ -3,12 +3,12 @@ package com.jetbrains.lang.dart.highlighting;
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
@@ -67,7 +67,7 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testSpelling() {
-    myFixture.enableInspections(SpellCheckingInspection.class);
+    myFixture.enableInspections(GrazieSpellCheckingInspection.class);
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, false, true);
   }

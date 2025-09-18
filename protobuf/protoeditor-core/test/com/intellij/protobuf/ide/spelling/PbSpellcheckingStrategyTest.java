@@ -15,10 +15,10 @@
  */
 package com.intellij.protobuf.ide.spelling;
 
-import com.intellij.psi.PsiFile;
-import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.psi.PsiFile;
 
 /** Tests for {@link PbSpellcheckingStrategy}. */
 public class PbSpellcheckingStrategyTest extends PbCodeInsightFixtureTestCase {
@@ -31,7 +31,7 @@ public class PbSpellcheckingStrategyTest extends PbCodeInsightFixtureTestCase {
     TestUtils.addTestFileResolveProvider(
         getProject(), TestUtils.OPENSOURCE_DESCRIPTOR_PATH, getTestRootDisposable());
     TestUtils.registerTestdataFileExtension();
-    myFixture.enableInspections(new SpellCheckingInspection());
+    myFixture.enableInspections(new GrazieSpellCheckingInspection());
   }
 
   public void testSpellchecker() {

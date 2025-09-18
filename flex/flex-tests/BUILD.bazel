@@ -34,6 +34,7 @@ jvm_library(
     "@community//platform/structure-view-impl:structureView-impl",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
+    "@community//plugins/grazie/src:core",
     "@lib//:assert_j",
     "//plugins/css/plugin",
     "@community//platform/testFramework",

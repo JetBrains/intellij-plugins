@@ -16,6 +16,7 @@ import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.parser.FlexImporterTest;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.*;
@@ -60,7 +61,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
@@ -270,17 +270,17 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testSpellChecker() {
-    enableInspectionTool(new SpellCheckingInspection());
+    enableInspectionTool(new GrazieSpellCheckingInspection());
     defaultTest();
   }
 
   public void testSpellChecker_2() {
-    enableInspectionTool(new SpellCheckingInspection());
+    enableInspectionTool(new GrazieSpellCheckingInspection());
     defaultTest();
   }
 
   public void testSpellChecker2() {
-    enableInspectionTool(new SpellCheckingInspection());
+    enableInspectionTool(new GrazieSpellCheckingInspection());
     defaultTest();
   }
 

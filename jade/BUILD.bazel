@@ -100,6 +100,7 @@ jvm_library(
     "//plugins/fileWatcher:fileWatcher_test_lib",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
+    "@community//plugins/grazie/src:core",
     "@community//xml/xml-psi-api:psi",
     "@community//xml/tests:tests_test_lib",
     "//plugins/JavaScriptLanguage:javascript-testFramework",

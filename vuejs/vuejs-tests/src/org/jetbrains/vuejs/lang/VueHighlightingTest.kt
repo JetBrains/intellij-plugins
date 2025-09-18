@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredAltAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlRequiredTitleElementInspection
@@ -15,7 +16,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
-import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -162,17 +162,17 @@ const props = {seeMe: {}}
   fun testNotImportedComponentIsUnknown() = doDirTest()
 
   fun testNoDoubleSpellCheckingInAttributesWithEmbeddedContents() {
-    myFixture.enableInspections(SpellCheckingInspection())
+    myFixture.enableInspections(GrazieSpellCheckingInspection())
     doTest()
   }
 
   fun testNoSpellcheckInEnumeratedAttributes() {
-    myFixture.enableInspections(SpellCheckingInspection())
+    myFixture.enableInspections(GrazieSpellCheckingInspection())
     doTest()
   }
 
   fun testSpellchecking() {
-    myFixture.enableInspections(SpellCheckingInspection())
+    myFixture.enableInspections(GrazieSpellCheckingInspection())
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
   }
 

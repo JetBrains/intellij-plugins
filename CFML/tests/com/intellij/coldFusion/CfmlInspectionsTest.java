@@ -20,11 +20,11 @@ import com.intellij.coldFusion.UI.config.CfmlMappingsConfig;
 import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
 import com.intellij.coldFusion.UI.inspections.CfmlFileReferenceInspection;
 import com.intellij.coldFusion.UI.inspections.CfmlReferenceInspection;
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 
 import java.util.HashMap;
@@ -56,7 +56,7 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testSpellCheck() {
-    doInspectionTest(false, SpellCheckingInspection.class);
+    doInspectionTest(false, GrazieSpellCheckingInspection.class);
   }
 
   public void testUnResolveIncludeWithMappings() {
@@ -116,7 +116,7 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testComponentSpellCheck() {
-    doInspectionTest(false, SpellCheckingInspection.class);
+    doInspectionTest(false, GrazieSpellCheckingInspection.class);
   }
 
   public void testArgumentsStandartVariable() {

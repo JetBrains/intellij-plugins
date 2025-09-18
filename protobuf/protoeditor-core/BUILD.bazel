@@ -72,6 +72,7 @@ jvm_library(
     "@community//platform/usageView-impl",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
+    "@community//plugins/grazie/src:core",
     "@community//platform/indexing-impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",

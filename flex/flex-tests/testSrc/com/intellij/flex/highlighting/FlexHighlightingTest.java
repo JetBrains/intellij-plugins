@@ -19,6 +19,7 @@ import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.javascript.flex.css.FlexCSSDialect;
@@ -94,7 +95,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.refactoring.rename.RenameProcessor;
-import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.spellchecker.quickfixes.RenameTo;
 import com.intellij.testFramework.*;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
@@ -1072,7 +1072,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testSpellChecker() throws Exception {
-    enableInspectionTool(new SpellCheckingInspection());
+    enableInspectionTool(new GrazieSpellCheckingInspection());
     configureByFile(getBasePath() + "/" + getTestName(false) + ".mxml");
     ExpectedHighlightingData expectedHighlightingData = new ExpectedHighlightingData(myEditor.getDocument(), true, true, false);
     Collection<HighlightInfo> infoCollection = checkHighlighting(expectedHighlightingData);
