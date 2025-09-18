@@ -29,7 +29,7 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
 
   @Override
   public void applyFix(final @NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-    final GherkinScenarioOutlineImpl outline = (GherkinScenarioOutlineImpl) descriptor.getPsiElement();
+    final GherkinScenarioOutlineImpl outline = (GherkinScenarioOutlineImpl)descriptor.getPsiElement();
 
     final GherkinFile featureFile = (GherkinFile)outline.getContainingFile();
 
@@ -55,7 +55,8 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
     }
     if (params.isEmpty()) {
       buff.append(" |");
-    } else {
+    }
+    else {
       for (String substitution : params) {
         buff.append(' ').append(substitution).append(" |");
       }
@@ -64,7 +65,7 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
     final String text = buff.toString();
     GherkinScenarioOutline fakeScenario = (GherkinScenarioOutline)GherkinElementFactory.createScenarioFromText(project, language, text);
 
-    final GherkinExamplesBlock fakeExampleSection = fakeScenario.getExamplesBlocks().get(0);
+    final GherkinExamplesBlock fakeExampleSection = fakeScenario.getExamplesBlocks().getFirst();
     assert fakeExampleSection != null;
 
     GherkinExamplesBlockImpl addedSection = (GherkinExamplesBlockImpl)outline.add(fakeExampleSection);
@@ -74,8 +75,8 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
     final GherkinTableRow headerRow = table.getHeaderRow();
     assert headerRow != null;
     final List<GherkinTableCell> cells = headerRow.getPsiCells();
-    final int firstCellOffset = !cells.isEmpty() && cells.get(0).getTextLength() > 0 ?
-                                cells.get(0).getTextOffset() : headerRow.getTextOffset() + 1;
+    final int firstCellOffset = !cells.isEmpty() && cells.getFirst().getTextLength() > 0 ?
+                                cells.getFirst().getTextOffset() : headerRow.getTextOffset() + 1;
 
     final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
     assert editor != null;

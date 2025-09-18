@@ -73,7 +73,7 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
         continue;
       }
       List<GherkinTableCell> headerCells = table.getHeaderRow().getPsiCells();
-      List<GherkinTableCell> dataCells = table.getDataRows().get(0).getPsiCells();
+      List<GherkinTableCell> dataCells = table.getDataRows().getFirst().getPsiCells();
 
       Map<String, String> result = new HashMap<>();
       for (int i = 0; i < headerCells.size(); i++) {

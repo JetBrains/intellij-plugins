@@ -195,7 +195,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
         if (examplesBlocks.isEmpty()) {
           return null;
         }
-        final GherkinTable table = examplesBlocks.get(0).getTable();
+        final GherkinTable table = examplesBlocks.getFirst().getTable();
         if (table == null) {
           return null;
         }

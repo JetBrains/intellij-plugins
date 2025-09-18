@@ -59,7 +59,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     // TODO + step defs pairs from other content roots
     final List<CucumberStepDefinitionCreationContext> pairs = new ArrayList<>(getStepDefinitionContainers(featureFile));
     if (!pairs.isEmpty()) {
-      pairs.add(0, new CucumberStepDefinitionCreationContext());
+      pairs.addFirst(new CucumberStepDefinitionCreationContext());
 
       final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
       final ListPopup popupStep = popupFactory.createListPopup(

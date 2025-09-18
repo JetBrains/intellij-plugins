@@ -100,7 +100,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
       preparedRegexp.append(')');
     }
     result.add(currentStaticText.toString());
-    result.add(0, preparedRegexp.toString());
+    result.addFirst(preparedRegexp.toString());
     return result;
   }
 
@@ -133,7 +133,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
 
       final StringBuilder sb = new StringBuilder();
       for (int i = 0; i < concreteValues.size(); i++) {
-        String staticText = newStaticTexts.remove(0);
+        String staticText = newStaticTexts.removeFirst();
         sb.append(staticText);
         String concreteValue = concreteValues.get(i);
         if (concreteValue != null) {
@@ -162,7 +162,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     if (reference != null) {
       List<AbstractStepDefinition> stepDefinitions = reference.resolveToDefinitions().stream().toList();
       if (stepDefinitions.size() != 1) return; // TODO: signal this to the user in some way
-      final AbstractStepDefinition stepDefinition = stepDefinitions.get(0);
+      final AbstractStepDefinition stepDefinition = stepDefinitions.getFirst();
       if (stepDefinition == null) throw new IllegalStateException("step definition must not be null");
       final PsiElement elementToRename = stepDefinition.getElement();
       final String regexp = stepDefinition.getCucumberRegex();
@@ -170,11 +170,11 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
       if (expression != null && regexp != null) {
         final boolean expressionIsRegex = expression.equals(regexp);
         final Pattern oldStepDefPattern = Pattern.compile(
-          (expressionIsRegex ? prepareRegexAndGetStaticTexts(regexp).get(0) : prepareRegexFromCukex(expression))
+          (expressionIsRegex ? prepareRegexAndGetStaticTexts(regexp).getFirst() : prepareRegexFromCukex(expression))
         );
         final List<String> newStaticTexts = expressionIsRegex ? prepareRegexAndGetStaticTexts(newName) : getStaticTextsFromCukex(newName);
         if (expressionIsRegex) {
-          newStaticTexts.remove(0);
+          newStaticTexts.removeFirst();
         }
 
         for (UsageInfo usage : usages) {
