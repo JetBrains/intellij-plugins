@@ -69,7 +69,7 @@ class VueNewComponentTest : VueTestCase("new_component") {
     action.actionPerformed(event)
   }
 
-  fun createDataContext(
+  private fun createDataContext(
     name: String,
     directory: PsiDirectory,
   ): DataContext {
