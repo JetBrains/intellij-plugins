@@ -1,10 +1,3 @@
-<template>
-  <div v-if="item">
-    <p>
-      {{ item.kids ? item.descendants + ' comments' : 'No comments yet.' }}
-    </p>
-  </div>
-</template>
 <script>
 export default {
   name: 'NewComponent',
@@ -13,3 +6,11 @@ export default {
   }
 }
 </script>
+
+<template>
+  <div v-if="item">
+    <p>
+      {{ item.kids ? item.descendants + ' comments' : 'No comments yet.' }}
+    </p>
+  </div>
+</template>

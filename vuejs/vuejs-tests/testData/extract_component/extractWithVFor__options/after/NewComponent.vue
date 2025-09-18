@@ -1,6 +1,3 @@
-<template>
-  <span>Text: {{ item }}</span>
-</template>
 <script>
 export default {
   name: 'NewComponent',
@@ -9,3 +6,7 @@ export default {
   }
 }
 </script>
+
+<template>
+  <span>Text: {{ item }}</span>
+</template>

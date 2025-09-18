@@ -1,11 +1,13 @@
-<template>
-  <p>Paragraph!</p>
-</template>
 <script>
 export default {
   name: 'NewComponent'
 }
 </script>
+
+<template>
+  <p>Paragraph!</p>
+</template>
+
 <style lang="stylus">
 @import './stylus/main'
 </style>

@@ -1,6 +1,3 @@
-<template>
-  <p v-if="one">Paragraph! {{ compMethod }}</p>
-</template>
 <script>
 export default {
   name: 'NewComponent',
@@ -10,3 +7,7 @@ export default {
   }
 }
 </script>
+
+<template>
+  <p v-if="one">Paragraph! {{ compMethod }}</p>
+</template>

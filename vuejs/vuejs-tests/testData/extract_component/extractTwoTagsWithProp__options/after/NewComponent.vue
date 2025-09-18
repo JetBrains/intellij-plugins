@@ -1,7 +1,3 @@
-<template>
-  <p>Paragraph! {{ one + 1 }}</p>
-  <div>And div {{ unresolved }}</div>
-</template>
 <script>
 export default {
   name: 'NewComponent',
@@ -10,3 +6,8 @@ export default {
   }
 }
 </script>
+
+<template>
+  <p>Paragraph! {{ one + 1 }}</p>
+  <div>And div {{ unresolved }}</div>
+</template>

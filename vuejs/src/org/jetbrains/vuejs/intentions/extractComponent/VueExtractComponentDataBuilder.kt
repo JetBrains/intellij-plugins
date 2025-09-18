@@ -160,16 +160,19 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
       }
     }
 
-    var newText =
-
-      """<template${langAttribute(templateLanguage)}>
-${generateNewTemplateContents(hasDirectUsageSet)}
-</template>
+    var newText = """
 <script${langAttribute(scriptLanguage)}>${generateImports()}
 export default {
   name: '$newComponentName'${generateDescriptorMembers(hasDirectUsageSet)}
 }
-</script>${copyStyles()}"""
+</script>
+
+<template${langAttribute(templateLanguage)}>
+${generateNewTemplateContents(hasDirectUsageSet)}
+</template>
+
+${copyStyles()}
+""".trim()
 
     newText = psiOperationOnText(newText) { optimizeAndRemoveEmptyStyles(it) }
     newText = psiOperationOnText(newText) {
@@ -186,8 +189,7 @@ export default {
   }
 
   private fun copyStyles(): String {
-    if (styleTags.isEmpty()) return ""
-    return "\n" + styleTags.joinToString("\n") { it.text }
+    return styleTags.joinToString("\n\n") { it.text }
   }
 
   private fun findStyles(file: PsiFile): List<XmlTag> {
