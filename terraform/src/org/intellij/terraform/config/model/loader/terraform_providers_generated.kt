@@ -68,7 +68,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
     }
 
     val description = value.string("description")
-    val description_kind = value.string("description_kind") ?: "plain"
+    val descriptionKind = value.string("description_kind") ?: "plain"
 
     val deprecated = value.boolean("deprecated") ?: false
     val required = value.boolean("required") ?: false
@@ -82,7 +82,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
       return BlockType(
         name.pool(context),
         description = description?.pool(context),
-        descriptionKind = description_kind.pool(context),
+        descriptionKind = descriptionKind.pool(context),
         optional = optional,
         required = required,
         computed = computed,
@@ -96,7 +96,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
     return PropertyType(
       name.pool(context), type, hint = additional?.hint,
       description = description?.pool(context),
-      descriptionKind = description_kind.pool(context),
+      descriptionKind = descriptionKind.pool(context),
       optional = optional,
       required = required,
       computed = computed,
@@ -151,24 +151,24 @@ Sensitive           bool            `json:"sensitive,omitempty"`
   */
   private fun parseBlock(context: LoadContext, block: ObjectNode, name: String, nesting: NestingInfo?): BlockType {
     val attributes = block.obj("attributes")
-    val block_types = block.obj("block_types")
+    val blockTypes = block.obj("block_types")
 
     val description = block.string("description")
-    val description_kind = block.string("description_kind") ?: "plain"
+    val descriptionKind = block.string("description_kind") ?: "plain"
 
     val deprecated = block.boolean("deprecated") ?: false
 
-    val attrs: List<PropertyOrBlockType> = attributes?.fields()?.asSequence()?.map {
+    val attrs: List<PropertyOrBlockType> = attributes?.properties()?.asSequence()?.map {
       parseAttribute(context, it.key, it.value, name)
     }?.toList() ?: emptyList()
 
-    val blocks: List<PropertyOrBlockType> = block_types?.fields()?.asSequence()?.map {
+    val blocks: List<PropertyOrBlockType> = blockTypes?.properties()?.asSequence()?.map {
       parseBlockType(context, it.key, it.value)
     }?.toList() ?: emptyList()
 
     return BlockType(name.pool(context),
                      description = description?.pool(context),
-                     descriptionKind = description_kind.pool(context),
+                     descriptionKind = descriptionKind.pool(context),
                      deprecated = if (deprecated) "DEPRECATED" else null,
                      nesting = nesting,
                      properties = (attrs + blocks).associateBy { it.name }).pool(context)
@@ -212,7 +212,7 @@ Sensitive           bool            `json:"sensitive,omitempty"`
           assert(node.size() == 2 || (node.size() == 3 && node.get(2).isArray))
 
           val obj = node.get(1) as ObjectNode
-          val attributes = obj.fields().asSequence().associate { it.key to parseType(context, it.value) }
+          val attributes = obj.properties().associate { it.key to parseType(context, it.value) }
 
           // optional is a list of names (strings)
           val optional: Set<String>? =
@@ -254,7 +254,7 @@ MaxItems    uint64                `json:"max_items,omitempty"`
 
     NestingInfo(NestingType.fromString(nesting_mode!!)!!, min_items?.toInt(), max_items?.toInt())
 
-    val attrs = attributes?.fields()?.asSequence()?.map { parseAttribute(context, it.key, it.value, fqnPrefix) }?.toList()
+    val attrs = attributes?.properties()?.asSequence()?.map { parseAttribute(context, it.key, it.value, fqnPrefix) }?.toList()
                 ?: emptyList()
 
     val nested = ObjectType(attrs.associate { it.name to it.asType() }).pool(context)
@@ -297,7 +297,7 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
   override fun load(context: LoadContext, json: ObjectNode, fileName: String) {
     val model = context.model
     val providerSchemas = (json.obj("schemas") ?: json).obj("provider_schemas") ?: return
-    for ((n, provider) in providerSchemas.fields().asSequence()) {
+    for ((n, provider) in providerSchemas.properties().asSequence()) {
       val coordinates = ProviderType.parseCoordinates(n)
       val providerFullName = "${coordinates.namespace}/${coordinates.name}"
       val providerKey = "provider.$providerFullName"
@@ -316,17 +316,17 @@ internal class TfProvidersSchema : VersionedMetadataLoader {
       if (resources == null && dataSources == null) {
         TfMetadataLoader.LOG.warn("No resources nor data-sources defined for provider '$providerFullName' in file '$fileName'")
       }
-      resources?.let { resource -> resource.fields().asSequence().mapTo(model.resources) { parseResourceInfo(context, it, providerInfo) } }
-      dataSources?.let { dataSource -> dataSource.fields().asSequence().mapTo(model.dataSources) { parseDataSourceInfo(context, it, providerInfo) } }
+      resources?.let { resource -> resource.properties().mapTo(model.resources) { parseResourceInfo(context, it, providerInfo) } }
+      dataSources?.let { dataSource -> dataSource.properties().mapTo(model.dataSources) { parseDataSourceInfo(context, it, providerInfo) } }
 
       val providerDefinedFunctions = provider.obj("functions")
       providerDefinedFunctions?.let { function ->
-        function.fields()?.asSequence()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(context, it, providerInfo) }
+        function.properties()?.mapNotNullTo(model.providerDefinedFunctions) { parseProviderFunctionInfo(context, it, providerInfo) }
       }
 
       val ephemeralResources = provider.obj("ephemeral_resource_schemas")
-      ephemeralResources?.let {
-        ephemeralResource -> ephemeralResource.fields().asSequence().mapNotNullTo(model.ephemeralResources) {
+      ephemeralResources?.let { ephemeralResource ->
+        ephemeralResource.properties().mapNotNullTo(model.ephemeralResources) {
           parseEphemeralResourceInfo(context, it, providerInfo)
         }
       }
