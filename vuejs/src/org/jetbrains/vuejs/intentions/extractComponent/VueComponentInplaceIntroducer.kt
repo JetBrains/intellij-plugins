@@ -56,7 +56,7 @@ internal class VueComponentInplaceIntroducer(
   override fun getCommandName(): String =
     VueBundle.message("vue.template.intention.extract.component.command.name")
 
-  override fun collectRefs(referencesSearchScope: SearchScope?): MutableCollection<PsiReference> {
+  override fun collectRefs(referencesSearchScope: SearchScope?): Collection<PsiReference> {
     return mutableListOf()
   }
 

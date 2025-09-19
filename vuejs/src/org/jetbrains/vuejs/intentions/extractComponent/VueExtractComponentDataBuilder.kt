@@ -115,7 +115,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     }
   }
 
-  private fun generateNewTemplateContents(mapHasDirectUsage: MutableSet<String>): String {
+  private fun generateNewTemplateContents(mapHasDirectUsage: Set<String>): String {
     return list.joinToString("")
     { tag ->
       val sb = StringBuilder(tag.text)
@@ -221,7 +221,7 @@ ${copyStyles()}
     }
   }
 
-  private fun generateDescriptorMembers(mapHasDirectUsage: MutableSet<String>): String {
+  private fun generateDescriptorMembers(mapHasDirectUsage: Set<String>): String {
     val members = mutableListOf<String>()
     if (importsToCopy.isNotEmpty()) {
       members.add(importsToCopy.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
