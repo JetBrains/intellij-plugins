@@ -21,13 +21,21 @@ class VueExtractComponentIntention : JavaScriptIntention() {
     return VueBundle.message("action.VueExtractComponentAction.text")
   }
 
-  override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
+  override fun isAvailable(
+    project: Project,
+    editor: Editor?,
+    element: PsiElement,
+  ): Boolean {
     editor ?: return false
     if (!element.containingFile.isVueFile) return false
     return getContextForExtractComponentIntention(editor, element) != null
   }
 
-  override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
+  override fun invoke(
+    project: Project,
+    editor: Editor?,
+    element: PsiElement,
+  ) {
     editor ?: return
     val context = getContextForExtractComponentIntention(editor, element) ?: return
     VueExtractComponentRefactoring(project, context, editor).perform()
@@ -36,7 +44,10 @@ class VueExtractComponentIntention : JavaScriptIntention() {
   override fun startInWriteAction(): Boolean = false
 }
 
-fun getContextForExtractComponentIntention(editor: Editor?, element: PsiElement): List<XmlTag>? {
+fun getContextForExtractComponentIntention(
+  editor: Editor?,
+  element: PsiElement,
+): List<XmlTag>? {
   val selectedTags = getSelectedTags(element, editor)
   return if (selectedTags == null || selectedTags.any {
       PsiTreeUtil.getParentOfType(it, XmlTag::class.java) == null
