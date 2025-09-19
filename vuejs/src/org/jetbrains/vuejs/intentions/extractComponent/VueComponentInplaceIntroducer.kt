@@ -12,7 +12,6 @@ import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiElement
@@ -230,8 +229,13 @@ internal class VueComponentInplaceIntroducer(
     }
     step.defaultOptionIndex = 0
 
-    val listPopup: ListPopup = if (!ApplicationManager.getApplication().isUnitTestMode) ListPopupImpl(step)
-    else MockConfirmation(step, yesText)
+    val listPopup = if (!ApplicationManager.getApplication().isUnitTestMode) {
+      ListPopupImpl(step)
+    }
+    else {
+      MockConfirmation(step, yesText)
+    }
+
     listPopup.showInBestPositionFor(myEditor)
   }
 
