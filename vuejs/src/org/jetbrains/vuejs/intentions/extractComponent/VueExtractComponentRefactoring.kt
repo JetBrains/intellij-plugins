@@ -70,8 +70,14 @@ class VueExtractComponentRefactoring(
     }, refactoringName, GROUP_ID)
   }
 
-  private fun getSelectedText(): String =
-    editor.document.getText(TextRange(list[0].textRange.startOffset, list[list.size - 1].textRange.endOffset))
+  private fun getSelectedText(): String {
+    val range = TextRange(
+      list.first().textRange.startOffset,
+      list.last().textRange.endOffset,
+    )
+
+    return editor.document.getText(range)
+  }
 
   private class TagNameValidator(
     context: XmlTag,
