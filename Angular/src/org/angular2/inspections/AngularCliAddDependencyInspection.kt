@@ -10,6 +10,7 @@ import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.json.psi.JsonValue
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -46,7 +47,7 @@ class AngularCliAddDependencyInspection : LocalInspectionTool() {
     val project = file.project
     if (packageJson == null || !JSLibraryUtil.isInProjectAndOutsideOfLibraryRoots(project, packageJson)) return
 
-    val properties = PackageJsonCommonUtil.getDependencies(file, PackageJsonCommonUtil.PROD_DEV_DEPENDENCIES)
+    val properties = PackageJsonCommonUtil.getDependencies(file, PackageJsonUtil.PROD_DEV_DEPENDENCIES)
     if (properties.isEmpty()) return
     val finder = NodeInstalledPackageFinder(project, packageJson)
     for (property in properties) {

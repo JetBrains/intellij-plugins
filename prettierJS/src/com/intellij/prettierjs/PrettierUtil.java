@@ -12,6 +12,7 @@ import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.GlobPatternUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
@@ -78,7 +79,7 @@ public final class PrettierUtil {
   );
 
   private static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
-    ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonCommonUtil.FILE_NAME);
+    ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
 
   public static final SemVer MIN_VERSION = new SemVer("1.13.0", 1, 13, 0);
   public static final SemVer NODE_MIN_VERSION_FOR_STRIP_TYPES_FLAG = new SemVer("22.6.0", 22, 6, 0);
