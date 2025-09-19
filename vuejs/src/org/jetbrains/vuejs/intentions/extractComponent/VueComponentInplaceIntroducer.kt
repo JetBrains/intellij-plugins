@@ -201,12 +201,16 @@ internal class VueComponentInplaceIntroducer(
   }
 
   private fun findTagBeingRenamed(): XmlTag? {
-    if (myElementToRename != null && myElementToRename.isValid) {
-      return myElementToRename as? XmlTag
+    return if (myElementToRename != null && myElementToRename.isValid) {
+      myElementToRename as? XmlTag
     }
     else {
-      return PsiTreeUtil.findElementOfClassAtRange(containingFile, myRenameOffset.startOffset,
-                                                   myRenameOffset.endOffset, XmlTag::class.java)
+      PsiTreeUtil.findElementOfClassAtRange(
+        containingFile,
+        myRenameOffset.startOffset,
+        myRenameOffset.endOffset,
+        XmlTag::class.java,
+      )
     }
   }
 
