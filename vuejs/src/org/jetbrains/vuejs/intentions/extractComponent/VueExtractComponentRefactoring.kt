@@ -28,7 +28,10 @@ class VueExtractComponentRefactoring(
   private val list: List<XmlTag>,
   private val editor: Editor,
 ) {
-  fun perform(defaultName: String? = null, fireRefactoringEvents: Boolean = false) {
+  fun perform(
+    defaultName: String? = null,
+    fireRefactoringEvents: Boolean = false,
+  ) {
     if (list.isEmpty() ||
         list[0].containingFile == null ||
         list[0].containingFile.parent == null ||
@@ -47,15 +50,22 @@ class VueExtractComponentRefactoring(
       var newlyAdded: XmlTag? = null
       val validator = TagNameValidator(list[0])
       var startMarkAction: StartMarkAction? = null
+
       WriteAction.run<RuntimeException> {
         startMarkAction = StartMarkAction.start(editor, project, refactoringName)
         startMarkAction!!.isGlobal = true
         newlyAdded = data.replaceWithNewTag(defaultName ?: "NewComponent") as? XmlTag
       }
-      VueComponentInplaceIntroducer(newlyAdded!!, editor, data, oldText,
-                                    validator::validate,
-                                    startMarkAction!!,
-                                    fireRefactoringEvents).performInplaceRefactoring(linkedSetOf())
+
+      VueComponentInplaceIntroducer(
+        elementToRename = newlyAdded!!,
+        editor = editor,
+        data = data,
+        oldText = oldText,
+        validator = validator::validate,
+        startMarkAction = startMarkAction!!,
+        fireRefactoringEvents = fireRefactoringEvents,
+      ).performInplaceRefactoring(linkedSetOf())
 
     }, refactoringName, GROUP_ID)
   }
