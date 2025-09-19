@@ -7,7 +7,8 @@ import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import icons.CucumberIcons;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinFeatureHeaderImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableImpl;
@@ -19,31 +20,33 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class GherkinStructureViewElement extends PsiTreeElementBase<PsiElement> {
-  protected GherkinStructureViewElement(PsiElement psiElement) {
+@NotNullByDefault
+public final class GherkinStructureViewElement extends PsiTreeElementBase<PsiElement> {
+  GherkinStructureViewElement(PsiElement psiElement) {
     super(psiElement);
   }
 
   @Override
-  public @NotNull Collection<StructureViewTreeElement> getChildrenBase() {
+  public Collection<StructureViewTreeElement> getChildrenBase() {
     List<StructureViewTreeElement> result = new ArrayList<>();
-    for (PsiElement element : getElement().getChildren()) {
-      if (element instanceof GherkinPsiElement &&
-          !(element instanceof GherkinFeatureHeaderImpl) &&
-          !(element instanceof GherkinTableImpl) &&
-          !(element instanceof GherkinTagImpl) &&
-          !(element instanceof GherkinPystring)) {
-        result.add(new GherkinStructureViewElement(element));
+    PsiElement element = getElement();
+    if (element == null) return result;
+    for (PsiElement child : element.getChildren()) {
+      if (child instanceof GherkinPsiElement &&
+          !(child instanceof GherkinFeatureHeaderImpl) &&
+          !(child instanceof GherkinTableImpl) &&
+          !(child instanceof GherkinTagImpl) &&
+          !(child instanceof GherkinPystring)) {
+        result.add(new GherkinStructureViewElement(child));
       }
     }
     return result;
   }
 
   @Override
-  public Icon getIcon(boolean open) {
+  public @Nullable Icon getIcon(boolean open) {
     final PsiElement element = getElement();
-    if (element instanceof GherkinFeature
-        || element instanceof GherkinStepsHolder) {
+    if (element instanceof GherkinFeature || element instanceof GherkinStepsHolder) {
       return AllIcons.Nodes.LogFolder;
     }
     if (element instanceof GherkinStep) {
@@ -54,7 +57,12 @@ public class GherkinStructureViewElement extends PsiTreeElementBase<PsiElement> 
 
 
   @Override
-  public String getPresentableText() {
-    return ((NavigationItem) getElement()).getPresentation().getPresentableText();
+  public @Nullable String getPresentableText() {
+    if (getElement() instanceof NavigationItem navigationItem) {
+      if (navigationItem.getPresentation() != null) {
+        return navigationItem.getPresentation().getPresentableText();
+      }
+    }
+    return null;
   }
 }
