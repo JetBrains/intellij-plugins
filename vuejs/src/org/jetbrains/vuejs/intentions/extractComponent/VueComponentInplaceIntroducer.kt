@@ -20,6 +20,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.refactoring.RefactoringActionHandler
@@ -103,7 +104,7 @@ internal class VueComponentInplaceIntroducer(
       WriteAction.run<RuntimeException> {
         val tag = findTagBeingRenamed() ?: return@run
         // for the case with pug
-        val embedded = PsiTreeUtil.getParentOfType(tag, JSEmbeddedContent::class.java)
+        val embedded = tag.parentOfType<JSEmbeddedContent>()
         val offset = embedded?.textRange?.startOffset ?: 0
         myEditor.document.replaceString(offset + tag.textRange.startOffset, offset + tag.textRange.endOffset, oldText)
         myEditor.caretModel.currentCaret.moveToOffset(oldCaret)

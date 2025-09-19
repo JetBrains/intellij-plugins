@@ -22,6 +22,7 @@ import com.intellij.psi.css.inspections.CssUnusedSymbolUtils.getUnusedStyles
 import com.intellij.psi.css.inspections.RemoveUnusedSymbolIntentionAction
 import com.intellij.psi.impl.source.xml.TagNameReference
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
@@ -56,11 +57,11 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
         return@forEach
       }
       val resolved = refData.resolve() ?: return@forEach
-      var parentTag = PsiTreeUtil.getParentOfType(resolved, XmlTag::class.java)
+      var parentTag = resolved.parentOfType<XmlTag>()
       if (parentTag == null && isVueExprMetaLanguage(resolved.language)) {
         val host = InjectedLanguageManager.getInstance(list[0].project).getInjectionHost(resolved)
         if (host != null) {
-          parentTag = PsiTreeUtil.getParentOfType(host, XmlTag::class.java)
+          parentTag = host.parentOfType<XmlTag>()
         }
       }
       if (scriptTag != null && parentTag == scriptTag || PsiTreeUtil.isAncestor(parentTag, refData.tag, true)) {
