@@ -47,23 +47,23 @@ class VueExtractComponentRefactoring(
       if (fireRefactoringEvents)
         JSRefactoringUtil.registerRefactoringUndo(project, VueExtractComponentAction.REFACTORING_ID)
 
-      var newlyAdded: XmlTag? = null
+      lateinit var newlyAdded: XmlTag
       val validator = TagNameValidator(list[0])
-      var startMarkAction: StartMarkAction? = null
+      lateinit var startMarkAction: StartMarkAction
 
       WriteAction.run<RuntimeException> {
         startMarkAction = StartMarkAction.start(editor, project, refactoringName)
-        startMarkAction!!.isGlobal = true
-        newlyAdded = data.replaceWithNewTag(defaultName ?: "NewComponent") as? XmlTag
+        startMarkAction.isGlobal = true
+        newlyAdded = data.replaceWithNewTag(defaultName ?: "NewComponent")
       }
 
       VueComponentInplaceIntroducer(
-        elementToRename = newlyAdded!!,
+        elementToRename = newlyAdded,
         editor = editor,
         data = data,
         oldText = oldText,
         validator = validator::validate,
-        startMarkAction = startMarkAction!!,
+        startMarkAction = startMarkAction,
         fireRefactoringEvents = fireRefactoringEvents,
       ).performInplaceRefactoring(linkedSetOf())
 

@@ -239,7 +239,7 @@ ${copyStyles()}
     optimizeUnusedComponentsAndImports(currentFile)
   }
 
-  fun replaceWithNewTag(replaceName: String): PsiElement {
+  fun replaceWithNewTag(replaceName: String): XmlTag {
     unusedStylesInExistingComponent = getUnusedStyles(containingFile)
 
     val leader = list[0]
@@ -252,7 +252,7 @@ ${copyStyles()}
     val template = PsiTreeUtil.findChildOfType(dummyFile, XmlTag::class.java)!!
     val newTag = PsiTreeUtil.findChildOfType(template, XmlTag::class.java)!!
 
-    val newlyAdded = leader.replace(newTag)
+    val newlyAdded = leader.replace(newTag) as XmlTag
     list.subList(1, list.size).forEach { it.delete() }
     return newlyAdded
   }
