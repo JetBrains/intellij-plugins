@@ -485,8 +485,7 @@ public final class CucumberJavaUtil {
                                                                GlobalSearchScope scope,
                                                                Map<String, String> values,
                                                                Map<String, SmartPsiElementPointer<PsiElement>> declarations) {
-    PsiClass parameterTypeAnnotationClass =
-      JavaPsiFacade.getInstance(module.getProject()).findClass(PARAMETER_TYPE_ANNOTATION_FQN, scope);
+    PsiClass parameterTypeAnnotationClass = JavaPsiFacade.getInstance(module.getProject()).findClass(PARAMETER_TYPE_ANNOTATION_FQN, scope);
     if (parameterTypeAnnotationClass != null) {
       Query<PsiMethod> parameterTypeMethods = AnnotatedElementsSearch.searchPsiMethods(parameterTypeAnnotationClass, scope);
       for (PsiMethod method : parameterTypeMethods.findAll()) {
@@ -494,10 +493,15 @@ public final class CucumberJavaUtil {
         if (parameterTypeAnnotation != null) {
           String parameterTypeAnnotationValue = getAnnotationValue(parameterTypeAnnotation);
           if (StringUtil.isNotEmpty(parameterTypeAnnotationValue)) {
-            values.put(method.getName(), parameterTypeAnnotationValue);
-            PsiIdentifier methodNameIdentifier = method.getNameIdentifier();
-            if (methodNameIdentifier != null) {
-              declarations.put(method.getName(), SmartPointerManager.createPointer(methodNameIdentifier));
+            final String nameAttr = AnnotationUtil.getDeclaredStringAttributeValue(parameterTypeAnnotation, "name");
+            final String typeName = StringUtil.isNotEmpty(nameAttr) ? nameAttr : method.getName();
+            values.put(typeName, parameterTypeAnnotationValue);
+
+            final PsiAnnotationMemberValue nameAttrValue = parameterTypeAnnotation.findDeclaredAttributeValue("name");
+            final PsiElement declarationElement = nameAttrValue != null ? nameAttrValue : method.getNameIdentifier();
+
+            if (declarationElement != null) {
+              declarations.put(typeName, SmartPointerManager.createPointer(declarationElement));
             }
           }
         }

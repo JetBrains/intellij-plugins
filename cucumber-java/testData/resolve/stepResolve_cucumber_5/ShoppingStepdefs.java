@@ -5,6 +5,7 @@ import io.cucumber.java8.StepDefinitionBody;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.When;
 import io.cucumber.java.ParameterType;
 import java.util.List;
 
@@ -56,4 +57,15 @@ public class ShoppingStepdefs implements En {
   public String color(String color) {
     return "Text with color: " + color;
   }
+
+  @When("the {customMoodName} mood is chosen")
+  public void task_choose_mood(Mood mood) {
+  }
+
+  @ParameterType(value = ".*", name = "customMoodName")
+  public Mood mood(String moodName) {
+    return Mood.valueOf(moodName);
+  }
+
+  public enum Mood {HAPPY, SAD}
 }
