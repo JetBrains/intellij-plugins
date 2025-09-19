@@ -32,10 +32,13 @@ class VueExtractComponentRefactoring(
     defaultName: String? = null,
     fireRefactoringEvents: Boolean = false,
   ) {
-    if (list.isEmpty() ||
-        list[0].containingFile == null ||
-        list[0].containingFile.parent == null ||
-        !CommonRefactoringUtil.checkReadOnlyStatus(project, list[0].containingFile)) return
+    val firstTag = list.firstOrNull()
+
+    firstTag
+      ?.containingFile
+      ?.takeIf { it.parent != null }
+      ?.takeIf { CommonRefactoringUtil.checkReadOnlyStatus(project, it) }
+    ?: return
 
     val oldText = getSelectedText()
 
@@ -48,7 +51,7 @@ class VueExtractComponentRefactoring(
         JSRefactoringUtil.registerRefactoringUndo(project, VueExtractComponentAction.REFACTORING_ID)
 
       lateinit var newlyAdded: XmlTag
-      val validator = TagNameValidator(list[0])
+      val validator = TagNameValidator(firstTag)
       lateinit var startMarkAction: StartMarkAction
 
       WriteAction.run<RuntimeException> {
