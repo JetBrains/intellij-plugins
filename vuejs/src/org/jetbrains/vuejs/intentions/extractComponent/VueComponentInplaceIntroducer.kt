@@ -230,7 +230,7 @@ internal class VueComponentInplaceIntroducer(
     step.defaultOptionIndex = 0
 
     val listPopup = if (!ApplicationManager.getApplication().isUnitTestMode) {
-      ListPopupImpl(step)
+      ListPopupImpl(myProject, step)
     }
     else {
       MockConfirmation(step, yesText)
