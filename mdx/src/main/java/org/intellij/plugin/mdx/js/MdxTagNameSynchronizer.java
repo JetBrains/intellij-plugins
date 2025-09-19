@@ -154,7 +154,7 @@ public final class MdxTagNameSynchronizer implements EditorFactoryListener {
     }
   }
 
-  public static class MyDynamicPluginListener implements DynamicPluginListener {
+  final static class MyDynamicPluginListener implements DynamicPluginListener {
     @Override
     public void pluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
       recreateSynchronizers();
