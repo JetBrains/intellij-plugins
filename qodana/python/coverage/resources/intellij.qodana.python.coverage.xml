@@ -1,7 +1,7 @@
 <idea-plugin package="org.jetbrains.qodana.python.coverage">
   <dependencies>
     <plugin id="com.intellij.modules.lang" />
-    <plugin id="PythonCore"/>
+    <plugin id="com.intellij.modules.python"/>
     <plugin id="Pythonid"/>
     <module name="intellij.qodana.coverage"/>
     <module name="intellij.python"/>
