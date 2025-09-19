@@ -56,14 +56,21 @@ internal class VueComponentInplaceIntroducer(
   override fun getCommandName(): String =
     VueBundle.message("vue.template.intention.extract.component.command.name")
 
-  override fun collectRefs(referencesSearchScope: SearchScope?): Collection<PsiReference> {
-    return mutableListOf()
+  override fun collectRefs(
+    referencesSearchScope: SearchScope?,
+  ): Collection<PsiReference> {
+    return emptyList()
   }
 
-  override fun addReferenceAtCaret(refs: MutableCollection<in PsiReference>) {
+  override fun addReferenceAtCaret(
+    refs: MutableCollection<in PsiReference>,
+  ) {
   }
 
-  override fun startsOnTheSameElement(handler: RefactoringActionHandler?, element: PsiElement?): Boolean {
+  override fun startsOnTheSameElement(
+    handler: RefactoringActionHandler?,
+    element: PsiElement?,
+  ): Boolean {
     return true
   }
 
@@ -76,10 +83,14 @@ internal class VueComponentInplaceIntroducer(
   }
 
   override fun getNameIdentifier(): PsiElement? {
-    return myElementToRename.node.findChildByType(TokenSet.create(XmlTokenType.XML_NAME, XmlTokenType.XML_TAG_NAME))?.psi
+    return myElementToRename.node
+      .findChildByType(TokenSet.create(XmlTokenType.XML_NAME, XmlTokenType.XML_TAG_NAME))
+      ?.psi
   }
 
-  override fun performInplaceRefactoring(nameSuggestions: LinkedHashSet<String>?): Boolean {
+  override fun performInplaceRefactoring(
+    nameSuggestions: LinkedHashSet<String>?,
+  ): Boolean {
     nameIdentifier ?: return false
     myEditor!!.caretModel.moveToOffset(nameIdentifier!!.textRange.endOffset)
     return super.performInplaceRefactoring(nameSuggestions)
@@ -104,7 +115,8 @@ internal class VueComponentInplaceIntroducer(
     }
   }
 
-  override fun restoreCaretOffset(offset: Int): Int = if (isCanceled) oldCaret else offset
+  override fun restoreCaretOffset(offset: Int): Int =
+    if (isCanceled) oldCaret else offset
 
   override fun performRefactoring(): Boolean {
     if (myInsertedName == null) return false
@@ -157,7 +169,11 @@ internal class VueComponentInplaceIntroducer(
     CommandProcessor.getInstance().executeCommand(myProject, { performCleanup() }, commandName, getGroupId())
   }
 
-  private fun askAndRestartRename(@Nls error: String, commandProcessor: CommandProcessor, tag: XmlTag) {
+  private fun askAndRestartRename(
+    @Nls error: String,
+    commandProcessor: CommandProcessor,
+    tag: XmlTag,
+  ) {
     askConfirmation(error,
                     onYes = {
                       hijackCommand()
@@ -190,7 +206,11 @@ internal class VueComponentInplaceIntroducer(
     }
   }
 
-  private fun askConfirmation(@Nls title: String, onYes: () -> Unit, onNo: () -> Unit) {
+  private fun askConfirmation(
+    @Nls title: String,
+    onYes: () -> Unit,
+    onNo: () -> Unit,
+  ) {
     val yesText = VueBundle.message("vue.template.intention.extract.component.continue")
     val step = object : BaseListPopupStep<String>(title, yesText, CommonBundle.getCancelButtonText()) {
       private var yesChosen = false
