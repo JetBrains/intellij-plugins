@@ -32,7 +32,7 @@ internal class VueExtractComponentAction : BaseRefactoringAction() {
         editor ?: return
         val element = PsiUtilBase.getElementAtCaret(editor) ?: return
         val context = getContextForExtractComponentIntention(editor, element) ?: return
-        beforeRefactoring(project, REFACTORING_ID, *context.toTypedArray())
+        beforeRefactoring(project = project, id = REFACTORING_ID, elements = context.toTypedArray())
         VueExtractComponentRefactoring(project, context, editor).perform(fireRefactoringEvents = true)
       }
 
