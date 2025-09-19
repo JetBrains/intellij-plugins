@@ -73,20 +73,23 @@ class VueExtractComponentRefactoring(
   private fun getSelectedText(): String =
     editor.document.getText(TextRange(list[0].textRange.startOffset, list[list.size - 1].textRange.endOffset))
 
-  private class TagNameValidator(context: XmlTag) {
+  private class TagNameValidator(
+    context: XmlTag,
+  ) {
     private val folder = context.containingFile.parent!!
-    private val forbidden: Set<String>
-    private val alreadyExisting: Set<String>
 
-    init {
-      forbidden = DefaultXmlExtension.DEFAULT_EXTENSION.getAvailableTagNames(context.containingFile as XmlFile, context)
-        .map { it.name }.toSet()
-      alreadyExisting = PolySymbolQueryExecutorFactory.create(context)
+    private val forbidden: Set<String> =
+      DefaultXmlExtension.DEFAULT_EXTENSION
+        .getAvailableTagNames(context.containingFile as XmlFile, context)
+        .map { it.name }
+        .toSet()
+
+    private val alreadyExisting: Set<String> =
+      PolySymbolQueryExecutorFactory.create(context)
         .codeCompletionQuery(VUE_COMPONENTS, "", 0)
         .run()
         .map { fromAsset(it.name) }
         .toSet()
-    }
 
     fun validate(@NonNls text: String): @Nls String? {
       val normalized = fromAsset(text.trim())
