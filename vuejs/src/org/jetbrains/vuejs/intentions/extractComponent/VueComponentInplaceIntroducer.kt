@@ -166,7 +166,8 @@ internal class VueComponentInplaceIntroducer(
   }
 
   private fun performCleanupInCommand() {
-    CommandProcessor.getInstance().executeCommand(myProject, { performCleanup() }, commandName, getGroupId())
+    CommandProcessor.getInstance()
+      .executeCommand(myProject, ::performCleanup, commandName, getGroupId())
   }
 
   private fun askAndRestartRename(
@@ -174,16 +175,29 @@ internal class VueComponentInplaceIntroducer(
     commandProcessor: CommandProcessor,
     tag: XmlTag,
   ) {
-    askConfirmation(error,
-                    onYes = {
-                      hijackCommand()
-                      commandProcessor.executeCommand(myProject, {
-                        VueComponentInplaceIntroducer(tag, myEditor, data, oldText,
-                                                      validator, startMarkAction)
-                          .performInplaceRefactoring(linkedSetOf())
-                      }, commandName, getGroupId())
-                    },
-                    onNo = this::performCleanupInCommand)
+    askConfirmation(
+      error,
+      onYes = {
+        hijackCommand()
+
+        commandProcessor.executeCommand(
+          myProject,
+          {
+            VueComponentInplaceIntroducer(
+              elementToRename = tag,
+              editor = myEditor,
+              data = data,
+              oldText = oldText,
+              validator = validator,
+              startMarkAction = startMarkAction,
+            ).performInplaceRefactoring(linkedSetOf())
+          },
+          commandName,
+          getGroupId(),
+        )
+      },
+      onNo = ::performCleanupInCommand,
+    )
   }
 
   private fun findTagBeingRenamed(): XmlTag? {
