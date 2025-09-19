@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.vuejs.VueBundle
@@ -49,10 +50,14 @@ fun getContextForExtractComponentIntention(
   element: PsiElement,
 ): List<XmlTag>? {
   val selectedTags = getSelectedTags(element, editor)
-  return if (selectedTags == null || selectedTags.any {
-      PsiTreeUtil.getParentOfType(it, XmlTag::class.java) == null
-    }) return null
-  else selectedTags
+                     ?: return null
+
+  val validParents = selectedTags
+    .all { it.parentOfType<XmlTag>() != null }
+
+  return if (validParents) {
+    selectedTags
+  } else null
 }
 
 private fun getSelectedTags(
