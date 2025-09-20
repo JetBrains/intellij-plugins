@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -725,7 +725,9 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public void testClassHierarchyMembersOrder2() {
     final LookupElement[] lookupElements = doTest("");
-    assertStartsWith(lookupElements, "e", "param", "return", "Extended", "a", "Base", "zbb", "zzz", "Object", "zaa", "constructor");
+    assertStartsWith(lookupElements, "e", "param");
+    checkWeHaveInCompletion(lookupElements, "return", "Extended", "a", "Base", "zbb", "zzz", "Object", "zaa", "constructor");
+    checkNoCompletion(lookupElements, "basePrivate");
   }
 
   public void testUseKeyword() {
