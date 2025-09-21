@@ -9,13 +9,13 @@ import org.intellij.terraform.hcl.codeinsight.HclKeywordsCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createBlockHeaderPattern
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createRootBlockPattern
-import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns
+import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns.TerragruntFile
 
 internal class TerragruntCompletionContributor : CompletionContributor(), DumbAware {
   init {
     extend(CompletionType.BASIC, AfterCommaOrBracketPattern, HclKeywordsCompletionProvider)
 
-    extend(CompletionType.BASIC, createRootBlockPattern(TerragruntPsiPatterns.TerragruntFile), HclRootBlockCompletionProvider)
-    extend(CompletionType.BASIC, createBlockHeaderPattern(TerragruntPsiPatterns.TerragruntFile), HclRootBlockCompletionProvider)
+    extend(CompletionType.BASIC, createRootBlockPattern(TerragruntFile), HclRootBlockCompletionProvider)
+    extend(CompletionType.BASIC, createBlockHeaderPattern(TerragruntFile), HclRootBlockCompletionProvider)
   }
 }

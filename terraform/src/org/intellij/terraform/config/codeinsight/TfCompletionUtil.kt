@@ -27,7 +27,7 @@ import org.intellij.terraform.config.Constants.HCL_SELF_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VAR_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
-import org.intellij.terraform.config.documentation.psi.HCLFakeElementPsiFactory
+import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLElementTypes
@@ -102,7 +102,7 @@ internal object TfCompletionUtil {
   fun buildLookupForProviderBlock(provider: ProviderType, element: PsiElement): LookupElement =
     createProviderLookupElement(provider, element)
       .withInsertHandler(BlockSubNameInsertHandler(provider))
-      .withPsiElement(element.project.service<HCLFakeElementPsiFactory>().createFakeHCLBlock(provider, element.containingFile.originalFile))
+      .withPsiElement(element.project.service<HclFakeElementPsiFactory>().createFakeHclBlock(provider, element.containingFile.originalFile))
 
   fun buildLookupForRequiredProvider(provider: ProviderType, element: PsiElement): LookupElement =
     createProviderLookupElement(provider, element)

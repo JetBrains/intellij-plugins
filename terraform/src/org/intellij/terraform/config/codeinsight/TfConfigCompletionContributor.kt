@@ -36,7 +36,7 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getClearTextVa
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getLookupIcon
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getOriginalObject
-import org.intellij.terraform.config.documentation.psi.HCLFakeElementPsiFactory
+import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
@@ -215,7 +215,7 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
 
   abstract class TfCompletionProvider : CompletionProvider<CompletionParameters>() {
 
-    protected fun addResultsWithCustomSorter(result: CompletionResultSet, toAdd: Collection<LookupElementBuilder>) {
+    protected fun addResultsWithCustomSorter(result: CompletionResultSet, toAdd: Collection<LookupElement>) {
       if (toAdd.isEmpty()) return
       result.withRelevanceSorter(
         CompletionSorter.emptySorter().weigh(PreferRequiredProperty)
@@ -355,14 +355,14 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
           }
         })
         .withInsertHandler(BlockSubNameInsertHandler(it as BlockType))
-        .withPsiElement(position.project.service<HCLFakeElementPsiFactory>().createFakeHCLBlock(it, position.containingFile.originalFile))
+        .withPsiElement(position.project.service<HclFakeElementPsiFactory>().createFakeHclBlock(it, position.containingFile.originalFile))
     }
 
     private fun buildLookupElement(it: BlockType, typeName: String, typeText: String?, position: PsiElement): LookupElementBuilder = create(typeName)
       .withTypeText(typeText, true)
       .withIcon(getLookupIcon(position))
       .withInsertHandler(BlockSubNameInsertHandler(it))
-      .withPsiElement(position.project.service<HCLFakeElementPsiFactory>().createFakeHCLBlock(it.literal, typeName, position.containingFile.originalFile))
+      .withPsiElement(position.project.service<HclFakeElementPsiFactory>().createFakeHclBlock(it.literal, typeName, position.containingFile.originalFile))
   }
 
   private object BlockPropertiesCompletionProvider : TfCompletionProvider() {
@@ -457,45 +457,49 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       properties: Map<String, PropertyOrBlockType>,
     ) {
       if (properties.isEmpty()) return
+
       val incomplete = getIncomplete(parameters)
-      if (incomplete != null) {
-        LOG.debug { "Including properties which contains incomplete result: $incomplete" }
-      }
-      val fakeHCLPsiFactory = parent.project.service<HCLFakeElementPsiFactory>()
-      addResultsWithCustomSorter(result, properties.values
+      val fakeFactory = parent.project.service<HclFakeElementPsiFactory>()
+
+      val candidates = properties.values
         .asSequence()
         .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES }
-        .filter { isRightOfPropertyWithCompatibleType(isProperty, it, right) || (isBlock && it is BlockType) || (!isProperty && !isBlock) }
-        // TODO: Filter should be based on 'max-count' model property (?)
-        .filter {
-          (it is PropertyType &&
-           (parent.findProperty(it.name) == null || (incomplete != null && it.name.contains(incomplete)))
-          ) || (it is BlockType)
-        }
+        .filter { isCompatiblePropertyType(isProperty, it, right) || (isBlock && it is BlockType) || (!isProperty && !isBlock) }
+        .filter { passesExistenceFilter(parent, it, incomplete) }
         .filter { it.configurable }
-        .map { property ->
-          when {
-            property is BaseModelType && property.descriptionKind != null -> {
-              val hclBlock = parent.parentOfType<HCLBlock>()
-              val hclProperty = hclBlock?.let { fakeHCLPsiFactory.createFakeHCLProperty(hclBlock, property) }
-              createPropertyOrBlockType(property, property.name, hclProperty)
-            }
-            else -> {
-              createPropertyOrBlockType(property, property.name, fakeHCLPsiFactory.emptyHCLBlock)
-            }
-          }
-        }
-        .toList())
+        .map { toLookupElement(it, parent, fakeFactory) }
+        .toList()
+
+      addResultsWithCustomSorter(result, candidates)
     }
 
-    private fun isRightOfPropertyWithCompatibleType(isProperty: Boolean, it: PropertyOrBlockType, right: HclType?): Boolean {
-      if (!isProperty) return false
-      if (it !is PropertyType) return false
-      if (right == Types.StringWithInjection) {
-        // StringWithInjection means TypeCachedValueProvider was unable to understand type of interpolation
-        return true
+    private fun isCompatiblePropertyType(isProperty: Boolean, element: PropertyOrBlockType, rightType: HclType?): Boolean {
+      return isProperty &&
+             element is PropertyType &&
+             (rightType == Types.StringWithInjection || element.type == rightType)
+    }
+
+    private fun passesExistenceFilter(parent: HCLObject, candidate: PropertyOrBlockType, incomplete: String?): Boolean {
+      return when (candidate) {
+        is PropertyType -> {
+          val alreadyExists = parent.findProperty(candidate.name) != null
+          val matchesIncomplete = incomplete != null && candidate.name.contains(incomplete)
+          !alreadyExists || matchesIncomplete
+        }
+        is BlockType -> true
+        else -> false
       }
-      return it.type == right
+    }
+
+    private fun toLookupElement(property: PropertyOrBlockType, parent: HCLObject, fakeFactory: HclFakeElementPsiFactory): LookupElement {
+      return if (property is BaseModelType && property.descriptionKind != null) {
+        val block = parent.parentOfType<HCLBlock>()
+        val fakeProperty = block?.let { fakeFactory.createFakeHclProperty(it, property) }
+        createPropertyOrBlockType(property, property.name, fakeProperty)
+      }
+      else {
+        createPropertyOrBlockType(property, property.name, fakeFactory.emptyHclBlock)
+      }
     }
   }
 
