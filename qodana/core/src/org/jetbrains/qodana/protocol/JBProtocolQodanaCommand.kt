@@ -322,7 +322,7 @@ private suspend fun openProjectByRegion(parameters: Map<String, String>): Projec
   }
 
   val matchedRecentProjectPath = withContext(QodanaDispatchers.Ui) {
-    RecentProjectListActionProvider.getInstance().getActions()
+    RecentProjectListActionProvider.getInstance().getActionsWithoutGroups()
       .asSequence()
       .filterIsInstance(ReopenProjectAction::class.java)
       .map { Path(it.projectPath) }
