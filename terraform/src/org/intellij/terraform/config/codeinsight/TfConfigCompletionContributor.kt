@@ -366,12 +366,17 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
   }
 
   private object BlockPropertiesCompletionProvider : TfCompletionProvider() {
+
+    private data class PositionContext(
+      val parent: PsiElement? = null,
+      val isBlock: Boolean = false,
+      val isProperty: Boolean = false,
+      val rightType: HclType? = null,
+    )
+
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val position = parameters.position
-      var parent: PsiElement? = position.parent
-      var right: HclType? = null
-      var isProperty = false
-      var isBlock = false
+
       val original = parameters.originalPosition ?: return
       if (isInvalidCurly(original)) return
 
@@ -380,34 +385,15 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
         result.addAllElements(defaults)
         return
       }
-      if (parent is HCLIdentifier || parent is HCLStringLiteral) {
-        val pob = parent.parent // Property or Block
-        if (pob is HCLProperty) {
-          right = getRightTypeOfProperty(pob)
-          isProperty = true
-        }
-        else if (pob is HCLBlock) {
-          isBlock = true
-          if (pob.nameElements.firstOrNull() == parent) {
-            if (parent.nextSibling is PsiWhiteSpace && parent.nextSibling.text.contains("\n")) {
-              isBlock = false
-              parent = parent.parent.parent
-            }
-          }
-        }
-        if (isBlock || isProperty) {
-          parent = pob?.parent // Object
-        }
-        LOG.debug { "TF.BlockPropertiesCompletionProvider{position=$position, parent=$parent, original=$original, right=$right, isBlock=$isBlock, isProperty=$isProperty}" }
-      }
-      else {
-        LOG.debug { "TF.BlockPropertiesCompletionProvider{position=$position, parent=$parent, original=$original, no right part}" }
-      }
-      val hclObject: HCLObject = parent as? HCLObject ?: return
+
+      val positionContext = resolvePositionContext(position)
+
+      val hclObject: HCLObject = positionContext.parent as? HCLObject ?: return
       val use = getOriginalObject(parameters, hclObject)
       val block = use.parent as? HCLBlock ?: return
       val properties = TfModelHelper.getBlockProperties(block)
-      doAddCompletion(isBlock, isProperty, use, result, right, parameters, properties)
+
+      doAddCompletion(positionContext.isBlock, positionContext.isProperty, use, result, positionContext.rightType, parameters, properties)
     }
 
     private fun isInvalidCurly(original: PsiElement): Boolean {
@@ -429,6 +415,30 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       val property = TfModelHelper.getBlockProperties(hclBlock)[container.name] as? PropertyType
       val defaults = property?.type?.suggestedValues ?: return null
       return defaults.map { create(it) }
+    }
+
+    private fun resolvePositionContext(position: PsiElement): PositionContext {
+      val initialParent: PsiElement? = position.parent
+
+      return if (initialParent is HCLIdentifier || initialParent is HCLStringLiteral) {
+        when (val pob = initialParent.parent) {
+          is HCLProperty -> {
+            val type = getRightTypeOfProperty(pob)
+            PositionContext(pob.parent, isProperty = true, rightType = type)
+          }
+          is HCLBlock -> {
+            val isNameElement = pob.nameElements.firstOrNull() == initialParent
+            val followedByNewline = initialParent.nextSibling is PsiWhiteSpace && initialParent.nextSibling.text.contains("\n")
+            val computedIsBlock = !(isNameElement && followedByNewline)
+
+            PositionContext(pob.parent, isBlock = computedIsBlock)
+          }
+          else -> PositionContext(initialParent)
+        }
+      }
+      else {
+        PositionContext(initialParent)
+      }
     }
 
     private fun getRightTypeOfProperty(pob: HCLProperty): HclType? {
