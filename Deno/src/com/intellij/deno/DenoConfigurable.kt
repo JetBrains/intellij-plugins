@@ -1,12 +1,14 @@
 package com.intellij.deno
 
 import com.intellij.codeInsight.template.impl.TemplateEditorUtil
+import com.intellij.javascript.runtime.settings.isJavaScriptRuntimeSettingsPageEnabled
 import com.intellij.json.JsonLanguage
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.EditorSettings
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.options.ConfigurableProvider
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -118,4 +120,9 @@ class DenoConfigurable(private val project: Project) : Configurable {
     panel.add(helpLabel)
     return panel
   }
+}
+
+internal class DenoConfigurableProvider(private val project: Project) : ConfigurableProvider() {
+  override fun createConfigurable(): Configurable = DenoConfigurable(project)
+  override fun canCreateConfigurable(): Boolean = !isJavaScriptRuntimeSettingsPageEnabled
 }

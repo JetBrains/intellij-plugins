@@ -4,7 +4,10 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.deno.roots.createDenoEntity
 import com.intellij.deno.roots.removeDenoEntity
 import com.intellij.deno.service.DenoLspSupportProvider
+import com.intellij.deno.settings.DenoRuntimeType
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.javascript.runtime.settings.JSRuntimeConfiguration
+import com.intellij.javascript.runtime.settings.isJavaScriptRuntimeSettingsPageEnabled
 import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lang.javascript.TypeScriptJSXFileType
 import com.intellij.openapi.application.ApplicationManager
@@ -88,14 +91,23 @@ class DenoSettings(private val project: Project) : PersistentStateComponent<Deno
   }
 
   fun isConfigureDenoAutomatically(): Boolean {
+    if (!ApplicationManager.getApplication().isUnitTestMode && isJavaScriptRuntimeSettingsPageEnabled) {
+      return false
+    }
     return this.state.useDenoValue == UseDeno.CONFIGURE_AUTOMATICALLY
   }
 
   fun isEnableDeno(): Boolean {
+    if (!ApplicationManager.getApplication().isUnitTestMode && isJavaScriptRuntimeSettingsPageEnabled) {
+      return JSRuntimeConfiguration.getInstance(project).runtimeType == DenoRuntimeType
+    }
     return this.state.useDenoValue == UseDeno.ENABLE
   }
 
   fun isDisableDeno(): Boolean {
+    if (!ApplicationManager.getApplication().isUnitTestMode && isJavaScriptRuntimeSettingsPageEnabled) {
+      return JSRuntimeConfiguration.getInstance(project).runtimeType != DenoRuntimeType
+    }
     return this.state.useDenoValue == UseDeno.DISABLE
   }
 

@@ -23,7 +23,7 @@
   <resource-bundle>messages.DenoBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
-    <projectConfigurable groupId="language" instance="com.intellij.deno.DenoConfigurable" key="deno.name" />
+    <projectConfigurable groupId="language" provider="com.intellij.deno.DenoConfigurableProvider" key="deno.name" />
     <additionalLibraryRootsProvider implementation="com.intellij.deno.DenoLibraryProvider"/>
     <configurationType implementation="com.intellij.deno.run.DenoConfigurationType"/>
     <fileTypeOverrider implementation="com.intellij.deno.lang.DenoFileTypeOverrider"/>
@@ -54,5 +54,6 @@
                               implementation="com.intellij.deno.modules.DenoImportModulePathStrategy"/>
     <tsImportResolver implementation="com.intellij.deno.modules.DenoTypeScriptImportResolverProvider"/>
     <itemPresentation language="TypeScript" implementationClass="com.intellij.deno.lang.DenoItemPresentationProvider"/>
+    <runtimeProvider implementation="com.intellij.deno.settings.DenoRuntimeProvider"/>
   </extensions>
 </idea-plugin>
