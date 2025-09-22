@@ -40,7 +40,6 @@ import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager
 import java.io.File
 import javax.swing.JEditorPane
 import javax.swing.JTextField
-import kotlin.Throws
 
 private const val CHARSET_NONE: @NlsSafe String = "none"
 private const val CHARSET_ISO8859_1: @NlsSafe String = "iso8859-1"
@@ -194,6 +193,12 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
 
   private fun Panel.configPanel(): Row = group(PerforceBundle.message("border.configure.perforce.config.settings")) {
     buttonsGroup {
+      row(PerforceBundle.message("combobox.configure.perforce.charset")) {
+        myCharset = comboBox(charsetValues, textListCellRenderer {
+          if (it == CHARSET_NONE) PerforceBundle.message("none.charset.presentation") else it
+        }).align(AlignX.FILL)
+          .bindItem(mySettings::CHARSET).component
+      }
       row {
         myUseP4ConfigRadioButton = radioButton(PerforceBundle.message("checkbox.configure.perforce.use.p4config"), true)
           .configWarningComment().onChanged { updateIgnorePanelHeader() }.component
@@ -213,12 +218,6 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
         row(PerforceBundle.message("label.configure.perforce.client")) {
           myClient = textField().align(AlignX.FILL)
             .bindText(mySettings::client).component
-        }
-        row(PerforceBundle.message("combobox.configure.perforce.charset")) {
-          myCharset = comboBox(charsetValues, textListCellRenderer {
-            if (it == CHARSET_NONE) PerforceBundle.message("none.charset.presentation") else it
-          }).align(AlignX.FILL)
-            .bindItem(mySettings::CHARSET).component
         }
       }.enabledIf(myUseP4ConfigRadioButton.selected.not())
     }.bind(mySettings::useP4CONFIG)
