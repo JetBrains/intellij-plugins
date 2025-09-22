@@ -4,7 +4,6 @@ package org.intellij.terraform.config.codeinsight
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder.create
-import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -13,14 +12,11 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.Plow.Companion.toPlow
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
-import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
@@ -33,9 +29,7 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.buildLookupFor
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.buildLookupForRequiredProvider
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getClearTextValue
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getLookupIcon
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getOriginalObject
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TfPsiPatterns
@@ -44,9 +38,9 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersBlo
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformVariablesFile
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.codeinsight.AfterCommaOrBracketPattern
+import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclKeywordsCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createBlockHeaderPattern
@@ -63,10 +57,8 @@ import org.intellij.terraform.hcl.patterns.HCLPatterns.PropertyOrBlock
 import org.intellij.terraform.hcl.patterns.HCLPatterns.WhiteSpace
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hcl.psi.HCLPsiUtil.getPrevSiblingNonWhiteSpace
-import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.codeinsight.HilCompletionContributor
 import org.intellij.terraform.hil.codeinsight.ReferenceCompletionHelper.findByFQNRef
-import org.intellij.terraform.hil.psi.ILExpression
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_ENCRYPTION_METHOD_BLOCK
 import org.intellij.terraform.opentofu.OpenTofuConstants.TOFU_KEY_PROVIDER
 import org.intellij.terraform.opentofu.model.encryptionKeyProviders
@@ -93,32 +85,20 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
     extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
       .inFile(TerraformConfigFile)
       .withParent(Object)
-      .withSuperParent(2, Block), BlockPropertiesCompletionProvider)
+      .withSuperParent(2, Block), HclBlockPropertiesCompletionProvider)
     extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
       .inFile(TerraformConfigFile)
       .withParent(IdentifierOrStringLiteral)
       .withSuperParent(2, Property)
       .withSuperParent(3, Object)
-      .withSuperParent(4, Block), BlockPropertiesCompletionProvider)
+      .withSuperParent(4, Block), HclBlockPropertiesCompletionProvider)
     extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
       .inFile(TerraformConfigFile)
       .and(psiElement().insideStarting(Block))
       .withParent(IdentifierOrStringLiteral)
       .withSuperParent(2, Block)
       .withSuperParent(3, Object)
-      .withSuperParent(4, Block), BlockPropertiesCompletionProvider)
-    //```
-    //resource "X" "Y" {
-    //  count<caret>
-    //  provider {}
-    //}
-    //```
-    //extend(CompletionType.BASIC, psiElement(HCLElementTypes.ID)
-    //  .inFile(TerraformConfigFile)
-    //  .withParent(psiElement(HCLIdentifier::class.java).beforeLeafSkipping(Nothing, AtLeastOneEOL))
-    //  .withSuperParent(2, Block)
-    //  .withSuperParent(3, Object)
-    //  .withSuperParent(4, Block), BlockPropertiesCompletionProvider)
+      .withSuperParent(4, Block), HclBlockPropertiesCompletionProvider)
     //endregion
 
     extend(CompletionType.BASIC, TfPsiPatterns.RequiredProviderIdentifier, RequiredProviderCompletion)
@@ -202,25 +182,7 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
     //endregion
   }
 
-  private object PreferRequiredProperty : LookupElementWeigher("hcl.required.property") {
-    override fun weigh(element: LookupElement): Comparable<Nothing> {
-      val obj = element.`object`
-      if (obj is PropertyOrBlockType) {
-        if (obj.required) return 0
-        else return 1
-      }
-      return 10
-    }
-  }
-
   abstract class TfCompletionProvider : CompletionProvider<CompletionParameters>() {
-
-    protected fun addResultsWithCustomSorter(result: CompletionResultSet, toAdd: Collection<LookupElement>) {
-      if (toAdd.isEmpty()) return
-      result.withRelevanceSorter(
-        CompletionSorter.emptySorter().weigh(PreferRequiredProperty)
-      ).addAllElements(toAdd)
-    }
 
     protected fun needCompletionForBlock(block: HCLBlock, property: HCLProperty, type: String?): Boolean {
       val isRootBlock = TfPsiPatterns.RootBlock.accepts(block)
@@ -363,155 +325,6 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       .withIcon(getLookupIcon(position))
       .withInsertHandler(BlockSubNameInsertHandler(it))
       .withPsiElement(position.project.service<HclFakeElementPsiFactory>().createFakeHclBlock(it.literal, typeName, position.containingFile.originalFile))
-  }
-
-  private object BlockPropertiesCompletionProvider : TfCompletionProvider() {
-
-    private data class HclPositionContext(
-      val parent: PsiElement? = null,
-      val isBlock: Boolean = false,
-      val isProperty: Boolean = false,
-      val rightType: HclType? = null,
-    )
-
-    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      val position = parameters.position
-
-      val original = parameters.originalPosition ?: return
-      if (isInvalidCurly(original)) return
-
-      val defaults = checkPropertyDefaults(position)
-      if (defaults != null) {
-        result.addAllElements(defaults)
-        return
-      }
-
-      val positionContext = resolvePositionContext(position)
-      suggestCompletionsForContext(parameters, result, positionContext)
-    }
-
-    private fun isInvalidCurly(original: PsiElement): Boolean {
-      val parent = original.parent
-      return original.node.elementType == HCLElementTypes.L_CURLY
-             && parent is HCLObject
-             && parent.parent is HCLBlock
-    }
-
-    private fun checkPropertyDefaults(position: PsiElement): List<LookupElement>? {
-      val parent = position.parent
-      if (parent !is HCLIdentifier && parent !is HCLStringLiteral) return null
-
-      val container = parent.parent as? HCLProperty ?: return null
-      val value = container.value as? HCLValue ?: return null
-      if (value !== parent) return null
-
-      val hclBlock = container.parentOfType<HCLBlock>() ?: return null
-      val property = TfModelHelper.getBlockProperties(hclBlock)[container.name] as? PropertyType
-      val defaults = property?.type?.suggestedValues ?: return null
-      return defaults.map { create(it) }
-    }
-
-    private fun resolvePositionContext(position: PsiElement): HclPositionContext {
-      val initialParent: PsiElement? = position.parent
-
-      return if (initialParent is HCLIdentifier || initialParent is HCLStringLiteral) {
-        when (val pob = initialParent.parent) {
-          is HCLProperty -> {
-            val type = getRightTypeOfProperty(pob)
-            HclPositionContext(pob.parent, isProperty = true, rightType = type)
-          }
-          is HCLBlock -> {
-            val isNameElement = pob.nameElements.firstOrNull() == initialParent
-            val followedByNewline = initialParent.nextSibling is PsiWhiteSpace && initialParent.nextSibling.text.contains("\n")
-            val computedIsBlock = !(isNameElement && followedByNewline)
-
-            HclPositionContext(pob.parent, isBlock = computedIsBlock)
-          }
-          else -> HclPositionContext(initialParent)
-        }
-      }
-      else {
-        HclPositionContext(initialParent)
-      }
-    }
-
-    private fun getRightTypeOfProperty(pob: HCLProperty): HclType? {
-      val value = pob.value as? HCLValue ?: return null
-      var right: HclType? = value.getType()
-
-      if (right == Types.String && value is PsiLanguageInjectionHost) {
-        InjectedLanguageManager.getInstance(pob.project).enumerate(value) { injectedPsi, _ ->
-          if (injectedPsi.fileType == HILFileType) {
-            right = Types.StringWithInjection
-            val root = injectedPsi.firstChild
-            if (root == injectedPsi.lastChild && root is ILExpression) {
-              val type = root.getType()
-              if (type != null && type != Types.Any) {
-                right = type
-              }
-            }
-          }
-        }
-      }
-      return right
-    }
-
-    private fun suggestCompletionsForContext(parameters: CompletionParameters, result: CompletionResultSet, context: HclPositionContext) {
-      val hclObject: HCLObject = context.parent as? HCLObject ?: return
-      val parent = getOriginalObject(parameters, hclObject)
-      val block = parent.parent as? HCLBlock ?: return
-      val properties = TfModelHelper.getBlockProperties(block)
-
-      if (properties.isEmpty()) return
-
-      val incomplete = getIncomplete(parameters)
-      val fakeFactory = parent.project.service<HclFakeElementPsiFactory>()
-
-      val candidates = properties.values
-        .asSequence()
-        .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES }
-        .filter { matches(context, it) }
-        .filter { passesExistenceFilter(parent, it, incomplete) }
-        .filter { it.configurable }
-        .map { toLookupElement(it, parent, fakeFactory) }
-        .toList()
-
-      addResultsWithCustomSorter(result, candidates)
-    }
-
-    private fun matches(context: HclPositionContext, candidate: PropertyOrBlockType): Boolean = when {
-      context.isProperty -> isCompatiblePropertyType(candidate, context.rightType)
-      context.isBlock -> candidate is BlockType
-      else -> true
-    }
-
-    private fun isCompatiblePropertyType(element: PropertyOrBlockType, rightType: HclType?): Boolean {
-      return element is PropertyType &&
-             (rightType == Types.StringWithInjection || element.type == rightType)
-    }
-
-    private fun passesExistenceFilter(parent: HCLObject, candidate: PropertyOrBlockType, incomplete: String?): Boolean {
-      return when (candidate) {
-        is PropertyType -> {
-          val alreadyExists = parent.findProperty(candidate.name) != null
-          val matchesIncomplete = incomplete != null && candidate.name.contains(incomplete)
-          !alreadyExists || matchesIncomplete
-        }
-        is BlockType -> true
-        else -> false
-      }
-    }
-
-    private fun toLookupElement(property: PropertyOrBlockType, parent: HCLObject, fakeFactory: HclFakeElementPsiFactory): LookupElement {
-      return if (property is BaseModelType && property.descriptionKind != null) {
-        val block = parent.parentOfType<HCLBlock>()
-        val fakeProperty = block?.let { fakeFactory.createFakeHclProperty(it, property) }
-        createPropertyOrBlockType(property, property.name, fakeProperty)
-      }
-      else {
-        createPropertyOrBlockType(property, property.name, fakeFactory.emptyHclBlock)
-      }
-    }
   }
 
   private object PropertyValueCompletionProvider : TfCompletionProvider() {
