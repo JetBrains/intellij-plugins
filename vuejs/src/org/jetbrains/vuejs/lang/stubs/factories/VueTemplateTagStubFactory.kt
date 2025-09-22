@@ -5,6 +5,6 @@ import com.intellij.psi.impl.source.xml.stub.XmlTagStubImpl
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.TEMPLATE_TAG
 import org.jetbrains.vuejs.lang.html.psi.impl.VueTemplateTagImpl
 
-class VueTemplateTagStubFactory : VueStubBasedTagStubFactory(TEMPLATE_TAG) {
+internal class VueTemplateTagStubFactory : VueStubBasedTagStubFactory({ TEMPLATE_TAG }) {
   override fun createPsi(stub: XmlTagStubImpl) = VueTemplateTagImpl(stub, elementType)
 }

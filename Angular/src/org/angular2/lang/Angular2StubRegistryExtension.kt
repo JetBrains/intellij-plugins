@@ -31,22 +31,22 @@ class Angular2StubRegistryExtension : StubRegistryExtension {
 
     listOf(
       Angular2HtmlAttributeStubFactory(EVENT, ::Angular2HtmlEventImpl),
-      Angular2HtmlAttributeStubSerializer(EVENT),
+      Angular2HtmlAttributeStubSerializer { EVENT },
 
       Angular2HtmlAttributeStubFactory(BANANA_BOX_BINDING, ::Angular2HtmlBananaBoxBindingImpl),
-      Angular2HtmlAttributeStubSerializer(BANANA_BOX_BINDING),
+      Angular2HtmlAttributeStubSerializer { BANANA_BOX_BINDING },
 
       Angular2HtmlAttributeStubFactory(PROPERTY_BINDING, ::Angular2HtmlPropertyBindingImpl),
-      Angular2HtmlAttributeStubSerializer(PROPERTY_BINDING),
+      Angular2HtmlAttributeStubSerializer { PROPERTY_BINDING },
 
       Angular2HtmlAttributeStubFactory(REFERENCE, ::Angular2HtmlReferenceImpl),
-      Angular2HtmlAttributeStubSerializer(REFERENCE),
+      Angular2HtmlAttributeStubSerializer { REFERENCE },
 
       Angular2HtmlAttributeStubFactory(LET, ::Angular2HtmlLetImpl),
-      Angular2HtmlAttributeStubSerializer(LET),
+      Angular2HtmlAttributeStubSerializer { LET },
 
       Angular2HtmlAttributeStubFactory(TEMPLATE_BINDINGS, ::Angular2HtmlTemplateBindingsImpl),
-      Angular2HtmlAttributeStubSerializer(TEMPLATE_BINDINGS),
+      Angular2HtmlAttributeStubSerializer { TEMPLATE_BINDINGS },
     ).forEach {
       when (it) {
         is Angular2HtmlAttributeStubFactory -> registry.registerStubFactory(it.elementType, it)

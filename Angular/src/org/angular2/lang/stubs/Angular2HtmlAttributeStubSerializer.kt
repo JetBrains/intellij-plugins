@@ -12,7 +12,8 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes
 import org.angular2.lang.html.stub.impl.Angular2HtmlBoundAttributeStubImpl
 
-class Angular2HtmlAttributeStubSerializer(elementType: IElementType) : XmlStubBasedStubSerializer<Angular2HtmlBoundAttributeStubImpl>(elementType) {
+internal class Angular2HtmlAttributeStubSerializer(elementTypeSupplier: () -> IElementType)
+  : XmlStubBasedStubSerializer<Angular2HtmlBoundAttributeStubImpl>(elementTypeSupplier) {
   override fun getExternalId(): String {
     return Angular2HtmlElementTypes.EXTERNAL_ID_PREFIX + super.externalId
   }

@@ -8,7 +8,7 @@ import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.REF_ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeStubImpl
 
-class VueRefAttributeStubSerializer : XmlStubBasedStubSerializer<VueRefAttributeStubImpl>(REF_ATTRIBUTE) {
+internal class VueRefAttributeStubSerializer : XmlStubBasedStubSerializer<VueRefAttributeStubImpl>({ REF_ATTRIBUTE }) {
   override fun serialize(stub: VueRefAttributeStubImpl, dataStream: StubOutputStream) {
     stub.serialize(dataStream)
   }

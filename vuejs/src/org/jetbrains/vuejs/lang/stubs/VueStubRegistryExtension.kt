@@ -52,14 +52,14 @@ private class VueStubRegistryExtension : StubRegistryExtension {
       VueScriptSetupEmbeddedContentStubSerializer { SCRIPT_SETUP_JS_EMBEDDED_CONTENT },
     ).forEach(registry::register)
 
-    registry.registerStubFactory(STUBBED_TAG, VueStubBasedTagStubFactory(STUBBED_TAG))
-    registry.registerStubSerializer(STUBBED_TAG, HtmlStubBasedTagStubSerializer(STUBBED_TAG))
+    registry.registerStubFactory(STUBBED_TAG, VueStubBasedTagStubFactory { STUBBED_TAG })
+    registry.registerStubSerializer(STUBBED_TAG, HtmlStubBasedTagStubSerializer { STUBBED_TAG })
 
     registry.registerStubFactory(TEMPLATE_TAG, VueTemplateTagStubFactory())
-    registry.registerStubSerializer(TEMPLATE_TAG, HtmlStubBasedTagStubSerializer(TEMPLATE_TAG))
+    registry.registerStubSerializer(TEMPLATE_TAG, HtmlStubBasedTagStubSerializer { TEMPLATE_TAG })
 
     registry.registerStubFactory(STUBBED_ATTRIBUTE, XmlStubBasedAttributeStubFactory(STUBBED_ATTRIBUTE))
-    registry.registerStubSerializer(STUBBED_ATTRIBUTE, XmlStubBasedAttributeStubSerializer(STUBBED_ATTRIBUTE))
+    registry.registerStubSerializer(STUBBED_ATTRIBUTE, XmlStubBasedAttributeStubSerializer { STUBBED_ATTRIBUTE })
 
     registry.registerStubFactory(SCRIPT_ID_ATTRIBUTE, VueScriptIdAttributeStubFactory())
     registry.registerStubSerializer(SCRIPT_ID_ATTRIBUTE, VueScriptIdAttributeStubSerializer())

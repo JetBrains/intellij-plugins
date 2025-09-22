@@ -7,7 +7,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil.SLOT_TAG_NAME
 
-open class VueStubBasedTagStubFactory(elementType: IElementType) : HtmlStubBasedTagStubFactory(elementType) {
+internal open class VueStubBasedTagStubFactory(elementTypeSupplier: () -> IElementType) : HtmlStubBasedTagStubFactory(elementTypeSupplier) {
   override fun shouldCreateStub(node: ASTNode): Boolean =
     (node.psi as? XmlTag)
       ?.let {
