@@ -367,7 +367,7 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
 
   private object BlockPropertiesCompletionProvider : TfCompletionProvider() {
 
-    private data class PositionContext(
+    private data class HclPositionContext(
       val parent: PsiElement? = null,
       val isBlock: Boolean = false,
       val isProperty: Boolean = false,
@@ -387,13 +387,7 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       }
 
       val positionContext = resolvePositionContext(position)
-
-      val hclObject: HCLObject = positionContext.parent as? HCLObject ?: return
-      val use = getOriginalObject(parameters, hclObject)
-      val block = use.parent as? HCLBlock ?: return
-      val properties = TfModelHelper.getBlockProperties(block)
-
-      doAddCompletion(positionContext.isBlock, positionContext.isProperty, use, result, positionContext.rightType, parameters, properties)
+      suggestCompletionsForContext(parameters, result, positionContext)
     }
 
     private fun isInvalidCurly(original: PsiElement): Boolean {
@@ -417,27 +411,27 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       return defaults.map { create(it) }
     }
 
-    private fun resolvePositionContext(position: PsiElement): PositionContext {
+    private fun resolvePositionContext(position: PsiElement): HclPositionContext {
       val initialParent: PsiElement? = position.parent
 
       return if (initialParent is HCLIdentifier || initialParent is HCLStringLiteral) {
         when (val pob = initialParent.parent) {
           is HCLProperty -> {
             val type = getRightTypeOfProperty(pob)
-            PositionContext(pob.parent, isProperty = true, rightType = type)
+            HclPositionContext(pob.parent, isProperty = true, rightType = type)
           }
           is HCLBlock -> {
             val isNameElement = pob.nameElements.firstOrNull() == initialParent
             val followedByNewline = initialParent.nextSibling is PsiWhiteSpace && initialParent.nextSibling.text.contains("\n")
             val computedIsBlock = !(isNameElement && followedByNewline)
 
-            PositionContext(pob.parent, isBlock = computedIsBlock)
+            HclPositionContext(pob.parent, isBlock = computedIsBlock)
           }
-          else -> PositionContext(initialParent)
+          else -> HclPositionContext(initialParent)
         }
       }
       else {
-        PositionContext(initialParent)
+        HclPositionContext(initialParent)
       }
     }
 
@@ -462,15 +456,12 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       return right
     }
 
-    private fun doAddCompletion(
-      isBlock: Boolean,
-      isProperty: Boolean,
-      parent: HCLObject,
-      result: CompletionResultSet,
-      right: HclType?,
-      parameters: CompletionParameters,
-      properties: Map<String, PropertyOrBlockType>,
-    ) {
+    private fun suggestCompletionsForContext(parameters: CompletionParameters, result: CompletionResultSet, context: HclPositionContext) {
+      val hclObject: HCLObject = context.parent as? HCLObject ?: return
+      val parent = getOriginalObject(parameters, hclObject)
+      val block = parent.parent as? HCLBlock ?: return
+      val properties = TfModelHelper.getBlockProperties(block)
+
       if (properties.isEmpty()) return
 
       val incomplete = getIncomplete(parameters)
@@ -479,7 +470,7 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       val candidates = properties.values
         .asSequence()
         .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES }
-        .filter { isCompatiblePropertyType(isProperty, it, right) || (isBlock && it is BlockType) || (!isProperty && !isBlock) }
+        .filter { matches(context, it) }
         .filter { passesExistenceFilter(parent, it, incomplete) }
         .filter { it.configurable }
         .map { toLookupElement(it, parent, fakeFactory) }
@@ -488,9 +479,14 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       addResultsWithCustomSorter(result, candidates)
     }
 
-    private fun isCompatiblePropertyType(isProperty: Boolean, element: PropertyOrBlockType, rightType: HclType?): Boolean {
-      return isProperty &&
-             element is PropertyType &&
+    private fun matches(context: HclPositionContext, candidate: PropertyOrBlockType): Boolean = when {
+      context.isProperty -> isCompatiblePropertyType(candidate, context.rightType)
+      context.isBlock -> candidate is BlockType
+      else -> true
+    }
+
+    private fun isCompatiblePropertyType(element: PropertyOrBlockType, rightType: HclType?): Boolean {
+      return element is PropertyType &&
              (rightType == Types.StringWithInjection || element.type == rightType)
     }
 
