@@ -10,6 +10,9 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.components.service
+import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.patterns.PsiElementPattern
+import com.intellij.patterns.PsiFilePattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.PsiWhiteSpace
@@ -23,6 +26,11 @@ import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.hcl.HCLElementTypes
+import org.intellij.terraform.hcl.HCLTokenTypes
+import org.intellij.terraform.hcl.patterns.HCLPatterns.Block
+import org.intellij.terraform.hcl.patterns.HCLPatterns.IdentifierOrStringLiteral
+import org.intellij.terraform.hcl.patterns.HCLPatterns.Object
+import org.intellij.terraform.hcl.patterns.HCLPatterns.Property
 import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.psi.ILExpression
@@ -166,6 +174,30 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
       createPropertyOrBlockType(property, property.name, fakeFactory.emptyHclBlock)
     }
   }
+
+  // Psi Patterns
+  fun createBlockPropertyKeyPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> = psiElement()
+    .withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
+    .inFile(filePattern)
+    .withParent(Object)
+    .withSuperParent(2, Block)
+
+  fun createPropertyInBlockPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> = psiElement()
+    .withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
+    .inFile(filePattern)
+    .withParent(IdentifierOrStringLiteral)
+    .withSuperParent(2, Property)
+    .withSuperParent(3, Object)
+    .withSuperParent(4, Block)
+
+  fun createNestedBlockPropertyPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> = psiElement()
+    .withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
+    .inFile(filePattern)
+    .and(psiElement().insideStarting(Block))
+    .withParent(IdentifierOrStringLiteral)
+    .withSuperParent(2, Block)
+    .withSuperParent(3, Object)
+    .withSuperParent(4, Block)
 }
 
 private data class HclPositionContext(

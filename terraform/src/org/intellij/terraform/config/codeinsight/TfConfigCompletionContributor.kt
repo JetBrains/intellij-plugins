@@ -41,6 +41,9 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.codeinsight.AfterCommaOrBracketPattern
 import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
+import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createBlockPropertyKeyPattern
+import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createNestedBlockPropertyPattern
+import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createPropertyInBlockPattern
 import org.intellij.terraform.hcl.codeinsight.HclKeywordsCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createBlockHeaderPattern
@@ -81,25 +84,9 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       .withParent(psiElement().and(IdentifierOrStringLiteral).afterSiblingSkipping2(WhiteSpace, IdentifierOrStringLiteralOrSimple))
       .withSuperParent(2, FileOrBlock), BlockTypeOrNameCompletionProvider)
 
-    //region InBlock Property key
-    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-      .inFile(TerraformConfigFile)
-      .withParent(Object)
-      .withSuperParent(2, Block), HclBlockPropertiesCompletionProvider)
-    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-      .inFile(TerraformConfigFile)
-      .withParent(IdentifierOrStringLiteral)
-      .withSuperParent(2, Property)
-      .withSuperParent(3, Object)
-      .withSuperParent(4, Block), HclBlockPropertiesCompletionProvider)
-    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-      .inFile(TerraformConfigFile)
-      .and(psiElement().insideStarting(Block))
-      .withParent(IdentifierOrStringLiteral)
-      .withSuperParent(2, Block)
-      .withSuperParent(3, Object)
-      .withSuperParent(4, Block), HclBlockPropertiesCompletionProvider)
-    //endregion
+    extend(CompletionType.BASIC, createBlockPropertyKeyPattern(TerraformConfigFile), HclBlockPropertiesCompletionProvider)
+    extend(CompletionType.BASIC, createPropertyInBlockPattern(TerraformConfigFile), HclBlockPropertiesCompletionProvider)
+    extend(CompletionType.BASIC, createNestedBlockPropertyPattern(TerraformConfigFile), HclBlockPropertiesCompletionProvider)
 
     extend(CompletionType.BASIC, TfPsiPatterns.RequiredProviderIdentifier, RequiredProviderCompletion)
     extend(CompletionType.BASIC, TfPsiPatterns.IdentifierOfRequiredProviderProperty, RequiredProviderCompletion)
