@@ -47,8 +47,7 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@lib//:truth",
-  ],
-  runtime_deps = [":protoeditor-python_resources"]
+  ]
 )
 ### auto-generated section `build intellij.protoeditor.python` end
 

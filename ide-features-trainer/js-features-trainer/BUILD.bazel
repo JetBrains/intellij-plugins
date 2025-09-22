@@ -67,8 +67,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
-  ],
-  runtime_deps = [":javascript-featuresTrainer_resources"]
+  ]
 )
 ### auto-generated section `build intellij.javascript.featuresTrainer` end
 

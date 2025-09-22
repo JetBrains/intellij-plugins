@@ -55,8 +55,7 @@ jvm_library(
     "@community//java/testFramework",
     "@lib//:truth",
     "@community//java/java-indexing-api:indexing",
-  ],
-  runtime_deps = [":protoeditor-jvm_resources"]
+  ]
 )
 ### auto-generated section `build intellij.protoeditor.jvm` end
 

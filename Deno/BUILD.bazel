@@ -87,10 +87,6 @@ jvm_library(
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
     "@community//platform/core-impl",
-  ],
-  runtime_deps = [
-    ":deno_resources",
-    ":deno_resources_1",
   ]
 )
 ### auto-generated section `build intellij.deno` end

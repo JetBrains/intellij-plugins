@@ -56,8 +56,7 @@ jvm_library(
     "//contrib/qodana:qodana_test_lib",
     "@ultimate_lib//:kotlinc-kotlin-compiler-common-provided",
     "@community//platform/util-class-loader:util-classLoader",
-  ],
-  runtime_deps = [":kotlin_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.jvm.kotlin` end
 

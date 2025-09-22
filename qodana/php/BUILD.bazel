@@ -76,8 +76,7 @@ jvm_library(
     "@lib//:kotlinx-coroutines-core",
     "@community//platform/backend/observation",
     "@community//platform/backend/observation:observation_test_lib",
-  ],
-  runtime_deps = [":php_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.php` end
 

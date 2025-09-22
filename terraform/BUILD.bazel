@@ -129,10 +129,7 @@ jvm_library(
     "@community//plugins/copyright",
     "@community//plugins/copyright:copyright_test_lib",
   ],
-  runtime_deps = [
-    ":terraform_resources",
-    ":terraform_test_resources",
-  ]
+  runtime_deps = [":terraform_test_resources"]
 )
 ### auto-generated section `build intellij.terraform` end
 

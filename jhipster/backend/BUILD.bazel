@@ -63,8 +63,7 @@ jvm_library(
     "@community//platform/core-impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
-  ],
-  runtime_deps = [":backend_resources"]
+  ]
 )
 ### auto-generated section `build intellij.jhipster.backend` end
 

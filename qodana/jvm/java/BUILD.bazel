@@ -81,8 +81,7 @@ jvm_library(
     "@community//platform/util/coroutines",
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
-  ],
-  runtime_deps = [":java_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.jvm.java` end
 

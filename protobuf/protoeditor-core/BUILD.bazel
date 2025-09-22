@@ -85,8 +85,7 @@ jvm_library(
     "@community//platform/backend/workspace",
     "@lib//:protobuf",
     "@lib//:google-protobuf-java-util",
-  ],
-  runtime_deps = [":protoeditor-core_resources"]
+  ]
 )
 ### auto-generated section `build intellij.protoeditor.core` end
 

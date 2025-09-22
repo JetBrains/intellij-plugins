@@ -104,11 +104,7 @@ jvm_library(
     "@community//platform/polySymbols",
     "@community//platform/polySymbols:polySymbols-testFramework",
   ],
-  runtime_deps = [
-    ":prisma_resources",
-    ":prisma_resources_1",
-    ":prisma_test_resources",
-  ]
+  runtime_deps = [":prisma_test_resources"]
 )
 ### auto-generated section `build intellij.prisma` end
 

@@ -54,10 +54,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
   ],
-  runtime_deps = [
-    ":webassembly_resources",
-    ":webassembly_test_resources",
-  ]
+  runtime_deps = [":webassembly_test_resources"]
 )
 ### auto-generated section `build intellij.webassembly` end
 

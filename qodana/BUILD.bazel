@@ -228,10 +228,7 @@ jvm_library(
     "@community//platform/statistics/testFramework",
     "@ultimate_lib//:jetbrains-qodana-configuration",
   ],
-  runtime_deps = [
-    ":qodana_resources",
-    ":qodana_test_resources",
-  ]
+  runtime_deps = [":qodana_test_resources"]
 )
 ### auto-generated section `build intellij.qodana` end
 

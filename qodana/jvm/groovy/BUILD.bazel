@@ -43,8 +43,7 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/testFramework/extensions:testExtensions",
-  ],
-  runtime_deps = [":groovy_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.jvm.groovy` end
 

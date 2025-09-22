@@ -65,8 +65,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
-  ],
-  runtime_deps = [":makefile_resources"]
+  ]
 )
 ### auto-generated section `build intellij.makefile` end
 

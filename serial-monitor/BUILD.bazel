@@ -64,8 +64,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/testFramework/junit5",
     "@community//platform/testFramework/junit5:junit5_test_lib",
-  ],
-  runtime_deps = [":serial-monitor_resources"]
+  ]
 )
 ### auto-generated section `build intellij.serial.monitor` end
 

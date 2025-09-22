@@ -46,8 +46,7 @@ jvm_library(
     "//idea-tests:ultimate-tests_test_lib",
     "@community//plugins/dev/intellij.dev:dev",
     "@community//platform/util:util-ui",
-  ],
-  runtime_deps = [":js_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.js` end
 

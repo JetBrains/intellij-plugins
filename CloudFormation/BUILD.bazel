@@ -58,8 +58,7 @@ jvm_library(
     "@lib//:commons-lang3",
     "@community//java/java-runtime:rt",
     "@ultimate_lib//:cloud_formation-intellij-aws-cloudformation-meta",
-  ],
-  runtime_deps = [":cloudFormation_resources"]
+  ]
 )
 ### auto-generated section `build intellij.cloudFormation` end
 

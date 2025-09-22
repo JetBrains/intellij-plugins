@@ -53,8 +53,7 @@ jvm_library(
     "//goland/intellij-go/testFramework",
     "//goland/intellij-go/plugin",
     "//goland/intellij-go/go-frontback",
-  ],
-  runtime_deps = [":protoeditor-go_resources"]
+  ]
 )
 ### auto-generated section `build intellij.protoeditor.go` end
 

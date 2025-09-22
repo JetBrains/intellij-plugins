@@ -95,10 +95,6 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//xml/xml-psi-api:psi",
     "@community//platform/util/jdom",
-  ],
-  runtime_deps = [
-    ":cfml_resources",
-    ":cfml_resources_1",
   ]
 )
 ### auto-generated section `build intellij.cfml` end

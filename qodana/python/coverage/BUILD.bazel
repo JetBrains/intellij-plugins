@@ -86,8 +86,7 @@ jvm_library(
     "//contrib/qodana-test-framework:qodana-testFramework",
     "//idea-tests:ultimate-tests_test_lib",
     "//python/plugin",
-  ],
-  runtime_deps = [":coverage_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.python.coverage` end
 

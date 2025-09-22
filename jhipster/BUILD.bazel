@@ -53,8 +53,7 @@ jvm_library(
     "@community//platform/analysis-impl",
     "@community//platform/lang-impl",
     "//contrib/jhipster/plugin",
-  ],
-  runtime_deps = [":jhipster_resources"]
+  ]
 )
 ### auto-generated section `build intellij.jhipster` end
 

@@ -107,10 +107,6 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//xml/xml-psi-api:psi",
     "@community//platform/script-debugger/backend",
-  ],
-  runtime_deps = [
-    ":meteor_resources",
-    ":meteor_resources_1",
   ]
 )
 ### auto-generated section `build intellij.meteor` end

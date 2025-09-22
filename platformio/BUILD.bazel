@@ -134,10 +134,7 @@ jvm_library(
     "//plugins/profiler/clion:clion_test_lib",
     "@community//platform/util/coroutines",
   ],
-  runtime_deps = [
-    ":platformio_resources",
-    ":platformio_test_resources",
-  ]
+  runtime_deps = [":platformio_test_resources"]
 )
 ### auto-generated section `build intellij.clion.embedded.platformio` end
 

@@ -49,10 +49,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/code-style-impl:codeStyle-impl",
   ],
-  runtime_deps = [
-    ":tsr_resources",
-    ":tsr_test_resources",
-  ]
+  runtime_deps = [":tsr_test_resources"]
 )
 ### auto-generated section `build intellij.tsr` end
 

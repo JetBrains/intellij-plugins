@@ -115,8 +115,7 @@ jvm_library(
     "@ultimate_lib//:cucumber-java-cucumber-java8-7",
     "@ultimate_lib//:cucumber-java-cucumber-java-5-5",
     "@ultimate_lib//:cucumber-java-cucumber-java8-5-5",
-  ],
-  runtime_deps = [":cucumber-java_resources"]
+  ]
 )
 ### auto-generated section `build intellij.cucumber.java` end
 

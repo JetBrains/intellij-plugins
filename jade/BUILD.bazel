@@ -114,11 +114,7 @@ jvm_library(
     "//plugins/css/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
   ],
-  runtime_deps = [
-    ":jade_resources",
-    ":jade_resources_1",
-    ":jade_test_resources",
-  ]
+  runtime_deps = [":jade_test_resources"]
 )
 ### auto-generated section `build intellij.jade` end
 

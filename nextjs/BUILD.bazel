@@ -71,10 +71,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
   ],
-  runtime_deps = [
-    ":nextjs_resources",
-    ":nextjs_test_resources",
-  ]
+  runtime_deps = [":nextjs_test_resources"]
 )
 ### auto-generated section `build intellij.nextjs` end
 

@@ -96,10 +96,6 @@ jvm_library(
     "@community//platform/statistics/testFramework",
     "@community//platform/diff-impl",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [
-    ":prettierJS_resources",
-    ":prettierJS_resources_1",
   ]
 )
 ### auto-generated section `build intellij.prettierJS` end

@@ -55,10 +55,7 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
   ],
-  runtime_deps = [
-    ":template_resources",
-    ":template_test_resources",
-  ]
+  runtime_deps = [":template_test_resources"]
 )
 ### auto-generated section `build intellij.terraform.template` end
 

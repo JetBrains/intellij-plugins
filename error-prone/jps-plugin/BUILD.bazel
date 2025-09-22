@@ -37,8 +37,7 @@ jvm_library(
     "@community//jps/model-serialization",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
-  ],
-  runtime_deps = [":errorProne-jps_resources"]
+  ]
 )
 ### auto-generated section `build intellij.errorProne.jps` end
 

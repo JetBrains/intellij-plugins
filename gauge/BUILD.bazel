@@ -104,8 +104,7 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//libraries/grpc",
     "@community//libraries/grpc-netty-shaded",
-  ],
-  runtime_deps = [":gauge_resources"]
+  ]
 )
 ### auto-generated section `build intellij.gauge` end
 

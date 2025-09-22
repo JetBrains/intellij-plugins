@@ -75,10 +75,6 @@ jvm_library(
     "@community//xml/relaxng",
     "@community//xml/relaxng:relaxng_test_lib",
     "@community//xml/testFramework",
-  ],
-  runtime_deps = [
-    ":handlebars_resources",
-    ":handlebars_resources_1",
   ]
 )
 ### auto-generated section `build intellij.handlebars` end

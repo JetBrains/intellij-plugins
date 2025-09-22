@@ -57,8 +57,7 @@ jvm_library(
     "//contrib/qodana-test-framework:qodana-testFramework",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
-  ],
-  runtime_deps = [":coverage_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.coverage` end
 

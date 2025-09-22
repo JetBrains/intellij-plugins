@@ -67,8 +67,7 @@ jvm_library(
     "//duplicatedetector:duplicatesDetector_test_lib",
     "//plugins/NodeJS/tests:tests_test_lib",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [":js_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.js` end
 

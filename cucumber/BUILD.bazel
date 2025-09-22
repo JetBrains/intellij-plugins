@@ -88,10 +88,6 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/langInjection",
     "@lib//:jgoodies-forms",
-  ],
-  runtime_deps = [
-    ":gherkin_resources",
-    ":gherkin_resources_1",
   ]
 )
 ### auto-generated section `build intellij.gherkin` end

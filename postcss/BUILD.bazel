@@ -94,11 +94,7 @@ jvm_library(
     "//plugins/css/copyright",
   ],
   exports = ["@community//xml/impl"],
-  runtime_deps = [
-    ":postcss_resources",
-    ":postcss_resources_1",
-    ":postcss_test_resources",
-  ]
+  runtime_deps = [":postcss_test_resources"]
 )
 ### auto-generated section `build intellij.postcss` end
 

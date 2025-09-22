@@ -80,10 +80,6 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//json/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [
-    ":tslint_resources",
-    ":tslint_resources_1",
   ]
 )
 ### auto-generated section `build intellij.tslint` end

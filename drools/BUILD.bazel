@@ -67,8 +67,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//java/java-impl-refactorings:impl-refactorings",
     "@lib//:fastutil-min",
-  ],
-  runtime_deps = [":drools_resources"]
+  ]
 )
 ### auto-generated section `build intellij.jboss.drools` end
 

@@ -79,10 +79,7 @@ jvm_library(
     "@community//platform/syntax/syntax-api:syntax",
     "@community//platform/syntax/syntax-api:syntax_test_lib",
   ],
-  runtime_deps = [
-    ":dts_resources",
-    ":dts_test_resources",
-  ]
+  runtime_deps = [":dts_test_resources"]
 )
 ### auto-generated section `build intellij.dts` end
 

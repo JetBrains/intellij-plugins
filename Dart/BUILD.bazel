@@ -144,8 +144,7 @@ jvm_library(
     "@community//xml/testFramework",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
-  ],
-  runtime_deps = [":dart_resources"]
+  ]
 )
 ### auto-generated section `build intellij.dart` end
 

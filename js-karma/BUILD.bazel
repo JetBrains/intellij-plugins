@@ -105,11 +105,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
   ],
-  runtime_deps = [
-    ":karma_resources",
-    ":karma_resources_1",
-    ":karma_test_resources",
-  ]
+  runtime_deps = [":karma_test_resources"]
 )
 ### auto-generated section `build intellij.karma` end
 

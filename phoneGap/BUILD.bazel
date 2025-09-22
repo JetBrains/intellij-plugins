@@ -73,10 +73,6 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
-  ],
-  runtime_deps = [
-    ":phoneGap_resources",
-    ":phoneGap_resources_1",
   ]
 )
 ### auto-generated section `build intellij.phoneGap` end

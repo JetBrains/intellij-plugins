@@ -137,10 +137,7 @@ jvm_library(
     "//plugins/css/common",
     "//plugins/JavaScriptLanguage/javascript-common",
   ],
-  runtime_deps = [
-    ":angularJS_resources",
-    ":angularJS_test_resources",
-  ]
+  runtime_deps = [":angularJS_test_resources"]
 )
 ### auto-generated section `build intellij.angularJS` end
 

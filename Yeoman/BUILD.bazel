@@ -64,10 +64,6 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/text-matching",
-  ],
-  runtime_deps = [
-    ":yeoman_resources",
-    ":yeoman_resources_1",
   ]
 )
 ### auto-generated section `build intellij.yeoman` end
