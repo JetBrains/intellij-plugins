@@ -9,7 +9,7 @@ import com.intellij.psi.stubs.StubInputStream
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST
 import org.jetbrains.vuejs.lang.expr.stub.impl.VueJSScriptSetupTypeParameterListStubImpl
 
-class VueJSScriptSetupTypeParameterListStubSerializer : JSStubSerializer<TypeScriptTypeParameterListStub, TypeScriptTypeParameterList>(SCRIPT_SETUP_TYPE_PARAMETER_LIST) {
+internal class VueJSScriptSetupTypeParameterListStubSerializer : JSStubSerializer<TypeScriptTypeParameterListStub, TypeScriptTypeParameterList>({ SCRIPT_SETUP_TYPE_PARAMETER_LIST }) {
   override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): TypeScriptTypeParameterListStub =
     VueJSScriptSetupTypeParameterListStubImpl(dataStream, parentStub, elementType)
 }

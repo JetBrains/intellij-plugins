@@ -12,14 +12,14 @@ import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.parser.VueScriptSetupEmbeddedContentElementType
 import org.jetbrains.vuejs.lang.html.stub.impl.VueScriptSetupEmbeddedContentStubImpl
 
-internal class VueScriptSetupEmbeddedContentStubSerializer(elementType: VueScriptSetupEmbeddedContentElementType)
-  : JSStubSerializer<JSEmbeddedContentStub, JSEmbeddedContent>(elementType) {
+internal class VueScriptSetupEmbeddedContentStubSerializer(private val typedElementType: VueScriptSetupEmbeddedContentElementType)
+  : JSStubSerializer<JSEmbeddedContentStub, JSEmbeddedContent>(typedElementType) {
   override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): JSEmbeddedContentStub =
     VueScriptSetupEmbeddedContentStubImpl(dataStream, parentStub, elementType)
 
   override fun indexStub(stub: JSEmbeddedContentStub, sink: IndexSink) {
     super.indexStub(stub, sink)
-    if ((elementType as VueScriptSetupEmbeddedContentElementType).forcedLanguage == VueTSLanguage.INSTANCE) {
+    if (typedElementType.forcedLanguage == VueTSLanguage.INSTANCE) {
       sink.occurrence(TypeScriptScriptContentIndex.KEY, TypeScriptScriptContentIndex.DEFAULT_INDEX_KEY)
     }
   }
