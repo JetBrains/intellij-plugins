@@ -21,22 +21,10 @@ import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SRC_ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.STUBBED_ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.STUBBED_TAG
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.TEMPLATE_TAG
-import org.jetbrains.vuejs.lang.stubs.factories.VueJSEmbeddedExpressionContentStubFactory
-import org.jetbrains.vuejs.lang.stubs.factories.VueJSScriptSetupTypeParameterListStubFactory
-import org.jetbrains.vuejs.lang.stubs.factories.VueRefAttributeStubFactory
-import org.jetbrains.vuejs.lang.stubs.factories.VueScriptIdAttributeStubFactory
-import org.jetbrains.vuejs.lang.stubs.factories.VueScriptSetupEmbeddedContentStubFactory
-import org.jetbrains.vuejs.lang.stubs.factories.VueStubBasedTagStubFactory
-import org.jetbrains.vuejs.lang.stubs.factories.VueTemplateTagStubFactory
-import org.jetbrains.vuejs.lang.stubs.serializers.VueFileStubSerializer
-import org.jetbrains.vuejs.lang.stubs.serializers.VueJSEmbeddedExpressionContentStubSerializer
-import org.jetbrains.vuejs.lang.stubs.serializers.VueJSScriptSetupTypeParameterListStubSerializer
-import org.jetbrains.vuejs.lang.stubs.serializers.VueRefAttributeStubSerializer
-import org.jetbrains.vuejs.lang.stubs.serializers.VueScriptIdAttributeStubSerializer
-import org.jetbrains.vuejs.lang.stubs.serializers.VueScriptSetupEmbeddedContentStubSerializer
-import org.jetbrains.vuejs.lang.stubs.serializers.VueSrcAttributeStubSerializer
+import org.jetbrains.vuejs.lang.stubs.factories.*
+import org.jetbrains.vuejs.lang.stubs.serializers.*
 
-class VueStubRegistryExtension : StubRegistryExtension {
+private class VueStubRegistryExtension : StubRegistryExtension {
   override fun register(registry: StubRegistry) {
     listOf(
       VueFileElementType.INSTANCE,
@@ -51,17 +39,17 @@ class VueStubRegistryExtension : StubRegistryExtension {
       VueJSScriptSetupTypeParameterListStubFactory(),
       VueJSScriptSetupTypeParameterListStubSerializer(),
 
-      VueJSEmbeddedExpressionContentStubFactory(EMBEDDED_EXPR_CONTENT_JS),
-      VueJSEmbeddedExpressionContentStubSerializer(EMBEDDED_EXPR_CONTENT_JS),
+      VueJSEmbeddedExpressionContentStubFactory { EMBEDDED_EXPR_CONTENT_JS },
+      VueJSEmbeddedExpressionContentStubSerializer { EMBEDDED_EXPR_CONTENT_JS },
 
-      VueJSEmbeddedExpressionContentStubFactory(EMBEDDED_EXPR_CONTENT_TS),
-      VueJSEmbeddedExpressionContentStubSerializer(EMBEDDED_EXPR_CONTENT_TS),
+      VueJSEmbeddedExpressionContentStubFactory { EMBEDDED_EXPR_CONTENT_TS },
+      VueJSEmbeddedExpressionContentStubSerializer { EMBEDDED_EXPR_CONTENT_TS },
 
       VueScriptSetupEmbeddedContentStubFactory(SCRIPT_SETUP_TS_EMBEDDED_CONTENT),
-      VueScriptSetupEmbeddedContentStubSerializer(SCRIPT_SETUP_TS_EMBEDDED_CONTENT),
+      VueScriptSetupEmbeddedContentStubSerializer { SCRIPT_SETUP_TS_EMBEDDED_CONTENT },
 
       VueScriptSetupEmbeddedContentStubFactory(SCRIPT_SETUP_JS_EMBEDDED_CONTENT),
-      VueScriptSetupEmbeddedContentStubSerializer(SCRIPT_SETUP_JS_EMBEDDED_CONTENT),
+      VueScriptSetupEmbeddedContentStubSerializer { SCRIPT_SETUP_JS_EMBEDDED_CONTENT },
     ).forEach(registry::register)
 
     registry.registerStubFactory(STUBBED_TAG, VueStubBasedTagStubFactory(STUBBED_TAG))

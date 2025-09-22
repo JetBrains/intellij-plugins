@@ -9,7 +9,7 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.expr.stub.VueJSEmbeddedExpressionContentStub
 import org.jetbrains.vuejs.lang.expr.stub.impl.VueJSEmbeddedExpressionContentStubImpl
 
-class VueJSEmbeddedExpressionContentStubSerializer(elementType: VueJSEmbeddedExpressionContentElementType) : JSStubSerializer<VueJSEmbeddedExpressionContentStub, VueJSEmbeddedExpressionContent>(elementType) {
+internal class VueJSEmbeddedExpressionContentStubSerializer(elementTypeSupplier: () -> VueJSEmbeddedExpressionContentElementType) : JSStubSerializer<VueJSEmbeddedExpressionContentStub, VueJSEmbeddedExpressionContent>(elementTypeSupplier) {
   override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): VueJSEmbeddedExpressionContentStub =
     VueJSEmbeddedExpressionContentStubImpl(parentStub, elementType)
 }

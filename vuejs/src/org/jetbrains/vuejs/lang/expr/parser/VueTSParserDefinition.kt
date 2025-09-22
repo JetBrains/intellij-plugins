@@ -15,9 +15,9 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 
-val VUETS_FILE: IFileElementType = JSFileElementType.create(VueTSLanguage.INSTANCE)
+internal val VUETS_FILE: IFileElementType = JSFileElementType.create(VueTSLanguage.INSTANCE)
 
-class VueTSParserDefinition : JavascriptParserDefinition() {
+internal class VueTSParserDefinition : JavascriptParserDefinition() {
   object Util {
     @Suppress("UNUSED_PARAMETER")
     fun createLexer(project: Project?): Lexer {
