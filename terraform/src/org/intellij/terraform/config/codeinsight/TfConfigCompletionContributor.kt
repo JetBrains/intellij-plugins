@@ -383,23 +383,7 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       if (parent is HCLIdentifier || parent is HCLStringLiteral) {
         val pob = parent.parent // Property or Block
         if (pob is HCLProperty) {
-          val value = pob.value as? HCLValue
-          right = value.getType()
-          if (right == Types.String && value is PsiLanguageInjectionHost) {
-            // Check for Injection
-            InjectedLanguageManager.getInstance(pob.project).enumerate(value) { injectedPsi, _ ->
-              if (injectedPsi.fileType == HILFileType) {
-                right = Types.StringWithInjection
-                val root = injectedPsi.firstChild
-                if (root == injectedPsi.lastChild && root is ILExpression) {
-                  val type = root.getType()
-                  if (type != null && type != Types.Any) {
-                    right = type
-                  }
-                }
-              }
-            }
-          }
+          right = getRightTypeOfProperty(pob)
           isProperty = true
         }
         else if (pob is HCLBlock) {
@@ -445,6 +429,27 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       val property = TfModelHelper.getBlockProperties(hclBlock)[container.name] as? PropertyType
       val defaults = property?.type?.suggestedValues ?: return null
       return defaults.map { create(it) }
+    }
+
+    private fun getRightTypeOfProperty(pob: HCLProperty): HclType? {
+      val value = pob.value as? HCLValue ?: return null
+      var right: HclType? = value.getType()
+
+      if (right == Types.String && value is PsiLanguageInjectionHost) {
+        InjectedLanguageManager.getInstance(pob.project).enumerate(value) { injectedPsi, _ ->
+          if (injectedPsi.fileType == HILFileType) {
+            right = Types.StringWithInjection
+            val root = injectedPsi.firstChild
+            if (root == injectedPsi.lastChild && root is ILExpression) {
+              val type = root.getType()
+              if (type != null && type != Types.Any) {
+                right = type
+              }
+            }
+          }
+        }
+      }
+      return right
     }
 
     private fun doAddCompletion(
