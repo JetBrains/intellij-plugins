@@ -14,6 +14,7 @@ import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.execution.withBackgroundProgress
+import com.intellij.javascript.runtime.settings.getJavaScriptRuntimeConfigurableClass
 import com.intellij.lang.typescript.compiler.TypeScriptServiceRestarter
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
 import com.intellij.openapi.application.ApplicationManager
@@ -48,7 +49,7 @@ class DenoLspSupportProvider : LspServerSupportProvider {
   }
 
   override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
-    object : LspServerWidgetItem(lspServer, currentFile, DenoUtil.getDefaultDenoIcon(), DenoConfigurable::class.java) {
+    object : LspServerWidgetItem(lspServer, currentFile, DenoUtil.getDefaultDenoIcon(), getJavaScriptRuntimeConfigurableClass(DenoConfigurable::class.java)) {
       override val versionPostfix: @NlsSafe String
         get() {
           val postfix = super.versionPostfix
