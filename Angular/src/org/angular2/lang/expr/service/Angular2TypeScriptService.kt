@@ -135,7 +135,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     val result = super.getInlayHints(file, textRange) ?: return@withScopedServiceTraceSpan null
 
     if (hasTranspiledTemplate)
-      TypeScriptInlayHintsResult(repositionInlayHints(file, result.items), result.isSuccess)
+      TypeScriptInlayHintsResult(repositionInlayHints(file, result.items), result.isSuccess, result.message)
     else
       result
   }
