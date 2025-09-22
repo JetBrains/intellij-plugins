@@ -95,7 +95,9 @@ class JvmCoverageInspection : CoverageInspectionBase() {
     val stat = globalContext.coverageStatisticsData
     val searchScope = GlobalSearchScope.projectScope(globalContext.project)
     data.classes.filter {
-      JavaPsiFacade.getInstance(globalContext.project).findClass(it.value.name, searchScope) != null
+      runReadAction {
+        JavaPsiFacade.getInstance(globalContext.project).findClass(it.value.name, searchScope) != null
+      }
     }.forEach { x -> stat.processReportClassData(x.value) }
   }
 
