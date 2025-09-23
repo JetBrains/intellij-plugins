@@ -90,7 +90,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
       }
     };
 
-    if (CommandProcessor.getInstance().getCurrentCommand() == null) {
+    if (!CommandProcessor.getInstance().isCommandInProgress()) {
       CommandProcessor.getInstance().executeCommand(project, runnable, createMethodsFix.getCommandName(), null);
     }
     else {

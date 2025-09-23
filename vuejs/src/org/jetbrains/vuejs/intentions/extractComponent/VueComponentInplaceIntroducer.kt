@@ -218,7 +218,7 @@ internal class VueComponentInplaceIntroducer(
 
   private fun hijackCommand() {
     val commandProcessor = CommandProcessor.getInstance()
-    if (commandProcessor.currentCommand != null) {
+    if (commandProcessor.isCommandInProgress) {
       commandProcessor.currentCommandName = commandName
       commandProcessor.currentCommandGroupId = getGroupId()
     }
