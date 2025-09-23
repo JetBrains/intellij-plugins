@@ -9,5 +9,9 @@ public class ShoppingStepdefs implements En {
     Given("one " + "two", () -> {
       System.out.format("Cukes: %n\n", cukes);
     });
+
+    When("regex with number: (\\d+)", (Integer number) -> {
+      System.out.format("Number: %n\n", number);
+    });
   }
 }

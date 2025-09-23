@@ -62,6 +62,10 @@ public class CucumberJava2ResolveTest extends BaseCucumberJavaResolveTest {
     doTest("stepResolve_java8", "I have cuk<caret>es", "Given");
   }
 
+  public void testJava8StepDefWithRegex() {
+    doTest("stepResolve_java8", "regex <caret>with number: 10", "When");
+  }
+
   public void testJava8WithConcatenation() {
     doTest("stepResolve_java8", "one<caret> two", "Given");
   }
