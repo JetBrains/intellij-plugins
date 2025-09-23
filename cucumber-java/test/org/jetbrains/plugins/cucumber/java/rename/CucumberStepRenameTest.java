@@ -11,7 +11,9 @@ import org.jetbrains.plugins.cucumber.java.resolve.BaseCucumberJavaResolveTest;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /// See IDEA-107390.
 public class CucumberStepRenameTest extends BaseCucumberJavaResolveTest {
@@ -31,9 +33,9 @@ public class CucumberStepRenameTest extends BaseCucumberJavaResolveTest {
     CucumberStepReference stepReference = (CucumberStepReference)myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
     assertNotNull(stepReference);
 
-    Collection<AbstractStepDefinition> stepDefinitions = stepReference.resolveToDefinitions();
+    List<AbstractStepDefinition> stepDefinitions = new ArrayList<>(stepReference.resolveToDefinitions());
     assertEquals(1, stepDefinitions.size());
-    assertEquals(stepDefinitionName, stepDefinitions.iterator().next().getExpression());
+    assertEquals(stepDefinitionName, stepDefinitions.getFirst().getExpression());
   }
 
   @Override
