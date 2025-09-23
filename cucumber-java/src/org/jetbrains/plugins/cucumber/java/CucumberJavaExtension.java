@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
+import org.jetbrains.plugins.cucumber.java.steps.JavaAnnotatedStepDefinition;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinitionCreator;
-import org.jetbrains.plugins.cucumber.java.steps.factory.JavaStepDefinitionFactory;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.ArrayList;
@@ -37,8 +37,6 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
     final Collection<PsiClass> allStepAnnotationClasses = CucumberJavaUtil.getAllStepAnnotationClasses(module, dependenciesScope);
-
-    JavaStepDefinitionFactory stepDefinitionFactory = JavaStepDefinitionFactory.getInstance(module);
     final List<AbstractStepDefinition> result = new ArrayList<>();
     for (PsiClass annotationClass : allStepAnnotationClasses) {
       String annotationClassName = annotationClass.getQualifiedName();
@@ -47,7 +45,8 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
         for (PsiMethod stepDefMethod : javaStepDefinitions.findAll()) {
           List<String> annotationValues = CucumberJavaUtil.getStepAnnotationValues(stepDefMethod, annotationClassName);
           for (String annotationValue : annotationValues) {
-            result.add(stepDefinitionFactory.buildStepDefinition(stepDefMethod, annotationValue));
+            AbstractStepDefinition stepDefinition = new JavaAnnotatedStepDefinition(stepDefMethod, annotationValue);
+            result.add(stepDefinition);
           }
         }
       }
