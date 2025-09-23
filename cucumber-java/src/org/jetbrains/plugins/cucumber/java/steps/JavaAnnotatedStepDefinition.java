@@ -22,7 +22,8 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
 
   @Override
   protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
-    // NOTE(bartekpacia): Name of this method is invalid because it can return either a regex or a cukex.
+    // NOTE(bartekpacia): This implementation doesn't conform to this method's name because it can return either a regex or a cukex.
+    //  However, it has been like this for many years, and it seems to work fine. If possible, consider refactoring in the future.
     if (!(element instanceof PsiMethod)) return null;
     return myAnnotationValue;
   }
@@ -52,6 +53,6 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
 
   @Override
   public String toString() {
-    return "JavaAnnotatedStepDefinition{stepDef: " + getElement() + "}";
+    return "JavaAnnotatedStepDefinition{backed by element: " + getElement() + "}";
   }
 }

@@ -25,6 +25,8 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition implements P
 
   @Override
   protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
+    // NOTE(bartekpacia): This implementation doesn't conform to this method's name because it can return either a regex or a cukex.
+    //  However, it has been like this for many years, and it seems to work fine. If possible, consider refactoring in the future.
     if (!(element instanceof PsiMethodCallExpression methodCallExpression)) return null;
     final PsiExpressionList argumentList = methodCallExpression.getArgumentList();
     if (argumentList.getExpressions().length <= 1) return null;
@@ -87,6 +89,6 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition implements P
 
   @Override
   public String toString() {
-    return "Java8StepDefinition{element: " + getElement() + "}";
+    return "Java8StepDefinition{backed by element: " + getElement() + "}";
   }
 }

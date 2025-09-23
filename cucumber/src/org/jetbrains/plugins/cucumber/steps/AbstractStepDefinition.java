@@ -62,7 +62,9 @@ public abstract class AbstractStepDefinition {
     return myElementPointer.getElement();
   }
 
-  /// @return Regex pattern for the step or null if the regexp is malformed.
+  /// Returns a [Pattern] pattern for the step (or null if the regex is malformed).
+  ///
+  /// Depends on [#getCucumberRegex()].
   public @Nullable Pattern getPattern() {
     try {
       final String cucumberRegex = getCucumberRegex();
