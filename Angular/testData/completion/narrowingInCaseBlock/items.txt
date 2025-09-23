@@ -1,0 +1,2 @@
+bar (typeText=null; priority=4.0)
+foo (typeText=null; priority=4.0)
