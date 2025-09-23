@@ -7,6 +7,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings.IndentOptions
 import com.intellij.psi.codeStyle.PsiBasedFileIndentOptionsProvider
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
+import com.intellij.util.ReflectionUtil
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.isVueFile
@@ -15,6 +16,7 @@ private class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider()
   override fun getIndentOptionsByPsiFile(settings: CodeStyleSettings, file: PsiFile): IndentOptions? {
     if (file.language is VueLanguage) {
       if (file.isVueFile) {
+        copyCommonSettingsFromHtml(settings)
         return if (settings.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT)
           settings.getLanguageIndentOptions(VueLanguage.INSTANCE)
             ?.clone()
@@ -29,8 +31,16 @@ private class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider()
         htmlIndentOptions = htmlIndentOptions.clone() as IndentOptions
         htmlIndentOptions.isOverrideLanguageOptions = true
       }
+      copyCommonSettingsFromHtml(settings)
       return htmlIndentOptions
     }
     return null
+  }
+
+  fun copyCommonSettingsFromHtml(settings: CodeStyleSettings) {
+    val commonSettingsHtml = settings.getCommonSettings(HTMLLanguage.INSTANCE)
+    val commonSettingsVue = settings.getCommonSettings(VueLanguage.INSTANCE)
+    ReflectionUtil.copyFields(commonSettingsVue::class.java.getFields(), commonSettingsHtml, commonSettingsVue)
+    commonSettingsVue.softMargins = commonSettingsHtml.softMargins
   }
 }

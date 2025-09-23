@@ -14,6 +14,7 @@ import com.intellij.platform.testFramework.core.FileComparisonFailedError
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings.WRAP_ALWAYS
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.jetbrains.plugins.jade.JadeLanguage
@@ -260,6 +261,13 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
 
     }
   }
+
+  fun testHardWrap() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCommonSettings(HTMLLanguage.INSTANCE).RIGHT_MARGIN = 30
+      //styleSettings.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_TEXT_WRAP = WRAP_ALWAYS
+      doTestFromFile("vue")
+    }}
 
   private fun doTest(id: Int) {
     val testName = getTestName(false)
