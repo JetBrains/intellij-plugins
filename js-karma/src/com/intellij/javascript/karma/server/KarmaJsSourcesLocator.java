@@ -40,7 +40,7 @@ public final class KarmaJsSourcesLocator {
 
   private static @NotNull Path getBundledJsReporterDir() {
     String relativePathToResources;
-    if (AppMode.isDevServer()) {
+    if (AppMode.isRunningFromDevBuild()) {
       relativePathToResources = "karma";
     }
     else {
