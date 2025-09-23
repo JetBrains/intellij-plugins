@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.module.Module;
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
@@ -44,10 +45,9 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
       if (annotationClass.isAnnotationType() && annotationClassName != null) {
         final Query<PsiMethod> javaStepDefinitions = AnnotatedElementsSearch.searchPsiMethods(annotationClass, dependenciesScope);
         for (PsiMethod stepDefMethod : javaStepDefinitions.findAll()) {
-          List<String> annotationValues = CucumberJavaUtil.getStepAnnotationValues(stepDefMethod, annotationClassName);
-          for (String annotationValue : annotationValues) {
-            AbstractStepDefinition stepDefinition = new JavaAnnotatedStepDefinition(stepDefMethod, annotationValue);
-            result.add(stepDefinition);
+          List<PsiAnnotation> annotationValues = CucumberJavaUtil.getCucumberStepAnnotations(stepDefMethod, annotationClassName);
+          for (PsiAnnotation annotation : annotationValues) {
+            result.add(JavaAnnotatedStepDefinition.create(annotation));
           }
         }
       }

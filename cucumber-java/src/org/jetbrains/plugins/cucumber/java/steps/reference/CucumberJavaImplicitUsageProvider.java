@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java.steps.reference;
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,7 @@ public final class CucumberJavaImplicitUsageProvider implements ImplicitUsagePro
     else if (element instanceof PsiMethod method) {
       if (CucumberJavaUtil.isHook(method) || CucumberJavaUtil.isParameterType(method)) return true;
       if (CucumberJavaUtil.isAnnotationStepDefinition(method)) {
+        // This code is unnecessarily duplicated. See IDEA-379826.
         final List<PsiAnnotation> stepAnnotations = CucumberJavaUtil.getCucumberStepAnnotations(method);
         for (final PsiAnnotation stepAnnotation : stepAnnotations) {
           final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
@@ -31,7 +33,7 @@ public final class CucumberJavaImplicitUsageProvider implements ImplicitUsagePro
             psiReferenceRef.set(psiReference);
             return false;
           };
-          CucumberUtil.findGherkinReferencesToElement(method, regexp, processor, method.getResolveScope());
+          CucumberUtil.findGherkinReferencesToElement(stepAnnotation, regexp, processor, method.getResolveScope());
           if (psiReferenceRef.get() != null) return true;
         }
       }

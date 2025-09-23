@@ -11,6 +11,9 @@ import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 @NotNullByDefault
 public final class Java8StepDefinition extends AbstractJavaStepDefinition implements PomNamedTarget {
   public Java8StepDefinition(PsiMethodCallExpression element) {
@@ -55,7 +58,14 @@ public final class Java8StepDefinition extends AbstractJavaStepDefinition implem
 
   @Override
   public @Nullable PsiMethodCallExpression getElement() {
-    return (PsiMethodCallExpression)super.getElement();
+    final PsiElement element = super.getElement();
+    if (element == null) return null;
+    return (PsiMethodCallExpression)element;
+  }
+
+  @Override
+  public List<String> getVariableNames() {
+    return Collections.emptyList(); // This was never implemented. See IDEA-379823.
   }
 
   @Override

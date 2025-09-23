@@ -36,7 +36,7 @@ public final class CucumberJavaStepDefinitionSearch extends QueryExecutorBase<Ps
         if (regexp == null) {
           continue;
         }
-        CucumberUtil.findGherkinReferencesToElement(method, regexp, consumer, searchScope);
+        CucumberUtil.findGherkinReferencesToElement(stepAnnotation, regexp, consumer, searchScope);
       }
     }
 

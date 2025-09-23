@@ -3,9 +3,11 @@ package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
@@ -36,19 +38,5 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
     }
 
     return definitionText;
-  }
-
-  @Override
-  public List<String> getVariableNames() {
-    PsiElement element = getElement();
-    if (element instanceof PsiMethod method) {
-      PsiParameter[] parameters = method.getParameterList().getParameters();
-      ArrayList<String> result = new ArrayList<>();
-      for (PsiParameter parameter : parameters) {
-        result.add(parameter.getName());
-      }
-      return result;
-    }
-    return Collections.emptyList();
   }
 }

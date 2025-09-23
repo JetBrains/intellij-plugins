@@ -339,7 +339,7 @@ public final class CucumberJavaUtil {
     for (PsiReference ref : step.getReferences()) {
       ProgressManager.checkCanceled();
       PsiElement refElement = ref.resolve();
-      if (refElement instanceof PsiMethod || refElement instanceof PsiMethodCallExpression) {
+      if (refElement instanceof PsiAnnotation || refElement instanceof PsiMethodCallExpression) {
         PsiClassOwner file = (PsiClassOwner)refElement.getContainingFile();
         final String packageName = file.getPackageName();
         if (StringUtil.isNotEmpty(packageName)) {
