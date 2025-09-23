@@ -18,7 +18,6 @@
                               implementationClass="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionPresentationProvider"/>
     <elementDescriptionProvider implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionDescriptionProvider"/>
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDeclarationSearcher"/>
-    <codeInsight.lineMarkerProvider implementationClass="org.jetbrains.plugins.cucumber.groovy.steps.GrCucumberLineMarkerProvider" language="Groovy"/>
     <fileBasedIndex implementation="org.jetbrains.plugins.cucumber.groovy.GrCucumberStepIndex"/>
 
     <dependencySupport kind="java" coordinate="io.cucumber:cucumber-groovy" displayName="Cucumber"/>
