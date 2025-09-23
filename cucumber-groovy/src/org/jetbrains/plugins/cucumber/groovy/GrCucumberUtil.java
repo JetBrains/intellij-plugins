@@ -1,8 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.groovy;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -55,7 +54,7 @@ public final class GrCucumberUtil {
   }
 
   public static @Nullable String getStepDefinitionPatternText(final GrMethodCall stepDefinition) {
-    return ApplicationManager.getApplication().runReadAction((NullableComputable<String>)() -> {
+    return ReadAction.compute(() -> {
       GrLiteral pattern = getStepDefinitionPattern(stepDefinition);
       if (pattern == null) return null;
       Object value = pattern.getValue();
@@ -64,7 +63,7 @@ public final class GrCucumberUtil {
   }
 
   public static @Nullable GrLiteral getStepDefinitionPattern(final GrMethodCall stepDefinition) {
-    return ApplicationManager.getApplication().runReadAction((NullableComputable<GrLiteral>)() -> {
+    return ReadAction.compute(() -> {
       GrArgumentList argumentList = stepDefinition.getArgumentList();
 
       GroovyPsiElement[] arguments = argumentList.getAllArguments();
