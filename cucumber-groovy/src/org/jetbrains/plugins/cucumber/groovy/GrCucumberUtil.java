@@ -9,7 +9,6 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMirrorElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.groovy.lang.lexer.GroovyTokenTypes;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList;
@@ -23,7 +22,6 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
  * @author Max Medvedev
  */
 public final class GrCucumberUtil {
-  public static final String VERSION1_1 = "1.1";
 
   public static final String[] HOOKS = new String[]{"Before", "After"};
 
@@ -97,10 +95,5 @@ public final class GrCucumberUtil {
     if (containingClass == null) return false;
 
     return GrCucumberCommonClassNames.isHookClassName(containingClass.getQualifiedName());
-  }
-
-  public static boolean isCucumber_1_1_orAbove(PsiElement context) {
-    final String version = CucumberConfigUtil.getCucumberCoreVersion(context);
-    return version != null && version.compareTo(VERSION1_1) >= 0;
   }
 }

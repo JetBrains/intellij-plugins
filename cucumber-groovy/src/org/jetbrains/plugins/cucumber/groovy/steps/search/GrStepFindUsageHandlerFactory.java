@@ -5,7 +5,6 @@ import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Max Medvedev
@@ -17,7 +16,8 @@ public final class GrStepFindUsageHandlerFactory extends FindUsagesHandlerFactor
   }
 
   @Override
-  public @Nullable FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
-    return new FindUsagesHandler(element) {};
+  public @NotNull FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
+    return new FindUsagesHandler(element) {
+    };
   }
 }
