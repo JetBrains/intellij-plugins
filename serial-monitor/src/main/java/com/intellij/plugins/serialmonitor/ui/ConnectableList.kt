@@ -192,7 +192,6 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
       if (savedSelection != null) {
         select(savedSelection)
       }
-      PopupHandler.installPopupMenu(this@ConnectableList, toolbarActions, ActionPlaces.POPUP)
       invalidate()
       updateFlow.emit(Unit)
     }
@@ -261,7 +260,7 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
       }
     })
     ListSpeedSearch.installOn(this) { it.asSafely<Connectable>()?.entityName }
-
+    PopupHandler.installPopupMenu(this, toolbarActions, ActionPlaces.POPUP)
     launchOnShow("Connectable List Model Updater") {
       val profilesFlow = serviceAsync<SerialProfileService>().profilesFlow
       val portNamesFlow = serviceAsync<SerialPortService>().portNamesFlow
