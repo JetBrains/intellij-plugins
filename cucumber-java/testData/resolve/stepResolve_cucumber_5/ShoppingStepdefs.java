@@ -3,6 +3,7 @@ package cucumber.examples.java.calculator;
 import io.cucumber.java8.En;
 import io.cucumber.java8.StepDefinitionBody;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import io.cucumber.java.en.And;
 import io.cucumber.java.ParameterType;
 import java.util.List;
@@ -12,7 +13,12 @@ public class ShoppingStepdefs implements En {
     Given("my java8 step", () -> System.out.println("step"));
 
     And("my java8 step with cast", (StepDefinitionBody.A0) () -> {});
+
+    When("^my \\\\ step java 8$", () -> {});
   }
+
+  @When("^my \\\\ step java ann$")
+  public void my_step_java_ann() {}
 
   @Given("my step definition")
   public void my_step_definition() {

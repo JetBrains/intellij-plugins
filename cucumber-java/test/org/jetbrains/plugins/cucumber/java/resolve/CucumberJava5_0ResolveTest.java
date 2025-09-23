@@ -25,6 +25,12 @@ public class CucumberJava5_0ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("my jav<caret>a8 step with cast", "And");
   }
 
+  public void testResolveEscapeCharactersIsConsistent() {
+    init("stepResolve_cucumber_5");
+    checkReference("my \\ <caret>step java 8", "When");
+    checkReference("my \\ step<caret> java ann", "my_step_java_ann");
+  }
+
   public void testResolveToMethodWithColon() {
     init("stepResolve_cucumber_5");
     checkReference("step <caret><color>:", "my_step_with_colon");

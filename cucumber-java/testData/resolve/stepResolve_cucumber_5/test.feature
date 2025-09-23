@@ -55,3 +55,7 @@ Feature: Shopping
       | class  |
       | method |
       | field  |
+
+  Scenario: Escaping is consistent in "annotation style" and "Java 8 style"
+    And my \ step java 8
+    And my \ step java ann

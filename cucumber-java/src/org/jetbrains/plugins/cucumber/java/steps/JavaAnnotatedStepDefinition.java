@@ -24,10 +24,7 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
     // NOTE(bartekpacia): Name of this method is invalid because it can return either a regex or a cukex.
     if (!(element instanceof PsiMethod)) return null;
-    if (myAnnotationValue.length() > 1) {
-      return CucumberJavaUtil.escapeCucumberRegex(myAnnotationValue);
-    }
-    return null;
+    return myAnnotationValue;
   }
 
   @Override
