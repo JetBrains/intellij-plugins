@@ -6,11 +6,14 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.lang.javascript.service.readActionWithSuspend
 import com.intellij.lang.javascript.service.withScopedServiceTraceSpan
 import com.intellij.lang.javascript.service.withServiceTraceSpan
 import com.intellij.lang.typescript.compiler.TypeScriptService
@@ -47,6 +50,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.elementType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import com.intellij.util.concurrency.ThreadingAssertions
@@ -107,10 +111,12 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
       super.getQuickInfoAt(usageElement, originalFile)
 
   override suspend fun getCompletionItemsSuspending(virtualFile: VirtualFile, document: Document, offset: Int, parameters: CompletionParameters): List<TypeScriptService.CompletionEntry>? =
-    if (readAction { parameters.position.containingFile.language }.let { it is Angular2HtmlDialect || it is Angular2ExprDialect })
+    if (!acceptCodeCompletionFromService(parameters))
       null // For now do not use TS server for code completions
-    else
+    else {
+      readActionWithSuspend { refreshTranspiledTemplateIfNeeded(virtualFile) }
       super.getCompletionItemsSuspending(virtualFile, document, offset, parameters)
+    }
 
   override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
     val result = getTranspiledDirectiveAndTopLevelSourceFile(file)
@@ -185,6 +191,16 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   override fun skipInternalErrors(element: PsiElement): Boolean {
     return !isDeferOnReferenceExpression(element)
   }
+
+  private suspend fun acceptCodeCompletionFromService(parameters: CompletionParameters): Boolean =
+    readAction {
+      val language = parameters.position.containingFile.language
+      if (language !is Angular2HtmlDialect && language !is Angular2ExprDialect)
+        return@readAction true
+      // Support only string literals, where TS server should handle narrowing better
+      return@readAction parameters.position.takeIf { it.elementType == JSTokenTypes.STRING_LITERAL }
+        ?.parent?.asSafely<JSLiteralExpression>() != null
+    }
 
   private fun translateNamesInErrors(errors: List<JSAnnotationError>, file: TranspiledDirectiveFile, templateFile: PsiFile): List<JSAnnotationError> = withServiceTraceSpan("translateNamesInErrors") {
     val document = PsiDocumentManager.getInstance(templateFile.project).getDocument(templateFile)

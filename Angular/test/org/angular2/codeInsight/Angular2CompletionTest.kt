@@ -332,6 +332,11 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
       it.lookupString.endsWith(".")
     }
 
+  fun testNarrowingInCaseBlock() =
+    doLookupTest(ANGULAR_CORE_19_2_0, extension = "html", dir = true, configurators = listOf(Angular2TsConfigFile())) {
+      it.priority > 0.0
+    }
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
