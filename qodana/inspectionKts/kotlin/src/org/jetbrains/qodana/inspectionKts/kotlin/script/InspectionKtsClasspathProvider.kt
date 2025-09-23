@@ -149,7 +149,7 @@ private class InspectionKtsClasspathHolder(scope: CoroutineScope) {
   }
 
   private suspend fun collectDependenciesRoots(): Set<VirtualFile> {
-    val compiledFromSourcesRoot = if (AppMode.isDevServer() || PluginManagerCore.isRunningFromSources()) {
+    val compiledFromSourcesRoot = if (AppMode.isRunningFromDevBuild() || PluginManagerCore.isRunningFromSources()) {
       commonRoot(classPath)
     } else {
       null
