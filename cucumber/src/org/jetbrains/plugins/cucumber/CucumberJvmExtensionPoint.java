@@ -19,9 +19,11 @@ public interface CucumberJvmExtensionPoint {
     ExtensionPointName.create("org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint");
 
   // ToDo: remove parent
+
   /**
    * Checks if the child could be step definition file
-   * @param child a PsiFile
+   *
+   * @param child  a PsiFile
    * @param parent container of the child
    * @return true if the child could be step definition file, else otherwise
    */
@@ -29,7 +31,8 @@ public interface CucumberJvmExtensionPoint {
 
   /**
    * Checks if the child could be a step definition container
-   * @param child PsiElement to check
+   *
+   * @param child  PsiElement to check
    * @param parent it's container
    * @return true if child could be step definition container and it's possible to write in it
    */
@@ -37,7 +40,6 @@ public interface CucumberJvmExtensionPoint {
 
   /**
    * Provides type of step definition file
-   * @return type
    */
   @NotNull
   BDDFrameworkType getStepFileType();
@@ -47,17 +49,16 @@ public interface CucumberJvmExtensionPoint {
   StepDefinitionCreator getStepDefinitionCreator();
 
   /**
-   * Provides all possible step definitions available from current feature file.
+   * Provides all step definitions defined in {@code featureFile}.
    */
-  @Nullable
-  List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module);
+  @NotNull List<@NotNull AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module);
 
   Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile file);
 
   default boolean isGherkin6Supported(@NotNull Module module) {
     return false;
   }
-  
+
   default @Nullable String getStepName(@NotNull PsiElement step) {
     if (!(step instanceof GherkinStepImpl gherkinStep)) {
       return null;

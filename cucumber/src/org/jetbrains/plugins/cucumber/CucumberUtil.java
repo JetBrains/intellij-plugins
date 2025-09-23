@@ -3,7 +3,6 @@ package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -21,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
-import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
@@ -331,7 +329,6 @@ public final class CucumberUtil {
   /// Example input:
   /// - cukex: `"I have {int} cucumbers"`
   /// - ranges: `[TextRange(7,12)]` (the range covering `{int}`)
-  /// 
   ///
   /// Example output: `["I have ", " cucumbers"]`
   public static @NotNull List<String> textRangesOutsideToSubstrings(String cukex, @NotNull List<TextRange> ranges) {
@@ -709,12 +706,5 @@ public final class CucumberUtil {
       }
     }
     return null;
-  }
-
-  public static @NotNull List<AbstractStepDefinition> loadFrameworkSteps(@NotNull CucumberJvmExtensionPoint framework,
-                                                                         @Nullable PsiFile featureFile,
-                                                                         @NotNull Module module) {
-    List<AbstractStepDefinition> result = framework.loadStepsFor(featureFile, module);
-    return result != null ? result : Collections.emptyList();
   }
 }

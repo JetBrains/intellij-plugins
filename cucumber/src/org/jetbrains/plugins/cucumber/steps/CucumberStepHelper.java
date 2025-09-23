@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
-import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.OptionalStepDefinitionExtensionPoint;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepDefinitionCreationContext;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
@@ -127,7 +126,7 @@ public final class CucumberStepHelper {
     ArrayList<AbstractStepDefinition> result = new ArrayList<>();
 
     for (CucumberJvmExtensionPoint extension : getCucumberExtensions()) {
-      result.addAll(CucumberUtil.loadFrameworkSteps(extension, featureFile, module));
+      result.addAll(extension.loadStepsFor(featureFile, module));
     }
     return result;
   }
