@@ -6,14 +6,15 @@ import com.intellij.plugins.serialmonitor.service.SerialPortException
 import com.intellij.plugins.serialmonitor.service.SerialPortProvider
 import com.intellij.plugins.serialmonitor.service.SerialPortService
 import kotlinx.coroutines.flow.first
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
 class MockSerialPortProvider : SerialPortProvider {
   private val ports = AtomicReference<List<String>>(emptyList())
-  private val created = mutableMapOf<String, MockSerialPort>()
-  val failCreateFor = mutableSetOf<String>()
+  private val created = ConcurrentHashMap<String, MockSerialPort>()
+  val failCreateFor: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
   constructor(vararg portNames: String) {
     ports.store(listOf(*portNames))
@@ -53,24 +54,39 @@ class MockSerialPortProvider : SerialPortProvider {
 
 class MockSerialPort(private val name: String) : SerialPort {
   private var portListener: SerialPort.SerialPortListener? = null
+
+  @Volatile
   var connected: Boolean = false
     private set
+
+  @Volatile
   var lastWritten: ByteArray? = null
     private set
 
+  @Volatile
   var lastRTS: Boolean? = null
+  @Volatile
   var lastDTR: Boolean? = null
 
+  @Volatile
   var cts: Boolean = false
+  @Volatile
   var dsr: Boolean = false
 
+  @Volatile
   var connectedProfile: SerialPortProfile? = null
 
+  @Volatile
   var failOnConnect: Boolean = false
+  @Volatile
   var failOnRTS: Boolean = false
+  @Volatile
   var failOnDTR: Boolean = false
+  @Volatile
   var failOnDisconnect: Boolean = false
+  @Volatile
   var failOnGetCTS: Boolean = false
+  @Volatile
   var failOnGetDSR: Boolean = false
 
   override fun getSystemName(): String = name

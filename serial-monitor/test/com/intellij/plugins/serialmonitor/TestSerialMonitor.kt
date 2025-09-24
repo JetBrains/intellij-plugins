@@ -83,14 +83,14 @@ class TestSerialMonitor {
 
     // No data echoed from write
     suspendCancellableCoroutine { cont ->
-      launch {
-        delay(1000)
-        cont.resumeWith(Result.success(Unit))
-      }
       conn.dataListener = Consumer {
         cont.resumeWith(Result.failure(AssertionError("dataListener should not be called when localEcho is false")))
       }
       conn.write(data)
+      launch {
+        delay(1000)
+        cont.resumeWith(Result.success(Unit))
+      }
     }
 
     // but underlying port receives write
