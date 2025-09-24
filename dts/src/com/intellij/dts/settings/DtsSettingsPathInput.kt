@@ -30,7 +30,7 @@ abstract class DtsSettingsPathInput<T>(private val disposable: Disposable?,
 
         textField.addBrowseExtension({
                                        listener.actionPerformed(ActionEvent(textField, ActionEvent.ACTION_PERFORMED, "action"))
-                                     }, disposable)
+                                     }, disposable, false)
 
         return textField
       }
