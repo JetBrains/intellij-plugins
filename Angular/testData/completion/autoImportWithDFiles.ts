@@ -1,0 +1,4 @@
+
+function foo() {
+  signal<caret>
+}

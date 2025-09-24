@@ -337,6 +337,18 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
       it.priority > 0.0
     }
 
+  fun testAutoImportWithDFilesNg19() =
+    doCompletionAutoPopupTest(ANGULAR_CORE_19_2_0, configureFileName = "autoImportWithDFiles.ts", checkResult = true) {
+      completeBasic()
+      type("SetFn\n")
+    }
+
+  fun testAutoImportWithDFilesNg20_1() =
+    doCompletionAutoPopupTest(Angular2TestModule.ANGULAR_CORE_20_1_4, configureFileName = "autoImportWithDFiles.ts", checkResult = true) {
+      completeBasic()
+      type("SetFn\n")
+    }
+
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 
   private fun doBasicCompletionTest(vararg modules: WebFrameworkTestModule, dir: Boolean = false, extension: String = "ts") =
