@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.hints
 
+import com.intellij.codeInsight.codeVision.CodeVisionAnchorKind
 import com.intellij.codeInsight.codeVision.CodeVisionRelativeOrdering
 import com.intellij.codeInsight.hints.codeVision.ReferencesCodeVisionProvider
 import com.intellij.openapi.options.advanced.AdvancedSettings
@@ -60,6 +61,8 @@ internal class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
 
   override val relativeOrderings: List<CodeVisionRelativeOrdering>
     get() = emptyList()
+  override val defaultAnchor: CodeVisionAnchorKind
+    get() = CodeVisionAnchorKind.Right
   override val id: String
     get() = ID
 

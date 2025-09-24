@@ -1,8 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.hint
 
-import com.intellij.codeInsight.codeVision.CodeVisionAnchorKind
-import com.intellij.codeInsight.codeVision.settings.CodeVisionSettings
 import com.intellij.openapi.options.advanced.AdvancedSettings
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.utils.codeVision.CodeVisionTestCase
@@ -15,7 +13,6 @@ internal class TfCodeVisionProviderTest : CodeVisionTestCase() {
 
   override fun setUp() {
     super.setUp()
-    CodeVisionSettings.getInstance().defaultPosition = CodeVisionAnchorKind.Right
     setUpAdvancedSettings()
   }
 
