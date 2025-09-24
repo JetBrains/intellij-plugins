@@ -41,7 +41,7 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
   }
 
   @Override
-  public Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile featureFile) {
+  public @NotNull Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile featureFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) {
       return Collections.emptySet();
