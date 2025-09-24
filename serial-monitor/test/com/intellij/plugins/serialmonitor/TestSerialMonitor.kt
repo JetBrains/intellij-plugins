@@ -38,11 +38,13 @@ class TestSerialMonitor {
     provider.failCreateFor.addAll(ports)
   }
 
+  suspend fun createConnection(portName: String): SerialPortService.SerialConnection =
+    serviceAsync<SerialPortService>().newConnection(portName).also { Disposer.register(disposable, it) }
+
   suspend fun serialConnectionTestCase(portName: String, profile: SerialPortProfile): SerialPortService.SerialConnection {
     simpleTestCase(portName)
 
-    val portService = serviceAsync<SerialPortService>()
-    val conn = portService.newConnection(portName)
+    val conn = createConnection(portName)
     conn.connect(profile)
     return conn
   }
@@ -71,8 +73,7 @@ class TestSerialMonitor {
   fun `connect sets connected status and write without echo`() = timeoutRunBlocking {
     simpleTestCase("/dev/ttyUSB0")
 
-    val portService = serviceAsync<SerialPortService>()
-    val conn = portService.newConnection("/dev/ttyUSB0")
+    val conn = createConnection("/dev/ttyUSB0")
     assertEquals(PortStatus.DISCONNECTED, conn.getStatus())
 
     val profile = SerialPortProfile("/dev/ttyUSB0", baudRate = 9600, localEcho = false)
@@ -200,7 +201,7 @@ class TestSerialMonitor {
 
     assertEquals(PortStatus.UNAVAILABLE, portService.portStatus("/dev/does-not-exist"))
 
-    val conn = portService.newConnection("/dev/does-not-exist")
+    val conn = createConnection("/dev/does-not-exist")
     assertEquals(PortStatus.UNAVAILABLE_DISCONNECTED, portService.portStatus(conn.portName))
   }
 
@@ -249,8 +250,7 @@ class TestSerialMonitor {
 
   @Test
   fun `cts and dsr properties are false when not connected`() = timeoutRunBlocking {
-    val portService = serviceAsync<SerialPortService>()
-    val conn = portService.newConnection("/dev/ttyUSB0")
+    val conn = createConnection("/dev/ttyUSB0")
     assertFalse(conn.cts)
     assertFalse(conn.dsr)
   }
@@ -275,8 +275,7 @@ class TestSerialMonitor {
   fun `connect failure throws Serial Monitor Exception`(): Unit = timeoutRunBlocking {
     simpleTestCase("/dev/ttyUSB0")
 
-    val portService = serviceAsync<SerialPortService>()
-    val conn = portService.newConnection("/dev/ttyUSB0")
+    val conn = createConnection("/dev/ttyUSB0")
     val port = provider.createPort("/dev/ttyUSB0")
     port.failOnConnect = true
     assertThrows(SerialMonitorException::class.java) {
@@ -344,15 +343,14 @@ class TestSerialMonitor {
   @Test
   fun `newConnection replaces and disposes previous connection for same port`() = timeoutRunBlocking {
     simpleTestCase("/dev/ttyUSB0")
-    val portService = serviceAsync<SerialPortService>()
 
-    val first = portService.newConnection("/dev/ttyUSB0")
+    val first = createConnection("/dev/ttyUSB0")
     first.connect(SerialPortProfile(portName = "/dev/ttyUSB0", baudRate = 9600))
     val port = provider.createPort("/dev/ttyUSB0")
     assertTrue(port.connected)
 
     // Creating a second connection should dispose the first and disconnect the port
-    val second = portService.newConnection("/dev/ttyUSB0")
+    val second = createConnection("/dev/ttyUSB0")
     assertFalse(port.connected)
 
     // Now connect with the second connection to make sure it functions
@@ -401,8 +399,7 @@ class TestSerialMonitor {
   @Test
   fun `write before connect does not echo and does not write`() = timeoutRunBlocking {
     simpleTestCase("/dev/ttyUSB0")
-    val service = serviceAsync<SerialPortService>()
-    val conn = service.newConnection("/dev/ttyUSB0")
+    val conn = createConnection("/dev/ttyUSB0")
 
     val data = "pre-connect".toByteArray()
     val port = provider.createPort("/dev/ttyUSB0")
