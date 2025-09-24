@@ -3,10 +3,10 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeHighlighting.*;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
+import com.intellij.codeInsight.daemon.impl.BackgroundUpdateHighlightersUtil;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
-import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemDescriptorUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -104,8 +104,6 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
   }
 
   public static class ActionScriptUnusedImportsHighlightingPass extends TextEditorHighlightingPass {
-    private Collection<JSImportStatement> importStatements;
-    private Collection<JSReferenceExpression> fqnsToReplaceWithShortName;
     private final PsiFile myFile;
 
     public ActionScriptUnusedImportsHighlightingPass(final PsiFile file, final Editor editor) {
@@ -115,6 +113,8 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
 
     @Override
     public void doCollectInformation(final @NotNull ProgressIndicator progress) {
+      Collection<JSImportStatement> importStatements;
+      Collection<JSReferenceExpression> fqnsToReplaceWithShortName;
       if (myFile instanceof JSExpressionCodeFragment) {
         importStatements = Collections.emptyList();
         fqnsToReplaceWithShortName = Collections.emptyList();
@@ -124,18 +124,20 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
         importStatements = results.unusedImports;
         fqnsToReplaceWithShortName = results.fqnsToReplaceWithShortName;
       }
+      BackgroundUpdateHighlightersUtil.setHighlightersToEditor(myProject, myFile, myDocument, 0, myFile.getTextLength(), getHighlights(
+        importStatements, fqnsToReplaceWithShortName), getId());
     }
 
     @Override
     public void doApplyInformationToEditor() {
-      UpdateHighlightersUtil.setHighlightersToEditor(myProject, myDocument, 0, myFile.getTextLength(), getHighlights(), getColorsScheme(), getId());
     }
 
-    private List<HighlightInfo> getHighlights() {
-      final List<HighlightInfo> infos = new ArrayList<>(importStatements.size() + fqnsToReplaceWithShortName.size());
+    private List<HighlightInfo> getHighlights(Collection<JSImportStatement> jsImportStatements,
+                                              Collection<JSReferenceExpression> fqnsToReplaceWithShortName) {
+      final List<HighlightInfo> infos = new ArrayList<>(jsImportStatements.size() + fqnsToReplaceWithShortName.size());
       IntentionAction action = createOptimizeImportsIntention();
 
-      createHighlights(importStatements, action, JavaScriptBundle.message("javascript.validation.unused.import"), infos,
+      createHighlights(jsImportStatements, action, JavaScriptBundle.message("javascript.validation.unused.import"), infos,
                        ProblemHighlightType.LIKE_UNUSED_SYMBOL);
       createHighlights(fqnsToReplaceWithShortName, action, JavaScriptBundle.message("javascript.validation.fqn.to.replace.with.import"), infos,
                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
