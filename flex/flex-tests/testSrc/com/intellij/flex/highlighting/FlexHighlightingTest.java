@@ -1077,7 +1077,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     ExpectedHighlightingData expectedHighlightingData = new ExpectedHighlightingData(myEditor.getDocument(), true, true, false);
     Collection<HighlightInfo> infoCollection = checkHighlighting(expectedHighlightingData);
     assertEquals(1, countNonInformationHighlights(infoCollection));
-    findAndInvokeActionWithExpectedCheck(RenameTo.getFixName(), "mxml", infoCollection);
+    findAndInvokeActionWithExpectedCheck(RenameTo.getFixName(List.of()), "mxml", infoCollection);
   }
 
   @NeedsJavaModule
