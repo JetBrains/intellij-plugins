@@ -4,20 +4,12 @@ package org.jetbrains.plugins.cucumber.steps;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.util.CommonProcessors.CollectProcessor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.CucumberUtil;
-import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -137,27 +129,6 @@ public abstract class AbstractStepDefinition {
   /// If `newName` is null, it returns true if this step definition can be renamed at all.
   public boolean supportsRename(@Nullable String newName) {
     return true;
-  }
-
-  /// Finds all steps that refer to this definition in some [SearchScope] (kind of like "find usages").
-  public @NotNull Collection<GherkinStep> findSteps(@NotNull SearchScope searchScope) {
-    final String regex = getCucumberRegex();
-    final PsiElement element = getElement();
-    if (regex == null || element == null) {
-      return Collections.emptyList();
-    }
-
-    final CollectProcessor<PsiReference> consumer = new CollectProcessor<>();
-    CucumberUtil.findGherkinReferencesToElement(element, regex, consumer, searchScope);
-
-    // We use a hash set to get rid of duplicates
-    final Collection<GherkinStep> results = new HashSet<>(consumer.getResults().size());
-    for (final PsiReference reference : consumer.getResults()) {
-      if (reference.getElement() instanceof GherkinStep gherkinStep) {
-        results.add(gherkinStep);
-      }
-    }
-    return results;
   }
 
   /// Returns either a regex or cukex associated with this step.
