@@ -8,15 +8,16 @@ import com.intellij.pom.PomNamedTarget;
 import com.intellij.psi.*;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-public class Java8StepDefinition extends AbstractJavaStepDefinition implements PomNamedTarget {
-  public Java8StepDefinition(@NotNull PsiMethodCallExpression element) {
+@NotNullByDefault
+public final class Java8StepDefinition extends AbstractJavaStepDefinition implements PomNamedTarget {
+  public Java8StepDefinition(PsiMethodCallExpression element) {
     super(element);
   }
 
-  public static Java8StepDefinition create(@NotNull PsiMethodCallExpression element) {
+  public static Java8StepDefinition create(PsiMethodCallExpression element) {
     return CachedValuesManager.getCachedValue(element, () -> {
       final Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
       return CachedValueProvider.Result.create(new Java8StepDefinition(element), document);
@@ -42,7 +43,7 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition implements P
   }
 
   @Override
-  public void setValue(@NotNull String newValue) {
+  public void setValue(String newValue) {
     if (!(getElement() instanceof PsiMethodCallExpression methodCallExpression)) return;
     final PsiExpressionList argumentList = methodCallExpression.getArgumentList();
     if (argumentList.getExpressions().length <= 1) return;
@@ -58,7 +59,7 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition implements P
   }
 
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     return getExpression();
   }
 
