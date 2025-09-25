@@ -12,7 +12,7 @@ import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.FileBasedIndex;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
@@ -23,19 +23,20 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import java.util.ArrayList;
 import java.util.List;
 
+@NotNullByDefault
 public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
   @Override
-  public @NotNull BDDFrameworkType getStepFileType() {
+  public BDDFrameworkType getStepFileType() {
     return new BDDFrameworkType(JavaFileType.INSTANCE, "Java 8");
   }
 
   @Override
-  public @NotNull StepDefinitionCreator getStepDefinitionCreator() {
+  public StepDefinitionCreator getStepDefinitionCreator() {
     return new Java8StepDefinitionCreator();
   }
 
   @Override
-  public @NotNull List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module) {
+  public List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module) {
     final List<AbstractStepDefinition> result = new ArrayList<>();
     final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
     GlobalSearchScope scope = featureFile != null ? featureFile.getResolveScope() : module.getModuleWithDependenciesAndLibrariesScope(true);

@@ -9,7 +9,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.util.Query;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
@@ -21,19 +21,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@NotNullByDefault
 public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
   @Override
-  public @NotNull BDDFrameworkType getStepFileType() {
+  public BDDFrameworkType getStepFileType() {
     return new BDDFrameworkType(JavaFileType.INSTANCE);
   }
 
   @Override
-  public @NotNull StepDefinitionCreator getStepDefinitionCreator() {
+  public StepDefinitionCreator getStepDefinitionCreator() {
     return new JavaStepDefinitionCreator();
   }
 
   @Override
-  public @NotNull List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module) {
+  public List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module) {
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
     final Collection<PsiClass> allStepAnnotationClasses = CucumberJavaUtil.getAllStepAnnotationClasses(module, dependenciesScope);
@@ -55,7 +56,7 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
   }
 
   @Override
-  public boolean isGherkin6Supported(@NotNull Module module) {
+  public boolean isGherkin6Supported(Module module) {
     return CucumberJavaVersionUtil.isCucumber60orMore(module);
   }
 }
