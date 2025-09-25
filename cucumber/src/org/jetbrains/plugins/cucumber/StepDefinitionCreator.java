@@ -5,9 +5,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
+@NotNullByDefault
 public interface StepDefinitionCreator {
   /**
    * Creates step definition file
@@ -16,7 +17,7 @@ public interface StepDefinitionCreator {
    * @param name of created file
    * @return PsiFile object of created file
    */
-  @NotNull PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name);
+  PsiFile createStepDefinitionContainer(PsiDirectory dir, String name);
 
   /**
    * Creates step definition
@@ -27,7 +28,7 @@ public interface StepDefinitionCreator {
    *                     number of templates in case of "Create All Step Definitions" action invoked
    * @return true if success, false otherwise
    */
-  default boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file, boolean withTemplate) {
+  default boolean createStepDefinition(GherkinStep step, PsiFile file, boolean withTemplate) {
     return false;
   }
 
@@ -37,17 +38,17 @@ public interface StepDefinitionCreator {
    * @param fileName name of file to check
    * @return true if name is valid, false otherwise
    */
-  default boolean validateNewStepDefinitionFileName(@NotNull Project project, @NotNull String fileName) {
+  default boolean validateNewStepDefinitionFileName(Project project, String fileName) {
     return true;
   }
 
-  @NotNull String getDefaultStepDefinitionFolderPath(@NotNull GherkinStep step);
+  String getDefaultStepDefinitionFolderPath(GherkinStep step);
 
   /**
    * @return step definition file path relative to step definition folder
    */
   @NlsSafe
-  @NotNull String getStepDefinitionFilePath(@NotNull PsiFile file);
+  String getStepDefinitionFilePath(PsiFile file);
 
   /**
    * Provides default name of step definition file
@@ -55,5 +56,5 @@ public interface StepDefinitionCreator {
    * @param step step we want to create definition container for
    * @return String representing default name of step definition file
    */
-  @NotNull String getDefaultStepFileName(@NotNull GherkinStep step);
+  String getDefaultStepFileName(GherkinStep step);
 }
