@@ -14,7 +14,6 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReferenceBase;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
@@ -60,7 +59,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 /// @see CucumberJavaUtil#processParameterTypesDefinedByTypeRegistry
 //@formatter:on
 @NotNullByDefault
-public class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElement> {
+public final class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElement> {
   public CucumberJavaParameterTypeReference(PsiElement element, TextRange range) {
     // Exclude { and }
     super(element, TextRange.create(range.getStartOffset() + 1, range.getEndOffset() - 1), false);
