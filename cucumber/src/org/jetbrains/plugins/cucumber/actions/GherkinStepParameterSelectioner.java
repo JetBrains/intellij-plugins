@@ -9,7 +9,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.psi.GherkinPsiUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
@@ -25,6 +25,7 @@ import java.util.Set;
 /**
  * @author Dennis.Ushakov
  */
+@NotNullByDefault
 public final class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
   private static final Set<Pair<String, String>> START_END = new LinkedHashSet<>();
 
@@ -37,15 +38,12 @@ public final class GherkinStepParameterSelectioner extends AbstractWordSelection
   }
 
   @Override
-  public boolean canSelect(@NotNull PsiElement e) {
+  public boolean canSelect(PsiElement e) {
     return e.getParent() instanceof GherkinStep || e.getParent() instanceof GherkinStepsHolder;
   }
 
   @Override
-  public @NotNull List<TextRange> select(final @NotNull PsiElement e,
-                                         final @NotNull CharSequence editorText,
-                                         final int cursorOffset,
-                                         final @NotNull Editor editor) {
+  public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
     final List<TextRange> result = new ArrayList<>();
     if (editor.getSettings().isCamelWords()) {
       result.addAll(super.select(e, editorText, cursorOffset, editor));
@@ -66,7 +64,8 @@ public final class GherkinStepParameterSelectioner extends AbstractWordSelection
         }
       }
       buildAdditionalRanges(result, editorText);
-    } else if (parent instanceof GherkinStepsHolder) {
+    }
+    else if (parent instanceof GherkinStepsHolder) {
       final ASTNode stepHolderNode = parent.getNode();
       if (stepHolderNode != null) {
         final ASTNode keyword = stepHolderNode.findChildByType(GherkinTokenTypes.KEYWORDS);
@@ -76,11 +75,11 @@ public final class GherkinStepParameterSelectioner extends AbstractWordSelection
       }
       result.add(parent.getTextRange());
     }
-    
+
     return result;
   }
 
-  private static @NotNull List<TextRange> buildAdditionalRanges(final @NotNull List<TextRange> ranges, final @NotNull CharSequence editorText) {
+  private static List<TextRange> buildAdditionalRanges(List<TextRange> ranges, CharSequence editorText) {
     final List<TextRange> result = new ArrayList<>();
     for (TextRange textRange : ranges) {
       if (textRange.isEmpty()) continue;
@@ -89,9 +88,7 @@ public final class GherkinStepParameterSelectioner extends AbstractWordSelection
     return result;
   }
 
-  private static void addRangesForText(final @NotNull List<TextRange> result,
-                                       final @NotNull TextRange textRange,
-                                       final @NotNull CharSequence charSequence) {
+  private static void addRangesForText(List<TextRange> result, TextRange textRange, CharSequence charSequence) {
     final int startOffset = textRange.getStartOffset();
     final int endOffset = textRange.getEndOffset();
     final String text = charSequence.subSequence(startOffset, endOffset).toString();
