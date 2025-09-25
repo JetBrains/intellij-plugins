@@ -24,8 +24,8 @@ jvm_library(
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/util",
     "@community//platform/util/jdom",
-    "@lib//:kotlinx-serialization-core",
-    "@lib//:kotlinx-serialization-json",
+    "@community//libraries/kotlinx/serialization/core",
+    "@community//libraries/kotlinx/serialization/json",
   ],
   runtime_deps = [":cmake_resources"]
 )
@@ -48,8 +48,8 @@ jvm_library(
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/util",
     "@community//platform/util/jdom",
-    "@lib//:kotlinx-serialization-core",
-    "@lib//:kotlinx-serialization-json",
+    "@community//libraries/kotlinx/serialization/core",
+    "@community//libraries/kotlinx/serialization/json",
     "//CIDR/cidr-common-testFramework/core",
     "//CIDR/cidr-common-testFramework/nolang",
     "//CIDR/clion-testFramework",
