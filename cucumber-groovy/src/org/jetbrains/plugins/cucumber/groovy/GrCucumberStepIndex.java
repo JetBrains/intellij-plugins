@@ -35,7 +35,7 @@ public final class GrCucumberStepIndex extends CucumberStepIndex {
   }
 
   @Override
-  protected String[] getPackagesToScan() {
+  protected String @NotNull [] getPackagesToScan() {
     return PACKAGES_TO_SCAN;
   }
 
@@ -45,9 +45,8 @@ public final class GrCucumberStepIndex extends CucumberStepIndex {
   }
 
   @Override
-  protected List<Integer> getStepDefinitionOffsets(@NotNull LighterAST lighterAst, @NotNull CharSequence text) {
+  protected @NotNull List<Integer> getStepDefinitionOffsets(@NotNull LighterAST lighterAst, @NotNull CharSequence text) {
     List<Integer> result = new ArrayList<>();
-
     RecursiveLighterASTNodeWalkingVisitor visitor = new RecursiveLighterASTNodeWalkingVisitor(lighterAst) {
       @Override
       public void visitNode(@NotNull LighterASTNode element) {
