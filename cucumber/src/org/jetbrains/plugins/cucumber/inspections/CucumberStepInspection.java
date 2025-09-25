@@ -7,11 +7,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
+import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
@@ -44,7 +44,7 @@ public final class CucumberStepInspection extends GherkinInspection {
           final AbstractStepDefinition definition = reference.resolveToDefinition();
           if (definition == null) {
             LocalQuickFix[] fixes = null;
-            if (CucumberStepHelper.getExtensionCount() > 0) {
+            if (!CucumberJvmExtensionPoint.EP_NAME.getExtensionList().isEmpty()) {
               fixes = new LocalQuickFix[]{new CucumberCreateStepFix(), new CucumberCreateAllStepsFix()};
             }
             holder.registerProblem(reference.getElement(), reference.getRangeInElement(),

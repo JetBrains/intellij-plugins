@@ -11,6 +11,7 @@ import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -34,7 +35,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 
@@ -82,7 +82,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
                                     CompletionResultSet result) {
         final PsiFile psiFile = parameters.getOriginalFile();
         if (psiFile instanceof GherkinFile file) {
-          Module module = findModuleForPsiElement(psiFile);
+          Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
           boolean gherkin6Enabled = module != null && CucumberStepHelper.isGherkin6Supported(module);
           GherkinKeywordProvider keywordProvider = JsonGherkinKeywordProvider.getKeywordProvider(gherkin6Enabled);
           final String language = GherkinUtil.getFeatureLanguage(file);
