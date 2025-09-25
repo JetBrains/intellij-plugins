@@ -102,6 +102,10 @@ public final class CucumberStepHelper {
     return result;
   }
 
+  /**
+   * @deprecated Use {@link #loadStepsFor(PsiFile, Module)} instead.
+   */
+  @Deprecated(forRemoval = true)
   public static List<AbstractStepDefinition> getAllStepDefinitions(PsiFile featureFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) return Collections.emptyList();
@@ -157,7 +161,7 @@ public final class CucumberStepHelper {
     return definition.getPattern();
   }
 
-  private static List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module) {
+  public static List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module) {
     final ArrayList<AbstractStepDefinition> result = new ArrayList<>();
     for (final CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
       result.addAll(ep.loadStepsFor(featureFile, module));

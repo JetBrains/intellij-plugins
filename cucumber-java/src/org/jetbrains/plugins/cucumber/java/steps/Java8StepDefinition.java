@@ -2,7 +2,9 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.ide.util.EditSourceUtil;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.Ref;
 import com.intellij.pom.Navigatable;
 import com.intellij.pom.PomNamedTarget;
 import com.intellij.psi.*;
@@ -16,15 +18,21 @@ import java.util.List;
 
 @NotNullByDefault
 public final class Java8StepDefinition extends AbstractJavaStepDefinition implements PomNamedTarget {
+  private static final Logger LOG = Logger.getInstance(Java8StepDefinition.class);
+
   public Java8StepDefinition(PsiMethodCallExpression element) {
     super(element);
   }
 
   public static Java8StepDefinition create(PsiMethodCallExpression element) {
-    return CachedValuesManager.getCachedValue(element, () -> {
+    final Ref<Boolean> usedCache = new Ref<>(true);
+    final Java8StepDefinition stepDefinition = CachedValuesManager.getCachedValue(element, () -> {
+      usedCache.set(false);
       final Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
       return CachedValueProvider.Result.create(new Java8StepDefinition(element), document);
     });
+    LOG.trace("created for " + element.getText() + ", used cache: " + usedCache.get());
+    return stepDefinition;
   }
 
   @Override

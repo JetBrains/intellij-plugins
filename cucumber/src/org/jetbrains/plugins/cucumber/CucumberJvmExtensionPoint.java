@@ -47,7 +47,7 @@ public interface CucumberJvmExtensionPoint {
   StepDefinitionCreator getStepDefinitionCreator();
 
   /**
-   * Returns all step definitions defined in {@code featureFile}.
+   * Returns all step definitions available from {@code featureFile}.
    */
   List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module);
 

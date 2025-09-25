@@ -239,7 +239,9 @@ public final class CucumberCompletionContributor extends CompletionContributor {
 
 
   private static void addStepDefinitions(CompletionResultSet result, PsiFile file) {
-    final List<AbstractStepDefinition> definitions = CucumberStepHelper.getAllStepDefinitions(file);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(file);
+    if (module == null) return;
+    final List<AbstractStepDefinition> definitions = CucumberStepHelper.loadStepsFor(file, module);
     for (AbstractStepDefinition definition : definitions) {
       String expression = definition.getExpression();
       if (expression == null) {

@@ -5,11 +5,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -102,15 +102,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
       return ResolveResult.EMPTY_ARRAY;
     }
 
-    PsiFile featureFile = myStep.getContainingFile();
-    List<AbstractStepDefinition> stepDefinitions = CachedValuesManager.getCachedValue(featureFile, () -> {
-      List<AbstractStepDefinition> allStepDefinition = new ArrayList<>();
-      for (CucumberJvmExtensionPoint framework : frameworks) {
-        List<AbstractStepDefinition> steps = framework.loadStepsFor(featureFile, module);
-        allStepDefinition.addAll(steps);
-      }
-      return CachedValueProvider.Result.create(allStepDefinition, PsiModificationTracker.MODIFICATION_COUNT);
-    });
+    final List<AbstractStepDefinition> stepDefinitions = CucumberStepHelper.loadStepsFor(myStep.getContainingFile(), module);
 
     List<PsiElement> resolvedElements = new ArrayList<>();
     for (final AbstractStepDefinition stepDefinition : stepDefinitions) {
