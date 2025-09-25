@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 ///
 /// @see org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaPomDeclarationSearcher CucumberJavaPomDeclarationSearcher
 @NotNullByDefault
-public class CucumberJavaParameterPomTarget extends DelegatePsiTarget
+public final class CucumberJavaParameterPomTarget extends DelegatePsiTarget
   implements PomRenameableTarget<PsiLiteralExpression>, PsiDeclaredTarget {
   private final String name;
 
@@ -27,7 +27,7 @@ public class CucumberJavaParameterPomTarget extends DelegatePsiTarget
   }
 
   @Override
-  public @Nullable TextRange getNameIdentifierRange() {
+  public TextRange getNameIdentifierRange() {
     PsiElement element = getNavigationElement();
     if (element instanceof PsiIdentifier) {
       // method name
