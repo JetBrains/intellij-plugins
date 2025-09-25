@@ -26,6 +26,7 @@ class PrismaLspServerDescriptor(project: Project)
     override val findReferencesCustomizer = LspFindReferencesDisabled
     override val foldingRangeCustomizer = LspFoldingRangeDisabled
     override val inlayHintCustomizer: LspInlayHintCustomizer = LspInlayHintDisabled
+    override val documentHighlightsCustomizer: LspDocumentHighlightsCustomizer = LspDocumentHighlightsDisabled
 
     override val diagnosticsCustomizer: LspDiagnosticsCustomizer = object : LspDiagnosticsSupport() {
       override fun getTooltip(diagnostic: Diagnostic): @NlsSafe String = convertMarkdownToHtml(diagnostic.message)
