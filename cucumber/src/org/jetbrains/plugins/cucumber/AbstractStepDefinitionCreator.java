@@ -15,7 +15,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
@@ -24,9 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@NotNullByDefault
 public abstract class AbstractStepDefinitionCreator implements StepDefinitionCreator {
   @Override
-  public @NotNull String getStepDefinitionFilePath(final @NotNull PsiFile psiFile) {
+  public String getStepDefinitionFilePath(PsiFile psiFile) {
     final VirtualFile file = psiFile.getVirtualFile();
     assert file != null;
     VirtualFile parent = file.getParent();
@@ -54,7 +55,7 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
   }
 
   @Override
-  public @NotNull String getDefaultStepDefinitionFolderPath(@NotNull GherkinStep step) {
+  public String getDefaultStepDefinitionFolderPath(GherkinStep step) {
     PsiFile featureFile = step.getContainingFile();
     final PsiDirectory dir = findStepDefinitionDirectory(featureFile);
     if (dir != null) {
@@ -63,7 +64,7 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
     return FileUtil.join(featureFile.getContainingDirectory().getVirtualFile().getPath(), CucumberUtil.STEP_DEFINITIONS_DIR_NAME);
   }
 
-  private static @Nullable PsiDirectory findStepDefinitionDirectory(final @NotNull PsiFile featureFile) {
+  private static @Nullable PsiDirectory findStepDefinitionDirectory(PsiFile featureFile) {
     final PsiDirectory psiFeatureDir = featureFile.getContainingDirectory();
     assert psiFeatureDir != null;
 
