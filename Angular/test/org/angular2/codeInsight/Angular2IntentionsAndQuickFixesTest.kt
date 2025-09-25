@@ -4,9 +4,13 @@ package org.angular2.codeInsight
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.ide.IdeBundle
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
+import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.AccessType
+import com.intellij.lang.javascript.refactoring.JSVisibilityUtil.accessTypeToKeyword
 import com.intellij.polySymbols.testFramework.checkListByFile
 import com.intellij.polySymbols.testFramework.renderLookupItems
+import com.intellij.refactoring.BaseRefactoringProcessor
 import org.angular2.Angular2TemplateInspectionsProvider
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule.*
@@ -155,36 +159,61 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            dir = true)
 
   fun testRemoveUnusedBlockLetVariable() =
-    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'letUnused'"),  ANGULAR_CORE_18_2_1,
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'letUnused'"), ANGULAR_CORE_18_2_1,
            checkIntentionPreview = false)
 
   fun testRemoveUnusedNgTemplateLetVariable() =
-    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'ngTemplateUnused'"),  ANGULAR_CORE_18_2_1,
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'ngTemplateUnused'"), ANGULAR_CORE_18_2_1,
            checkIntentionPreview = false)
 
   fun testRemoveUnusedBlockParameterVariable1() =
-    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'first'"),  ANGULAR_CORE_18_2_1,
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'first'"), ANGULAR_CORE_18_2_1,
            checkIntentionPreview = false)
 
   fun testRemoveUnusedBlockParameterVariable2() =
-    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'first'"),  ANGULAR_CORE_18_2_1,
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'first'"), ANGULAR_CORE_18_2_1,
            checkIntentionPreview = false)
 
   fun testRemoveUnusedTemplateBindingVariable1() =
-    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'forUnused'"),  ANGULAR_CORE_18_2_1,
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'forUnused'"), ANGULAR_CORE_18_2_1,
            checkIntentionPreview = false)
 
   fun testRemoveUnusedTemplateBindingVariable2() =
-    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'ifUnused'"),  ANGULAR_CORE_18_2_1,
+    doTest(JavaScriptBundle.message("js.unused.symbol.remove", "constant 'ifUnused'"), ANGULAR_CORE_18_2_1,
            checkIntentionPreview = false)
+
+  fun testChangeVisibilityToProtectedInTemplate() =
+    doTest(JavaScriptBundle
+             .message("typescript.fix.change.member.access", accessTypeToKeyword(AccessType.PROTECTED, DialectOptionHolder.TS)),
+           ANGULAR_CORE_18_2_1, checkIntentionPreview = false)
+
+  fun testChangeVisibilityToPrivateInTemplate() =
+    try {
+      doTest(JavaScriptBundle
+               .message("typescript.fix.change.member.access", accessTypeToKeyword(AccessType.PRIVATE, DialectOptionHolder.TS)),
+             ANGULAR_CORE_18_2_1, checkIntentionPreview = false)
+      throw AssertionError("Intention action should report conflicts")
+    } catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
+      assert(e.messages.count() == 1) { "Intention action should report one conflict"}
+    }
+
+  fun testChangeVisibilityToSharpPrivateInTemplate() = try {
+    doTest(JavaScriptBundle.message("js.fix.change.member.access.to.sharp"),
+           ANGULAR_CORE_18_2_1, checkIntentionPreview = false)
+    throw AssertionError("Intention action should report conflicts")
+  } catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
+    assert(e.messages.count() == 1) { "Intention action should report one conflict"}
+  }
 
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
   }
 
-  private fun checkNoIntention(intentionName: String,
-                               vararg modules: WebFrameworkTestModule) {
+  private fun checkNoIntention(
+    intentionName: String,
+    vararg modules: WebFrameworkTestModule,
+  ) {
     doConfiguredTest(*modules,
                      configurators = listOf(Angular2TsConfigFile())
     ) {
@@ -199,13 +228,14 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
     }
   }
 
-  private fun doTest(intentionName: String,
-                     vararg modules: WebFrameworkTestModule,
-                     dir: Boolean = false,
-                     extension: String = defaultExtension,
-                     configureFileName: String = "$testName.$extension",
-                     checkIntentionPreview: Boolean = true,
-                     checkCodeCompletion: Boolean = false
+  private fun doTest(
+    intentionName: String,
+    vararg modules: WebFrameworkTestModule,
+    dir: Boolean = false,
+    extension: String = defaultExtension,
+    configureFileName: String = "$testName.$extension",
+    checkIntentionPreview: Boolean = true,
+    checkCodeCompletion: Boolean = false,
   ) {
     doConfiguredTest(*modules, dir = dir,
                      checkResult = true,
