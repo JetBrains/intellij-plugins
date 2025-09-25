@@ -7,7 +7,7 @@ import {Component} from "@angular/core"
 export class MyComponent {
     bar: number;
 
-    foo() {
+    protected foo() {
         return "";
     }
 }

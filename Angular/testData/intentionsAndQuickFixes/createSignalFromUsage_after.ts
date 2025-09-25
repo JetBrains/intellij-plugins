@@ -10,6 +10,6 @@ import {
   `
 })
 export class TestComponent {
-    fooSig = signal<string | null>(null);<caret>
+    protected readonly fooSig = signal<string | null>(null);<caret>
 
 }

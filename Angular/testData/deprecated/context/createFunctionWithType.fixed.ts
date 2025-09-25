@@ -5,7 +5,7 @@ import {Component} from "@angular/core"
     template: `<todo-cmp (event)="fetchFromApi('')"</todo-cmp>`,
 })
 export class TodoCmp {
-    fetchFromApi(s: string) {
+    protected fetchFromApi(s: string) {
 
     }
 }

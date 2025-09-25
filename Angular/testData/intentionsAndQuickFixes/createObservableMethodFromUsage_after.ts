@@ -19,7 +19,7 @@ export class TestComponent {
 })
 export class AppComponent {
 
-    foo() {
+    protected foo() {
 <selection>        return undefined;<caret></selection>
     }
 }
