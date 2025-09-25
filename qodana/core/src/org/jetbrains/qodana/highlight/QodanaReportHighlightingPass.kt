@@ -2,10 +2,10 @@ package org.jetbrains.qodana.highlight
 
 import com.intellij.codeHighlighting.TextEditorHighlightingPass
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.codeInsight.daemon.impl.BackgroundUpdateHighlightersUtil
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
-import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
 import com.intellij.codeInsight.daemon.impl.analysis.DaemonTooltipsUtil
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.history.LocalHistory
@@ -46,15 +46,11 @@ internal class QodanaReportHighlightingPass(
   private val passState: QodanaHighlightingPassState
 ) : TextEditorHighlightingPass(myFile.project, editor.document), DumbAware {
 
-  private val myHighlightInfos = AtomicReference<List<HighlightInfo>>(emptyList())
-
   private val enabledInspections = AtomicReference<Set<String>>(emptySet())
 
   override fun doCollectInformation(progress: ProgressIndicator) {
     val virtualFile = myFile.virtualFile ?: return
     val projectDir = myProject.guessProjectDir()?.let { Path(it.canonicalPath ?: it.path) } ?: return
-
-    myHighlightInfos.set(emptyList())
 
     val highlights = mutableListOf<HighlightInfo>()
 
@@ -69,47 +65,46 @@ internal class QodanaReportHighlightingPass(
         }
       }
 
-    if (relevantProblems.isEmpty()) return
+    if (relevantProblems.isNotEmpty()) {
+      val revisionIds = relevantProblems.map { it.revisionId }.toSet()
+      val localIdeRunTimestamp = highlightedReportData.ideRunData?.ideRunTimestamp
 
-    val revisionIds = relevantProblems.map { it.revisionId }.toSet()
-    val localIdeRunTimestamp = highlightedReportData.ideRunData?.ideRunTimestamp
+      val data = editor.document.getUserData(QODANA_REVISION_DATA)
+      if (isDataCorrect(data, localIdeRunTimestamp, revisionIds)) {
+        val rangesCalculator = QodanaRangeCalculator(myProject, myFile, document, highlightedReportData)
 
-    val data = editor.document.getUserData(QODANA_REVISION_DATA)
-    if (!isDataCorrect(data, localIdeRunTimestamp, revisionIds)) {
-      passState.scope.launch(QodanaDispatchers.Default) {
-        withBackgroundProgress(myProject, QodanaBundle.message("progress.title.qodana.highlight.calc", myFile.name)) {
-          if (localIdeRunTimestamp != null) {
-            putLocalRunData(localIdeRunTimestamp)
-          }
-          else {
-            putRevisionData(revisionIds)
-          }
-          DaemonCodeAnalyzer.getInstance(myProject).restart(myFile, this)
+        val relevantProblemsWithRanges = rangesCalculator.calculateTextRanges(
+          relevantProblems, data!!
+        )
+        highlights.addAll(relevantProblemsWithRanges.mapNotNull { (problem, range) ->
+          val toolId = highlightedReportData.inspectionsInfoProvider.getSuppressIdByInspection(problem.inspectionId)
+          buildHighlightInfo(problem, range, toolId)
+        })
+
+        if (virtualFile.isInLocalFileSystem) {
+          updateProblemsRanges(highlightedReportData, relevantProblemsWithRanges)
+        }
+
+        runBlockingCancellable {
+          val inspections = QodanaHighlightingSupportInfoProvider.getEnabledInspections(myProject)
+          enabledInspections.set(inspections)
         }
       }
-      return
+      else {
+        passState.scope.launch(QodanaDispatchers.Default) {
+          withBackgroundProgress(myProject, QodanaBundle.message("progress.title.qodana.highlight.calc", myFile.name)) {
+            if (localIdeRunTimestamp != null) {
+              putLocalRunData(localIdeRunTimestamp)
+            }
+            else {
+              putRevisionData(revisionIds)
+            }
+            DaemonCodeAnalyzer.getInstance(myProject).restart(myFile, this)
+          }
+        }
+      }
     }
-
-    val rangesCalculator = QodanaRangeCalculator(myProject, myFile, document, highlightedReportData)
-
-    val relevantProblemsWithRanges = rangesCalculator.calculateTextRanges(
-      relevantProblems, data!!
-    )
-    highlights.addAll(relevantProblemsWithRanges.mapNotNull { (problem, range) ->
-      val toolId = highlightedReportData.inspectionsInfoProvider.getSuppressIdByInspection(problem.inspectionId)
-      buildHighlightInfo(problem, range, toolId)
-    })
-
-    if (virtualFile.isInLocalFileSystem) {
-      updateProblemsRanges(highlightedReportData, relevantProblemsWithRanges)
-    }
-
-    runBlockingCancellable {
-      val inspections = QodanaHighlightingSupportInfoProvider.getEnabledInspections(myProject)
-      enabledInspections.set(inspections)
-    }
-
-    myHighlightInfos.set(highlights)
+    doApply(highlights)
   }
 
   private fun isDataCorrect(data: QodanaRevisionData?, localIdeRunTimestamp: Long?, revisionIds: Set<String?>): Boolean {
@@ -213,7 +208,7 @@ internal class QodanaReportHighlightingPass(
   }
 
   private fun updateWasAnalyzedOnceStatus(): Boolean {
-    val codeAnalyzer = (DaemonCodeAnalyzerEx.getInstance(myProject) as? DaemonCodeAnalyzerImpl)
+    val codeAnalyzer = DaemonCodeAnalyzerEx.getInstance(myProject) as? DaemonCodeAnalyzerImpl
     val firstAnalysisPassed = QodanaHighlightingSupportInfoProvider.getPrecedingPassesIds().all {
       codeAnalyzer?.fileStatusMap?.getFileDirtyScope(document, context, myFile, it) == null
     }
@@ -221,8 +216,10 @@ internal class QodanaReportHighlightingPass(
   }
 
   override fun doApplyInformationToEditor() {
+  }
+
+  private fun doApply(qodanaHighlights: List<HighlightInfo>) {
     val markupModel = DocumentMarkupModel.forDocument(document, myProject, false)
-    val qodanaHighlights = myHighlightInfos.get()
 
     val qodanaHighlightersDuplicatingIde = markupModel.allHighlighters.flatMap { getQodanaHighlightsDuplicatingIde(it, qodanaHighlights) }.toSet()
     val onlyQodanaHighlights = qodanaHighlights - qodanaHighlightersDuplicatingIde
@@ -248,8 +245,8 @@ internal class QodanaReportHighlightingPass(
         return@filter inspectionId !in enabledInspections
       }
 
-    UpdateHighlightersUtil.setHighlightersToEditor(
-      myProject, editor.document, 0, myFile.textLength, onlyQodanaNotFixedHighlights, colorsScheme, id
+    BackgroundUpdateHighlightersUtil.setHighlightersToEditor(
+      myProject, myFile, editor.document, 0, myFile.textLength, onlyQodanaNotFixedHighlights, id
     )
     passState.setInfosFromPass(onlyQodanaHighlights)
   }
