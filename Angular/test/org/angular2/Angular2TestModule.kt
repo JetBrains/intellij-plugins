@@ -10,6 +10,7 @@ enum class Angular2TestModule(myPackageName: String, myVersion: String) : WebFra
 
   ANGULAR_CDK_14_2_0("@angular/cdk", "14.2.0"),
   ANGULAR_CDK_17_1_0_RC_0("@angular/cdk", "17.1.0-rc.0"),
+  ANGULAR_CDK_19_2_11("@angular/cdk", "19.2.11"),
 
   ANGULAR_COMMON_4_0_0("@angular/common", "4.0.0"),
   ANGULAR_COMMON_8_2_14("@angular/common", "8.2.14"),

@@ -1,0 +1,186 @@
+{
+  "name": "@angular/cdk",
+  "version": "19.2.11",
+  "description": "Angular Material Component Development Kit",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular/components.git"
+  },
+  "keywords": [
+    "angular",
+    "cdk",
+    "component",
+    "development",
+    "kit"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/angular/components/issues"
+  },
+  "homepage": "https://github.com/angular/components#readme",
+  "exports": {
+    ".": {
+      "sass": "./_index.scss",
+      "types": "./index.d.ts",
+      "default": "./fesm2022/cdk.mjs"
+    },
+    "./a11y-prebuilt.css": {
+      "style": "./a11y-prebuilt.css"
+    },
+    "./a11y-prebuilt": {
+      "style": "./a11y-prebuilt.css"
+    },
+    "./overlay-prebuilt.css": {
+      "style": "./overlay-prebuilt.css"
+    },
+    "./overlay-prebuilt": {
+      "style": "./overlay-prebuilt.css"
+    },
+    "./text-field-prebuilt.css": {
+      "style": "./text-field-prebuilt.css"
+    },
+    "./text-field-prebuilt": {
+      "style": "./text-field-prebuilt.css"
+    },
+    "./schematics": {
+      "default": "./schematics/index.js"
+    },
+    "./package.json": {
+      "default": "./package.json"
+    },
+    "./a11y": {
+      "types": "./a11y/index.d.ts",
+      "default": "./fesm2022/a11y.mjs"
+    },
+    "./accordion": {
+      "types": "./accordion/index.d.ts",
+      "default": "./fesm2022/accordion.mjs"
+    },
+    "./bidi": {
+      "types": "./bidi/index.d.ts",
+      "default": "./fesm2022/bidi.mjs"
+    },
+    "./clipboard": {
+      "types": "./clipboard/index.d.ts",
+      "default": "./fesm2022/clipboard.mjs"
+    },
+    "./coercion": {
+      "types": "./coercion/index.d.ts",
+      "default": "./fesm2022/coercion.mjs"
+    },
+    "./coercion/private": {
+      "types": "./coercion/private/index.d.ts",
+      "default": "./fesm2022/coercion/private.mjs"
+    },
+    "./collections": {
+      "types": "./collections/index.d.ts",
+      "default": "./fesm2022/collections.mjs"
+    },
+    "./dialog": {
+      "types": "./dialog/index.d.ts",
+      "default": "./fesm2022/dialog.mjs"
+    },
+    "./drag-drop": {
+      "types": "./drag-drop/index.d.ts",
+      "default": "./fesm2022/drag-drop.mjs"
+    },
+    "./keycodes": {
+      "types": "./keycodes/index.d.ts",
+      "default": "./fesm2022/keycodes.mjs"
+    },
+    "./layout": {
+      "types": "./layout/index.d.ts",
+      "default": "./fesm2022/layout.mjs"
+    },
+    "./listbox": {
+      "types": "./listbox/index.d.ts",
+      "default": "./fesm2022/listbox.mjs"
+    },
+    "./menu": {
+      "types": "./menu/index.d.ts",
+      "default": "./fesm2022/menu.mjs"
+    },
+    "./observers": {
+      "types": "./observers/index.d.ts",
+      "default": "./fesm2022/observers.mjs"
+    },
+    "./observers/private": {
+      "types": "./observers/private/index.d.ts",
+      "default": "./fesm2022/observers/private.mjs"
+    },
+    "./overlay": {
+      "types": "./overlay/index.d.ts",
+      "default": "./fesm2022/overlay.mjs"
+    },
+    "./platform": {
+      "types": "./platform/index.d.ts",
+      "default": "./fesm2022/platform.mjs"
+    },
+    "./portal": {
+      "types": "./portal/index.d.ts",
+      "default": "./fesm2022/portal.mjs"
+    },
+    "./private": {
+      "types": "./private/index.d.ts",
+      "default": "./fesm2022/private.mjs"
+    },
+    "./scrolling": {
+      "types": "./scrolling/index.d.ts",
+      "default": "./fesm2022/scrolling.mjs"
+    },
+    "./stepper": {
+      "types": "./stepper/index.d.ts",
+      "default": "./fesm2022/stepper.mjs"
+    },
+    "./table": {
+      "types": "./table/index.d.ts",
+      "default": "./fesm2022/table.mjs"
+    },
+    "./testing": {
+      "types": "./testing/index.d.ts",
+      "default": "./fesm2022/testing.mjs"
+    },
+    "./testing/selenium-webdriver": {
+      "types": "./testing/selenium-webdriver/index.d.ts",
+      "default": "./fesm2022/testing/selenium-webdriver.mjs"
+    },
+    "./testing/testbed": {
+      "types": "./testing/testbed/index.d.ts",
+      "default": "./fesm2022/testing/testbed.mjs"
+    },
+    "./text-field": {
+      "types": "./text-field/index.d.ts",
+      "default": "./fesm2022/text-field.mjs"
+    },
+    "./tree": {
+      "types": "./tree/index.d.ts",
+      "default": "./fesm2022/tree.mjs"
+    }
+  },
+  "peerDependencies": {
+    "@angular/core": "^19.0.0 || ^20.0.0",
+    "@angular/common": "^19.0.0 || ^20.0.0",
+    "rxjs": "^6.5.3 || ^7.4.0"
+  },
+  "dependencies": {
+    "parse5": "^7.1.2",
+    "tslib": "^2.3.0"
+  },
+  "schematics": "./schematics/collection.json",
+  "ng-update": {
+    "migrations": "./schematics/migration.json",
+    "packageGroup": [
+      "@angular/material",
+      "@angular/cdk",
+      "@angular/cdk-experimental",
+      "@angular/material-experimental",
+      "@angular/material-luxon-adapter",
+      "@angular/material-moment-adapter",
+      "@angular/material-date-fns-adapter"
+    ]
+  },
+  "sideEffects": false,
+  "module": "./fesm2022/cdk.mjs",
+  "typings": "./index.d.ts",
+  "type": "module"
+}

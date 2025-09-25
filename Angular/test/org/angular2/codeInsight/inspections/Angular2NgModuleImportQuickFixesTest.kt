@@ -9,14 +9,14 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceIns
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Disposer
+import com.intellij.polySymbols.testFramework.checkListByFile
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageEditorUtil
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.testFramework.IndexingTestUtil.Companion.waitUntilIndexesAreReady
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.polySymbols.testFramework.checkListByFile
-import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection
@@ -345,6 +345,19 @@ class Angular2NgModuleImportQuickFixesTest : Angular2TestCase("inspections/ngMod
                     ),
                     expectedImports = setOf("IonContent - \"@ionic/angular/standalone\"",
                                             "IonicModule - \"@ionic/angular\"")
+    )
+  }
+
+  fun testImportFromCdk() {
+    doMultiFileTest(
+      testName = "importFromCdk",
+      mainFile = "app.component.html",
+      intention = "Import CdkVirtualScrollViewport",
+      modules = arrayOf(
+        Angular2TestModule.ANGULAR_CORE_19_2_0,
+        Angular2TestModule.ANGULAR_CDK_19_2_11),
+      signature = null,
+      importName = null,
     )
   }
 
