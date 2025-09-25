@@ -5,7 +5,7 @@ import {Component} from "@angular/core"
     template: `<div>{{fetchFromApi(2, "a", foobarbaz)}}</div>`,
 })
 export class TodoCmp {
-    fetchFromApi(number: number, a: string, foobarbaz: any) {
+    protected fetchFromApi(number: number, a: string, foobarbaz: any) {
         return "";
     }
 }

@@ -8,7 +8,7 @@ export class TodoCmp {
     @Output()
     event: EventEmitter<Bar>;
 
-    fetchFromApi($event: Bar) {
+    protected fetchFromApi($event: Bar) {
 
     }
 }

@@ -6,5 +6,5 @@ import {Component} from "@angular/core"
     template: `<div>{{todo}}</div>`,
 })
 export class TodoCmp {
-    todo: string;
+    protected todo: string;
 }

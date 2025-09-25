@@ -18,6 +18,6 @@ export class TestComponent {
       <app-test [test1]="foo | async"/>`
 })
 export class AppComponent {
-    foo<caret>: Observable<boolean>;
+    protected foo<caret>: Observable<boolean>;
 
 }

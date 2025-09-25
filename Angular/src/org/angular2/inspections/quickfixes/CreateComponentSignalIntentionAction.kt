@@ -9,6 +9,7 @@ import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
@@ -45,6 +46,8 @@ class CreateComponentSignalIntentionAction(methodExpression: JSReferenceExpressi
                              referenceExpression: JSReferenceExpression?,
                              isStaticContext: Boolean,
                              anchorParent: PsiElement) {
+    Angular2FixesTemplateUtil.addClassMemberModifiers(template, isStaticContext, anchorParent as JSClass)
+    template.addTextSegment("readonly ")
     template.addTextSegment(myReferencedName)
     template.addTextSegment(" = signal<")
 

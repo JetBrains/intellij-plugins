@@ -9,5 +9,5 @@ class Bar {
     selector: 'todo-cmp'
 })
 export class TodoCmp {
-    public unresolved: string;
+    protected unresolved: string;
 }

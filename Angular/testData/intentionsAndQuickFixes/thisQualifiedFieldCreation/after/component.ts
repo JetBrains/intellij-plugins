@@ -6,5 +6,5 @@ import {Component} from "@angular/core"
 })
 export class MyComponent {
     bar: number;
-    foo: string;
+    protected foo: string;
 }

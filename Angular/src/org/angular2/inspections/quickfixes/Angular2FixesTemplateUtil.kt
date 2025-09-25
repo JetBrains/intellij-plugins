@@ -9,9 +9,7 @@ import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 object Angular2FixesTemplateUtil {
   fun addClassMemberModifiers(template: Template, staticContext: Boolean, targetClass: JSClass) {
     if (DialectDetector.isTypeScript(targetClass)) {
-      if (TypeScriptCodeStyleSettings.getTypeScriptSettings(targetClass).USE_PUBLIC_MODIFIER) {
-        template.addTextSegment("public ")
-      }
+      template.addTextSegment("protected ")
       if (staticContext) {
         template.addTextSegment("static ")
       }

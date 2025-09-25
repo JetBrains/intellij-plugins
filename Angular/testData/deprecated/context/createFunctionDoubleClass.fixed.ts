@@ -9,7 +9,7 @@ class Bar {
     selector: 'todo-cmp'
 })
 export class TodoCmp {
-    fetchFromApi() {
+    protected fetchFromApi() {
         return "";
     }
 }
