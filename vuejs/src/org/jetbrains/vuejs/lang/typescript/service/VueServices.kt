@@ -21,10 +21,12 @@ import org.jetbrains.vuejs.options.VueSettings
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
+private const val vuePluginPath = "vuejs/vue-language-tools"
+
 private val vueLspServerPackageVersion = PackageVersion.bundled<VueLspServerPackageDescriptor>(
   version = "2.2.10",
-  pluginPath = "vuejs",
-  localPath = "vue-language-server",
+  pluginPath = "$vuePluginPath/language-server",
+  localPath = "2.2.10",
   isBundledEnabled = { Registry.`is`("vue.language.server.bundled.enabled") },
 )
 
@@ -96,8 +98,8 @@ private object VueLspActivationHelper : ServiceActivationHelper {
 
 private val vueTSPluginPackageVersion = PackageVersion.bundled<VueTSPluginPackageDescriptor>(
   version = "3.0.1",
-  pluginPath = "vuejs",
-  localPath = "typescript-vue-plugin",
+  pluginPath = "$vuePluginPath/typescript-plugin",
+  localPath = "3.0.1",
   isBundledEnabled = { Registry.`is`("vue.ts.plugin.bundled.enabled") },
 )
 

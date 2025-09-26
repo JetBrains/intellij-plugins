@@ -10,7 +10,7 @@ To be investigated.
 ## How to bundle
 
 - Adjust version everywhere in `package.json`, `VueServices.kt`
-- Build it using `rolldown`
+- Build it using `rolldown` inside leaf package folder (inside `node_modules/package/name/...`)
 
 ```shell
 npm i
