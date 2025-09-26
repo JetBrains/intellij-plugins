@@ -23,7 +23,7 @@ class JavaScriptInJadeExpressionParser extends ES6ExpressionParser<JavaScriptInJ
       return true;
     }
     if (firstToken == JSTokenTypes.IDENTIFIER && "attributes".equals(builder.getTokenText())) {
-      return parser.getStatementParser().markVariable();
+      return parser.getStatementParser().markVariable(false);
     }
 
     return super.parsePrimaryExpression();

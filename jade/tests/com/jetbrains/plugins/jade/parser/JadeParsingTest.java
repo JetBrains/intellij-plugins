@@ -234,6 +234,10 @@ public class JadeParsingTest extends JadeBaseParsingTestCase {
     defaultTest();
   }
 
+  public void testMixinDefaultArgumentValues() {
+    defaultTest();
+  }
+
   public void testAngular2() {
     defaultTest();
   }
