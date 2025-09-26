@@ -21,7 +21,7 @@ public class SerialMonitorToolWindowFactory implements ToolWindowFactory, DumbAw
   public void init(@NotNull ToolWindow toolWindow) {
     ToolWindowContentUi.setAllowTabsReordering(toolWindow, true);
     toolWindow.setToHideOnEmptyContent(false);
-    toolWindow.setStripeTitle(SerialMonitorBundle.message("tab.title.serial.connections"));
+    toolWindow.setStripeTitle(SerialMonitorBundle.message("toolwindow.stripe.title"));
     toolWindow.setAvailable(true);
   }
 
@@ -29,7 +29,7 @@ public class SerialMonitorToolWindowFactory implements ToolWindowFactory, DumbAw
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
     ContentManager manager = toolWindow.getContentManager();
     JPanel portPanel = new ConnectPanel(toolWindow);
-    Content content = manager.getFactory().createContent(portPanel, SerialMonitorBundle.message("tab.title.connect"), true);
+    Content content = manager.getFactory().createContent(portPanel, SerialMonitorBundle.message("toolwindow.port.tab.title"), true);
     content.setCloseable(false);
     manager.addContent(content);
   }
