@@ -2,6 +2,7 @@
 package org.intellij.terraform.terragrunt.codeinsight
 
 import com.intellij.psi.PsiFile
+import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
@@ -13,7 +14,7 @@ internal object TerragruntUnitHelper {
   fun getBlockProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(0) ?: return emptyMap()
     // For now, only root blocks are supported
-    if (block.parent !is PsiFile) return emptyMap()
+    if (block.parent !is PsiFile) return TfModelHelper.traverseParentBlockProperties(block, type)
 
     val file = block.containingFile.originalFile
     val rootBlocks = if (isTerragruntStack(file)) StackRootBlocksMap else TerragruntRootBlocksMap

@@ -56,7 +56,7 @@ internal object TfModelHelper {
       TfPsiPatterns.ResourceConnectionBlock.accepts(block) -> return getConnectionProperties(block)
       OpenTofuPatterns.KeyProviderBlock.accepts(block) -> return getEncryptionKeyProviderProperties(block)
       OpenTofuPatterns.EncryptionMethodBlock.accepts(block) -> return getEncryptionMethodProperties(block)
-      block.parent !is PsiFile -> return getModelBlockProperties(block, type)
+      block.parent !is PsiFile -> return traverseParentBlockProperties(block, type)
     }
 
     val props: Map<String, PropertyOrBlockType> = when (type) {
@@ -187,7 +187,7 @@ internal object TfModelHelper {
     return type
   }
 
-  private fun getModelBlockProperties(block: HCLBlock, type: String): Map<String, PropertyOrBlockType> {
+  fun traverseParentBlockProperties(block: HCLBlock, type: String): Map<String, PropertyOrBlockType> {
     // TODO: Speedup, remove recursive up-traverse
     val bp = block.parent as? HCLObject ?: return emptyMap()
     val bpp = bp.parent as? HCLBlock ?: return emptyMap()
