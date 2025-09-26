@@ -134,7 +134,10 @@ fun Panel.serialSettings(disposable: Disposable,
     topGap(TopGap.MEDIUM)
     comboBox(StandardBauds)
       .applyToComponent { isEditable = true }
-      .editableChangesBind(profile::baudRate.toMutableProperty(), String::toIntOrNull, disposable)
+      .editableChangesBind(MutableProperty(
+        getter = { profile.baudRate },
+        setter = { profile.baudRate = it; save(profile) }
+      ), String::toIntOrNull, disposable)
       .speedSearch()
       .label(message("label.baud"))
       .enabled(!readOnly)
