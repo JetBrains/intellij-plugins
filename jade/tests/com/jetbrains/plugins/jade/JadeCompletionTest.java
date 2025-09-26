@@ -235,4 +235,12 @@ public class JadeCompletionTest extends BasePlatformTestCase {
     selectItem("div", (char)0);
     myFixture.checkResultByFile("inBlock_after.pug");
   }
+
+  public void testMixinsObjectDestructuring() {
+    configureByFile(getTestName(true) + ".jade");
+    complete();
+    assertCompletionContains(true, "title", "subtitle");
+    selectItem("subtitle", (char)0);
+    myFixture.checkResultByFile(getTestName(true) + "_after.jade");
+  }
 }

@@ -118,9 +118,18 @@ public class JavaScriptInJadeStatementParser extends ES6StatementParser<JavaScri
 
       if (isDeclaration) {
         seenRest |= passRest();
-        boolean variableMarked = markVariable(true);
-        if (!variableMarked) {
-          break;
+        if (parser.getFunctionParser().willParseDestructuringAssignment()) {
+          var marker = builder.mark();
+          var elementType = parser.getExpressionParser().parseDestructuringElementNoMarker(
+            getVariableElementType(), true, true);
+          marker.done(elementType);
+          marker.precede().done(JSElementTypes.VAR_STATEMENT);
+        }
+        else {
+          boolean variableMarked = markVariable(true);
+          if (!variableMarked) {
+            break;
+          }
         }
       }
       else {
