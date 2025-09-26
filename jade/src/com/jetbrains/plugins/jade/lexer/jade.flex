@@ -727,16 +727,25 @@ Interpolation = ("#" | "!") "{" [^\n}]* "}"
 <MIXIN_DECL> {
   {IdentifierEx} { return JadeTokenTypes.IDENTIFIER; }
   {WhiteSpace} { return TokenType.WHITE_SPACE; }
-  "(" { yybegin(JS_MIXIN_PARAMS); return JadeTokenTypes.JS_MIXIN_PARAMS; }
+  "(" { yybegin(JS_MIXIN_PARAMS); parenthesisStack.clear(); return JadeTokenTypes.JS_MIXIN_PARAMS; }
   ")" { return JadeTokenTypes.RPAREN; }
 }
 
 <JS_MIXIN_PARAMS> {
-  ")" { yybegin(MIXIN_DECL); return JadeTokenTypes.JS_MIXIN_PARAMS; }
+  "("|"{"|"[" { parenthesisStack.push(yytext().toString()); return JadeTokenTypes.JS_MIXIN_PARAMS; }
+  ")"|"}"|"]" {
+    IElementType result = processClosingBracket(")", JadeTokenTypes.TEXT, JadeTokenTypes.JS_MIXIN_PARAMS);
+    if (result == JadeTokenTypes.TEXT) {
+      yybegin(MIXIN_DECL);
+    }
+    return JadeTokenTypes.JS_MIXIN_PARAMS;
+  }
   {LineTerminator} { return processEol(); }
   {Identifier} |
   {WhiteSpace} |
   . { return JadeTokenTypes.JS_MIXIN_PARAMS; }
+  {StringLiteral} |
+  {CharLiteral} { indentDone(); return JadeTokenTypes.JS_MIXIN_PARAMS; }
 }
 
 

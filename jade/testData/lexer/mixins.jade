@@ -7,6 +7,9 @@ mixin my_mixin()
 mixin my_mixin(arg1, arg2)
   div&attributes(attributes)
 
+mixin my_mixin(arg1='foo()', arg2=(12+{foo: 12}))
+  div&attributes(attributes)
+
 body
   +my_mixin
   + my_mixin

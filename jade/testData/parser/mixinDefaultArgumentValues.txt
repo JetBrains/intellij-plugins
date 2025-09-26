@@ -1,0 +1,89 @@
+XmlFile:mixinDefaultArgumentValues.jade
+  PsiElement(DOCUMENT)
+    JadeCommentImpl(COMMENT)
+      PsiElement(UNBUFFERED_COMMENT)('//- Declaration')
+    PsiElement(EOL)('\n')
+    Jade: MIXIN_DECLARATION
+      PsiElement(MIXIN_KEYWORD)('mixin')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('article')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_MIXIN_PARAMS
+        JSInJadeMixinParameters
+          PsiElement(JS:LPAR)('(')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('title')
+              PsiElement(JS:EQ)('=')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)(''Default Title'')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          JSVarStatement
+            JSVariable
+              PsiElement(JS:IDENTIFIER)('arg2')
+              PsiElement(JS:EQ)('=')
+              JSParenthesizedExpression
+                PsiElement(JS:LPAR)('(')
+                JSBinaryExpression
+                  JSLiteralExpression
+                    PsiElement(JS:NUMERIC_LITERAL)('12')
+                  PsiElement(JS:PLUS)('+')
+                  JSObjectLiteralExpression
+                    PsiElement(JS:LBRACE)('{')
+                    JSProperty
+                      PsiElement(JS:IDENTIFIER)('foo')
+                      PsiElement(JS:COLON)(':')
+                      PsiWhiteSpace(' ')
+                      JSLiteralExpression
+                        PsiElement(JS:NUMERIC_LITERAL)('12')
+                    PsiElement(JS:RBRACE)('}')
+                PsiElement(JS:RPAR)(')')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JadeClassImpl(CLASS)
+              PsiElement(DOT)('.')
+              JadeClassNameImpl(TAG_CLASS)('article')
+        PsiElement(INDENT)('\n    ')
+        JadeTagImpl(TAG)
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            PsiElement(XML_NAME)
+              <empty list>
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JadeClassImpl(CLASS)
+                PsiElement(DOT)('.')
+                JadeClassNameImpl(TAG_CLASS)('article-wrapper')
+          PsiElement(INDENT)('\n      ')
+          JadeTagImpl(TAG)
+            XmlToken:XML_TAG_NAME('h1')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('title')
+    PsiElement(EOL)('\n\n')
+    JadeCommentImpl(COMMENT)
+      PsiElement(UNBUFFERED_COMMENT)('//- Use')
+    PsiElement(EOL)('\n')
+    JadeMixinImpl(MIXIN)
+      PsiElement(PLUS)('+')
+      XmlToken:XML_TAG_NAME('article')
+      PsiElement(LPAREN)('(')
+      PsiElement(RPAREN)(')')
+    PsiElement(EOL)('\n\n')
+    JadeMixinImpl(MIXIN)
+      PsiElement(PLUS)('+')
+      XmlToken:XML_TAG_NAME('article')
+      PsiElement(LPAREN)('(')
+      JadeAttributeImpl(XML_ATTRIBUTE)
+        PsiElement(XML_NAME)
+          <empty list>
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''Hello world'')
+      PsiElement(RPAREN)(')')
