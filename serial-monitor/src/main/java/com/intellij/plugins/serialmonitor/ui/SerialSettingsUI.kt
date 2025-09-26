@@ -200,7 +200,7 @@ internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe S
       }
 
       serialSettings(profile = profileService.copyDefaultProfile(portName),
-                     readOnly = (portStatus != PortStatus.DISCONNECTED) && (portStatus != PortStatus.READY),
+                     readOnly = portStatus != PortStatus.DISCONNECTED && portStatus != PortStatus.READY,
                      disposable = disposable) {
         profileService.setDefaultProfile(it)
       }
