@@ -7,7 +7,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.updateSettings.impl.UpdateChecker;
+import com.intellij.openapi.updateSettings.impl.UpdateCheckerFacade;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -135,7 +135,7 @@ public final class DartSdkUpdateChecker {
     final String title = DartBundle.message("dart.sdk.update.title");
     final String message = DartBundle.message("new.dart.sdk.available.for.download..notification", availableSdkVersion, currentSdkVersion);
 
-    UpdateChecker.getNotificationGroup().createNotification(title, message, NotificationType.INFORMATION)
+    ApplicationManager.getApplication().getService(UpdateCheckerFacade.class).getNotificationGroup().createNotification(title, message, NotificationType.INFORMATION)
       .setDisplayId("dart.sdk.update.available")
       .setListener((notification, event) -> {
       notification.expire();
