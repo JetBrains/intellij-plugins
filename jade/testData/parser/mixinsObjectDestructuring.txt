@@ -1,0 +1,32 @@
+XmlFile:mixinsObjectDestructuring.jade
+  PsiElement(DOCUMENT)
+    Jade: MIXIN_DECLARATION
+      PsiElement(MIXIN_KEYWORD)('mixin')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('SomeComponent')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_MIXIN_PARAMS
+        JSInJadeMixinParameters
+          PsiElement(JS:LPAR)('(')
+          JSVarStatement
+            JSDestructuringParameter
+              JSDestructuringObject
+                PsiElement(JS:LBRACE)('{')
+                JSDestructuringShorthandedProperty
+                  JSVariable
+                    PsiElement(JS:IDENTIFIER)('title')
+                    PsiElement(JS:EQ)('=')
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)(''title'')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSDestructuringShorthandedProperty
+                  JSVariable
+                    PsiElement(JS:IDENTIFIER)('subtitle')
+                    PsiElement(JS:EQ)('=')
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)(''subtitle'')
+                PsiElement(JS:RBRACE)('}')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        XmlToken:XML_TAG_NAME('a')

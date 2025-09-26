@@ -85,4 +85,9 @@ public class JadeHighlightingTest extends BasePlatformTestCase {
     myFixture.configureByFile(getTestName(true) + ".jade");
     myFixture.checkHighlighting(true, true, true);
   }
+
+  public void testMixinsObjectDestructuring() {
+    myFixture.configureByFile(getTestName(true) + ".jade");
+    myFixture.checkHighlighting( true, true, true);
+  }
 }
