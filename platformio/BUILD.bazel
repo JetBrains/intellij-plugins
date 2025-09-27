@@ -98,7 +98,6 @@ jvm_library(
     "//CIDR/clion-embedded",
     "//CIDR/clion-embedded:clion-embedded_test_lib",
     "//CIDR/clion-execution",
-    "//CIDR/clion-execution:clion-execution_test_lib",
     "//CIDR/clion-external-system:clion-externalSystem",
     "//CIDR/clion-projectStatus",
     "//CIDR/clion-testFramework",
