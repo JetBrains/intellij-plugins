@@ -1,15 +1,15 @@
 ### auto-generated section `build intellij.cfml` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "cfml_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "cfml_resources_1",
-  files = glob(["compatibilityResources/**/*"]),
+  srcs = glob(["compatibilityResources/**/*"]),
   strip_prefix = "compatibilityResources"
 )
 
@@ -18,6 +18,10 @@ jvm_library(
   module_name = "intellij.cfml",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [
+    ":cfml_resources",
+    ":cfml_resources_1",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -44,8 +48,6 @@ jvm_library(
     "@community//platform/util/jdom",
   ],
   runtime_deps = [
-    ":cfml_resources",
-    ":cfml_resources_1",
     "//ultimate/platform-ultimate:commercial",
     "//plugins/javaee/web/coverage",
   ]

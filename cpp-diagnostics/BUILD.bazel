@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.clion.diagnostics` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "clion-diagnostics_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.clion.diagnostics",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":clion-diagnostics_resources"],
   deps = [
     "//CIDR/cidr-projectModel",
     "//CIDR/cidr-psi-base",
@@ -32,7 +33,6 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//libraries/kotlinx/serialization/core",
     "@community//libraries/kotlinx/serialization/json",
-  ],
-  runtime_deps = [":clion-diagnostics_resources"]
+  ]
 )
 ### auto-generated section `build intellij.clion.diagnostics` end

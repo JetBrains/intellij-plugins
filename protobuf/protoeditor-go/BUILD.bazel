@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.protoeditor.go` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "protoeditor-go_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.protoeditor.go",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":protoeditor-go_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/core-impl",
@@ -24,8 +25,7 @@ jvm_library(
     "//goland/intellij-go/impl",
     "@lib//:guava",
     "//goland/intellij-go/go-frontback",
-  ],
-  runtime_deps = [":protoeditor-go_resources"]
+  ]
 )
 
 jvm_library(

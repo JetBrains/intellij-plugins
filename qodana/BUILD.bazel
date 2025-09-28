@@ -1,6 +1,6 @@
 ### auto-generated section `build intellij.qodana` start
 load("@community//build:compiler-options.bzl", "create_kotlinc_options")
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 create_kotlinc_options(
   name = "custom_qodana",
@@ -12,15 +12,15 @@ create_kotlinc_options(
   x_sam_conversions = "class"
 )
 
-jvm_resources(
+resourcegroup(
   name = "qodana_resources",
-  files = glob(["core/resources/**/*"]),
+  srcs = glob(["core/resources/**/*"]),
   strip_prefix = "core/resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "qodana_test_resources",
-  files = glob(["core/test-data/**/*"]),
+  srcs = glob(["core/test-data/**/*"]),
   strip_prefix = "core/test-data"
 )
 
@@ -29,6 +29,7 @@ jvm_library(
   module_name = "intellij.qodana",
   visibility = ["//visibility:public"],
   srcs = glob(["core/src/**/*.kt", "core/src/**/*.java", "core/src/**/*.form"], allow_empty = True),
+  resources = [":qodana_resources"],
   kotlinc_opts = ":custom_qodana",
   deps = [
     "@community//platform/analysis-api:analysis",
@@ -111,14 +112,14 @@ jvm_library(
     "@community//plugins/IntelliLang:langInjection",
     "@community//platform/platform-impl/ui",
     "@ultimate_lib//:jetbrains-qodana-configuration",
-  ],
-  runtime_deps = [":qodana_resources"]
+  ]
 )
 
 jvm_library(
   name = "qodana_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["core/tests/**/*.kt", "core/tests/**/*.java", "core/tests/**/*.form"], allow_empty = True),
+  resources = [":qodana_test_resources"],
   kotlinc_opts = ":custom_qodana",
   associates = [":qodana"],
   deps = [
@@ -227,8 +228,7 @@ jvm_library(
     "@community//platform/platform-impl/ui",
     "@community//platform/statistics/testFramework",
     "@ultimate_lib//:jetbrains-qodana-configuration",
-  ],
-  runtime_deps = [":qodana_test_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana` end
 

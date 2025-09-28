@@ -1,21 +1,21 @@
 ### auto-generated section `build intellij.vuejs` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "vuejs_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "vuejs_resources_1",
-  files = glob(["compatibilityResources/**/*"]),
+  srcs = glob(["compatibilityResources/**/*"]),
   strip_prefix = "compatibilityResources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "vuejs_resources_2",
-  files = glob(["gen-resources/**/*"]),
+  srcs = glob(["gen-resources/**/*"]),
   strip_prefix = "gen-resources"
 )
 
@@ -24,6 +24,11 @@ jvm_library(
   module_name = "intellij.vuejs",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [
+    ":vuejs_resources",
+    ":vuejs_resources_1",
+    ":vuejs_resources_2",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -83,11 +88,6 @@ jvm_library(
     "@community//plugins/markdown/core:markdown",
     "//plugins/css/common/psi",
     "@community//platform/polySymbols/backend",
-  ],
-  runtime_deps = [
-    ":vuejs_resources",
-    ":vuejs_resources_1",
-    ":vuejs_resources_2",
   ]
 )
 ### auto-generated section `build intellij.vuejs` end

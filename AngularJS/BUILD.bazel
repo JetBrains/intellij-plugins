@@ -1,15 +1,15 @@
 ### auto-generated section `build intellij.angularJS` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "angularJS_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "angularJS_test_resources",
-  files = glob(["testResources/**/*"]),
+  srcs = glob(["testResources/**/*"]),
   strip_prefix = "testResources"
 )
 
@@ -18,6 +18,7 @@ jvm_library(
   module_name = "intellij.angularJS",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [":angularJS_resources"],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -60,14 +61,14 @@ jvm_library(
     "//webcore/impl",
     "//plugins/css/common/psi",
     "//plugins/css/common",
-  ],
-  runtime_deps = [":angularJS_resources"]
+  ]
 )
 
 jvm_library(
   name = "angularJS_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
+  resources = [":angularJS_test_resources"],
   associates = [":angularJS"],
   deps = [
     "@community//platform/analysis-api:analysis",
@@ -136,8 +137,7 @@ jvm_library(
     "//plugins/css/common/psi",
     "//plugins/css/common",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [":angularJS_test_resources"]
+  ]
 )
 ### auto-generated section `build intellij.angularJS` end
 

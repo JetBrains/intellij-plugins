@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.flex` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "flex_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.flex",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":flex_resources"],
   deps = [
     "//contrib/flex/flex-shared:shared",
     "@community//platform/analysis-api:analysis",
@@ -80,9 +81,6 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-common",
     "@community//platform/workspace/storage",
   ],
-  runtime_deps = [
-    ":flex_resources",
-    "//contrib/flex/jps-plugin:jps",
-  ]
+  runtime_deps = ["//contrib/flex/jps-plugin:jps"]
 )
 ### auto-generated section `build intellij.flex` end

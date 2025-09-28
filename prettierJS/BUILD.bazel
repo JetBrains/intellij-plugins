@@ -1,15 +1,15 @@
 ### auto-generated section `build intellij.prettierJS` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "prettierJS_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "prettierJS_resources_1",
-  files = glob(["gen/**/*"]),
+  srcs = glob(["gen/**/*"]),
   strip_prefix = "gen"
 )
 
@@ -18,6 +18,10 @@ jvm_library(
   module_name = "intellij.prettierJS",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [
+    ":prettierJS_resources",
+    ":prettierJS_resources_1",
+  ],
   deps = [
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//platform/analysis-api:analysis",
@@ -47,10 +51,6 @@ jvm_library(
     "@community//platform/statistics",
     "@community//platform/diff-impl",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [
-    ":prettierJS_resources",
-    ":prettierJS_resources_1",
   ]
 )
 

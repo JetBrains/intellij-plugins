@@ -1,15 +1,15 @@
 ### auto-generated section `build intellij.deno` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "deno_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "deno_resources_1",
-  files = glob(["gen-resources/**/*"]),
+  srcs = glob(["gen-resources/**/*"]),
   strip_prefix = "gen-resources"
 )
 
@@ -18,6 +18,10 @@ jvm_library(
   module_name = "intellij.deno",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [
+    ":deno_resources",
+    ":deno_resources_1",
+  ],
   deps = [
     "@lib//:guava",
     "@lib//:gson",
@@ -43,10 +47,6 @@ jvm_library(
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
-  ],
-  runtime_deps = [
-    ":deno_resources",
-    ":deno_resources_1",
   ]
 )
 

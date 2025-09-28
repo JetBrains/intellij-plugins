@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.gauge` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "gauge_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.gauge",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [":gauge_resources"],
   deps = [
     "@community//java/java-indexing-api:indexing",
     "@community//platform/analysis-api:analysis",
@@ -51,8 +52,7 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//libraries/grpc",
     "@community//libraries/grpc-netty-shaded",
-  ],
-  runtime_deps = [":gauge_resources"]
+  ]
 )
 
 jvm_library(

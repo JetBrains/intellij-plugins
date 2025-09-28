@@ -1,21 +1,21 @@
 ### auto-generated section `build intellij.prisma` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "prisma_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "prisma_resources_1",
-  files = glob(["gen-resources/**/*"]),
+  srcs = glob(["gen-resources/**/*"]),
   strip_prefix = "gen-resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "prisma_test_resources",
-  files = glob(["testData/**/*"]),
+  srcs = glob(["testData/**/*"]),
   strip_prefix = "testData"
 )
 
@@ -24,6 +24,10 @@ jvm_library(
   module_name = "intellij.prisma",
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [
+    ":prisma_resources",
+    ":prisma_resources_1",
+  ],
   deps = [
     "@lib//:kotlin-stdlib",
     "@lib//:jetbrains-markdown",
@@ -53,10 +57,6 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-backend",
     "//platform/lsp",
     "@community//platform/execution",
-  ],
-  runtime_deps = [
-    ":prisma_resources",
-    ":prisma_resources_1",
   ]
 )
 
@@ -64,6 +64,7 @@ jvm_library(
   name = "prisma_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
+  resources = [":prisma_test_resources"],
   associates = [":prisma"],
   deps = [
     "@lib//:kotlin-stdlib",
@@ -103,8 +104,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//platform/polySymbols",
     "@community//platform/polySymbols:polySymbols-testFramework",
-  ],
-  runtime_deps = [":prisma_test_resources"]
+  ]
 )
 ### auto-generated section `build intellij.prisma` end
 

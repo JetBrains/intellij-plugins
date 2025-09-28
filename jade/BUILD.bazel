@@ -1,21 +1,21 @@
 ### auto-generated section `build intellij.jade` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "jade_resources",
-  files = glob(["compatibilityResources/**/*"]),
+  srcs = glob(["compatibilityResources/**/*"]),
   strip_prefix = "compatibilityResources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "jade_resources_1",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "jade_test_resources",
-  files = glob(["testResources/**/*"]),
+  srcs = glob(["testResources/**/*"]),
   strip_prefix = "testResources"
 )
 
@@ -24,6 +24,10 @@ jvm_library(
   module_name = "intellij.jade",
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [
+    ":jade_resources",
+    ":jade_resources_1",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -56,10 +60,6 @@ jvm_library(
     "//plugins/css/common/psi",
     "//plugins/css/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [
-    ":jade_resources",
-    ":jade_resources_1",
   ]
 )
 
@@ -67,6 +67,7 @@ jvm_library(
   name = "jade_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["tests/**/*.kt", "tests/**/*.java", "tests/**/*.form"], allow_empty = True),
+  resources = [":jade_test_resources"],
   associates = [":jade"],
   deps = [
     "@community//platform/analysis-api:analysis",
@@ -113,8 +114,7 @@ jvm_library(
     "//plugins/css/backend",
     "//plugins/css/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [":jade_test_resources"]
+  ]
 )
 ### auto-generated section `build intellij.jade` end
 

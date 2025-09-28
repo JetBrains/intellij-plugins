@@ -1,21 +1,21 @@
 ### auto-generated section `build intellij.postcss` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "postcss_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "postcss_resources_1",
-  files = glob(["compatibilityResources/**/*"]),
+  srcs = glob(["compatibilityResources/**/*"]),
   strip_prefix = "compatibilityResources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "postcss_test_resources",
-  files = glob(["testData/**/*"]),
+  srcs = glob(["testData/**/*"]),
   strip_prefix = "testData"
 )
 
@@ -24,6 +24,10 @@ jvm_library(
   module_name = "intellij.postcss",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [
+    ":postcss_resources",
+    ":postcss_resources_1",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -51,17 +55,14 @@ jvm_library(
     "//plugins/css/backend",
     "//plugins/css/copyright",
   ],
-  exports = ["@community//xml/impl"],
-  runtime_deps = [
-    ":postcss_resources",
-    ":postcss_resources_1",
-  ]
+  exports = ["@community//xml/impl"]
 )
 
 jvm_library(
   name = "postcss_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
+  resources = [":postcss_test_resources"],
   associates = [":postcss"],
   deps = [
     "@community//platform/analysis-api:analysis",
@@ -93,8 +94,7 @@ jvm_library(
     "//plugins/css/backend",
     "//plugins/css/copyright",
   ],
-  exports = ["@community//xml/impl"],
-  runtime_deps = [":postcss_test_resources"]
+  exports = ["@community//xml/impl"]
 )
 ### auto-generated section `build intellij.postcss` end
 

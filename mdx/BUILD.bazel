@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.mdx` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "mdx_resources",
-  files = glob(["src/main/resources/**/*"]),
+  srcs = glob(["src/main/resources/**/*"]),
   strip_prefix = "src/main/resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.mdx",
   visibility = ["//visibility:public"],
   srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/java/**/*.form", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java", "src/main/kotlin/**/*.form"], allow_empty = True),
+  resources = [":mdx_resources"],
   deps = [
     "@lib//:kotlinx-coroutines-core",
     "//plugins/JavaScriptLanguage/javascript-parser",
@@ -36,8 +37,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [":mdx_resources"]
+  ]
 )
 
 jvm_library(

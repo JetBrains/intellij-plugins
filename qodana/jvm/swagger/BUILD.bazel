@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.qodana.jvm.swagger` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "swagger_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.qodana.jvm.swagger",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":swagger_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",
@@ -19,7 +20,6 @@ jvm_library(
     "@community//platform/ide-core",
     "//contrib/qodana",
     "//plugins/frameworks/swagger",
-  ],
-  runtime_deps = [":swagger_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.jvm.swagger` end

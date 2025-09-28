@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.cloudFormation` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "cloudFormation_resources",
-  files = glob(["src/main/resources/**/*"]),
+  srcs = glob(["src/main/resources/**/*"]),
   strip_prefix = "src/main/resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.cloudFormation",
   visibility = ["//visibility:public"],
   srcs = glob(["src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java", "src/main/kotlin/**/*.form", "src/main/gen/**/*.kt", "src/main/gen/**/*.java"], allow_empty = True),
+  resources = [":cloudFormation_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
@@ -27,8 +28,7 @@ jvm_library(
     "@lib//:x_stream",
     "@community//platform/core-ui",
     "@ultimate_lib//:cloud_formation-intellij-aws-cloudformation-meta",
-  ],
-  runtime_deps = [":cloudFormation_resources"]
+  ]
 )
 
 jvm_library(

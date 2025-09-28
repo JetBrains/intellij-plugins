@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.dart` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "dart_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.dart",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java", "thirdPartySrc/vmServiceDrivers/**/*.kt", "thirdPartySrc/vmServiceDrivers/**/*.java", "thirdPartySrc/analysisServer/**/*.kt", "thirdPartySrc/analysisServer/**/*.java"], allow_empty = True),
+  resources = [":dart_resources"],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -64,8 +65,7 @@ jvm_library(
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
     "//plugins/JavaScriptDebugger/debugger-ui:javascript-debugger-ui",
-  ],
-  runtime_deps = [":dart_resources"]
+  ]
 )
 
 jvm_library(

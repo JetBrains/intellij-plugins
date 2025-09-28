@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.qodana.python.community` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "community_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.qodana.python.community",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":community_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/projectModel-api:projectModel",
@@ -21,7 +22,6 @@ jvm_library(
     "@community//platform/lang-impl",
     "@community//python:python-community-impl",
     "@community//platform/backend/observation",
-  ],
-  runtime_deps = [":community_resources"]
+  ]
 )
 ### auto-generated section `build intellij.qodana.python.community` end

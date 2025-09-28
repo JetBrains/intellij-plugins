@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.astro` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "astro_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.astro",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [":astro_resources"],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -48,7 +49,6 @@ jvm_library(
     "//plugins/css/psi",
     "@community//platform/polySymbols/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [":astro_resources"]
+  ]
 )
 ### auto-generated section `build intellij.astro` end

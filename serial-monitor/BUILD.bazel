@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.serial.monitor` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "serial-monitor_resources",
-  files = glob(["src/main/resources/**/*"]),
+  srcs = glob(["src/main/resources/**/*"]),
   strip_prefix = "src/main/resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.serial.monitor",
   visibility = ["//visibility:public"],
   srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/java/**/*.form"], allow_empty = True),
+  resources = [":serial-monitor_resources"],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -31,8 +32,7 @@ jvm_library(
     "@lib//:jediterm-core",
     "@lib//:jediterm-ui",
     "@lib//:commons-io",
-  ],
-  runtime_deps = [":serial-monitor_resources"]
+  ]
 )
 
 jvm_library(

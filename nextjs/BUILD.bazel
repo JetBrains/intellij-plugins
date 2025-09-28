@@ -1,15 +1,15 @@
 ### auto-generated section `build intellij.nextjs` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "nextjs_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "nextjs_test_resources",
-  files = glob(["testData/**/*"]),
+  srcs = glob(["testData/**/*"]),
   strip_prefix = "testData"
 )
 
@@ -18,6 +18,7 @@ jvm_library(
   module_name = "intellij.nextjs",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":nextjs_resources"],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -37,14 +38,14 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/polySymbols",
     "@community//xml/xml-psi-api:psi",
-  ],
-  runtime_deps = [":nextjs_resources"]
+  ]
 )
 
 jvm_library(
   name = "nextjs_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
+  resources = [":nextjs_test_resources"],
   associates = [":nextjs"],
   deps = [
     "@community//platform/analysis-api:analysis",
@@ -70,8 +71,7 @@ jvm_library(
     "@community//platform/polySymbols",
     "@community//xml/xml-psi-api:psi",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
-  ],
-  runtime_deps = [":nextjs_test_resources"]
+  ]
 )
 ### auto-generated section `build intellij.nextjs` end
 

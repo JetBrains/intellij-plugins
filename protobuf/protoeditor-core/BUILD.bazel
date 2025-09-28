@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.protoeditor.core` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "protoeditor-core_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -12,6 +12,7 @@ jvm_library(
   module_name = "intellij.protoeditor.core",
   visibility = ["//visibility:public"],
   srcs = glob(["gen/**/*.kt", "gen/**/*.java", "src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":protoeditor-core_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/analysis-api:analysis",
@@ -41,8 +42,7 @@ jvm_library(
     "@community//platform/backend/workspace",
     "@lib//:protobuf",
     "@lib//:google-protobuf-java-util",
-  ],
-  runtime_deps = [":protoeditor-core_resources"]
+  ]
 )
 
 jvm_library(

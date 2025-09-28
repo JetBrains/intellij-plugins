@@ -1,21 +1,21 @@
 ### auto-generated section `build intellij.karma` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "karma_resources",
-  files = glob(["compatibilityResources/**/*"]),
+  srcs = glob(["compatibilityResources/**/*"]),
   strip_prefix = "compatibilityResources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "karma_resources_1",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "karma_test_resources",
-  files = glob(["testData/**/*"]),
+  srcs = glob(["testData/**/*"]),
   strip_prefix = "testData"
 )
 
@@ -24,6 +24,10 @@ jvm_library(
   module_name = "intellij.karma",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [
+    ":karma_resources",
+    ":karma_resources_1",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/util/concurrency",
@@ -54,10 +58,6 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//xml/xml-psi-api:psi",
-  ],
-  runtime_deps = [
-    ":karma_resources",
-    ":karma_resources_1",
   ]
 )
 
@@ -65,6 +65,7 @@ jvm_library(
   name = "karma_test_lib",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
+  resources = [":karma_test_resources"],
   associates = [":karma"],
   deps = [
     "@community//platform/analysis-api:analysis",
@@ -104,8 +105,7 @@ jvm_library(
     "//plugins/js-test-common/test:javascript-testing-tests_test_lib",
     "@community//xml/xml-psi-api:psi",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
-  ],
-  runtime_deps = [":karma_test_resources"]
+  ]
 )
 ### auto-generated section `build intellij.karma` end
 

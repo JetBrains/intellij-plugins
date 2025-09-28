@@ -1,15 +1,15 @@
 ### auto-generated section `build intellij.angular` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "angular_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "angular_resources_1",
-  files = glob(["gen-resources/**/*"]),
+  srcs = glob(["gen-resources/**/*"]),
   strip_prefix = "gen-resources"
 )
 
@@ -18,6 +18,10 @@ jvm_library(
   module_name = "intellij.angular",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [
+    ":angular_resources",
+    ":angular_resources_1",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -71,24 +75,20 @@ jvm_library(
     "//plugins/css/backend",
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
-  ],
-  runtime_deps = [
-    ":angular_resources",
-    ":angular_resources_1",
   ]
 )
 ### auto-generated section `build intellij.angular` end
 
 ### auto-generated section `build intellij.angular.tests` start
-jvm_resources(
+resourcegroup(
   name = "angular-tests_test_resources",
-  files = glob(["testData/**/*"]),
+  srcs = glob(["testData/**/*"]),
   strip_prefix = "testData"
 )
 
-jvm_resources(
+resourcegroup(
   name = "angular-tests_test_resources_1",
-  files = glob(["testResources/**/*"]),
+  srcs = glob(["testResources/**/*"]),
   strip_prefix = "testResources"
 )
 
@@ -103,6 +103,10 @@ jvm_library(
   module_name = "intellij.angular.tests",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form", "test-ex/**/*.kt", "test-ex/**/*.java", "test-ex/**/*.form"], allow_empty = True),
+  resources = [
+    ":angular-tests_test_resources",
+    ":angular-tests_test_resources_1",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -183,10 +187,6 @@ jvm_library(
     "//plugins/css/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/sass/backend",
-  ],
-  runtime_deps = [
-    ":angular-tests_test_resources",
-    ":angular-tests_test_resources_1",
   ]
 )
 ### auto-generated section `build intellij.angular.tests` end

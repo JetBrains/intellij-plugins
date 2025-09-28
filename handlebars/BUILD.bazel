@@ -1,15 +1,15 @@
 ### auto-generated section `build intellij.handlebars` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "handlebars_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "handlebars_resources_1",
-  files = glob(["compatibilityResources/**/*"]),
+  srcs = glob(["compatibilityResources/**/*"]),
   strip_prefix = "compatibilityResources"
 )
 
@@ -18,6 +18,10 @@ jvm_library(
   module_name = "intellij.handlebars",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [
+    ":handlebars_resources",
+    ":handlebars_resources_1",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -35,10 +39,6 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
-  ],
-  runtime_deps = [
-    ":handlebars_resources",
-    ":handlebars_resources_1",
   ]
 )
 

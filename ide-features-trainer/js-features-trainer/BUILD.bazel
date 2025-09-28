@@ -1,9 +1,9 @@
 ### auto-generated section `build intellij.javascript.featuresTrainer` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_provided_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "javascript-featuresTrainer_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
@@ -17,6 +17,7 @@ jvm_library(
   module_name = "intellij.javascript.featuresTrainer",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":javascript-featuresTrainer_resources"],
   deps = [
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@lib//:kotlin-stdlib",
@@ -35,8 +36,7 @@ jvm_library(
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     ":plugins_javascript-backend_provided",
-  ],
-  runtime_deps = [":javascript-featuresTrainer_resources"]
+  ]
 )
 
 jvm_library(

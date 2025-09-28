@@ -1,15 +1,15 @@
 ### auto-generated section `build intellij.tslint` start
-load("@rules_jvm//:jvm.bzl", "jvm_library", "jvm_resources")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
-jvm_resources(
+resourcegroup(
   name = "tslint_resources",
-  files = glob(["resources/**/*"]),
+  srcs = glob(["resources/**/*"]),
   strip_prefix = "resources"
 )
 
-jvm_resources(
+resourcegroup(
   name = "tslint_resources_1",
-  files = glob(["gen/**/*"]),
+  srcs = glob(["gen/**/*"]),
   strip_prefix = "gen"
 )
 
@@ -18,6 +18,10 @@ jvm_library(
   module_name = "intellij.tslint",
   visibility = ["//visibility:public"],
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [
+    ":tslint_resources",
+    ":tslint_resources_1",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -41,10 +45,6 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//json/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
-  ],
-  runtime_deps = [
-    ":tslint_resources",
-    ":tslint_resources_1",
   ]
 )
 
