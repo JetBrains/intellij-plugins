@@ -410,7 +410,7 @@
     <scanningFileListenerContributor implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderScanningListenerContributor"/>
     <moduleExportsProvider id="vue" implementation="org.jetbrains.vuejs.codeInsight.imports.VueModuleExportsProvider"/>
     <componentUsageProvider language="Vue" implementationClass="org.jetbrains.vuejs.codeInsight.hints.VueComponentUsageProvider"/>
-    <typeScriptCompilerTypePatcher implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtTypeScriptTypePatcher"/>
+    <typeScriptCompilerTypeFilter implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtTypeScriptTypeFilter"/>
   </extensions>
 
   <extensions defaultExtensionNs="intellij.webpack">
