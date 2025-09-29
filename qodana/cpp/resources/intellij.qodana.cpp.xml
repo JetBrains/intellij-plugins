@@ -24,7 +24,7 @@
     <qodana.externalToolsConfigurationProvider implementation="org.jetbrains.qodana.cpp.QodanaRadlerScopeLimitator"/>
     <qodana.workflowExtension implementation="org.jetbrains.qodana.cpp.QodanaCppWorkflow"/>
   </extensions>
-  <extensions defaultExtensionNs="com.jetbrains">
-    <cidr.radler.headlessStartupExtension implementation="org.jetbrains.qodana.cpp.QodanaCppHeadlessStartupExtension"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <clion.radler.core.inspections.headlessStartupExtension implementation="org.jetbrains.qodana.cpp.QodanaCppHeadlessStartupExtension"/>
   </extensions>
 </idea-plugin>
