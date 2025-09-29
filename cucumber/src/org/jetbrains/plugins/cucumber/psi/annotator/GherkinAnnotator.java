@@ -4,16 +4,17 @@ package org.jetbrains.plugins.cucumber.psi.annotator;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 
 /**
  * @author Roman.Chernyatchik
  */
+@NotNullByDefault
 public final class GherkinAnnotator implements Annotator {
 
-    @Override
-    public void annotate(final @NotNull PsiElement psiElement, final @NotNull AnnotationHolder holder) {
-        final GherkinAnnotatorVisitor visitor = new GherkinAnnotatorVisitor(holder);
-        psiElement.accept(visitor);
-    }
+  @Override
+  public void annotate(PsiElement psiElement, AnnotationHolder holder) {
+    final GherkinAnnotatorVisitor visitor = new GherkinAnnotatorVisitor(holder);
+    psiElement.accept(visitor);
+  }
 }

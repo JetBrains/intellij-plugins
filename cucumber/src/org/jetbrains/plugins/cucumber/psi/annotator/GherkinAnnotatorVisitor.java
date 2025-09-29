@@ -161,7 +161,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
     }
   }
 
-  private void highlightOutlineParamsForText(final String text, final int textStartInElementOffset,  final Pattern pattern,
+  private void highlightOutlineParamsForText(final String text, final int textStartInElementOffset, final Pattern pattern,
                                              final GherkinStep step) {
     if (StringUtil.isEmpty(text)) {
       return;
@@ -179,7 +179,8 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
           highlight(step, range, GherkinHighlighter.OUTLINE_PARAMETER_SUBSTITUTION);
         }
         result = matcher.find();
-      } while (result);
+      }
+      while (result);
     }
   }
 
