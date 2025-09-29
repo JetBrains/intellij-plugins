@@ -7,7 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler;
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepParameter;
 import org.jetbrains.plugins.cucumber.psi.GherkinTableCell;
@@ -19,14 +19,15 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTableCell;
  *
  * @see <a href="https://cucumber.io/docs/gherkin/reference#scenario-outline">Gherkin Reference | Scenario Outline</a>
  */
+@NotNullByDefault
 public final class GherkinParameterRenameHandler extends VariableInplaceRenameHandler {
   @Override
-  protected boolean isAvailable(@Nullable PsiElement element, @NotNull Editor editor, @NotNull PsiFile file) {
+  protected boolean isAvailable(@Nullable PsiElement element, Editor editor, PsiFile file) {
     return element instanceof GherkinStepParameter || element instanceof GherkinTableCell;
   }
 
   @Override
-  protected @NotNull VariableInplaceRenamer createRenamer(@NotNull PsiElement elementToRename, @NotNull Editor editor) {
+  protected VariableInplaceRenamer createRenamer(PsiElement elementToRename, Editor editor) {
     if (!(elementToRename instanceof PsiNamedElement namedElementToRename)) {
       throw new IllegalArgumentException("elementToRename must be PsiNamedElement, but was: " + elementToRename.getClass());
     }
