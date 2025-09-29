@@ -124,6 +124,16 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     val makeSwitches = makeSwitches(localMakefile, localWorkDirectory)
 
     val environment = environment()
+    if (!localWorkDirectory.isNullOrEmpty()) {
+      // we have to unset PWD to have it set by GeneralCommandLine
+      // otherwise make invocations will have PWD set to IDE's PWD.
+      // this is caused by unclear decision to pass env vars manually
+      // specifically in this plugin, as technically it should be done
+      // with ParentEnvironmentType.SYSTEM or CONSOLE instead of NONE
+
+      environment.remove("PWD")
+    }
+
     var command = arrayOf(localMakePath) + makeSwitches.array
     command = customizeCommandAndEnvironment(command, environment)
 
@@ -179,6 +189,11 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     val makeSwitches = makeSwitches(remoteMakefile, remoteWorkDirectory)
 
     val environment = environment()
+    if (!remoteWorkDirectory.isNullOrEmpty()) {
+      // see comment in [newCommandLineLocal]
+      environment.remove("PWD")
+    }
+
     var command = arrayOf(remoteMakePath.linuxPath) + makeSwitches.array
     command = customizeCommandAndEnvironment(command, environment)
 
