@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@NotNullByDefault
 public final class CucumberGoToRelatedProvider extends GotoRelatedProvider {
   @Override
-  public @NotNull List<? extends GotoRelatedItem> getItems(@NotNull DataContext context) {
+  public List<? extends GotoRelatedItem> getItems(DataContext context) {
     final PsiFile file = CommonDataKeys.PSI_FILE.getData(context);
     if (file != null) {
       return getItems(file);
@@ -30,7 +31,7 @@ public final class CucumberGoToRelatedProvider extends GotoRelatedProvider {
   }
 
   @Override
-  public @NotNull List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
+  public List<? extends GotoRelatedItem> getItems(PsiElement psiElement) {
     final PsiFile file = psiElement.getContainingFile();
     if (file instanceof GherkinFile gherkinFile) {
       final List<GherkinStep> steps = new ArrayList<>();
