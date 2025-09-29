@@ -161,10 +161,10 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     final CucumberStepReference reference = CucumberUtil.getCucumberStepReference(element);
     if (reference != null) {
       List<AbstractStepDefinition> stepDefinitions = reference.resolveToDefinitions().stream().toList();
-      if (stepDefinitions.size() != 1) return; // TODO: signal this to the user in some way
+      if (stepDefinitions.size() != 1) {
+        throw new IllegalStateException("there must be exactly 1 step definition for rename, but there are " + stepDefinitions.size());
+      }
       final AbstractStepDefinition stepDefinition = stepDefinitions.getFirst();
-      if (stepDefinition == null) throw new IllegalStateException("step definition must not be null");
-      final PsiElement elementToRename = stepDefinition.getElement();
       final String regexp = stepDefinition.getCucumberRegex();
       final String expression = stepDefinition.getExpression();
       if (expression != null && regexp != null) {
@@ -190,6 +190,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
         final String suffix = expression.endsWith("$") ? "$" : "";
         stepDefinition.setValue(prefix + newName + suffix);
 
+        final PsiElement elementToRename = stepDefinition.getElement();
         if (listener != null && elementToRename != null) {
           listener.elementRenamed(elementToRename);
         }
