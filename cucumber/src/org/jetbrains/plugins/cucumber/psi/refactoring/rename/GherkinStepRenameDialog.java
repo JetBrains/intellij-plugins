@@ -38,7 +38,6 @@ import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReferen
 /// - showing a warning if the user introduces a new cukex parameter
 ///   (because a better solution – similar to "introduce parameter refactoring" in Java – is not implemented yet. See IDEA-376074)
 ///
-///
 /// It is not clear whether the equivalent functionality can be provided with inline rename, so it is a dialog.
 public final class GherkinStepRenameDialog extends RenameDialog {
   private AbstractStepDefinition myStepDefinition;
@@ -148,20 +147,20 @@ public final class GherkinStepRenameDialog extends RenameDialog {
   @Override
   public String[] getSuggestedNames() {
     AbstractStepDefinition stepDefinition = getStepDefinition();
-    if (stepDefinition != null) {
-      final String regexOrCukex = stepDefinition.getExpression();
-      if (regexOrCukex != null) {
-        if (CucumberUtil.isCucumberExpression(regexOrCukex)) {
-          oldParameterCount = CucumberUtil.getCukexHighlightRanges(regexOrCukex).size();
-          return new String[]{regexOrCukex};
-        }
-        String result = StringUtil.trimStart(regexOrCukex, "^");
-        result = StringUtil.trimEnd(result, "$");
-        return new String[]{result};
-      }
+    if (stepDefinition == null) {
+      throw new IllegalStateException("step definition must not be null");
     }
 
-    // TODO: Decide: if there is no step definition, rename probably doesn't make sense at all. Let's throw exception?
+    final String regexOrCukex = stepDefinition.getExpression();
+    if (regexOrCukex != null) {
+      if (CucumberUtil.isCucumberExpression(regexOrCukex)) {
+        oldParameterCount = CucumberUtil.getCukexHighlightRanges(regexOrCukex).size();
+        return new String[]{regexOrCukex};
+      }
+      String result = StringUtil.trimStart(regexOrCukex, "^");
+      result = StringUtil.trimEnd(result, "$");
+      return new String[]{result};
+    }
 
     return super.getSuggestedNames();
   }
