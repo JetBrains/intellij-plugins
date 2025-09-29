@@ -49,7 +49,7 @@ public class CreateStepDefinitionFileModel {
   }
 
   public String getFileNameWithExtension() {
-    return myFileName + '.' + getSelectedFileType().getFileType().getDefaultExtension();
+    return myFileName + '.' + getSelectedFileType().fileType().getDefaultExtension();
   }
 
   public String getFileName() {

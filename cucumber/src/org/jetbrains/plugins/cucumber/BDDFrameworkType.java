@@ -17,10 +17,18 @@ public record BDDFrameworkType(@NotNull FileType fileType, @Nullable String addi
     this(fileType, null);
   }
 
+  /**
+   * @deprecated Use {@link #fileType()} directly.
+   */
+  @Deprecated(forRemoval = true)
   public @NotNull FileType getFileType() {
     return fileType;
   }
 
+  /**
+   * @deprecated Use {@link #fileType()} directly.
+   */
+  @Deprecated(forRemoval = true)
   public @Nullable String getAdditionalInfo() {
     return additionalInfo;
   }
