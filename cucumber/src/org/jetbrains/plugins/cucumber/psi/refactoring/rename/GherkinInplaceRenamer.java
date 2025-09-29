@@ -6,11 +6,12 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
 
-public class GherkinInplaceRenamer extends VariableInplaceRenamer {
-  public GherkinInplaceRenamer(@NotNull PsiNamedElement elementToRename, Editor editor) {
+@NotNullByDefault
+public final class GherkinInplaceRenamer extends VariableInplaceRenamer {
+  public GherkinInplaceRenamer(PsiNamedElement elementToRename, Editor editor) {
     super(elementToRename, editor);
   }
 
