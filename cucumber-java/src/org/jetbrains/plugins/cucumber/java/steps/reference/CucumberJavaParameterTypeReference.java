@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
-//@formatter:off Temporarily disable formatter because of bug IDEA-371809
 /// A reference from a [parameter type](https://cucumber.io/docs/cucumber/configuration#parameter-types) usage inside
 /// a definition of a [Cucumber Expression](https://github.com/cucumber/cucumber-expressions)
 /// to the parameter type's definition.
@@ -55,9 +54,9 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 ///   return new SimpleDateFormat("yyyy-MM-dd").parse(input);
 /// }
 /// ```
+///
 /// @see CucumberJavaUtil#processParameterTypesDefinedByAnnotation
 /// @see CucumberJavaUtil#processParameterTypesDefinedByTypeRegistry
-//@formatter:on
 @NotNullByDefault
 public final class CucumberJavaParameterTypeReference extends PsiReferenceBase<PsiElement> {
   public CucumberJavaParameterTypeReference(PsiElement element, TextRange range) {

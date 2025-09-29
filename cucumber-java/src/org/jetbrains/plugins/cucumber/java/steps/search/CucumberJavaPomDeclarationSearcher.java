@@ -11,13 +11,12 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterPomTarget;
 
-//@formatter:off Temporarily disable formatter because of bug IDEA-371809
 /// Provides "Find Usages" functionality for the definition of a Cucumber `ParameterType`.
-/// 
+///
 /// ### Example
-/// 
+///
 /// To see this in action, run "Find Usages" on the first argument of the `ParameterType` constructor (`"isoDate"`)":
-/// 
+///
 /// ```
 /// ParameterType<Date> parameterType = new ParameterType<>(
 ///         "isoDate",
@@ -26,9 +25,9 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameter
 ///         (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
 /// );
 /// ```
-/// 
-/// Assuming the following step definitions were in the project: 
-/// 
+///
+/// Assuming the following step definitions were in the project:
+///
 /// ```
 /// public class Steps
 ///   @And("today is {isoDate}")
@@ -36,11 +35,10 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameter
 ///
 ///   @And("yeserday was {isoDate}, and tomorrow will be {isoDate}")
 ///   public void yesterday_and_tomorrow(Date yesterday, Date tomorrow) {}
-/// } 
+/// }
 /// ```
 ///
 /// we would find *three* usages of the `"isoDate"` parameter.
-//@formatter:on
 public final class CucumberJavaPomDeclarationSearcher extends PomDeclarationSearcher {
   @Override
   public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, @NotNull Consumer<? super PomTarget> consumer) {

@@ -438,7 +438,6 @@ public final class CucumberUtil {
     return buildRegexpFromCucumberExpression(cucumberExpression, MapParameterTypeManager.DEFAULT);
   }
 
-  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
   /// Builds a regexp from the `cucumberExpression` containing `ParameterType`s.
   /// ### Example
   /// We can go from Cucumber expression:
@@ -454,7 +453,6 @@ public final class CucumberUtil {
   /// @return regular expression defined by Cucumber Expression and `ParameterType`s value
   /// @see <a href="https://cucumber.io/docs/cucumber/configuration/#parameter-types">Cucumber Reference | Step Definitions</a>
   /// @see <a href="https://github.com/cucumber/cucumber-expressions">Cucumber Expressions on GitHub</a>
-  //@formatter:on
   public static @NotNull String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
                                                                   @NotNull ParameterTypeManager parameterTypeManager) {
     String cucumberExpression1 = escapeCucumberExpression(cucumberExpression);
@@ -580,9 +578,8 @@ public final class CucumberUtil {
     }
   }
 
-  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
   /// Substitutes scenario outline parameters into step.
-  /// 
+  ///
   /// For example we can go from:
   /// ```
   /// Scenario Outline
@@ -598,7 +595,6 @@ public final class CucumberUtil {
   ///
   /// @param outlineTableMap mapping from the header to the first data row
   /// @return OutlineStepSubstitution that contains the result step name and can calculate offsets
-  //@formatter:on
   public static @NotNull OutlineStepSubstitution substituteTableReferences(String stepName, @Nullable Map<String, String> outlineTableMap) {
     if (outlineTableMap == null) {
       return new OutlineStepSubstitution(stepName, Collections.emptyList());

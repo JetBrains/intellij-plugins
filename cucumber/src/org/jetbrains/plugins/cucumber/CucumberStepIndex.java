@@ -27,7 +27,6 @@ import java.util.Map;
 @NotNullByDefault
 public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean, List<Integer>> {
 
-  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
   /// Regenerate it with:
   ///
   /// ```
@@ -37,9 +36,8 @@ public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean,
   /// ```
   ///
   /// The keywords are generated with spaces and punctuation removed for reasons described in IDEA-295155.
-  /// 
+  ///
   /// @see org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider JsonGherkinKeywordProvider
-  //@formatter:on
   private static final List<String> STEP_KEYWORDS = loadStepKeywords();
 
   private static List<String> loadStepKeywords() {

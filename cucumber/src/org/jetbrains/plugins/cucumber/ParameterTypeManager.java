@@ -5,14 +5,13 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-//@formatter:off Temporarily disable formatter because of bug IDEA-371809
-/// Stores mappings for [parameter types](https://cucumber.io/docs/cucumber/configuration/#parameter-types) which are 
+/// Stores mappings for [parameter types](https://cucumber.io/docs/cucumber/configuration/#parameter-types) which are
 /// present in [Cucumber Expressions](https://github.com/cucumber/cucumber-expressions), for example:
 ///
 /// ## Terminology
 ///
 /// In our Cucumber plugin, a single parameter type can have a value or a declaration, but not both.
-/// 
+///
 /// The examples below are in Java, but the principle is the same for our all language-specific Cucumber plugins.
 ///
 /// ### Parameter types with value
@@ -56,9 +55,6 @@ import org.jetbrains.annotations.Nullable;
 ///   Scenario: Date calculation works correctly
 ///     Then yesterday was 2002-04-25, and in 3 days it will be 2002-04-29
 /// ```
-///
-/// ### Parameter types with declaration
-//@formatter:on
 @NotNullByDefault
 public interface ParameterTypeManager {
   /// @return value of the parameter type `name`

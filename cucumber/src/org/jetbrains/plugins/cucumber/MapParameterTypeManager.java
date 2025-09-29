@@ -17,7 +17,6 @@ public class MapParameterTypeManager implements ParameterTypeManager {
   private final Map<String, String> parameterTypesValues;
   private final @Nullable Map<String, SmartPsiElementPointer<PsiElement>> parameterTypesDeclarations;
 
-  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
   /// Creates a new [MapParameterTypeManager] that only holds parameter types that have a value
   /// (see doc of [ParameterTypeManager] for terminology).
   ///
@@ -29,12 +28,10 @@ public class MapParameterTypeManager implements ParameterTypeManager {
   /// "word" -> "[^\s]+"
   /// "int" -> "-?\d+"
   /// ```
-  //@formatter:off
   public MapParameterTypeManager(Map<String, String> parameterTypesValues) {
     this(parameterTypesValues, null);
   }
 
-  //@formatter:off Temporarily disable formatter because of bug IDEA-371809
   /// Creates a new [MapParameterTypeManager] that holds parameter types that have a value and parameter type that have a declaration.
   /// (see doc of [ParameterTypeManager] for terminology).
   ///
@@ -42,7 +39,6 @@ public class MapParameterTypeManager implements ParameterTypeManager {
   /// ```
   /// isoDate -> SmartPointer to PsiIdentifier:isoDate (getNameIdentifier() of PsiMethod:isoDate)
   /// ```
-  //@formatter:off
   public MapParameterTypeManager(Map<String, String> parameterTypesValues,
                                  @Nullable Map<String, SmartPsiElementPointer<PsiElement>> parameterTypeDeclarations) {
     this.parameterTypesValues = parameterTypesValues;
