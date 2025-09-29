@@ -84,7 +84,6 @@ jvm_library(
     "//CIDR/cidr-core",
     "//CIDR/cidr-debugger/backend-api:cidr-debugger-backend",
     "//CIDR/cidr-debugger/core",
-    "//CIDR/cidr-debugger/core:core_test_lib",
     "//CIDR/cidr-execution",
     "//CIDR/cidr-external-system:cidr-externalSystem",
     "//CIDR/cidr-lang-base",
