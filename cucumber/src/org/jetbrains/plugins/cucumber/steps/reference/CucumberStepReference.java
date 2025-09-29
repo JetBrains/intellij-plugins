@@ -24,10 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
 public class CucumberStepReference implements PsiPolyVariantReference {
-  private static final MyResolver RESOLVER = new MyResolver();
-
   private final PsiElement myStep;
   private final TextRange myRange;
 
@@ -86,7 +83,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   @Override
   public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     Project project = getElement().getProject();
-    return ResolveCache.getInstance(project).resolveWithCaching(this, RESOLVER, false, incompleteCode);
+    return ResolveCache.getInstance(project).resolveWithCaching(this, MyResolver.INSTANCE, false, incompleteCode);
   }
 
   private ResolveResult[] multiResolveInner() {
@@ -140,6 +137,8 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   }
 
   private static class MyResolver implements ResolveCache.PolyVariantResolver<CucumberStepReference> {
+    private static final MyResolver INSTANCE = new MyResolver();
+
     @Override
     public ResolveResult @NotNull [] resolve(@NotNull CucumberStepReference ref, boolean incompleteCode) {
       return ref.multiResolveInner();
