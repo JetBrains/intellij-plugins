@@ -58,6 +58,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/jdom",
     "@community//xml/xml-psi-api:psi",
+    "//plugins/JavaScriptDebugger/common",
   ]
 )
 
@@ -105,6 +106,7 @@ jvm_library(
     "//plugins/js-test-common/test:javascript-testing-tests_test_lib",
     "@community//xml/xml-psi-api:psi",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
+    "//plugins/JavaScriptDebugger/common",
   ]
 )
 ### auto-generated section `build intellij.karma` end

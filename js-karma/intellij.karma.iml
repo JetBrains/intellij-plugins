@@ -44,5 +44,6 @@
     <orderEntry type="module" module-name="intellij.javascript.testing.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.psi" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.debugger.common" />
   </component>
 </module>
