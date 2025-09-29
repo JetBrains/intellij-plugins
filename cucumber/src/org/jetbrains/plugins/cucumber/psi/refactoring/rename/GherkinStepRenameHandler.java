@@ -13,7 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.rename.PsiElementRenameHandler;
 import com.intellij.refactoring.rename.RenameDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
@@ -23,15 +23,16 @@ import org.jetbrains.plugins.cucumber.psi.*;
  *
  * @see <a href="https://cucumber.io/docs/gherkin/reference#steps">Gherkin Reference | Steps</a>
  */
+@NotNullByDefault
 public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
   @Override
-  public boolean isAvailableOnDataContext(@NotNull DataContext dataContext) {
+  public boolean isAvailableOnDataContext(DataContext dataContext) {
     PsiElement element = getGherkinStep(dataContext);
     return element != null;
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file, @NotNull DataContext dataContext) {
+  public void invoke(Project project, Editor editor, PsiFile file, DataContext dataContext) {
     final GherkinStep step = getGherkinStep(dataContext);
     if (step == null) {
       return;
