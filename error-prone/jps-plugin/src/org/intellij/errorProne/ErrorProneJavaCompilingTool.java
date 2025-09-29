@@ -70,7 +70,9 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
 
     String compilerPath = getCompilerPath(processorPathOption);
 
+    //use options specified at https://errorprone.info/docs/installation
     options.add("-XDcompilePolicy=simple");
+    options.add("--should-stop=ifError=FLOW");
     options.add("-processorpath");
     options.add(compilerPath);
     options.add(("-Xplugin:ErrorProne " + StringUtil.join(errorProneOptions, " ")).trim());
