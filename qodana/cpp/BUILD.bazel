@@ -24,7 +24,7 @@ jvm_library(
     "@community//platform/platform-api:ide",
     "//CIDR/cidr-projectModel",
     "//CIDR/cidr-workspaceModel",
-    "//rider/plugins/clion-radler/core",
+    "//CIDR/clion-radler/core",
     "@community//platform/projectModel-api:projectModel",
   ]
 )
