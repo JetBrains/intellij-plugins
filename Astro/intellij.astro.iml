@@ -47,5 +47,6 @@
     <orderEntry type="module" module-name="intellij.javascript.common" />
     <orderEntry type="module" module-name="intellij.libraries.gson" />
     <orderEntry type="module" module-name="intellij.xml.emmet" />
+    <orderEntry type="module" module-name="intellij.javascript.ultimate" />
   </component>
 </module>
