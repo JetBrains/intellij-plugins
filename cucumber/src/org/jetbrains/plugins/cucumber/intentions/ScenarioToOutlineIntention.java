@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
@@ -25,21 +25,22 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
 
+@NotNullByDefault
 public final class ScenarioToOutlineIntention implements IntentionAction {
   public static final String ARGUMENT = "argument";
 
   @Override
-  public @NotNull String getText() {
+  public String getText() {
     return CucumberBundle.message("intention.convert.scenario.to.outline.name");
   }
 
   @Override
-  public @NotNull String getFamilyName() {
+  public String getFamilyName() {
     return CucumberBundle.message("intention.convert.scenario.to.outline.name");
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
+  public boolean isAvailable(Project project, Editor editor, PsiFile psiFile) {
     if (!(psiFile.getLanguage() instanceof GherkinLanguage)) {
       return false;
     }
@@ -65,7 +66,7 @@ public final class ScenarioToOutlineIntention implements IntentionAction {
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
+  public void invoke(Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
     final PsiElement element = psiFile.findElementAt(editor.getCaretModel().getOffset());
     final GherkinScenario scenario = PsiTreeUtil.getParentOfType(element, GherkinScenario.class);
     assert scenario != null;
@@ -83,7 +84,7 @@ public final class ScenarioToOutlineIntention implements IntentionAction {
     }
     newScenarioText.append(keywordsTable.getScenarioOutlineKeyword()).append(": ").append(scenario.getScenarioName());
     Map<String, String> examples = new LinkedHashMap<>();
-    for(GherkinStep step: scenario.getSteps()) {
+    for (GherkinStep step : scenario.getSteps()) {
       CucumberStepReference reference = getCucumberStepReference(step);
       final AbstractStepDefinition definition = reference != null ? reference.resolveToDefinition() : null;
       if (definition != null) {
@@ -95,8 +96,6 @@ public final class ScenarioToOutlineIntention implements IntentionAction {
       }
     }
     newScenarioText.append("\n").append(buildExamplesSection(examples, keywordsTable.getExampleSectionKeyword()));
-
-
 
     final GherkinStepsHolder newScenario = GherkinElementFactory.createScenarioFromText(project, language, newScenarioText.toString());
     scenario.replace(newScenario);
@@ -112,7 +111,7 @@ public final class ScenarioToOutlineIntention implements IntentionAction {
         Matcher matcher = pattern.matcher(stepName);
         if (matcher.matches()) {
           int groupCount = matcher.groupCount();
-          for(int i = 0; i < groupCount; i++) {
+          for (int i = 0; i < groupCount; i++) {
             if (matcher.group(i + 1) == null) {
               continue;
             }
@@ -147,7 +146,7 @@ public final class ScenarioToOutlineIntention implements IntentionAction {
     return builder.toString();
   }
 
-  private static String uniqueName(@NotNull String name, @NotNull Map<String, String> examples, @NotNull String value) {
+  private static String uniqueName(String name, Map<String, String> examples, String value) {
     String candidate = name;
     int i = 1;
     while (examples.containsKey(candidate) && !examples.get(candidate).equals(value)) {
