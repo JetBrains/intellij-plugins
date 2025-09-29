@@ -16,7 +16,7 @@ import com.intellij.util.containers.Stack;
 import org.intellij.lang.regexp.RegExpCapability;
 import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpTT;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
@@ -24,13 +24,17 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NotNullByDefault
 public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor {
   @Override
-  public boolean canProcessElement(@NotNull PsiElement element) {
+  public boolean canProcessElement(PsiElement element) {
     boolean isGherkinStep = element instanceof GherkinStep || PsiTreeUtil.getParentOfType(element, GherkinStep.class) != null;
     return isGherkinStep;
   }
@@ -41,7 +45,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
    * @param source regex to work with
    * @return List of strings. The first one is prepared regex, then static elements of the regex
    */
-  public static @NotNull List<String> prepareRegexAndGetStaticTexts(final @NotNull String source) {
+  public static List<String> prepareRegexAndGetStaticTexts(String source) {
     final ArrayList<String> result = new ArrayList<>();
     final StringBuilder preparedRegexp = new StringBuilder();
 
@@ -88,7 +92,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
       }
       preparedRegexp.append(lexer.getTokenText());
       if (lexer.getTokenType() == RegExpTT.GROUP_BEGIN) {
-        //Making all group in the regex non capturing
+        // Making all group in the regex non-capturing
         preparedRegexp.append("?:");
       }
 
@@ -104,7 +108,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     return result;
   }
 
-  public static @NotNull String prepareRegexFromCukex(@NotNull String cukex) {
+  public static String prepareRegexFromCukex(String cukex) {
     String preparedRegex = CucumberUtil.buildRegexpFromCucumberExpression(cukex, MapParameterTypeManager.DEFAULT);
     return preparedRegex.substring(1).substring(0, preparedRegex.length() - 2);
   }
@@ -112,15 +116,13 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
   /// Wraps all special cukex special symbols with regex groups and cuts out static text.
   ///
   /// @return List of strings. Each string is a static part of the cukex.
-  public static @NotNull List<String> getStaticTextsFromCukex(@NotNull String cukex) {
+  public static List<String> getStaticTextsFromCukex(String cukex) {
     List<TextRange> ranges = CucumberUtil.getCukexRanges(cukex);
     return CucumberUtil.textRangesOutsideToSubstrings(cukex, ranges);
   }
 
   /// Returns a _concrete_ new name of a specific renamed step usage.
-  public static @NotNull String getNewStepName(@NotNull String oldStepName,
-                                               @NotNull Pattern oldStepDefPattern,
-                                               @NotNull List<String> newStaticTexts) {
+  public static String getNewStepName(String oldStepName, Pattern oldStepDefPattern, List<String> newStaticTexts) {
     newStaticTexts = new ArrayList<>(newStaticTexts);
     final Matcher matcher = oldStepDefPattern.matcher(oldStepName);
     if (matcher.find()) {
@@ -154,10 +156,8 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
   }
 
   @Override
-  public void renameElement(@NotNull PsiElement element,
-                            @NotNull String newName,
-                            UsageInfo @NotNull [] usages,
-                            @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
+  public void renameElement(PsiElement element, String newName, UsageInfo[] usages, @Nullable RefactoringElementListener listener)
+    throws IncorrectOperationException {
     final CucumberStepReference reference = CucumberUtil.getCucumberStepReference(element);
     if (reference != null) {
       List<AbstractStepDefinition> stepDefinitions = reference.resolveToDefinitions().stream().toList();
@@ -198,9 +198,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
   }
 
   @Override
-  public @NotNull Collection<PsiReference> findReferences(@NotNull PsiElement element,
-                                                          @NotNull SearchScope searchScope,
-                                                          boolean searchInCommentsAndStrings) {
+  public Collection<PsiReference> findReferences(PsiElement element, SearchScope searchScope, boolean searchInCommentsAndStrings) {
     if (!(element instanceof GherkinStep)) throw new IllegalStateException("element must be a GherkinStep, but is: " + element);
     final CucumberStepReference cucumberStepReference = CucumberUtil.getCucumberStepReference(element);
     if (cucumberStepReference != null) {
