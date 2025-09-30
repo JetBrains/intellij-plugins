@@ -497,6 +497,14 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
     """)
   }
 
+  fun testRawTextWithInterpolation() {
+    doTestAstro($$"""
+      <title>{ title as number } and { 12 + "foo" }</title>
+      <textarea>My { title ? `${title} foo` : `bar` } is cool</textarea>
+      <div>My {title ? `${title} foo` : `bar`}</div>
+    """.trimIndent())
+  }
+
   override fun setUp() {
     super.setUp()
     addExplicitExtension(LanguageParserDefinitions.INSTANCE, AstroFrontmatterLanguage.INSTANCE, TypeScriptParserDefinition())

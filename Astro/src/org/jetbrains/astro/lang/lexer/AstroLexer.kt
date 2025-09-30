@@ -1,6 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.lang.lexer
 
+import com.intellij.html.embedding.HtmlEmbeddedContentProvider
+import com.intellij.html.embedding.HtmlEmbedment
 import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JSTokenTypes.STRING_TEMPLATE_PART
@@ -10,6 +12,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN
 import com.intellij.psi.xml.XmlTokenType.XML_BAD_CHARACTER
 import com.intellij.psi.xml.XmlTokenType.XML_CHAR_ENTITY_REF
@@ -21,6 +24,7 @@ import com.intellij.psi.xml.XmlTokenType.XML_WHITE_SPACE
 import com.intellij.util.containers.Stack
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes.Companion.FRONTMATTER_SCRIPT
+import org.jetbrains.astro.lang.parser.ASTRO_RAW_TEXT_FORMATTABLE_EMBEDMENT
 
 class AstroLexer(val project: Project?, highlightMode: Boolean, private val lexJsFragment: Boolean)
   : HtmlLexer(AstroMergingLexer(AstroFlexAdapter(highlightMode, false), highlightMode), true, highlightMode) {
@@ -59,6 +63,15 @@ class AstroLexer(val project: Project?, highlightMode: Boolean, private val lexJ
 
   override fun getStateForRestartDuringEmbedmentScan(): Int {
     return _AstroLexer.HTML_INITIAL
+  }
+
+  override fun acquireHtmlEmbedmentInfo(): HtmlEmbedment? {
+    return super.acquireHtmlEmbedmentInfo()?.let {
+      if (it.getElementType() == XmlElementType.HTML_RAW_TEXT)
+        HtmlEmbedment(ASTRO_RAW_TEXT_FORMATTABLE_EMBEDMENT, it.range, it.baseLexerState)
+      else
+        it
+    }
   }
 
   override fun advance() {
@@ -110,7 +123,7 @@ class AstroLexer(val project: Project?, highlightMode: Boolean, private val lexJ
   }
 
   companion object {
-    internal val TAG_TOKENS = TokenSet.create(FRONTMATTER_SCRIPT)
+    internal val TAG_TOKENS = TokenSet.create(FRONTMATTER_SCRIPT, JSTokenTypes.XML_LBRACE)
 
     const val HAS_NON_RESTARTABLE_STATE = 1 shl (BASE_STATE_SHIFT + 3)
 

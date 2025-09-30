@@ -21,6 +21,7 @@ import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.lexer.AstroLexer
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
+import org.jetbrains.astro.lang.parser.AstroElementTypes.ASTRO_RAW_TEXT
 
 
 class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
@@ -123,7 +124,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   override fun shouldContinueParsingTag(): Boolean {
     val token = token()
-    if (token === JSTokenTypes.XML_LBRACE || token is JSEmbeddedContentElementType) return true
+    if (token === JSTokenTypes.XML_LBRACE || token is JSEmbeddedContentElementType || token === ASTRO_RAW_TEXT) return true
     if (builder.hasJSToken()) return false
     if (token === XmlTokenType.XML_START_TAG_START) return true
     return stackSize() == 0 || hasTags()
@@ -241,6 +242,11 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   override fun isSingleTag(tagInfo: HtmlTagInfo): Boolean {
     return !AstroLexer.isPossiblyComponentTag(tagInfo.originalName) && super.isSingleTag(tagInfo)
+  }
+
+  fun parseEmbeddedExpression() {
+    (tsxParser.expressionParser as AstroTypeScriptExpressionParser)
+      .parseExpression(true, false)
   }
 
   private fun parseJsxExpression(supportsNestedTemplateLiterals: Boolean, supportsEmptyExpression: Boolean) {

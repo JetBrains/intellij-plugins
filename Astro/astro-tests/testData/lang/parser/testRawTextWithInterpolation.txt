@@ -1,0 +1,120 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:title
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('title')
+      XmlToken:XML_TAG_END('>')
+      HtmlRawText
+        JSEmbeddedContent:ASTRO_EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          PsiWhiteSpace(' ')
+          TypeScriptAsExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('title')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:AS_KEYWORD)('as')
+            PsiWhiteSpace(' ')
+            TypeScriptSingleType
+              JSReferenceExpression
+                PsiElement(JS:NUMBER_KEYWORD)('number')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:XML_RBRACE)('}')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('and')
+        PsiWhiteSpace(' ')
+        JSEmbeddedContent:ASTRO_EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          PsiWhiteSpace(' ')
+          JSBinaryExpression
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:PLUS)('+')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"foo"')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:XML_RBRACE)('}')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('title')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    AstroTag:textarea
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('textarea')
+      XmlToken:XML_TAG_END('>')
+      HtmlRawText
+        XmlToken:XML_DATA_CHARACTERS('My')
+        PsiWhiteSpace(' ')
+        JSEmbeddedContent:ASTRO_EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          PsiWhiteSpace(' ')
+          JSConditionalExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('title')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:QUEST)('?')
+            PsiWhiteSpace(' ')
+            JSStringTemplateExpression
+              PsiElement(JS:BACKQUOTE)('`')
+              PsiElement(JS:DOLLAR)('$')
+              PsiElement(JS:LBRACE)('{')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('title')
+              PsiElement(JS:RBRACE)('}')
+              PsiElement(JS:STRING_TEMPLATE_PART)(' foo')
+              PsiElement(JS:BACKQUOTE)('`')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSStringTemplateExpression
+              PsiElement(JS:BACKQUOTE)('`')
+              PsiElement(JS:STRING_TEMPLATE_PART)('bar')
+              PsiElement(JS:BACKQUOTE)('`')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:XML_RBRACE)('}')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('is')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('cool')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('textarea')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    AstroTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('My')
+        PsiWhiteSpace(' ')
+      JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+        PsiElement(JS:XML_LBRACE)('{')
+        JSConditionalExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('title')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:QUEST)('?')
+          PsiWhiteSpace(' ')
+          JSStringTemplateExpression
+            PsiElement(JS:BACKQUOTE)('`')
+            PsiElement(JS:DOLLAR)('$')
+            PsiElement(JS:LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('title')
+            PsiElement(JS:RBRACE)('}')
+            PsiElement(JS:STRING_TEMPLATE_PART)(' foo')
+            PsiElement(JS:BACKQUOTE)('`')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:COLON)(':')
+          PsiWhiteSpace(' ')
+          JSStringTemplateExpression
+            PsiElement(JS:BACKQUOTE)('`')
+            PsiElement(JS:STRING_TEMPLATE_PART)('bar')
+            PsiElement(JS:BACKQUOTE)('`')
+        PsiElement(JS:XML_RBRACE)('}')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
