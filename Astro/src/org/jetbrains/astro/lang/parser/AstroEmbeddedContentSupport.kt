@@ -10,17 +10,25 @@ import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lexer.BaseHtmlLexer
+import com.intellij.lexer.Lexer
+import com.intellij.psi.tree.IElementType
 import com.intellij.xml.util.HtmlUtil
 import org.intellij.plugins.postcss.PostCssLanguage
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 import org.jetbrains.astro.codeInsight.ASTRO_INLINE_DIRECTIVE
 import org.jetbrains.astro.lang.lexer.AstroLexer
+import org.jetbrains.astro.lang.lexer.AstroRawTextLexer
 
 class AstroEmbeddedContentSupport : HtmlEmbeddedContentSupport {
   override fun isEnabled(lexer: BaseHtmlLexer): Boolean = lexer is AstroLexer
 
   override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> =
     listOf(AstroTagEmbeddedContentProvider(lexer))
+}
+
+val ASTRO_RAW_TEXT_FORMATTABLE_EMBEDMENT: HtmlEmbedmentInfo = object : HtmlEmbedmentInfo {
+  override fun getElementType(): IElementType = AstroElementTypes.ASTRO_RAW_TEXT
+  override fun createHighlightingLexer(): Lexer = AstroRawTextLexer(true)
 }
 
 class AstroTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedContentProvider(lexer) {

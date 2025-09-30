@@ -566,6 +566,13 @@ open class AstroLexerTest : LexerTestCase() {
     |}
   """.trimIndent())
 
+  fun testRawTextWithInterpolation() {
+    doTest($$"""
+      <title>{ title as number } and { 12 + "foo" }</title>
+      <textarea>My { title ? `${title} foo` : `bar` } is cool</textarea>
+      <div>My {title ? `${title} foo` : `bar`}</div>
+    """.trimIndent())
+  }
   override fun createLexer(): Lexer = AstroLexer(fixture.project, false, false)
 
   override fun getDirPath() = "lang/lexer"

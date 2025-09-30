@@ -31,6 +31,9 @@ class AstroInspectionsTest : AstroCodeInsightTestCase("codeInsight/inspections")
   fun testUnresolvedVariableInFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
                                                      JavaScriptBundle.message("javascript.create.variable.intention.name", "test"))
 
+  fun testUnresolvedVariableInRawTextExpression() = doTest(TypeScriptUnresolvedReferenceInspection::class,
+                                                           JavaScriptBundle.message("javascript.create.variable.intention.name", "test"))
+
   fun testUnresolvedFunctionCallInExprNoFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
                                                                JavaScriptBundle.message("javascript.create.function.intention.name",
                                                                                         "test"))
@@ -48,9 +51,11 @@ class AstroInspectionsTest : AstroCodeInsightTestCase("codeInsight/inspections")
 
   //region Test configuration and helper methods
 
-  private fun doTest(inspection: KClass<out LocalInspectionTool>,
-                     quickFixName: String? = null,
-                     additionalFiles: List<String> = emptyList()) {
+  private fun doTest(
+    inspection: KClass<out LocalInspectionTool>,
+    quickFixName: String? = null,
+    additionalFiles: List<String> = emptyList(),
+  ) {
     doConfiguredTest(additionalFiles = additionalFiles, checkResult = quickFixName != null) {
       enableInspections(inspection.java)
       checkHighlighting()
