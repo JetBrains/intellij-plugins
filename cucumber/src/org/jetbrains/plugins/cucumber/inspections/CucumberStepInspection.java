@@ -18,10 +18,6 @@ import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReferen
 
 @NotNullByDefault
 public final class CucumberStepInspection extends GherkinInspection {
-  @Override
-  public boolean isEnabledByDefault() {
-    return true;
-  }
 
   @Override
   public String getShortName() {
