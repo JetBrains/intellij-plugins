@@ -5,7 +5,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
@@ -16,7 +16,7 @@ import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
 
-
+@NotNullByDefault
 public final class CucumberStepInspection extends GherkinInspection {
   @Override
   public boolean isEnabledByDefault() {
@@ -24,12 +24,12 @@ public final class CucumberStepInspection extends GherkinInspection {
   }
 
   @Override
-  public @NotNull String getShortName() {
+  public String getShortName() {
     return "CucumberUndefinedStep";
   }
 
   @Override
-  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, final boolean isOnTheFly) {
+  public PsiElementVisitor buildVisitor(ProblemsHolder holder, boolean isOnTheFly) {
     return new GherkinElementVisitor() {
       @Override
       public void visitStep(GherkinStep step) {
