@@ -4,7 +4,10 @@ package org.jetbrains.astro.lang.parser
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.html.HtmlParsing
-import com.intellij.lang.javascript.*
+import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.JavaScriptParserBundle
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.ecmascript6.parsing.TypeScriptExpressionParser
 import com.intellij.lang.javascript.ecmascript6.parsing.TypeScriptParser
 import com.intellij.lang.javascript.ecmascript6.parsing.TypeScriptStatementParser
@@ -17,6 +20,7 @@ import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.containers.Stack
 import com.intellij.xml.parsing.XmlParserBundle
+import com.intellij.xml.parsing.XmlParserBundle.message
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.lexer.AstroLexer
@@ -324,9 +328,20 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
             if (builder.tokenType === JSTokenTypes.XML_END_TAG_START) {
               val footer = builder.mark()
               builder.advanceLexer()
-              parseEndTagName()
-              if (token() === XmlTokenType.XML_TAG_END) builder.advanceLexer()
-              footer.error(XmlParserBundle.message("xml.parsing.closing.tag.matches.nothing"))
+              val name = parseEndTagName()
+              if (name != null) {
+                val endTagName = normalizeTagName(name)
+                if (!isTagFurtherInStack(endTagName)) {
+                  if (token() === XmlTokenType.XML_TAG_END) builder.advanceLexer()
+                  footer.error(message("xml.parsing.closing.tag.matches.nothing"))
+                } else {
+                  footer.rollbackTo()
+                  break
+                }
+              } else {
+                error(message("xml.parsing.closing.tag.name.missing"))
+                footer.drop()
+              }
             }
             else if (!parseArgument()) {
               builder.advanceLexer()
@@ -343,6 +358,18 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
       withNestedTemplateLiteralsSupport(false) {
         parseStringTemplate()
       }
+    }
+
+    private fun isTagFurtherInStack(endTagName: String): Boolean {
+      var result = false
+      processStackItems { item ->
+        when (item) {
+          is HtmlTagInfo -> (item.normalizedName == endTagName).also { result = it }
+          is AstroExpressionItem -> true
+          else -> false
+        }
+      }
+      return result
     }
 
     private fun withNestedTemplateLiteralsSupport(enabled: Boolean, action: () -> Unit) {
