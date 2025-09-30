@@ -22,13 +22,14 @@ import org.angular2.lang.expr.Angular2ExprDialect
 import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 import org.angular2.lang.expr.psi.Angular2PipeArgumentsList
+import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.jetbrains.annotations.NonNls
 
 object Angular2InspectionSuppressor : InspectionSuppressor {
 
   override fun isSuppressedFor(element: PsiElement, toolId: String): Boolean {
     return isSuppressedInStatement(element, stripToolIdPrefix(toolId))
-           || isUnusedLocalSymbolInNgBlockPrimaryExpression(element, toolId)
+           || ("JSUnusedLocalSymbols" == toolId && isUnderscoredLocalVariableIdentifierInAngularTemplate(element))
   }
 
   override fun getSuppressActions(element: PsiElement?, toolId: String): Array<SuppressQuickFix> {
@@ -103,13 +104,14 @@ object Angular2InspectionSuppressor : InspectionSuppressor {
     return toolId
   }
 
-  private fun isUnusedLocalSymbolInNgBlockPrimaryExpression(place: PsiElement, toolId: String): Boolean =
-    "JSUnusedLocalSymbols" == toolId
-    && (place.parent as? JSVariable)
+  fun isUnderscoredLocalVariableIdentifierInAngularTemplate(place: PsiElement): Boolean =
+    (place.parent as? JSVariable)
       ?.takeIf { it.name?.startsWith("_") == true }
       ?.parent
       ?.asSafely<JSVarStatement>()
       ?.parent
-      ?.asSafely<Angular2BlockParameter>()
-      ?.isPrimaryExpression == true
+      ?.let {
+        (it is Angular2BlockParameter && it.isPrimaryExpression)
+        || it is Angular2TemplateBinding
+      } == true
 }
