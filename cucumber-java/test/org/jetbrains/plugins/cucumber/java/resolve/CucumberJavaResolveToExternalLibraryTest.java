@@ -1,7 +1,6 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.resolve;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -15,10 +14,16 @@ import static org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil.attachCuc
 
 public class CucumberJavaResolveToExternalLibraryTest extends BaseCucumberJavaResolveTest {
 
-  public void testResolveWithParameterTypeDouble() {
-    init("resolveToExternalLibrary");
+  public void testResolveManySteps() {
+    init(getTestName(true));
 
-    checkReference("step w<caret>ith", "stepWithDoubleParameterType");
+    checkReference("<caret>I have a normal some parameter", "normal");
+    checkReference("<caret>I have this parameter", "alternative");
+    checkReference("<caret>I have that parameter", "alternative");
+    checkReference("<caret>I have or not parameter", "optional");
+    checkReference("<caret>I have or not", "optional");
+    // FIXME: doesn't work for custom '@ParameterType's defined in external libraries. See IDEA-211600.
+    // checkReference("<caret>I have a custom blah parameter", "custom");
   }
 
   @Override
@@ -28,17 +33,22 @@ public class CucumberJavaResolveToExternalLibraryTest extends BaseCucumberJavaRe
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
         IntelliJProjectConfiguration.LibraryRoots
           libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-core-5.5");
-        PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
+        PsiTestUtil.addProjectLibrary(model, "my-cucumber-core", libraryRoots.getClassesPaths());
 
         libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java-5.5");
-        PsiTestUtil.addProjectLibrary(model, "cucumber-java", libraryRoots.getClassesPaths());
+        PsiTestUtil.addProjectLibrary(model, "my-cucumber-java", libraryRoots.getClassesPaths());
 
         attachCucumberExpressionsLibrary(model);
 
-        PsiTestUtil.addLibrary(model, "cucumber-java8",
-                               PathManager.getHomePath() + "/contrib/cucumber-java/testData/resolve/resolveToExternalLibrary",
-                               "step-def-jar-1.0.jar");
+        PsiTestUtil.addLibrary(model, "my-cucumber-java8",
+                               getTestDataPath() + "/resolveManySteps",
+                               "steps-1.0.0.jar");
       }
     };
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return super.getTestDataPath() + "/resolveToExternalLibrary";
   }
 }
