@@ -250,9 +250,10 @@ public final class CucumberJavaUtil {
     final PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
 
     for (PsiAnnotation annotation : annotations) {
-      if ((annotationClassName == null || annotationClassName.equals(annotation.getQualifiedName())) &&
-          isCucumberStepAnnotation(annotation)) {
-        result.add(annotation);
+      if (annotationClassName == null || annotationClassName.equals(annotation.getQualifiedName())) {
+        if (isCucumberStepAnnotation(annotation)) {
+          result.add(annotation);
+        }
       }
     }
     return result;
