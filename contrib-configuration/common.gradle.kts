@@ -3,7 +3,7 @@ repositories {
   maven("https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
-rootProject.extensions.add("platform.version", "LATEST-EAP-SNAPSHOT")
+rootProject.extensions.add("platform.version", "252-EAP-SNAPSHOT")
 
 rootProject.extensions.add("gradle.version", "8.5")
 
