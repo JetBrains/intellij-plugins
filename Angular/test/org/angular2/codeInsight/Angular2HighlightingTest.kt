@@ -416,7 +416,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html", dir = true)
 
   fun testUnusedSymbolSuppressionInBlock() =
-    checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html")
+    checkHighlighting(ANGULAR_CORE_20_1_4, extension = "html", dir = true)
+
+  fun testUnusedSymbolSuppressionInTemplateBindings() =
+    checkHighlighting(ANGULAR_CORE_20_1_4, extension = "ts")
 
   fun testListenerInNestedIfBlocks() =
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "ts")
