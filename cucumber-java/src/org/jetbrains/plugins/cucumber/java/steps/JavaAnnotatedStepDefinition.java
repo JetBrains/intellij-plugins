@@ -1,11 +1,8 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.steps;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
@@ -18,20 +15,15 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import java.util.*;
 
 public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
-  private static final Logger LOG = Logger.getInstance(JavaAnnotatedStepDefinition.class);
 
   public JavaAnnotatedStepDefinition(@NotNull PsiAnnotation element) {
     super(element);
   }
 
   public static JavaAnnotatedStepDefinition create(@NotNull PsiAnnotation element) {
-    final Ref<Boolean> usedCache = new Ref<>(true);
     final JavaAnnotatedStepDefinition stepDefinition = CachedValuesManager.getCachedValue(element, () -> {
-      usedCache.set(false);
-      final Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
-      return CachedValueProvider.Result.create(new JavaAnnotatedStepDefinition(element), document);
+      return CachedValueProvider.Result.create(new JavaAnnotatedStepDefinition(element), element);
     });
-    LOG.trace("created for " + element.getText() + ", used cache: " + usedCache.get());
     return stepDefinition;
   }
 
