@@ -115,6 +115,12 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
     """)
   }
 
+  fun testBroken3() {
+    doTestAstro("""
+      { 12 + <a>foo{12 + <b>bar</> + <foo> { bar</a> + 32 }
+    """)
+  }
+
   fun testAttributeExpression() {
     doTestAstro("""
       { <a href={url}>{url}</a> }
@@ -502,6 +508,45 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
       <title>{ title as number } and { 12 + "foo" }</title>
       <textarea>My { title ? `${title} foo` : `bar` } is cool</textarea>
       <div>My {title ? `${title} foo` : `bar`}</div>
+    """.trimIndent())
+  }
+
+  fun testJsxWithAndOperator() {
+    doTestAstro("""
+       <table>
+         {data.map((wd:any) =>
+           <tr>
+             <td>{wd.wdir !== null && <i></i>}</td>
+             <td></td>
+           </tr>
+         )}
+       </table>
+    """.trimIndent())
+  }
+
+  fun testJsxWithAndOperatorBroken1() {
+    doTestAstro("""
+       <table>
+         {data.map((wd:any) =>
+           <tr>
+             <td>{wd.wdir !== null && </i>}</td>
+             <td></td>
+           </tr>
+         )}
+       </table>
+    """.trimIndent())
+  }
+
+  fun testJsxWithAndOperatorBroken2() {
+    doTestAstro("""
+       <table>
+         {data.map((wd:any) =>
+           <tr>
+             <td>{wd.wdir !== null && </i></td>
+             <td></td>
+           </tr>
+         )}
+       </table>
     """.trimIndent())
   }
 

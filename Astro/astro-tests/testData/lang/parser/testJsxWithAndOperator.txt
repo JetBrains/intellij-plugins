@@ -1,0 +1,96 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:table
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('table')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+        PsiElement(JS:XML_LBRACE)('{')
+        JSCallExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('data')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('map')
+          JSArgumentList
+            PsiElement(JS:LPAR)('(')
+            TypeScriptFunctionExpression
+              JSAttributeList
+                <empty list>
+              TypeScriptParameterList
+                PsiElement(JS:LPAR)('(')
+                TypeScriptParameter
+                  JSAttributeList
+                    <empty list>
+                  PsiElement(JS:IDENTIFIER)('wd')
+                  PsiElement(JS:COLON)(':')
+                  TypeScriptSingleType
+                    PsiElement(JS:ANY_KEYWORD)('any')
+                PsiElement(JS:RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:EQGT)('=>')
+              PsiWhiteSpace('\n    ')
+              AstroTag:tr
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('tr')
+                XmlToken:XML_TAG_END('>')
+                XmlText
+                  PsiWhiteSpace('\n      ')
+                AstroTag:td
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('td')
+                  XmlToken:XML_TAG_END('>')
+                  JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+                    PsiElement(JS:XML_LBRACE)('{')
+                    JSBinaryExpression
+                      JSBinaryExpression
+                        JSReferenceExpression
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('wd')
+                          PsiElement(JS:DOT)('.')
+                          PsiElement(JS:IDENTIFIER)('wdir')
+                        PsiWhiteSpace(' ')
+                        PsiElement(JS:NEQEQ)('!==')
+                        PsiWhiteSpace(' ')
+                        JSLiteralExpression
+                          PsiElement(JS:NULL_KEYWORD)('null')
+                      PsiWhiteSpace(' ')
+                      PsiElement(JS:ANDAND)('&&')
+                      PsiWhiteSpace(' ')
+                      AstroTag:i
+                        XmlToken:XML_START_TAG_START('<')
+                        XmlToken:XML_NAME('i')
+                        XmlToken:XML_TAG_END('>')
+                        XmlToken:XML_END_TAG_START('</')
+                        XmlToken:XML_NAME('i')
+                        XmlToken:XML_TAG_END('>')
+                    PsiElement(JS:XML_RBRACE)('}')
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_NAME('td')
+                  XmlToken:XML_TAG_END('>')
+                XmlText
+                  PsiWhiteSpace('\n      ')
+                AstroTag:td
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('td')
+                  XmlToken:XML_TAG_END('>')
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_NAME('td')
+                  XmlToken:XML_TAG_END('>')
+                XmlText
+                  PsiWhiteSpace('\n    ')
+                XmlToken:XML_END_TAG_START('</')
+                XmlToken:XML_NAME('tr')
+                XmlToken:XML_TAG_END('>')
+            PsiWhiteSpace('\n  ')
+            PsiElement(JS:RPAR)(')')
+        PsiElement(JS:XML_RBRACE)('}')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('table')
+      XmlToken:XML_TAG_END('>')

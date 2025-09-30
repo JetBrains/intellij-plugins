@@ -540,7 +540,7 @@ open class AstroLexerTest : LexerTestCase() {
     |<>
   """.trimIndent())
 
-  fun testTitleComponent(){
+  fun testTitleComponent() {
     doTest("<head><title>This is <std>title</std></title></head><div><Title>This is <custom>title</custom></Title></div>")
   }
 
@@ -573,6 +573,46 @@ open class AstroLexerTest : LexerTestCase() {
       <div>My {title ? `${title} foo` : `bar`}</div>
     """.trimIndent())
   }
+
+  fun testJsxWithAndOperator() {
+    doTest("""
+       <table>
+         {data.map((wd:any) =>
+           <tr>
+             <td>{wd.wdir !== null && <i></i>}</td>
+             <td></td>
+           </tr>
+         )}
+       </table>
+    """.trimIndent())
+  }
+
+  fun testJsxWithAndOperatorBroken1() {
+    doTest("""
+       <table>
+         {data.map((wd:any) =>
+           <tr>
+             <td>{wd.wdir !== null && </i>}</td>
+             <td></td>
+           </tr>
+         )}
+       </table>
+    """.trimIndent())
+  }
+
+  fun testJsxWithAndOperatorBroken2() {
+    doTest("""
+       <table>
+         {data.map((wd:any) =>
+           <tr>
+             <td>{wd.wdir !== null && </i></td>
+             <td></td>
+           </tr>
+         )}
+       </table>
+    """.trimIndent())
+  }
+
   override fun createLexer(): Lexer = AstroLexer(fixture.project, false, false)
 
   override fun getDirPath() = "lang/lexer"

@@ -11,6 +11,7 @@ import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.Stack;
 import com.intellij.xml.util.HtmlUtil;
+import com.intellij.util.containers.ContainerUtil;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -304,7 +305,19 @@ import static com.intellij.util.ArrayUtil.*;
           yybegin(HTML_INITIAL);
         } else {
           if (!isEmpty) {
-            while (!expressionStack.isEmpty() && expressionStack.popInt() != KIND_HTML_CONTENT) {
+            if (tagName.isEmpty()) {
+              while (!expressionStack.isEmpty() && !elementNameStack.isEmpty()) {
+                if (expressionStack.popInt() == KIND_HTML_CONTENT) {
+                  elementNameStack.pop();
+                  break;
+                }
+              }
+            } else {
+              while (!expressionStack.isEmpty() && ContainerUtil.exists(elementNameStack, tag -> tag.equalsIgnoreCase(tagName))) {
+                if (expressionStack.popInt() == KIND_HTML_CONTENT && elementNameStack.pop().equalsIgnoreCase(tagName)) {
+                  break;
+                }
+              }
             }
           }
           if (!expressionStack.isEmpty() && expressionStack.peekInt(0) == KIND_IS_RAW)
@@ -314,9 +327,6 @@ import static com.intellij.util.ArrayUtil.*;
           } else {
             var current = expressionStack.peekInt(0);
             if (current == KIND_HTML_CONTENT) {
-              // TODO properly support auto-close on closing tag, when Astro lexer supports that
-              if (!elementNameStack.isEmpty())
-                elementNameStack.pop();
               yybegin(HTML_INITIAL);
             } else if (current == KIND_EXPRESSION
                       || current == KIND_EXPRESSION_PARENTHESIS
