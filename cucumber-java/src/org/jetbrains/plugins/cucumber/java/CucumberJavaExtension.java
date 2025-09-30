@@ -5,6 +5,7 @@ import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
@@ -25,6 +26,7 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @NotNullByDefault
@@ -49,17 +51,19 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
     final List<AbstractStepDefinition> stepDefinitions = CachedValuesManager.getManager(module.getProject()).getCachedValue(module, () -> {
       final var javaPsiModificationTracker = PsiModificationTracker.getInstance(module.getProject()).forLanguage(JavaLanguage.INSTANCE);
       final Collection<PsiClass> allStepAnnotationClasses = CucumberJavaUtil.getAllStepAnnotationClasses(module, dependenciesScope);
-      final List<AbstractStepDefinition> result = new ArrayList<>();
+      final List<AbstractStepDefinition> result = Collections.synchronizedList(new ArrayList<>());
       for (PsiClass annotationClass : allStepAnnotationClasses) {
         String annotationClassName = annotationClass.getQualifiedName();
         if (annotationClass.isAnnotationType() && annotationClassName != null) {
           final Query<PsiMethod> javaStepDefinitions = AnnotatedElementsSearch.searchPsiMethods(annotationClass, dependenciesScope);
-          for (PsiMethod stepDefMethod : javaStepDefinitions.findAll()) {
-            final List<PsiAnnotation> annotationValues = CucumberJavaUtil.getCucumberStepAnnotations(stepDefMethod, annotationClassName);
-            for (PsiAnnotation annotation : annotationValues) {
+          javaStepDefinitions.allowParallelProcessing().forEach(stepDefMethod -> {
+            ProgressManager.checkCanceled();
+            final List<PsiAnnotation> annotations = CucumberJavaUtil.getCucumberStepAnnotations(stepDefMethod, annotationClassName);
+            for (PsiAnnotation annotation : annotations) {
               result.add(JavaAnnotatedStepDefinition.create(annotation));
             }
-          }
+            return true;
+          });
         }
       }
       return CachedValueProvider.Result.create(result, javaPsiModificationTracker);
