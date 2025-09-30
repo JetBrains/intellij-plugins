@@ -7,41 +7,41 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+@NotNullByDefault
 public abstract class AbstractStepDefinition {
   private static final Pattern ESCAPE_PATTERN = Pattern.compile("(#\\{.+?})");
 
   private static final String CUCUMBER_START_PREFIX = "\\A";
-
   private static final String CUCUMBER_END_SUFFIX = "\\z";
-  private static final int TIME_TO_CHECK_STEP_BY_REGEXP_MILLIS = 300;
 
-  private final SmartPsiElementPointer<PsiElement> myElementPointer;
+  private static final int TIME_TO_CHECK_STEP_BY_REGEX_MILLIS = 300;
 
-  private volatile String myRegexText;
+  private final SmartPsiElementPointer<PsiElement> elementPointer;
 
-  private volatile Pattern myRegex;
+  private volatile @Nullable String regexText;
+  private volatile @Nullable Pattern regexPattern;
 
-  public AbstractStepDefinition(@NotNull PsiElement element) {
-    myElementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
+  public AbstractStepDefinition(PsiElement element) {
+    elementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
   }
 
   public abstract List<String> getVariableNames();
 
   /// @return true if a concrete step named `stepName` is defined by this step definition.
-  public boolean matches(@NotNull String stepName) {
+  public boolean matches(String stepName) {
     final Pattern pattern = getPattern();
     if (pattern == null) {
       return false;
     }
 
-    CharSequence stepChars = StringUtil.newBombedCharSequence(stepName, TIME_TO_CHECK_STEP_BY_REGEXP_MILLIS);
+    CharSequence stepChars = StringUtil.newBombedCharSequence(stepName, TIME_TO_CHECK_STEP_BY_REGEX_MILLIS);
     try {
       return pattern.matcher(stepChars).find();
     }
@@ -51,7 +51,7 @@ public abstract class AbstractStepDefinition {
   }
 
   public @Nullable PsiElement getElement() {
-    return myElementPointer.getElement();
+    return elementPointer.getElement();
   }
 
   /// Returns a [Pattern] pattern for the step (or null if the regex is malformed).
@@ -60,8 +60,10 @@ public abstract class AbstractStepDefinition {
   public @Nullable Pattern getPattern() {
     try {
       final String cucumberRegex = getCucumberRegex();
-      if (cucumberRegex == null) return null;
-      if (myRegexText == null || !cucumberRegex.equals(myRegexText)) {
+      if (cucumberRegex == null) {
+        return null;
+      }
+      if (regexText == null || !cucumberRegex.equals(regexText)) {
         final StringBuilder patternText = new StringBuilder(ESCAPE_PATTERN.matcher(cucumberRegex).replaceAll("(.*)"));
         if (patternText.toString().startsWith(CUCUMBER_START_PREFIX)) {
           patternText.replace(0, CUCUMBER_START_PREFIX.length(), "^");
@@ -71,10 +73,10 @@ public abstract class AbstractStepDefinition {
           patternText.replace(patternText.length() - CUCUMBER_END_SUFFIX.length(), patternText.length(), "$");
         }
 
-        myRegex = Pattern.compile(patternText.toString(), isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
-        myRegexText = cucumberRegex;
+        regexPattern = Pattern.compile(patternText.toString(), isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
+        regexText = cucumberRegex;
       }
-      return myRegex;
+      return regexPattern;
     }
     catch (PatternSyntaxException ignored) {
       return null; // Bad regex?
@@ -90,7 +92,7 @@ public abstract class AbstractStepDefinition {
   }
 
   @Contract("null -> null")
-  protected abstract @Nullable String getCucumberRegexFromElement(PsiElement element);
+  protected abstract @Nullable String getCucumberRegexFromElement(@Nullable PsiElement element);
 
   protected boolean isCaseSensitive() {
     return true;
@@ -103,24 +105,24 @@ public abstract class AbstractStepDefinition {
 
     AbstractStepDefinition that = (AbstractStepDefinition)o;
 
-    if (!myElementPointer.equals(that.myElementPointer)) return false;
+    if (!elementPointer.equals(that.elementPointer)) return false;
 
     return true;
   }
 
   @Override
   public int hashCode() {
-    return myElementPointer.hashCode();
+    return elementPointer.hashCode();
   }
 
   /// Sets the new value for this step definition (either a regex or a cukex).
   ///
   /// What the value exactly is depends on the particular Cucumber implementation in some programming language.
   /// For example, it could be a string inside the annotation `@When` or a method name.
-  public void setValue(@NotNull String newValue) { }
+  public void setValue(String newValue) { }
 
   /// @return True if this step definition supports some certain `step` (e.g., some step definitions do not support some keywords).
-  public boolean supportsStep(@NotNull PsiElement step) {
+  public boolean supportsStep(PsiElement step) {
     return true;
   }
 
