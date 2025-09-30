@@ -8,6 +8,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
@@ -20,16 +21,15 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import java.util.*;
 import java.util.regex.Pattern;
 
-
 @NotNullByDefault
 public final class CucumberStepHelper {
-  private static final Logger LOG = Logger.getInstance(CucumberStepHelper.class.getName());
+  private static final Logger LOG = Logger.getInstance(CucumberStepHelper.class);
 
   /**
    * Creates a file that will contain step definitions
    *
-   * @param dir                      container for created file
-   * @param fileNameWithoutExtension name of the file with out "." and extension
+   * @param dir                      container for a created file
+   * @param fileNameWithoutExtension name of the file without "." and extension
    * @param frameworkType            type of file to create
    */
   public static @Nullable PsiFile createStepDefinitionFile(PsiDirectory dir,
@@ -44,9 +44,7 @@ public final class CucumberStepHelper {
     return ep.getStepDefinitionCreator().createStepDefinitionContainer(dir, fileNameWithoutExtension);
   }
 
-  public static boolean validateNewStepDefinitionFileName(Project project,
-                                                          String fileName,
-                                                          BDDFrameworkType frameworkType) {
+  public static boolean validateNewStepDefinitionFileName(Project project, String fileName, BDDFrameworkType frameworkType) {
     final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
     assert ep != null;
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(project, fileName);
@@ -54,19 +52,19 @@ public final class CucumberStepHelper {
 
 
   /**
-   * Searches for ALL step definitions, groups it by step definition class and sorts by pattern size.
+   * Searches for ALL step definitions, groups it by step definition class, and sorts by pattern size.
    * For each step definition class it finds the largest pattern.
    *
    * @param featureFile file with steps
    * @param step        step itself
    * @return definitions
    */
-  public static Collection<AbstractStepDefinition> findStepDefinitions(PsiFile featureFile,
-                                                                       GherkinStep step) {
+  public static Collection<AbstractStepDefinition> findStepDefinitions(PsiFile featureFile, GherkinStep step) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) {
       return Collections.emptyList();
     }
+
     final String substitutedName = step.getSubstitutedName();
     if (substitutedName == null) {
       return Collections.emptyList();
@@ -76,7 +74,7 @@ public final class CucumberStepHelper {
     final List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
 
     for (final AbstractStepDefinition stepDefinition : allSteps) {
-      boolean matches = stepDefinition.matches(substitutedName);
+      final boolean matches = stepDefinition.matches(substitutedName);
       if (matches && stepDefinition.supportsStep(step)) {
         final Pattern currentLongestPattern = getPatternByDefinition(definitionsByClass.get(stepDefinition.getClass()));
         final Pattern newPattern = getPatternByDefinition(stepDefinition);
@@ -86,6 +84,7 @@ public final class CucumberStepHelper {
         }
       }
     }
+
     return definitionsByClass.values();
   }
 
@@ -148,12 +147,7 @@ public final class CucumberStepHelper {
     return false;
   }
 
-  /**
-   * Returns pattern from step definition (if exists)
-   *
-   * @param definition step definition
-   * @return pattern or null if does not exist
-   */
+  @Contract("null -> null")
   private static @Nullable Pattern getPatternByDefinition(@Nullable AbstractStepDefinition definition) {
     if (definition == null) {
       return null;
