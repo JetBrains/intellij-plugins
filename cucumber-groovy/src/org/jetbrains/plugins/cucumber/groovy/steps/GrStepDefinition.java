@@ -2,10 +2,8 @@
 package org.jetbrains.plugins.cucumber.groovy.steps;
 
 import com.intellij.ide.util.EditSourceUtil;
-import com.intellij.openapi.editor.Document;
 import com.intellij.pom.Navigatable;
 import com.intellij.pom.PomNamedTarget;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -32,8 +30,7 @@ public final class GrStepDefinition extends AbstractStepDefinition implements Po
 
   public static GrStepDefinition getStepDefinition(GrMethodCall statement) {
     return CachedValuesManager.getCachedValue(statement, () -> {
-      final Document document = PsiDocumentManager.getInstance(statement.getProject()).getDocument(statement.getContainingFile());
-      return CachedValueProvider.Result.create(new GrStepDefinition(statement), document);
+      return CachedValueProvider.Result.create(new GrStepDefinition(statement), statement);
     });
   }
 
