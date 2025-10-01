@@ -9,6 +9,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
@@ -23,12 +24,13 @@ import java.util.List;
 /**
  * @author Max Medvedev
  */
-public class GrStepDefinition extends AbstractStepDefinition implements PomNamedTarget {
+@NotNullByDefault
+public final class GrStepDefinition extends AbstractStepDefinition implements PomNamedTarget {
   public GrStepDefinition(GrMethodCall stepDefinition) {
     super(stepDefinition);
   }
 
-  public static GrStepDefinition getStepDefinition(final GrMethodCall statement) {
+  public static GrStepDefinition getStepDefinition(GrMethodCall statement) {
     return CachedValuesManager.getCachedValue(statement, () -> {
       final Document document = PsiDocumentManager.getInstance(statement.getProject()).getDocument(statement.getContainingFile());
       return CachedValueProvider.Result.create(new GrStepDefinition(statement), document);
@@ -53,7 +55,7 @@ public class GrStepDefinition extends AbstractStepDefinition implements PomNamed
   }
 
   @Override
-  protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
+  protected @Nullable String getCucumberRegexFromElement(@Nullable PsiElement element) {
     if (!(element instanceof GrMethodCall call)) {
       return null;
     }
@@ -61,7 +63,7 @@ public class GrStepDefinition extends AbstractStepDefinition implements PomNamed
   }
 
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     return getCucumberRegex();
   }
 
@@ -73,7 +75,9 @@ public class GrStepDefinition extends AbstractStepDefinition implements PomNamed
 
   @Override
   public void navigate(boolean requestFocus) {
-    Navigatable descr = EditSourceUtil.getDescriptor(getElement());
+    final PsiElement element = getElement();
+    if (element == null) return;
+    final Navigatable descr = EditSourceUtil.getDescriptor(element);
     if (descr != null) descr.navigate(requestFocus);
   }
 
