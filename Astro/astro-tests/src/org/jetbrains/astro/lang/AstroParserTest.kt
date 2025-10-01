@@ -503,6 +503,17 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
     """)
   }
 
+  fun testMultipleScriptBlocks() {
+    doTestAstro("""
+      <div>
+        <script type="text/javascript"
+                src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="/js/highcharts/highcharts.js" defer></script>
+        <script src="/js/buoychart.js" data={JSON.stringify(chartData)} defer></script>
+      </div>
+    """.trimIndent())
+  }
+
   fun testRawTextWithInterpolation() {
     doTestAstro($$"""
       <title>{ title as number } and { 12 + "foo" }</title>

@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.lang.lexer
 
-import com.intellij.html.embedding.HtmlEmbeddedContentProvider
 import com.intellij.html.embedding.HtmlEmbedment
 import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JSTokenTypes
@@ -148,24 +147,24 @@ class AstroLexer(val project: Project?, highlightMode: Boolean, private val lexJ
     }
 
     override fun getCurrentPosition(): LexerPosition {
-      return AstroFlexAdapterPosition(tokenStart, super.getState(), flex.expressionStack.clone(), Stack(flex.elementNameStack))
+      return AstroFlexAdapterPosition(super.currentPosition,
+                                      flex.expressionStack.clone(), Stack(flex.elementNameStack))
     }
 
     override fun restore(position: LexerPosition) {
-      flex.expressionStack = (position as AstroFlexAdapterPosition).expressionStack.clone()
+      super.restore((position as AstroFlexAdapterPosition).flexAdapterPosition)
+      flex.expressionStack = position.expressionStack.clone()
       flex.elementNameStack = Stack(position.elementNameStack)
-      super.start(bufferSequence, position.offset, bufferEnd, position.state)
     }
 
     private class AstroFlexAdapterPosition(
-      private val offset: Int,
-      private val state: Int,
+      val flexAdapterPosition: LexerPosition,
       val expressionStack: IntArrayList,
       val elementNameStack: Stack<String>,
     ) : LexerPosition {
-      override fun getOffset(): Int = offset
+      override fun getOffset(): Int = flexAdapterPosition.offset
 
-      override fun getState(): Int = state
+      override fun getState(): Int = flexAdapterPosition.state
 
     }
   }
