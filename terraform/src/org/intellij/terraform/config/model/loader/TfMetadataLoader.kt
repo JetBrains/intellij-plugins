@@ -82,7 +82,7 @@ class TfMetadataLoader {
     }
 
     if (json is ObjectNode) {
-      for ((fqn, obj) in json.fields()) {
+      for ((fqn, obj) in json.properties()) {
         if (obj !is ObjectNode) {
           LOG.warn("In external-data.json value for '$fqn' root key is not an object")
           continue

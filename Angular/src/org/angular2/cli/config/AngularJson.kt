@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import java.io.IOException
 
 class AngularJson {
-
   @JsonProperty("projects")
   val projects: Map<String, AngularJsonProject> = HashMap()
 
@@ -50,7 +49,6 @@ class AngularJsonProject {
   @JsonProperty("targets")
   @JsonAlias(value = ["architect"])
   val targets: AngularJsonTargets? = null
-
 }
 
 class AngularJsonTargets {
@@ -96,7 +94,6 @@ class AngularJsonBuild {
 }
 
 open class AngularJsonBuildOptionsBase {
-
   @JsonProperty("stylePreprocessorOptions")
   val stylePreprocessorOptions: AngularJsonStylePreprocessorOptions? = null
 
@@ -177,16 +174,15 @@ class AngularJsonLegacyConfig {
 }
 
 private class StringOrObjectWithInputDeserializer : JsonDeserializer<List<String>>() {
-
   @Throws(IOException::class)
   override fun deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): List<String> {
     val files = mutableListOf<String>()
-    if (jsonParser.currentToken === JsonToken.START_ARRAY) {
+    if (jsonParser.currentToken() === JsonToken.START_ARRAY) {
       while (jsonParser.nextToken() !== JsonToken.END_ARRAY) {
-        when (jsonParser.currentToken) {
+        when (jsonParser.currentToken()) {
           JsonToken.START_OBJECT -> while (jsonParser.nextToken() !== JsonToken.END_OBJECT) {
-            assert(jsonParser.currentToken === JsonToken.FIELD_NAME)
-            val propName = jsonParser.currentName
+            assert(jsonParser.currentToken() === JsonToken.FIELD_NAME)
+            val propName = jsonParser.currentName()
             jsonParser.nextToken()
             if (propName == "input") {
               files.add(jsonParser.valueAsString)
@@ -208,13 +204,12 @@ private class StringOrObjectWithInputDeserializer : JsonDeserializer<List<String
 }
 
 private class StringOrStringArrayDeserializer : JsonDeserializer<List<String>>() {
-
   override fun deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): List<String> {
     val items = mutableListOf<String>()
-    when (jsonParser.currentToken) {
+    when (jsonParser.currentToken()) {
       JsonToken.START_ARRAY ->
         while (jsonParser.nextToken() !== JsonToken.END_ARRAY) {
-          if (jsonParser.currentToken === JsonToken.VALUE_STRING) {
+          if (jsonParser.currentToken() === JsonToken.VALUE_STRING) {
             items.add(jsonParser.valueAsString)
           }
           else {
@@ -226,5 +221,4 @@ private class StringOrStringArrayDeserializer : JsonDeserializer<List<String>>()
     }
     return items
   }
-
 }
