@@ -7,8 +7,6 @@ import com.intellij.codeInspection.InspectionApplicationException
 import com.intellij.ide.plugins.DisabledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.internal.statistic.eventLog.EventLogConfiguration
-import com.intellij.internal.statistic.eventLog.StatisticsEventLogProviderUtil
-import com.intellij.internal.statistic.eventLog.validator.storage.persistence.EventLogMetadataSettingsPersistence
 import com.intellij.internal.statistic.updater.StatisticsValidationUpdatedService
 import com.intellij.internal.statistic.updater.updateValidationRules
 import com.intellij.openapi.application.ApplicationInfo
@@ -127,9 +125,6 @@ class QodanaInspectionApplication(
       withTimeout(1.minutes) {
         // wait for scheduled updated to not accidentally trigger some race condition
         service<StatisticsValidationUpdatedService>().updatedDeferred.join()
-        StatisticsEventLogProviderUtil.getEventLogProviders().forEach {
-          EventLogMetadataSettingsPersistence.getInstance().setLastModified(it.recorderId, 0)
-        }
         updateValidationRules()
       }
     }
