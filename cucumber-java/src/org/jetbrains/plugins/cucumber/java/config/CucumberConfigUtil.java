@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 /**
  * @author Max Medvedev
  */
+@NotNullByDefault
 public final class CucumberConfigUtil {
   private static final @NonNls Pattern CUCUMBER_PATTERN = Pattern.compile("cucumber-core-(.*)\\.jar");
 
@@ -36,14 +37,16 @@ public final class CucumberConfigUtil {
   public static final @NonNls String CUCUMBER_VERSION_4_5 = "4.5";
 
   public static final @NonNls String CUCUMBER_VERSION_5_0 = "5.0";
-  
-  public static @Nullable String getCucumberCoreVersion(@NotNull PsiElement place) {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(place);
-    if (module == null) return null;
 
-    return CachedValuesManager.getManager(module.getProject()).getCachedValue(module,
-                                                                              () -> CachedValueProvider.Result
-                                                                                .create(getCucumberCoreVersionImpl(module), ProjectRootManager.getInstance(module.getProject())));
+  public static @Nullable String getCucumberCoreVersion(PsiElement place) {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(place);
+    if (module == null) {
+      return null;
+    }
+
+    return CachedValuesManager.getManager(module.getProject()).getCachedValue(module, () -> {
+      return CachedValueProvider.Result.create(getCucumberCoreVersionImpl(module), ProjectRootManager.getInstance(module.getProject()));
+    });
   }
 
   private static @Nullable String getCucumberCoreVersionImpl(Module module) {
@@ -66,7 +69,7 @@ public final class CucumberConfigUtil {
     return getSimpleVersionFromMainClass(module);
   }
 
-  private static String getSimpleVersionFromMainClass(Module module) {
+  private static @Nullable String getSimpleVersionFromMainClass(Module module) {
     final JavaPsiFacade facade = JavaPsiFacade.getInstance(module.getProject());
 
     final PsiClass oldMain = facade.findClass(CUCUMBER_CLI_MAIN_1_0, module.getModuleWithLibrariesScope());
