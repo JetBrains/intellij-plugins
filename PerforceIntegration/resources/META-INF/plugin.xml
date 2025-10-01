@@ -116,6 +116,8 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="vcs" coordinate="perforce" displayName="Perforce Helix Core"/>
+
     <vcs name="Perforce" vcsClass="org.jetbrains.idea.perforce.application.PerforceVcs" displayName="Perforce"/>
     <checkoutProvider implementation="org.jetbrains.idea.perforce.checkout.PerforceCheckoutProvider"/>
     <projectConfigurable id="vcs.Perforce" key="settings.perforce.option.group" instance="org.jetbrains.idea.perforce.perforce.PerforceConfigurable"
