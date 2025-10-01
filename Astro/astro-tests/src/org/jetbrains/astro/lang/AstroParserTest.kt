@@ -4,6 +4,7 @@ import com.intellij.html.embedding.HtmlEmbeddedContentSupport
 import com.intellij.javascript.testFramework.web.JSHtmlParsingTest
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.javascript.dialects.TypeScriptParserDefinition
+import com.intellij.psi.LanguageFileViewProviders
 import org.jetbrains.astro.getAstroTestDataPath
 import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
 import org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport
@@ -571,6 +572,8 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
 
   override fun setUp() {
     super.setUp()
+
+    addExplicitExtension(LanguageFileViewProviders.INSTANCE, AstroLanguage.INSTANCE, AstroFileViewProviderFactory())
     addExplicitExtension(LanguageParserDefinitions.INSTANCE, AstroFrontmatterLanguage.INSTANCE, TypeScriptParserDefinition())
     HtmlEmbeddedContentSupport.register(application, testRootDisposable, AstroEmbeddedContentSupport::class.java)
   }
