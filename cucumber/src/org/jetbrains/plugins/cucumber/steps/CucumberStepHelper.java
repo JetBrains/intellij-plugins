@@ -25,13 +25,11 @@ import java.util.regex.Pattern;
 public final class CucumberStepHelper {
   private static final Logger LOG = Logger.getInstance(CucumberStepHelper.class);
 
-  /**
-   * Creates a file that will contain step definitions
-   *
-   * @param dir                      container for a created file
-   * @param fileNameWithoutExtension name of the file without "." and extension
-   * @param frameworkType            type of file to create
-   */
+  /// Creates a file that will contain step definitions.
+  ///
+  /// @param dir                      container for a created file
+  /// @param fileNameWithoutExtension name of the file without "." and extension
+  /// @param frameworkType            type of file to create
   public static @Nullable PsiFile createStepDefinitionFile(PsiDirectory dir,
                                                            String fileNameWithoutExtension,
                                                            BDDFrameworkType frameworkType) {
@@ -53,15 +51,23 @@ public final class CucumberStepHelper {
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(project, fileName);
   }
 
+  /// Searches for all step definitions that are available from `featureFile` and returns them.
+  ///
+  /// @see CucumberJvmExtensionPoint#loadStepsFor(PsiFile, Module)
+  public static Collection<AbstractStepDefinition> findAllStepDefinitions(PsiFile featureFile) {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
+    if (module == null) {
+      return Collections.emptyList();
+    }
+    return loadStepsFor(featureFile, module);
+  }
 
-  /**
-   * Searches for ALL step definitions, groups it by step definition class, and sorts by pattern size.
-   * For each step definition class it finds the largest pattern.
-   *
-   * @param featureFile file with steps
-   * @param step        step itself
-   * @return definitions
-   */
+  /// Searches for all step definitions that [match][AbstractStepDefinition#matches] `step`,
+  /// groups them by step definition class, and sorts them by pattern size.
+  /// For each step definition class it finds the largest pattern.
+  ///
+  /// @param featureFile file with steps
+  /// @param step        step itself
   public static Collection<AbstractStepDefinition> findStepDefinitions(PsiFile featureFile, GherkinStep step) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) {
@@ -148,7 +154,10 @@ public final class CucumberStepHelper {
     return definition.getPattern();
   }
 
-  public static List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module) {
+  /// Returns all step definitions available from `featureFile`.
+  ///
+  /// This is a helper method that calls [AbstractCucumberExtension#loadStepsFor] of all installed language-specific Cucumber plugins.
+  private static List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module) {
     final ArrayList<AbstractStepDefinition> result = new ArrayList<>();
     for (final CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
       result.addAll(ep.loadStepsFor(featureFile, module));
@@ -158,27 +167,24 @@ public final class CucumberStepHelper {
 
   //region Deprecated and to be removed
 
-  /**
-   * @deprecated Use {@link #loadStepsFor(PsiFile, Module)} instead.
-   */
+  /// @deprecated Use [#findAllStepDefinitions(PsiFile)] instead.
+  @SuppressWarnings("JavaExistingMethodCanBeUsed")
   @Deprecated(forRemoval = true)
   public static List<AbstractStepDefinition> getAllStepDefinitions(PsiFile featureFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
-    if (module == null) return Collections.emptyList();
+    if (module == null) {
+      return Collections.emptyList();
+    }
     return loadStepsFor(featureFile, module);
   }
 
-  /**
-   * @deprecated Use {@code CucumberJvmExtensionPoint.EP_NAME.getExtensionList()} directly.
-   */
+  /// @deprecated Use `CucumberJvmExtensionPoint.EP_NAME.getExtensionList()` directly.
   @Deprecated(forRemoval = true)
   public static List<CucumberJvmExtensionPoint> getCucumberExtensions() {
     return CucumberJvmExtensionPoint.EP_NAME.getExtensionList();
   }
 
-  /**
-   * @deprecated Use {@code CucumberJvmExtensionPoint.EP_NAME.getExtensionList()} directly.
-   */
+  /// @deprecated Use `CucumberJvmExtensionPoint.EP_NAME.getExtensionList().size()` directly.
   @Deprecated(forRemoval = true)
   public static int getExtensionCount() {
     return getCucumberExtensions().size();

@@ -239,11 +239,9 @@ public final class CucumberCompletionContributor extends CompletionContributor {
 
 
   private static void addStepDefinitions(CompletionResultSet result, PsiFile file) {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(file);
-    if (module == null) return;
-    final List<AbstractStepDefinition> definitions = CucumberStepHelper.loadStepsFor(file, module);
-    for (AbstractStepDefinition definition : definitions) {
-      String expression = definition.getExpression();
+    final Collection<AbstractStepDefinition> stepDefinitions = CucumberStepHelper.findAllStepDefinitions(file);
+    for (AbstractStepDefinition stepDefinition : stepDefinitions) {
+      String expression = stepDefinition.getExpression();
       if (expression == null) {
         continue;
       }
@@ -276,7 +274,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
           ranges.add(new TextRange(m.start(), m.end()));
         }
 
-        final PsiElement element = definition.getElement();
+        final PsiElement element = stepDefinition.getElement();
         final LookupElementBuilder lookup = element != null
                                             ? LookupElementBuilder.create(element, stepCompletion).bold()
                                             : LookupElementBuilder.create(stepCompletion);

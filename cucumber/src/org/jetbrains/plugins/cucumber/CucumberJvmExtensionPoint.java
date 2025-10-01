@@ -46,9 +46,11 @@ public interface CucumberJvmExtensionPoint {
 
   StepDefinitionCreator getStepDefinitionCreator();
 
-  /**
-   * Returns all step definitions available from {@code featureFile}.
-   */
+  /// Returns all step definitions available from `featureFile`.
+  ///
+  /// In large projects there can be a huge number of step definitions, so implementations are encouraged to
+  /// [cache the results][com.intellij.psi.util.CachedValue], [use an index][com.intellij.util.indexing.FileBasedIndexExtension],
+  /// or use other performance-enhancing techniques.
   List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module);
 
   Collection<? extends PsiFile> getStepDefinitionContainers(GherkinFile file);
