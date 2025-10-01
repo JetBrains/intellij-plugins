@@ -46,7 +46,10 @@ public final class CucumberStepHelper {
 
   public static boolean validateNewStepDefinitionFileName(Project project, String fileName, BDDFrameworkType frameworkType) {
     final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
-    assert ep != null;
+    if (ep == null) {
+      LOG.error(String.format("No extension point registered for framework type %s", frameworkType));
+      return false;
+    }
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(project, fileName);
   }
 
@@ -101,16 +104,6 @@ public final class CucumberStepHelper {
     return result;
   }
 
-  /**
-   * @deprecated Use {@link #loadStepsFor(PsiFile, Module)} instead.
-   */
-  @Deprecated(forRemoval = true)
-  public static List<AbstractStepDefinition> getAllStepDefinitions(PsiFile featureFile) {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
-    if (module == null) return Collections.emptyList();
-    return loadStepsFor(featureFile, module);
-  }
-
   public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(GherkinFile featureFile) {
     final Set<CucumberStepDefinitionCreationContext> result = new HashSet<>();
     for (final CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
@@ -129,7 +122,7 @@ public final class CucumberStepHelper {
 
   public static Map<BDDFrameworkType, CucumberJvmExtensionPoint> getExtensionMap() {
     final HashMap<BDDFrameworkType, CucumberJvmExtensionPoint> result = new HashMap<>();
-    for (CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
+    for (final CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
       result.put(ep.getStepFileType(), ep);
     }
     return result;
@@ -163,6 +156,18 @@ public final class CucumberStepHelper {
     return result;
   }
 
+  //region Deprecated and to be removed
+
+  /**
+   * @deprecated Use {@link #loadStepsFor(PsiFile, Module)} instead.
+   */
+  @Deprecated(forRemoval = true)
+  public static List<AbstractStepDefinition> getAllStepDefinitions(PsiFile featureFile) {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
+    if (module == null) return Collections.emptyList();
+    return loadStepsFor(featureFile, module);
+  }
+
   /**
    * @deprecated Use {@code CucumberJvmExtensionPoint.EP_NAME.getExtensionList()} directly.
    */
@@ -178,4 +183,6 @@ public final class CucumberStepHelper {
   public static int getExtensionCount() {
     return getCucumberExtensions().size();
   }
+
+  //endregion
 }
