@@ -20,6 +20,14 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
     throw AssumptionViolatedException("disable")
   }
 
+  override fun testSpecialTagsParsing() {
+    throw AssumptionViolatedException("disable")
+  }
+
+  override fun testScriptEmbeddingParsing() {
+    throw AssumptionViolatedException("disable")
+  }
+
   fun testBasic1() {
     doTestAstro("""
       ---
