@@ -28,7 +28,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
-import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.lang.javascript.inspection.JSUnusedAssignmentInspection;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
@@ -76,6 +75,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static com.intellij.lang.javascript.highlighting.JSLineMarkerUtilKt.ourClassInheritorsNavHandler;
+import static com.intellij.lang.javascript.highlighting.JSLineMarkerUtilKt.ourInterfaceImplementationsNavHandler;
 
 public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
@@ -1438,8 +1440,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public static void invokeShowImplemenationsForLineMarker(PsiElement at, int num) {
     JSClass c = PsiTreeUtil.getParentOfType(at, JSClass.class);
     int items = (c.isInterface()
-                 ? JavaScriptLineMarkerProvider.ourInterfaceImplementationsNavHandler
-                 : JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler).search(c).findAll().size();
+                 ? ourInterfaceImplementationsNavHandler
+                 : ourClassInheritorsNavHandler).search(c).findAll().size();
     assertEquals(num, items);
   }
 

@@ -25,6 +25,8 @@ import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
 
+import static com.intellij.lang.javascript.highlighting.JSLineMarkerUtilKt.ourClassInheritorsNavHandler;
+
 public final class XmlBackedClassLineMarkerProvider extends LineMarkerProviderDescriptor {
 
   @Override
@@ -49,7 +51,7 @@ public final class XmlBackedClassLineMarkerProvider extends LineMarkerProviderDe
         if (classQuery.findFirst() != null && nameElement != null) {
           result.add(new LineMarkerInfo<>(element, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
                                           JavaScriptLineMarkerProvider::getClassInheritorsTooltip,
-                                          JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
+                                          ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
         }
       }
     }

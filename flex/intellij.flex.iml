@@ -35,6 +35,7 @@
     <orderEntry type="module" module-name="intellij.platform.usageView" />
     <orderEntry type="module" module-name="intellij.javascript.parser" />
     <orderEntry type="module" module-name="intellij.javascript.backend" />
+    <orderEntry type="module" module-name="intellij.javascript.ultimate" />
     <orderEntry type="module" module-name="intellij.xml.parser" />
     <orderEntry type="module" module-name="intellij.platform.indexing.impl" />
     <orderEntry type="module" module-name="intellij.javascript.debugger.backend" />
