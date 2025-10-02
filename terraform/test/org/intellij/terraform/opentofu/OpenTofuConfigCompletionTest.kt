@@ -340,10 +340,10 @@ internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
     myFixture.testCompletionVariants(file.virtualFile.name, "some_method_name", "some_method_name2")
   }
 
-  fun testNoEphemeralResourcesAtTopLevel() {
+  fun testEphemeralResourcesAtTopLevel() {
     val file = myFixture.configureByText("main.tofu", """
-       ephem<caret>
+       al<caret>
      """.trimIndent())
-    myFixture.testCompletionVariants(file.virtualFile.name)
+    myFixture.testCompletionVariants(file.virtualFile.name, "ephemeral", "locals")
   }
 }
