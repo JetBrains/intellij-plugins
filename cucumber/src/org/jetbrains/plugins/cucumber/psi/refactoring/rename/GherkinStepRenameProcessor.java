@@ -37,18 +37,80 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     return element instanceof GherkinStep;
   }
 
-  /**
-   * Wraps all special symbols of regexp with group and cut static text.
-   *
-   * @param source regex to work with
-   * @return List of strings. The first one is prepared regex, then static elements of the regex
-   */
-  public static List<String> prepareRegexAndGetStaticTexts(String source) {
+  @Override
+  public void renameElement(PsiElement element, String newName, UsageInfo[] usages, @Nullable RefactoringElementListener listener)
+    throws IncorrectOperationException {
+    final CucumberStepReference reference = CucumberUtil.getCucumberStepReference(element);
+    if (reference != null) {
+      List<AbstractStepDefinition> stepDefinitions = reference.resolveToDefinitions().stream().toList();
+      if (stepDefinitions.size() != 1) {
+        throw new IllegalStateException("there must be exactly 1 step definition for rename, but there are " + stepDefinitions.size());
+      }
+      final AbstractStepDefinition stepDefinition = stepDefinitions.getFirst();
+      final String regexp = stepDefinition.getCucumberRegex();
+      final String expression = stepDefinition.getExpression();
+      if (expression != null && regexp != null) {
+        final boolean expressionIsRegex = expression.equals(regexp);
+        final Pattern oldStepDefPattern = Pattern.compile(
+          (expressionIsRegex ? prepareRegexAndGetStaticTexts(regexp).getFirst() : prepareRegexFromCukex(expression))
+        );
+        final List<String> newStaticTexts = expressionIsRegex ? prepareRegexAndGetStaticTexts(newName) : getStaticTextsFromCukex(newName);
+        if (expressionIsRegex) {
+          newStaticTexts.removeFirst();
+        }
+
+        for (UsageInfo usage : usages) {
+          final PsiElement possibleStep = usage.getElement();
+          if (possibleStep instanceof GherkinStep gherkinStep) {
+            final String oldStepName = gherkinStep.getName();
+            final String newStepName = getNewStepName(oldStepName, oldStepDefPattern, newStaticTexts);
+            gherkinStep.setName(newStepName);
+          }
+        }
+
+        final String prefix = expression.startsWith("^") ? "^" : "";
+        final String suffix = expression.endsWith("$") ? "$" : "";
+        stepDefinition.setValue(prefix + newName + suffix);
+
+        final PsiElement elementToRename = stepDefinition.getElement();
+        if (listener != null && elementToRename != null) {
+          listener.elementRenamed(elementToRename);
+        }
+      }
+    }
+  }
+
+  @Override
+  public Collection<PsiReference> findReferences(PsiElement element, SearchScope searchScope, boolean searchInCommentsAndStrings) {
+    if (!(element instanceof GherkinStep)) throw new IllegalStateException("element must be a GherkinStep, but is: " + element);
+    final CucumberStepReference cucumberStepReference = CucumberUtil.getCucumberStepReference(element);
+    if (cucumberStepReference != null) {
+      final AbstractStepDefinition abstractStepDef = cucumberStepReference.resolveToDefinition();
+      if (abstractStepDef != null) {
+        final PsiElement stepDefElement = abstractStepDef.getElement();
+        if (stepDefElement != null) {
+          final String cucumberRegex = abstractStepDef.getCucumberRegex();
+          if (cucumberRegex != null) {
+            final List<PsiReference> result = new ArrayList<>();
+            CucumberUtil.findGherkinReferencesToElement(stepDefElement, cucumberRegex, reference -> result.add(reference), searchScope);
+            return result;
+          }
+        }
+      }
+    }
+
+    return List.of();
+  }
+
+  /// Wraps each special symbol of `regexText` with a group and cuts static text.
+  ///
+  /// @return List of strings. The first one is prepared regex, then static elements of the regex
+  public static List<String> prepareRegexAndGetStaticTexts(String regexText) {
     final ArrayList<String> result = new ArrayList<>();
     final StringBuilder preparedRegexp = new StringBuilder();
 
     final RegExpLexer lexer = new RegExpLexer(EnumSet.noneOf(RegExpCapability.class));
-    lexer.start(source);
+    lexer.start(regexText);
     IElementType previous = null;
     final TokenSet toSkip = TokenSet.create(RegExpTT.CHARACTER, RegExpTT.CARET, RegExpTT.DOLLAR, RegExpTT.REDUNDANT_ESCAPE);
 
@@ -151,70 +213,5 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     else {
       return oldStepName;
     }
-  }
-
-  @Override
-  public void renameElement(PsiElement element, String newName, UsageInfo[] usages, @Nullable RefactoringElementListener listener)
-    throws IncorrectOperationException {
-    final CucumberStepReference reference = CucumberUtil.getCucumberStepReference(element);
-    if (reference != null) {
-      List<AbstractStepDefinition> stepDefinitions = reference.resolveToDefinitions().stream().toList();
-      if (stepDefinitions.size() != 1) {
-        throw new IllegalStateException("there must be exactly 1 step definition for rename, but there are " + stepDefinitions.size());
-      }
-      final AbstractStepDefinition stepDefinition = stepDefinitions.getFirst();
-      final String regexp = stepDefinition.getCucumberRegex();
-      final String expression = stepDefinition.getExpression();
-      if (expression != null && regexp != null) {
-        final boolean expressionIsRegex = expression.equals(regexp);
-        final Pattern oldStepDefPattern = Pattern.compile(
-          (expressionIsRegex ? prepareRegexAndGetStaticTexts(regexp).getFirst() : prepareRegexFromCukex(expression))
-        );
-        final List<String> newStaticTexts = expressionIsRegex ? prepareRegexAndGetStaticTexts(newName) : getStaticTextsFromCukex(newName);
-        if (expressionIsRegex) {
-          newStaticTexts.removeFirst();
-        }
-
-        for (UsageInfo usage : usages) {
-          final PsiElement possibleStep = usage.getElement();
-          if (possibleStep instanceof GherkinStep gherkinStep) {
-            final String oldStepName = gherkinStep.getName();
-            final String newStepName = getNewStepName(oldStepName, oldStepDefPattern, newStaticTexts);
-            gherkinStep.setName(newStepName);
-          }
-        }
-
-        final String prefix = expression.startsWith("^") ? "^" : "";
-        final String suffix = expression.endsWith("$") ? "$" : "";
-        stepDefinition.setValue(prefix + newName + suffix);
-
-        final PsiElement elementToRename = stepDefinition.getElement();
-        if (listener != null && elementToRename != null) {
-          listener.elementRenamed(elementToRename);
-        }
-      }
-    }
-  }
-
-  @Override
-  public Collection<PsiReference> findReferences(PsiElement element, SearchScope searchScope, boolean searchInCommentsAndStrings) {
-    if (!(element instanceof GherkinStep)) throw new IllegalStateException("element must be a GherkinStep, but is: " + element);
-    final CucumberStepReference cucumberStepReference = CucumberUtil.getCucumberStepReference(element);
-    if (cucumberStepReference != null) {
-      final AbstractStepDefinition abstractStepDef = cucumberStepReference.resolveToDefinition();
-      if (abstractStepDef != null) {
-        final PsiElement stepDefElement = abstractStepDef.getElement();
-        if (stepDefElement != null) {
-          final String cucumberRegex = abstractStepDef.getCucumberRegex();
-          if (cucumberRegex != null) {
-            final List<PsiReference> result = new ArrayList<>();
-            CucumberUtil.findGherkinReferencesToElement(stepDefElement, cucumberRegex, reference -> result.add(reference), searchScope);
-            return result;
-          }
-        }
-      }
-    }
-
-    return List.of();
   }
 }
