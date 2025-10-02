@@ -127,7 +127,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       parseAttributeValue()
     }
     if (tagName.lowercase(Locale.US) == SLOT_TAG_NAME) {
-      attr.done(VueElementTypes.STUBBED_ATTRIBUTE)
+      attr.done(VueElementTypes.ATTRIBUTE)
     }
     else
       when (attributeInfo.kind) {
@@ -137,7 +137,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         SCRIPT_VAPOR,
         SCRIPT_GENERIC,
         STYLE_MODULE,
-           -> attr.done(VueElementTypes.STUBBED_ATTRIBUTE)
+           -> attr.done(VueElementTypes.ATTRIBUTE)
         REF -> attr.done(VueElementTypes.REF_ATTRIBUTE)
         else -> attr.done(XmlElementType.XML_ATTRIBUTE)
       }
@@ -147,7 +147,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     val tagName = info.normalizedName.lowercase(Locale.US)
     if (tagName in ALWAYS_STUBBED_TAGS
         || (tagLevel == 1 && tagName in TOP_LEVEL_TAGS)) {
-      return if (tagName == TEMPLATE_TAG_NAME) VueElementTypes.TEMPLATE_TAG else VueElementTypes.STUBBED_TAG
+      return if (tagName == TEMPLATE_TAG_NAME) VueElementTypes.TEMPLATE_TAG else VueElementTypes.TAG
     }
     return super.getHtmlTagElementType(info, tagLevel)
   }

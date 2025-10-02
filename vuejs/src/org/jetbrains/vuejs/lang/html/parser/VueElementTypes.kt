@@ -22,11 +22,11 @@ import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeImpl
 
 object VueElementTypes {
-  val STUBBED_TAG: VueStubBasedTagElementType = VueStubBasedTagElementType("STUBBED_TAG")
+  val TAG: VueTagElementType = VueTagElementType("TAG")
 
   val TEMPLATE_TAG: VueTemplateTagElementType = VueTemplateTagElementType()
 
-  val STUBBED_ATTRIBUTE: XmlStubBasedAttributeElementType = XmlStubBasedAttributeElementType("STUBBED_ATTRIBUTE", INSTANCE)
+  val ATTRIBUTE: XmlStubBasedAttributeElementType = XmlStubBasedAttributeElementType("ATTRIBUTE", INSTANCE)
 
   val SCRIPT_ID_ATTRIBUTE: VueScriptIdAttributeElementType = VueScriptIdAttributeElementType()
 

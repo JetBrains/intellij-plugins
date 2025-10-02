@@ -18,8 +18,8 @@ import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_ID_ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_SETUP_JS_EMBEDDED_CONTENT
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_SETUP_TS_EMBEDDED_CONTENT
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SRC_ATTRIBUTE
-import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.STUBBED_ATTRIBUTE
-import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.STUBBED_TAG
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.ATTRIBUTE
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.TAG
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.TEMPLATE_TAG
 import org.jetbrains.vuejs.lang.stubs.factories.*
 import org.jetbrains.vuejs.lang.stubs.serializers.*
@@ -52,14 +52,14 @@ private class VueStubRegistryExtension : StubRegistryExtension {
       VueScriptSetupEmbeddedContentStubSerializer { SCRIPT_SETUP_JS_EMBEDDED_CONTENT },
     ).forEach(registry::register)
 
-    registry.registerStubFactory(STUBBED_TAG, VueStubBasedTagStubFactory { STUBBED_TAG })
-    registry.registerStubSerializer(STUBBED_TAG, HtmlStubBasedTagStubSerializer { STUBBED_TAG })
+    registry.registerStubFactory(TAG, VueStubBasedTagStubFactory { TAG })
+    registry.registerStubSerializer(TAG, HtmlStubBasedTagStubSerializer { TAG })
 
     registry.registerStubFactory(TEMPLATE_TAG, VueTemplateTagStubFactory())
     registry.registerStubSerializer(TEMPLATE_TAG, HtmlStubBasedTagStubSerializer { TEMPLATE_TAG })
 
-    registry.registerStubFactory(STUBBED_ATTRIBUTE, XmlStubBasedAttributeStubFactory(STUBBED_ATTRIBUTE))
-    registry.registerStubSerializer(STUBBED_ATTRIBUTE, XmlStubBasedAttributeStubSerializer { STUBBED_ATTRIBUTE })
+    registry.registerStubFactory(ATTRIBUTE, XmlStubBasedAttributeStubFactory(ATTRIBUTE))
+    registry.registerStubSerializer(ATTRIBUTE, XmlStubBasedAttributeStubSerializer { ATTRIBUTE })
 
     registry.registerStubFactory(SCRIPT_ID_ATTRIBUTE, VueScriptIdAttributeStubFactory())
     registry.registerStubSerializer(SCRIPT_ID_ATTRIBUTE, VueScriptIdAttributeStubSerializer())

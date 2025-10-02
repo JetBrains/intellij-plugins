@@ -35,7 +35,7 @@ HtmlFile:test.vue
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('script')
       PsiWhiteSpace(' ')
-      PsiElement(VUE:STUBBED_ATTRIBUTE)
+      PsiElement(VUE:ATTRIBUTE)
         XmlToken:XML_NAME('setup')
       XmlToken:XML_TAG_END('>')
       VueScriptSetupEmbeddedContent:VUE:SCRIPT_SETUP_TS_EMBEDDED_CONTENT
