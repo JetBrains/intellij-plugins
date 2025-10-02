@@ -13,7 +13,6 @@ import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.linter.GlobPatternUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
@@ -23,6 +22,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.BaseProjectDirectories;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -52,7 +52,6 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil.findChildPackageJsonFile;
 import static com.intellij.prettierjs.PrettierConfig.createFromMap;
 
 public final class PrettierUtil {
@@ -123,54 +122,19 @@ public final class PrettierUtil {
 
   public static @NotNull Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull List<VirtualFile> from, @NotNull Project project) {
     HashSet<VirtualFile> results = new HashSet<>();
-    VirtualFile baseDir = project.getBaseDir();
-    if (baseDir == null) {
+    Set<VirtualFile> baseDirs = BaseProjectDirectories.getBaseDirectories(project);
+    if (baseDirs.isEmpty()) {
       return results;
     }
     for (VirtualFile file : from) {
-      addPossibleConfigsForFile(file, results, baseDir);
+      addPossibleConfigsForFile(file, results, baseDirs);
     }
     return results;
   }
 
-  public static boolean isFormattingAllowedForFile(@NotNull Project project, @NotNull VirtualFile file) {
-    var configuration = PrettierConfiguration.getInstance(project);
-
-    if (!GlobPatternUtil.isFileMatchingGlobPattern(project, configuration.getFilesPattern(), file)) {
-      return false;
-    }
-
-    if (!configuration.getFormatFilesOutsideDependencyScope()) {
-      return findPrettierScopeUpTree(project, file) != null;
-    }
-
-    return true;
-  }
-
-  public static @Nullable VirtualFile findPrettierScopeUpTree(@NotNull Project project, @NotNull VirtualFile file) {
-    Ref<VirtualFile> result = Ref.create();
-
-    JSProjectUtil.processDirectoriesUpToContentRoot(project, file, directory -> {
-      var packageJson = findChildPackageJsonFile(directory);
-      if (packageJson != null) {
-        var data = PackageJsonData.getOrCreate(packageJson);
-        if (data.isDependencyOfAnyType(PACKAGE_NAME)) {
-          result.set(directory);
-        }
-      }
-      if (result.isNull() && directory.isValid()) {
-        var configFile = findChildConfigFile(directory);
-        if (configFile != null) {
-          result.set(directory);
-        }
-      }
-      return result.isNull();
-    });
-
-    return result.get();
-  }
-
-  private static void addPossibleConfigsForFile(@NotNull VirtualFile from, @NotNull Set<VirtualFile> result, @NotNull VirtualFile baseDir) {
+  private static void addPossibleConfigsForFile(@NotNull VirtualFile from,
+                                                @NotNull Set<VirtualFile> result,
+                                                @NotNull Set<VirtualFile> baseDirs) {
     VirtualFile current = from.getParent();
     while (current != null && current.isValid() && current.isDirectory()) {
       for (String name : CONFIG_FILE_NAMES_WITH_PACKAGE_JSON) {
@@ -179,7 +143,7 @@ public final class PrettierUtil {
           result.add(file);
         }
       }
-      if (current.equals(baseDir)) {
+      if (baseDirs.contains(current)) {
         return;
       }
       current = current.getParent();

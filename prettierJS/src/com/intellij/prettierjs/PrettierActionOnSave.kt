@@ -43,7 +43,7 @@ private class PrettierActionOnSave : ActionsOnSaveFileDocumentManagerListener.Do
       }
     }
 
-    if (!PrettierUtil.isFormattingAllowedForFile(project, file)) return null
+    if (!isPrettierFormattingAllowedFor(project, file)) return null
 
     return file to psiFile
   }
