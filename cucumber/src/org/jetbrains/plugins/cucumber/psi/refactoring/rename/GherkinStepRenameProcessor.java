@@ -7,7 +7,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import com.intellij.usageView.UsageInfo;
@@ -35,8 +34,7 @@ import java.util.regex.Pattern;
 public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(PsiElement element) {
-    boolean isGherkinStep = element instanceof GherkinStep || PsiTreeUtil.getParentOfType(element, GherkinStep.class) != null;
-    return isGherkinStep;
+    return element instanceof GherkinStep;
   }
 
   /**
