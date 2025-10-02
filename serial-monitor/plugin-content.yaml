@@ -1,12 +1,7 @@
-- name: lib/jssc-2.9.5.jar
-  library: io.github.java.native.jssc
+- name: lib/jSerialComm-2.11.2.jar
+  library: jetbrains.intellij.deps.jSerialComm
   files:
-  - name: $MAVEN_REPOSITORY$/io/github/java-native/jssc/2/jssc-2.jar
-  reason: withProjectLibrary
-- name: lib/native-lib-loader-2.4.0.jar
-  library: io.github.java.native.jssc
-  files:
-  - name: $MAVEN_REPOSITORY$/org/scijava/native-lib-loader/2/native-lib-loader-2.jar
+  - name: $MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jSerialComm/2/jSerialComm-2.jar
   reason: withProjectLibrary
 - name: lib/serial-monitor.jar
   modules:

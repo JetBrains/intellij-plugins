@@ -27,11 +27,11 @@ jvm_library(
     "@community//platform/lang-impl",
     "@lib//:guava",
     "@community//platform/platform-impl:ide-impl",
-    "@ultimate_lib//:io-github-java-native-jssc",
     "@community//platform/statistics",
     "@lib//:jediterm-core",
     "@lib//:jediterm-ui",
     "@lib//:commons-io",
+    "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
   ]
 )
 
@@ -54,7 +54,6 @@ jvm_library(
     "@community//platform/lang-impl",
     "@lib//:guava",
     "@community//platform/platform-impl:ide-impl",
-    "@ultimate_lib//:io-github-java-native-jssc",
     "@community//platform/statistics",
     "@community//platform/statistics:statistics_test_lib",
     "@lib//:jediterm-core",
@@ -64,6 +63,7 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/testFramework/junit5",
     "@community//platform/testFramework/junit5:junit5_test_lib",
+    "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
   ]
 )
 ### auto-generated section `build intellij.serial.monitor` end
