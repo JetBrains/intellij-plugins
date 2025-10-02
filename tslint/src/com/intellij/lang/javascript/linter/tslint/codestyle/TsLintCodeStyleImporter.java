@@ -1,7 +1,8 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.codestyle;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.idea.AppMode;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.JSLinterCodeStyleImporter;
@@ -12,6 +13,7 @@ import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWr
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintRule;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
+import com.intellij.lang.javascript.psi.util.JSPluginPathManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -19,12 +21,11 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.intellij.lang.javascript.service.JSLanguageServiceUtil.getPluginDirectory;
 
 public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintConfigWrapper> {
   public TsLintCodeStyleImporter(boolean isForInitialImport) {
@@ -67,9 +68,21 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
                                                                  @NotNull NodePackage linterPackage) throws ExecutionException {
 
     String configFilePath = FileUtil.toSystemDependentName(configPsi.getVirtualFile().getPath());
-    List<String> parameters =
-      Arrays.asList(getPluginDirectory(TsLintImportCodeStyleAction.class, "js/convert-tslint-config.js").getAbsolutePath(),
-                    linterPackage.getSystemDependentPath(), configFilePath);
+    List<String> parameters;
+    try {
+      parameters = Arrays.asList(
+        JSPluginPathManager.getPluginResource(
+          TsLintImportCodeStyleAction.class,
+          "js/convert-tslint-config.js",
+          AppMode.isRunningFromDevBuild() ? "tslint" : "tslint/gen"
+        ).toAbsolutePath().toString(),
+        linterPackage.getSystemDependentPath(),
+        configFilePath
+      );
+    }
+    catch (IOException e) {
+      throw new ExecutionException(e);
+    }
     String text = runToolWithArguments(configPsi, interpreter, parameters);
     if (LOG.isTraceEnabled()) {
       LOG.trace(String.format("TSLint: computed effective config for file %s:\n%s", configFilePath, text));

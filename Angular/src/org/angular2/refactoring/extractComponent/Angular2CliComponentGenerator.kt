@@ -3,6 +3,7 @@ package org.angular2.refactoring.extractComponent
 
 import com.intellij.execution.process.CapturingAnsiEscapesAwareProcessHandler
 import com.intellij.ide.actions.CreateFileAction
+import com.intellij.idea.AppMode
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
@@ -11,7 +12,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.util.NodePackage
-import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.lang.javascript.psi.util.JSPluginPathManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
@@ -35,6 +36,7 @@ import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.expr.Angular2Language
 import java.io.File
 import java.nio.charset.StandardCharsets
+import kotlin.io.path.absolutePathString
 
 interface Angular2CliComponentGenerator {
   suspend fun showDialog(): Array<String>?
@@ -83,10 +85,14 @@ class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliCompo
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: throw Exception("Node interpreter not found")
     findCliPackage(cliDir) ?: throw Exception("Angular CLI package not found")
 
-    val utilityDirectory = JSLanguageServiceUtil.getPluginDirectory(Angular2Language::class.java, "ngCli")
-    val binPath = "${utilityDirectory}${File.separator}generate.js"
+    val utilityDirectory = JSPluginPathManager.getPluginResource(
+      Angular2Language::class.java,
+      "ngCli",
+      if (AppMode.isRunningFromDevBuild()) "angular" else "Angular/gen-resources"
+    )
+    val binPath = utilityDirectory.resolve("generate.js")
 
-    val output = executeNode(interpreter, workingDir, arrayOf(binPath, cliDir.path, "component", *arguments))
+    val output = executeNode(interpreter, workingDir, arrayOf(binPath.absolutePathString(), cliDir.path, "component", *arguments))
     val commands = GenerateJsonParser.parse(output)
 
     return { executeGenerateCommands(cliDir, commands) }

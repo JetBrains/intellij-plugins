@@ -2,6 +2,7 @@
 package com.intellij.lang.javascript.linter.tslint.service
 
 import com.google.gson.*
+import com.intellij.idea.AppMode
 import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage
 import com.intellij.javascript.nodejs.util.NodePackage
@@ -12,6 +13,7 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputJsonParser
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError
+import com.intellij.lang.javascript.psi.util.JSPluginPathManager.getPluginResource
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue
 import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl
@@ -27,8 +29,10 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.text.SemVer
 import kotlinx.coroutines.async
 import kotlinx.coroutines.future.asCompletableFuture
+import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
 import java.util.function.BiFunction
+import kotlin.io.path.absolutePathString
 
 class TsLintLanguageService(
   project: Project,
@@ -140,13 +144,13 @@ class TsLintLanguageService(
       result.additionalRootDirectory = create(extendedState.getState().rulesDirectory)
       result.pluginName = "tslint"
       result.pluginPath = LocalFilePath.create(
-        JSLanguageServiceUtil.getPluginDirectory(javaClass, "js/languageService/tslint-plugin-provider.js")!!.absolutePath)
+        getBundledScriptsDir().resolve("languageService/tslint-plugin-provider.js").absolutePathString())
       return result
     }
 
     override fun addNodeProcessAdditionalArguments(targetRun: NodeTargetRun) {
       super.addNodeProcessAdditionalArguments(targetRun)
-      targetRun.path(JSLanguageServiceUtil.getPluginDirectory(javaClass, "js")!!.absolutePath)
+      targetRun.path(getBundledScriptsDir())
     }
   }
 
@@ -203,5 +207,11 @@ class TsLintLanguageService(
       }
       return null
     }
+
+    private fun getBundledScriptsDir(): Path = getPluginResource(
+      TsLintLanguageService::class.java,
+      "js",
+      if (AppMode.isRunningFromDevBuild()) "tslint" else "tslint/gen"
+    )
   }
 }

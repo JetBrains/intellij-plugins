@@ -3,12 +3,13 @@ package org.angular2.cli
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
+import com.intellij.idea.AppMode
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.util.NodePackage
-import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.lang.javascript.psi.util.JSPluginPathManager
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -18,6 +19,7 @@ import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
 import org.angular2.lang.expr.Angular2Language
 import org.jetbrains.annotations.ApiStatus
 import java.io.File
+import kotlin.io.path.absolutePathString
 
 private var myLogErrors: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
 private val LOG: Logger = Logger.getInstance("#org.angular2.cli.SchematicsLoader")
@@ -68,9 +70,13 @@ fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean, logErrors
 private fun loadSchematicsInfoJson(configurator: NodeCommandLineConfigurator,
                                    cli: VirtualFile,
                                    includeHidden: Boolean): String {
-  val directory = JSLanguageServiceUtil.getPluginDirectory(Angular2Language::class.java, "ngCli")
-  val utilityExe = "${directory}${File.separator}runner.js"
-  val commandLine = GeneralCommandLine("", utilityExe, cli.path, "./schematicsInfoProvider.js")
+  val directory = JSPluginPathManager.getPluginResource(
+    Angular2Language::class.java,
+    "ngCli",
+    if (AppMode.isRunningFromDevBuild()) "angular" else "Angular/gen-resources"
+  )
+  val utilityExe = directory.resolve("runner.js")
+  val commandLine = GeneralCommandLine("", utilityExe.absolutePathString(), cli.path, "./schematicsInfoProvider.js")
   if (includeHidden)
     commandLine.addParameter("--includeHidden")
   configurator.configure(commandLine)

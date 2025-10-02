@@ -21,10 +21,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.prettierjs.PrettierUtil.getPrettierLanguageServicePath
+import com.intellij.util.PathUtilRt
 import com.intellij.webcore.util.JsonUtil
 import kotlinx.coroutines.future.future
-import java.io.File
 import java.util.concurrent.CompletableFuture
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.isRegularFile
 
 class PrettierLanguageServiceImpl(
   project: Project,
@@ -64,7 +67,7 @@ class PrettierLanguageServiceImpl(
       val res = parseReformatResponse(answer, forceLineBreakAtEof)
       val newError = when {
         res.error != null -> PrettierError.ShowDetails(res.error)
-        res.unsupported -> PrettierError.Unsupported(PrettierBundle.message("not.supported.file", File(filePath).name))
+        res.unsupported -> PrettierError.Unsupported(PrettierBundle.message("not.supported.file", PathUtilRt.getFileName(filePath)))
         else -> null
       }
       updateError(newError)
@@ -194,7 +197,7 @@ class PrettierLanguageServiceImpl(
 
       // Check for Node.js version and add experimental strip types if needed
       PrettierUtil.addExperimentalStripTypesIfNeeded(targetRun, serviceName)
-      targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "prettierLanguageService")!!.absolutePath)
+      targetRun.path(getPrettierLanguageServicePath().absolutePathString())
     }
 
     override val workingDirectory: String?
@@ -210,13 +213,13 @@ class PrettierLanguageServiceImpl(
     override fun needReadActionToCreateState(): Boolean = false
 
     override fun createState(): JSLanguageServiceInitialState {
-      val service = File(JSLanguageServiceUtil.getPluginDirectory(this.javaClass, "prettierLanguageService"), "prettier-plugin-provider.js")
-      if (!service.exists()) {
+      val service = getPrettierLanguageServicePath().resolve("prettier-plugin-provider.js")
+      if (!service.isRegularFile()) {
         thisLogger().error("prettier language service plugin not found")
       }
       return JSLanguageServiceInitialState().also {
         it.pluginName = "prettier"
-        it.pluginPath = LocalFilePath.create(service.absolutePath)
+        it.pluginPath = LocalFilePath.create(service.absolutePathString())
       }
     }
 

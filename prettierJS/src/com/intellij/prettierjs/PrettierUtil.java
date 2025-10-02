@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.google.gson.Gson;
@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonToken;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
+import com.intellij.idea.AppMode;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.json.psi.JsonFile;
@@ -15,6 +16,7 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonCommonUtil;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
+import com.intellij.lang.javascript.psi.util.JSPluginPathManager;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -49,6 +51,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkListener;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -311,5 +314,13 @@ public final class PrettierUtil {
         nodeVersion.compareTo(NODE_MAX_VERSION_FOR_STRIP_TYPES_FLAG) < 0) {
       JSLanguageServiceUtil.addNodeProcessArguments(targetRun.getCommandLineBuilder(), serviceName, "--experimental-strip-types");
     }
+  }
+
+  static Path getPrettierLanguageServicePath() throws IOException {
+    return JSPluginPathManager.getPluginResource(
+      PrettierUtil.class,
+      "prettierLanguageService",
+      AppMode.isRunningFromDevBuild() ? "prettierJS" : "prettierJS/gen"
+    );
   }
 }
