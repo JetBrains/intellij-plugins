@@ -9,8 +9,8 @@ import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.CoreFormattingService
 import com.intellij.formatting.service.FormattingService
-import com.intellij.lang.javascript.imports.JSModuleImportOptimizerBase
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.lang.javascript.imports.JSOptimizeImportUtil
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.logger
@@ -50,7 +50,7 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
     val virtualFile = context.virtualFile ?: return null
 
     val formatterLatch = CountDownLatch(1)
-    file.putUserData(JSModuleImportOptimizerBase.COUNTDOWN_LATCH_KEY, formatterLatch)
+    file.putUserData(JSOptimizeImportUtil.COUNTDOWN_LATCH_KEY, formatterLatch)
 
     val skipInContentCheck = file.consumeSkipInContentScopeCheck()
     return PrettierFormattingTask(request, file, virtualFile, project, formatterLatch, skipInContentCheck)
