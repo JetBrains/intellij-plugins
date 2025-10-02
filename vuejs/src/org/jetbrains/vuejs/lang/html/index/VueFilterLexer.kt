@@ -86,8 +86,8 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
       XMLLanguage.INSTANCE,
       HTMLLanguage.INSTANCE,
       VueLanguage.INSTANCE,
-      VueJSLanguage.INSTANCE,
-      VueTSLanguage.INSTANCE,
+      VueJSLanguage,
+      VueTSLanguage,
       Language.ANY
     )
 

@@ -82,10 +82,10 @@ internal object VueScriptLangs {
  * Enum values are designed to be a little strange in order to make the reader think about the above.
  */
 enum class LangMode(val exprLang: JSLanguageDialect, scriptElementType: IElementType, vararg val attrValues: String?) {
-  PENDING(VueJSLanguage.INSTANCE, JSElementTypes.MOD_ES6_EMBEDDED_CONTENT),
-  NO_TS(VueJSLanguage.INSTANCE, JSElementTypes.MOD_ES6_EMBEDDED_CONTENT, "js", "javascript",
+  PENDING(VueJSLanguage, JSElementTypes.MOD_ES6_EMBEDDED_CONTENT),
+  NO_TS(VueJSLanguage, JSElementTypes.MOD_ES6_EMBEDDED_CONTENT, "js", "javascript",
         null /* null -> lang attribute is missing */),
-  HAS_TS(VueTSLanguage.INSTANCE, JSElementTypes.MOD_TS_EMBEDDED_CONTENT, "ts", "typescript");
+  HAS_TS(VueTSLanguage, JSElementTypes.MOD_TS_EMBEDDED_CONTENT, "ts", "typescript");
 
   val canonicalAttrValue: String get() = if (this == HAS_TS) "ts" else "js"
 

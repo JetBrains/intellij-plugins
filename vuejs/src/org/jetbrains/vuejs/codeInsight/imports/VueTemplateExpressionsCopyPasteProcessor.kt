@@ -145,7 +145,7 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
       }, { elements ->
         val newExportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing
         ES6CreateImportUtil.addRequiredImports(
-          newExportScope, VueJSLanguage.INSTANCE, elements.mapNotNull { it.second?.let { el -> Pair(it.first, el) } })
+          newExportScope, VueJSLanguage, elements.mapNotNull { it.second?.let { el -> Pair(it.first, el) } })
       }
     )
 
@@ -184,7 +184,7 @@ class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTe
     imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
     pasteContextLanguage: Language,
   ) {
-    ES6CreateImportUtil.addRequiredImports(destinationModule, VueJSLanguage.INSTANCE, imports)
+    ES6CreateImportUtil.addRequiredImports(destinationModule, VueJSLanguage, imports)
   }
 
   class VueTemplateExpressionsImportsTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>) : ES6ImportsTransferableDataBase(importedElementsDeferred) {

@@ -21,7 +21,7 @@ internal class VueScriptSetupEmbeddedContentStubSerializer(elementTypeSupplier: 
 
   override fun indexStub(stub: JSEmbeddedContentStub, sink: IndexSink) {
     super.indexStub(stub, sink)
-    if (typedElementType.forcedLanguage == VueTSLanguage.INSTANCE) {
+    if (typedElementType.forcedLanguage == VueTSLanguage) {
       sink.occurrence(TypeScriptScriptContentIndex.KEY, TypeScriptScriptContentIndex.DEFAULT_INDEX_KEY)
     }
   }

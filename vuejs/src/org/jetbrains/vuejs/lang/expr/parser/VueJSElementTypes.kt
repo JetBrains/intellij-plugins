@@ -58,7 +58,7 @@ object VueJSElementTypes {
   private class VueJSExpressionElementType(
     @NonNls debugName: String,
     classConstructor: (VueJSElementType) -> ASTNode,
-  ) : VueJSElementType(debugName, VueJSLanguage.INSTANCE, classConstructor),
+  ) : VueJSElementType(debugName, VueJSLanguage, classConstructor),
       JSExpressionElementType
 
 

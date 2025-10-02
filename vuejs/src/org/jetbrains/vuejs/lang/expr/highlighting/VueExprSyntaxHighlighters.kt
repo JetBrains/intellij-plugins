@@ -23,6 +23,6 @@ class VueTSHighlighterFactory : SyntaxHighlighterFactory() {
   }
 }
 
-class VueJSSyntaxHighlighter : ECMA6SyntaxHighlighterFactory.ECMA6SyntaxHighlighter(VueJSLanguage.INSTANCE.optionHolder)
+class VueJSSyntaxHighlighter : ECMA6SyntaxHighlighterFactory.ECMA6SyntaxHighlighter(VueJSLanguage.optionHolder)
 
-class VueTSSyntaxHighlighter : TypeScriptHighlighter(VueTSLanguage.INSTANCE.optionHolder)
+class VueTSSyntaxHighlighter : TypeScriptHighlighter(VueTSLanguage.optionHolder)

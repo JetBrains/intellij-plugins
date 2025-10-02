@@ -14,11 +14,7 @@ object VueJSLanguage :
     optionHolder = DialectOptionHolder.JS_WITH_JSX,
     baseLanguage = JavaScriptSupportLoader.ECMA_SCRIPT_6,
   ),
-  DependentLanguage {
-
-  inline val INSTANCE: VueJSLanguage
-    get() = VueJSLanguage
-}
+  DependentLanguage
 
 object VueTSLanguage :
   JSLanguageDialect(
@@ -26,13 +22,9 @@ object VueTSLanguage :
     optionHolder = DialectOptionHolder.TS,
     baseLanguage = JavaScriptSupportLoader.TYPESCRIPT,
   ),
-  DependentLanguage {
+  DependentLanguage
 
-  inline val INSTANCE: VueTSLanguage
-    get() = VueTSLanguage
-}
-
-private val vueExprLanguages = setOf<JSLanguageDialect>(VueJSLanguage.INSTANCE, VueTSLanguage.INSTANCE)
+private val vueExprLanguages = setOf<JSLanguageDialect>(VueJSLanguage, VueTSLanguage)
 
 fun isVueExprMetaLanguage(language: Language?): Boolean {
   return language != null && MetaLanguage.findInstance(VueExprMetaLanguage::class.java).matchesLanguage(language)

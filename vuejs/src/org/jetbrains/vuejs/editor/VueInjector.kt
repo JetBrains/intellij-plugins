@@ -49,7 +49,7 @@ internal class VueInjector : MultiHostInjector {
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
 
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil.delimitersFactory(
-      VueJSLanguage.INSTANCE.id, // might be slightly wrong for VueTSLanguage, but so far nothing was found
+      VueJSLanguage.id, // might be slightly wrong for VueTSLanguage, but so far nothing was found
       { element ->
         (VueModelManager.findEnclosingContainer(element) as? VueSourceContainer)
           ?.delimiters

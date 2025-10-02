@@ -44,7 +44,7 @@ class VueJSParserTest : LightPlatformCodeInsightTestCase(), FileBasedTestCaseHel
       if (result.isNotEmpty()) result.append("------\n")
 
       val psiFile = PsiFileFactory.getInstance(project)
-        .createFileFromText("test.js.$attributeName.$extension", VueJSLanguage.INSTANCE, line)
+        .createFileFromText("test.js.$attributeName.$extension", VueJSLanguage, line)
 
       result.append(DebugUtil.psiToString(psiFile, true, false))
     }

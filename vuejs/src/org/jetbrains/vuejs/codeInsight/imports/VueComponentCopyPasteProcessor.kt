@@ -264,7 +264,7 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
         val exportScope = exportScopePtr.dereference() ?: return@scheduleOnPasteProcessing
         insertRequiredImports(pasteContext, VueComponentImportsTransferableData(ArrayList(), null, emptyList()), exportScope,
                               elementsToImport.mapNotNull { info -> info.second?.let { OpenApiPair(info.first, it) } },
-                              VueJSLanguage.INSTANCE)
+                              VueJSLanguage)
       }
     )
   }

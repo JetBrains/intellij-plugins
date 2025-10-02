@@ -69,7 +69,7 @@ class VueInjectionTest : BasePlatformTestCase() {
     </div>
   </body>
 </html>""")
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
   fun testSimpleInterpolationInVue() {
@@ -79,7 +79,7 @@ class VueInjectionTest : BasePlatformTestCase() {
       {{ 1 + <caret>2 }}
     </div>
 </template>""")
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
   fun testCustomDelimitersInterpolationInVue() {
@@ -162,7 +162,7 @@ new Vue({
 })
 </script>
 </html>""")
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
   fun testCommentIntersectsDelimitersInterpolationInHtml() {
@@ -225,13 +225,13 @@ another}}{{two}}"""
   fun testInjectionByConfigDelimitersAssignmentJS() {
     myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.js", "Vue.config.delimiters = ['<%', '%>']")
     myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.vue", "<template><% <caret> %></template>")
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
   fun testInjectionByOptionsDelimitersAssignmentJS() {
     myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.js", "Vue.options.delimiters = ['<%', '%>']")
     myFixture.configureByText("InjectionByConfigDelimitersAssignmentJS.vue", "<template><% <caret> %></template>")
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
   fun testInjectionByConfigDelimitersAssignment() {
@@ -241,7 +241,7 @@ another}}{{two}}"""
 Vue.config.delimiters = ['<%', '%>']
 </script>
 """)
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
   fun testInjectionByOptionsDelimitersAssignment() {
@@ -251,7 +251,7 @@ Vue.config.delimiters = ['<%', '%>']
 Vue.options.delimiters = ['<%', '%>']
 </script>
 """)
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueJSLanguage, myFixture.file.language)
   }
 
   fun testAttrValueInjection() {
