@@ -3,9 +3,8 @@
   files:
   - name: $MAVEN_REPOSITORY$/org/apache/commons/commons-text/1/commons-text-1.jar
   reason: <- intellij.vuejs
-- name: lib/vuejs-frontend.jar
-  contentModules:
-  - name: intellij.vuejs.common
 - name: lib/vuejs.jar
   modules:
   - name: intellij.vuejs
+  contentModules:
+  - name: intellij.vuejs.common

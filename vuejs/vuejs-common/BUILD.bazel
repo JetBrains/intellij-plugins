@@ -17,6 +17,8 @@ jvm_library(
     "@community//platform/core-api:core",
     "@lib//:kotlin-stdlib",
     "@community//platform/util",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "@community//xml/xml-parser:parser",
   ]
 )
 ### auto-generated section `build intellij.vuejs.common` end
