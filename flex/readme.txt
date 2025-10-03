@@ -3,7 +3,7 @@ How to setup IntelliJ IDEA project to work with the Flex plugin source code.
 Prerequisites:
 - Oracle JDK 1.8
 - Git command line client
-- The latest IntelliJ IDEA Ultimate installed (usually the latest is the EAP: http://eap.jetbrains.com/idea/). Keep the installation up-to-date.
+- The latest IntelliJ IDEA installed (usually the latest is the EAP: http://eap.jetbrains.com/idea/). Keep the installation up-to-date.
   The following bundled plugins must be enabled: Git Integration, I18n for Java, IntelliLang, JUnit, Plugin DevKit, Properties Support, UI Designer.
 
 1. Clone the following 2 repositories to neighbor folders:
@@ -29,7 +29,7 @@ Prerequisites:
          [IDEA Installation]/plugins/uml/lib/*.jar
          [IDEA Installation]/plugins/w3validators/lib/*.jar
 
-  2.5. Open Sources tab of the Plugin SDK and add path to the cloned intellij-community repository. After some scanning IDE will find all src folders - accept them. To have IntelliJ IDEA Community sources matching IntelliJ IDEA Ultimate installation it is recommended to checkout tag with the name equal to the IntelliJ IDEA Ultimate build number, for example 'git checkout idea/142.4675.3'.
+  2.5. Open Sources tab of the Plugin SDK and add path to the cloned intellij-community repository. After some scanning IDE will find all src folders - accept them. To have IntelliJ IDEA sources matching the IntelliJ IDEA installation it is recommended to checkout tag with the name equal to the IntelliJ IDEA build number, for example 'git checkout idea/142.4675.3'.
 
   2.6. Open Plugin SDK Annotations tab and add [IDEA Installation]/lib/jdkAnnotations.jar if its is not already there.
 
@@ -61,7 +61,7 @@ How to debug compiler.
 Troubleshooting.
 
 1. Q: Some code is red and compilation fails with errors.
-   A: Most likely classes with red code were recently updated to match current state of the original IntelliJ IDEA Ultimate repository (which is not fully open source). The code will become green again when the next EAP or official release is out. While waiting for the next release just fix compilation locally (for example by reverting affected files to their previous git revisions).
+   A: Most likely classes with red code were recently updated to match current state of the original IntelliJ IDEA repository (which is not fully open source). The code will become green again when the next EAP or official release is out. While waiting for the next release just fix compilation locally (for example by reverting affected files to their previous git revisions).
 
 2. Q: Some tests fail even without any changes in the plugin source code.
    A: Delete folder plugins-sandbox/test and run tests again. Path to the plugins-sandbox folder is shown in Project Structure | SDKs | IntelliJ IDEA Ultimate

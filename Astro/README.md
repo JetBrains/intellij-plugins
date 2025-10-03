@@ -1,12 +1,12 @@
 # Astro plugin for IntelliJ IDEA-based IDEs
 
-This plugin provides support for [Astro](https://astro.build) in IntelliJ IDEA Ultimate, WebStorm, PhpStorm, PyCharm and RubyMine.
+This plugin provides support for [Astro](https://astro.build) in IntelliJ IDEA, WebStorm, PhpStorm, PyCharm and RubyMine.
 
 It provides features including syntax highlighting, code completion (with auto-imports) refactorings, navigation, intentions, code folding, Emmet support and formatting.
 
 ## Getting started
 
-1. If you’re using IntelliJ IDEA Ultimate, PhpStorm, PyCharm, or RubyMine, install the Astro plugin in Preferences | Plugins - Install JetBrains plugins.
+1. If you’re using IntelliJ IDEA, PhpStorm, PyCharm, or RubyMine, install the Astro plugin in Preferences | Plugins - Install JetBrains plugins.
 2. Open your Astro project.
 
 ## Reporting issue

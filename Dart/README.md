@@ -19,7 +19,7 @@ How to set up IntelliJ IDEA project for developing Dart Plugin.
 
 Prerequisites:
 - Git command line client
-- The latest IntelliJ IDEA Ultimate installed. Ensure the following installed plugins are enabled:
+- The latest IntelliJ IDEA installed. Ensure the following installed plugins are enabled:
   Git, Kotlin, Java Internationalization, IntelliLang, JUnit, Plugin DevKit, Properties, UI Designer.
   Additionally install 'Dart' and 'Grammar-Kit' plugins:
   start IntelliJ IDEA, on Welcome screen click Plugins.
@@ -35,7 +35,7 @@ Prerequisites:
    If it's already cloned, just update it using `git pull`.
 
 2. Open and build the `intellij-community` project as described in its 
-   [README file](https://github.com/JetBrains/intellij-community/blob/master/README.md#building-intellij-community-edition).
+   [README file](https://github.com/JetBrains/intellij-community/blob/master/README.md#building-intellij-idea).
    
 3. Open File | Project Structure | Modules | `[+]` | Import Module, select `intellij-plugins/Dart/Dart-community.iml`.
    In the same Project Structure dialog open the Dependencies tab of the `intellij.idea.community.main` module

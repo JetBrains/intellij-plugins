@@ -1,6 +1,6 @@
 # PostCSS support for IntelliJ IDEA-based IDEs
 
-This plugin provides support for PostCSS in IntelliJ IDEA Ultimate, GoLand, PhpStorm, PyCharm, Rider, RubyMine, and WebStorm.
+This plugin provides support for PostCSS in IntelliJ IDEA, GoLand, PhpStorm, PyCharm, Rider, RubyMine, and WebStorm.
 
 Features:
 - Highlighting for the PostCSS syntax. You can additionally configure it in *Settings/Preferences | Editor | Colors & Fonts*.

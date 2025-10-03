@@ -1,6 +1,6 @@
 # Angular Plugin for IntelliJ IDEA-based IDEs
 
-This plugin provides support for Angular projects in IntelliJ IDEA Ultimate, GoLand, PhpStorm, PyCharm, Rider, RubyMine, and WebStorm.
+This plugin provides support for Angular projects in IntelliJ IDEA, GoLand, PhpStorm, PyCharm, Rider, RubyMine, and WebStorm.
 
 It provides intelligent Angular-specific code completion, navigation and refactoring. 
 
@@ -8,7 +8,7 @@ The plugin bundles a collection of Angular code templates by [John Papa](https:/
 
 ## Getting started
 
-1. If you’re using WebStorm, IntelliJ IDEA Ultimate, PhpStorm or PyCharm Pro, the plugin is already installed and enabled in your IDE.
+1. If you’re using WebStorm, IntelliJ IDEA, PhpStorm or PyCharm Pro, the plugin is already installed and enabled in your IDE.
 In GoLand, Rider or RubyMine, install AngularJS plugin in *Preferences | Plugins - Install JetBrains plugins*.
 2. Open your Angular project.
 3. Make sure that you have Angular library files in your project (for example, in the node_modules folder) – this is required for the IDE to enable Angular support for this project.
