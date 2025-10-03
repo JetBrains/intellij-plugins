@@ -426,7 +426,7 @@ public final class CucumberJavaUtil {
    * }</pre>
    *
    * <h3>Note</h3>
-   * {@code TypeRegistry} has been deprecated since cucumber-jvm v7.1.0.
+   * {@code TypeRegistry} <a href="https://github.com/cucumber/cucumber-jvm/blob/main/CHANGELOG.md">has been deprecated since cucumber-jvm v7.1.0</a>.
    * New Cucumber users should use the {@code @ParameterType} annotation instead.
    *
    * @see #processParameterTypesDefinedByAnnotation
