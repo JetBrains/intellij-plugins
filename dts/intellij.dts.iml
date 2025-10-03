@@ -34,8 +34,8 @@
     <orderEntry type="library" name="snakeyaml" level="project" />
     <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="json-schema-validator" level="project" />
-    <orderEntry type="library" scope="TEST" name="jackson" level="project" />
-    <orderEntry type="library" scope="TEST" name="jackson-databind" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.jackson" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.libraries.jackson.databind" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="jackson-dataformat-yaml" level="project" />
     <orderEntry type="module" module-name="intellij.platform.syntax" scope="TEST" />
   </component>
