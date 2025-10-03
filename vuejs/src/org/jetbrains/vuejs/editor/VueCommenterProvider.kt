@@ -28,16 +28,16 @@ private class VueCommenterProvider : MultipleLangCommentProvider {
       .let { findMinimalElementContainingRange(file, it.selectionStart, it.selectionEnd) }
     return minimalElement
              ?.let { PsiUtilCore.findLanguageFromElement(it) }
-             ?.takeIf { it != VueLanguage.INSTANCE }
+             ?.takeIf { it != VueLanguage }
              ?.let { elementLanguage ->
                var xmlParent: XmlElement? = null
                // If we have caret within attribute value expression or style attribute and we are commenting line, adjust language
-               if (lineStartLanguage == VueLanguage.INSTANCE
+               if (lineStartLanguage == VueLanguage
                    && PsiTreeUtil.getParentOfType(minimalElement, XmlAttributeValue::class.java, XmlTag::class.java)
                      ?.takeIf { it is XmlAttributeValue }
                      ?.also { xmlParent = it } != null
                ) {
-                 xmlParent?.language.takeIf { it != VueLanguage.INSTANCE }
+                 xmlParent?.language.takeIf { it != VueLanguage }
                }
                else
                  elementLanguage
@@ -48,7 +48,7 @@ private class VueCommenterProvider : MultipleLangCommentProvider {
                else
                  LanguageCommenters.INSTANCE.forLanguage(it)
              }
-           ?: if (lineStartLanguage == VueLanguage.INSTANCE) {
+           ?: if (lineStartLanguage == VueLanguage) {
              CodeStyle.getLanguageSettings(file, HTMLLanguage.INSTANCE).let { styleSettings ->
                object : XmlCommenter(), IndentedCommenter {
                  override fun forceIndentedLineComment(): Boolean = !styleSettings.LINE_COMMENT_AT_FIRST_COLUMN
@@ -59,11 +59,11 @@ private class VueCommenterProvider : MultipleLangCommentProvider {
            else lineStartLanguage.let { LanguageCommenters.INSTANCE.forLanguage(it) }
   }
 
-  override fun canProcess(file: PsiFile, viewProvider: FileViewProvider): Boolean = file.language == VueLanguage.INSTANCE
+  override fun canProcess(file: PsiFile, viewProvider: FileViewProvider): Boolean = file.language == VueLanguage
 
   private fun findMinimalElementContainingRange(file: PsiFile, startOffset: Int, endOffset: Int): PsiElement? {
-    val element1 = file.viewProvider.findElementAt(startOffset, VueLanguage.INSTANCE)
-    val element2 = file.viewProvider.findElementAt(endOffset - 1, VueLanguage.INSTANCE)
+    val element1 = file.viewProvider.findElementAt(startOffset, VueLanguage)
+    val element2 = file.viewProvider.findElementAt(endOffset - 1, VueLanguage)
     if (element2 == null || element1 == null) return null
     return PsiTreeUtil.findCommonParent(element1, element2)
   }

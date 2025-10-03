@@ -4,4 +4,4 @@ package org.jetbrains.vuejs.lang.html.parser
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedAttributeElementType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueScriptIdAttributeElementType : XmlStubBasedAttributeElementType("SCRIPT_ID_ATTRIBUTE", VueLanguage.INSTANCE)
+class VueScriptIdAttributeElementType : XmlStubBasedAttributeElementType("SCRIPT_ID_ATTRIBUTE", VueLanguage)

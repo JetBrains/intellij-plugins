@@ -4,4 +4,4 @@ package org.jetbrains.vuejs.lang.html.parser
 import com.intellij.psi.impl.source.html.HtmlTagElementType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-open class VueTagElementType(debugName: String) : HtmlTagElementType(debugName, VueLanguage.INSTANCE)
+open class VueTagElementType(debugName: String) : HtmlTagElementType(debugName, VueLanguage)

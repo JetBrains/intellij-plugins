@@ -25,7 +25,7 @@ class VueFramework : WebFramework() {
     get() = VuejsIcons.Vue
 
   override fun isOwnTemplateLanguage(language: Language): Boolean =
-    language.isKindOf(VueLanguage.INSTANCE)
+    language.isKindOf(VueLanguage)
 
   override fun getFileType(kind: SourceFileKind, context: VirtualFile, project: Project): WebFrameworkHtmlFileType? =
     when (kind) {

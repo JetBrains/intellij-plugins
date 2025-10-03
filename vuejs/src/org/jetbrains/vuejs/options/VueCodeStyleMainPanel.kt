@@ -11,13 +11,13 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueCodeStyleMainPanel(currentSettings: CodeStyleSettings?, settings: CodeStyleSettings)
-  : TabbedLanguageCodeStylePanel(VueLanguage.INSTANCE, currentSettings, settings) {
+  : TabbedLanguageCodeStylePanel(VueLanguage, currentSettings, settings) {
 
   override fun initTabs(settings: CodeStyleSettings) {
     addIndentOptionsTab(settings)
     addSpacesTab(settings)
     addWrappingAndBracesTab(settings)
-    addTab(ArrangementSettingsPanel(settings, VueLanguage.INSTANCE))
+    addTab(ArrangementSettingsPanel(settings, VueLanguage))
   }
 
   override fun addSpacesTab(settings: CodeStyleSettings?) {

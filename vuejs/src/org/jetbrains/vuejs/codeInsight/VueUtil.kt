@@ -407,7 +407,7 @@ inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
 
 fun XmlAttributeValue.findVueJSEmbeddedExpressionContent(): VueJSEmbeddedExpressionContent? {
   val root = when {
-    language === VueLanguage.INSTANCE ->
+    language === VueLanguage ->
       children.find { it is ASTWrapperPsiElement }
     textLength >= 2 ->
       InjectedLanguageManager.getInstance(project)

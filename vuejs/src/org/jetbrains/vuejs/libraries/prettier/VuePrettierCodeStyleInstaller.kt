@@ -36,7 +36,7 @@ internal class VuePrettierCodeStyleInstaller : PrettierCodeStyleInstaller {
       it.INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = false
       it.INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
     }
-    applyCommonPrettierSettings(config, settings, VueLanguage.INSTANCE)
+    applyCommonPrettierSettings(config, settings, VueLanguage)
   }
 
   override fun isInstalled(project: Project, config: PrettierConfig, settings: CodeStyleSettings): Boolean {
@@ -59,7 +59,7 @@ internal class VuePrettierCodeStyleInstaller : PrettierCodeStyleInstaller {
                    && tags.contains("template")
                  }
              }
-           && commonPrettierSettingsApplied(config, settings, VueLanguage.INSTANCE)
+           && commonPrettierSettingsApplied(config, settings, VueLanguage)
   }
 
   private fun getIndentChildrenOfTopLevelSequence(settings: @NotNull VueCodeStyleSettings): Sequence<String> {

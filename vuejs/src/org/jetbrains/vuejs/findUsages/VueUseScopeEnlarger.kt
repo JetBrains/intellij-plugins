@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 class VueUseScopeEnlarger : UseScopeEnlarger() {
   override fun getAdditionalUseScope(element: PsiElement): SearchScope? =
     if (element is JSFieldVariable
-        && element.containingFile.language == VueLanguage.INSTANCE
+        && element.containingFile.language == VueLanguage
         && element.parent
           ?.parent
           ?.takeIf {

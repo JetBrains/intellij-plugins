@@ -17,7 +17,6 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.html.VueFileElementType
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.lang.html.VueLanguage.Companion.INSTANCE
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeImpl
 
@@ -26,7 +25,7 @@ object VueElementTypes {
 
   val TEMPLATE_TAG: VueTemplateTagElementType = VueTemplateTagElementType()
 
-  val ATTRIBUTE: XmlStubBasedAttributeElementType = XmlStubBasedAttributeElementType("ATTRIBUTE", INSTANCE)
+  val ATTRIBUTE: XmlStubBasedAttributeElementType = XmlStubBasedAttributeElementType("ATTRIBUTE", VueLanguage)
 
   val SCRIPT_ID_ATTRIBUTE: VueScriptIdAttributeElementType = VueScriptIdAttributeElementType()
 
@@ -40,7 +39,7 @@ object VueElementTypes {
 
   val VUE_EMBEDDED_CONTENT: IElementType = EmbeddedVueContentElementType()
 
-  class EmbeddedVueContentElementType : ILazyParseableElementType("VUE_EMBEDDED_CONTENT", VueLanguage.INSTANCE),
+  class EmbeddedVueContentElementType : ILazyParseableElementType("VUE_EMBEDDED_CONTENT", VueLanguage),
                                         ILightLazyParseableElementType {
 
     override fun parseContents(chameleon: LighterLazyParseableNode): FlyweightCapableTreeStructure<LighterASTNode> {

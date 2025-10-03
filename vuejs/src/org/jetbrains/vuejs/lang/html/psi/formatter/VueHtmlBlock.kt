@@ -39,6 +39,6 @@ class VueHtmlBlock(
   }
 
   override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean {
-    return childLanguage === VueLanguage.INSTANCE || super.useMyFormatter(myLanguage, childLanguage, childPsi)
+    return childLanguage === VueLanguage || super.useMyFormatter(myLanguage, childLanguage, childPsi)
   }
 }

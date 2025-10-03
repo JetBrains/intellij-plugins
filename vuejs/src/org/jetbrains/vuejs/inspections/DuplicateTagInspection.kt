@@ -22,7 +22,7 @@ class DuplicateTagInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
     return object : XmlElementVisitor() {
       override fun visitXmlTag(tag: XmlTag) {
-        if (tag.language != VueLanguage.INSTANCE || !tag.containingFile.isVueFile) return
+        if (tag.language != VueLanguage || !tag.containingFile.isVueFile) return
         val templateTag = TEMPLATE_TAG_NAME == tag.name
         val scriptTag = HtmlUtil.isScriptTag(tag)
         if (!templateTag && !scriptTag) return

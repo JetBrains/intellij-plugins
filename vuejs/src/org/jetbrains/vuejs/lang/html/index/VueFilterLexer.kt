@@ -85,7 +85,7 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
     private val SUPPORTED_LANGUAGES = ContainerUtil.newHashSet(
       XMLLanguage.INSTANCE,
       HTMLLanguage.INSTANCE,
-      VueLanguage.INSTANCE,
+      VueLanguage,
       VueJSLanguage,
       VueTSLanguage,
       Language.ANY

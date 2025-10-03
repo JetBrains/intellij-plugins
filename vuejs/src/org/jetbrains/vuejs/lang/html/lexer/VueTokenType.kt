@@ -5,4 +5,4 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueTokenType(@NonNls debugName: String) : IElementType(debugName, VueLanguage.INSTANCE)
+class VueTokenType(@NonNls debugName: String) : IElementType(debugName, VueLanguage)

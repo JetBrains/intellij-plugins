@@ -9,7 +9,7 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeImpl
 
 class VueRefAttributeElementType :
-  XmlStubBasedElementType<VueRefAttributeImpl>("REF_ATTRIBUTE", VueLanguage.INSTANCE),
+  XmlStubBasedElementType<VueRefAttributeImpl>("REF_ATTRIBUTE", VueLanguage),
   ICompositeElementType, IXmlAttributeElementType {
 
   override fun createPsi(node: ASTNode): VueRefAttributeImpl {

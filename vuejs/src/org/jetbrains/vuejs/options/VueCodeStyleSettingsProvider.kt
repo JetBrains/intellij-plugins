@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
 class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
 
-  override fun getLanguage(): Language = VueLanguage.INSTANCE
+  override fun getLanguage(): Language = VueLanguage
 
   override fun getCodeSample(settingsType: SettingsType): String = """
       <template>
@@ -47,7 +47,7 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
 
   override fun createFileFromText(project: Project, text: String): PsiFile? =
     PsiFileFactory.getInstance(project).createFileFromText(
-      "a.{{.}}.#@injected@#.html", VueLanguage.INSTANCE, text, false, true)
+      "a.{{.}}.#@injected@#.html", VueLanguage, text, false, true)
 
   override fun getIndentOptionsEditor(): IndentOptionsEditor {
     return VueIndentOptionsEditor()

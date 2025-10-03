@@ -22,7 +22,7 @@ internal class VueExtractComponentAction : BaseRefactoringAction() {
     return getContextForExtractComponentIntention(editor, element) != null
   }
 
-  override fun isAvailableForLanguage(language: Language?): Boolean = VueLanguage.INSTANCE == language
+  override fun isAvailableForLanguage(language: Language?): Boolean = VueLanguage == language
 
   override fun isAvailableForFile(file: PsiFile?): Boolean = file?.isVueFile == true
 

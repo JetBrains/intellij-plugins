@@ -25,7 +25,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
       styleSettings.getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 1
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 5
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
       doTest("\n")
     }
@@ -38,7 +38,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
       styleSettings.getLanguageIndentOptions(SASSLanguage.INSTANCE).INDENT_SIZE = 4
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 1
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 1
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 1
       doTest("\n")
     }
@@ -51,7 +51,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
       }
       styleSettings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 6
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 6
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 6
       doTest("\n")
     }
@@ -64,7 +64,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
       styleSettings.getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 6
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 6
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 6
       doTest("\n")
     }
@@ -77,7 +77,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
       }
       styleSettings.getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 5
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
       doTest("\b\b")
     }
@@ -90,7 +90,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
       }
       styleSettings.getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 2
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
       doTest("StylusBackspace", "\b\b")
     }
@@ -103,7 +103,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
       }
       styleSettings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 5
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
       doTest("\b\b")
     }
@@ -116,7 +116,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
       }
       styleSettings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 5
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 2
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
       doTest("PugBackspace", "\b\b")
     }
@@ -129,7 +129,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
       }
       styleSettings.getLanguageIndentOptions(SASSLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 5
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
       doTest("\b\b")
     }
@@ -142,7 +142,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "script"
       }
       styleSettings.getLanguageIndentOptions(JavascriptLanguage).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 5
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
       doTest("\b")
     }
@@ -154,7 +154,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.UNIFORM_INDENT = false
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
       }
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 5
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
       doTest("\b")
     }
@@ -167,7 +167,7 @@ class VueTypingTest : BasePlatformTestCase() {
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
       }
       styleSettings.getLanguageIndentOptions(SCSSLanguage.INSTANCE).INDENT_SIZE = 2
-      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 5
+      styleSettings.getLanguageIndentOptions(VueLanguage).INDENT_SIZE = 5
       styleSettings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 5
       doTest("\b")
     }

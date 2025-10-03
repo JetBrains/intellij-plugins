@@ -59,8 +59,8 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
       val alignAttributes = getBooleanOptionValue(config as? JsonObject, "alignAttributesVertically", true)
                             ?: return EslintSettingsConverter.MISCONFIGURATION
       val getIndentOptions = { settings: CodeStyleSettings ->
-        if (settings.getLanguageIndentOptions(VueLanguage.INSTANCE).isOverrideLanguageOptions) {
-          settings.getLanguageIndentOptions(VueLanguage.INSTANCE)
+        if (settings.getLanguageIndentOptions(VueLanguage).isOverrideLanguageOptions) {
+          settings.getLanguageIndentOptions(VueLanguage)
         }
         else {
           settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE)

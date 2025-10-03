@@ -4,4 +4,4 @@ package org.jetbrains.vuejs.lang.html.parser
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedAttributeElementType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueSrcAttributeElementType : XmlStubBasedAttributeElementType("SRC_ATTRIBUTE", VueLanguage.INSTANCE)
+class VueSrcAttributeElementType : XmlStubBasedAttributeElementType("SRC_ATTRIBUTE", VueLanguage)

@@ -33,7 +33,7 @@ class VueParserTest : JSHtmlParsingTest(
   override fun setUp() {
     super.setUp()
 
-    addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, VueLanguage.INSTANCE, VueASTComparator())
+    addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, VueLanguage, VueASTComparator())
     HtmlEmbeddedContentSupport.register(application, testRootDisposable, VueEmbeddedContentSupport::class.java)
 
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,

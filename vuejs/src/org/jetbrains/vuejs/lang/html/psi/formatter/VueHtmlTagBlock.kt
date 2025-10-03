@@ -40,7 +40,7 @@ class VueHtmlTagBlock(
   }
 
   override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean {
-    return childLanguage === VueLanguage.INSTANCE || super.useMyFormatter(myLanguage, childLanguage, childPsi)
+    return childLanguage === VueLanguage || super.useMyFormatter(myLanguage, childLanguage, childPsi)
   }
 
   override fun chooseWrap(child: ASTNode?, tagBeginWrap: Wrap?, attrWrap: Wrap?, textWrap: Wrap?): Wrap? =

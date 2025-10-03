@@ -13,7 +13,7 @@ class VueRearrangerTest : AbstractRearrangerTest() {
   override fun setUp() {
     super.setUp()
     fileType = VueFileType
-    language = VueLanguage.INSTANCE
+    language = VueLanguage
   }
 
   fun testTypescript() {

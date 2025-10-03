@@ -21,7 +21,7 @@ fun isVueFileName(name: CharSequence): Boolean =
   name.endsWith(VUE_FILE_EXTENSION)
   || vueFileTypeAssociations.value.any { it.acceptsCharSequence(name) }
 
-object VueFileType : WebFrameworkHtmlFileType(VueLanguage.INSTANCE, "Vue.js", "vue") {
+object VueFileType : WebFrameworkHtmlFileType(VueLanguage, "Vue.js", "vue") {
   class FileTypeChangeListener : FileTypeListener {
     override fun fileTypesChanged(event: FileTypeEvent) {
       vueFileTypeAssociations.drop()

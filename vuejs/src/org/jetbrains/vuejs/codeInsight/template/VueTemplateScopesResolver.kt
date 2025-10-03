@@ -39,9 +39,9 @@ object VueTemplateScopesResolver {
 
   private fun checkLanguage(element: PsiElement): Boolean {
     return element.language.let {
-      isVueExprMetaLanguage(it) || it == VueLanguage.INSTANCE || it.isKindOf(CSSLanguage.INSTANCE)
+      isVueExprMetaLanguage(it) || it == VueLanguage || it.isKindOf(CSSLanguage.INSTANCE)
     } || element.parent?.language.let {
-      isVueExprMetaLanguage(it) || it == VueLanguage.INSTANCE
+      isVueExprMetaLanguage(it) || it == VueLanguage
     }
   }
 

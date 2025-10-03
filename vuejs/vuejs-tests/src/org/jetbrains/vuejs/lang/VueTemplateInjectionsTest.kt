@@ -33,7 +33,7 @@ class VueTemplateInjectionsTest : BasePlatformTestCase() {
 
     PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-    TestCase.assertEquals(VueLanguage.INSTANCE, injectedLanguageManager.findInjectedElementAt(
+    TestCase.assertEquals(VueLanguage, injectedLanguageManager.findInjectedElementAt(
       myFixture.file, myFixture.file.findOffsetBySignature("</<caret>div>"))?.containingFile?.language)
 
     val injectedElement = injectedLanguageManager.findInjectedElementAt(

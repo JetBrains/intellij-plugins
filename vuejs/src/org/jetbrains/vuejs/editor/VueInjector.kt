@@ -108,7 +108,7 @@ internal class VueInjector : MultiHostInjector {
         && parent is XmlAttribute
         && parent.parent != null
         && VueAttributeNameParser.parse(parent.name, parent.parent).injectJS) {
-      if (parent.language !== VueLanguage.INSTANCE) {
+      if (parent.language !== VueLanguage) {
         val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
         if (embedded != null) {
           val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
@@ -146,7 +146,7 @@ internal class VueInjector : MultiHostInjector {
                    ?: Holder.BRACES_FACTORY.`fun`(context)
                    ?: Pair(JSInjectionBracesUtil.DEFAULT_START, JSInjectionBracesUtil.DEFAULT_END)
       JSInjectionUtil.injectInQuotedLiteral(registrar,
-                                            VueLanguage.INSTANCE,
+                                            VueLanguage,
                                             "${braces.first}.${braces.second}${INJECTED_FILE_SUFFIX}",
                                             context, null, null) {
         JSFormattableInjectionUtil.setReformattableInjection(context, it)

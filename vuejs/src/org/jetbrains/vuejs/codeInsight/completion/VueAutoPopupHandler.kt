@@ -16,7 +16,7 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 class VueAutoPopupHandler : TypedHandlerDelegate() {
   override fun checkAutoPopup(charTyped: Char, project: Project, editor: Editor, file: PsiFile): Result {
     if (LookupManager.getActiveLookup(editor) != null) return Result.CONTINUE
-    if (file.language != VueLanguage.INSTANCE) return Result.CONTINUE
+    if (file.language != VueLanguage) return Result.CONTINUE
 
     val element = file.findElementAt(editor.caretModel.offset)
     if (element?.parent !is HtmlTag) return Result.CONTINUE

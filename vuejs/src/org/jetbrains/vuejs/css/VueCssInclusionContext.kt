@@ -7,6 +7,6 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueCssInclusionContext : CssInclusionContext() {
   override fun processAllCssFilesOnResolving(context: PsiElement): Boolean {
-    return context.containingFile?.language == VueLanguage.INSTANCE
+    return context.containingFile?.language == VueLanguage
   }
 }

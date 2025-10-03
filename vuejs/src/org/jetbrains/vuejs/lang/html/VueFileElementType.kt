@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 import org.jetbrains.vuejs.lang.html.parser.VueParsing
 
-class VueFileElementType : IFileElementType("vue", VueLanguage.INSTANCE) {
+class VueFileElementType : IFileElementType("vue", VueLanguage) {
   companion object {
     @JvmStatic
     val INSTANCE: VueFileElementType = VueFileElementType()
@@ -40,7 +40,7 @@ class VueFileElementType : IFileElementType("vue", VueLanguage.INSTANCE) {
     val delimiters = readDelimiters(SharedImplUtil.getContainingFile(chameleon).name)
     val languageForParser = getLanguageForParser(psi)
     // TODO support for custom delimiters - port to Angular and merge
-    if (languageForParser === VueLanguage.INSTANCE) {
+    if (languageForParser === VueLanguage) {
       val project = psi.project
       val htmlCompatMode = !psi.containingFile.isVueFile
       val lexer = VueParserDefinition.Util.createLexer(project, delimiters, htmlCompatMode)

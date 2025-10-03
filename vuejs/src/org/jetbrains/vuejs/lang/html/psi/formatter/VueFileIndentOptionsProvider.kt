@@ -18,7 +18,7 @@ private class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider()
       if (file.isVueFile) {
         copyCommonSettingsFromHtml(settings)
         return if (settings.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT)
-          settings.getLanguageIndentOptions(VueLanguage.INSTANCE)
+          settings.getLanguageIndentOptions(VueLanguage)
             ?.clone()
             ?.asSafely<IndentOptions>()
             ?.also { it.isOverrideLanguageOptions = true }
@@ -39,7 +39,7 @@ private class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider()
 
   fun copyCommonSettingsFromHtml(settings: CodeStyleSettings) {
     val commonSettingsHtml = settings.getCommonSettings(HTMLLanguage.INSTANCE)
-    val commonSettingsVue = settings.getCommonSettings(VueLanguage.INSTANCE)
+    val commonSettingsVue = settings.getCommonSettings(VueLanguage)
     ReflectionUtil.copyFields(commonSettingsVue::class.java.getFields(), commonSettingsHtml, commonSettingsVue)
     commonSettingsVue.softMargins = commonSettingsHtml.softMargins
   }

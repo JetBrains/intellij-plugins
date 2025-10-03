@@ -38,7 +38,7 @@ private class VueArrangementSettingsMigration : ProjectActivity {
             ?.arrangementSettings
             ?.let {
               val vueSettings = codeStyleSettings
-                .getCommonSettings(VueLanguage.INSTANCE)
+                .getCommonSettings(VueLanguage)
               if (vueSettings.arrangementSettings == null) {
                 vueSettings.setArrangementSettings(it)
                 changed = true
