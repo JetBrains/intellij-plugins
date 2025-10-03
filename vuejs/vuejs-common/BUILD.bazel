@@ -19,6 +19,7 @@ jvm_library(
     "@community//platform/util",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//xml/xml-parser:parser",
+    "//plugins/JavaScriptLanguage/javascript-parser",
   ]
 )
 ### auto-generated section `build intellij.vuejs.common` end
