@@ -235,6 +235,7 @@ jvm_library(
     "//plugins/css/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/sass/backend",
+    "//plugins/JavaScriptLanguage/javascript-ultimate",
   ],
   runtime_deps = [":angular-tests"]
 )

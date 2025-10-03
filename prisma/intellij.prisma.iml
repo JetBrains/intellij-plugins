@@ -63,6 +63,7 @@
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.javascript.plugin" />
     <orderEntry type="module" module-name="intellij.javascript.backend" />
+    <orderEntry type="module" module-name="intellij.javascript.common" />
     <orderEntry type="module" module-name="intellij.platform.lsp" />
     <orderEntry type="module" module-name="intellij.platform.execution" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />

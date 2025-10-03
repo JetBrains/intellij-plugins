@@ -31,6 +31,7 @@
     <orderEntry type="module" module-name="intellij.xml.parser" />
     <orderEntry type="module" module-name="intellij.css.psi" />
     <orderEntry type="module" module-name="intellij.javascript.backend" />
+    <orderEntry type="module" module-name="intellij.javascript.ultimate" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.css.plugin" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />

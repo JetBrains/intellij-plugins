@@ -92,6 +92,7 @@ jvm_library(
     "//contrib/vuejs/vuejs-backend:backend",
     "//contrib/vuejs/vuejs-plugin:plugin",
     "@community//platform/lang-api:lang",
+    "//plugins/JavaScriptLanguage/javascript-ultimate",
   ],
   runtime_deps = [":tests"]
 )

@@ -73,6 +73,7 @@ jvm_library(
     "@community//xml/impl",
     "@community//xml/xml-analysis-api:analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/JavaScriptLanguage/javascript-ultimate",
   ]
 )
 ### auto-generated section `build intellij.mdx` end

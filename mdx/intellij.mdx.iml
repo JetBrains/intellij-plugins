@@ -37,5 +37,6 @@
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.xml.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.common" />
+    <orderEntry type="module" module-name="intellij.javascript.ultimate" scope="TEST" />
   </component>
 </module>

@@ -24,6 +24,7 @@
     <plugin id="com.intellij.modules.xml"/>
     <module name="intellij.css.backend"/>
     <plugin id="JavaScript"/>
+    <plugin id="com.intellij.modules.ultimate"/>
   </dependencies>
   <depends optional="true" config-file="jade-liveEdit.xml">com.intellij.plugins.html.instantEditing</depends>
   <depends optional="true" config-file="jade-watcher.xml">com.intellij.plugins.watcher</depends>

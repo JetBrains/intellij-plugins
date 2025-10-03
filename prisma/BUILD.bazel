@@ -71,6 +71,7 @@ jvm_library(
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage:javascript-plugin",
     "//plugins/JavaScriptLanguage:javascript-backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
     "//platform/lsp",
     "@community//platform/execution",
   ]
@@ -113,6 +114,7 @@ jvm_library(
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage:javascript-plugin",
     "//plugins/JavaScriptLanguage:javascript-backend",
+    "//plugins/JavaScriptLanguage/javascript-common",
     "//platform/lsp",
     "@community//platform/execution",
     "@community//platform/testFramework",
