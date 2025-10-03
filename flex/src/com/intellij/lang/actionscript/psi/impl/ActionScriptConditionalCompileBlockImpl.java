@@ -3,7 +3,6 @@ package com.intellij.lang.actionscript.psi.impl;
 
 import com.intellij.lang.actionscript.psi.ActionScriptConditionalCompileBlock;
 import com.intellij.lang.javascript.psi.JSSourceElement;
-import com.intellij.lang.javascript.psi.JSStatement;
 import com.intellij.lang.javascript.psi.impl.JSBlockStatementImpl;
 import com.intellij.lang.javascript.psi.impl.JSStatementImpl;
 import com.intellij.psi.tree.IElementType;
@@ -16,11 +15,6 @@ public final class ActionScriptConditionalCompileBlockImpl extends JSStatementIm
 
   public ActionScriptConditionalCompileBlockImpl(IElementType elementType) {
     super(elementType);
-  }
-
-  @Override
-  public JSStatement @NotNull [] getStatements() {
-    return JSBlockStatementImpl.getStatements(this);
   }
 
   @Override
