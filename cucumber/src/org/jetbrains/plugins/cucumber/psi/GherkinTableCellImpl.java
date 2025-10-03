@@ -28,6 +28,11 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
   }
 
   @Override
+  public String toString() {
+    return "GherkinTableCell:" + getName();
+  }
+
+  @Override
   protected String getPresentableText() {
     return String.format("Step parameter '%s'", getName());
   }

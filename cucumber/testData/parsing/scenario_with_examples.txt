@@ -24,7 +24,7 @@ GherkinFile:scenario_with_examples.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:name
               PsiElement(TABLE_CELL)('name')
             PsiWhiteSpace('  ')
             PsiElement(PIPE)('|')
@@ -32,7 +32,7 @@ GherkinFile:scenario_with_examples.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:value
               PsiElement(TABLE_CELL)('value')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')

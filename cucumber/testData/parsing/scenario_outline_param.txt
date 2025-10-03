@@ -60,7 +60,7 @@ GherkinFile:scenario_outline_param.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:scan
               PsiElement(TABLE_CELL)('scan')
             PsiWhiteSpace('            ')
             PsiElement(PIPE)('|')
@@ -68,7 +68,7 @@ GherkinFile:scenario_outline_param.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:Quick
               PsiElement(TABLE_CELL)('Quick')
             PsiWhiteSpace('           ')
             PsiElement(PIPE)('|')
@@ -76,7 +76,7 @@ GherkinFile:scenario_outline_param.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:Boot time
               PsiElement(TABLE_CELL)('Boot time')
             PsiWhiteSpace('       ')
             PsiElement(PIPE)('|')
@@ -84,7 +84,7 @@ GherkinFile:scenario_outline_param.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:Removable media
               PsiElement(TABLE_CELL)('Removable media')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
@@ -92,7 +92,7 @@ GherkinFile:scenario_outline_param.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:Folder Scan
               PsiElement(TABLE_CELL)('Folder Scan')
             PsiWhiteSpace('     ')
             PsiElement(PIPE)('|')
