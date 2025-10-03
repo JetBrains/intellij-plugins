@@ -15,7 +15,7 @@ jvm_library(
   resources = [":cmake_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
-    "//CIDR/clion-cmake",
+    "//CIDR/clion-cmake:cmake",
     "//contrib/cpp-diagnostics:clion-diagnostics",
     "//CIDR/clion-toolchains",
     "//CIDR/cidr-util/execution",
@@ -37,7 +37,7 @@ jvm_library(
   associates = [":cmake"],
   deps = [
     "@lib//:kotlin-stdlib",
-    "//CIDR/clion-cmake",
+    "//CIDR/clion-cmake:cmake",
     "//contrib/cpp-diagnostics:clion-diagnostics",
     "//CIDR/clion-toolchains",
     "//CIDR/cidr-util/execution",
