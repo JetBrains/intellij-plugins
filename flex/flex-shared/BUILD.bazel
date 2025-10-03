@@ -23,7 +23,7 @@ jvm_library(
     "@lib//:fastutil-min",
     "@community//platform/util/jdom",
     "@community//platform/core-api:core",
-    "@lib//:hash4j",
+    "@community//libraries/hash4j",
   ]
 )
 ### auto-generated section `build intellij.flex.shared` end
