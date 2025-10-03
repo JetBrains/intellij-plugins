@@ -16,7 +16,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//java/java-psi-api:psi",
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@community//platform/core-api:core",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/core-impl",
@@ -38,7 +38,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//java/java-psi-api:psi",
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@community//platform/core-api:core",
     "@community//jps/model-api:model",
     "@community//platform/projectModel-api:projectModel",

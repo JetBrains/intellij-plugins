@@ -15,7 +15,7 @@ jvm_library(
   resources = [":protoeditor-python_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/core-impl",
@@ -34,7 +34,7 @@ jvm_library(
   associates = [":protoeditor-python"],
   deps = [
     "@lib//:kotlin-stdlib",
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@community//platform/analysis-api:analysis",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/core-impl",

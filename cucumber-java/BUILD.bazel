@@ -14,7 +14,7 @@ jvm_library(
   srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
   resources = [":cucumber-java_resources"],
   deps = [
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@lib//:cucumber-core-1",
     "@ultimate_lib//:gherkin",
     "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
@@ -55,7 +55,7 @@ jvm_library(
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   associates = [":cucumber-java"],
   deps = [
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@lib//:cucumber-core-1",
     "@ultimate_lib//:gherkin",
     "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",

@@ -21,7 +21,7 @@ jvm_library(
     "@lib//:gson",
     "@community//platform/projectModel-api:projectModel",
     "//webcore/impl",
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@community//platform/ide-core",
     "@community//platform/lang-impl",
     "@community//spellchecker",

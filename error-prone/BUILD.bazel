@@ -18,7 +18,7 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@community//jps/model-api:model",
     "@community//platform/lang-api:lang",
     "@community//java/java-psi-api:psi",

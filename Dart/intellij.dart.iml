@@ -57,7 +57,7 @@
     <orderEntry type="module" module-name="intellij.platform.coverage.agent" />
     <orderEntry type="module" module-name="intellij.webComponents" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.usageView" />
-    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.guava" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="library" name="snakeyaml" level="project" />
     <orderEntry type="module" module-name="intellij.xml.parser" />

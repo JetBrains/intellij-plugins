@@ -23,7 +23,7 @@ jvm_library(
     ":deno_resources_1",
   ],
   deps = [
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@lib//:gson",
     "@ultimate_lib//:eclipse-lsp4j",
     "@community//platform/analysis-api:analysis",
@@ -56,7 +56,7 @@ jvm_library(
   srcs = glob(["test/src/**/*.kt", "test/src/**/*.java", "test/src/**/*.form"], allow_empty = True),
   associates = [":deno"],
   deps = [
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@lib//:gson",
     "@ultimate_lib//:eclipse-lsp4j",
     "@community//platform/analysis-api:analysis",
