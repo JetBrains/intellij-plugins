@@ -58,6 +58,10 @@ abstract class VueCompositionContainer() :
         putAll(container.directives)
       }
 
+      for (plugin in pluginChain()) {
+        putAll(plugin.directives)
+      }
+
       putAll(getEntitiesAnalysis().directives)
     }
 
