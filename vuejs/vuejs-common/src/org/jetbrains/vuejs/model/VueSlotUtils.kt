@@ -1,9 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model
 
-import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
-import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
-import com.intellij.polySymbols.js.jsType
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.StubSafe
@@ -14,6 +11,9 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_SLOTS
+import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
+import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
+import com.intellij.polySymbols.js.jsType
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.query.PolySymbolQueryStack
@@ -33,7 +33,6 @@ const val DEFAULT_SLOT_NAME: String = "default"
 const val SLOT_NAME_ATTRIBUTE: String = "name"
 
 const val DEPRECATED_SLOT_ATTRIBUTE: String = "slot"
-
 fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<PolySymbol> =
   processSlots(
     tag = tag,
@@ -74,7 +73,7 @@ private fun <T> processSlots(
 fun getSlotTypeFromContext(context: PsiElement): JSType? =
   context.parentOfType<XmlAttribute>()
     ?.takeIf { attribute ->
-      VueAttributeNameParser.parse(attribute.name, attribute.parent).let {
+      VueAttributeNameParser.Companion.parse(attribute.name, attribute.parent).let {
         it is VueAttributeNameParser.VueDirectiveInfo
         && it.directiveKind == VueAttributeNameParser.VueDirectiveKind.SLOT
       }

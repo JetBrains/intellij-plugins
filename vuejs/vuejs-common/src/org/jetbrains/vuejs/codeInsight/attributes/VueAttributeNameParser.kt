@@ -1,14 +1,30 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.codeInsight.attributes
 
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.MultiMap
-import com.intellij.xml.util.HtmlUtil.*
+import com.intellij.xml.util.BasicHtmlUtil.ID_ATTRIBUTE_NAME
+import com.intellij.xml.util.BasicHtmlUtil.LANG_ATTRIBUTE_NAME
+import com.intellij.xml.util.BasicHtmlUtil.SCRIPT_TAG_NAME
+import com.intellij.xml.util.BasicHtmlUtil.SLOT_TAG_NAME
+import com.intellij.xml.util.BasicHtmlUtil.SRC_ATTRIBUTE_NAME
+import com.intellij.xml.util.BasicHtmlUtil.STYLE_TAG_NAME
+import com.intellij.xml.util.BasicHtmlUtil.TEMPLATE_TAG_NAME
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.*
+import org.jetbrains.vuejs.codeInsight.ATTR_ARGUMENT_PREFIX
+import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
+import org.jetbrains.vuejs.codeInsight.ATTR_EVENT_SHORTHAND
+import org.jetbrains.vuejs.codeInsight.ATTR_MODIFIER_PREFIX
+import org.jetbrains.vuejs.codeInsight.ATTR_SLOT_SHORTHAND
+import org.jetbrains.vuejs.codeInsight.GENERIC_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.MODULE_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.REF_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.VAPOR_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
-import java.util.*
+import java.util.Locale
+import kotlin.collections.find
 
 class VueAttributeNameParser private constructor() {
   companion object {

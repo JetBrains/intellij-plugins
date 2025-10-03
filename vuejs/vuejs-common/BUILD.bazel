@@ -20,6 +20,12 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//xml/xml-parser:parser",
     "//plugins/JavaScriptLanguage/javascript-parser",
+    "@community//xml/xml-psi-api:psi",
+    "@lib//:stream_ex",
+    "@community//platform/polySymbols",
+    "@community//xml/xml-psi-impl:psi-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "@community//platform/ide-core",
   ]
 )
 ### auto-generated section `build intellij.vuejs.common` end

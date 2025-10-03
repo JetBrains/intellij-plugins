@@ -31,9 +31,10 @@ class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
       when (info.directiveKind) {
         VueAttributeNameParser.VueDirectiveKind.ON -> return
         VueAttributeNameParser.VueDirectiveKind.BIND -> {
-          if (info.arguments != null) {
-            names.add(ATTR_ARGUMENT_PREFIX + info.arguments)
-            names.add(ATTR_DIRECTIVE_PREFIX + info.name + ATTR_ARGUMENT_PREFIX + info.arguments)
+          val arguments = info.arguments
+          if (arguments != null) {
+            names.add(ATTR_ARGUMENT_PREFIX + arguments)
+            names.add(ATTR_DIRECTIVE_PREFIX + info.name + ATTR_ARGUMENT_PREFIX + arguments)
           }
           else {
             return

@@ -14,5 +14,11 @@
     <orderEntry type="module" module-name="intellij.javascript.web" />
     <orderEntry type="module" module-name="intellij.xml.parser" />
     <orderEntry type="module" module-name="intellij.javascript.parser" />
+    <orderEntry type="module" module-name="intellij.xml.psi" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.polySymbols" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide.core" />
   </component>
 </module>
