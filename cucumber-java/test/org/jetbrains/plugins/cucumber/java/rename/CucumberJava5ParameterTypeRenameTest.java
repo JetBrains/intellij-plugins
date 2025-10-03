@@ -25,8 +25,11 @@ public class CucumberJava5ParameterTypeRenameTest extends CucumberCodeInsightTes
     doTest("new-iso-value");
   }
 
-  public void _testDefinedWithAnnotation() {
-    // This is not implemented. See IDEA-380255.
+  public void testDefinedWithAnnotation() {
+    doTest("newMoodName");
+  }
+
+  public void testDefinedWithAnnotationNameAttribute() {
     doTest("newMoodName");
   }
 

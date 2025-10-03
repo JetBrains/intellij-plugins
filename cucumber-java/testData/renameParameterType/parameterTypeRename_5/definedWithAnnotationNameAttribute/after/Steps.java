@@ -5,15 +5,15 @@ import io.cucumber.java.ParameterType;
 
 public class Steps {
   public Steps() {
-    // customMoodName("some another usage"); // Not implemented yet.
+    toMood("some another usage");
   }
 
   @Given("today is {newMoodName}")
   public void step_method(Mood mood) {
   }
 
-  @ParameterType(".*")
-  public Mood newMoodName(String moodName) {
+  @ParameterType(value = ".*", name = "newMoodName")
+  public Mood toMood(String moodName) {
     return Mood.valueOf(moodName);
   }
 
