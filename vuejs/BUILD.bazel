@@ -76,7 +76,7 @@ jvm_library(
     "@lib//:gson",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
-    "@lib//:caffeine",
+    "@community//libraries/caffeine",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//platform/polySymbols",
     "//contrib/postcss",
