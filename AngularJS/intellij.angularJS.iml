@@ -36,7 +36,7 @@
     <orderEntry type="module" module-name="intellij.platform.polySymbols.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.webpack" />
-    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.gson" />
     <orderEntry type="module" module-name="intellij.javascript.intentions" scope="TEST" />
     <orderEntry type="module-library" scope="TEST">
       <library name="oleaster-matcher" type="repository">

@@ -18,7 +18,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/platform-util-io:ide-util-io",
-    "@lib//:gson",
+    "@community//libraries/gson",
     "@community//platform/projectModel-api:projectModel",
     "//webcore/impl",
     "@community//libraries/guava",

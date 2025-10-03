@@ -24,7 +24,7 @@ jvm_library(
   ],
   deps = [
     "@community//libraries/guava",
-    "@lib//:gson",
+    "@community//libraries/gson",
     "@ultimate_lib//:eclipse-lsp4j",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -57,7 +57,7 @@ jvm_library(
   associates = [":deno"],
   deps = [
     "@community//libraries/guava",
-    "@lib//:gson",
+    "@community//libraries/gson",
     "@ultimate_lib//:eclipse-lsp4j",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",

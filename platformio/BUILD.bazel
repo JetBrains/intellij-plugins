@@ -21,7 +21,7 @@ jvm_library(
   resources = [":platformio_resources"],
   deps = [
     "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
-    "@lib//:gson",
+    "@community//libraries/gson",
     "@lib//:jediterm-core",
     "@lib//:jediterm-ui",
     "//CIDR/cidr-core",
@@ -76,7 +76,7 @@ jvm_library(
   associates = [":platformio"],
   deps = [
     "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
-    "@lib//:gson",
+    "@community//libraries/gson",
     "@lib//:jediterm-core",
     "@lib//:jediterm-ui",
     "//CIDR/cidr-common-testFramework/core",

@@ -45,7 +45,7 @@
     <orderEntry type="module" module-name="intellij.platform.util.diff" />
     <orderEntry type="module" module-name="intellij.qodana.sarif" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
-    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.gson" />
     <orderEntry type="library" name="snakeyaml" level="project" />
     <orderEntry type="library" name="snakeyaml-engine" level="project" />
     <orderEntry type="module" module-name="intellij.libraries.guava" />
