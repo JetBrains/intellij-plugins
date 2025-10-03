@@ -88,6 +88,49 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     """.trimIndent(), TERRAGRUNT_STACK_EXTENSION)
   }
 
+  fun testPropertiesCompletion() {
+    doBasicCompletionTest("terraform { <caret> }", Matcher.and(
+      Matcher.all("after_hook", "before_hook", "copy_terraform_lock_file", "error_hook", "exclude_from_copy", "extra_arguments", "include_in_copy", "source"),
+      Matcher.not("required_providers"))
+    )
+    doBasicCompletionTest("""
+      terraform {
+        extra_arguments {
+          arguments = []
+          commands = []
+          <caret>
+        }
+      }
+    """.trimIndent(), Matcher.and(
+      Matcher.all("env_vars", "required_var_files", "optional_var_files"),
+      Matcher.not("arguments", "commands"))
+    )
+
+    doBasicCompletionTest("""
+      remote_state {
+        backend = ""
+        config = {}
+        <caret>
+      }
+    """.trimIndent(), Matcher.and(
+      Matcher.all("generate", "disable_init", "disable_dependency_optimization", "encryption"),
+      Matcher.not("backend", "config"))
+    )
+
+    // Should be no completion, because unit and stack are allowed in terragrunt.stack.hcl only
+    doBasicCompletionTest("unit { <caret> }")
+    doBasicCompletionTest("stack { <caret> }", Matcher.not("source", "path"))
+  }
+
+  fun testStackPropertiesCompletion() {
+    val file = myFixture.configureByText(TERRAGRUNT_STACK_EXTENSION, "unit \"some_unit\" { <caret> }")
+    myFixture.testCompletionVariants(file.virtualFile.name, "source", "path", "values", "no_dot_terragrunt_stack", "no_validation")
+
+    val file2 = myFixture.configureByText(TERRAGRUNT_STACK_EXTENSION, "errors { <caret> }")
+    val completionVariants = myFixture.getCompletionVariants(file2.virtualFile.name) ?: emptyList()
+    assertEmpty(completionVariants)
+  }
+
   private fun doAutoInsertCompletionTest(textBefore: String, textAfter: String, file: String = this.fileName) {
     myFixture.configureByText(file, textBefore)
     val variants = myFixture.completeBasic()
