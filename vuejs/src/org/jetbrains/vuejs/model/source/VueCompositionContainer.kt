@@ -52,7 +52,14 @@ abstract class VueCompositionContainer() :
     }
 
   override val directives: Map<String, VueDirective>
-    get() = (delegate?.directives ?: emptyMap()) + getEntitiesAnalysis().directives
+    get() = buildMap {
+      val container = delegate
+      if (container != null) {
+        putAll(container.directives)
+      }
+
+      putAll(getEntitiesAnalysis().directives)
+    }
 
   override val mixins: List<VueMixin>
     get() = (delegate?.mixins ?: emptyList()) + getEntitiesAnalysis().mixins
