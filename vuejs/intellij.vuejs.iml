@@ -70,5 +70,6 @@
     <orderEntry type="module" module-name="intellij.markdown" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />
+    <orderEntry type="module" module-name="intellij.vuejs.common" />
   </component>
 </module>

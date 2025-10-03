@@ -88,6 +88,7 @@ jvm_library(
     "@community//plugins/markdown/core:markdown",
     "//plugins/css/common/psi",
     "@community//platform/polySymbols/backend",
+    "//contrib/vuejs/vuejs-common:common",
   ]
 )
 ### auto-generated section `build intellij.vuejs` end

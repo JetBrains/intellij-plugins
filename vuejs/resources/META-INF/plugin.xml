@@ -28,6 +28,7 @@
   <content>
     <module name="intellij.vuejs/prettier"/>
     <module name="intellij.vuejs/copyright"/>
+    <module name="intellij.vuejs.common" loading="embedded" />
   </content>
   <dependencies>
     <plugin id="com.intellij.modules.xml"/>
