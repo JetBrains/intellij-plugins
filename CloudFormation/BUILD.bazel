@@ -25,7 +25,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-impl",
     "@community//libraries/guava",
-    "@lib//:x_stream",
+    "@community//libraries/xstream",
     "@community//platform/core-ui",
     "@ultimate_lib//:cloud_formation-intellij-aws-cloudformation-meta",
   ]
@@ -51,7 +51,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-impl",
     "@community//libraries/guava",
-    "@lib//:x_stream",
+    "@community//libraries/xstream",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/core-ui",
