@@ -103,7 +103,7 @@ private suspend fun loadProfileSectionAsYamlProfile(
     val yamlInspectionProfile = yamlProfile.buildEffectiveProfile()
     QodanaInspectionProfile.clone(
       yamlInspectionProfile,
-      "effective profiled based on qodana yaml `profile`",
+      "effective profile (based on global qodana.yaml)",
       baseProfile.profileManager
     )
   }
