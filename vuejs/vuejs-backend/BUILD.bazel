@@ -82,6 +82,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage:javascript-plugin",
     "@community//xml/xml-analysis-api:analysis",
     "@community//platform/execution",
+    "//plugins/JavaScriptLanguage/javascript-ultimate",
   ]
 )
 ### auto-generated section `build intellij.vuejs.backend` end

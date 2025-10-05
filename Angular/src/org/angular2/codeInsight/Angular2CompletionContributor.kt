@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.completion.JSLookupPriority.*
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.ecmascript6.types.OverloadStrictness
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
+import com.intellij.lang.javascript.modules.imports.JSAutoImportSupport
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
@@ -362,9 +363,11 @@ class Angular2CompletionContributor : CompletionContributor() {
                ?.delegate
                ?.asSafely<LookupElementBuilder>()
                ?.let {
-                 it.withInsertHandler(JSImportCompletionUtil.createInsertHandler(
-                   Angular2GlobalImportCandidate(it.lookupString, it.lookupString, place)
-                 ))
+                 it.withInsertHandler(
+                   JSAutoImportSupport.getInstance(place.project).getImportInsertHandler(
+                     Angular2GlobalImportCandidate(it.lookupString, it.lookupString, place)
+                   )
+                 )
                }
                ?.let { JSCompletionUtil.withJSLookupPriority(it, IMPORT_PRIORITY) }
              ?: lookupElement
