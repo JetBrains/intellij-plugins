@@ -67,7 +67,7 @@ jvm_library(
     "@lib//:protobuf",
     "@community//platform/util/nanoxml",
     "@lib//:stream_ex",
-    "@lib//:fastutil-min",
+    "@community//libraries/fastutil",
     "@lib//:commons-compress",
     "@community//platform/core-ui",
     "@community//plugins/properties/properties-psi-impl:backend-psi",

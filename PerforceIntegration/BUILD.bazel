@@ -28,7 +28,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/ide-core-impl",
     "@community//libraries/guava",
-    "@lib//:fastutil-min",
+    "@community//libraries/fastutil",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/dvcs-impl:vcs-dvcs-impl",

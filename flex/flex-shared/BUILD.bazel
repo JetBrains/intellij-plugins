@@ -20,7 +20,7 @@ jvm_library(
     "@community//jps/model-impl",
     "@community//jps/model-serialization",
     "@community//jps/jps-builders:build",
-    "@lib//:fastutil-min",
+    "@community//libraries/fastutil",
     "@community//platform/util/jdom",
     "@community//platform/core-api:core",
     "@community//libraries/hash4j",

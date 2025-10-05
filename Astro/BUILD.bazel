@@ -40,7 +40,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//xml/impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "@lib//:fastutil-min",
+    "@community//libraries/fastutil",
     "//plugins/JavaScriptLanguage:javascript-backend",
     "@community//platform/code-style-impl:codeStyle-impl",
     "//contrib/postcss",

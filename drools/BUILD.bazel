@@ -33,7 +33,7 @@ jvm_library(
     "@community//java/idea-ui:ui",
     "@community//platform/core-ui",
     "@community//java/java-impl-refactorings:impl-refactorings",
-    "@lib//:fastutil-min",
+    "@community//libraries/fastutil",
   ]
 )
 
@@ -66,7 +66,7 @@ jvm_library(
     "@community//java/testFramework",
     "@community//platform/core-ui",
     "@community//java/java-impl-refactorings:impl-refactorings",
-    "@lib//:fastutil-min",
+    "@community//libraries/fastutil",
   ]
 )
 ### auto-generated section `build intellij.jboss.drools` end
