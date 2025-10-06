@@ -1,7 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.typed
 
-import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.types.JSAnyType
@@ -13,8 +12,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueDirective
-import org.jetbrains.vuejs.model.source.DIRECTIVE_MODIFIERS_PROP
-import org.jetbrains.vuejs.model.source.DIRECTIVE_MOUNTED_FUN
+import org.jetbrains.vuejs.model.typed.VueTypedDirectives.getDirectiveModifiers
 
 class VueTypedDirective(
   override val source: TypeScriptPropertySignature,
@@ -31,7 +29,7 @@ class VueTypedDirective(
   override val modifiers: List<VueTypedDirectiveModifier>
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
-        getModifiers(source),
+        getDirectiveModifiers(source),
         DumbService.getInstance(source.project).modificationTracker,
         PsiModificationTracker.MODIFICATION_COUNT,
       )
@@ -53,35 +51,4 @@ class VueTypedDirective(
 
   override fun hashCode(): Int =
     source.hashCode()
-
-  private companion object {
-    private fun getModifiers(
-      source: TypeScriptPropertySignature,
-    ): List<VueTypedDirectiveModifier> {
-      val jsType = source.jsType
-                   ?: return emptyList()
-
-      val mounted = jsType.asRecordType()
-                      .findPropertySignature(DIRECTIVE_MOUNTED_FUN)
-                    ?: return emptyList()
-
-      val bindingType = mounted.jsType
-                          ?.substitute()
-                          ?.let { it as? JSFunctionType }
-                          ?.let { it.parameters.getOrNull(1) }
-                          ?.let { it.simpleType }
-                        ?: return emptyList()
-
-      val modifiers = bindingType.asRecordType()
-                        .findPropertySignature(DIRECTIVE_MODIFIERS_PROP)
-                        ?.jsType
-                        ?.asRecordType()
-                      ?: return emptyList()
-
-      return modifiers.properties.asSequence()
-        .filterIsInstance<TypeScriptPropertySignature>()
-        .map(::VueTypedDirectiveModifier)
-        .toList()
-    }
-  }
 }
