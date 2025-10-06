@@ -39,7 +39,7 @@ abstract class VueDirectiveSymbolBase<T : VueDirective>(
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     when (qualifiedKind) {
-      VUE_DIRECTIVE_ARGUMENT -> {
+      VUE_DIRECTIVE_ARGUMENT if (!params.expandPatterns) -> {
         listOf(VueAnySymbol(origin, qualifiedKind, "Vue directive argument"))
       }
 
