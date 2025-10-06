@@ -4,7 +4,7 @@ package org.intellij.terraform.config.editor
 import com.intellij.internal.statistic.collectors.fus.fileTypes.FileTypeUsageSchemaDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.intellij.terraform.terragrunt.TerragruntFileType
+import org.intellij.terraform.terragrunt.TERRAGRUNT_EXTENSION
 
 class TfJsonFileTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
   override fun describes(project: Project, file: VirtualFile): Boolean {
@@ -18,8 +18,8 @@ class OpenTofuJsonFileTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor 
   }
 }
 
-class TfTerragruntTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
+class TerragruntTypeUsageSchemaDescriptor : FileTypeUsageSchemaDescriptor {
   override fun describes(project: Project, file: VirtualFile): Boolean {
-    return file.name.equals(TerragruntFileType.defaultExtension, ignoreCase = true)
+    return file.name.equals(TERRAGRUNT_EXTENSION, ignoreCase = true)
   }
 }

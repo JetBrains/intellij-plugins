@@ -6,8 +6,7 @@ import com.intellij.openapi.util.registry.Registry.Companion.get
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.model.TypeModelProvider.Companion.globalModel
-import org.intellij.terraform.terragrunt.StackBlockKeywords
-import org.intellij.terraform.terragrunt.TerragruntBlockKeywords
+import org.intellij.terraform.terragrunt.TerragruntCompletionTest
 
 internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
 
@@ -49,13 +48,13 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       .orEmpty()
     assertNotEmpty(completionVariants)
 
-    val unexpectedTerragruntBlocks = TerragruntBlockKeywords.filter { it in completionVariants }
+    val unexpectedTerragruntBlocks = TerragruntCompletionTest.TerragruntBlockKeywords.filter { it in completionVariants }
     assertTrue(
       "These Terragrunt-only root blocks should not appear in a Terraform file: $unexpectedTerragruntBlocks",
       unexpectedTerragruntBlocks.isEmpty()
     )
 
-    val unexpectedStackBlocks = StackBlockKeywords.filter { it in completionVariants }
+    val unexpectedStackBlocks = TerragruntCompletionTest.StackBlockKeywords.filter { it in completionVariants }
     assertTrue(
       "These Terragrunt Stack-only root blocks should not appear in a Terraform file: $unexpectedStackBlocks",
       unexpectedStackBlocks.isEmpty()

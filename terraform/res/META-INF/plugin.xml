@@ -537,7 +537,7 @@
                                    implementationClass="org.intellij.terraform.config.editor.TfJsonFileTypeUsageSchemaDescriptor"/>
 
     <fileTypeUsageSchemaDescriptor schema="Terragrunt"
-                                   implementationClass="org.intellij.terraform.config.editor.TfTerragruntTypeUsageSchemaDescriptor"/>
+                                   implementationClass="org.intellij.terraform.config.editor.TerragruntTypeUsageSchemaDescriptor"/>
 
     <statistics.projectUsagesCollector implementation="org.intellij.terraform.TfUsageCollector"/>
     <statistics.counterUsagesCollector implementationClass="org.intellij.terraform.TfUsageTriggerCollector"/>
