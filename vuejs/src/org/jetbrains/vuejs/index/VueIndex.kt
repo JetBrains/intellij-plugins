@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.index
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
@@ -15,7 +15,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
-const val VUE_FILE_EXTENSION = ".vue"
+const val VUE_FILE_EXTENSION: String = ".vue"
 const val VUE_MODULE: String = "vue"
 const val VUE_INSTANCE_MODULE: String = "vue/types/vue"
 const val VUETIFY_MODULE: String = "vuetify"
@@ -27,7 +27,7 @@ const val GLOBAL_COMPONENTS: String = "GlobalComponents"
 const val GLOBAL_DIRECTIVES: String = "GlobalDirectives"
 const val CUSTOM_PROPERTIES: String = "ComponentCustomProperties"
 
-val VUE_DEFAULT_EXTENSIONS_WITH_DOT = arrayOf(VUE_FILE_EXTENSION)
+val VUE_DEFAULT_EXTENSIONS_WITH_DOT: Array<String> = arrayOf(VUE_FILE_EXTENSION)
 
 val VUE_CORE_MODULES: Set<String> = setOf(
   VUE_MODULE,
@@ -44,7 +44,10 @@ private const val DELIMITER = ';'
 /**
  * Requires [PsiModificationTracker.MODIFICATION_COUNT] and [DumbService.modificationTracker] as dependencies for caches.
  */
-fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
+fun getForAllKeys(
+  scope: GlobalSearchScope,
+  key: StubIndexKey<String, JSImplicitElementProvider>,
+): Sequence<JSImplicitElement> {
   if (DumbService.isDumb(scope.project!!)) return emptySequence()
   val result = SmartList<JSImplicitElement>()
   StubIndex.getInstance().getAllKeys(key, scope.project!!).forEach {
@@ -57,7 +60,11 @@ fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicit
 /**
  * Requires [PsiModificationTracker.MODIFICATION_COUNT] and [DumbService.modificationTracker] as dependencies for caches.
  */
-fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
+fun resolve(
+  name: String,
+  scope: GlobalSearchScope,
+  key: StubIndexKey<String, JSImplicitElementProvider>,
+): Collection<JSImplicitElement> {
   if (DumbService.isDumb(scope.project!!)) return emptyList()
   val normalized = normalizeNameForIndex(name)
   val indexKey = createJSKey(key)
@@ -77,7 +84,8 @@ fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JS
   return result
 }
 
-internal fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
+internal fun normalizeNameForIndex(name: String) =
+  fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
 data class VueIndexData(
   val originalName: String,
