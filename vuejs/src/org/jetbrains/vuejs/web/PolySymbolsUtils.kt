@@ -9,11 +9,13 @@ import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
+import org.jetbrains.vuejs.model.source.VueSourceDirective
 import org.jetbrains.vuejs.model.typed.VueTypedDirective
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDirectiveSymbol
 import org.jetbrains.vuejs.web.symbols.VueGlobalDirectiveSymbol
 import org.jetbrains.vuejs.web.symbols.VueScriptSetupLocalDirectiveSymbol
+import org.jetbrains.vuejs.web.symbols.VueSourceDirectiveSymbol
 
 fun HtmlElementSymbolDescriptor.getModel(): VueModelDirectiveProperties =
   runListSymbolsQuery(VUE_MODEL, true).firstOrNull()
@@ -27,6 +29,7 @@ fun VueScopeElement.asPolySymbol(name: String, forcedProximity: VueModelVisitor.
   when (this) {
     is VueComponent -> VueComponentSymbol(toAsset(name, true), this, forcedProximity)
     is VueTypedDirective -> VueGlobalDirectiveSymbol(this, forcedProximity)
+    is VueSourceDirective -> VueSourceDirectiveSymbol(this, forcedProximity)
     is VueScriptSetupLocalDirective -> VueScriptSetupLocalDirectiveSymbol(this, forcedProximity)
     is VueDirective -> VueDirectiveSymbol(name, this, forcedProximity)
     else -> null

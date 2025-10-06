@@ -16,7 +16,7 @@ class VueSourceDirective(
   override val defaultName: String = name
   override val parents: List<VueEntitiesContainer> = emptyList()
 
-  override fun createPointer(): Pointer<VueDirective> {
+  override fun createPointer(): Pointer<out VueSourceDirective> {
     val name = defaultName
     val source = this.source.createSmartPointer()
     return Pointer {
