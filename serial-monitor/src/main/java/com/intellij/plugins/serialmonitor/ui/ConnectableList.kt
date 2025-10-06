@@ -231,6 +231,11 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
           is Connectable -> {
             icon = value.icon()
             append(value.name())
+
+            val description = value.description()
+            if (description != null) {
+              append(" $description", SimpleTextAttributes.GRAYED_ATTRIBUTES)
+            }
           }
           else -> {
             @NlsSafe val label: String = value as? String ?: ""
