@@ -6,9 +6,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinPsiElement;
 
+@NotNullByDefault
 public class GherkinSimpleReference implements PsiReference {
 
   private final GherkinPsiElement myElement;
@@ -18,27 +20,27 @@ public class GherkinSimpleReference implements PsiReference {
   }
 
   @Override
-  public @NotNull PsiElement getElement() {
+  public PsiElement getElement() {
     return myElement;
   }
 
   @Override
-  public @NotNull TextRange getRangeInElement() {
+  public TextRange getRangeInElement() {
     return new TextRange(0, myElement.getTextLength());
   }
 
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     return myElement;
   }
 
   @Override
-  public @NotNull String getCanonicalText() {
+  public String getCanonicalText() {
     return myElement.getText();
   }
 
   @Override
-  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
     if (myElement instanceof PsiNamedElement element) {
       element.setName(newElementName);
     }
@@ -46,18 +48,18 @@ public class GherkinSimpleReference implements PsiReference {
   }
 
   @Override
-  public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
+  public PsiElement bindToElement(PsiElement element) throws IncorrectOperationException {
     return myElement;
   }
 
   @Override
-  public boolean isReferenceTo(@NotNull PsiElement element) {
+  public boolean isReferenceTo(PsiElement element) {
     PsiElement myResolved = resolve();
     PsiElement resolved = element.getReference() != null ? element.getReference().resolve() : null;
     if (resolved == null) {
       resolved = element;
     }
-    return myResolved != null && resolved.equals(myResolved);
+    return resolved.equals(myResolved);
   }
 
   @Override
