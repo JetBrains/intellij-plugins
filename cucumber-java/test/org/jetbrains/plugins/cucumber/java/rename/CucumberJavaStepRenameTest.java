@@ -18,6 +18,27 @@ import java.util.List;
 @SuppressWarnings("NonAsciiCharacters")
 public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
 
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber7ProjectDescriptor();
+  }
+
+  @Override
+  protected String getRelatedTestDataPath() {
+    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "renameStep";
+  }
+
+  @Override
+  public void doTest(@NotNull String stepDefinitionName, @NotNull String oldName, String newName) {
+    prepare(oldName, stepDefinitionName);
+
+    myFixture.renameElementAtCaretUsingHandler(newName);
+
+    myFixture.checkResultByFile("test.feature", getTestName(true) + "/after/test.feature", false);
+    myFixture.checkResultByFile("Steps.java", getTestName(true) + "/after/Steps.java", false);
+    myFixture.testHighlightingAllFiles(true, false, true, "test.feature", "Steps.java");
+  }
+
   /// Prepares the fixtures and verifies that the element under the caret points to a method named `stepDefinitionName`.
   private void prepare(String oldName, String stepDefinitionName) {
     myFixture.enableInspections(new CucumberStepInspection());
@@ -36,17 +57,6 @@ public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
     List<AbstractStepDefinition> stepDefinitions = new ArrayList<>(stepReference.resolveToDefinitions());
     assertEquals(1, stepDefinitions.size());
     assertEquals(oldName, stepDefinitions.getFirst().getExpression());
-  }
-
-  @Override
-  public void doTest(@NotNull String stepDefinitionName, @NotNull String oldName, String newName) {
-    prepare(oldName, stepDefinitionName);
-
-    myFixture.renameElementAtCaretUsingHandler(newName);
-
-    myFixture.checkResultByFile("test.feature", getTestName(true) + "/after/test.feature", false);
-    myFixture.checkResultByFile("Steps.java", getTestName(true) + "/after/Steps.java", false);
-    myFixture.testHighlightingAllFiles(true, false, true, "test.feature", "Steps.java");
   }
 
   public void testCukexSimple() {
@@ -82,15 +92,5 @@ public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
 
   public void testRegexWithArgument() {
     doTest("withdraw_EUR", "^I withdraw (-?\\d+) EUR$", "I spend (-?\\d+) USD");
-  }
-
-  @Override
-  protected String getRelatedTestDataPath() {
-    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "renameStep";
-  }
-
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumber7ProjectDescriptor();
   }
 }
