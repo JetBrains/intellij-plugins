@@ -45,7 +45,7 @@ class VueGlobalDirectiveSymbol(
 
       VUE_DIRECTIVE_MODIFIERS -> {
         item.modifiers.map { modifier ->
-          VueGlobalDirectiveModifierSymbol(modifier, vueProximity)
+          VueDirectiveModifierSymbol(modifier, vueProximity)
         }.ifEmpty {
           listOf(VueAnySymbol(origin, qualifiedKind, "Vue directive modifier"))
         }
