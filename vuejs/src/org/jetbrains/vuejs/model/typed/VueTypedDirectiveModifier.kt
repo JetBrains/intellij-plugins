@@ -12,7 +12,7 @@ data class VueTypedDirectiveModifier(
   override val name: String
     get() = source.memberName
 
-  fun createPointer(): Pointer<out VueTypedDirectiveModifier> {
+  override fun createPointer(): Pointer<out VueTypedDirectiveModifier> {
     val sourcePtr = source.createSmartPointer()
     return Pointer {
       val source = sourcePtr.dereference() ?: return@Pointer null

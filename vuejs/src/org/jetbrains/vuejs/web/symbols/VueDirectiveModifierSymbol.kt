@@ -6,16 +6,16 @@ import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedKind
+import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.typed.VueTypedDirectiveModifier
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
 class VueDirectiveModifierSymbol(
-  modifier: VueTypedDirectiveModifier,
+  modifier: VueDirectiveModifier,
   private val vueProximity: VueModelVisitor.Proximity,
-) : VueDocumentedItemSymbol<VueTypedDirectiveModifier>(modifier.name, modifier) {
+) : VueDocumentedItemSymbol<VueDirectiveModifier>(modifier.name, modifier) {
 
   override val origin: PolySymbolOrigin
     get() = VueDirectiveModifierSymbolOrigin
