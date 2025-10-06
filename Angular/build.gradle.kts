@@ -45,12 +45,15 @@ dependencies {
     bundledPlugins("JavaScript", "JSIntentionPowerPack", "HtmlTools", "com.intellij.css",
                    "com.intellij.diagram", "tslint", "intellij.webpack", "org.jetbrains.plugins.sass")
     jetbrainsRuntime()
-    intellijIdeaUltimate(ext("platform.version"), useInstaller = false)
+    intellijIdea(ext("platform.version")) {
+      useInstaller.set(false)
+    }
     testFramework(TestFrameworkType.Platform)
     testFramework(TestFrameworkType.Plugin.XML)
     testFramework(TestFrameworkType.Plugin.JavaScript)
     platformDependency(Coordinates("com.jetbrains.intellij.platform", "poly-symbols-test-framework"))
     platformDependency(Coordinates("com.jetbrains.intellij.resharper", "resharper-test-framework"))
+    platformDependency(Coordinates("com.jetbrains.intellij.platform", "lsp-test-framework"))
   }
   testImplementation("com.mscharhag.oleaster:oleaster-matcher:0.2.0")
   testImplementation("com.mscharhag.oleaster:oleaster-runner:0.2.0")
