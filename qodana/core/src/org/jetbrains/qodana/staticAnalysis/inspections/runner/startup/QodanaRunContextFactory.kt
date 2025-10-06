@@ -6,12 +6,16 @@ import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogg
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
+import org.jetbrains.qodana.coroutines.QodanaDispatchers
+import org.jetbrains.qodana.global.QodanaConfigJson
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.qodanaEnv
 import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector
 import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector.logPromoGithubConfigPresent
+import kotlin.io.path.readText
 
 private val logger = logger<QodanaRunContextFactory>()
 
@@ -58,6 +62,22 @@ internal class DefaultRunContextFactory(
 
     if (config.yamlFiles.effectiveQodanaYaml != null) {
       UsageCollector.logQodanaYamlPresent()
+    }
+    if (config.yamlFiles.qodanaConfigJson != null) {
+      scope.launch(QodanaDispatchers.IO) {
+        val config = Json.decodeFromString<QodanaConfigJson>(
+          config.yamlFiles.qodanaConfigJson.readText()
+        )
+
+        val source = when {
+          config.local != null && config.global != null -> UsageCollector.QodanaConfigSource.LOCAL_AND_GLOBAL
+          config.local != null -> UsageCollector.QodanaConfigSource.LOCAL
+          config.global != null -> UsageCollector.QodanaConfigSource.GLOBAL
+          else -> UsageCollector.QodanaConfigSource.UNKNOWN
+        }
+
+        UsageCollector.logQodanaConfigSource(source)
+      }
     }
     try {
       FUCounterUsageLogger.getInstance().logRegisteredGroups()

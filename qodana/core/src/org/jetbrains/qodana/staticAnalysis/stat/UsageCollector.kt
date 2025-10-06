@@ -26,7 +26,7 @@ import java.time.Duration
 import java.time.Instant
 
 object UsageCollector : CounterUsagesCollector() {
-  private val GROUP = QodanaEventLogGroup("qodana.usage", 12)
+  private val GROUP = QodanaEventLogGroup("qodana.usage", 13)
 
   override fun getGroup() = GROUP.eventLogGroup
 
@@ -137,6 +137,22 @@ object UsageCollector : CounterUsagesCollector() {
     "qodana.yaml.detected"
   )
 
+  enum class QodanaConfigSource {
+    LOCAL,
+    GLOBAL,
+    LOCAL_AND_GLOBAL,
+
+    UNKNOWN
+  }
+
+  private val QODANA_CONFIG_SOURCE = EventFields.Enum<QodanaConfigSource>("configSource")
+
+  private val qodanaConfigurationSourceEvent = GROUP.registerVarargEvent(
+    "qodana.configuration.source",
+    QODANA_CONFIG_SOURCE
+  )
+
+
   private val qodanaGithubPromoWorkflowUsed = GROUP.registerVarargEvent(
     "qodana.github.promo.workflow.used"
   )
@@ -162,6 +178,10 @@ object UsageCollector : CounterUsagesCollector() {
 
   fun logQodanaYamlPresent() {
     qodanaYamlDetectedEvent.log()
+  }
+
+  fun logQodanaConfigSource(source: QodanaConfigSource) {
+    qodanaConfigurationSourceEvent.log(QODANA_CONFIG_SOURCE with source)
   }
 
   @JvmStatic
