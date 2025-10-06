@@ -1,0 +1,3 @@
+User:	john
+Email:	johndoe@example.com
+FullName:	John Doe

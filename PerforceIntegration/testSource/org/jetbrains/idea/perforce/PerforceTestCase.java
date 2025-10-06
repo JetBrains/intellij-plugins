@@ -112,7 +112,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected String getPerforceExecutableDir() {
-    return "/plugins/PerforceIntegration/testData/p4d/" + getPerforceVersion();
+    return "/contrib/PerforceIntegration/testResources/testData/p4d/" + getPerforceVersion();
   }
 
   protected String getPerforceVersion() {

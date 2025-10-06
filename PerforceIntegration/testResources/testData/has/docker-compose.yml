@@ -1,0 +1,9 @@
+name: jetbrains-perforce
+services:
+  server:
+    build:
+      dockerfile: Dockerfile
+    container_name: jetbrains-perforce-server
+    hostname: perforce
+    ports:
+      - "1666:1666"
