@@ -1,6 +1,8 @@
 package org.jetbrains.idea.perforce.client
 
+import com.intellij.openapi.application.PathManager
 import com.intellij.vcs.test.VcsPlatformTest
+import org.jetbrains.idea.perforce.PerforceTestCase.RESOURCES_DIR
 import org.jetbrains.idea.perforce.perforce.connections.HelixClientConnectionParametersProvider
 import org.jetbrains.idea.perforce.perforce.connections.HelixClientConnectionParametersProvider.ConfigFiles
 import org.mockito.Mockito
@@ -10,7 +12,7 @@ class ParseHelixClientConnectionTest : VcsPlatformTest() {
 
   fun `test parse single client connection`() {
     val configFiles = Mockito.mock(ConfigFiles::class.java)
-    val connectionMapFile = File("resources/connectionmap-single.xml")
+    val connectionMapFile = getResource("connectionmap-single.xml")
     assertTrue(connectionMapFile.exists())
 
     Mockito.`when`(configFiles.getClientConfig()).thenReturn(connectionMapFile)
@@ -26,7 +28,7 @@ class ParseHelixClientConnectionTest : VcsPlatformTest() {
 
   fun `test parse multi client connection`() {
     val configFiles = Mockito.mock(ConfigFiles::class.java)
-    val connectionMapFile = File("resources/connectionmap-multi.xml")
+    val connectionMapFile = getResource("connectionmap-multi.xml")
     assertTrue(connectionMapFile.exists())
 
     Mockito.`when`(configFiles.getClientConfig()).thenReturn(connectionMapFile)
@@ -43,5 +45,9 @@ class ParseHelixClientConnectionTest : VcsPlatformTest() {
     val secondConnectionParameters = connectionParameters.last()
     assertEquals("SomeSecondUser", secondConnectionParameters.user)
     assertEquals("ssl:server-host-2:1666", secondConnectionParameters.server)
+  }
+
+  private fun getResource(resource: String): File {
+    return File(PathManager.getHomePath(), RESOURCES_DIR + resource)
   }
 }

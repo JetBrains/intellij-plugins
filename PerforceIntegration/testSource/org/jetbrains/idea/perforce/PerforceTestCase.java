@@ -64,6 +64,8 @@ import static com.intellij.testFramework.UsefulTestCase.*;
 public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   private static final Logger LOG = Logger.getInstance(PerforceTestCase.class);
 
+  public static final String RESOURCES_DIR = "/contrib/PerforceIntegration/testResources/";
+
   protected static final String TEST_P4CONFIG = "testP4config";
   protected static final String DEFAULT_P4CONFIG = ".p4config";
   protected static final String P4_IGNORE_NAME = ".p4ignore";
@@ -112,7 +114,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected String getPerforceExecutableDir() {
-    return "/contrib/PerforceIntegration/testResources/testData/p4d/" + getPerforceVersion();
+    return RESOURCES_DIR + "testData/p4d/" + getPerforceVersion();
   }
 
   protected String getPerforceVersion() {
