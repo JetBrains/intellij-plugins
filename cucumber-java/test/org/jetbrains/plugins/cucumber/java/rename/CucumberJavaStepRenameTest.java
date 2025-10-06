@@ -16,7 +16,7 @@ import java.util.List;
 
 /// See IDEA-107390.
 @SuppressWarnings("NonAsciiCharacters")
-public class CucumberStepRenameTest extends BaseCucumberJavaResolveTest {
+public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
 
   /// Prepares the fixtures and verifies that the element under the caret points to a method named `stepDefinitionName`.
   private void prepare(String oldName, String stepDefinitionName) {
