@@ -3,21 +3,23 @@ package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
 
+@NotNullByDefault
 public class GherkinStepParameterReference extends GherkinSimpleReference {
   public GherkinStepParameterReference(GherkinStepParameter stepParameter) {
     super(stepParameter);
   }
 
   @Override
-  public @NotNull GherkinStepParameter getElement() {
+  public GherkinStepParameter getElement() {
     return (GherkinStepParameter)super.getElement();
   }
 
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     final GherkinScenarioOutline scenario = PsiTreeUtil.getParentOfType(getElement(), GherkinScenarioOutline.class);
     if (scenario == null) {
       return null;
