@@ -114,10 +114,7 @@
       implementation="org.jetbrains.plugins.cucumber.navigation.CucumberGoToRelatedProvider"/>
 
     <renameHandler
-      implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinParameterRenameHandler"/>
-    <renameHandler
       implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameHandler"/>
-
 
     <renamePsiElementProcessor
       implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameProcessor"

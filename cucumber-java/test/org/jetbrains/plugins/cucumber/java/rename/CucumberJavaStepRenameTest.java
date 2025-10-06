@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java.rename;
 
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection;
@@ -88,6 +89,14 @@ public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
 
   public void testCukexWithArgumentAndOptionalText() {
     doTest("i_have_feelings", "I have {int} feeling(s)", "I really do have {int} feeling(s)");
+  }
+
+  public void testNoDefinition() {
+    myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
+    myFixture.configureByFiles("test.feature", "Steps.java");
+    assertThrows(CommonRefactoringUtil.RefactoringErrorHintException.class,
+                 "Cannot perform refactoring. This step can't be renamed due to no definition, several definitions or several steps pointing to one definition. Please rename it manually.",
+                 () -> myFixture.renameElementAtCaretUsingHandler("newName"));
   }
 
   public void testRegexSimple() {
