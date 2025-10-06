@@ -186,7 +186,7 @@ abstract class VueCompositionContainer() :
         }
       }.toMap()
 
-      val directives = processCalls(DIRECTIVE_FUN, true) { name, el, nameLiteral ->
+      val directives = processCalls(DIRECTIVE_FUN, true) { name, _, nameLiteral ->
         Pair(name, VueSourceDirective(name, nameLiteral!!))
       }.toMap()
 
@@ -194,7 +194,7 @@ abstract class VueCompositionContainer() :
         VueModelManager.getMixin(getComponentDescriptor(el) as? VueSourceEntityDescriptor)
       }.toList()
 
-      val filters = processCalls(FILTER_FUN, true) { name, el, nameLiteral ->
+      val filters = processCalls(FILTER_FUN, true) { name, _, nameLiteral ->
         Pair(name, VueSourceFilter(name, nameLiteral!!))
       }.toMap()
 
