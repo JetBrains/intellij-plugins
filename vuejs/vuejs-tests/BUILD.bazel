@@ -83,7 +83,7 @@ jvm_library(
     "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
     "//webcore:webide",
-    "//plugins/css/analysis",
+    "//plugins/css/paid/analysis",
     "//plugins/css/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/sass/backend",

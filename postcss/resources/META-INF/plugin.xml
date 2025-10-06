@@ -32,6 +32,7 @@
     <plugin id="com.intellij.css"/>
     <plugin id="com.intellij.modules.lang"/>
     <module name="intellij.css.backend"/>
+    <module name="intellij.css.analysis"/>
   </dependencies>
 
   <content>
