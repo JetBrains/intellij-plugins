@@ -60,7 +60,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//xml/tests:tests_test_lib",
     "@lib//:stream_ex",
-    "@lib//:gson",
+    "@community//libraries/gson",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "//plugins/webpack",

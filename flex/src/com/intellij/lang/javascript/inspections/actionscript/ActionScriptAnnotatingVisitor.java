@@ -63,6 +63,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ProcessingContext;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -136,6 +137,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   /**
    * @deprecated use {@link JSTypeUtils#areTypesCompatible(JSType, JSType, ProcessingContext, PsiElement)} instead.
    */
+  @ApiStatus.Internal
   @Deprecated
   protected static boolean compatibleType(String overrideParameterType,
                                           String parameterType,

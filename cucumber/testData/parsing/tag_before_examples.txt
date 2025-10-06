@@ -35,7 +35,7 @@ GherkinFile:tag_before_examples.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:value
               PsiElement(TABLE_CELL)('value')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')

@@ -11,7 +11,7 @@ jvm_library(
     "//contrib/CloudFormation:cloudFormation",
     "//contrib/CloudFormation:cloudFormation_test_lib",
     "@lib//:jsoup",
-    "@lib//:gson",
+    "@community//libraries/gson",
     "@lib//:commons-io",
     "@community//platform/util",
     "@community//platform/platform-api:ide",

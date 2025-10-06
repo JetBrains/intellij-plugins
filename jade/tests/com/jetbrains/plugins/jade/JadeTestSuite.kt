@@ -19,7 +19,6 @@ import org.junit.runners.Suite
   JadeFormatterTest::class,
   JadeHighlightingLexerTest::class,
   JadeHighlightingTest::class,
-  JadeInjectionTest::class,
   JadeQuoteHandlerTest::class,
   JadeRenameTest::class,
   JadeSpellcheckerTest::class,

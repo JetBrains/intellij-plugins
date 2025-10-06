@@ -17,10 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinPsiElementBase;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinSimpleReference;
 
-/**
- * @author Roman.Chernyatchik
- */
-public class GherkinTableCellImpl extends GherkinPsiElementBase implements GherkinTableCell  {
+public class GherkinTableCellImpl extends GherkinPsiElementBase implements GherkinTableCell {
   public GherkinTableCellImpl(final @NotNull ASTNode node) {
     super(node);
   }
@@ -31,18 +28,13 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
   }
 
   @Override
+  public String toString() {
+    return "GherkinTableCell:" + getName();
+  }
+
+  @Override
   protected String getPresentableText() {
     return String.format("Step parameter '%s'", getName());
-  }
-
-  @Override
-  public PsiReference getReference() {
-    return new GherkinSimpleReference(this);
-  }
-
-  @Override
-  public String getName() {
-    return getText();
   }
 
   @Override
@@ -53,6 +45,16 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
       getNode().replaceChild(content, elements[0].getNode());
     }
     return this;
+  }
+
+  @Override
+  public PsiReference getReference() {
+    return new GherkinSimpleReference(this);
+  }
+
+  @Override
+  public String getName() {
+    return getText();
   }
 
   @Override
@@ -70,7 +72,7 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
     return CachedValuesManager.getCachedValue(this, () -> CachedValueProvider.Result.create(getReferencesInner(), this));
   }
 
-  private PsiReference[] getReferencesInner() {
+  private PsiReference @NotNull [] getReferencesInner() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 }

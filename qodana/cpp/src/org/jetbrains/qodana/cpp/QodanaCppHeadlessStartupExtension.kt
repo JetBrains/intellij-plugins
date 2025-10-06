@@ -8,7 +8,7 @@ import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceManager
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceState
-import com.jetbrains.cidr.radler.inspections.RadHeadlessStartupExtension
+import com.intellij.clion.radler.core.inspections.RadHeadlessStartupExtension
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 

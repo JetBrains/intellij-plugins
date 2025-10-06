@@ -49,7 +49,7 @@ sourceSets {
 
 dependencies {
   intellijPlatform {
-    bundledPlugins("JavaScript", "JSIntentionPowerPack", "HtmlTools", "com.intellij.css")
+    bundledPlugins("JavaScript", "JSIntentionPowerPack", "HtmlTools", "com.intellij.css", "tanvd.grazi")
     compatiblePlugins(
       "com.intellij.plugins.watcher",
       "com.intellij.plugins.html.instantEditing",

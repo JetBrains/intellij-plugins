@@ -167,25 +167,24 @@ open class Angular2HtmlLexer(
 
     override fun getCurrentPosition(): LexerPosition =
       flex.let {
-        Angular2HtmlFlexAdapterPosition(tokenStart, super.getState(), it.blockName, it.parameterIndex, it.parameterStart,
+        Angular2HtmlFlexAdapterPosition(super.currentPosition, it.blockName, it.parameterIndex, it.parameterStart,
                                         it.blockParenLevel, it.expansionFormNestingLevel, it.interpolationStartPos)
       }
 
     override fun restore(position: LexerPosition) {
+      super.restore((position as Angular2HtmlFlexAdapterPosition).flexPosition)
       flex.apply {
-        blockName = (position as Angular2HtmlFlexAdapterPosition).blockName
+        blockName = position.blockName
         parameterIndex = position.parameterIndex
         parameterStart = position.parameterStart
         blockParenLevel = position.blockParenLevel
         expansionFormNestingLevel = position.expansionFormNestingLevel
         interpolationStartPos = position.interpolationStartPos
       }
-      super.start(bufferSequence, position.offset, bufferEnd, position.state)
     }
 
     private class Angular2HtmlFlexAdapterPosition(
-      private val offset: Int,
-      private val state: Int,
+      val flexPosition: LexerPosition,
       val blockName: String?,
       val parameterIndex: Int,
       val parameterStart: Int,
@@ -193,9 +192,9 @@ open class Angular2HtmlLexer(
       val expansionFormNestingLevel: Int,
       val interpolationStartPos: Int,
     ) : LexerPosition {
-      override fun getOffset(): Int = offset
+      override fun getOffset(): Int = flexPosition.offset
 
-      override fun getState(): Int = state
+      override fun getState(): Int = flexPosition.state
 
     }
   }

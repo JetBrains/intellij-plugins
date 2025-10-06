@@ -16,7 +16,7 @@ jvm_library(
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
-    "@lib//:gson",
+    "@community//libraries/gson",
     "@community//platform/projectModel-api:projectModel",
     "//contrib/qodana/sarif",
     "@community//platform/util",

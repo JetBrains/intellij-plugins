@@ -31,7 +31,7 @@ GherkinFile:idea375449.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:type
               PsiElement(TABLE_CELL)('type')
             PsiWhiteSpace('   ')
             PsiElement(PIPE)('|')
@@ -39,7 +39,7 @@ GherkinFile:idea375449.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:class
               PsiElement(TABLE_CELL)('class')
             PsiWhiteSpace('  ')
             PsiElement(PIPE)('|')
@@ -47,7 +47,7 @@ GherkinFile:idea375449.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:method
               PsiElement(TABLE_CELL)('method')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
@@ -55,7 +55,7 @@ GherkinFile:idea375449.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:field
               PsiElement(TABLE_CELL)('field')
             PsiWhiteSpace('  ')
             PsiElement(PIPE)('|')
@@ -87,7 +87,7 @@ GherkinFile:idea375449.feature
           GherkinTableHeaderRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:type
               PsiElement(TABLE_CELL)('type')
             PsiWhiteSpace('   ')
             PsiElement(PIPE)('|')
@@ -95,7 +95,7 @@ GherkinFile:idea375449.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:class
               PsiElement(TABLE_CELL)('class')
             PsiWhiteSpace('  ')
             PsiElement(PIPE)('|')
@@ -103,7 +103,7 @@ GherkinFile:idea375449.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:method
               PsiElement(TABLE_CELL)('method')
             PsiWhiteSpace(' ')
             PsiElement(PIPE)('|')
@@ -111,7 +111,7 @@ GherkinFile:idea375449.feature
           GherkinTableRow
             PsiElement(PIPE)('|')
             PsiWhiteSpace(' ')
-            GherkinTableCellImpl(table cell)
+            GherkinTableCell:field
               PsiElement(TABLE_CELL)('field')
             PsiWhiteSpace('  ')
             PsiElement(PIPE)('|')

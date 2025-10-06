@@ -18,7 +18,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="module" module-name="intellij.cidr.projectModel" />
     <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
-    <orderEntry type="module" module-name="intellij.rider.plugins.clion.radler.core" />
+    <orderEntry type="module" module-name="intellij.clion.radler.core" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
   </component>
 </module>

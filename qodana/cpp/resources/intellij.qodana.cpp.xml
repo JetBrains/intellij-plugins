@@ -2,7 +2,7 @@
   <dependencies>
     <plugin id="com.intellij.modules.clion.cmake"/>
     <plugin id="org.jetbrains.plugins.clion.radler"/>
-    <module name="intellij.rider.plugins.clion.radler.core"/>
+    <module name="intellij.clion.radler.core"/>
     <module name="intellij.cidr.projectModel"/>
   </dependencies>
 
@@ -24,7 +24,7 @@
     <qodana.externalToolsConfigurationProvider implementation="org.jetbrains.qodana.cpp.QodanaRadlerScopeLimitator"/>
     <qodana.workflowExtension implementation="org.jetbrains.qodana.cpp.QodanaCppWorkflow"/>
   </extensions>
-  <extensions defaultExtensionNs="com.jetbrains">
-    <cidr.radler.headlessStartupExtension implementation="org.jetbrains.qodana.cpp.QodanaCppHeadlessStartupExtension"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <clion.radler.core.inspections.headlessStartupExtension implementation="org.jetbrains.qodana.cpp.QodanaCppHeadlessStartupExtension"/>
   </extensions>
 </idea-plugin>

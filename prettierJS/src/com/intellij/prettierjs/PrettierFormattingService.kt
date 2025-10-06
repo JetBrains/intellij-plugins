@@ -1,13 +1,16 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs
 
+import com.intellij.CodeStyleBundle
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.formatting.FormatTextRanges
 import com.intellij.formatting.FormattingContext
 import com.intellij.formatting.service.AsyncDocumentFormattingService
 import com.intellij.formatting.service.AsyncFormattingRequest
+import com.intellij.formatting.service.CoreFormattingService
 import com.intellij.formatting.service.FormattingService
 import com.intellij.lang.javascript.imports.JSModuleImportOptimizerBase
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.logger
@@ -16,6 +19,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.registry.Registry
@@ -36,9 +41,7 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
   override fun getNotificationGroupId(): String = "Prettier"
   override fun getFeatures(): Set<FormattingService.Feature> = setOf(FormattingService.Feature.FORMAT_FRAGMENTS)
 
-  override fun canFormat(psiFile: PsiFile): Boolean =
-    Registry.`is`("prettier.use.async.formatting.service") &&
-    isApplicable(psiFile)
+  override fun canFormat(psiFile: PsiFile): Boolean = Registry.`is`("prettier.use.async.formatting.service") && isApplicable(psiFile)
 
   override fun createFormattingTask(request: AsyncFormattingRequest): FormattingTask? {
     val context = request.context
@@ -49,7 +52,8 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
     val formatterLatch = CountDownLatch(1)
     file.putUserData(JSModuleImportOptimizerBase.COUNTDOWN_LATCH_KEY, formatterLatch)
 
-    return PrettierFormattingTask(request, file, virtualFile, project, formatterLatch)
+    val skipInContentCheck = file.consumeSkipInContentScopeCheck()
+    return PrettierFormattingTask(request, file, virtualFile, project, formatterLatch, skipInContentCheck)
   }
 
   private fun isApplicable(psiFile: PsiFile): Boolean {
@@ -63,7 +67,12 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
     val template = fileEditor?.let { TemplateManager.getInstance(project).getActiveTemplate(it.editor) }
     if (template != null) return false
 
-    return PrettierUtil.isFormattingAllowedForFile(project, file)
+    val isOffEdt = !ApplicationManager.getApplication().isDispatchThread
+    val isAllowed = isPrettierFormattingAllowedFor(project, file, checkIsInContent = isOffEdt)
+
+    if (isOffEdt && isAllowed) psiFile.setSkipInContentScopeCheck() else psiFile.clearSkipInContentScopeCheck()
+
+    return isAllowed
   }
 
   private class PrettierFormattingTask(
@@ -72,6 +81,7 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
     private val virtualFile: VirtualFile,
     private val project: Project,
     private val formatterLatch: CountDownLatch,
+    private val skipInContentCheck: Boolean,
   ) : FormattingTask {
     private var cancelled = false
 
@@ -84,8 +94,19 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
 
     override fun run() {
       try {
-        val extendedRanges = computeExtendedRanges()
-        processRangesWithPrettier(extendedRanges)
+        if (skipInContentCheck) {
+          formatWithPrettier()
+        }
+        else {
+          val fileIndex = ProjectFileIndex.getInstance(project)
+          val isInContent = runReadAction { fileIndex.isInContent(virtualFile) }
+          if (isInContent) {
+            formatWithPrettier()
+          }
+          else {
+            formatWithCoreFormatter()
+          }
+        }
       }
       catch (e: Exception) {
         LOG.warn("Error during Prettier formatting", e)
@@ -94,6 +115,27 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
         request.onTextReady(null)
         formatterLatch.countDown()
       }
+    }
+
+    private fun formatWithCoreFormatter() {
+      val coreFormattingService = EP_NAME.extensionList.find { it is CoreFormattingService }
+
+      WriteCommandAction.writeCommandAction(project, request.context.containingFile)
+        .withName(CodeStyleBundle.message("process.reformat.code"))
+        .shouldRecordActionForActiveDocument(false)
+        .run<RuntimeException> {
+          coreFormattingService?.formatRanges(
+            file,
+            FormatTextRanges(file.textRange, true),
+            request.canChangeWhitespaceOnly(),
+            false,
+          )
+        }
+    }
+
+    private fun formatWithPrettier() {
+      val extendedRanges = computeExtendedRanges()
+      processRangesWithPrettier(extendedRanges)
     }
 
     private fun computeExtendedRanges(): List<TextRange> {
@@ -147,4 +189,21 @@ class PrettierFormattingService : AsyncDocumentFormattingService() {
         }
     }
   }
+}
+
+
+private val SKIP_IN_CONTENT_CHECK: Key<Boolean> = Key.create("prettier.skip.isInContent.check")
+
+private fun PsiFile.setSkipInContentScopeCheck() {
+  putUserData(SKIP_IN_CONTENT_CHECK, true)
+}
+
+private fun PsiFile.clearSkipInContentScopeCheck() {
+  putUserData(SKIP_IN_CONTENT_CHECK, null)
+}
+
+private fun PsiFile.consumeSkipInContentScopeCheck(): Boolean {
+  val value = getUserData(SKIP_IN_CONTENT_CHECK) == true
+  if (value) clearSkipInContentScopeCheck()
+  return value
 }

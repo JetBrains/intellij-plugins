@@ -89,6 +89,6 @@ class PrettierCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransfera
     val configuration = PrettierConfiguration.getInstance(project)
     if (!configuration.isRunOnPaste) return false
     val vFile = psiFile.virtualFile ?: return false
-    return PrettierUtil.isFormattingAllowedForFile(project, vFile)
+    return isPrettierFormattingAllowedFor(project, vFile)
   }
 }

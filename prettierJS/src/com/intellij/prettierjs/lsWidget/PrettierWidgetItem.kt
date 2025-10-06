@@ -47,7 +47,7 @@ class PrettierWidgetItem(
   override val widgetActionLocation: LanguageServicePopupSection by lazy {
     if (currentFile == null) return@lazy Other
     if (!VfsUtil.isAncestor(location.workingDirectory, currentFile, true)) return@lazy Other
-    if (!PrettierUtil.isFormattingAllowedForFile(project, currentFile)) return@lazy Other
+    if (!isPrettierFormattingAllowedFor(project, currentFile)) return@lazy Other
     else ForCurrentFile
   }
 

@@ -8,10 +8,22 @@ import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import java.util.*
 
-class VueSourceDirective(name: String, override val source: PsiElement) : VueDirective {
+class VueSourceDirective(
+  name: String,
+  override val source: PsiElement,
+) : VueDirective {
 
   override val defaultName: String = name
   override val parents: List<VueEntitiesContainer> = emptyList()
+
+  override fun createPointer(): Pointer<VueDirective> {
+    val name = defaultName
+    val source = this.source.createSmartPointer()
+    return Pointer {
+      val newSource = source.dereference() ?: return@Pointer null
+      VueSourceDirective(name, newSource)
+    }
+  }
 
   override fun equals(other: Any?): Boolean =
     other === this ||
@@ -22,14 +34,5 @@ class VueSourceDirective(name: String, override val source: PsiElement) : VueDir
 
   override fun toString(): String {
     return "VueSourceDirective($defaultName)"
-  }
-
-  override fun createPointer(): Pointer<VueDirective> {
-    val name = defaultName
-    val source = this.source.createSmartPointer()
-    return Pointer {
-      val newSource = source.dereference() ?: return@Pointer null
-      VueSourceDirective(name, newSource)
-    }
   }
 }

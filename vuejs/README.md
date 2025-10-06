@@ -1,6 +1,6 @@
 # Vue.js for IntelliJ IDEA-based IDEs
 
-This plugin provides support for [Vue.js](https://vuejs.org) in IntelliJ IDEA Ultimate, WebStorm, PhpStorm, PyCharm and RubyMine.
+This plugin provides support for [Vue.js](https://vuejs.org) in IntelliJ IDEA, WebStorm, PhpStorm, PyCharm and RubyMine.
 
 It provides intelligent Vue-specific code completion, navigation, and refactoring.
 
@@ -8,7 +8,7 @@ The plugin bundles a collection of [Vue.js code templates](https://github.com/sd
 
 ## Getting started
 
-1. If you’re using IntelliJ IDEA Ultimate, PhpStorm, PyCharm, or RubyMine, install Vue.js plugin in Preferences | Plugins - Install JetBrains plugins.
+1. If you’re using IntelliJ IDEA, PhpStorm, PyCharm, or RubyMine, install Vue.js plugin in Preferences | Plugins - Install JetBrains plugins.
 2. Open your Vue project.
 3. Make sure that you have Vue.js library files in your project (for example, in the node_modules folder).
 

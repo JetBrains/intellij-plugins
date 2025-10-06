@@ -27,9 +27,7 @@ dependencies {
     jetbrainsRuntime()
     clion("LATEST-EAP-SNAPSHOT", useInstaller = false)
   }
-  implementation ("io.github.java-native:jssc:2.9.4")  {
-    exclude("org.slf4j", "slf4j-api")
-  }
+  implementation("org.jetbrains.intellij.deps:jSerialComm:2.11.2")
 }
 
 kotlin {
@@ -37,6 +35,7 @@ kotlin {
     jvmTarget.set(JvmTarget.fromTarget(ext("kotlin.jvmTarget")))
     @Suppress("UNCHECKED_CAST")
     freeCompilerArgs.addAll(rootProject.extensions["kotlin.freeCompilerArgs"] as List<String>)
+    freeCompilerArgs.add("-Xwhen-guards")
   }
 }
 

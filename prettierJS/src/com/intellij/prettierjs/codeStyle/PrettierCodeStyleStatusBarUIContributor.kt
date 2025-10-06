@@ -3,7 +3,6 @@ package com.intellij.prettierjs.codeStyle
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.ide.actions.ShowSettingsUtilImpl
-import com.intellij.ide.ui.LafManager
 import com.intellij.lang.javascript.linter.JSLinterGuesser
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -13,15 +12,15 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.prettierjs.*
+import com.intellij.prettierjs.CONFIGURABLE_ID
+import com.intellij.prettierjs.OpenConfigurationAction
+import com.intellij.prettierjs.PrettierBundle
+import com.intellij.prettierjs.PrettierConfiguration
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.codeStyle.IndentStatusBarUIContributor
 import com.intellij.psi.codeStyle.modifier.CodeStyleStatusBarUIContributor
-import com.intellij.util.IconUtil
-import com.intellij.util.ui.JBUI
-import javax.swing.Icon
 
 internal class PrettierCodeStyleStatusBarUIContributor : CodeStyleStatusBarUIContributor {
   private var myIndentOptionsForFileInEditor: CommonCodeStyleSettings.IndentOptions? = null
@@ -50,15 +49,6 @@ internal class PrettierCodeStyleStatusBarUIContributor : CodeStyleStatusBarUICon
     val optionsForFileInEditor = CodeStyle.getSettings(psiFile).getIndentOptions(psiFile.getFileType())
     myIndentOptionsForFileInEditor = optionsForFileInEditor
     return IndentStatusBarUIContributor.getIndentInfo(optionsForFileInEditor)
-  }
-
-  override fun getIcon(): Icon {
-    val statusBarFriendlyColor = when {
-      LafManager.getInstance().currentUIThemeLookAndFeel.isDark -> JBUI.CurrentTheme.StatusBar.Widget.FOREGROUND
-      else -> JBUI.CurrentTheme.StatusBar.Widget.FOREGROUND.brighter()
-    }
-
-    return IconUtil.colorize(PrettierUtil.ICON, statusBarFriendlyColor)
   }
 
   private fun createNavigationActions(file: PsiFile): Array<AnAction> {

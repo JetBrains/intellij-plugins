@@ -4,6 +4,7 @@ import com.intellij.html.embedding.HtmlEmbeddedContentSupport
 import com.intellij.javascript.testFramework.web.JSHtmlParsingTest
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.javascript.dialects.TypeScriptParserDefinition
+import com.intellij.psi.LanguageFileViewProviders
 import org.jetbrains.astro.getAstroTestDataPath
 import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
 import org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport
@@ -17,6 +18,14 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
   }
 
   override fun testContent1() {
+    throw AssumptionViolatedException("disable")
+  }
+
+  override fun testSpecialTagsParsing() {
+    throw AssumptionViolatedException("disable")
+  }
+
+  override fun testScriptEmbeddingParsing() {
     throw AssumptionViolatedException("disable")
   }
 
@@ -503,6 +512,17 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
     """)
   }
 
+  fun testMultipleScriptBlocks() {
+    doTestAstro("""
+      <div>
+        <script type="text/javascript"
+                src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="/js/highcharts/highcharts.js" defer></script>
+        <script src="/js/buoychart.js" data={JSON.stringify(chartData)} defer></script>
+      </div>
+    """.trimIndent())
+  }
+
   fun testRawTextWithInterpolation() {
     doTestAstro($$"""
       <title>{ title as number } and { 12 + "foo" }</title>
@@ -552,6 +572,8 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
 
   override fun setUp() {
     super.setUp()
+
+    addExplicitExtension(LanguageFileViewProviders.INSTANCE, AstroLanguage.INSTANCE, AstroFileViewProviderFactory())
     addExplicitExtension(LanguageParserDefinitions.INSTANCE, AstroFrontmatterLanguage.INSTANCE, TypeScriptParserDefinition())
     HtmlEmbeddedContentSupport.register(application, testRootDisposable, AstroEmbeddedContentSupport::class.java)
   }

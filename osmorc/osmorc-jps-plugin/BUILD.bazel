@@ -26,7 +26,7 @@ jvm_library(
     "@lib//:plexus-utils",
     "@community//platform/util/jdom",
     "//contrib/osmorc/lib:bundlor-all",
-    "@lib//:hash4j",
+    "@community//libraries/hash4j",
   ],
   exports = [
     "@ultimate_lib//:osgi-jps-bndlib",
@@ -59,7 +59,7 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "@community//jps/jps-builders:build-tests_test_lib",
     "@lib//:assert_j",
-    "@lib//:hash4j",
+    "@community//libraries/hash4j",
   ],
   exports = [
     "@ultimate_lib//:osgi-jps-bndlib",

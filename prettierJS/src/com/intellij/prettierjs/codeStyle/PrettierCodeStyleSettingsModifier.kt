@@ -38,7 +38,7 @@ private class PrettierCodeStyleSettingsModifier : CodeStyleSettingsModifier {
     if (!application.isReadAccessAllowed) return false
     if (project.isDisposed) return false
     if (!PrettierConfiguration.getInstance(project).codeStyleSettingsModifierEnabled) return false
-    if (!PrettierUtil.isFormattingAllowedForFile(project, file)) return false
+    if (!isPrettierFormattingAllowedFor(project, file)) return false
 
     return doModifySettings(settings, psiFile)
   }

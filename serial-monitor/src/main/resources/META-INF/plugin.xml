@@ -34,7 +34,7 @@
 
     <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.SerialMonitorCollector"/>
     <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorUsagesCollector"/>
-    <applicationService serviceInterface="com.intellij.plugins.serialmonitor.service.SerialPortProvider" serviceImplementation="com.intellij.plugins.serialmonitor.service.JsscSerialPortProvider" />
+    <applicationService serviceInterface="com.intellij.plugins.serialmonitor.service.SerialPortProvider" serviceImplementation="com.intellij.plugins.serialmonitor.service.JSerialCommPortProvider" />
   </extensions>
   <resource-bundle>messages.SerialMonitorBundle</resource-bundle>
 </idea-plugin>

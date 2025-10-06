@@ -706,7 +706,7 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
-    fun testComponentFromFunctionPlugin_vapor() =
+  fun testComponentFromFunctionPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
       dir = true,
@@ -724,7 +724,7 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
-    fun testComponentFromNestedFunctionPlugin_vapor() =
+  fun testComponentFromNestedFunctionPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
       dir = true,
@@ -742,7 +742,7 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
-    fun testComponentFromNestedFunctionPluginWithCycle_vapor() =
+  fun testComponentFromNestedFunctionPluginWithCycle_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
       dir = true,
@@ -760,7 +760,7 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
-    fun testComponentFromObjectPlugin_vapor() =
+  fun testComponentFromObjectPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
       dir = true,
@@ -778,7 +778,7 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
-    fun testComponentFromNestedObjectPlugin_vapor() =
+  fun testComponentFromNestedObjectPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
       dir = true,
@@ -796,7 +796,7 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
-    fun testComponentFromNestedObjectPluginWithCycle_vapor() =
+  fun testComponentFromNestedObjectPluginWithCycle_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
       dir = true,
@@ -805,6 +805,60 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  fun testDirectivesFromFunctionPlugin() =
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromNestedFunctionPlugin() =
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromNestedFunctionPluginWithCycle() =
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromObjectPlugin() =
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromNestedObjectPlugin() =
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromNestedObjectPluginWithCycle() =
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+  
   fun testCreateAppIndex() =
     doLookupTest(VueTestModule.VUE_3_2_2,
                  dir = true,

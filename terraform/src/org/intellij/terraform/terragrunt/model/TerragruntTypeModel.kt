@@ -22,8 +22,8 @@ internal val TfBlockType: BlockType = BlockType(
     //TODO: default value is "true"
     PropertyType("copy_terraform_lock_file", Types.Boolean),
 
-    // Extra arguments block
-    BlockType("extra_arguments", properties = listOf(
+    // Extra arguments block: https://terragrunt.gruntwork.io/docs/features/extra-arguments
+    BlockType("extra_arguments", args = 1, properties = listOf(
       PropertyType("arguments", ListType(Types.String), required = true, optional = false),
       PropertyType(TERRAGRUNT_COMMANDS, ListType(Types.String), required = true, optional = false),
       PropertyType("env_vars", MapType(Types.String)),
@@ -42,18 +42,23 @@ internal val TfBlockType: BlockType = BlockType(
   ).toMap()
 )
 
+// https://terragrunt.gruntwork.io/docs/reference/hcl/blocks/#remote_state
 internal val RemoteStateBlockType: BlockType = BlockType(
   literal = TERRAGRUNT_REMOTE_STATE,
   properties = listOf(
     PropertyType(HCL_BACKEND_IDENTIFIER, Types.String, required = true, optional = false),
+    PropertyType("config", Types.Object, required = true, optional = false),
     PropertyType("disable_init", Types.Boolean),
     PropertyType("disable_dependency_optimization", Types.Boolean),
-    BlockType("generate", properties = listOf(
-      PropertyType(HCL_PATH_IDENTIFIER, Types.String, required = true, optional = false),
-      createIfExistsProperty(isRequired = true, isOptional = false),
-    ).toMap()),
-    BlockType("config"),
-    BlockType("encryption")
+    PropertyType(
+      "generate", Types.Object,
+      // IJPL-211118 Support predefined properties for PropertyType
+      // properties = listOf(
+      //   PropertyType(HCL_PATH_IDENTIFIER, Types.String, required = true, optional = false),
+      //   createIfExistsProperty(isRequired = true, isOptional = false)
+      // ).toMap()
+    ),
+    PropertyType("encryption", Types.Object),
   ).toMap()
 )
 
@@ -68,6 +73,7 @@ internal val IncludeBlockType: BlockType = BlockType(
 
 internal val LocalsBlockType: BlockType = BlockType(HCL_LOCALS_IDENTIFIER)
 
+// https://terragrunt.gruntwork.io/docs/reference/hcl/blocks/#dependency
 internal val DependencyBlockType: BlockType = BlockType(
   TERRAGRUNT_DEPENDENCY, args = 1,
   properties = listOf(
@@ -75,7 +81,7 @@ internal val DependencyBlockType: BlockType = BlockType(
     // TODO: default value is "true"
     PropertyType("enabled", Types.Boolean),
     PropertyType("skip_outputs", Types.Boolean),
-    BlockType("mock_outputs"),
+    PropertyType("mock_outputs", Types.Object),
     PropertyType("mock_outputs_allowed_terraform_commands", ListType(Types.String)),
     PropertyType("mock_outputs_merge_strategy_with_state", Types.String, hint = SimpleValueHint("no_merge", "shallow", "deep_map_only"))
   ).toMap()

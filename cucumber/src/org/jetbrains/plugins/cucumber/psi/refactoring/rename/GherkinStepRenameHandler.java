@@ -48,7 +48,7 @@ public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
     RenameDialog.showRenameDialog(dataContext, dialog);
   }
 
-  public @Nullable GherkinStep getGherkinStep(@Nullable DataContext context) {
+  private static @Nullable GherkinStep getGherkinStep(@Nullable DataContext context) {
     PsiElement element = null;
     if (context == null) return null;
     final Editor editor = CommonDataKeys.EDITOR.getData(context);

@@ -38,6 +38,12 @@ public class CucumberJava5_5ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("je<caret>m ciastko", "Wtedy");
   }
 
+  // Test for IDEA-238181
+  public void testResolveAnnotatedParameterTypeWithName() {
+    init("stepResolve_cucumber_5", "ShoppingStepdefs.java");
+    checkReference("the {custom<caret>MoodName} mood is chosen", "customMoodName");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber5_5ProjectDescriptor();

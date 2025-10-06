@@ -1,7 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -38,7 +37,6 @@ import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.Constants.HCL_VALIDATION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_WORKSPACES_BLOCK_IDENTIFIER
-import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.model.local.LocalProviderNamesService
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -225,16 +223,13 @@ class TfTypeModel(
       AbstractResourceProvisioner
     ).toMap())
 
-    // Ephemeral resources are not supported yet in OpenTofu: https://github.com/opentofu/opentofu/issues/2834
-    val AbstractEphemeralResource: BlockType = object : BlockType(HCL_EPHEMERAL_IDENTIFIER, 2, properties = listOf<PropertyOrBlockType>(
+    val AbstractEphemeralResource: BlockType = BlockType(HCL_EPHEMERAL_IDENTIFIER, 2, properties = listOf<PropertyOrBlockType>(
       DependsOnProperty,
       CountProperty,
       ForEachProperty,
       ProviderProperty,
       ResourceLifecycle
-    ).toMap()) {
-      override fun canBeUsedIn(fileType: FileType): Boolean = fileType == TerraformFileType
-    }
+    ).toMap())
 
     @JvmField
     val AbstractDataSource: BlockType = BlockType(HCL_DATASOURCE_IDENTIFIER, 2, properties = listOf(

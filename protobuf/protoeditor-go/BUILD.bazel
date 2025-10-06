@@ -23,7 +23,7 @@ jvm_library(
     "@community//platform/indexing-api:indexing",
     "//contrib/protobuf/protoeditor-core",
     "//goland/intellij-go/impl",
-    "@lib//:guava",
+    "@community//libraries/guava",
     "//goland/intellij-go/go-frontback",
   ]
 )
@@ -46,7 +46,7 @@ jvm_library(
     "//contrib/protobuf/protoeditor-core",
     "//contrib/protobuf/protoeditor-core:protoeditor-core_test_lib",
     "//goland/intellij-go/impl",
-    "@lib//:guava",
+    "@community//libraries/guava",
     "@community//platform/ide-core-impl",
     "@community//platform/lang-impl",
     "@lib//:truth",

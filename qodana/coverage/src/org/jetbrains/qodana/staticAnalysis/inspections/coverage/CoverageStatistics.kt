@@ -1,7 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.coverage
 
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.rt.coverage.data.ClassData
@@ -9,20 +8,7 @@ import com.intellij.rt.coverage.data.LineCoverage
 import com.intellij.rt.coverage.data.LineData
 import com.intellij.rt.coverage.report.XMLProjectData
 import com.intellij.rt.coverage.report.XMLProjectData.FileInfo
-import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.CoverageStatisticsData
-
-@ApiStatus.ScheduledForRemoval
-@Deprecated("Only for API compatibility. QodanaGlobalInspectionContext.coverageStatisticsData should be used directly instead")
-@Suppress("unused") // used in Scala plugin
-class CoverageStatistics(private val statData: CoverageStatisticsData) {
-  companion object {
-    val stats = Key.create<CoverageStatistics>("qodana.coverage.stats")
-  }
-
-  fun processReportXmlData(fileInfo: FileInfo) {
-  }
-}
 
 fun CoverageStatisticsData.processReportClassData(data: ClassData) {
   for (line in data.lines) {

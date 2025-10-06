@@ -24,7 +24,6 @@ import org.intellij.terraform.terragrunt.isTerragruntPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntStack
 import org.intellij.terraform.terragrunt.model.StackRootBlocks
 import org.intellij.terraform.terragrunt.model.TerragruntRootBlocks
-import kotlin.sequences.forEach
 
 internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
@@ -38,7 +37,7 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
       else -> return
     }
 
-    rootBlock.asSequence().filter { it.canBeUsedIn(psiFile.fileType) }.map { createPropertyOrBlockType(it) }.forEach {
+    rootBlock.map { createPropertyOrBlockType(it) }.forEach {
       result.addElement(it)
     }
   }

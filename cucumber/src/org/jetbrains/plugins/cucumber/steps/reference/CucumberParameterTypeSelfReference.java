@@ -4,21 +4,28 @@ package org.jetbrains.plugins.cucumber.steps.reference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Reference to itself for name element of Cucumber Parameter Type declaration
- * <blockquote><pre>
- *     ParameterType(
- *         name: 'anything',
- *         regexp: /(.*?)/,
- *     )
- * </pre></blockquote>
- * Necessary to find usages of Cucumber Parameter Type
- */
+/// Reference to itself for the name element of Cucumber Parameter Type declaration
+///
+/// ```ruby
+/// ParameterType(
+///   name: 'anything',
+///   regexp: /(.*?)/,
+/// )
+/// ```
+///
+/// It's necessary for "Find Usages" to work for custom parameter types.
+///
+/// Currently only used in Cucumber Ruby.
+/// Probably could also be used in Cucumber Java (and others).
+///
+/// @see org.jetbrains.plugins.cucumber.ParameterTypeManager ParameterTypeManager
+/// @see org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterTypeReference CucumberJavaParameterTypeReference
+@NotNullByDefault
 public class CucumberParameterTypeSelfReference extends PsiReferenceBase<PsiElement> {
-  public CucumberParameterTypeSelfReference(@NotNull PsiElement element) {
+  public CucumberParameterTypeSelfReference(PsiElement element) {
     super(element, TextRange.create(1, element.getTextLength() - 1));
   }
 
