@@ -90,7 +90,7 @@ class QodanaToolResultDatabase private constructor(private val connection: Sqlit
   }
 
   fun insertDuplicate(file: String, line: Int, start: Int, end: Int, hash: String, json: String) {
-    connection.execute(INSERT_DUPLICATES_STATEMENT, arrayOf(file, line, start, end, hash, json))
+    connection.execute(INSERT_DUPLICATES_STATEMENT, arrayOf<Any>(file, line, start, end, hash, json))
   }
 
   fun insertMetricsData(rowData: MetricTableRowData) {

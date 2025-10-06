@@ -104,12 +104,12 @@ class Angular2ComponentDeclarationNavigationTest : Angular2CodeInsightFixtureTes
     @Parameterized.Parameters(name = "Component={0}, Injected={1}: {2}, {3}")
     @JvmStatic
     fun data(): Collection<Any> {
-      return listOf(arrayOf(true, false, "<my-cu<caret>st", "my-customer"),
-                    arrayOf(true, true, "<my-cu<caret>st", "my-customer"),
-                    arrayOf(true, false, "my-cu<caret>stomer-att", "my-customer-attr"),
-                    arrayOf(true, true, "my-cu<caret>stomer-att", "my-customer-attr"),
-                    arrayOf(false, false, "foo-<caret>dir", "foo-directive"),
-                    arrayOf(false, true, "foo-<caret>dir", "foo-directive"))
+      return listOf(arrayOf<Any>(true, false, "<my-cu<caret>st", "my-customer"),
+                    arrayOf<Any>(true, true, "<my-cu<caret>st", "my-customer"),
+                    arrayOf<Any>(true, false, "my-cu<caret>stomer-att", "my-customer-attr"),
+                    arrayOf<Any>(true, true, "my-cu<caret>stomer-att", "my-customer-attr"),
+                    arrayOf<Any>(false, false, "foo-<caret>dir", "foo-directive"),
+                    arrayOf<Any>(false, true, "foo-<caret>dir", "foo-directive"))
     }
   }
 }

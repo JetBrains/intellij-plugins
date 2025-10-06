@@ -207,7 +207,7 @@ class InspectionInfoQodanaReporterService(val project: Project) {
         .sortedByDescending { it.duration }
         .forEach { inspectionInfo ->
           bw.newLine()
-          bw.write(arrayOf(
+          bw.write(arrayOf<Any>(
             inspectionInfo.id,
             inspectionInfo.groupPath,
             inspectionInfo.displayName,
