@@ -89,7 +89,7 @@ public final class FlexProjectRootsUtil {
 
   public static @Nullable Library findOrderEntry(final Project project, final SharedLibraryEntry entry) {
     final LibraryTable libraryTable = LibraryTablesRegistrar.APPLICATION_LEVEL.equals(entry.getLibraryLevel())
-                                      ? LibraryTablesRegistrar.getInstance().getLibraryTable()
+                                      ? LibraryTablesRegistrar.getInstance().getGlobalLibraryTable(project)
                                       : LibraryTablesRegistrar.getInstance().getLibraryTable(project);
     return libraryTable.getLibraryByName((entry).getLibraryName());
   }
