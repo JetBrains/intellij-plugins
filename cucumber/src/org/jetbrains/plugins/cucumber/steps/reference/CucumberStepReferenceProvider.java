@@ -9,6 +9,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
 
 import static com.intellij.psi.tree.TokenSet.WHITE_SPACE;
@@ -27,7 +28,7 @@ public final class CucumberStepReferenceProvider extends PsiReferenceProvider {
 
   @Override
   public PsiReference[] getReferencesByElement(PsiElement element, ProcessingContext context) {
-    if (element instanceof GherkinStepImpl) {
+    if (element instanceof GherkinStep) {
       ASTNode textNode = element.getNode().findChildByType(TEXT_AND_PARAM_SET);
       if (textNode != null) {
         int start = textNode.getTextRange().getStartOffset();
