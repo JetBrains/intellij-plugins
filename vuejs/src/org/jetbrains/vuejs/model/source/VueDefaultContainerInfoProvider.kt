@@ -33,7 +33,7 @@ import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
 import org.jetbrains.vuejs.model.typed.VueTypedMixin
 import org.jetbrains.vuejs.types.VueSourcePropType
 import org.jetbrains.vuejs.types.optionalIf

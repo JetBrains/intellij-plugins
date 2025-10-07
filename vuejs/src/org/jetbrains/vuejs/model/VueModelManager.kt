@@ -42,8 +42,8 @@ import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.model.VueModelManager.Companion.findEnclosingContainer
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getSourceComponentDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.getSourceComponentDescriptor
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import org.jetbrains.vuejs.model.typed.VueTypedGlobal
 

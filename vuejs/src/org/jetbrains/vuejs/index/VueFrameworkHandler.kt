@@ -56,7 +56,7 @@ import org.jetbrains.vuejs.libraries.componentDecorator.isVueComponentDecoratorN
 import org.jetbrains.vuejs.model.getSlotTypeFromContext
 import org.jetbrains.vuejs.model.hasSrcReference
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictComponentDefiningCall
+import org.jetbrains.vuejs.model.source.VueComponents.isStrictComponentDefiningCall
 import org.jetbrains.vuejs.model.tryResolveSrcReference
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider

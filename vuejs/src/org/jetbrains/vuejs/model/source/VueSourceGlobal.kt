@@ -170,7 +170,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
 
     private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> =
       getForAllKeys(scope, VUE_OPTIONS_INDEX_KEY)
-        .filter(VueComponents.Companion::isNotInLibrary)
+        .filter(VueComponents::isNotInLibrary)
         .mapNotNull { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getContextOfType(it, JSObjectLiteralExpression::class.java) }
         .map { VueModelManager.getApp(it) }
         .filter { it.element != null }
@@ -178,7 +178,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
           resolve(CREATE_APP_FUN, scope, VUE_COMPOSITION_APP_INDEX_KEY)
             .asSequence()
             .plus(resolve(CREATE_VAPOR_APP_FUN, scope, VUE_COMPOSITION_APP_INDEX_KEY))
-            .filter(VueComponents.Companion::isNotInLibrary)
+            .filter(VueComponents::isNotInLibrary)
             .mapNotNull { (it.context as? JSCallExpression)?.let { call -> VueCompositionApp(call) } }
         )
         .toList()

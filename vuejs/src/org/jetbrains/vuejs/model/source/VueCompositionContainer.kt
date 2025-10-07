@@ -24,7 +24,7 @@ import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_JS_KEY
 import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_KEY
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
 
 abstract class VueCompositionContainer() :
   VueDelegatedContainer<VueContainer>() {

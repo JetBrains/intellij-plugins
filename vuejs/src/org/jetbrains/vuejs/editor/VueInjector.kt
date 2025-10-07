@@ -41,7 +41,7 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.DELIMITERS_PROP
 import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
+import org.jetbrains.vuejs.model.source.VueComponents.onlyLocal
 import org.jetbrains.vuejs.model.source.VueSourceContainer
 
 internal class VueInjector : MultiHostInjector {

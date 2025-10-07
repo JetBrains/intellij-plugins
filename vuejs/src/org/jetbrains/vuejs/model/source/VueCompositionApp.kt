@@ -11,7 +11,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
 
 data class VueCompositionApp(
   override val source: JSCallExpression,
