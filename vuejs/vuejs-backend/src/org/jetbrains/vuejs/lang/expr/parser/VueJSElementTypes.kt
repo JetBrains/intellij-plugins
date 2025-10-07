@@ -16,11 +16,11 @@ import org.jetbrains.vuejs.lang.expr.psi.impl.*
 object VueJSElementTypes {
   const val EXTERNAL_ID_PREFIX: String = "VUE-JS:"
 
-  val V_FOR_VARIABLE: JSVariableElementType = VueJSVForVariableElementType()
+  val V_FOR_VARIABLE: JSVariableElementType = VueJSVForVariableElementType() // ready
 
-  val SLOT_PROPS_PARAMETER: JSParameterElementType = VueJSSlotPropsParameterElementType()
+  val SLOT_PROPS_PARAMETER: JSParameterElementType = VueJSSlotPropsParameterElementType() // ready
 
-  val SCRIPT_SETUP_TYPE_PARAMETER_LIST: VueJSScriptSetupTypeParameterListElementType = VueJSScriptSetupTypeParameterListElementType()
+  val SCRIPT_SETUP_TYPE_PARAMETER_LIST: VueJSScriptSetupTypeParameterListElementType = VueJSScriptSetupTypeParameterListElementType() // ! ready
 
   val EMBEDDED_EXPR_CONTENT_JS: VueJSEmbeddedExpressionContentElementType = VueJSEmbeddedExpressionContentElementType(
     "EMBEDDED_EXPR_CONTENT_JS", VueJSLanguage)

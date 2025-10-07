@@ -21,7 +21,7 @@ import org.jetbrains.vuejs.options.VueSettings
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
-private const val vuePluginPath = "vuejs"
+private const val vuePluginPath = "vuejs/vuejs-backend"
 
 private val vueLspServerPackageVersion = PackageVersion.bundled<VueLspServerPackageDescriptor>(
   version = "2.2.10",

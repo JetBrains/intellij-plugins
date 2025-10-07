@@ -79,6 +79,7 @@ jvm_library(
     "//plugins/sass/backend",
     "//plugins/sass",
     "//contrib/vuejs/vuejs-common:common",
+    "//contrib/vuejs/vuejs-backend:backend",
   ]
 )
 ### auto-generated section `build intellij.vuejs.tests` end

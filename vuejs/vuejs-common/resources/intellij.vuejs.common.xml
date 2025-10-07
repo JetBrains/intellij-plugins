@@ -1,2 +1,5 @@
 <idea-plugin>
+  <dependencies>
+    <plugin id="JavaScript"/>
+  </dependencies>
 </idea-plugin>

@@ -1,5 +1,9 @@
+- name: lib/modules/intellij.vuejs.backend.jar
+  contentModules:
+  - name: intellij.vuejs.backend
+- name: lib/modules/intellij.vuejs.common.jar
+  contentModules:
+  - name: intellij.vuejs.common
 - name: lib/vuejs.jar
   modules:
   - name: intellij.vuejs
-  contentModules:
-  - name: intellij.vuejs.common
