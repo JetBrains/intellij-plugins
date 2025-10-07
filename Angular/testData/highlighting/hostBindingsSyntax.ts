@@ -7,7 +7,7 @@ import {
 } <info descr="null">from</info> '@angular/core';
 import {<symbolName descr="classes//exported class">NgClass</symbolName>} <info descr="null">from</info> "@angular/common";
 
-<info descr="decorator">@</info><info descr="decorator">Directive</info>({
+<symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Directive</symbolName>({
    <symbolName descr="instance field">selector</symbolName>: '[appClicks]',
    <symbolName descr="instance field">standalone</symbolName>: true,
    <symbolName descr="instance field">host</symbolName>: {
@@ -22,7 +22,7 @@ export <info descr="null">abstract</info> class <symbolName descr="classes//expo
   }
 }
 
-<info descr="decorator">@</info><info descr="decorator">Component</info>({
+<symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Component</symbolName>({
    <symbolName descr="instance field">selector</symbolName>: '<symbolName descr="HTML_TAG_NAME">oy-chip</symbolName>',
    <symbolName descr="instance field">template</symbolName>: `<inject descr="null">
         <div [class.<symbolName descr="CSS.CLASS_NAME">oy-chip--small</symbolName>]="<symbolName descr="instance field">small</symbolName>"></div>
@@ -50,14 +50,14 @@ export <info descr="null">abstract</info> class <symbolName descr="classes//expo
    ]
  })
 export class <symbolName descr="classes//exported class">ChipComponent</symbolName> {
-  <info descr="decorator">@</info><info descr="decorator">HostBinding</info>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">class.<symbolName descr="CSS.CLASS_NAME">oy-chip--small</symbolName></symbolName>")
-  <info descr="decorator">@</info><info descr="decorator">HostBinding</info>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">attr.<symbolName descr="HTML_ATTRIBUTE_NAME">title</symbolName></symbolName>")
-  <info descr="decorator">@</info><info descr="decorator">HostBinding</info>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">style.<symbolName descr="CSS.PROPERTY_NAME">align-content</symbolName></symbolName>")
-  <info descr="decorator">@</info><info descr="decorator">HostBinding</info>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">bar</symbolName>")
-  <info descr="decorator">@</info><info descr="decorator">Input</info>('<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">small</symbolName>')
+  <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">HostBinding</symbolName>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">class.<symbolName descr="CSS.CLASS_NAME">oy-chip--small</symbolName></symbolName>")
+  <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">HostBinding</symbolName>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">attr.<symbolName descr="HTML_ATTRIBUTE_NAME">title</symbolName></symbolName>")
+  <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">HostBinding</symbolName>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">style.<symbolName descr="CSS.PROPERTY_NAME">align-content</symbolName></symbolName>")
+  <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">HostBinding</symbolName>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">bar</symbolName>")
+  <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Input</symbolName>('<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">small</symbolName>')
   public <symbolName descr="instance field">small</symbolName>: <info descr="null">boolean</info> = false;
 
-  <info descr="decorator">@</info><info descr="decorator">HostListener</info>('<symbolName descr="NG.EVENT_BINDING_ATTR_NAME">keydown</symbolName>', ['$event'])
+  <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">HostListener</symbolName>('<symbolName descr="NG.EVENT_BINDING_ATTR_NAME">keydown</symbolName>', ['$event'])
   <symbolName descr="instance method">onKeyDown</symbolName>(<warning descr="Unused parameter $event"><weak_warning descr="TS6133: '$event' is declared but its value is never read."><symbolName descr="identifiers//parameter">$event</symbolName></weak_warning></warning>: <info descr="null">string</info>) {
   }
 }

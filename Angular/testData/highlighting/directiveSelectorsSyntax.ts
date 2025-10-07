@@ -3,7 +3,7 @@ import {
   <symbolName descr="identifiers//exported function">Directive</symbolName>,
 } <info>from</info> '@angular/core';
 
-<info descr="decorator">@</info><info descr="decorator">Directive</info>({
+<symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Directive</symbolName>({
   <symbolName descr="instance field">selector</symbolName>: '<symbolName textAttributesKey="HTML_TAG_NAME">div</symbolName>.oy-chip--small[<symbolName textAttributesKey="HTML_ATTRIBUTE_NAME">appClicks</symbolName>=value]',
   <symbolName descr="instance field">standalone</symbolName>: true,
 })
@@ -14,7 +14,7 @@ export class <symbolName descr="classes//exported class">AppClicksDirective</sym
   }
 }
 
-<info descr="decorator">@</info><info descr="decorator">Component</info>({
+<symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Component</symbolName>({
   <symbolName descr="instance field">selector</symbolName>: '<symbolName textAttributesKey="HTML_TAG_NAME">div</symbolName>.oy-chip--small[<symbolName textAttributesKey="HTML_ATTRIBUTE_NAME">appClicks</symbolName>=value]',
   <symbolName descr="instance field">template</symbolName>: `<inject textAttributesKey="TypeScript:INJECTED_LANGUAGE_FRAGMENT">
         <ng-content select="<symbolName textAttributesKey="HTML_TAG_NAME">div</symbolName>.oy-chip--small[<symbolName textAttributesKey="HTML_ATTRIBUTE_NAME">appClicks</symbolName>=value]"></ng-content>

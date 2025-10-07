@@ -3,10 +3,10 @@ public class <symbolName descr="classes//class name">SemanticHighlighting</symbo
 
     private function <symbolName descr="instance method">foo</symbolName>():void {
         if (<symbolName descr="classes//class name">Math</symbolName>.<symbolName descr="static method">random</symbolName>() > 0.5) {
-            <info descr="null">goto</info> <info descr="label">myLabel</info>;
+            <info descr="null">goto</info> <symbolName descr="label">myLabel</symbolName>;
         }
         else {
-            <info descr="label">myLabel</info>:
+            <symbolName descr="label">myLabel</symbolName>:
             <symbolName descr="identifiers//global function">eval</symbolName>("")
         }
     }

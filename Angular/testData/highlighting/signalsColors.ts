@@ -14,7 +14,7 @@ export interface <symbolName descr="interface">Movie</symbolName> {
   <symbolName descr="TypeScript property signature">upVote</symbolName>: <info descr="null">number</info>;
 }
 
-<info descr="decorator">@</info><info descr="decorator">Component</info>({
+<symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Component</symbolName>({
    <symbolName descr="instance field">selector</symbolName>: '<symbolName textAttributesKey="HTML_TAG_NAME">app-root</symbolName>',
    <symbolName descr="instance field">template</symbolName>: `<inject descr="null">
     {{

@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import {<symbolName descr="identifiers//exported function">Component</symbolName>} <info descr="null">from</info> '@angular/core';
 
-<info descr="decorator">@</info><info descr="decorator">Component</info>({
+<symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Component</symbolName>({
    <symbolName descr="instance field">selector</symbolName>: '<symbolName descr="HTML_TAG_NAME">robot-profile</symbolName>',
    <symbolName descr="instance field">standalone</symbolName>: true,
    <symbolName descr="instance field">template</symbolName>: `<inject descr="null">
