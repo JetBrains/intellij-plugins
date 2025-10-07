@@ -68,7 +68,7 @@ jvm_library(
     "@community//platform/util/nanoxml",
     "@lib//:stream_ex",
     "@community//libraries/fastutil",
-    "@lib//:commons-compress",
+    "@community//libraries/commons/compress",
     "@community//platform/core-ui",
     "@community//plugins/properties/properties-psi-impl:backend-psi",
     "@community//platform/platform-util-io:ide-util-io",

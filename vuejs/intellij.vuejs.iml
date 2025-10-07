@@ -53,7 +53,7 @@
     <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="module" module-name="intellij.libraries.jackson" />
     <orderEntry type="module" module-name="intellij.libraries.jackson.databind" />
-    <orderEntry type="library" name="commons-compress" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.commons.compress" />
     <orderEntry type="library" name="StreamEx" level="project" />
     <orderEntry type="module" module-name="intellij.libraries.gson" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
@@ -66,7 +66,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
     <orderEntry type="library" name="eclipse.lsp4j" level="project" />
     <orderEntry type="module" module-name="intellij.platform.backend.workspace" />
-    <orderEntry type="library" name="commons-text" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.commons.text" />
     <orderEntry type="module" module-name="intellij.markdown" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />

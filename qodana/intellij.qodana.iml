@@ -49,10 +49,10 @@
     <orderEntry type="library" name="snakeyaml" level="project" />
     <orderEntry type="library" name="snakeyaml-engine" level="project" />
     <orderEntry type="module" module-name="intellij.libraries.guava" />
-    <orderEntry type="library" name="commons-cli" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.commons.cli" />
     <orderEntry type="module" module-name="intellij.platform.diff" />
     <orderEntry type="library" name="flexmark" level="project" />
-    <orderEntry type="library" name="jsoup" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.jsoup" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.yaml" />
     <orderEntry type="module" module-name="intellij.platform.externalProcessAuthHelper" />
@@ -108,7 +108,7 @@
     <orderEntry type="module" module-name="intellij.lombok" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.fastutil" />
     <orderEntry type="module" module-name="intellij.platform.ide.internal" />
-    <orderEntry type="library" name="jackson-dataformat-yaml" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.jackson.dataformat.yaml" />
     <orderEntry type="module" module-name="intellij.libraries.kotlin.reflect" />
     <orderEntry type="module" module-name="intellij.platform.util.coroutines" />
     <orderEntry type="module" module-name="intellij.platform.backend.observation" />

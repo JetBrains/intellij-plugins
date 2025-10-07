@@ -76,7 +76,7 @@ jvm_library(
     "@lib//:json-schema-validator",
     "@community//libraries/jackson/jackson",
     "@community//libraries/jackson/databind",
-    "@lib//:jackson-dataformat-yaml",
+    "@community//libraries/jackson/dataformat-yaml:libraries-jackson-dataformat-yaml",
     "@community//platform/syntax/syntax-api:syntax",
     "@community//platform/syntax/syntax-api:syntax_test_lib",
   ]

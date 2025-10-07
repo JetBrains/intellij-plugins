@@ -37,6 +37,7 @@
     <plugin id="intellij.webpack"/>
     <plugin id="org.intellij.plugins.postcss"/>
     <module name="intellij.spellchecker"/>
+    <module name="intellij.libraries.commons.text"/>
   </dependencies>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="vue-markdown.xml">org.intellij.plugins.markdown</depends>
