@@ -11,6 +11,7 @@ import java.util.*
 class VueSourceDirective(
   name: String,
   override val source: PsiElement,
+  private val typeSource: PsiElement? = null,
 ) : VueDirective {
 
   override val defaultName: String = name
@@ -19,9 +20,11 @@ class VueSourceDirective(
   override fun createPointer(): Pointer<out VueSourceDirective> {
     val name = defaultName
     val source = this.source.createSmartPointer()
+    val typeSource = this.typeSource?.createSmartPointer()
     return Pointer {
       val newSource = source.dereference() ?: return@Pointer null
-      VueSourceDirective(name, newSource)
+      val newTypeSource = typeSource?.dereference()
+      VueSourceDirective(name, newSource, newTypeSource)
     }
   }
 
