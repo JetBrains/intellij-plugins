@@ -2,16 +2,34 @@
 package org.jetbrains.vuejs.model.typed
 
 import com.intellij.lang.javascript.psi.JSFunctionType
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.source.DIRECTIVE_MODIFIERS_PROP
 import org.jetbrains.vuejs.model.source.DIRECTIVE_MOUNTED_FUN
+import org.jetbrains.vuejs.model.source.VueDeclarations.findDeclaration
 
 internal object VueTypedDirectives {
   fun getDirectiveModifiers(
+    source: PsiElement,
+  ): List<VueTypedDirectiveModifier> {
+    val declaration = findDeclaration(source) as? JSTypeOwner
+                      ?: return emptyList()
+
+    return getDirectiveModifiers(declaration.jsType)
+  }
+
+  fun getDirectiveModifiers(
     source: TypeScriptPropertySignature,
   ): List<VueTypedDirectiveModifier> {
-    val jsType = source.jsType
-                 ?: return emptyList()
+    return getDirectiveModifiers(source.jsType)
+  }
+
+  private fun getDirectiveModifiers(
+    jsType: JSType?,
+  ): List<VueTypedDirectiveModifier> {
+    jsType ?: return emptyList()
 
     val mounted = jsType.asRecordType()
                     .findPropertySignature(DIRECTIVE_MOUNTED_FUN)
