@@ -29,6 +29,7 @@ COPY files/user_swarm.txt .
 COPY files/user_jack.txt .
 COPY files/user_john.txt .
 COPY files/group_unlimited.txt .
+COPY files/ConsoleApp1.zip .
 
 
 RUN ./build.sh
