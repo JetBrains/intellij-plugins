@@ -10,5 +10,6 @@
     <orderEntry type="module" module-name="intellij.vuejs.backend" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.vuejs.debugger" />
+    <orderEntry type="module" module-name="intellij.vuejs.prettier" />
   </component>
 </module>

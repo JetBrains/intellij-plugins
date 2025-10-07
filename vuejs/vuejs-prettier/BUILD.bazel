@@ -1,0 +1,29 @@
+### auto-generated section `build intellij.vuejs.prettier` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "prettier_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "prettier",
+  module_name = "intellij.vuejs.prettier",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":prettier_resources"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//contrib/prettierJS",
+    "@community//platform/core-api:core",
+    "@community//platform/code-style-api:codeStyle",
+    "//contrib/vuejs/vuejs-backend:backend",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "@community//platform/util",
+    "//contrib/vuejs/vuejs-common:common",
+    "@community//xml/xml-parser:parser",
+    "@lib//:jetbrains-annotations",
+  ]
+)
+### auto-generated section `build intellij.vuejs.prettier` end

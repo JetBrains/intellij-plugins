@@ -58,7 +58,6 @@ jvm_library(
     "//plugins/css/analysis",
     "@community//platform/built-in-server:builtInServer-impl",
     "//plugins/JavaScriptLanguage/javascript-common",
-    "//contrib/prettierJS",
     "//plugins/webpack",
     "@community//libraries/jackson/jackson",
     "@community//libraries/jackson/databind",

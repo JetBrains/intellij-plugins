@@ -46,7 +46,6 @@
     <orderEntry type="module" module-name="intellij.css.analysis" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" />
     <orderEntry type="module" module-name="intellij.javascript.common" />
-    <orderEntry type="module" module-name="intellij.prettierJS" />
     <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="module" module-name="intellij.libraries.jackson" />
     <orderEntry type="module" module-name="intellij.libraries.jackson.databind" />

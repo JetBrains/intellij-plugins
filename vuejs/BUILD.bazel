@@ -25,6 +25,7 @@ jvm_library(
     "//contrib/vuejs/vuejs-common:common",
     "//contrib/vuejs/vuejs-backend:backend",
     "//contrib/vuejs/vuejs-debugger:debugger",
+    "//contrib/vuejs/vuejs-prettier:prettier",
   ]
 )
 ### auto-generated section `build intellij.vuejs` end

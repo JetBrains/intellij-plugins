@@ -8,7 +8,6 @@
     <plugin id="com.intellij.css"/>
     <plugin id="intellij.webpack"/>
     <plugin id="org.intellij.plugins.postcss"/>
-    <plugin id="intellij.prettierJS"/>
     <module name="intellij.spellchecker"/>
   </dependencies>
 
