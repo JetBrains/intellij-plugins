@@ -1,12 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.actions
 
-import com.intellij.lang.ecmascript6.psi.ES6ExportSpecifier
-import com.intellij.lang.javascript.dialects.JSHandlersFactory
-import com.intellij.lang.javascript.modules.imports.JSImportAction
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate
 import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor
-import com.intellij.lang.javascript.modules.imports.providers.JSImportCandidatesProvider.getCandidatesFromProviders
 import com.intellij.lang.javascript.psi.util.runWithTimeout
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.NlsContexts
@@ -22,7 +18,6 @@ import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.entities.Angular2Entity
 import org.angular2.entities.Angular2Module
 import org.angular2.entities.metadata.psi.Angular2MetadataModule
-import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
 import org.jetbrains.annotations.ApiStatus.Internal
@@ -94,16 +89,13 @@ class NgModuleImportAction internal constructor(
         }
       }
 
-      val candidatesPerName = mutableMapOf<String, List<JSImportCandidate>>()
-      val componentClass = Angular2SourceUtil.findComponentClass(context)
-
       return averageDistances.keys
         .asSequence()
         .sortedBy { averageDistances[it] }
         .mapNotNull {
           val entitySource = it.entitySource ?: return@mapNotNull null
           val name = detectName(entitySource) ?: return@mapNotNull null
-          Angular2ModuleImportCandidate(name, entitySource.remapIfNeeded(name, componentClass, candidatesPerName), context)
+          Angular2ModuleImportCandidate(name, entitySource, context)
         }
         .toList()
     }
@@ -118,15 +110,8 @@ class NgModuleImportAction internal constructor(
         entityToImport.entitySourceName
     }
 
-    private fun PsiElement.remapIfNeeded(name: String, place: PsiElement?, candidatesPerName: MutableMap<String, List<JSImportCandidate>>): PsiElement {
-      if (place == null) return this
-      val candidates = candidatesPerName.computeIfAbsent(name) {
-        JSImportAction(null, place, name).filteredCandidates.map { it.candidate }
-      }
-      return candidates.filter { (it.element as? ES6ExportSpecifier)?.resolve() == this || it.element == this }
-        .minByOrNull { it.priority }?.element ?: this
-    }
   }
+
 
   private class DistanceCalculator {
 
