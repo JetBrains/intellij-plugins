@@ -106,12 +106,14 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       if (myProject.isDisposed()) {
-        isInitializing = false;
+        synchronized (myLock) {
+          isInitializing = false;
+        }
         return;
       }
 
       initialize();
-      synchronized (this) {
+      synchronized (myLock) {
         isInitializing = false;
       }
     });
