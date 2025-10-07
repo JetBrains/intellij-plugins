@@ -4,6 +4,9 @@
 - name: lib/modules/intellij.vuejs.common.jar
   contentModules:
   - name: intellij.vuejs.common
+- name: lib/modules/intellij.vuejs.debugger.jar
+  contentModules:
+  - name: intellij.vuejs.debugger
 - name: lib/vuejs.jar
   modules:
   - name: intellij.vuejs

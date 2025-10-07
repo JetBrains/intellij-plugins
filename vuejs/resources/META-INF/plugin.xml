@@ -28,11 +28,11 @@
   <content namespace="jetbrains">
     <module name="intellij.vuejs/prettier"/>
     <module name="intellij.vuejs/copyright"/>
+    <module name="intellij.vuejs.debugger"/>
 
     <module name="intellij.vuejs.common" loading="required"/>
     <module name="intellij.vuejs.backend"/>
   </content>
-  <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="vue-markdown.xml">org.intellij.plugins.markdown</depends>
 
   <extensions defaultExtensionNs="com.intellij">

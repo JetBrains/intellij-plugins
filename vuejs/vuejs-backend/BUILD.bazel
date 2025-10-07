@@ -51,8 +51,6 @@ jvm_library(
     "@community//platform/analysis-impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "//plugins/JavaScriptLanguage:javascript-backend",
-    "//plugins/JavaScriptDebugger/backend",
-    "//plugins/JavaScriptDebugger/debugger-ui:javascript-debugger-ui",
     "//plugins/css/psi",
     "@community//platform/xdebugger-api:debugger",
     "@community//xml/impl",
