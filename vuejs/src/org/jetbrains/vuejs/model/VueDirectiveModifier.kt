@@ -5,7 +5,5 @@ import com.intellij.model.Pointer
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 
 interface VueDirectiveModifier : VueDocumentedItem, VueNamedSymbol {
-  val pattern: Regex? get() = null
-
   fun createPointer(): Pointer<out VueDirectiveModifier>
 }
