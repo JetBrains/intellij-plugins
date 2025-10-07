@@ -810,7 +810,10 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -819,7 +822,10 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -828,7 +834,10 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -837,7 +846,10 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -846,7 +858,10 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -855,10 +870,13 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
-  
+
   fun testCreateAppIndex() =
     doLookupTest(VueTestModule.VUE_3_2_2,
                  dir = true,
