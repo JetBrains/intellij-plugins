@@ -1,8 +1,6 @@
 package org.jetbrains.idea.perforce.client
 
-import com.intellij.openapi.application.PathManager
 import com.intellij.vcs.test.VcsPlatformTest
-import org.jetbrains.idea.perforce.PerforceTestCase.RESOURCES_DIR
 import org.jetbrains.idea.perforce.perforce.connections.HelixClientConnectionParametersProvider
 import org.jetbrains.idea.perforce.perforce.connections.HelixClientConnectionParametersProvider.ConfigFiles
 import org.mockito.Mockito
@@ -47,7 +45,9 @@ class ParseHelixClientConnectionTest : VcsPlatformTest() {
     assertEquals("ssl:server-host-2:1666", secondConnectionParameters.server)
   }
 
-  private fun getResource(resource: String): File {
-    return File(PathManager.getHomePath(), RESOURCES_DIR + resource)
+  private fun getResource(resourceName: String): File {
+    val resource = javaClass.getResource(resourceName.takeIf { it.startsWith("/") } ?: "/$resourceName")?.file
+    assertNotNull("Resource '$resourceName' not found", resource)
+    return File(resource!!)
   }
 }

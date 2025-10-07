@@ -3,7 +3,6 @@ package org.jetbrains.idea.perforce;
 import com.intellij.execution.process.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
@@ -53,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,8 +63,6 @@ import static com.intellij.testFramework.UsefulTestCase.*;
 
 public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   private static final Logger LOG = Logger.getInstance(PerforceTestCase.class);
-
-  public static final String RESOURCES_DIR = "/contrib/PerforceIntegration/testResources/";
 
   protected static final String TEST_P4CONFIG = "testP4config";
   protected static final String DEFAULT_P4CONFIG = ".p4config";
@@ -91,7 +89,9 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
 
     String tempDir = myTempDirFixture.findOrCreateDir(FileUtil.sanitizeFileName(getTestName())).getPath();
 
-    myClientBinaryPath = new File(PathManager.getHomePath(), getPerforceExecutableDir());
+    URL resource = getClass().getResource(getPerforceExecutableDir());
+    assertNotNull(myClientBinaryPath + " doesn't exist!", resource);
+    myClientBinaryPath = new File(resource.getFile());
     assertTrue(myClientBinaryPath + " doesn't exist!", myClientBinaryPath.exists());
     myClientRoot = createSubDirectory(tempDir, "clientRoot");
     setupP4Ignore();
@@ -114,7 +114,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected String getPerforceExecutableDir() {
-    return RESOURCES_DIR + "testData/p4d/" + getPerforceVersion();
+    return "/testData/p4d/" + getPerforceVersion();
   }
 
   protected String getPerforceVersion() {
