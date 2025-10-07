@@ -813,6 +813,8 @@ class VueCompletionTest : VueTestCase("completion") {
       locations = listOf(
         "<MyButtonFromPlugin v-<caret>my-",
         "<MyButtonFromPlugin v-my-<caret>",
+        "<MyLabelFromPlugin v-my-intersect.<caret>pass",
+        "<MyLabelFromPlugin v-my-intersect.pa<caret>ss",
       ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
@@ -849,6 +851,8 @@ class VueCompletionTest : VueTestCase("completion") {
       locations = listOf(
         "<MyButtonFromPlugin v-<caret>my-",
         "<MyButtonFromPlugin v-my-<caret>",
+        "<MyLabelFromPlugin v-my-intersect.<caret>pass",
+        "<MyLabelFromPlugin v-my-intersect.pa<caret>ss",
       ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )

@@ -3,5 +3,5 @@
 
 <template>
   <MyButtonFromPlugin v-my-mutate="console.warn"></MyButtonFromPlugin>
-  <MyLabelFromPlugin v-my-intersect="console.warn"></MyLabelFromPlugin>
+  <MyLabelFromPlugin v-my-intersect.pass="console.warn"></MyLabelFromPlugin>
 </template>

@@ -1,0 +1,1 @@
+.passive (typeText=null; priority=50.0; typeGreyed)

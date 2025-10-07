@@ -1,0 +1,3 @@
+.once (typeText=null; priority=50.0; typeGreyed)
+.passive (typeText=null; priority=50.0; typeGreyed)
+.quiet (typeText=null; priority=50.0; typeGreyed)
