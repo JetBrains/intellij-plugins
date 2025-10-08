@@ -47,8 +47,9 @@ class VueSourceDirective(
       val newSource = source.dereference() ?: return@Pointer null
       val newTypeSource = if (typeSource != null) {
         typeSource.dereference() ?: return@Pointer null
-      } else null
-      
+      }
+      else null
+
       VueSourceDirective(
         name = name,
         source = newSource,
