@@ -179,6 +179,10 @@ public class JadeLexerTest extends LexerTestCase {
     defaultTest();
   }
 
+  public void testAttributeWithConditional() {
+    defaultTest();
+  }
+
   public void testInterpStress() {
     final Lexer lexer = new JadeSimpleInterpolationLexer(new JavaScriptInJadeLexer());
     final String textToLex = "var abc = 'abc#{trava}cba'";

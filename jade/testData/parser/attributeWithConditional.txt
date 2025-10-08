@@ -1,0 +1,89 @@
+XmlFile:attributeWithConditional.jade
+  PsiElement(DOCUMENT)
+    Jade: MIXIN_DECLARATION
+      PsiElement(MIXIN_KEYWORD)('mixin')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('progress')
+      JSInJadeEmbeddedContentImpl:EMBEDDED_MIXIN_PARAMS
+        JSInJadeMixinParameters
+          PsiElement(JS:LPAR)('(')
+          JSVarStatement
+            JSDestructuringParameter
+              JSDestructuringObject
+                PsiElement(JS:LBRACE)('{')
+                PsiWhiteSpace(' ')
+                JSDestructuringShorthandedProperty
+                  JSVariable
+                    PsiElement(JS:IDENTIFIER)('color')
+                PsiElement(JS:COMMA)(',')
+                PsiWhiteSpace(' ')
+                JSDestructuringShorthandedProperty
+                  JSVariable
+                    PsiElement(JS:IDENTIFIER)('width')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:RBRACE)('}')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(INDENT)('\n  ')
+      JadeTagImpl(TAG)
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          PsiElement(XML_NAME)
+            <empty list>
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JadeClassImpl(CLASS)
+              PsiElement(DOT)('.')
+              JadeClassNameImpl(TAG_CLASS)('progress')
+        PsiElement(LPAREN)('(')
+        PsiElement(JADE_PSEUDO_WHITESPACE)
+          <empty list>
+        JadeAttributeImpl(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('class')
+          PsiElement(EQ)('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+              JSConditionalExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('color')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:QUEST)('?')
+                PsiWhiteSpace(' ')
+                JSBinaryExpression
+                  JSLiteralExpression
+                    PsiElement(JS:STRING_LITERAL)(''progress--'')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('color')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:COLON)(':')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('''')
+        PsiElement(RPAREN)(')')
+        PsiElement(INDENT)('\n    ')
+        JadeTagImpl(TAG)
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            PsiElement(XML_NAME)
+              <empty list>
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JadeClassImpl(CLASS)
+                PsiElement(DOT)('.')
+                JadeClassNameImpl(TAG_CLASS)('progress__line')
+          PsiElement(LPAREN)('(')
+          PsiElement(JADE_PSEUDO_WHITESPACE)
+            <empty list>
+          JadeAttributeImpl(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('style')
+            PsiElement(EQ)('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                JSStringTemplateExpression
+                  PsiElement(JS:BACKQUOTE)('`')
+                  PsiElement(JS:STRING_TEMPLATE_PART)('width: ')
+                  PsiElement(JS:DOLLAR)('$')
+                  PsiElement(JS:LBRACE)('{')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('width')
+                  PsiElement(JS:RBRACE)('}')
+                  PsiElement(JS:BACKQUOTE)('`')
+          PsiElement(RPAREN)(')')
