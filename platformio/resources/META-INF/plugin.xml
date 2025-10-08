@@ -46,7 +46,7 @@
     <module name="intellij.clion.ide.core"/>
   </dependencies>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="intellij.clion.embedded.platformio.terminal"/>
   </content>
 

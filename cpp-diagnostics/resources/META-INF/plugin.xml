@@ -16,7 +16,7 @@
     <module name="intellij.clion.toolchains"/>
   </dependencies>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="intellij.clion.diagnostics.cmake"/>
     <module name="intellij.clion.diagnostics.docker"/>
   </content>
