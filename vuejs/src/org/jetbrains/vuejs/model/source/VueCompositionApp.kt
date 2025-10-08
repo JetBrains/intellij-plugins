@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
-import com.intellij.psi.PsiQualifiedReference
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -15,17 +14,9 @@ import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
 
 data class VueCompositionApp(
   override val source: JSCallExpression,
+  override val mode: VueMode,
 ) : VueCompositionContainer(),
     VueApp {
-
-  override val mode: VueMode
-    get() {
-      val vapor = source.methodExpression
-        ?.asSafely<PsiQualifiedReference>()
-        ?.referenceName == CREATE_VAPOR_APP_FUN
-      
-      return if (vapor) VueMode.VAPOR else VueMode.CLASSIC
-    }
 
   override val rootComponent: VueComponent?
     get() = delegate.asSafely<VueComponent>()
@@ -49,9 +40,11 @@ data class VueCompositionApp(
     library.defaultProximity
 
   override fun createPointer(): Pointer<out VueEntitiesContainer> {
-    val initializerPtr = source.createSmartPointer()
+    val sourcePointer = source.createSmartPointer()
+    val mode = this.mode
     return Pointer {
-      initializerPtr.dereference()?.let { VueCompositionApp(it) }
+      sourcePointer.dereference()
+        ?.let { VueCompositionApp(it, mode) }
     }
   }
 

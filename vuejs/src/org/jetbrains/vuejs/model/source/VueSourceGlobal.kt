@@ -174,14 +174,20 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
         .mapNotNull { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getContextOfType(it, JSObjectLiteralExpression::class.java) }
         .map { VueModelManager.getApp(it) }
         .filter { it.element != null }
-        .plus(
-          resolve(CREATE_APP_FUN, scope, VUE_COMPOSITION_APP_INDEX_KEY)
-            .asSequence()
-            .plus(resolve(CREATE_VAPOR_APP_FUN, scope, VUE_COMPOSITION_APP_INDEX_KEY))
-            .filter(VueComponents::isNotInLibrary)
-            .mapNotNull { (it.context as? JSCallExpression)?.let { call -> VueCompositionApp(call) } }
-        )
+        .plus(apps(scope, CREATE_APP_FUN, VueMode.CLASSIC))
+        .plus(apps(scope, CREATE_VAPOR_APP_FUN, VueMode.VAPOR))
         .toList()
+
+    private fun apps(
+      scope: GlobalSearchScope,
+      factoryName: String,
+      mode: VueMode,
+    ): Sequence<VueApp> =
+      resolve(factoryName, scope, VUE_COMPOSITION_APP_INDEX_KEY)
+        .asSequence()
+        .filter(VueComponents::isNotInLibrary)
+        .mapNotNull { it.context as? JSCallExpression }
+        .map { call -> VueCompositionApp(call, mode) }
 
     private fun buildFiltersMap(scope: GlobalSearchScope): Map<String, VueFilter> =
       getForAllKeys(scope, VUE_GLOBAL_FILTERS_INDEX_KEY)
