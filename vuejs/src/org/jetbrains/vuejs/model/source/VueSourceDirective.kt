@@ -9,9 +9,9 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueMode
-import org.jetbrains.vuejs.model.typed.VueTypedDirectiveModifier
 import org.jetbrains.vuejs.model.typed.VueTypedDirectives.getDirectiveModifiers
 import java.util.*
 
@@ -25,7 +25,7 @@ class VueSourceDirective(
   override val defaultName: String = name
   override val parents: List<VueEntitiesContainer> = emptyList()
 
-  override val modifiers: List<VueTypedDirectiveModifier>
+  override val modifiers: List<VueDirectiveModifier>
     get() {
       typeSource ?: return emptyList()
 
