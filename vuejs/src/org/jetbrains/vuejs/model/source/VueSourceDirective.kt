@@ -31,7 +31,7 @@ class VueSourceDirective(
 
       return CachedValuesManager.getCachedValue(typeSource) {
         CachedValueProvider.Result.create(
-          getDirectiveModifiers(typeSource),
+          getDirectiveModifiers(typeSource, mode),
           DumbService.getInstance(typeSource.project).modificationTracker,
           PsiModificationTracker.MODIFICATION_COUNT,
         )

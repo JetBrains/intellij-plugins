@@ -12,6 +12,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.typed.VueTypedDirectives.getDirectiveModifiers
 
 class VueTypedDirective(
@@ -29,7 +30,7 @@ class VueTypedDirective(
   override val modifiers: List<VueTypedDirectiveModifier>
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
-        getDirectiveModifiers(source),
+        getDirectiveModifiers(source, VueMode.CLASSIC),
         DumbService.getInstance(source.project).modificationTracker,
         PsiModificationTracker.MODIFICATION_COUNT,
       )
