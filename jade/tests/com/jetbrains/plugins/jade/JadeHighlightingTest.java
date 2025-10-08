@@ -2,7 +2,9 @@
 package com.jetbrains.plugins.jade;
 
 import com.intellij.codeInsight.TargetElementUtil;
+import com.intellij.lang.javascript.inspections.JSAnnotatorInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
+import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiDirectory;
@@ -19,7 +21,10 @@ public class JadeHighlightingTest extends BasePlatformTestCase {
     super.setUp();
     myFixture.enableInspections(
       new JSUnresolvedReferenceInspection(),
-      new JadeTabsAndSpacesInspection());
+      new JSValidateTypesInspection(),
+      new JadeTabsAndSpacesInspection(),
+      new JSAnnotatorInspection()
+    );
   }
 
   @Override

@@ -1,3 +1,6 @@
 mixin SomeComponent({title='title', subtitle='subtitle'})
   a(href=subtitle)
   a(href=<weak_warning descr="Unresolved variable or type sbtitle">sbtitle</weak_warning>)
+
+mixin breadcrumbs({ extraClass, title, items = [] })
+  .breadcrumbs(class=extraClass)
