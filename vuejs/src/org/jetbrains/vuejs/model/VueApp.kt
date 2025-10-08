@@ -3,8 +3,8 @@ package org.jetbrains.vuejs.model
 
 interface VueApp : VueContainer {
 
-  val vapor: Boolean
-    get() = false
+  val mode: VueMode
+    get() = VueMode.CLASSIC
 
   val rootComponent: VueComponent? get() = null
 

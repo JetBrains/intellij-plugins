@@ -35,10 +35,14 @@ class VueSourceComponent(
 ) : VueSourceContainer(sourceElement, descriptor),
     VueRegularComponent {
 
-  override val vapor: Boolean
-    get() = descriptor.source
-      .asSafely<XmlFile>()
-      ?.let { findScriptVaporTag(it) } != null
+  override val mode: VueMode
+    get() {
+      val vapor = descriptor.source
+        .asSafely<XmlFile>()
+        ?.let { findScriptVaporTag(it) } != null
+
+      return if (vapor) VueMode.VAPOR else VueMode.CLASSIC
+    }
 
   override val nameElement: PsiElement?
     get() = descriptor.initializer

@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.model
 import com.intellij.model.Pointer
 
 interface VueComponent : VueNamedEntity, VueInstanceOwner {
-  val vapor: Boolean
-    get() = false
+  val mode: VueMode
+    get() = VueMode.CLASSIC
 
   fun createPointer(): Pointer<out VueComponent>
 }

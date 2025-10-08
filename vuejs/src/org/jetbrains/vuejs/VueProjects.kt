@@ -6,6 +6,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.model.VueGlobalImpl
+import org.jetbrains.vuejs.model.VueMode
 
 @ApiStatus.Internal
 object VueProjects {
@@ -32,6 +33,6 @@ object VueProjects {
   ): Boolean {
     val apps = VueGlobalImpl.get(directory).apps
     return apps.isNotEmpty() &&
-           apps.all { it.vapor }
+           apps.all { it.mode == VueMode.VAPOR }
   }
 }

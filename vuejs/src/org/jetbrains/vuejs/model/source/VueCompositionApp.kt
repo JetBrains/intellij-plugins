@@ -18,10 +18,14 @@ data class VueCompositionApp(
 ) : VueCompositionContainer(),
     VueApp {
 
-  override val vapor: Boolean
-    get() = source.methodExpression
-      ?.asSafely<PsiQualifiedReference>()
-      ?.referenceName == CREATE_VAPOR_APP_FUN
+  override val mode: VueMode
+    get() {
+      val vapor = source.methodExpression
+        ?.asSafely<PsiQualifiedReference>()
+        ?.referenceName == CREATE_VAPOR_APP_FUN
+      
+      return if (vapor) VueMode.VAPOR else VueMode.CLASSIC
+    }
 
   override val rootComponent: VueComponent?
     get() = delegate.asSafely<VueComponent>()

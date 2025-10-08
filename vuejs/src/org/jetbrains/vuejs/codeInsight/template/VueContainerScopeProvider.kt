@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
@@ -36,7 +37,7 @@ class VueContainerScopeProvider : VueTemplateScopesProvider() {
     override fun resolve(
       consumer: Consumer<in ResolveResult>,
     ) {
-      val excludedProperties = if (container is VueComponent && container.vapor) {
+      val excludedProperties = if (container is VueComponent && container.mode == VueMode.VAPOR) {
         VAPOR_EXCLUDED_PROPERTIES
       }
       else emptySet()
