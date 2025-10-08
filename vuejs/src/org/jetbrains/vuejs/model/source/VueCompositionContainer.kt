@@ -191,7 +191,7 @@ abstract class VueCompositionContainer(
       }.toMap()
 
       val directives = processCalls(DIRECTIVE_FUN, true) { name, el, nameLiteral ->
-        Pair(name, VueSourceDirective(name, nameLiteral!!, el))
+        Pair(name, VueSourceDirective(name, nameLiteral!!, el, mode))
       }.toMap()
 
       val mixins = processCalls(MIXIN_FUN, false) { _, el, _ ->

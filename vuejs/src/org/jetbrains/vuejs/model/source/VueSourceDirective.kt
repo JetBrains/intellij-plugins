@@ -10,6 +10,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.typed.VueTypedDirectiveModifier
 import org.jetbrains.vuejs.model.typed.VueTypedDirectives.getDirectiveModifiers
 import java.util.*
@@ -18,6 +19,7 @@ class VueSourceDirective(
   name: String,
   override val source: PsiElement,
   private val typeSource: PsiElement? = null,
+  private val mode: VueMode = VueMode.CLASSIC,
 ) : VueDirective {
 
   override val defaultName: String = name
@@ -40,10 +42,19 @@ class VueSourceDirective(
     val name = defaultName
     val source = this.source.createSmartPointer()
     val typeSource = this.typeSource?.createSmartPointer()
+    val mode = this.mode
     return Pointer {
       val newSource = source.dereference() ?: return@Pointer null
-      val newTypeSource = typeSource?.dereference()
-      VueSourceDirective(name, newSource, newTypeSource)
+      val newTypeSource = if (typeSource != null) {
+        typeSource.dereference() ?: return@Pointer null
+      } else null
+      
+      VueSourceDirective(
+        name = name,
+        source = newSource,
+        typeSource = newTypeSource,
+        mode = mode,
+      )
     }
   }
 
