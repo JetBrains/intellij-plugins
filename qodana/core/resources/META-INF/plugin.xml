@@ -17,7 +17,7 @@
     </ul>
   ]]></description>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="intellij.qodana.sarif" loading="embedded"/>
     <module name="intellij.qodana/yaml"/>
     <module name="intellij.qodana.coverage"/>
