@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMirrorElement;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.groovy.lang.lexer.GroovyTokenTypes;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement;
@@ -21,6 +22,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
 /**
  * @author Max Medvedev
  */
+@NotNullByDefault
 public final class GrCucumberUtil {
 
   public static final String[] HOOKS = new String[]{"Before", "After"};
@@ -31,7 +33,7 @@ public final class GrCucumberUtil {
            getStepDefinitionPatternText(call) != null;
   }
 
-  public static @Nullable GrReferenceExpression getCucumberStepRef(final GrMethodCall stepDefinition) {
+  public static @Nullable GrReferenceExpression getCucumberStepRef(GrMethodCall stepDefinition) {
     final GrExpression ref = stepDefinition.getInvokedExpression();
     if (!(ref instanceof GrReferenceExpression expression)) return null;
 
@@ -51,7 +53,7 @@ public final class GrCucumberUtil {
     return expression;
   }
 
-  public static @Nullable String getStepDefinitionPatternText(final GrMethodCall stepDefinition) {
+  public static @Nullable String getStepDefinitionPatternText(GrMethodCall stepDefinition) {
     return ReadAction.compute(() -> {
       GrLiteral pattern = getStepDefinitionPattern(stepDefinition);
       if (pattern == null) return null;
@@ -60,7 +62,7 @@ public final class GrCucumberUtil {
     });
   }
 
-  public static @Nullable GrLiteral getStepDefinitionPattern(final GrMethodCall stepDefinition) {
+  public static @Nullable GrLiteral getStepDefinitionPattern(GrMethodCall stepDefinition) {
     return ReadAction.compute(() -> {
       GrArgumentList argumentList = stepDefinition.getArgumentList();
 
