@@ -10,21 +10,25 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.VuePlugin
 
 @ConsistentCopyVisibility
 data class VueCompositionPlugin
 private constructor(
   override val source: JSFunction,
-) : VueCompositionContainer(),
+  private val mode: VueMode,
+) : VueCompositionContainer(mode),
     VuePlugin {
 
   override val delegate: VueContainer? = null
 
   override fun createPointer(): Pointer<out VueEntitiesContainer> {
-    val initializerPtr = source.createSmartPointer()
+    val sourcePointer = source.createSmartPointer()
+    val mode = this.mode
     return Pointer {
-      initializerPtr.dereference()?.let { VueCompositionPlugin(it) }
+      sourcePointer.dereference()
+        ?.let { VueCompositionPlugin(it, mode) }
     }
   }
 
@@ -36,11 +40,12 @@ private constructor(
   }
 
   companion object {
-    fun create(
+    private fun create(
       source: PsiElement,
+      mode: VueMode,
     ): VueCompositionPlugin? {
       if (source is JSFunction) {
-        return VueCompositionPlugin(source)
+        return VueCompositionPlugin(source, mode)
       }
 
       if (source is JSVariable) {
@@ -50,7 +55,7 @@ private constructor(
                         ?.let { it as? JSFunctionProperty }
                       ?: return null
 
-        return VueCompositionPlugin(install)
+        return VueCompositionPlugin(install, mode)
       }
 
       return null
@@ -58,8 +63,9 @@ private constructor(
 
     fun get(
       source: PsiElement,
+      mode: VueMode,
     ): VueCompositionPlugin? =
       VueDeclarations.findDeclaration(source)
-        ?.let(::create)
+        ?.let { create(it, mode) }
   }
 }

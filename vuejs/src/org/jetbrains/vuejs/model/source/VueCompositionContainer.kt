@@ -26,8 +26,9 @@ import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
 
-abstract class VueCompositionContainer() :
-  VueDelegatedContainer<VueContainer>() {
+abstract class VueCompositionContainer(
+  private val mode: VueMode,
+) : VueDelegatedContainer<VueContainer>() {
 
   abstract override val source: JSElement
 
@@ -83,7 +84,7 @@ abstract class VueCompositionContainer() :
   private fun getEntitiesAnalysis(): EntitiesAnalysis =
     CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
-        analyzeCall(source),
+        analyzeCall(source, mode),
         DumbService.getInstance(source.project).modificationTracker,
         PsiModificationTracker.MODIFICATION_COUNT
       )
@@ -148,7 +149,10 @@ abstract class VueCompositionContainer() :
       else args.getOrNull(nr)
     }
 
-    private fun analyzeCall(call: JSElement): EntitiesAnalysis {
+    private fun analyzeCall(
+      call: JSElement,
+      mode: VueMode,
+    ): EntitiesAnalysis {
       val resolveScope = PsiTreeUtil.findFirstContext(call, false) { JSUtils.isScopeOwner(it) || it is JSFile || it is JSEmbeddedContent }
       val searchScope = GlobalSearchScopeUtil.toGlobalSearchScope(LocalSearchScope(resolveScope ?: call.containingFile), call.project)
 
@@ -170,7 +174,7 @@ abstract class VueCompositionContainer() :
           }
 
       val plugins = processCalls(USE_FUN, false) { _, el, _ ->
-        VueCompositionPlugin.get(el)
+        VueCompositionPlugin.get(el, mode)
       }.toList()
 
       val components = processCalls(COMPONENT_FUN, true) { name, el, nameLiteral ->

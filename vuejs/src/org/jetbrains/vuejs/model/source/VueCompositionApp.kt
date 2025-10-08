@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
 data class VueCompositionApp(
   override val source: JSCallExpression,
   override val mode: VueMode,
-) : VueCompositionContainer(),
+) : VueCompositionContainer(mode),
     VueApp {
 
   override val rootComponent: VueComponent?
