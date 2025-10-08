@@ -233,6 +233,14 @@ import com.intellij.openapi.util.text.StringUtil;
     if (bracket.equals(")")) paired = "(";
     if (bracket.equals("]")) paired = "[";
     if (bracket.equals("}")) paired = "{";
+    // We need to treat conditional as brackets to ensure that
+    // we continue lexing the attribute value correctly
+    if (bracket.equals(":")) {
+      paired = "?";
+      if (parenthesisStack.isEmpty() || !parenthesisStack.peek().equals(paired)) {
+        return defaultType;
+      }
+    }
 
     if (parenthesisStack.isEmpty()) {
       if (bracket.equals(exitBracket)) {
@@ -297,12 +305,6 @@ import com.intellij.openapi.util.text.StringUtil;
     if (tail.endsWith("return")) return false;
     if (tail.endsWith("?")) return false;
     if (tail.endsWith(":")) return false;
-
-    if (yycharat(1) == ':') {
-        // can be a part of conditional operator or a beginning of the name of the next attribute
-        if (tail.contains("?")) return false;
-    }
-
     return true;
   }
 %}
@@ -528,9 +530,9 @@ Interpolation = ("#" | "!") "{" [^\n}]* "}"
 }
 
 <ATTRIBUTE_VALUE> {
-  "("|"{"|"[" { updateValueTail(); parenthesisStack.push(yytext().toString()); return JadeTokenTypes.JS_EXPR; }
+  "("|"{"|"["|"?" { updateValueTail(); parenthesisStack.push(yytext().toString()); return JadeTokenTypes.JS_EXPR; }
 
-  ")"|"}"|"]" {
+  ")"|"}"|"]"|":" {
     updateValueTail();
     IElementType result = processClosingBracket(")", JadeTokenTypes.RPAREN, JadeTokenTypes.JS_EXPR);
     if (result == JadeTokenTypes.RPAREN) {

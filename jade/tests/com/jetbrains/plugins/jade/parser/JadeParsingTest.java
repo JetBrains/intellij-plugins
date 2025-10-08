@@ -261,4 +261,9 @@ public class JadeParsingTest extends JadeBaseParsingTestCase {
   public void testTagsIndentation() {
     defaultTest();
   }
+
+  public void testAttributeWithConditional() {
+    defaultTest();
+  }
+
 }
