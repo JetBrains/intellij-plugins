@@ -726,6 +726,17 @@ fun XmlTag?.isScriptSetupTag(): Boolean {
 }
 
 @StubSafe
+@OptIn(ExperimentalContracts::class)
+fun XmlTag?.isScriptVaporTag(): Boolean {
+  contract {
+    returns(true) implies (this@isScriptVaporTag != null)
+  }
+  return this != null
+         && name == SCRIPT_TAG_NAME
+         && stubSafeGetAttribute(VAPOR_ATTRIBUTE_NAME) != null
+}
+
+@StubSafe
 fun findAttribute(tag: XmlTag, attributeName: String): XmlAttribute? =
   PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java).firstOrNull { it.name == attributeName }
 
