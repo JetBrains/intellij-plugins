@@ -154,7 +154,7 @@ internal val ErrorsBlockType: BlockType = BlockType(
   ).toMap()
 )
 
-internal val TerragruntRootBlocks: List<BlockType> = listOf(
+private val TerragruntRootBlocks: List<BlockType> = listOf(
   TfBlockType,
   RemoteStateBlockType,
   IncludeBlockType,
@@ -168,6 +168,8 @@ internal val TerragruntRootBlocks: List<BlockType> = listOf(
   ErrorsBlockType
 )
 internal val TerragruntRootBlocksMap: Map<String, BlockType> = TerragruntRootBlocks.associateBy { it.literal }
+
+internal val TerragruntBlocksAndAttributes: List<PropertyOrBlockType> = TerragruntRootBlocks + TerragruntAttributes
 
 internal val UnitBlockType: BlockType = BlockType(TERRAGRUNT_UNIT, args = 1, properties = createStacksProperties())
 internal val StackBlockType: BlockType = BlockType(TERRAGRUNT_STACK, args = 1, properties = createStacksProperties())

@@ -212,19 +212,24 @@ private data class HclPositionContext(
   val rightType: HclType? = null,
 )
 
-internal object HclPreferRequiredProperty : LookupElementWeigher("hcl.required.property") {
+internal object HclElementsPriorityWeigher : LookupElementWeigher("hcl.required.property") {
   override fun weigh(element: LookupElement): Comparable<Nothing> {
     val obj = element.`object`
-    if (obj is PropertyOrBlockType) {
-      if (obj.required) return 0
-      else return 1
+    if (obj !is PropertyOrBlockType) return 100
+
+    val requiredWeight = if (obj.required) 0 else 1
+    val typeWeight = when (obj) {
+      is BlockType -> 0
+      is PropertyType -> 1
+      else -> 2
     }
-    return 10
+
+    return requiredWeight * 10 + typeWeight
   }
 }
 
 internal fun addResultsWithCustomSorter(result: CompletionResultSet, toAdd: Collection<LookupElement>) {
   if (toAdd.isEmpty()) return
-  result.withRelevanceSorter(CompletionSorter.emptySorter().weigh(HclPreferRequiredProperty))
+  result.withRelevanceSorter(CompletionSorter.emptySorter().weigh(HclElementsPriorityWeigher))
     .addAllElements(toAdd)
 }

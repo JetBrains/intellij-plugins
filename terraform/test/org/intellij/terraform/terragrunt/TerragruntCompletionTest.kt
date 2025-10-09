@@ -8,7 +8,7 @@ import org.intellij.terraform.config.CompletionTestCase
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.terragrunt.model.StackRootBlocks
-import org.intellij.terraform.terragrunt.model.TerragruntRootBlocks
+import org.intellij.terraform.terragrunt.model.TerragruntBlocksAndAttributes
 
 internal class TerragruntCompletionTest : CompletionTestCase() {
   override fun getFileName(): String = "terragrunt.hcl"
@@ -167,7 +167,7 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
   }
 
   companion object {
-    val TerragruntBlockKeywords: List<String> = TerragruntRootBlocks.map { it.literal }
+    val TerragruntBlockKeywords: List<String> = TerragruntBlocksAndAttributes.map { it.name }
 
     val StackBlockKeywords: List<String> = StackRootBlocks.map { it.literal }
   }

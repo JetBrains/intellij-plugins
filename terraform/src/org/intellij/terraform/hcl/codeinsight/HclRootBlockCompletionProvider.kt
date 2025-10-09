@@ -23,7 +23,7 @@ import org.intellij.terraform.isTerraformCompatiblePsiFile
 import org.intellij.terraform.terragrunt.isTerragruntPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntStack
 import org.intellij.terraform.terragrunt.model.StackRootBlocks
-import org.intellij.terraform.terragrunt.model.TerragruntRootBlocks
+import org.intellij.terraform.terragrunt.model.TerragruntBlocksAndAttributes
 
 internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
@@ -31,15 +31,14 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
     position.parent ?: return
 
     val psiFile = position.containingFile.originalFile
-    val rootBlock = when {
+    val rootBlocks = when {
       isTerraformCompatiblePsiFile(psiFile) -> RootBlockSorted
-      isTerragruntPsiFile(psiFile) -> if (isTerragruntStack(psiFile)) StackRootBlocks else TerragruntRootBlocks
+      isTerragruntPsiFile(psiFile) -> if (isTerragruntStack(psiFile)) StackRootBlocks else TerragruntBlocksAndAttributes
       else -> return
     }
 
-    rootBlock.map { createPropertyOrBlockType(it) }.forEach {
-      result.addElement(it)
-    }
+    val rootLookups = rootBlocks.map { createPropertyOrBlockType(it) }
+    addResultsWithCustomSorter(result, rootLookups)
   }
 
   fun createRootBlockPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> {
@@ -52,8 +51,7 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
   fun createBlockHeaderPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> {
     return psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
       .inFile(filePattern)
-      .withParent(psiElement()
-                    .and(IdentifierOrStringLiteral)
+      .withParent(psiElement().and(IdentifierOrStringLiteral)
                     .andNot(psiElement().afterSiblingSkipping2(WhiteSpace, IdentifierOrStringLiteralOrSimple)))
       .withSuperParent(2, Block)
       .withSuperParent(3, File)
