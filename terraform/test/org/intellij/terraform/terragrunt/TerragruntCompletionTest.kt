@@ -133,6 +133,27 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     assertEmpty(completionVariants)
   }
 
+  fun testPropertyPredefinedValuesCompletion() {
+    doBasicCompletionTest("""
+      remote_state {
+        disable_init = <caret>
+      }
+    """.trimIndent(), "true", "false")
+
+    doBasicCompletionTest("""
+      include "some_include_block" {
+        path           = ""
+        merge_strategy = "<caret>"
+      }
+    """.trimIndent(), "no_merge", "shallow", "deep")
+
+    doBasicCompletionTest("""
+      generate "gen_block" {
+        if_exists = "over<caret>"
+      }
+    """.trimIndent(), "overwrite", "overwrite_terragrunt")
+  }
+
   private fun doAutoInsertCompletionTest(textBefore: String, textAfter: String, file: String = this.fileName) {
     myFixture.configureByText(file, textBefore)
     val variants = myFixture.completeBasic()

@@ -19,6 +19,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.codeinsight.QuoteInsertHandler
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getOriginalObject
@@ -68,9 +69,13 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
     if (value !== parent) return null
 
     val hclBlock = container.parentOfType<HCLBlock>() ?: return null
-    val property = TfModelHelper.getBlockProperties(hclBlock)[container.name] as? PropertyType
-    val defaults = property?.type?.suggestedValues ?: return null
-    return defaults.map { create(it) }
+    val property = TfModelHelper.getBlockProperties(hclBlock)[container.name] as? PropertyType ?: return null
+    val suggestedValues = property.type.suggestedValues.map { create(it) }
+
+    val hintOfProperty = property.hint as? SimpleValueHint
+    val hintValues = hintOfProperty?.hint?.map { create(it).withInsertHandler(QuoteInsertHandler) }.orEmpty()
+
+    return (suggestedValues + hintValues).takeIf { it.isNotEmpty() }
   }
 
   private fun resolvePositionContext(position: PsiElement): HclPositionContext {
