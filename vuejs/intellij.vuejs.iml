@@ -11,5 +11,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.vuejs.debugger" />
     <orderEntry type="module" module-name="intellij.vuejs.prettier" />
+    <orderEntry type="module" module-name="intellij.vuejs.copyright" />
   </component>
 </module>
