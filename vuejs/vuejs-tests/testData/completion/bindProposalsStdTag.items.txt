@@ -23,6 +23,7 @@ inputmode
 lang
 methods
 nonce
+popover
 prefix
 property
 referrerpolicy
