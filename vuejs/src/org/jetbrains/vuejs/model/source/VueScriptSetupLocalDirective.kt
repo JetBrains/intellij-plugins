@@ -10,20 +10,13 @@ import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import java.util.*
 
-class VueScriptSetupLocalDirective(name: String, override val rawSource: JSPsiNamedElementBase) : VueDirective {
+class VueScriptSetupLocalDirective(
+  name: String,
+  override val rawSource: JSPsiNamedElementBase,
+) : VueDirective {
 
   override val defaultName: String = name
   override val parents: List<VueEntitiesContainer> = emptyList()
-  override fun equals(other: Any?): Boolean =
-    other === this ||
-    (other is VueScriptSetupLocalDirective && other.defaultName == defaultName && other.source == source)
-
-  override fun hashCode(): Int =
-    Objects.hash(defaultName, source)
-
-  override fun toString(): String {
-    return "VueScriptSetupLocalDirective($defaultName)"
-  }
 
   override val source: PsiElement
     get() = rawSource.resolveIfImportSpecifier()
@@ -35,5 +28,16 @@ class VueScriptSetupLocalDirective(name: String, override val rawSource: JSPsiNa
       val newSource = source.dereference() ?: return@Pointer null
       VueScriptSetupLocalDirective(name, newSource)
     }
+  }
+
+  override fun equals(other: Any?): Boolean =
+    other === this ||
+    (other is VueScriptSetupLocalDirective && other.defaultName == defaultName && other.source == source)
+
+  override fun hashCode(): Int =
+    Objects.hash(defaultName, source)
+
+  override fun toString(): String {
+    return "VueScriptSetupLocalDirective($defaultName)"
   }
 }
