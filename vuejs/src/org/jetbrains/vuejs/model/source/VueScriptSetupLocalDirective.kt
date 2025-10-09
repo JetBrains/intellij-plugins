@@ -8,11 +8,13 @@ import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueMode
 import java.util.*
 
 class VueScriptSetupLocalDirective(
   name: String,
   override val rawSource: JSPsiNamedElementBase,
+  private val mode: VueMode,
 ) : VueDirective {
 
   override val defaultName: String = name
@@ -24,9 +26,10 @@ class VueScriptSetupLocalDirective(
   override fun createPointer(): Pointer<VueScriptSetupLocalDirective> {
     val name = defaultName
     val source = this.rawSource.createSmartPointer()
+    val mode = this.mode
     return Pointer {
       val newSource = source.dereference() ?: return@Pointer null
-      VueScriptSetupLocalDirective(name, newSource)
+      VueScriptSetupLocalDirective(name, newSource, mode)
     }
   }
 

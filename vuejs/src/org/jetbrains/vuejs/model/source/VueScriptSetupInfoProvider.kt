@@ -2,8 +2,8 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
-import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -27,10 +27,12 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlFile
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
+import org.jetbrains.vuejs.index.isScriptVaporTag
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueSourceModelPropType
 import org.jetbrains.vuejs.types.optionalIf
@@ -90,7 +92,16 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         CachedValueProvider.Result.create(getInjectionCalls(module), PsiModificationTracker.MODIFICATION_COUNT)
       }
 
+    private fun getVueMode(module: JSExecutionScope): VueMode {
+      val isVapor = module.context
+        .asSafely<XmlTag>()
+        .isScriptVaporTag()
+
+      return if (isVapor) VueMode.VAPOR else VueMode.CLASSIC
+    }
+
     private fun analyzeModule(module: JSExecutionScope): VueScriptSetupStructure {
+      val mode = getVueMode(module)
       val components = mutableMapOf<String, VueComponent>()
       val directives = mutableMapOf<String, VueDirective>()
 
@@ -99,7 +110,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         { element, _ ->
           val name = (element as? JSPsiNamedElementBase)?.let { if (it is ES6ImportSpecifier) it.declaredName else it.name }
           if (name != null && isScriptSetupLocalDirectiveName(name)) {
-            directives[name.substring(1)] = VueScriptSetupLocalDirective(name, element)
+            directives[name.substring(1)] = VueScriptSetupLocalDirective(name, element, mode)
           }
           else if (name != null && element !is JSClass) {
             (VueModelManager.getComponent(VueComponents.getComponentDescriptor(element)) ?: VueUnresolvedComponent(element, element, name))
