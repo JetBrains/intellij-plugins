@@ -1,0 +1,5 @@
+.char (typeText=null; priority=50.0; typeGreyed)
+.child (typeText=null; priority=50.0; typeGreyed)
+.immediate (typeText=null; priority=50.0; typeGreyed)
+.once (typeText=null; priority=50.0; typeGreyed)
+.sub (typeText=null; priority=50.0; typeGreyed)
