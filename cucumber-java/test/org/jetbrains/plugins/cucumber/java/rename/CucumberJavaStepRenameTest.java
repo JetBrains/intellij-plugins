@@ -63,6 +63,10 @@ public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
     doTest("i_am_happy", "I am happy", "Me be satisfied");
   }
 
+  public void testCukexSimpleWithManyAnnotations() {
+    doTest("foo", "I am close", "I am finding a bug");
+  }
+
   public void testCukexSimpleInPolishWithJava8() {
     doTest("Wtedy", "jem ciastko", "pożeram ogóreczka");
   }
@@ -88,6 +92,10 @@ public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
 
   public void testRegexSimple() {
     doTest("i_am_angry", "^I am angry$", "I am not happy at all");
+  }
+
+  public void testRegexSimpleWithManyAnnotations() {
+    doTest("foo", "^I am close$", "I am finding a bug");
   }
 
   public void testRegexWithArgument() {
