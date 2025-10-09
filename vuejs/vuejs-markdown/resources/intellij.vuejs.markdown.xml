@@ -1,0 +1,11 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="org.intellij.plugins.markdown"/>
+    <module name="intellij.markdown"/>
+    <module name="intellij.xml.parser"/>
+    <module name="intellij.vuejs.common"/>
+  </dependencies>
+  <extensions defaultExtensionNs="org.intellij.markdown">
+    <fenceLanguageProvider implementation="com.intellij.vuejs.markdown.VueCodeFenceLanguageProvider"/>
+  </extensions>
+</idea-plugin>

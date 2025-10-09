@@ -10,6 +10,9 @@
 - name: lib/modules/intellij.vuejs.debugger.jar
   contentModules:
   - name: intellij.vuejs.debugger
+- name: lib/modules/intellij.vuejs.markdown.jar
+  contentModules:
+  - name: intellij.vuejs.markdown
 - name: lib/modules/intellij.vuejs.prettier.jar
   contentModules:
   - name: intellij.vuejs.prettier
