@@ -20,13 +20,6 @@ jvm_library(
   resources = [
     ":vuejs_resources",
     ":vuejs_resources_1",
-  ],
-  runtime_deps = [
-    "//contrib/vuejs/vuejs-common:common",
-    "//contrib/vuejs/vuejs-backend:backend",
-    "//contrib/vuejs/vuejs-debugger:debugger",
-    "//contrib/vuejs/vuejs-prettier:prettier",
-    "//contrib/vuejs/vuejs-copyright:copyright",
   ]
 )
 ### auto-generated section `build intellij.vuejs` end

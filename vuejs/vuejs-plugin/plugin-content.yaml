@@ -16,6 +16,6 @@
 - name: lib/modules/intellij.vuejs.prettier.jar
   contentModules:
   - name: intellij.vuejs.prettier
-- name: lib/vuejs.jar
+- name: lib/vuejs-plugin.jar
   modules:
-  - name: intellij.vuejs
+  - name: intellij.vuejs.plugin

@@ -61,7 +61,7 @@
     <orderEntry type="module" module-name="intellij.sass.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.sass" scope="TEST" />
     <orderEntry type="module" module-name="intellij.vuejs.common" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.vuejs.backend" />
     <orderEntry type="module" module-name="intellij.vuejs.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.vuejs.plugin" scope="TEST" />
   </component>
 </module>
