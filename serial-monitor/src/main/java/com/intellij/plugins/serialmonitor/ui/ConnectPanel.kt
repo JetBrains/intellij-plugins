@@ -90,10 +90,10 @@ internal class ConnectPanel(private val toolWindow: ToolWindow) : OnePixelSplitt
   }
 
   /**
-   * Return the profile with which the port is currently configured, if any.
+   * Returns the [SerialMonitor] with which the port is currently opened in this panel, if any.
    */
-  fun getOpenedProfile(portName: String): SerialPortProfile? {
-    return contentByPortName(portName)?.getUserData(SERIAL_MONITOR)?.portProfile
+  fun getOpenedMonitor(portName: String): SerialMonitor? {
+    return contentByPortName(portName)?.getUserData(SERIAL_MONITOR)
   }
 
   fun openConsole(portName: String?) {
