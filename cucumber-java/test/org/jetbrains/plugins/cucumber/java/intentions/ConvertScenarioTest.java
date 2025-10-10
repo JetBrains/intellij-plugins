@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.intentions;
 
+import com.intellij.idea.TestFor;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
@@ -14,6 +15,18 @@ public class ConvertScenarioTest extends BasePlatformTestCase {
   }
 
   public void testTheSameParameterNamesInDifferentSteps() {
+    doTest();
+  }
+
+  @TestFor(issues = "IDEA-379823")
+  public void _testJava8ParameterType() {
+    // Disabled because this was never implemented.
+    doTest();
+  }
+
+  @TestFor(issues = "IDEA-379823")
+  public void _testJava8CustomParameterType() {
+    // Disabled because this was never implemented.
     doTest();
   }
 
