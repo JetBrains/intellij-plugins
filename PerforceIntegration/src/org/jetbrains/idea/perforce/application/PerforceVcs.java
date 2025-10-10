@@ -62,7 +62,6 @@ import org.jetbrains.idea.perforce.operations.P4EditOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperationLog;
 import org.jetbrains.idea.perforce.perforce.P4File;
-import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
@@ -271,28 +270,6 @@ public final class PerforceVcs extends AbstractVcs {
       return PerforceBundle.message("confirmation.text.open.files.for.edit");
     }
 
-  }
-
-  @Override
-  public boolean fileIsUnderVcs(FilePath filePath) {
-    VirtualFile virtualFile = filePath.getVirtualFile();
-    if (virtualFile == null) return false;
-
-    try {
-      if (virtualFile.isDirectory()) {
-        // at the moment is not called, never. so doesn't care abt that..
-        //if (PerforceConnectionManager.getInstance(myProject).isInitializingConnections()) return true;
-        return PerforceManager.getInstance(getProject()).isUnderPerforceRoot(virtualFile);
-      }
-      else {
-        final P4File p4File = P4File.create(virtualFile);
-
-        return PerforceRunner.getInstance(myProject).have(p4File);
-      }
-    }
-    catch (VcsException e) {
-      return false;
-    }
   }
 
   @Override
