@@ -16,14 +16,14 @@ public final class CucumberJavaStepDefClassIsPublicInspections extends AbstractB
   }
 
   @Override
-  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new CucumberJavaStepDefClassIsPublicVisitor(holder);
   }
 
   static class CucumberJavaStepDefClassIsPublicVisitor extends JavaElementVisitor {
     final ProblemsHolder holder;
 
-    CucumberJavaStepDefClassIsPublicVisitor(final ProblemsHolder holder) {
+    CucumberJavaStepDefClassIsPublicVisitor(ProblemsHolder holder) {
       this.holder = holder;
     }
 

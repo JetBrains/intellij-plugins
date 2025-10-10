@@ -15,7 +15,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 
 public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
-  protected @Nullable CucumberGlueProvider getGlueProvider(final @NotNull PsiElement element) {
+  protected @Nullable CucumberGlueProvider getGlueProvider(@NotNull PsiElement element) {
     final PsiFile file = element.getContainingFile();
     if (file instanceof GherkinFile) {
       return new CucumberJavaFeatureGlueProvider(element);

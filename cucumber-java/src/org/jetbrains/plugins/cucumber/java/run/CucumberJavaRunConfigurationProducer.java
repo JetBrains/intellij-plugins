@@ -76,7 +76,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     return CucumberJavaRunConfigurationType.getInstance().getConfigurationFactories()[0];
   }
 
-  protected abstract @Nullable CucumberGlueProvider getGlueProvider(final @NotNull PsiElement element);
+  protected abstract @Nullable CucumberGlueProvider getGlueProvider(@NotNull PsiElement element);
 
   protected abstract String getConfigurationName(@NotNull ConfigurationContext context);
 
