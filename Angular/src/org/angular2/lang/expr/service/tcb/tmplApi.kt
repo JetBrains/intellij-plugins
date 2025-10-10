@@ -6,6 +6,8 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.openapi.util.TextRange
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.childrenOfType
@@ -17,13 +19,12 @@ import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.containers.addIfNotNull
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.xml.util.XmlTagUtil
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2InjectionUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.blocks.*
 import org.angular2.codeInsight.template.Angular2TemplateScope
 import org.angular2.codeInsight.template.getTemplateElementsScopeFor
@@ -38,6 +39,7 @@ import org.angular2.lang.html.Angular2HtmlFile
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType.*
 import org.angular2.lang.html.psi.*
+import org.angular2.lang.types.Angular2EventType
 import org.angular2.lang.types.Angular2TypeUtils.possiblyGenericJsType
 import java.util.*
 
@@ -155,7 +157,8 @@ internal class TmplAstBoundEvent(
   val target: String?,
   val phase: String?,
   override val sourceSpan: TextRange,
-  val fromHostBinding: Boolean = false,
+  val jsType: JSType?,
+  val fromHostBinding: Boolean,
 ) : TmplAstAttribute
 
 internal interface TmplAstBlockNode : TmplAstNode {
@@ -564,7 +567,7 @@ internal fun buildHostBindingsAst(
           TmplAstBoundEvent(attributeName.name, property.nameIdentifier?.textRange,
                             (attributeName as Angular2AttributeNameParser.EventInfo).tmplParsedEventType,
                             Angular2InjectionUtils.findInjectedAngularExpression(quotedLiteral, Angular2Action::class.java)?.statements?.toList()
-                            ?: emptyList(), valueTextRange.startOffset, null, null, property.textRange, true)
+                            ?: emptyList(), valueTextRange.startOffset, null, null, property.textRange, null, true)
       }
       PROPERTY_BINDING -> {
         inlineCodeRanges.add(valueTextRange)
@@ -650,7 +653,9 @@ private fun XmlTag.toTmplAstDirectiveContainer(
           0,
           null,
           info.animationPhase?.name,
-          attr.textRange
+          attr.textRange,
+          Angular2EventType(attr),
+          false,
         )
       }) + (attributesByKind[BANANA_BOX_BINDING]?.asSequence() ?: emptySequence())
       .associateBy({ it.second.name }, { (attr, info) ->
@@ -662,7 +667,9 @@ private fun XmlTag.toTmplAstDirectiveContainer(
           0,
           null,
           null,
-          attr.textRange
+          attr.textRange,
+          null,
+          false,
         )
       })
 
@@ -905,7 +912,7 @@ private fun Angular2HtmlBlock.toTmplAstBlock(referenceResolver: ReferenceResolve
     BLOCK_ELSE_IF -> TmplAstIfBlockBranch(
       nameSpan = nameElement.textRange,
       expression = parameters.firstOrNull()?.expression,
-      expressionAlias = parameters.takeIf { isAtLeastAngularVersion(this, AngularVersion.V_20_2)}
+      expressionAlias = parameters.takeIf { isAtLeastAngularVersion(this, AngularVersion.V_20_2) }
         ?.getOrNull(1)?.variables?.firstOrNull()?.toTmplAstVariable(referenceResolver),
       children = contents.mapChildren(referenceResolver)
     )

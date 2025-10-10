@@ -2,11 +2,13 @@ package org.angular2.lang.expr.service.tcb
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.lang.ecmascript6.actions.JSImportDescriptorBuilder
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier.ImportExportSpecifierKind
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
+import com.intellij.lang.javascript.modules.JSImportPlaceInfo
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
@@ -16,11 +18,13 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptType
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiUtilCore
@@ -66,8 +70,18 @@ internal class Environment(
   fun reference(ref: TypeScriptClass): Expression =
     Expression(reference(ref, ImportExportSpecifierKind.IMPORT))
 
-  fun referenceExternalType(packageName: String, symbol: String): Expression =
-    Expression(getModuleImportName(packageName, false, ImportExportSpecifierKind.IMPORT) + "." + symbol)
+  fun referenceExternalType(packageName: String, symbol: String, sourceElement: PsiNameIdentifierOwner? = null): Expression =
+    Expression {
+      append(getModuleImportName(packageName, false, ImportExportSpecifierKind.IMPORT) + ".")
+      if (sourceElement != null) {
+        withSourceFile(sourceElement.containingFile) {
+          append(symbol, originalRange = sourceElement.nameIdentifier?.textRange)
+        }
+      }
+      else {
+        append(symbol)
+      }
+    }
 
   fun referenceExternalSymbol(moduleName: String, name: String): Expression =
     Expression(getModuleImportName(moduleName, false, ImportExportSpecifierKind.IMPORT) + "." + name)
@@ -76,19 +90,32 @@ internal class Environment(
     referenceExternalType(extRef.moduleName, extRef.name)
 
   fun referenceType(dirTypeRef: JSType): Expression {
-    val substitutedType = dirTypeRef.substitute()
+    val substitutedType = dirTypeRef
+      .let { it as? JSAliasTypeImpl ?: it.substitute() }
+      .let { (it as? JSAliasTypeImpl)?.alias ?: it }
     if (substitutedType.sourceElement != null) {
       val typeScriptType = substitutedType as? TypeScriptType
                            ?: substitutedType.sourceElement as? TypeScriptType
       if (typeScriptType is TypeScriptType) {
         return typeScriptType.toExpression()
       }
-      else if (substitutedType is JSTypeImpl && substitutedType.sourceElement is TypeScriptClass) {
-        val sourceElement = substitutedType.sourceElement as TypeScriptClass
-        return Expression {
-          withSourceFile(sourceElement.containingFile) {
-            append(substitutedType.getTypeText(JSType.TypeTextFormat.CODE), originalRange = sourceElement.nameIdentifier?.textRange)
-          }
+      else if (substitutedType is JSTypeImpl) {
+        val sourceElement = substitutedType.source.sourceElement
+        if (sourceElement is PsiNameIdentifierOwner) {
+          val importDescriptor = if (!JSResolveUtil.isFromPredefinedFile(sourceElement.containingFile))
+            JSImportDescriptorBuilder(file)
+              .createDescriptor(substitutedType.typeText, sourceElement, JSImportPlaceInfo.ImportContext.SIMPLE)
+          else
+            null
+          return importDescriptor
+                   ?.takeIf { descriptor -> descriptor.moduleName.let { it != "typescript" && !it.startsWith("typescript/") } }
+                   ?.exportedName
+                   ?.let { referenceExternalType(importDescriptor.moduleName, it, sourceElement) }
+                 ?: Expression {
+                   withSourceFile(sourceElement.containingFile) {
+                     append(substitutedType.getTypeText(JSType.TypeTextFormat.CODE), originalRange = sourceElement.nameIdentifier?.textRange)
+                   }
+                 }
         }
       }
     }

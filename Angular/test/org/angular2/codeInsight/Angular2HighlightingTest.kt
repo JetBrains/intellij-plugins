@@ -410,6 +410,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testNewAngularAnimationAttributes() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts", checkSymbolNames = true)
 
+  fun testNewAngularAnimationEvents() =
+    checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts")
+
   fun testIonic8() =
     checkHighlighting(ANGULAR_CORE_19_2_0, IONIC_ANGULAR_8_4_3, IONIC_CORE_8_4_3,
                       configurators = listOf(Angular2TsConfigFile(strictTemplates = true)),

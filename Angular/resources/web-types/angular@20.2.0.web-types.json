@@ -84,6 +84,26 @@
           ]
         }
       ],
+      "ng-event-bindings": [
+        {
+          "name": "animate.enter",
+          "description": "Both `animate.enter` and `animate.leave` support event binding syntax that allows for function calls. You can use this syntax to call a function in your component code or utilize third-party animation libraries, like GSAP, anime.js, or any other JavaScript animation library.\n\nThe `$event` object has the type `AnimationCallbackEvent`. It includes the element as the `target` and provides an `animationComplete()` function to notify the framework when the animation finishes.",
+          "doc-url": "https://angular.dev/guide/animations#event-bindings-functions-and-third-party-libraries",
+          "type": {
+            "module": "@angular/core",
+            "name": "AnimationCallbackEvent"
+          }
+        },
+        {
+          "name": "animate.leave",
+          "description": "Both `animate.enter` and `animate.leave` support event binding syntax that allows for function calls. You can use this syntax to call a function in your component code or utilize third-party animation libraries, like GSAP, anime.js, or any other JavaScript animation library.\n\nThe `$event` object has the type `AnimationCallbackEvent`. It includes the element as the `target` and provides an `animationComplete()` function to notify the framework when the animation finishes.",
+          "doc-url": "https://angular.dev/guide/animations#event-bindings-functions-and-third-party-libraries",
+          "type": {
+            "module": "@angular/core",
+            "name": "AnimationCallbackEvent"
+          }
+        }
+      ],
       "ng-blocks": [
         {
           "name": "defer",
