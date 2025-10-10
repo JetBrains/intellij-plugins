@@ -18,12 +18,11 @@ internal object VueTypedDirectives {
   fun getDirectiveModifiers(
     source: PsiElement,
     mode: VueMode,
-  ): List<VueDirectiveModifier> {
-    val declaration = findDeclaration(source)
-                      ?: return emptyList()
-
-    return getDirectiveModifiersInternal(declaration, mode)
-  }
+  ): List<VueDirectiveModifier> =
+    getDirectiveModifiersInternal(
+      source = findDeclaration(source) ?: source,
+      mode = mode,
+    )
 
   fun getDirectiveModifiers(
     source: TypeScriptPropertySignature,
