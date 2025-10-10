@@ -23,13 +23,11 @@
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
-  <resource-bundle>messages.VueBundle</resource-bundle>
-
   <content namespace="jetbrains">
     <module name="intellij.vuejs.prettier"/>
     <module name="intellij.vuejs.copyright"/>
     <module name="intellij.vuejs.debugger"/>
-    <module name="intellij.vuejs.markdown" />
+    <module name="intellij.vuejs.markdown"/>
 
     <module name="intellij.vuejs.common" loading="required"/>
     <module name="intellij.vuejs.backend"/>
