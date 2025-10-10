@@ -44,6 +44,13 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
     if (isInvalidCurly(original)) return
 
     val defaults = checkPropertyDefaults(position)
+    // NOTE: do NOT check `defaults.isNotEmpty()` here.
+    // We distinguish between:
+    //  - `null` => this provider is NOT applicable to the current context, continue with `resolvePositionContext`
+    //  - empty list => this provider IS applicable but has no suggestions (we must stop completion here
+    //                  to avoid falling back to unrelated suggestions).
+    // Returning an empty list signals "handled, but nothing to suggest" and prevents undesired fallthrough
+    // Regression example: without this, `resource "aws_instance" "test" { ami = "<caret>"}` other resource's properties were suggested.
     if (defaults != null) {
       result.addAllElements(defaults)
       return
@@ -75,7 +82,7 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
     val hintOfProperty = property.hint as? SimpleValueHint
     val hintValues = hintOfProperty?.hint?.map { create(it).withInsertHandler(QuoteInsertHandler) }.orEmpty()
 
-    return (suggestedValues + hintValues).takeIf { it.isNotEmpty() }
+    return suggestedValues + hintValues
   }
 
   private fun resolvePositionContext(position: PsiElement): HclPositionContext {

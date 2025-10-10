@@ -145,7 +145,10 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
         path           = ""
         merge_strategy = "<caret>"
       }
-    """.trimIndent(), "no_merge", "shallow", "deep")
+    """.trimIndent(), Matcher.and(
+      Matcher.all("no_merge", "shallow", "deep"),
+      Matcher.not("expose"))
+    )
 
     doBasicCompletionTest("""
       generate "gen_block" {

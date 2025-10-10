@@ -1069,6 +1069,16 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     """.trimIndent(),
       "arn", "id", "instance_state", "user_data", "password_data")
   }
+
+  fun testNoCompletionsForEmptyDefaults() {
+    doBasicCompletionTest("resource \"aws_instance\" \"test\" { ami = \"<caret>\" }", 0)
+    doBasicCompletionTest("""
+      data "aws_eks_addon" "instance" {
+        addon_name   = ""
+        cluster_name = "<caret>"
+      }
+    """.trimIndent(), 0)
+  }
 }
 
 private const val ENTRIES_LIST_SIZE = 900
