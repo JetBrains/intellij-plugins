@@ -38,7 +38,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-ui",
     "@community//xml/dom-impl",
-    "@lib//:snakeyaml",
+    "@community//libraries/snakeyaml",
   ]
 )
 
@@ -70,7 +70,7 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//xml/dom-impl",
-    "@lib//:snakeyaml",
+    "@community//libraries/snakeyaml",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "@lib//:json-schema-validator",

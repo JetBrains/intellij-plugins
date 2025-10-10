@@ -84,7 +84,7 @@
     <orderEntry type="module" module-name="intellij.html.tools" />
     <orderEntry type="module" module-name="intellij.libraries.jackson" />
     <orderEntry type="module" module-name="intellij.libraries.jackson.databind" />
-    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.stream" />
     <orderEntry type="module" module-name="intellij.platform.graph.impl" />
     <orderEntry type="module" module-name="intellij.diagram.impl" />
     <orderEntry type="module" module-name="intellij.platform.graph" />

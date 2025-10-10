@@ -22,7 +22,7 @@ jvm_library(
     "@community//jps/model-api:model",
     "@community//platform/lang-api:lang",
     "@community//java/java-psi-api:psi",
-    "@lib//:stream_ex",
+    "@community//libraries/stream",
     "@community//platform/projectModel-api:projectModel",
     "@community//java/java-psi-impl:psi-impl",
   ]

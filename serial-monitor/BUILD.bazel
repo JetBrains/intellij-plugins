@@ -29,7 +29,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/statistics",
     "@lib//:jediterm-core",
-    "@lib//:jediterm-ui",
+    "@community//libraries/jediterm-ui",
     "@community//libraries/commons/io",
     "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
   ]
@@ -57,7 +57,7 @@ jvm_library(
     "@community//platform/statistics",
     "@community//platform/statistics:statistics_test_lib",
     "@lib//:jediterm-core",
-    "@lib//:jediterm-ui",
+    "@community//libraries/jediterm-ui",
     "@community//libraries/commons/io",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",

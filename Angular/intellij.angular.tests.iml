@@ -95,7 +95,7 @@
     <orderEntry type="module" module-name="intellij.libraries.jackson" />
     <orderEntry type="module" module-name="intellij.libraries.jackson.databind" />
     <orderEntry type="module" module-name="intellij.tslint" />
-    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.stream" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.libraries.icu4j" />
     <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />

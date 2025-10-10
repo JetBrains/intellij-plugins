@@ -16,7 +16,7 @@ jvm_library(
   deps = [
     "@lib//:kotlinx-coroutines-core",
     "//plugins/JavaScriptLanguage/javascript-parser",
-    "@lib//:jetbrains-markdown",
+    "@community//libraries/markdown",
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",
@@ -48,7 +48,7 @@ jvm_library(
   deps = [
     "@lib//:kotlinx-coroutines-core",
     "//plugins/JavaScriptLanguage/javascript-parser",
-    "@lib//:jetbrains-markdown",
+    "@community//libraries/markdown",
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",

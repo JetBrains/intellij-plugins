@@ -59,7 +59,7 @@ jvm_library(
     "//plugins/stylus:stylus_test_lib",
     "@community//xml/xml-psi-api:psi",
     "@community//xml/tests:tests_test_lib",
-    "@lib//:stream_ex",
+    "@community//libraries/stream",
     "@community//libraries/gson",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",

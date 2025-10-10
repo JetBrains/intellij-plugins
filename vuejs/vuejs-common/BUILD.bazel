@@ -21,7 +21,7 @@ jvm_library(
     "@community//xml/xml-parser:parser",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//xml/xml-psi-api:psi",
-    "@lib//:stream_ex",
+    "@community//libraries/stream",
     "@community//platform/polySymbols",
     "@community//xml/xml-psi-impl:psi-impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",

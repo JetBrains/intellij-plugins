@@ -56,7 +56,7 @@
     <orderEntry type="module" module-name="intellij.ant" />
     <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.platform.jps.build" />
-    <orderEntry type="library" name="Velocity" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.velocity" />
     <orderEntry type="module" module-name="intellij.properties.backend" />
     <orderEntry type="module" module-name="intellij.platform.webide" />
     <orderEntry type="module" module-name="intellij.properties.psi" />
@@ -65,7 +65,7 @@
     <orderEntry type="module" module-name="intellij.flex.jps" scope="RUNTIME" />
     <orderEntry type="library" name="protobuf" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util.nanoxml" />
-    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.stream" />
     <orderEntry type="module" module-name="intellij.libraries.fastutil" />
     <orderEntry type="module" module-name="intellij.libraries.commons.compress" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
