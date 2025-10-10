@@ -25,7 +25,7 @@
 
   <resource-bundle>messages.VueBundle</resource-bundle>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="intellij.vuejs/prettier"/>
     <module name="intellij.vuejs/copyright"/>
     <module name="intellij.vuejs.common" loading="embedded" />
