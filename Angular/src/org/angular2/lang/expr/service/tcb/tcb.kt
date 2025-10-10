@@ -9,13 +9,19 @@
 
 package org.angular2.lang.expr.service.tcb
 
+import com.intellij.lang.ecmascript6.actions.JSImportDescriptorBuilder
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptParserBundle
+import com.intellij.lang.javascript.modules.JSImportPlaceInfo
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.types.JSEvaluableType
+import com.intellij.lang.javascript.psi.types.JSTypeImpl
+import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -39,6 +45,7 @@ import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.Angular2LangUtil.`$IMPLICIT`
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
+import org.angular2.lang.Angular2LangUtil.AngularVersion
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.lang.expr.psi.Angular2PipeExpression
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
@@ -1191,6 +1198,14 @@ private class TcbUnclaimedOutputsOp(
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, eventType)
         this.scope.addStatement(handler)
       }
+      else if ((output.name == "animate.enter" || output.name == "animate.leave")
+                   && Angular2LangUtil.isAtLeastAngularVersion(this.tcb.env.file,AngularVersion.V_20_2)) {
+        val eventType = output.jsType?.substitute()
+            ?.let { if (it is JSEvaluableType) it.substitute() else it }
+            ?.let { if (it is TypeScriptCompilerType) it.substitute() else it }
+        val handler = tcbCreateEventHandler(output, this.tcb, this.scope, eventType ?: EventParamType.Any)
+        this.scope.addStatement(handler)
+      }
       else if (this.tcb.env.config.checkTypeOfDomEvents && !output.fromHostBinding) {
         // If strict checking of DOM events is enabled, generate a call to `addEventListener` on
         // the element instance so that TypeScript's type inference for
@@ -1796,7 +1811,9 @@ internal class Scope constructor(private val tcb: Context, private val parent: S
                 handlerMappingOffset = 0,
                 target = null,
                 phase = null,
-                sourceSpan = it.name.textRange
+                sourceSpan = it.name.textRange,
+                jsType = null,
+                fromHostBinding = false,
               )
             }),
           emptyMap(), emptyMap(), null, emptyList()

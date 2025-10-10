@@ -1,0 +1,35 @@
+[
+  {
+    "file-name": "newAnimateEvents.ts",
+    "mappings": [
+      "0:106 => 0:106 (source)",
+      "«div» [113] => «_t1» [153]} (no diagnostics) (no semantic)",
+      "«$event» [134] => «$event» [237]}",
+      "«$event.animationComplete» [134] => «$event.animationComplete» [237]}",
+      "«$event.animationComplete()» [134] => «$event.animationComplete()» [237]}",
+      "«.» [140] => «.» [243]}",
+      "«animationComplete» [141] => «animationComplete» [244]}",
+      "«(» [158] => «(» [261]}",
+      "«()» [158] => «()» [261]}",
+      "«)» [159] => «)» [262]}",
+      "«div» [174] => «_t2» [272]} (no diagnostics) (no semantic)",
+      "«$event» [195] => «$event» [356]}",
+      "«$event.animationComplete» [195] => «$event.animationComplete» [356]}",
+      "«$event.animationComplete()» [195] => «$event.animationComplete()» [356]}",
+      "«.» [201] => «.» [362]}",
+      "«animationComplete» [202] => «animationComplete» [363]}",
+      "«(» [219] => «(» [380]}",
+      "«()» [219] => «()» [380]}",
+      "«)» [220] => «)» [381]}",
+      "233:258 => 233:258 (source)"
+    ]
+  },
+  {
+    "file-name": "index.d.ts",
+    "external-file": true,
+    "mappings": [
+      "«AnimationCallbackEvent» [207124] => «AnimationCallbackEvent» [203]} (no types)",
+      "«AnimationCallbackEvent» [207124] => «AnimationCallbackEvent» [322]} (no types)"
+    ]
+  }
+]
