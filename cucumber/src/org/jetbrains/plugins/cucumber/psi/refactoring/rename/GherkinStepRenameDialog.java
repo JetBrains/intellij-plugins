@@ -91,7 +91,7 @@ public final class GherkinStepRenameDialog extends RenameDialog {
         final Document document = editor.getDocument();
         EditorActionManager.getInstance().setReadonlyFragmentModificationHandler(document, new ReadonlyFragmentModificationHandler() {
           @Override
-          public void handle(final ReadOnlyFragmentModificationException e) {
+          public void handle(ReadOnlyFragmentModificationException e) {
             //do nothing
           }
         });

@@ -15,7 +15,7 @@ import java.util.List;
 
 
 public class GherkinFeatureImpl extends GherkinPsiElementBase implements GherkinFeature {
-  public GherkinFeatureImpl(final @NotNull ASTNode node) {
+  public GherkinFeatureImpl(@NotNull ASTNode node) {
     super(node);
   }
 

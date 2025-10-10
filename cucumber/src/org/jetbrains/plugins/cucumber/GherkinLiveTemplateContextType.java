@@ -18,7 +18,7 @@ public final class GherkinLiveTemplateContextType extends TemplateContextType {
   }
 
   @Override
-  public boolean isInContext(final @NotNull PsiFile file, final int offset) {
+  public boolean isInContext(@NotNull PsiFile file, int offset) {
     return file instanceof GherkinFileImpl;
   }
 

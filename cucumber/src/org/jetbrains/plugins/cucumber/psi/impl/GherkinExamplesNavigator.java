@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Roman.Chernyatchik
  */
 public final class GherkinExamplesNavigator {
-  public static @Nullable GherkinExamplesBlockImpl getExamplesByTable(final GherkinTableImpl table) {
+  public static @Nullable GherkinExamplesBlockImpl getExamplesByTable(GherkinTableImpl table) {
     final PsiElement element = table.getParent();
     return element instanceof GherkinExamplesBlockImpl block ? block : null;
   }

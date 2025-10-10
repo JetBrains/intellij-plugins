@@ -77,7 +77,7 @@ public class GherkinLexer extends LexerBase {
     return myPosition;
   }
 
-  private boolean isStepParameter(final @NotNull String currentElementTerminator) {
+  private boolean isStepParameter(@NotNull String currentElementTerminator) {
     int pos = myPosition;
 
     if (myBuffer.charAt(pos) == '<') {
@@ -255,7 +255,7 @@ public class GherkinLexer extends LexerBase {
     return myState == STATE_AFTER_STEP_KEYWORD || myState == STATE_AFTER_SCENARIO_KEYWORD;
   }
 
-  public static @Nullable String fetchLocationLanguage(final @NotNull String commentText) {
+  public static @Nullable String fetchLocationLanguage(@NotNull String commentText) {
     if (commentText.startsWith("language:")) {
       return commentText.substring(9).trim();
     }

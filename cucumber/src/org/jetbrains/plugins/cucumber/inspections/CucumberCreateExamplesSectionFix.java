@@ -28,7 +28,7 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
   }
 
   @Override
-  public void applyFix(final @NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinScenarioOutlineImpl outline = (GherkinScenarioOutlineImpl)descriptor.getPsiElement();
 
     final GherkinFile featureFile = (GherkinFile)outline.getContainingFile();

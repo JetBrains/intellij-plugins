@@ -187,15 +187,15 @@ public final class CucumberCompletionContributor extends CompletionContributor {
     addKeywordsToResult(keywords, result, true);
   }
 
-  private static void addKeywordsToResult(final Collection<String> keywords,
-                                          final CompletionResultSet result,
-                                          final boolean withColonSuffix) {
+  private static void addKeywordsToResult(Collection<String> keywords,
+                                          CompletionResultSet result,
+                                          boolean withColonSuffix) {
     addKeywordsToResult(keywords, result, withColonSuffix, 0, true);
   }
 
-  private static void addKeywordsToResult(final Collection<String> keywords,
-                                          final CompletionResultSet result,
-                                          final boolean withColonSuffix, int priority, boolean withSpace) {
+  private static void addKeywordsToResult(Collection<String> keywords,
+                                          CompletionResultSet result,
+                                          boolean withColonSuffix, int priority, boolean withSpace) {
     for (String keyword : keywords) {
       LookupElement element = createKeywordLookupElement(withColonSuffix ? keyword + ":" : keyword, withSpace);
 
@@ -203,7 +203,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
     }
   }
 
-  private static LookupElement createKeywordLookupElement(final String keyword, boolean withSpace) {
+  private static LookupElement createKeywordLookupElement(String keyword, boolean withSpace) {
     LookupElement result = LookupElementBuilder.create(keyword);
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       result = ((LookupElementBuilder)result).withAutoCompletionPolicy(AutoCompletionPolicy.NEVER_AUTOCOMPLETE);
@@ -356,7 +356,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void handleInsert(final InsertionContext context, LookupElement item) {
+    public void handleInsert(InsertionContext context, LookupElement item) {
       if (!ranges.isEmpty()) {
         final PsiElement element = context.getFile().findElementAt(context.getStartOffset());
         final GherkinStep step = PsiTreeUtil.getParentOfType(element, GherkinStep.class);

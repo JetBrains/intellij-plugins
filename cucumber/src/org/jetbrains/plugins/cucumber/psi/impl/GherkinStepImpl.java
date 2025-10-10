@@ -186,7 +186,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
 
 
   @Override
-  public boolean isRenameAllowed(final @Nullable String newName) {
+  public boolean isRenameAllowed(@Nullable String newName) {
     final Collection<AbstractStepDefinition> definitions = findDefinitions();
     if (definitions.isEmpty()) {
       return false; // Cannot rename a step without definitions
@@ -200,7 +200,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   }
 
   @Override
-  public void checkSetName(final String name) {
+  public void checkSetName(String name) {
     if (!isRenameAllowed(name)) {
       throw new IncorrectOperationException(CucumberBundle.message("cucumber.refactor.rename.bad_symbols"));
     }

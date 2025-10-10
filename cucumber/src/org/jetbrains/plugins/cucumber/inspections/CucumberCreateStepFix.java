@@ -14,7 +14,7 @@ public class CucumberCreateStepFix extends CucumberCreateStepFixBase implements 
   }
 
   @Override
-  protected void createStepOrSteps(GherkinStep step, final @NotNull CucumberStepDefinitionCreationContext fileAndFrameworkType) {
+  protected void createStepOrSteps(GherkinStep step, @NotNull CucumberStepDefinitionCreationContext fileAndFrameworkType) {
     createFileOrStepDefinition(step, fileAndFrameworkType);
   }
 }

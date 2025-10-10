@@ -18,7 +18,7 @@ import java.util.List;
 public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTable {
   private static final TokenSet HEADER_ROW_TOKEN_SET = TokenSet.create(GherkinElementTypes.TABLE_HEADER_ROW);
 
-  public GherkinTableImpl(final @NotNull ASTNode node) {
+  public GherkinTableImpl(@NotNull ASTNode node) {
     super(node);
   }
 

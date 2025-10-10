@@ -12,7 +12,7 @@ public final class GherkinTableNavigator {
   private GherkinTableNavigator() {
   }
 
-  public static @Nullable GherkinTableImpl getTableByRow(final GherkinTableRow row) {
+  public static @Nullable GherkinTableImpl getTableByRow(GherkinTableRow row) {
     final PsiElement element = row.getParent();
     return element instanceof GherkinTableImpl table ? table : null;
   }

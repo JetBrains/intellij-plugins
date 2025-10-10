@@ -23,7 +23,7 @@ public final class GherkinSuppressionUtil {
   private GherkinSuppressionUtil() {
   }
 
-  public static SuppressQuickFix @NotNull [] getDefaultSuppressActions(final @NotNull String toolId) {
+  public static SuppressQuickFix @NotNull [] getDefaultSuppressActions(@NotNull String toolId) {
     return new SuppressQuickFix[]{
       new GherkinSuppressForStepCommentFix(toolId),
       new GherkinSuppressForScenarioCommentFix(toolId),
@@ -31,7 +31,7 @@ public final class GherkinSuppressionUtil {
     };
   }
 
-  public static boolean isSuppressedFor(final @NotNull PsiElement element, final @NotNull String toolId) {
+  public static boolean isSuppressedFor(@NotNull PsiElement element, @NotNull String toolId) {
     return ReadAction.compute(() -> getSuppressedIn(element, toolId) != null).booleanValue();
   }
 

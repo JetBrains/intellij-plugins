@@ -17,7 +17,7 @@ import java.util.*;
 public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implements GherkinScenarioOutline {
   private static final TokenSet EXAMPLES_BLOCK_FILTER = TokenSet.create(GherkinElementTypes.EXAMPLES_BLOCK);
 
-  public GherkinScenarioOutlineImpl(final @NotNull ASTNode node) {
+  public GherkinScenarioOutlineImpl(@NotNull ASTNode node) {
     super(node);
   }
 

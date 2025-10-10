@@ -17,7 +17,7 @@ public final class GherkinElementFactory {
   private GherkinElementFactory() {
   }
 
-  public static GherkinFeature createFeatureFromText(final Project project, final @NotNull String text) {
+  public static GherkinFeature createFeatureFromText(Project project, @NotNull String text) {
     final PsiElement[] list = getTopLevelElements(project, text);
     for (PsiElement psiElement : list) {
       if (psiElement instanceof GherkinFeature feature) {
@@ -29,7 +29,7 @@ public final class GherkinElementFactory {
     return null;
   }
 
-  public static GherkinStepsHolder createScenarioFromText(final Project project, final String language, final @NotNull String text) {
+  public static GherkinStepsHolder createScenarioFromText(Project project, String language, @NotNull String text) {
     final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider();
     final GherkinKeywordTable keywordsTable = provider.getKeywordsTable(language);
     String featureText = "# language: " + language + "\n" + keywordsTable.getFeatureSectionKeyword() + ": Dummy\n" + text;
@@ -37,7 +37,7 @@ public final class GherkinElementFactory {
     return feature.getScenarios() [0];
   }
 
-  public static PsiElement[] getTopLevelElements(final Project project, final @NotNull String text) {
+  public static PsiElement[] getTopLevelElements(Project project, @NotNull String text) {
     return CucumberElementFactory.createTempPsiFile(project, text).getChildren();
   }
 }

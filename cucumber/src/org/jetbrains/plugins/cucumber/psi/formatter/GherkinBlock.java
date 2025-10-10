@@ -50,11 +50,11 @@ public class GherkinBlock implements ASTBlock {
     this(node, indent, node.getTextRange());
   }
 
-  public GherkinBlock(ASTNode node, Indent indent, final TextRange textRange) {
+  public GherkinBlock(ASTNode node, Indent indent, TextRange textRange) {
     this(node, indent, textRange, false);
   }
 
-  public GherkinBlock(ASTNode node, Indent indent, final TextRange textRange, final boolean leaf) {
+  public GherkinBlock(ASTNode node, Indent indent, TextRange textRange, boolean leaf) {
     myNode = node;
     myIndent = indent;
     myTextRange = textRange;

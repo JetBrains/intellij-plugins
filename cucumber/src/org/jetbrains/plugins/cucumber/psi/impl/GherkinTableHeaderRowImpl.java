@@ -7,7 +7,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 
 
 public class GherkinTableHeaderRowImpl extends GherkinTableRowImpl {
-  public GherkinTableHeaderRowImpl(final @NotNull ASTNode node) {
+  public GherkinTableHeaderRowImpl(@NotNull ASTNode node) {
     super(node);
   }
 

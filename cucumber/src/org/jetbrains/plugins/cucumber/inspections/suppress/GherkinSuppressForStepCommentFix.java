@@ -9,7 +9,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 public class GherkinSuppressForStepCommentFix extends AbstractBatchSuppressByNoInspectionCommentFix {
-  GherkinSuppressForStepCommentFix(final @NotNull String toolId) {
+  GherkinSuppressForStepCommentFix(@NotNull String toolId) {
     super(toolId, false);
   }
 

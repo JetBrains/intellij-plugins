@@ -16,7 +16,7 @@ import java.util.List;
 
 
 public class GherkinTableRowImpl extends GherkinPsiElementBase implements GherkinTableRow {
-  public GherkinTableRowImpl(final @NotNull ASTNode node) {
+  public GherkinTableRowImpl(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -31,7 +31,7 @@ public class GherkinTableRowImpl extends GherkinPsiElementBase implements Gherki
   }
 
   // ToDo: Andrey Vokin, remove code duplication
-  public static @NotNull <T extends PsiElement> List<T> getChildrenByFilter(final PsiElement psiElement, final Class<T> c) {
+  public static @NotNull <T extends PsiElement> List<T> getChildrenByFilter(PsiElement psiElement, Class<T> c) {
     LinkedList<T> list = new LinkedList<>();
     for (PsiElement element : psiElement.getChildren()) {
       if (c.isInstance(element)) {

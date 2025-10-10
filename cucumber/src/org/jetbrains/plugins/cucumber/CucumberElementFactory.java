@@ -10,7 +10,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 public final class CucumberElementFactory {
 
-  public static PsiElement createTempPsiFile(final @NotNull Project project, final @NotNull String text) {
+  public static PsiElement createTempPsiFile(@NotNull Project project, @NotNull String text) {
     return PsiFileFactory.getInstance(project).createFileFromText("temp." + GherkinFileType.INSTANCE.getDefaultExtension(),
                                                                   GherkinFileType.INSTANCE,
                                                                   text, LocalTimeCounter.currentTime(), false);

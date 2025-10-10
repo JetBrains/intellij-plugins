@@ -20,7 +20,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 
 public final class GherkinStructureViewFactory implements PsiStructureViewFactory {
   @Override
-  public StructureViewBuilder getStructureViewBuilder(final @NotNull PsiFile psiFile) {
+  public StructureViewBuilder getStructureViewBuilder(@NotNull PsiFile psiFile) {
     return new TreeBasedStructureViewBuilder() {
       @Override
       public @NotNull StructureViewModel createStructureViewModel(@Nullable Editor editor) {

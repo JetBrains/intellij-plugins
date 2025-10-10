@@ -133,7 +133,7 @@ public final class JsonGherkinKeywordProvider implements GherkinKeywordProvider 
     return getKeywordList(language).getKeywordsTable();
   }
 
-  private GherkinKeywordList getKeywordList(final @Nullable String language) {
+  private GherkinKeywordList getKeywordList(@Nullable String language) {
     GherkinKeywordList keywordList = myLanguageKeywords.get(language);
     if (keywordList == null) {
       keywordList = Lazy.myEmptyKeywordList;
