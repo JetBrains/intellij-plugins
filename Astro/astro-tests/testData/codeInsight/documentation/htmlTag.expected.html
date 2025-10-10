@@ -9,7 +9,7 @@
 The <strong><code>&lt;img&gt;</code></strong> <a href="https://developer.mozilla.org/en-us/docs/Web/HTML">HTML</a> element embeds an image into the document.
 <p>The above example shows usage of the <code>&lt;img&gt;</code> element:
 <ul>
-<li>The <code>src</code> attribute is <strong>required</strong>, and contains the path to the image you want to embed.</li>
+<li>The <code>src</code> attribute holds the path to the image you want to embed. It is not mandatory if the <a href="https://developer.mozilla.org/en-us/docs/Web/API/HTMLImageElement/srcset">srcset</a> attribute is available. However, at least one of the <code>src</code> or <code>srcset</code> attributes must be provided.</li>
 <li>The <code>alt</code> attribute holds a textual replacement for the image, which is mandatory and <strong>incredibly useful</strong> for accessibility — screen readers read the attribute value out to their users so they know what the image means. Alt text is also displayed on the page if the image can't be loaded for some reason: for example, network errors, content blocking, or link rot.</li>
 </ul>
 <p>There are many other attributes to achieve various purposes:

@@ -20,6 +20,11 @@ id
 inert
 inlist
 inputmode
+itemid
+itemprop
+itemref
+itemscope
+itemtype
 lang
 methods
 nonce
@@ -42,11 +47,6 @@ urn
 vocab
 charset
 coords
-itemid
-itemprop
-itemref
-itemscope
-itemtype
 name
 rev
 shape
