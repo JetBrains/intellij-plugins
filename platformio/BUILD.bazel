@@ -96,7 +96,6 @@ jvm_library(
     "//CIDR/cidr-util/execution:execution_test_lib",
     "//CIDR/cidr-workspaceModel",
     "//CIDR/clion-embedded",
-    "//CIDR/clion-embedded:clion-embedded_test_lib",
     "//CIDR/clion-execution",
     "//CIDR/clion-external-system:clion-externalSystem",
     "//CIDR/clion-projectStatus",
