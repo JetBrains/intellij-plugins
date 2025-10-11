@@ -22,7 +22,7 @@ jvm_library(
   deps = [
     "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
     "@community//libraries/gson",
-    "@lib//:jediterm-core",
+    "@community//libraries/jediterm-core",
     "@community//libraries/jediterm-ui",
     "//CIDR/cidr-core",
     "//CIDR/cidr-debugger/backend-api:cidr-debugger-backend",
@@ -77,7 +77,7 @@ jvm_library(
   deps = [
     "@ultimate_lib//:eclipse-lsp4j-jsonrpc",
     "@community//libraries/gson",
-    "@lib//:jediterm-core",
+    "@community//libraries/jediterm-core",
     "@community//libraries/jediterm-ui",
     "//CIDR/cidr-common-testFramework/core",
     "//CIDR/cidr-common-testFramework/nolang",
