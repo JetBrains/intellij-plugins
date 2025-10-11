@@ -1,17 +1,22 @@
 package com.jetbrains.cidr.cpp.diagnostics
 
-import com.jetbrains.cidr.cpp.CPPTestCase
-import org.junit.Assert.assertTrue
+import com.intellij.clion.testFramework.nolang.junit5.cmake.cmakeProjectTestFixture
+import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
+import com.intellij.testFramework.junit5.TestApplication
+import com.jetbrains.cidr.CidrTestDataFixture
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class CMakeWorkspaceDescriptionKeywordsTest : CPPTestCase() {
-
-  @Throws(Exception::class)
-  override fun setUpFixtures() {
-    super.setUpFixtures()
-    myProjectFixture.initProject("simple-cmake-project")
-    myProjectFixture.waitForReloads()
+@TestApplication
+class CMakeWorkspaceDescriptionKeywordsTest {
+  companion object {
+    private val projectDir = CidrTestDataFixture.getCppDiagnosticsTestData()
   }
 
+  private val tempDir = tempDirTestFixture(projectDir.resolve("simple-cmake-project"))
+  private val project by cmakeProjectTestFixture(tempDir)
+
+  @Test
   fun testCMakeWorkspaceDescriptionKeywords() {
     val out = collectCidrWorkspaces(project).toText()
 
@@ -24,6 +29,6 @@ class CMakeWorkspaceDescriptionKeywordsTest : CPPTestCase() {
   }
 
   private fun assertOutputContains(text: String, needle: String) {
-    assertTrue("Expected to find '$needle' in output.\nOutput:\n$text", text.contains(needle))
+    assertTrue(text.contains(needle), "Expected to find '$needle' in output.\nOutput:\n$text")
   }
 }
