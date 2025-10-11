@@ -64,8 +64,8 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
   }
 
 
-  internal class Builder(result: TfLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TfLocalMetaEntity, TfLocalMetaEntityData>(result),
-                                                           TfLocalMetaEntity.Builder {
+  internal class Builder(result: TfLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TfLocalMetaEntity, TfLocalMetaEntityData>(
+    result), TfLocalMetaEntity.Builder {
     internal constructor() : this(TfLocalMetaEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {

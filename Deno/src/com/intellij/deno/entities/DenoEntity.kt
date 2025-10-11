@@ -42,7 +42,5 @@ interface DenoEntity : WorkspaceEntity {
 fun MutableEntityStorage.modifyDenoEntity(
   entity: DenoEntity,
   modification: DenoEntity.Builder.() -> Unit,
-): DenoEntity {
-  return modifyEntity(DenoEntity.Builder::class.java, entity, modification)
-}
+): DenoEntity = modifyEntity(DenoEntity.Builder::class.java, entity, modification)
 //endregion

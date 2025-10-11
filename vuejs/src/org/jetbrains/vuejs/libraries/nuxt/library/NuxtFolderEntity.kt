@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.library
 
 import com.intellij.platform.workspace.storage.*
@@ -45,7 +45,5 @@ internal interface NuxtFolderEntity : WorkspaceEntity {
 internal fun MutableEntityStorage.modifyNuxtFolderEntity(
   entity: NuxtFolderEntity,
   modification: NuxtFolderEntity.Builder.() -> Unit,
-): NuxtFolderEntity {
-  return modifyEntity(NuxtFolderEntity.Builder::class.java, entity, modification)
-}
+): NuxtFolderEntity = modifyEntity(NuxtFolderEntity.Builder::class.java, entity, modification)
 //endregion
