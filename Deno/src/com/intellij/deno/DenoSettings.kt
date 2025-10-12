@@ -26,6 +26,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.concurrency.annotations.RequiresEdt
+import kotlinx.coroutines.CoroutineScope
 
 enum class UseDeno {
   CONFIGURE_AUTOMATICALLY,
@@ -42,7 +43,11 @@ class DenoState : Cloneable {
   @Deprecated("old state, do not use, keep for backward-compatibility")
   var useDeno = false
 
-  var useDenoValue: UseDeno = UseDeno.CONFIGURE_AUTOMATICALLY
+  var useDenoValue: UseDeno = if (isJavaScriptRuntimeSettingsPageEnabled)
+    UseDeno.DISABLE
+  else
+    UseDeno.CONFIGURE_AUTOMATICALLY
+
   var denoPath = ""
   var denoCache = ""
   var denoInit = getDefaultInitTemplate()
@@ -63,7 +68,10 @@ class DenoState : Cloneable {
 
 @Service(Service.Level.PROJECT)
 @State(name = "DenoSettings", storages = [Storage("deno.xml")])
-class DenoSettings(private val project: Project) : PersistentStateComponent<DenoState> {
+class DenoSettings(
+  private val project: Project,
+  internal val coroutineScope: CoroutineScope,
+) : PersistentStateComponent<DenoState> {
   companion object {
     fun getService(project: Project): DenoSettings = project.service<DenoSettings>()
   }
@@ -172,6 +180,7 @@ class DenoSettings(private val project: Project) : PersistentStateComponent<Deno
     this.state.enableFormatting = denoFormatting
   }
 
+  @RequiresEdt
   fun setUseDenoAndReload(useDeno: UseDeno) {
     val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
     val oldRoots = libraryProvider.getRootsToWatch(project)
