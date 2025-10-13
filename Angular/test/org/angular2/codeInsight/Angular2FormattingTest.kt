@@ -3,6 +3,8 @@ package org.angular2.codeInsight
 
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
@@ -120,6 +122,20 @@ class Angular2FormattingTest : Angular2TestCase("formatting", false) {
         OptimizeImportsProcessor(project, file).runWithoutProgress()
       }
     }
+
+  fun testReferenceDeclaration() = doFormattingTest(extension = "html") {
+    val tsSettings = getCustomSettings(TypeScriptCodeStyleSettings::class.java)
+    tsSettings.VAR_DECLARATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
+    val jsSettings = getCustomSettings(JSCodeStyleSettings::class.java)
+    jsSettings.VAR_DECLARATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
+  }
+
+  fun testForBlockVariableDeclaration() = doFormattingTest(extension = "html") {
+    val tsSettings = getCustomSettings(TypeScriptCodeStyleSettings::class.java)
+    tsSettings.VAR_DECLARATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
+    val jsSettings = getCustomSettings(JSCodeStyleSettings::class.java)
+    jsSettings.VAR_DECLARATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
+  }
 
   private fun testInterpolation(newLineAfterStart: Boolean, newLineBeforeEnd: Boolean, wrap: Int) =
     doFormattingTest(configureFileName = "interpolation.html") {
