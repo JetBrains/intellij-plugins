@@ -1,0 +1,3 @@
+User:	swarm
+Email:	swarm@example.com
+FullName:	Swarm Admin

@@ -1,6 +1,6 @@
+ansible/aap
 hashicorp/ad
 hashicorp/archive
-hashicorp/assert
 hashicorp/aws
 hashicorp/awscc
 hashicorp/azuread
@@ -13,7 +13,6 @@ hashicorp/dns
 hashicorp/external
 hashicorp/google
 hashicorp/google-beta
-hashicorp/googleworkspace
 hashicorp/hcp
 hashicorp/hcs
 hashicorp/helm
@@ -23,10 +22,12 @@ hashicorp/local
 hashicorp/nomad
 hashicorp/null
 hashicorp/random
-hashicorp/salesforce
 hashicorp/template
 hashicorp/tfe
 hashicorp/tfmigrate
 hashicorp/time
 hashicorp/tls
 hashicorp/vault
+IBM/ode
+IBM/turbonomic
+IBM-Cloud/ibm

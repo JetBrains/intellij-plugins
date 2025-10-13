@@ -1,4 +1,4 @@
-<idea-plugin package="org.intellij.terraform.watchers">
+<idea-plugin visibility="internal" package="org.intellij.terraform.watchers">
   <dependencies>
     <plugin id="com.intellij.plugins.watcher"/>
   </dependencies>

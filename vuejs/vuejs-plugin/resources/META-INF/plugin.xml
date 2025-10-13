@@ -1,0 +1,40 @@
+<idea-plugin allow-bundled-update="true">
+  <!--suppress PluginXmlCapitalization -->
+  <name>Vue.js</name>
+  <id>org.jetbrains.plugins.vue</id>
+  <description><![CDATA[
+    <p>Provides <a href="https://vuejs.org/">Vue.js</a> support to all JetBrains IDEs that
+    <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.</p>
+
+    <h2>Features</h2>
+    <ul>
+      <li>Completion of components, directives, props, and methods in templates</li>
+      <li>Navigation from the component, directives, and event handlers to their definition</li>
+      <li>Coding assistance for different languages inside the template, script, and style tags in <code>.vue</code> files</li>
+      <li>Extract component and rename component refactorings</li>
+      <li>Collection of code snippets for Vue.js</li>
+      <li>New Vue project option in the <i>Welcome</i> screen</li>
+    </ul>
+
+    <h2>Getting started</h2>
+    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+    For WebStorm, you can check out this section in the <a href="https://www.jetbrains.com/help/webstorm/vue-js.html">documentation</a>.</p>
+    ]]></description>
+  <vendor>JetBrains</vendor>
+  <category>JavaScript Frameworks and Tools</category>
+
+  <content namespace="jetbrains">
+    <module name="intellij.vuejs.prettier"/>
+    <module name="intellij.vuejs.copyright"/>
+    <module name="intellij.vuejs.debugger"/>
+    <module name="intellij.vuejs.markdown"/>
+
+    <module name="intellij.vuejs.common" loading="required"/>
+    <module name="intellij.vuejs.backend"/>
+  </content>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="javascript" coordinate="npm:vue" displayName="Vue.js"/>
+    <dependencySupport kind="javascript" coordinate="npm:nuxt" displayName="Nuxt"/>
+  </extensions>
+</idea-plugin>

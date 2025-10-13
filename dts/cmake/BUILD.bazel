@@ -16,7 +16,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "//CIDR/cidr-workspaceModel",
-    "//CIDR/clion-cmake",
+    "//CIDR/clion-cmake:cmake",
     "//contrib/dts",
     "@community//platform/core-api:core",
     "@community//platform/execution",

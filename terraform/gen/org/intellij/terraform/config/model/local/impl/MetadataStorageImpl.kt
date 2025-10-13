@@ -9,30 +9,50 @@ import com.intellij.platform.workspace.storage.metadata.model.StorageTypeMetadat
 import com.intellij.platform.workspace.storage.metadata.model.ValueTypeMetadata
 
 @OptIn(WorkspaceEntityInternalApi::class)
-internal object MetadataStorageImpl: MetadataStorageBase() {
-    override fun initializeMetadata() {
-        val primitiveTypeIntNotNullable = ValueTypeMetadata.SimpleType.PrimitiveType(isNullable = false, type = "Int")
-        val primitiveTypeStringNotNullable = ValueTypeMetadata.SimpleType.PrimitiveType(isNullable = false, type = "String")
+internal object MetadataStorageImpl : MetadataStorageBase() {
+  override fun initializeMetadata() {
+    val primitiveTypeIntNotNullable = ValueTypeMetadata.SimpleType.PrimitiveType(isNullable = false, type = "Int")
+    val primitiveTypeStringNotNullable = ValueTypeMetadata.SimpleType.PrimitiveType(isNullable = false, type = "String")
 
-        var typeMetadata: StorageTypeMetadata
+    var typeMetadata: StorageTypeMetadata
 
-        typeMetadata = FinalClassMetadata.ObjectMetadata(fqName = "org.intellij.terraform.config.model.local.TfLocalMetaEntity\$LockEntitySource", properties = listOf(OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "virtualFileUrl", valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = true, typeMetadata = FinalClassMetadata.KnownClass(fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")), withDefault = false)), supertypes = listOf("com.intellij.platform.workspace.storage.EntitySource"))
+    typeMetadata = FinalClassMetadata.ObjectMetadata(
+      fqName = "org.intellij.terraform.config.model.local.TfLocalMetaEntity\$LockEntitySource", properties = listOf(
+        OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "virtualFileUrl",
+                            valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = true,
+                                                                                typeMetadata = FinalClassMetadata.KnownClass(
+                                                                                  fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")),
+                            withDefault = false)), supertypes = listOf("com.intellij.platform.workspace.storage.EntitySource"))
 
-        addMetadata(typeMetadata)
+    addMetadata(typeMetadata)
 
-        typeMetadata = EntityMetadata(fqName = "org.intellij.terraform.config.model.local.TfLocalMetaEntity", entityDataFqName = "org.intellij.terraform.config.model.local.impl.TfLocalMetaEntityData", supertypes = listOf("com.intellij.platform.workspace.storage.WorkspaceEntity"), properties = listOf(OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "entitySource", valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false, typeMetadata = FinalClassMetadata.KnownClass(fqName = "com.intellij.platform.workspace.storage.EntitySource")), withDefault = false),
-OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "timeStampLow", valueType = primitiveTypeIntNotNullable, withDefault = false),
-OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "timeStampHigh", valueType = primitiveTypeIntNotNullable, withDefault = false),
-OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "jsonPath", valueType = primitiveTypeStringNotNullable, withDefault = false),
-OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "lockFile", valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false, typeMetadata = FinalClassMetadata.KnownClass(fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")), withDefault = false)), extProperties = listOf(), isAbstract = false)
+    typeMetadata = EntityMetadata(fqName = "org.intellij.terraform.config.model.local.TfLocalMetaEntity",
+                                  entityDataFqName = "org.intellij.terraform.config.model.local.impl.TfLocalMetaEntityData",
+                                  supertypes = listOf("com.intellij.platform.workspace.storage.WorkspaceEntity"), properties = listOf(
+        OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "entitySource",
+                            valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false,
+                                                                                typeMetadata = FinalClassMetadata.KnownClass(
+                                                                                  fqName = "com.intellij.platform.workspace.storage.EntitySource")),
+                            withDefault = false),
+        OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "timeStampLow",
+                            valueType = primitiveTypeIntNotNullable, withDefault = false),
+        OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "timeStampHigh",
+                            valueType = primitiveTypeIntNotNullable, withDefault = false),
+        OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "jsonPath",
+                            valueType = primitiveTypeStringNotNullable, withDefault = false),
+        OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "lockFile",
+                            valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false,
+                                                                                typeMetadata = FinalClassMetadata.KnownClass(
+                                                                                  fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")),
+                            withDefault = false)), extProperties = listOf(), isAbstract = false)
 
-        addMetadata(typeMetadata)
-    }
+    addMetadata(typeMetadata)
+  }
 
-    override fun initializeMetadataHash() {
-        addMetadataHash(typeFqn = "org.intellij.terraform.config.model.local.TfLocalMetaEntity", metadataHash = -1351350227)
-        addMetadataHash(typeFqn = "com.intellij.platform.workspace.storage.EntitySource", metadataHash = -539337291)
-        addMetadataHash(typeFqn = "org.intellij.terraform.config.model.local.TfLocalMetaEntity\$LockEntitySource", metadataHash = -964283785)
-    }
+  override fun initializeMetadataHash() {
+    addMetadataHash(typeFqn = "org.intellij.terraform.config.model.local.TfLocalMetaEntity", metadataHash = -1351350227)
+    addMetadataHash(typeFqn = "com.intellij.platform.workspace.storage.EntitySource", metadataHash = -539337291)
+    addMetadataHash(typeFqn = "org.intellij.terraform.config.model.local.TfLocalMetaEntity\$LockEntitySource", metadataHash = -964283785)
+  }
 
 }

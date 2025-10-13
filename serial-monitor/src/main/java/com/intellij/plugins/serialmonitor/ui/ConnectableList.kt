@@ -178,8 +178,9 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
     val profileService = application.serviceAsync<SerialProfileService>()
     profileService.getProfiles().forEach { (profileName, profile) ->
 
-      val status = portService.portStatus(profile.portName)
-      val isUsed = parentPanel.getOpenedProfile(profile.portName) === profile
+      val monitor = parentPanel.getOpenedMonitor(profile.portName)
+      val status = monitor?.getStatus() ?: portService.portStatus(profile.portName)
+      val isUsed = monitor?.portProfile === profile
       val profile = ConnectableProfile(profileName, status, isUsed)
       newModel.addElement(profile)
       checkCanceled()
@@ -187,6 +188,7 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
     @Nls val portsSeparator = SerialMonitorBundle.message("available.ports")
     newModel.addElement(portsSeparator)
     portService.getPortsNames().forEach {
+      // Use global status for the icon to indicate that other windows are connected.
       val status = portService.portStatus(it)
       newModel.addElement(ConnectablePort(it, status))
       checkCanceled()

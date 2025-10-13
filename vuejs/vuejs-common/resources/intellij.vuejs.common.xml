@@ -1,2 +1,7 @@
 <idea-plugin>
+  <dependencies>
+    <plugin id="JavaScript"/>
+  </dependencies>
+
+  <resource-bundle>messages.VueBundle</resource-bundle>
 </idea-plugin>

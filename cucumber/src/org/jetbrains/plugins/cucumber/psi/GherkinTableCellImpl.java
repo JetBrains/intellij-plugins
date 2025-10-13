@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lang.ASTNode;
@@ -12,18 +12,21 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinPsiElementBase;
-import org.jetbrains.plugins.cucumber.psi.impl.GherkinSimpleReference;
 
+@ApiStatus.Internal
+@NotNullByDefault
 public class GherkinTableCellImpl extends GherkinPsiElementBase implements GherkinTableCell {
-  public GherkinTableCellImpl(final @NotNull ASTNode node) {
+  public GherkinTableCellImpl(ASTNode node) {
     super(node);
   }
 
   @Override
-  protected void acceptGherkin(final GherkinElementVisitor gherkinElementVisitor) {
+  protected void acceptGherkin(GherkinElementVisitor gherkinElementVisitor) {
     gherkinElementVisitor.visitGherkinTableCell(this);
   }
 
@@ -38,7 +41,7 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
   }
 
   @Override
-  public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
+  public PsiElement setName(@NonNls String name) throws IncorrectOperationException {
     final LeafPsiElement content = PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
     if (content != null) {
       PsiElement[] elements = GherkinElementFactory.getTopLevelElements(getProject(), name);
@@ -48,31 +51,26 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
   }
 
   @Override
-  public PsiReference getReference() {
-    return new GherkinSimpleReference(this);
-  }
-
-  @Override
   public String getName() {
     return getText();
   }
 
   @Override
-  public PsiElement getNameIdentifier() {
+  public @Nullable PsiElement getNameIdentifier() {
     return PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
   }
 
   @Override
-  public @NotNull SearchScope getUseScope() {
+  public SearchScope getUseScope() {
     return new LocalSearchScope(getContainingFile());
   }
 
   @Override
-  public PsiReference @NotNull [] getReferences() {
+  public PsiReference[] getReferences() {
     return CachedValuesManager.getCachedValue(this, () -> CachedValueProvider.Result.create(getReferencesInner(), this));
   }
 
-  private PsiReference @NotNull [] getReferencesInner() {
+  private PsiReference[] getReferencesInner() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 }

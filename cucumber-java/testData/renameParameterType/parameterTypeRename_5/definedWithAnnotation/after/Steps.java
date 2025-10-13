@@ -4,12 +4,16 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.ParameterType;
 
 public class Steps {
-  @Given("today is {custom<caret>MoodName}")
+  public Steps() {
+    // customMoodName("some another usage"); // Not implemented yet.
+  }
+
+  @Given("today is {newMoodName}")
   public void step_method(Mood mood) {
   }
 
   @ParameterType(".*")
-  public Mood mood(String moodName) {
+  public Mood newMoodName(String moodName) {
     return Mood.valueOf(moodName);
   }
 

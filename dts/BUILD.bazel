@@ -38,7 +38,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-ui",
     "@community//xml/dom-impl",
-    "@lib//:snakeyaml",
+    "@community//libraries/snakeyaml",
   ]
 )
 
@@ -70,13 +70,13 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//xml/dom-impl",
-    "@lib//:snakeyaml",
+    "@community//libraries/snakeyaml",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "@lib//:json-schema-validator",
     "@community//libraries/jackson/jackson",
     "@community//libraries/jackson/databind",
-    "@lib//:jackson-dataformat-yaml",
+    "@community//libraries/jackson/dataformat-yaml:libraries-jackson-dataformat-yaml",
     "@community//platform/syntax/syntax-api:syntax",
     "@community//platform/syntax/syntax-api:syntax_test_lib",
   ]

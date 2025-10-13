@@ -1,21 +1,26 @@
 package com.jetbrains.cidr.cpp.diagnostics
 
-import com.jetbrains.cidr.cpp.CPPTestCase
+import com.intellij.clion.testFramework.nolang.junit5.cmake.cmakeProjectTestFixture
+import com.intellij.clion.testFramework.nolang.junit5.core.tempDirTestFixture
+import com.intellij.testFramework.junit5.TestApplication
+import com.jetbrains.cidr.CidrTestDataFixture
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 /**
  * Tests for diagnostic collectors. We validate outputs by keywords rather than full golden text
  * to avoid flakiness due to machine-specific paths or versions.
  */
-class DiagnosticsCollectorsTest : CPPTestCase() {
-
-  @Throws(Exception::class)
-  override fun setUpFixtures() {
-    super.setUpFixtures()
-    // Use a tiny CMake project to initialize workspaces/OCWorkspace
-    myProjectFixture.initProject("simple-cmake-project")
-    myProjectFixture.waitForReloads()
+@TestApplication
+class DiagnosticsCollectorsTest {
+  companion object {
+    private val projectDir = CidrTestDataFixture.getCppDiagnosticsTestData()
   }
 
+  private val tempDir = tempDirTestFixture(projectDir.resolve("simple-cmake-project"))
+  private val project by cmakeProjectTestFixture(tempDir)
+
+  @Test
   fun testOCWorkspaceKeywords() {
     val out = collectOCWorkspace(project).toText()
 
@@ -26,6 +31,7 @@ class DiagnosticsCollectorsTest : CPPTestCase() {
     assertOutputContains(out, "source file(s)")
   }
 
+  @Test
   fun testCidrWorkspacesKeywords() {
     val out = collectCidrWorkspaces(project).toText()
 
@@ -35,6 +41,7 @@ class DiagnosticsCollectorsTest : CPPTestCase() {
     assertOutputContains(out, "Toolchains:")
   }
 
+  @Test
   fun testToolchainsKeywords() {
     val out = collectToolchains(project).toText()
 
@@ -49,6 +56,7 @@ class DiagnosticsCollectorsTest : CPPTestCase() {
     assertOutputContains(out, "Path:")
   }
 
+  @Test
   fun testToolchainsOptionsKeywords() {
     val out = collectToolchains(project).toText()
 
@@ -57,6 +65,6 @@ class DiagnosticsCollectorsTest : CPPTestCase() {
   }
 
   private fun assertOutputContains(text: String, needle: String) {
-    assertTrue("Expected to find '$needle' in output.\nOutput:\n$text", text.contains(needle))
+    assertTrue(text.contains(needle), "Expected to find '$needle' in output.\nOutput:\n$text")
   }
 }

@@ -158,6 +158,7 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     override val foldingRangeCustomizer = LspFoldingRangeDisabled
     override val inlayHintCustomizer: LspInlayHintCustomizer = LspInlayHintDisabled
     override val workspaceSymbolCustomizer: LspWorkspaceSymbolCustomizer = LspWorkspaceSymbolDisabled
+    override val documentSymbolCustomizer: LspDocumentSymbolCustomizer = LspDocumentSymbolDisabled
     override val documentHighlightsCustomizer: LspDocumentHighlightsCustomizer = LspDocumentHighlightsDisabled
 
     override val formattingCustomizer = object : LspFormattingSupport() {

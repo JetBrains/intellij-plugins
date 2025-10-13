@@ -11,12 +11,21 @@ jvm_library(
   name = "common",
   module_name = "intellij.vuejs.common",
   visibility = ["//visibility:public"],
-  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
   resources = [":common_resources"],
   deps = [
     "@community//platform/core-api:core",
     "@lib//:kotlin-stdlib",
     "@community//platform/util",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "@community//xml/xml-parser:parser",
+    "//plugins/JavaScriptLanguage/javascript-parser",
+    "@community//xml/xml-psi-api:psi",
+    "@community//libraries/stream",
+    "@community//platform/polySymbols",
+    "@community//xml/xml-psi-impl:psi-impl",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "@community//platform/ide-core",
   ]
 )
 ### auto-generated section `build intellij.vuejs.common` end

@@ -7,16 +7,19 @@ import com.intellij.deno.UseDeno
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.KillableColoredProcessHandler
-import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessListener
+import com.intellij.ide.file.BatchFileChangeListener
 import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.ide.util.projectWizard.WebProjectTemplate
 import com.intellij.javascript.nodejs.execution.withBackgroundProgress
+import com.intellij.javascript.nodejs.packageJson.PackageJsonDependenciesExternalUpdateManager
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.observable.util.whenTextChanged
+import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -40,6 +43,10 @@ private class DenoProjectTemplateGenerator : WebProjectTemplate<DenoProjectTempl
     denoSettings.setDenoPath(denoPath)
     denoSettings.setUseDeno(UseDeno.CONFIGURE_AUTOMATICALLY)
 
+    val done = PackageJsonDependenciesExternalUpdateManager.getInstance(project).updateActionStarted(null, null)
+    val batchFileChangeListener = BackgroundTaskUtil.syncPublisher(BatchFileChangeListener.TOPIC)
+    batchFileChangeListener.batchChangeStarted(project, JavaScriptBundle.message("project.generation"))
+
     val commandLine = GeneralCommandLine(denoPath, "init").withWorkingDirectory(baseDir.toNioPath())
 
     try {
@@ -47,11 +54,14 @@ private class DenoProjectTemplateGenerator : WebProjectTemplate<DenoProjectTempl
         KillableColoredProcessHandler(commandLine)
       }
 
-      handler.addProcessListener(object : ProcessAdapter() {
+      handler.addProcessListener(object : ProcessListener {
         override fun processTerminated(event: ProcessEvent) {
           baseDir.refresh(false, true)
+          batchFileChangeListener.batchChangeCompleted(project)
+          done.run()
         }
       })
+      handler.startNotify()
     }
     catch (e: ExecutionException) {
       NotificationGroupManager.getInstance().getNotificationGroup("Project generator")

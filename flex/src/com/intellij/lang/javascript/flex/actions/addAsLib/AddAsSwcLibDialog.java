@@ -128,7 +128,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
 
     final LibraryTable.ModifiableModel projectLibsModel = LibraryTablesRegistrar.getInstance().getLibraryTable(myProject).getModifiableModel();
 
-    final LibraryTable.ModifiableModel globalLibsModel = LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel();
+    final LibraryTable.ModifiableModel globalLibsModel = LibraryTablesRegistrar.getInstance().getGlobalLibraryTable(myProject).getModifiableModel();
 
     final FlexProjectConfigurationEditor flexConfigEditor =
       FlexProjectConfigurationEditor.createEditor(myProject, moduleToModifiableModelMap, projectLibsModel, globalLibsModel);

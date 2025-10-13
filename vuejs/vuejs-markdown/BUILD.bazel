@@ -1,0 +1,27 @@
+### auto-generated section `build intellij.vuejs.markdown` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "markdown_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "markdown",
+  module_name = "intellij.vuejs.markdown",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":markdown_resources"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//contrib/vuejs/vuejs-common:common",
+    "@community//plugins/markdown/core:markdown",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "@community//xml/xml-parser:parser",
+    "@community//platform/util",
+  ]
+)
+### auto-generated section `build intellij.vuejs.markdown` end

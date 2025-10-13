@@ -46,6 +46,62 @@
             "kind": "no-value"
           },
           "ng-host-binding": false
+        },
+        {
+          "name": "animate.enter",
+          "doc-url": "https://angular.dev/guide/animations#animateenter",
+          "description": "You can use `animate.enter` to animate elements as they *enter* the DOM. You can define enter animations using CSS classes with either transitions or keyframe animations.\n\nWhen the animation completes, Angular removes the class or classes that you specified in `animate.enter` from the DOM. Animation classes are only be present while the animation is active.",
+          "value": {
+            "required": true,
+            "kind": "plain",
+            "type": "symbol"
+          },
+          "values": [
+            {
+              "name": "CSS classes",
+              "pattern": {
+                "items": "/css/class-list"
+              }
+            }
+          ]
+        },
+        {
+          "name": "animate.leave",
+          "doc-url": "https://angular.dev/guide/animations#animateleave",
+          "description": "You can use `animate.leave` to animate elements as they *leave* the DOM. You can define leave animations using CSS classes with either transitions or keyframe animations.\n\nWhen the animation completes, Angular automatically removes the animated element from the DOM.",
+          "value": {
+            "required": true,
+            "kind": "plain",
+            "type": "symbol"
+          },
+          "values": [
+            {
+              "name": "CSS classes",
+              "pattern": {
+                "items": "/css/class-list"
+              }
+            }
+          ]
+        }
+      ],
+      "ng-event-bindings": [
+        {
+          "name": "animate.enter",
+          "description": "Both `animate.enter` and `animate.leave` support event binding syntax that allows for function calls. You can use this syntax to call a function in your component code or utilize third-party animation libraries, like GSAP, anime.js, or any other JavaScript animation library.\n\nThe `$event` object has the type `AnimationCallbackEvent`. It includes the element as the `target` and provides an `animationComplete()` function to notify the framework when the animation finishes.",
+          "doc-url": "https://angular.dev/guide/animations#event-bindings-functions-and-third-party-libraries",
+          "type": {
+            "module": "@angular/core",
+            "name": "AnimationCallbackEvent"
+          }
+        },
+        {
+          "name": "animate.leave",
+          "description": "Both `animate.enter` and `animate.leave` support event binding syntax that allows for function calls. You can use this syntax to call a function in your component code or utilize third-party animation libraries, like GSAP, anime.js, or any other JavaScript animation library.\n\nThe `$event` object has the type `AnimationCallbackEvent`. It includes the element as the `target` and provides an `animationComplete()` function to notify the framework when the animation finishes.",
+          "doc-url": "https://angular.dev/guide/animations#event-bindings-functions-and-third-party-libraries",
+          "type": {
+            "module": "@angular/core",
+            "name": "AnimationCallbackEvent"
+          }
         }
       ],
       "ng-blocks": [

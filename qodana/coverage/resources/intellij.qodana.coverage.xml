@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.staticAnalysis.inspections.coverage">
+<idea-plugin visibility="public" package="org.jetbrains.qodana.staticAnalysis.inspections.coverage">
   <dependencies>
     <module name="intellij.platform.coverage"/>
   </dependencies>

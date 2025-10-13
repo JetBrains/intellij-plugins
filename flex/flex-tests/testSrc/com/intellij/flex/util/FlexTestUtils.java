@@ -329,7 +329,7 @@ public final class FlexTestUtils {
 
       private LibraryTable getLibrariesTable(final String level) {
         if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
-          return LibraryTablesRegistrar.getInstance().getLibraryTable();
+          return LibraryTablesRegistrar.getInstance().getGlobalLibraryTable(modules[0].getProject());
         }
         else {
           assert LibraryTablesRegistrar.PROJECT_LEVEL.equals(level);

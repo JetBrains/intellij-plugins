@@ -1,0 +1,10 @@
+<idea-plugin>
+  <dependencies>
+    <module name="intellij.javascript.debugger.backend"/>
+    <module name="intellij.javascript.debugger.ui"/>
+    <module name="intellij.vuejs.backend"/>
+  </dependencies>
+  <extensions defaultExtensionNs="com.jetbrains">
+    <javaScriptDebugAware implementation="com.intellij.vuejs.debugger.VueDebugAware"/>
+  </extensions>
+</idea-plugin>

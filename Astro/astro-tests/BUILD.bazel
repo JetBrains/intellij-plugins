@@ -35,7 +35,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//xml/tests:tests_test_lib",
     "@community//platform/lang-impl",
-    "@lib//:stream_ex",
+    "@community//libraries/stream",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//platform/polySymbols",

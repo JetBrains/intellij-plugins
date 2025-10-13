@@ -7,6 +7,8 @@ import com.intellij.testFramework.common.waitUntilAssertSucceeds
 import org.intellij.terraform.config.CompletionTestCase
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.hcl.HCLLanguage
+import org.intellij.terraform.terragrunt.model.StackRootBlocks
+import org.intellij.terraform.terragrunt.model.TerragruntBlocksAndAttributes
 
 internal class TerragruntCompletionTest : CompletionTestCase() {
   override fun getFileName(): String = "terragrunt.hcl"
@@ -131,6 +133,30 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     assertEmpty(completionVariants)
   }
 
+  fun testPropertyPredefinedValuesCompletion() {
+    doBasicCompletionTest("""
+      remote_state {
+        disable_init = <caret>
+      }
+    """.trimIndent(), "true", "false")
+
+    doBasicCompletionTest("""
+      include "some_include_block" {
+        path           = ""
+        merge_strategy = "<caret>"
+      }
+    """.trimIndent(), Matcher.and(
+      Matcher.all("no_merge", "shallow", "deep"),
+      Matcher.not("expose"))
+    )
+
+    doBasicCompletionTest("""
+      generate "gen_block" {
+        if_exists = "over<caret>"
+      }
+    """.trimIndent(), "overwrite", "overwrite_terragrunt")
+  }
+
   private fun doAutoInsertCompletionTest(textBefore: String, textAfter: String, file: String = this.fileName) {
     myFixture.configureByText(file, textBefore)
     val variants = myFixture.completeBasic()
@@ -141,5 +167,11 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
         myFixture.checkResult(textAfter)
       }
     }
+  }
+
+  companion object {
+    val TerragruntBlockKeywords: List<String> = TerragruntBlocksAndAttributes.map { it.name }
+
+    val StackBlockKeywords: List<String> = StackRootBlocks.map { it.literal }
   }
 }

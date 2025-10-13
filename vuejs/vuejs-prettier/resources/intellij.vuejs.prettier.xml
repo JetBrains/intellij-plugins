@@ -1,0 +1,9 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="intellij.prettierJS"/>
+    <module name="intellij.vuejs.backend"/>
+  </dependencies>
+  <extensions defaultExtensionNs="com.intellij">
+    <prettierjs.codeStyleInstaller implementation="com.intellij.vuejs.prettier.VuePrettierCodeStyleInstaller"/>
+  </extensions>
+</idea-plugin>

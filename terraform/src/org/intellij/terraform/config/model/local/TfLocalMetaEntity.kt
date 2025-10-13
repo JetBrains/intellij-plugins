@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.local
 
 import com.intellij.platform.workspace.storage.EntitySource
@@ -65,7 +65,5 @@ interface TfLocalMetaEntity : WorkspaceEntity {
 fun MutableEntityStorage.modifyTfLocalMetaEntity(
   entity: TfLocalMetaEntity,
   modification: TfLocalMetaEntity.Builder.() -> Unit,
-): TfLocalMetaEntity {
-  return modifyEntity(TfLocalMetaEntity.Builder::class.java, entity, modification)
-}
+): TfLocalMetaEntity = modifyEntity(TfLocalMetaEntity.Builder::class.java, entity, modification)
 //endregion

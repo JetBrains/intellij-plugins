@@ -355,10 +355,6 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       }
       val prop = TfModelHelper.getBlockProperties(block)[property.name] as? PropertyType
       val hint = prop?.hint ?: return
-      if (hint is SimpleValueHint) {
-        result.addAllElements(hint.hint.map { create(it).withInsertHandler(QuoteInsertHandler) })
-        return
-      }
       if (hint is ReferenceHint) {
         val module = property.getTerraformModule()
         hint.hint

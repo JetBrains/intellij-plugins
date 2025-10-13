@@ -8,7 +8,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
@@ -17,14 +18,15 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethod
 /**
  * @author Max Medvedev
  */
+@NotNullByDefault
 public final class GrCucumberStepDefinitionSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   public GrCucumberStepDefinitionSearcher() {
     super(true);
   }
 
   @Override
-  public void processQuery(final @NotNull ReferencesSearch.SearchParameters queryParameters,
-                           final @NotNull Processor<? super PsiReference> consumer) {
+  public void processQuery(ReferencesSearch.SearchParameters queryParameters,
+                           Processor<? super PsiReference> consumer) {
 
     PsiElement element = getStepDefinition(queryParameters.getElementToSearch());
     if (element == null) return;
@@ -35,7 +37,7 @@ public final class GrCucumberStepDefinitionSearcher extends QueryExecutorBase<Ps
     CucumberUtil.findGherkinReferencesToElement(element, regexp, consumer, queryParameters.getEffectiveSearchScope());
   }
 
-  public static PsiElement getStepDefinition(final PsiElement element) {
+  public static @Nullable PsiElement getStepDefinition(PsiElement element) {
     if (GrCucumberUtil.isStepDefinition(element)) {
       return element;
     }

@@ -1,0 +1,21 @@
+- name: lib/modules/intellij.vuejs.backend.jar
+  contentModules:
+  - name: intellij.vuejs.backend
+- name: lib/modules/intellij.vuejs.common.jar
+  contentModules:
+  - name: intellij.vuejs.common
+- name: lib/modules/intellij.vuejs.copyright.jar
+  contentModules:
+  - name: intellij.vuejs.copyright
+- name: lib/modules/intellij.vuejs.debugger.jar
+  contentModules:
+  - name: intellij.vuejs.debugger
+- name: lib/modules/intellij.vuejs.markdown.jar
+  contentModules:
+  - name: intellij.vuejs.markdown
+- name: lib/modules/intellij.vuejs.prettier.jar
+  contentModules:
+  - name: intellij.vuejs.prettier
+- name: lib/vuejs-plugin.jar
+  modules:
+  - name: intellij.vuejs.plugin

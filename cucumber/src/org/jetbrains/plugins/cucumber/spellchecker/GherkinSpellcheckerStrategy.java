@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementType;
 
 import java.util.List;
+import java.util.Set;
 
 public final class GherkinSpellcheckerStrategy extends SpellcheckingStrategy implements DumbAware {
   @Override
@@ -32,9 +33,10 @@ public final class GherkinSpellcheckerStrategy extends SpellcheckingStrategy imp
   public LocalQuickFix[] getRegularFixes(@NotNull PsiElement element,
                                          @NotNull TextRange textRange,
                                          boolean useRename,
-                                         String typo) {
+                                         String typo,
+                                         Set<String> suggestions) {
     SpellcheckerRateTracker tracker = new SpellcheckerRateTracker(element);
-    List<LocalQuickFix> result = SpellCheckerQuickFixFactory.changeToVariants(element, textRange, typo, tracker);
+    List<LocalQuickFix> result = SpellCheckerQuickFixFactory.changeToVariants(element, textRange, typo, tracker, suggestions);
     result.add(SpellCheckerQuickFixFactory.saveTo(element, textRange, typo, tracker));
     return result.toArray(LocalQuickFix.EMPTY_ARRAY);
   }

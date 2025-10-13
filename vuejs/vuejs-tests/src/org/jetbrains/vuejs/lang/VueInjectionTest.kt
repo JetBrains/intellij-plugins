@@ -139,7 +139,7 @@ new Vue({
 })
 </script>
 """)
-    TestCase.assertEquals(VueLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueLanguage, myFixture.file.language)
     checkParseTree()
   }
 
@@ -202,7 +202,7 @@ new Vue({
 })
 </script>
 </html>""")
-    TestCase.assertEquals(VueLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueLanguage, myFixture.file.language)
     checkParseTree()
   }
 

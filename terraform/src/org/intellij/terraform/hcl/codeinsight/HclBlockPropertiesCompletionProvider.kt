@@ -19,6 +19,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants
+import org.intellij.terraform.config.codeinsight.QuoteInsertHandler
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getOriginalObject
@@ -43,6 +44,13 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
     if (isInvalidCurly(original)) return
 
     val defaults = checkPropertyDefaults(position)
+    // NOTE: do NOT check `defaults.isNotEmpty()` here.
+    // We distinguish between:
+    //  - `null` => this provider is NOT applicable to the current context, continue with `resolvePositionContext`
+    //  - empty list => this provider IS applicable but has no suggestions (we must stop completion here
+    //                  to avoid falling back to unrelated suggestions).
+    // Returning an empty list signals "handled, but nothing to suggest" and prevents undesired fallthrough
+    // Regression example: without this, `resource "aws_instance" "test" { ami = "<caret>"}` other resource's properties were suggested.
     if (defaults != null) {
       result.addAllElements(defaults)
       return
@@ -68,9 +76,13 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
     if (value !== parent) return null
 
     val hclBlock = container.parentOfType<HCLBlock>() ?: return null
-    val property = TfModelHelper.getBlockProperties(hclBlock)[container.name] as? PropertyType
-    val defaults = property?.type?.suggestedValues ?: return null
-    return defaults.map { create(it) }
+    val property = TfModelHelper.getBlockProperties(hclBlock)[container.name] as? PropertyType ?: return null
+    val suggestedValues = property.type.suggestedValues.map { create(it) }
+
+    val hintOfProperty = property.hint as? SimpleValueHint
+    val hintValues = hintOfProperty?.hint?.map { create(it).withInsertHandler(QuoteInsertHandler) }.orEmpty()
+
+    return suggestedValues + hintValues
   }
 
   private fun resolvePositionContext(position: PsiElement): HclPositionContext {
@@ -207,19 +219,24 @@ private data class HclPositionContext(
   val rightType: HclType? = null,
 )
 
-internal object HclPreferRequiredProperty : LookupElementWeigher("hcl.required.property") {
+internal object HclElementsPriorityWeigher : LookupElementWeigher("hcl.required.property") {
   override fun weigh(element: LookupElement): Comparable<Nothing> {
     val obj = element.`object`
-    if (obj is PropertyOrBlockType) {
-      if (obj.required) return 0
-      else return 1
+    if (obj !is PropertyOrBlockType) return 100
+
+    val requiredWeight = if (obj.required) 0 else 1
+    val typeWeight = when (obj) {
+      is BlockType -> 0
+      is PropertyType -> 1
+      else -> 2
     }
-    return 10
+
+    return requiredWeight * 10 + typeWeight
   }
 }
 
 internal fun addResultsWithCustomSorter(result: CompletionResultSet, toAdd: Collection<LookupElement>) {
   if (toAdd.isEmpty()) return
-  result.withRelevanceSorter(CompletionSorter.emptySorter().weigh(HclPreferRequiredProperty))
+  result.withRelevanceSorter(CompletionSorter.emptySorter().weigh(HclElementsPriorityWeigher))
     .addAllElements(toAdd)
 }

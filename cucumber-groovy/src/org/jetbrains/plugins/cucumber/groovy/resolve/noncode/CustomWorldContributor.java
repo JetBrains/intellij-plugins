@@ -9,7 +9,7 @@ import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberCommonClassNames;
 import org.jetbrains.plugins.cucumber.groovy.resolve.CustomWorldType;
@@ -23,22 +23,23 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrRefere
 import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor;
 import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil;
 
+@NotNullByDefault
 public final class CustomWorldContributor extends NonCodeMembersContributor {
 
   @Override
-  public void processDynamicElements(@NotNull PsiType qualifierType,
-                                     @NotNull PsiScopeProcessor processor,
-                                     @NotNull PsiElement place,
-                                     @NotNull ResolveState state) {
+  public void processDynamicElements(PsiType qualifierType,
+                                     PsiScopeProcessor processor,
+                                     PsiElement place,
+                                     ResolveState state) {
     if (qualifierType instanceof CustomWorldType type) {
       doProcessDynamicMethods(processor, place, state, type.getStepFile());
     }
   }
 
-  private static void doProcessDynamicMethods(@NotNull PsiScopeProcessor processor,
-                                              @NotNull PsiElement place,
-                                              @NotNull ResolveState state,
-                                              final PsiFile stepFile) {
+  private static void doProcessDynamicMethods(PsiScopeProcessor processor,
+                                              PsiElement place,
+                                              ResolveState state,
+                                              PsiFile stepFile) {
     if (stepFile instanceof GroovyFile groovyStepFile) {
       final PsiType worldType = getWorldType(groovyStepFile);
       if (worldType != null) {
@@ -62,7 +63,7 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
     }
   }
 
-  private static @Nullable PsiType getWorldType(final @NotNull GroovyFile stepFile) {
+  private static @Nullable PsiType getWorldType(GroovyFile stepFile) {
     return CachedValuesManager.getCachedValue(stepFile, () -> {
       for (GrStatement statement : stepFile.getStatements()) {
         if (statement instanceof GrMethodCall call && isWorldDeclaration(call)) {
@@ -74,7 +75,7 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
     });
   }
 
-  private static @Nullable GrClosableBlock getClosureArg(@NotNull GrMethodCall methodCall) {
+  private static @Nullable GrClosableBlock getClosureArg(GrMethodCall methodCall) {
     final GrClosableBlock[] closures = methodCall.getClosureArguments();
     if (closures.length == 1) return closures[0];
     if (closures.length > 1) return null;
@@ -88,13 +89,13 @@ public final class CustomWorldContributor extends NonCodeMembersContributor {
     return null;
   }
 
-  private static boolean isWorldDeclaration(@NotNull GrMethodCall methodCall) {
+  private static boolean isWorldDeclaration(GrMethodCall methodCall) {
     final GrExpression invoked = methodCall.getInvokedExpression();
     if (invoked instanceof GrReferenceExpression) {
       final PsiMethod method = methodCall.resolveMethod();
       final PsiClass clazz = method == null ? null : method.getContainingClass();
       final String qname = clazz == null ? null : clazz.getQualifiedName();
-      return method!= null && "World".equals(method.getName()) && GrCucumberCommonClassNames.isHookClassName(qname);
+      return method != null && "World".equals(method.getName()) && GrCucumberCommonClassNames.isHookClassName(qname);
     }
 
     return false;

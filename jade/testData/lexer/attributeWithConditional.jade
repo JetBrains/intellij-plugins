@@ -1,0 +1,3 @@
+mixin progress({ color, width })
+  .progress(class=color ? 'progress--' + color : '')
+    .progress__line(style=`width: ${width}`)

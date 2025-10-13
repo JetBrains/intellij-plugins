@@ -15,7 +15,7 @@ jvm_library(
   resources = [":cmake_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
-    "//CIDR/clion-cmake",
+    "//CIDR/clion-cmake:cmake",
     "//contrib/cpp-diagnostics:clion-diagnostics",
     "//CIDR/clion-toolchains",
     "//CIDR/cidr-util/execution",
@@ -37,7 +37,7 @@ jvm_library(
   associates = [":cmake"],
   deps = [
     "@lib//:kotlin-stdlib",
-    "//CIDR/clion-cmake",
+    "//CIDR/clion-cmake:cmake",
     "//contrib/cpp-diagnostics:clion-diagnostics",
     "//CIDR/clion-toolchains",
     "//CIDR/cidr-util/execution",
@@ -50,12 +50,14 @@ jvm_library(
     "@community//platform/util/jdom",
     "@community//libraries/kotlinx/serialization/core",
     "@community//libraries/kotlinx/serialization/json",
-    "//CIDR/cidr-common-testFramework/core",
     "//CIDR/cidr-common-testFramework/nolang",
-    "//CIDR/clion-testFramework",
     "//CIDR/clion-testFramework-nolang",
+    "//CIDR/clion-testFramework-nolang/junit5/cmake",
+    "//CIDR/clion-testFramework-nolang/junit5/core",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testFramework/junit5",
+    "@community//platform/testFramework/junit5:junit5_test_lib",
   ]
 )
 ### auto-generated section `build intellij.clion.diagnostics.cmake` end

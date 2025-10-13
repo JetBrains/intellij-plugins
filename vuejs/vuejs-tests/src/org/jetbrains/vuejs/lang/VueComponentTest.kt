@@ -259,9 +259,6 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "pattern", sourceElement.pattern)
           printProperty(level, "required", sourceElement.required)
         }
-        if (sourceElement is VueDirectiveModifier) {
-          printProperty(level, "pattern", sourceElement.pattern)
-        }
         if (sourceElement is VueEntitiesContainer) {
           printProperty(level, "components", sourceElement.components.takeIf { it.isNotEmpty() }
             ?.filterOutLowercaseScriptSetupVariables()?.toSortedMap())

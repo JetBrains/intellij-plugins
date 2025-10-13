@@ -27,7 +27,7 @@ class VueESLintImportCodeStyleTest : ESLintImportCodeStyleTestBase() {
     doImportTest(
       """{"rules": {"vue/html-indent": ["warn", "tab", {"baseIndent": 1, "attribute": 2, "alignAttributesVertically": true}]}}""",
       { settings ->
-        settings.getLanguageIndentOptions(VueLanguage.INSTANCE).let {
+        settings.getLanguageIndentOptions(VueLanguage).let {
           it.isOverrideLanguageOptions = true
           it.USE_TAB_CHARACTER = false
           it.INDENT_SIZE = 2
@@ -41,7 +41,7 @@ class VueESLintImportCodeStyleTest : ESLintImportCodeStyleTestBase() {
         settings.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ALIGN_ATTRIBUTES = false
       },
       { settings ->
-        settings.getLanguageIndentOptions(VueLanguage.INSTANCE).let {
+        settings.getLanguageIndentOptions(VueLanguage).let {
           TestCase.assertTrue(it.USE_TAB_CHARACTER)
           TestCase.assertEquals(1, it.INDENT_SIZE)
           TestCase.assertEquals(2, it.CONTINUATION_INDENT_SIZE)
@@ -59,7 +59,7 @@ class VueESLintImportCodeStyleTest : ESLintImportCodeStyleTestBase() {
     doImportTest(
       """{"rules": {"vue/html-indent": ["warn", 3, {"baseIndent": 1}]}}""",
       { settings ->
-        settings.getLanguageIndentOptions(VueLanguage.INSTANCE).let {
+        settings.getLanguageIndentOptions(VueLanguage).let {
           it.isOverrideLanguageOptions = false
           it.USE_TAB_CHARACTER = true
           it.INDENT_SIZE = 1
@@ -73,7 +73,7 @@ class VueESLintImportCodeStyleTest : ESLintImportCodeStyleTestBase() {
         settings.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_ALIGN_ATTRIBUTES = false
       },
       { settings ->
-        settings.getLanguageIndentOptions(VueLanguage.INSTANCE).let {
+        settings.getLanguageIndentOptions(VueLanguage).let {
           TestCase.assertTrue(it.USE_TAB_CHARACTER)
           TestCase.assertEquals(1, it.INDENT_SIZE)
           TestCase.assertEquals(2, it.CONTINUATION_INDENT_SIZE)

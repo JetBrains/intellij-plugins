@@ -10,13 +10,14 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementFactory;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepParameter;
 
+@NotNullByDefault
 public class GherkinStepParameterImpl extends GherkinPsiElementBase implements GherkinStepParameter {
-  public GherkinStepParameterImpl(final @NotNull ASTNode node) {
+  public GherkinStepParameterImpl(ASTNode node) {
     super(node);
   }
 
@@ -31,10 +32,12 @@ public class GherkinStepParameterImpl extends GherkinPsiElementBase implements G
   }
 
   @Override
-  public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
+  public PsiElement setName(@NonNls String name) throws IncorrectOperationException {
     final LeafPsiElement content = PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
-    PsiElement[] elements = GherkinElementFactory.getTopLevelElements(getProject(), name);
-    getNode().replaceChild(content, elements[0].getNode());
+    if (content != null) {
+      PsiElement[] elements = GherkinElementFactory.getTopLevelElements(getProject(), name);
+      getNode().replaceChild(content, elements[0].getNode());
+    }
     return this;
   }
 
@@ -54,7 +57,7 @@ public class GherkinStepParameterImpl extends GherkinPsiElementBase implements G
   }
 
   @Override
-  public @NotNull SearchScope getUseScope() {
+  public SearchScope getUseScope() {
     return new LocalSearchScope(getContainingFile());
   }
 }

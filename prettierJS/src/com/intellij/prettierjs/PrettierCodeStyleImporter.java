@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.execution.ExecutionException;
@@ -14,11 +14,10 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static com.intellij.lang.javascript.service.JSLanguageServiceUtil.getPluginDirectory;
 
 public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<PrettierConfig> {
   public PrettierCodeStyleImporter(boolean isForInitialImport) {
@@ -61,8 +60,14 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
                                                             @NotNull NodeJsInterpreter interpreter,
                                                             @NotNull NodePackage linterPackage) throws ExecutionException {
     String configFilePath = FileUtil.toSystemDependentName(configPsi.getVirtualFile().getPath());
-    String convertConfigScriptPath =
-      getPluginDirectory(PrettierCodeStyleImporter.class, "prettierLanguageService/convert-prettier-config.js").getAbsolutePath();
+    String convertConfigScriptPath;
+    try {
+      convertConfigScriptPath =
+        PrettierUtil.getPrettierLanguageServicePath().resolve("convert-prettier-config.js").toAbsolutePath().toString();
+    }
+    catch (IOException e) {
+      throw new ExecutionException(e);
+    }
     String absPkgPathToRequire = linterPackage.getAbsolutePackagePathToRequire(configPsi.getProject());
     if (absPkgPathToRequire == null) {
       throw new ExecutionException(PrettierBundle.message("dialog.message.cannot.find.absolute.package.path.to.require", linterPackage));

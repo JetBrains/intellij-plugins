@@ -90,7 +90,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingWithoutServerTest() 
 
   override fun doHighlightingWithInvokeFixAndCheckResult(fixName: String?, ext: String?, vararg files: String?) {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
-      styleSettings.getCommonSettings(VueLanguage.INSTANCE).indentOptions?.let {
+      styleSettings.getCommonSettings(VueLanguage).indentOptions?.let {
         it.INDENT_SIZE = 4
         it.TAB_SIZE = 4
         it.CONTINUATION_INDENT_SIZE = 8

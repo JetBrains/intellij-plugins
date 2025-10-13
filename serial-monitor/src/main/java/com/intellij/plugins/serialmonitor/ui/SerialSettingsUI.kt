@@ -190,7 +190,9 @@ fun Panel.serialSettings(disposable: Disposable,
 
 
 internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe String, disposable: Disposable): DialogPanel {
-  val portStatus = service<SerialPortService>().portStatus(portName)
+  val monitor = connectableList.parentPanel.getOpenedMonitor(portName)
+  val openedInParentPanel = monitor != null
+  val portStatus = monitor?.getStatus() ?: service<SerialPortService>().portStatus(portName)
   val profileService = service<SerialProfileService>()
   return panel {
     indent {
@@ -200,7 +202,7 @@ internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe S
       }
 
       serialSettings(profile = profileService.copyDefaultProfile(portName),
-                     readOnly = portStatus != PortStatus.DISCONNECTED && portStatus != PortStatus.READY,
+                     readOnly = portStatus != PortStatus.DISCONNECTED && portStatus != PortStatus.READY && openedInParentPanel,
                      disposable = disposable) {
         profileService.setDefaultProfile(it)
       }
@@ -213,17 +215,25 @@ internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe S
 
         button(message("button.disconnect")) {
           connectableList.parentPanel.disconnectPort(portName)
-        }.visible(portStatus.disconnectVisible)
+        }.visible(portStatus.disconnectVisible && openedInParentPanel)
 
         button(message("button.open.console")) {
           connectableList.parentPanel.openConsole(portName)
-        }.visible(portStatus.openConsoleVisible)
+        }.visible(portStatus.openConsoleVisible && openedInParentPanel)
+
+        button(message("button.reconnect")) {
+          val profile =  profileService.copyDefaultProfile(portName)
+          val name = profile.defaultName()
+          if (showReconnectDialog(profile, name, connectableList.parentPanel)) {
+            connectableList.parentPanel.reconnectProfile(profile, name)
+          }
+        }.visible(!portStatus.portConnectVisible && !openedInParentPanel)
 
         link(message("link.label.create.profile")) {
-        profileService.cs.launch {
-          connectableList.createNewProfile (null, portName)
+          profileService.cs.launch {
+            connectableList.createNewProfile (null, portName)
+          }
         }
-      }
       }
     }
   }
@@ -232,10 +242,10 @@ internal fun portSettings(connectableList: ConnectableList, portName: @NlsSafe S
 internal fun profileSettings(connectableList: ConnectableList, disposable: Disposable): DialogPanel? {
   val (profileName, profile) = connectableList.getSelectedProfile() ?: return null
   if (profile == null) return null
-  val portStatus = service<SerialPortService>().portStatus(profile.portName)
 
-  val openedProfile = connectableList.parentPanel.getOpenedProfile(profile.portName)
-  val isOpenedProfile = openedProfile === profile
+  val monitor = connectableList.parentPanel.getOpenedMonitor(profile.portName)
+  val status = monitor?.getStatus() ?: service<SerialPortService>().portStatus(profile.portName)
+  val isUsed = monitor?.portProfile === profile
 
   val profileService = service<SerialProfileService>()
   return panel {
@@ -276,22 +286,22 @@ internal fun profileSettings(connectableList: ConnectableList, disposable: Dispo
       row {
         button(message("button.connect")) {
           connectableList.parentPanel.connectProfile(profile, profileName)
-        }.visible(portStatus.profileConnectVisible).enabled(portStatus.connectEnabled)
-        .applyToComponent { toolTipText = portStatus.connectTooltip }
+        }.visible(status.profileConnectVisible).enabled(status.connectEnabled)
+        .applyToComponent { toolTipText = status.connectTooltip }
 
         button(message("button.reconnect")) {
           if (showReconnectDialog(profile, profileName, connectableList.parentPanel)) {
             connectableList.parentPanel.reconnectProfile(profile, profileName)
           }
-        }.visible(!portStatus.profileConnectVisible && !isOpenedProfile )
+        }.visible(!status.profileConnectVisible && !isUsed)
 
         button(message("button.disconnect")) {
           connectableList.parentPanel.disconnectPort(profile.portName)
-        }.visible(portStatus.disconnectVisible && isOpenedProfile)
+        }.visible(status.disconnectVisible && isUsed)
 
         button(message("button.open.console")) {
           connectableList.parentPanel.openConsole(profile.portName)
-        }.visible(portStatus.openConsoleVisible && isOpenedProfile)
+        }.visible(status.openConsoleVisible && isUsed)
 
         link(message("link.label.duplicate.profile")) {profileService.cs.launch { connectableList.createNewProfile(profileName) } }
       }

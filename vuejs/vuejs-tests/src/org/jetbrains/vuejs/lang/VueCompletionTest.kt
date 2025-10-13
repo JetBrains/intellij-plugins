@@ -810,7 +810,28 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+        "<MyLabelFromPlugin v-my-intersect.<caret>pass",
+        "<MyLabelFromPlugin v-my-intersect.pa<caret>ss",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromFunctionPlugin_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+        "<MyButtonFromPlugin v-my-mutate.<caret>attr",
+        "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
+        "<MyLabelFromPlugin v-my-intersect.<caret>once",
+        "<MyLabelFromPlugin v-my-intersect.on<caret>ce",
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -819,7 +840,24 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromNestedFunctionPlugin_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+        "<MyButtonFromPlugin v-my-mutate.<caret>attr",
+        "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
+        ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -828,7 +866,24 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromNestedFunctionPluginWithCycle_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+        "<MyButtonFromPlugin v-my-mutate.<caret>attr",
+        "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
+        ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -837,7 +892,28 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+        "<MyLabelFromPlugin v-my-intersect.<caret>pass",
+        "<MyLabelFromPlugin v-my-intersect.pa<caret>ss",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromObjectPlugin_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+        "<MyButtonFromPlugin v-my-mutate.<caret>attr",
+        "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
+        "<MyLabelFromPlugin v-my-intersect.<caret>once",
+        "<MyLabelFromPlugin v-my-intersect.on<caret>ce",
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -846,7 +922,24 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testDirectivesFromNestedObjectPlugin_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+        "<MyButtonFromPlugin v-my-mutate.<caret>attr",
+        "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
+        ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -855,10 +948,27 @@ class VueCompletionTest : VueTestCase("completion") {
       VueTestModule.VUE_3_5_0,
       dir = true,
       configureFileName = "App.vue",
-      locations = listOf("<MyButtonFromPlugin v-<caret>my-", "<MyButtonFromPlugin v-my-<caret>"),
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
-  
+
+  fun testDirectivesFromNestedObjectPluginWithCycle_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<MyButtonFromPlugin v-<caret>my-",
+        "<MyButtonFromPlugin v-my-<caret>",
+        "<MyButtonFromPlugin v-my-mutate.<caret>attr",
+        "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
+        ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
   fun testCreateAppIndex() =
     doLookupTest(VueTestModule.VUE_3_2_2,
                  dir = true,

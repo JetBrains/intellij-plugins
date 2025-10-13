@@ -7,6 +7,17 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 public class CucumberJavaFindUsagesTest extends CucumberJavaCodeInsightTestCase {
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber7ProjectDescriptor();
+  }
+
+  @Override
+  protected String getBasePath() {
+    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "search";
+  }
+
   public void testStepUsages() {
     myFixture.copyDirectoryToProject(getTestName(true), "");
     String[] usages = myFixture.testFindUsagesUsingAction("Steps.java").stream().map(Usage::toString).toArray(String[]::new);
@@ -42,15 +53,5 @@ public class CucumberJavaFindUsagesTest extends CucumberJavaCodeInsightTestCase 
       "23|@And(|\"yesterday was {|isoDate|}, before was {|isoDate|}\"|)",
     };
     assertSameElements(expectedUsages, usages);
-  }
-
-  @Override
-  protected String getBasePath() {
-    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "search";
-  }
-
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumber7ProjectDescriptor();
   }
 }

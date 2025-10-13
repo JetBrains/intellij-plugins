@@ -21,6 +21,7 @@ import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,13 +51,13 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
     }
   }
 
-  private @NotNull PerforceConnectionMapper getConnectionMapper() {
+  private @Nullable PerforceConnectionMapper getConnectionMapper() {
     synchronized (myLock) {
       if (myConnectionMapper != null) {
         return myConnectionMapper;
       }
     }
-    return initialize();
+    return null;
   }
 
   private @NotNull PerforceConnectionMapper initialize() {
@@ -92,7 +93,10 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
 
   @Override
   public @NotNull Map<VirtualFile, P4Connection> getAllConnections() {
-    return getConnectionMapper().getAllConnections();
+    PerforceConnectionMapper mapper = getConnectionMapper();
+    if (mapper == null) return Collections.emptyMap();
+
+    return mapper.getAllConnections();
   }
 
   public void scheduleInitialization() {
@@ -106,12 +110,14 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       if (myProject.isDisposed()) {
-        isInitializing = false;
+        synchronized (myLock) {
+          isInitializing = false;
+        }
         return;
       }
 
       initialize();
-      synchronized (this) {
+      synchronized (myLock) {
         isInitializing = false;
       }
     });
@@ -134,6 +140,8 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
   @Override
   public @Nullable P4Connection getConnectionForFile(@NotNull File file) {
     PerforceConnectionMapper mapper = getConnectionMapper();
+    if (mapper == null) return null;
+
     if (mapper instanceof SingletonConnection) {
       if (LOG.isDebugEnabled()) {
         LOG.debug("getConnectionForFile(" + file + ") returning singleton");
@@ -156,9 +164,12 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
   }
 
   @Override
-  public P4Connection getConnectionForFile(final @NotNull VirtualFile file) {
+  public @Nullable P4Connection getConnectionForFile(final @NotNull VirtualFile file) {
     // todo : also use client roots information
-    return getConnectionMapper().getConnection(file);
+    PerforceConnectionMapper mapper = getConnectionMapper();
+    if (mapper == null) return null;
+
+    return mapper.getConnection(file);
   }
 
   @Override
@@ -187,7 +198,10 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
 
   @Override
   public boolean isUnderProjectConnections(final @NotNull File file) {
-    Set<VirtualFile> allRoots = getConnectionMapper().getAllConnections().keySet();
+    PerforceConnectionMapper mapper = getConnectionMapper();
+    if (mapper == null) return false;
+
+    Set<VirtualFile> allRoots = mapper.getAllConnections().keySet();
     return ContainerUtil.or(allRoots, root -> FileUtil.isAncestor(VfsUtilCore.virtualToIoFile(root), file, false));
   }
 

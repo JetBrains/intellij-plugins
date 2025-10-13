@@ -10,7 +10,7 @@ class ParseHelixClientConnectionTest : VcsPlatformTest() {
 
   fun `test parse single client connection`() {
     val configFiles = Mockito.mock(ConfigFiles::class.java)
-    val connectionMapFile = File("resources/connectionmap-single.xml")
+    val connectionMapFile = getResource("connectionmap-single.xml")
     assertTrue(connectionMapFile.exists())
 
     Mockito.`when`(configFiles.getClientConfig()).thenReturn(connectionMapFile)
@@ -26,7 +26,7 @@ class ParseHelixClientConnectionTest : VcsPlatformTest() {
 
   fun `test parse multi client connection`() {
     val configFiles = Mockito.mock(ConfigFiles::class.java)
-    val connectionMapFile = File("resources/connectionmap-multi.xml")
+    val connectionMapFile = getResource("connectionmap-multi.xml")
     assertTrue(connectionMapFile.exists())
 
     Mockito.`when`(configFiles.getClientConfig()).thenReturn(connectionMapFile)
@@ -43,5 +43,11 @@ class ParseHelixClientConnectionTest : VcsPlatformTest() {
     val secondConnectionParameters = connectionParameters.last()
     assertEquals("SomeSecondUser", secondConnectionParameters.user)
     assertEquals("ssl:server-host-2:1666", secondConnectionParameters.server)
+  }
+
+  private fun getResource(resourceName: String): File {
+    val resource = javaClass.getResource(resourceName.takeIf { it.startsWith("/") } ?: "/$resourceName")?.file
+    assertNotNull("Resource '$resourceName' not found", resource)
+    return File(resource!!)
   }
 }

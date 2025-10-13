@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.editorActions.completionProviders;
 
 import com.intellij.codeInsight.TailType;
@@ -66,7 +66,7 @@ class CfmlAttributeNamesCompletionProvider extends CompletionProvider<Completion
       result.addElement(TailTypeDecorator.withTail(LookupElementBuilder.create(s.getName()).
         withCaseSensitivity(false), new TailType() {
         @Override
-        public int processTail(Editor editor, int tailOffset) {
+        public int processTail(@NotNull Editor editor, int tailOffset) {
           HighlighterIterator iterator = editor.getHighlighter().createIterator(tailOffset);
           if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.WHITE_SPACE) iterator.advance();
           if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.ASSIGN) {

@@ -1,6 +1,6 @@
 import {<symbolName descr="identifiers//exported function">booleanAttribute</symbolName>, <symbolName descr="identifiers//exported function">Component</symbolName>, <symbolName descr="identifiers//exported function">Input</symbolName>} <info descr="null">from</info> '@angular/core';
 
-<info descr="decorator">@</info><info descr="decorator">Component</info>({
+<symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Component</symbolName>({
     <symbolName descr="instance field">inputs</symbolName>: [
         { <symbolName descr="instance field">name</symbolName>: "<symbolName descr="TS.INSTANCE_MEMBER_VARIABLE">obj</symbolName>" },
         { <symbolName descr="instance field">name</symbolName>: "<symbolName descr="TS.INSTANCE_MEMBER_VARIABLE">obj2</symbolName>", <symbolName descr="instance field">alias</symbolName>:"<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">foo-bar</symbolName>" },
@@ -22,13 +22,13 @@ import {<symbolName descr="identifiers//exported function">booleanAttribute</sym
     </inject>`
 })
 export class <symbolName descr="classes//exported class">TestComponent</symbolName> {
-    <info descr="decorator">@</info><info descr="decorator">Input</info>({<symbolName descr="instance field">alias</symbolName>: "<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">foo</symbolName>", <symbolName descr="instance field">transform</symbolName>: <symbolName descr="identifiers//exported function">booleanAttribute</symbolName>})
+    <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Input</symbolName>({<symbolName descr="instance field">alias</symbolName>: "<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">foo</symbolName>", <symbolName descr="instance field">transform</symbolName>: <symbolName descr="identifiers//exported function">booleanAttribute</symbolName>})
     <symbolName descr="instance field">nope</symbolName>!: <info descr="null">boolean</info>;
 
-    <info descr="decorator">@</info><info descr="decorator">Input</info>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">bar</symbolName>")
+    <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Input</symbolName>("<symbolName descr="NG.PROPERTY_BINDING_ATTR_NAME">bar</symbolName>")
     <symbolName descr="instance field">alsoNo</symbolName>!: <info descr="null">boolean</info>;
 
-    <info descr="decorator">@</info><info descr="decorator">Input</info>()
+    <symbolName descr="decorator">@</symbolName><symbolName descr="decorator">Input</symbolName>()
     <symbolName descr="instance field">strict</symbolName>!: <info descr="null">boolean</info>;
 
     <symbolName descr="instance field">obj</symbolName>!: <info descr="null">boolean</info>;

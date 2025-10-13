@@ -42,7 +42,7 @@
     <orderEntry type="module" module-name="intellij.stylus" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.psi" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.tests" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.stream" scope="TEST" />
     <orderEntry type="module" module-name="intellij.libraries.gson" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.web" scope="TEST" />
@@ -61,5 +61,7 @@
     <orderEntry type="module" module-name="intellij.sass.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.sass" scope="TEST" />
     <orderEntry type="module" module-name="intellij.vuejs.common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.vuejs.backend" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.vuejs.plugin" scope="TEST" />
   </component>
 </module>

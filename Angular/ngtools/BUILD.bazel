@@ -17,7 +17,7 @@ jvm_library(
     "//WebStorm:webstorm",
     "//ultimate/platform-ultimate:commercial",
     "//ultimate/ultimate-verifier:commercial-verifier",
-    "@lib//:commons-compress",
+    "@community//libraries/commons/compress",
     "@community//libraries/gson",
     "@community//platform/service-container",
     "@community//platform/platform-util-io:ide-util-io",

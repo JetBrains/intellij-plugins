@@ -17,7 +17,7 @@
     <plugin id="com.intellij.modules.appcode"/>
   </dependencies>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="intellij.appcode.reveal"/>
   </content>
 

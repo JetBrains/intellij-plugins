@@ -8,7 +8,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
-import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.Collection;
@@ -60,7 +60,7 @@ public interface CucumberJvmExtensionPoint {
   }
 
   default @Nullable String getStepName(PsiElement step) {
-    if (!(step instanceof GherkinStepImpl gherkinStep)) {
+    if (!(step instanceof GherkinStep gherkinStep)) {
       return null;
     }
     return gherkinStep.getSubstitutedName();

@@ -1,0 +1,28 @@
+{
+  "manifest_version": 1,
+  "api_version": 20191,
+  "script_runtime": {
+    "language": "Lua",
+    "version": "5.3"
+  },
+  "key": "117E9283-732B-45A6-9993-AE64C354F1C5",
+  "name": "loginhook",
+  "namespace": "Auth",
+  "version": "2020.1-snapshot",
+  "version_name": "2020.1 pre-release snapshot",
+  "description": "SSO auth integration",
+  "compatible_products": [
+    "p4d"
+  ],
+  "default_locale": "en",
+  "supported_locales": [
+    "en"
+  ],
+  "developer": {
+    "name": "Perforce",
+    "url": "http://perforce.com/"
+  },
+  "homepage_url": "http://perforce.com/",
+  "license": "UNLICENSED",
+  "license_body": "UNLICENSED"
+}
