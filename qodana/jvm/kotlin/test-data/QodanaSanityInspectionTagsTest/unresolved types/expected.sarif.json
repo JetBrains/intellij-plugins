@@ -66,8 +66,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[REDECLARATION] Conflicting declarations: param: param: List",
-            "markdown": "\\[REDECLARATION\\] Conflicting declarations: param: param: List"
+            "text": "[REDECLARATION] Conflicting declarations: param: ??? (Unresolved qualified name: Param) param: List",
+            "markdown": "\\[REDECLARATION\\] Conflicting declarations: param: ??? (Unresolved qualified name: Param) param: List"
           },
           "locations": [
             {
@@ -107,7 +107,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "009694076850ad29",
-            "equalIndicator/v1": "4a43a2b903cb1178da2856af7e94feb5dbc20a26acd28ed4cfb7c0a008299d1c"
+            "equalIndicator/v1": "ce1a8319f209d3817274860e29f10f11af1b7489fdaa617a7b0db69749302aa6"
           },
           "properties": {
             "ideaSeverity": "ERROR",
@@ -182,8 +182,8 @@
           "kind": "fail",
           "level": "error",
           "message": {
-            "text": "[REDECLARATION] Conflicting declarations: param: param: List",
-            "markdown": "\\[REDECLARATION\\] Conflicting declarations: param: param: List"
+            "text": "[REDECLARATION] Conflicting declarations: param: ??? (Unresolved qualified name: Param) param: List",
+            "markdown": "\\[REDECLARATION\\] Conflicting declarations: param: ??? (Unresolved qualified name: Param) param: List"
           },
           "locations": [
             {
@@ -223,7 +223,7 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v2": "e45bebed6efc1153",
-            "equalIndicator/v1": "ed484071a72501b13d6f8e539a6cbff052fdfa985d24dec33a12f707a9e2c7ad"
+            "equalIndicator/v1": "3e95a0c765765acdb74a8a54631faa108c9654b4a00aff0f72994a81d9145ec2"
           },
           "properties": {
             "ideaSeverity": "ERROR",
