@@ -9,6 +9,7 @@ import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywo
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.terragrunt.model.StackRootBlocks
 import org.intellij.terraform.terragrunt.model.TerragruntBlocksAndAttributes
+import org.intellij.terraform.terragrunt.model.TerragruntFunctions
 
 internal class TerragruntCompletionTest : CompletionTestCase() {
   override fun getFileName(): String = "terragrunt.hcl"
@@ -155,6 +156,44 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
         if_exists = "over<caret>"
       }
     """.trimIndent(), "overwrite", "overwrite_terragrunt")
+  }
+
+  fun testTerragruntFunctionsCompletion() {
+    doBasicCompletionTest("""
+      remote_state {
+        backend = "s3"
+        config = {
+          bucket = get_aws<caret>
+        }
+      }
+    """.trimIndent(), "get_aws_account_alias", "get_aws_account_id", "get_aws_caller_identity_arn", "get_aws_caller_identity_user_id")
+
+    val allTerragruntFunctions = TerragruntFunctions.map { it.name }
+    doBasicCompletionTest("""
+      inputs = {
+        caller_arn = <caret>
+      }
+    """.trimIndent(), getPartialMatcher(allTerragruntFunctions))
+
+    doBasicCompletionTest("""
+      remote_state {
+        backend = "s3"
+        config = {
+          bucket = <caret>
+        }
+      }
+    """.trimIndent(), Matcher.not(
+      "provider::aws::arn_parse", "provider::azurerm::parse_resource_id", "provider::kubernetes::manifest_decode")
+    )
+    doBasicCompletionTest("""
+      remote_state {
+        backend = "s3"
+        config = {
+          <caret>bucket = get_env("BUCKET")
+        }
+      }
+    """.trimIndent(), emptyList()
+    )
   }
 
   private fun doAutoInsertCompletionTest(textBefore: String, textAfter: String, file: String = this.fileName) {

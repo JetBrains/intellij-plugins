@@ -14,6 +14,7 @@ import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createBlockHeaderPattern
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createRootBlockPattern
 import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns.TerragruntFile
+import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns.TerragruntMethodPosition
 
 internal class TerragruntCompletionContributor : CompletionContributor(), DumbAware {
   init {
@@ -25,5 +26,7 @@ internal class TerragruntCompletionContributor : CompletionContributor(), DumbAw
     extend(CompletionType.BASIC, createBlockPropertyKeyPattern(TerragruntFile), HclBlockPropertiesCompletionProvider)
     extend(CompletionType.BASIC, createPropertyInBlockPattern(TerragruntFile), HclBlockPropertiesCompletionProvider)
     extend(CompletionType.BASIC, createNestedBlockPropertyPattern(TerragruntFile), HclBlockPropertiesCompletionProvider)
+
+    extend(CompletionType.BASIC, TerragruntMethodPosition, TerragruntMethodCompletionProvider)
   }
 }

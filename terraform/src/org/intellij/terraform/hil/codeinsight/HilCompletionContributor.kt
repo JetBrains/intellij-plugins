@@ -44,7 +44,7 @@ import org.intellij.terraform.hil.patterns.HILPatterns.IlseEphemeralResource
 import org.intellij.terraform.hil.patterns.HILPatterns.IlseFromKnownScope
 import org.intellij.terraform.hil.patterns.HILPatterns.IlseNotFromKnownScope
 import org.intellij.terraform.hil.patterns.HILPatterns.InsideForExpressionBody
-import org.intellij.terraform.hil.patterns.HILPatterns.MethodPosition
+import org.intellij.terraform.hil.patterns.HILPatterns.TfMethodPosition
 import org.intellij.terraform.hil.patterns.HILPatterns.VariableTypePosition
 import org.intellij.terraform.hil.psi.FakeTypeProperty
 import org.intellij.terraform.hil.psi.ForVariableCompletion
@@ -75,8 +75,8 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
   ).associateBy { it.scope }
 
   init {
-    extend(CompletionType.BASIC, MethodPosition, MethodsCompletionProvider)
-    extend(CompletionType.BASIC, MethodPosition, ResourceTypesCompletionProvider)
+    extend(CompletionType.BASIC, TfMethodPosition, MethodsCompletionProvider)
+    extend(CompletionType.BASIC, TfMethodPosition, ResourceTypesCompletionProvider)
 
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
       .withParent(Identifier::class.java).withSuperParent(2, IlseFromKnownScope), KnownScopeCompletionProvider())

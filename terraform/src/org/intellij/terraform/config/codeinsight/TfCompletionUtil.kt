@@ -93,11 +93,11 @@ internal object TfCompletionUtil {
       }
     })
 
-  fun createFunction(function: TfFunction): LookupElementBuilder = create(function, function.presentableName)
+  fun createFunction(function: TfFunction, isTerragrunt: Boolean = false): LookupElementBuilder = create(function, function.presentableName)
     .withInsertHandler(if (function.arguments.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
     .withTailText(function.getArgumentsAsText())
     .withTypeText(function.returnType.presentableText)
-    .withIcon(AllIcons.Nodes.Function)
+    .withIcon(if (isTerragrunt) TerraformIcons.Terragrunt else AllIcons.Nodes.Function)
 
   fun buildLookupForProviderBlock(provider: ProviderType, element: PsiElement): LookupElement =
     createProviderLookupElement(provider, element)
