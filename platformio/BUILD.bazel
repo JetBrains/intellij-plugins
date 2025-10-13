@@ -101,6 +101,7 @@ jvm_library(
     "//CIDR/clion-projectStatus",
     "//CIDR/clion-testFramework",
     "//CIDR/clion-testFramework-nolang",
+    "//CIDR/clion-testFramework-nolang:clion-testFramework-nolang_test_lib",
     "//CIDR/clion-toolchains",
     "@community//platform/analysis-api:analysis",
     "@community//platform/util/concurrency",
