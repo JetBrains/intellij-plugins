@@ -27,6 +27,7 @@ class PrismaLspServerDescriptor(project: Project)
     override val foldingRangeCustomizer = LspFoldingRangeDisabled
     override val inlayHintCustomizer: LspInlayHintCustomizer = LspInlayHintDisabled
     override val documentHighlightsCustomizer: LspDocumentHighlightsCustomizer = LspDocumentHighlightsDisabled
+    override val documentSymbolCustomizer: LspDocumentSymbolCustomizer = LspDocumentSymbolDisabled
     override val signatureHelpCustomizer: LspSignatureHelpCustomizer = LspSignatureHelpDisabled
 
     override val diagnosticsCustomizer: LspDiagnosticsCustomizer = object : LspDiagnosticsSupport() {
