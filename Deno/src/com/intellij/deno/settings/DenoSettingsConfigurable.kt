@@ -29,7 +29,7 @@ internal class DenoSettingsConfigurable(
   override fun createPanel(): DialogPanel {
     return panel {
       val service = DenoSettings.getService(project)
-      row(DenoBundle.message("settings.deno.path.javascriptRuntimePage.label")) {
+      row(DenoBundle.message("deno.path")) {
         val denoPathDescriptor = FileChooserDescriptorFactory.singleFile().withTitle(DenoBundle.message("deno.name"))
         textFieldWithBrowseButton(denoPathDescriptor)
           .align(AlignX.FILL)
