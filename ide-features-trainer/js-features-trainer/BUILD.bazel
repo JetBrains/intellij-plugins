@@ -63,10 +63,10 @@ jvm_library(
     "@community//platform/refactoring",
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/core-ui",
-    "//plugins/JavaScriptLanguage:javascript-backend",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    ":plugins_javascript-backend_provided",
   ]
 )
 ### auto-generated section `build intellij.javascript.featuresTrainer` end
