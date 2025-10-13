@@ -191,6 +191,7 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
     synchronized (myLock) {
       myConnectionMapper = null;
     }
+    scheduleInitialization();
     final PerforceManager manager = PerforceManager.getInstance(getProject());
     manager.configurationChanged();
   }
