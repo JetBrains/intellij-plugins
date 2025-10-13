@@ -52,6 +52,7 @@ jvm_library(
     "@community//libraries/kotlinx/serialization/json",
     "//CIDR/cidr-common-testFramework/nolang",
     "//CIDR/clion-testFramework-nolang",
+    "//CIDR/clion-testFramework-nolang:clion-testFramework-nolang_test_lib",
     "//CIDR/clion-testFramework-nolang/junit5/cmake",
     "//CIDR/clion-testFramework-nolang/junit5/core",
     "@community//platform/testFramework",
