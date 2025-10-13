@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform
 
 import com.intellij.internal.statistic.beans.MetricEvent
@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.CommonProcessors
+import org.intellij.terraform.terragrunt.TERRAGRUNT_MAIN_FILE
 
 internal class TfUsageCollector : ProjectUsagesCollector() {
 
@@ -35,7 +36,7 @@ internal class TfUsageCollector : ProjectUsagesCollector() {
 
     if (hasHCLLanguageFiles(project, FileTypeManager.getInstance().registeredFileTypes.asList())) {
       val terragruntSearch = CommonProcessors.FindFirstProcessor<VirtualFile>()
-      FilenameIndex.processFilesByName("terragrunt.hcl", false, GlobalSearchScope.allScope(project), terragruntSearch)
+      FilenameIndex.processFilesByName(TERRAGRUNT_MAIN_FILE, false, GlobalSearchScope.allScope(project), terragruntSearch)
       result.add(TERRAGRUNT.metric(terragruntSearch.isFound))
     }
 
