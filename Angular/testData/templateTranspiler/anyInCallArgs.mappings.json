@@ -1,0 +1,37 @@
+[
+  {
+    "file-name": "anyInCallArgs.ts",
+    "mappings": [
+      "0:67 => 0:67 (source)",
+      "«button» [74] => «_t1» [111]} (no diagnostics) (no semantic)",
+      "«(click)» [81] => «click» [173]} (no types)",
+      "«newTask» [90] => «newTask» [205]} (no types)",
+      "«newTask» [90] => «this.newTask» [200]}",
+      "«newTask($any(input.value), $any(input.value), $any(input.value))» [90] => «this.newTask((this.input.value as any), (this.input.value as any), (this.input.value as any))» [200]}",
+      "«(» [97] => «(» [212]}",
+      "«($any(input.value), $any(input.value), $any(input.value))» [97] => «((this.input.value as any), (this.input.value as any), (this.input.value as any))» [212]}",
+      "«$any(input.value)» [98] => «(this.input.value as any)» [213]} (no types)",
+      "«input» [103] => «input» [219]} (no types)",
+      "«input» [103] => «this.input» [214]}",
+      "«input.value» [103] => «this.input.value» [214]}",
+      "«.» [108] => «.» [224]}",
+      "«value» [109] => «value» [225]}",
+      "«,» [115] => «,» [238]}",
+      "«$any(input.value)» [117] => «(this.input.value as any)» [240]} (no types)",
+      "«input» [122] => «input» [246]} (no types)",
+      "«input» [122] => «this.input» [241]}",
+      "«input.value» [122] => «this.input.value» [241]}",
+      "«.» [127] => «.» [251]}",
+      "«value» [128] => «value» [252]}",
+      "«,» [134] => «,» [265]}",
+      "«$any(input.value)» [136] => «(this.input.value as any)» [267]} (no types)",
+      "«input» [141] => «input» [273]} (no types)",
+      "«input» [141] => «this.input» [268]}",
+      "«input.value» [141] => «this.input.value» [268]}",
+      "«.» [146] => «.» [278]}",
+      "«value» [147] => «value» [279]}",
+      "«)» [153] => «)» [292]}",
+      "173:292 => 173:292 (source)"
+    ]
+  }
+]

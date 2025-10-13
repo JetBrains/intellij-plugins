@@ -1,0 +1,10 @@
+/* Angular type checking code */
+
+/* TCB for anyInCallArgs.ts */
+
+function _tcb1(this: NewTaskComponent) {
+var _t1 = document.createElement("button");
+_t1.addEventListener("click", ($event): any => {
+this.newTask((this.input.value as any), (this.input.value as any), (this.input.value as any));
+});
+}

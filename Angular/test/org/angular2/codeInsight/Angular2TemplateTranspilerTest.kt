@@ -175,6 +175,10 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
     Angular2TestModule.ANGULAR_CORE_20_2_2
   )
 
+  fun testAnyInCallArgs() = checkTranspilation(
+    Angular2TestModule.ANGULAR_CORE_20_2_2
+  )
+
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,
     dir: Boolean = false,
