@@ -42,6 +42,13 @@ class Angular2ServiceInlayHintsTest : Angular2TestCase("inlayHints", true) {
     checkInlayHints()
   }
 
+  fun testAnyCalls() = doConfiguredTest(
+    Angular2TestModule.ANGULAR_CORE_18_2_1, Angular2TestModule.ANGULAR_COMMON_18_2_1,
+    configurators = listOf(Angular2TsConfigFile())
+  ) {
+    checkInlayHints()
+  }
+
   private fun checkInlayHints() {
     TypeScriptServiceInlayHintsService.testInlayHints(testRootDisposable)
     myFixture.configureJSInlayHints(
