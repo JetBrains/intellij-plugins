@@ -31,6 +31,7 @@ import org.angular2.lang.expr.lexer.Angular2TokenTypes
 import org.angular2.lang.expr.parser.Angular2ElementTypes
 import org.angular2.lang.expr.parser.Angular2StubElementTypes
 import org.angular2.lang.expr.psi.Angular2BlockParameter
+import org.angular2.lang.html.parser.Angular2HtmlVarAttrTokenType
 import org.angular2.lang.html.psi.Angular2HtmlBlockContents
 import org.angular2.lang.html.psi.formatter.Angular2HtmlCodeStyleSettings
 
@@ -68,27 +69,39 @@ class Angular2FormattingModelBuilder : JavascriptFormattingModelBuilder() {
 
   private class Angular2BlockContext(settings: CodeStyleSettings, dialect: Language, formattingContext: FormattingContext)
     : JSBlockContext(settings, dialect, null, formattingContext.formattingMode) {
-    override fun createSpacingProcessor(node: ASTNode?, child1: ASTNode?, child2: ASTNode?): JSSpacingProcessor {
-      return Angular2SpacingProcessor(node, child1, child2, topSettings, dialect, dialectSettings)
-    }
+    override fun createSpacingProcessor(node: ASTNode?, child1: ASTNode?, child2: ASTNode?): JSSpacingProcessor =
+      Angular2SpacingProcessor(node, child1, child2, topSettings, dialect, dialectSettings)
 
-    override fun indentEachBinaryOperandSeparately(child: ASTNode, parentBlock: JSBlock?): Boolean {
-      return super.indentEachBinaryOperandSeparately(child, parentBlock)
-             || parentBlock?.node?.elementType == Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE
-    }
+    override fun indentEachBinaryOperandSeparately(child: ASTNode, parentBlock: JSBlock?): Boolean =
+      super.indentEachBinaryOperandSeparately(child, parentBlock)
+      || parentBlock?.node?.elementType == Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE
 
-    override fun createSubBlockVisitor(parentBlock: JSBlock, alignmentFactory: ASTNodeBasedAlignmentFactory?): SubBlockVisitor {
-      return object : TypedJSSubBlockVisitor(parentBlock, alignmentFactory, this) {
-        override fun getIndent(node: ASTNode, child: ASTNode, sharedSmartIndent: Indent?): Indent? {
-          if (node.elementType == Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE
-              && child.elementType === JSTokenTypes.IDENTIFIER
-          ) {
-            return Indent.getNoneIndent()
-          }
-          return super.getIndent(node, child, sharedSmartIndent)
-        }
+    override fun createSubBlockVisitor(parentBlock: JSBlock, alignmentFactory: ASTNodeBasedAlignmentFactory?): SubBlockVisitor =
+      Angular2SubBlockVisitor(parentBlock, alignmentFactory, this)
+  }
+
+  private class Angular2SubBlockVisitor(
+    parentBlock: JSBlock,
+    alignmentFactory: ASTNodeBasedAlignmentFactory?,
+    jsBlockContext: Angular2BlockContext,
+  ) : TypedJSSubBlockVisitor(parentBlock, alignmentFactory, jsBlockContext) {
+    override fun getIndent(node: ASTNode, child: ASTNode, sharedSmartIndent: Indent?): Indent? =
+      when (node.elementType) {
+        Angular2StubElementTypes.BLOCK_PARAMETER_VARIABLE if child.elementType === JSTokenTypes.IDENTIFIER ->
+          Indent.getNoneIndent()
+        else ->
+          super.getIndent(node, child, sharedSmartIndent)
       }
-    }
+
+    override fun getWrap(node: ASTNode, child: ASTNode?, sharedWrap: Wrap?): Wrap? =
+      when (node.elementType) {
+        JSStubElementTypes.VAR_STATEMENT
+          if node.treeParent?.elementType.let {
+            it == Angular2HtmlVarAttrTokenType.REFERENCE || it == Angular2ElementTypes.BLOCK_PARAMETER_STATEMENT
+          } -> null
+        else ->
+          super.getWrap(node, child, sharedWrap)
+      }
   }
 
   private class Angular2SpacingProcessor(
