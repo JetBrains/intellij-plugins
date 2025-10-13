@@ -60,7 +60,7 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
     return null;
   }
 
-  private @NotNull PerforceConnectionMapper initialize() {
+  private void initialize() {
     PerforceConnectionMapper mapper;
     if (isSingletonConnectionUsed()) {
       mapper = SingletonConnection.getInstance(myProject);
@@ -77,7 +77,6 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
           myNotifier.setProblems(((PerforceMultipleConnections)mapper).hasAnyErrors(), false);
         }
       }
-      return mapper;
     }
   }
 

@@ -39,10 +39,7 @@ import org.jetbrains.idea.perforce.perforce.FormParser;
 import org.jetbrains.idea.perforce.perforce.PerforceChangeListHelper;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
-import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection;
-import org.jetbrains.idea.perforce.perforce.connections.P4ConfigFields;
-import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
-import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
+import org.jetbrains.idea.perforce.perforce.connections.*;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
@@ -133,6 +130,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
         fillPerforceSettings(myClientBinaryPath);
         setupWorkspace();
         activateVCS("Perforce");
+        waitForConnectionManagerInitialization();
       }
       catch (Throwable e) {
         TestLoggerFactory.dumpLogToStdout(getTestStartedLogMessage());
@@ -153,6 +151,15 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     FileUtil.writeToFile(myP4ConfigFile, createP4Config("test"));
     AbstractP4Connection.setTestEnvironment(Map.of(P4ConfigFields.P4CONFIG.name(), DEFAULT_P4CONFIG), myTestRootDisposable);
     VfsUtil.markDirtyAndRefresh(false, false, false, VfsUtil.findFileByIoFile(myP4ConfigFile, true));
+  }
+
+  protected final void waitForConnectionManagerInitialization() {
+    PerforceConnectionManagerI connectionManager = PerforceConnectionManager.getInstance(myProject);
+    if (connectionManager.isInitialized()) return;
+
+    while (!connectionManager.isInitialized()) {
+      TimeoutUtil.sleep(100);
+    }
   }
 
   protected void setupWorkspace() {
@@ -414,6 +421,20 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     return new VcsDirectoryMapping(root.getPath(), "Perforce");
   }
 
+  @Override
+  public void setVcsMappings(VcsDirectoryMapping... mappings) {
+    super.setVcsMappings(mappings);
+
+    waitForConnectionManagerInitialization();
+  }
+
+  @Override
+  protected void setVcsMappings(List<VcsDirectoryMapping> mappings) {
+    super.setVcsMappings(mappings);
+
+    waitForConnectionManagerInitialization();
+  }
+
   protected void setUseP4Config() {
     setUseP4Config(TEST_P4CONFIG);
   }
@@ -422,6 +443,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     PerforceSettings.getSettings(myProject).useP4CONFIG = true;
     AbstractP4Connection.setTestEnvironment(Map.of(P4ConfigFields.P4CONFIG.getName(), p4ConfigName), myTestRootDisposable);
     PerforceConnectionManager.getInstance(myProject).updateConnections();
+    waitForConnectionManagerInitialization();
   }
 
   protected static String createP4Ignore() {

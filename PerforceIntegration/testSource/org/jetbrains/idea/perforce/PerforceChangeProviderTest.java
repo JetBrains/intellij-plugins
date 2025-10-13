@@ -32,6 +32,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.intellij.testFramework.UsefulTestCase.*;
+import static com.intellij.testFramework.UsefulTestCase.assertEquals;
+import static com.intellij.testFramework.UsefulTestCase.assertNull;
+import static com.intellij.testFramework.UsefulTestCase.fail;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -46,7 +49,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     // similar to svn tests to be added
     myScheme = new DuringChangeListManagerUpdateTestScheme(myProject, myTempDirFixture.getTempDirPath());
-
+    // because DuringChangeListManagerUpdateTestScheme reactivate Perforce VCS which cause reset of PerforceConnectionManager initialization
+    waitForConnectionManagerInitialization();
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY);
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.REMOVE, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY);
   }
