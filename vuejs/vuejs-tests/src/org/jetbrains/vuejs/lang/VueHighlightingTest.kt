@@ -64,12 +64,16 @@ class VueHighlightingTest : BasePlatformTestCase() {
 
   private fun doDirTest(
     addNodeModules: List<VueTestModule> = emptyList(),
+    additionalDependencies: Map<String, String> = emptyMap(),
     fileName: String? = null,
     vararg additionalFilesToCheck: String,
   ) {
     val testName = getTestName(true)
     if (addNodeModules.isNotEmpty()) {
-      myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
+      myFixture.configureVueDependencies(
+        modules = addNodeModules.toTypedArray(),
+        additionalDependencies = additionalDependencies,
+      )
     }
     myFixture.copyDirectoryToProject(testName, ".")
 
