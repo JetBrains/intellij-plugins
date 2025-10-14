@@ -161,7 +161,7 @@ public final class DartRunner extends GenericProgramRunner {
       }
     });
 
-    return ((XDebugSessionImpl)debugSession).getInitializedRunContentDescriptor();
+    return ((XDebugSessionImpl)debugSession).getMockRunContentDescriptor();
   }
 
   private DartUrlResolver getDartUrlResolver(final @NotNull Project project, final @NotNull VirtualFile contextFileOrDir) {
