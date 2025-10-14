@@ -107,7 +107,6 @@ private class Angular2GotoRelatedItemActionGroup : ActionGroup() {
     val editor = CommonDataKeys.EDITOR.getData(e.dataContext)
                  ?: return
     val element = getContextElement(file, editor)
-                  ?: return
 
     relatedItems = getRelatedItems(element)
     e.presentation.isEnabledAndVisible = relatedItems.isNotEmpty()
@@ -116,7 +115,7 @@ private class Angular2GotoRelatedItemActionGroup : ActionGroup() {
   private fun getContextElement(
     file: PsiFile,
     editor: Editor,
-  ): PsiElement? {
+  ): PsiElement {
     val onlyTypeScriptClassInFile = Angular2SourceUtil
       .findComponentClassesInFile(file, null)
       .singleOrNull()
@@ -217,7 +216,7 @@ private class OpenPopupRelatedFilesAction(private val shortcutText: String) : Cu
   override fun actionPerformed(e: AnActionEvent) {
     ActionUtil.performAction(
       action = ActionManager.getInstance().getAction(ACTION_GOTO_RELATED),
-      event = e
+      event = e,
     )
   }
 
