@@ -1,0 +1,2 @@
+MyVeryRegularButton (typeText='my-vue-items-library'; priority=10.0; typeGreyed)
+MyVeryRegularLabel (typeText='my-vue-items-library'; priority=10.0; typeGreyed)

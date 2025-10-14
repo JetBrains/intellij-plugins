@@ -146,6 +146,30 @@ class VueCompletionTest : VueTestCase("completion") {
   fun testCustomDirectivesLinkedFilesInCompletion() =
     doLookupTest(VueTestModule.VUE_2_5_3, configureFileName = "CustomDirectives.html", dir = true) { it.lookupString.startsWith("v-") }
 
+  fun testGlobalItemsAugmentedFromCompilerOptionsTypes() {
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        // components
+        "<My<caret>SpecialButton>",
+        "<MySpecial<caret>Button>",
+        "<MyVery<caret>RegularLabel>",
+        
+        // directives
+        "<main v-<caret>my-click-outside>",
+        "<main v-my<caret>-click-outside>",
+
+        // directive modifiers
+        "<main v-my-click-outside.<caret>once>",
+        "<main v-my-intersect.<caret>once>",
+        "<main v-my-mutate.<caret>once>",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+  }
+
   fun testDirectivesFromGlobalDirectives() {
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -857,7 +881,7 @@ class VueCompletionTest : VueTestCase("completion") {
         "<MyButtonFromPlugin v-my-<caret>",
         "<MyButtonFromPlugin v-my-mutate.<caret>attr",
         "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
-        ),
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -883,7 +907,7 @@ class VueCompletionTest : VueTestCase("completion") {
         "<MyButtonFromPlugin v-my-<caret>",
         "<MyButtonFromPlugin v-my-mutate.<caret>attr",
         "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
-        ),
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -939,7 +963,7 @@ class VueCompletionTest : VueTestCase("completion") {
         "<MyButtonFromPlugin v-my-<caret>",
         "<MyButtonFromPlugin v-my-mutate.<caret>attr",
         "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
-        ),
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
@@ -965,7 +989,7 @@ class VueCompletionTest : VueTestCase("completion") {
         "<MyButtonFromPlugin v-my-<caret>",
         "<MyButtonFromPlugin v-my-mutate.<caret>attr",
         "<MyButtonFromPlugin v-my-mutate.attr.<caret>sub",
-        ),
+      ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 

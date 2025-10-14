@@ -1,0 +1,4 @@
+MySpecialButton (typeText='my-vue-items-library'; priority=10.0; typeGreyed)
+MySpecialLabel (typeText='my-vue-items-library'; priority=10.0; typeGreyed)
+MyVeryRegularButton (typeText='my-vue-items-library'; priority=10.0; typeGreyed)
+MyVeryRegularLabel (typeText='my-vue-items-library'; priority=10.0; typeGreyed)
