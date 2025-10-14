@@ -197,6 +197,14 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting(true, false, true)
   }
 
+  fun testGlobalItemsAugmentedFromCompilerOptionsTypes() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
+      additionalDependencies = mapOf("my-vue-items-library" to "*"),
+    )
+  }
+
   fun testDirectivesFromGlobalDirectives() {
     doDirTest(
       fileName = "App.vue",
