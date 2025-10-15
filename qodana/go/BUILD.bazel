@@ -76,6 +76,21 @@ jvm_library(
   ]
 )
 
+jvm_provided_library(
+  name = "community_platform_ide-impl_test_lib_provided",
+  lib = "@community//platform/platform-impl:ide-impl_test_lib"
+)
+
+jvm_provided_library(
+  name = "contrib_qodana_test_lib_provided",
+  lib = "//contrib/qodana:qodana_test_lib"
+)
+
+jvm_provided_library(
+  name = "community_plugins_coverage_test_lib_provided",
+  lib = "@community//plugins/coverage-common:coverage_test_lib"
+)
+
 jvm_library(
   name = "go_test_lib",
   visibility = ["//visibility:public"],
@@ -86,25 +101,25 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/core-ui",
-    "@community//platform/platform-api:ide",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/platform-impl:ide-impl_test_lib",
-    "@community//platform/lang-impl",
     "@community//platform/projectModel-api:projectModel",
-    "//contrib/qodana",
-    "//contrib/qodana:qodana_test_lib",
     "//contrib/qodana/coverage",
     "//contrib/qodana/coverage:coverage_test_lib",
-    "//goland/intellij-go/plugin",
-    "//goland/intellij-go/go-coverage",
-    "@community//platform/util/jdom",
-    "@community//plugins/coverage-common:coverage",
-    "@community//plugins/coverage-common:coverage_test_lib",
-    "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     "@community//java/testFramework",
     "//contrib/qodana-test-framework:qodana-testFramework",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    ":community_platform_ide_provided",
+    ":community_platform_ide-impl_provided",
+    ":community_platform_lang-impl_provided",
+    ":contrib_qodana_provided",
+    ":goland_intellij-go_plugin_provided",
+    ":goland_intellij-go_go-coverage_provided",
+    ":community_platform_util_jdom_provided",
+    ":community_plugins_coverage_provided",
+    ":community_plugins_coverage-common_coverage-agent_provided",
+    ":community_platform_ide-impl_test_lib_provided",
+    ":contrib_qodana_test_lib_provided",
+    ":community_plugins_coverage_test_lib_provided",
   ]
 )
 ### auto-generated section `build intellij.qodana.go` end
