@@ -166,7 +166,7 @@ internal class NuxtFolderManager(
 
     private fun isNuxtFolder(file: VirtualFile): Boolean = file.isDirectory && file.name == NUXT_OUTPUT_FOLDER
 
-    internal fun createEntity(library: NuxtFolderLibrary, virtualFileUrlManager: VirtualFileUrlManager): NuxtFolderEntity.Builder {
+    internal fun createEntity(library: NuxtFolderLibrary, virtualFileUrlManager: VirtualFileUrlManager): NuxtFolderEntityBuilder {
       val fileUrls = library.libraryFiles.map { it.toVirtualFileUrl(virtualFileUrlManager) }
       return NuxtFolderEntity(library.nuxtFolder.toVirtualFileUrl(virtualFileUrlManager), fileUrls, NuxtFolderEntity.MyEntitySource)
     }

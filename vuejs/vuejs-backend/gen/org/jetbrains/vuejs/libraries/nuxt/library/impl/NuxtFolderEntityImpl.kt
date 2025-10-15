@@ -1,7 +1,14 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.library.impl
 
-import com.intellij.platform.workspace.storage.*
+import com.intellij.platform.workspace.storage.ConnectionId
+import com.intellij.platform.workspace.storage.EntitySource
+import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
+import com.intellij.platform.workspace.storage.GeneratedCodeImplVersion
+import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
+import com.intellij.platform.workspace.storage.MutableEntityStorage
+import com.intellij.platform.workspace.storage.WorkspaceEntity
+import com.intellij.platform.workspace.storage.WorkspaceEntityInternalApi
 import com.intellij.platform.workspace.storage.impl.ModifiableWorkspaceEntityBase
 import com.intellij.platform.workspace.storage.impl.WorkspaceEntityBase
 import com.intellij.platform.workspace.storage.impl.WorkspaceEntityData
@@ -12,6 +19,7 @@ import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInst
 import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity
+import org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntityBuilder
 
 @GeneratedCodeApiVersion(3)
 @GeneratedCodeImplVersion(7)
@@ -50,7 +58,7 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
 
 
   internal class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(
-    result), NuxtFolderEntity.Builder {
+    result), NuxtFolderEntityBuilder {
     internal constructor() : this(NuxtFolderEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
@@ -166,7 +174,7 @@ internal class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
   internal fun isNuxtFolderUrlInitialized(): Boolean = ::nuxtFolderUrl.isInitialized
   internal fun isLibraryFileUrlsInitialized(): Boolean = ::libraryFileUrls.isInitialized
 
-  override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntity.Builder<NuxtFolderEntity> {
+  override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntityBuilder<NuxtFolderEntity> {
     val modifiable = NuxtFolderEntityImpl.Builder(null)
     modifiable.diff = diff
     modifiable.id = createEntityId()
@@ -199,7 +207,7 @@ internal class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
     return NuxtFolderEntity::class.java
   }
 
-  override fun createDetachedEntity(parents: List<WorkspaceEntity.Builder<*>>): WorkspaceEntity.Builder<*> {
+  override fun createDetachedEntity(parents: List<WorkspaceEntityBuilder<*>>): WorkspaceEntityBuilder<*> {
     return NuxtFolderEntity(nuxtFolderUrl, libraryFileUrls, entitySource) {
     }
   }

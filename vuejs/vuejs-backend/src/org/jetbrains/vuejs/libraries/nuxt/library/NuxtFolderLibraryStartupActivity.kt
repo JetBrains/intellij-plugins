@@ -20,7 +20,7 @@ internal class NuxtFolderModelSynchronizer internal constructor(
 ) {
 
   suspend fun sync() {
-    val actualEntities: List<NuxtFolderEntity.Builder> = buildActualEntities()
+    val actualEntities: List<NuxtFolderEntityBuilder> = buildActualEntities()
     val workspaceModelEntities: List<NuxtFolderEntity> = getWorkspaceModelEntities()
     if (areEntitiesOutdated(actualEntities, workspaceModelEntities)) {
       LOG.info("Syncing outdated .nuxt/ workspace model (old count: ${workspaceModelEntities.size}, new count: ${actualEntities.size})")
@@ -28,7 +28,7 @@ internal class NuxtFolderModelSynchronizer internal constructor(
     }
   }
 
-  private suspend fun buildActualEntities(): List<NuxtFolderEntity.Builder> {
+  private suspend fun buildActualEntities(): List<NuxtFolderEntityBuilder> {
     val libraries = nuxtFolderManager.nuxtFolders.map {
       NuxtFolderReadyLibrary.create(it)
     }
@@ -38,7 +38,7 @@ internal class NuxtFolderModelSynchronizer internal constructor(
   }
 
   private fun areEntitiesOutdated(
-    actualEntities: List<NuxtFolderEntity.Builder>,
+    actualEntities: List<NuxtFolderEntityBuilder>,
     workspaceModelEntities: List<NuxtFolderEntity>,
   ): Boolean {
     if (workspaceModelEntities.size != actualEntities.size) return true
@@ -51,7 +51,7 @@ internal class NuxtFolderModelSynchronizer internal constructor(
     return workspaceModel.currentSnapshot.entities(NuxtFolderEntity::class.java).toList()
   }
 
-  private suspend fun updateEntities(actualEntities: List<NuxtFolderEntity.Builder>) {
+  private suspend fun updateEntities(actualEntities: List<NuxtFolderEntityBuilder>) {
     val entitiesStorage = createStorageFrom(actualEntities)
     nuxtFolderManager.updateWorkspaceModel("sync outdated .nuxt/") { _, storage ->
       storage.replaceBySource({ it === NuxtFolderEntity.MyEntitySource }, entitiesStorage)
@@ -70,9 +70,9 @@ private class NuxtFolderEntityWrapper(
   entity: Any,
 ) {
   private val nuxtFolderUrl: VirtualFileUrl = (entity as? NuxtFolderEntity)?.nuxtFolderUrl
-                                              ?: (entity as NuxtFolderEntity.Builder).nuxtFolderUrl
+                                              ?: (entity as NuxtFolderEntityBuilder).nuxtFolderUrl
   private val libraryFileUrls: Set<VirtualFileUrl> = (entity as? NuxtFolderEntity)?.libraryFileUrls?.toHashSet()
-                                                     ?: (entity as NuxtFolderEntity.Builder).libraryFileUrls.toHashSet()
+                                                     ?: (entity as NuxtFolderEntityBuilder).libraryFileUrls.toHashSet()
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

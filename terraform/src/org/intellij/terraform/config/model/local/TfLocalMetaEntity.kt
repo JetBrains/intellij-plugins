@@ -25,45 +25,4 @@ interface TfLocalMetaEntity : WorkspaceEntity {
 
   object LockEntitySource : EntitySource
 
-  //region generated code
-  @GeneratedCodeApiVersion(3)
-  interface Builder : WorkspaceEntity.Builder<TfLocalMetaEntity> {
-    override var entitySource: EntitySource
-    var timeStampLow: Int
-    var timeStampHigh: Int
-    var jsonPath: String
-    var lockFile: VirtualFileUrl
-  }
-
-  companion object : EntityType<TfLocalMetaEntity, Builder>() {
-    @JvmOverloads
-    @JvmStatic
-    @JvmName("create")
-    operator fun invoke(
-      timeStampLow: Int,
-      timeStampHigh: Int,
-      jsonPath: String,
-      lockFile: VirtualFileUrl,
-      entitySource: EntitySource,
-      init: (Builder.() -> Unit)? = null,
-    ): Builder {
-      val builder = builder()
-      builder.timeStampLow = timeStampLow
-      builder.timeStampHigh = timeStampHigh
-      builder.jsonPath = jsonPath
-      builder.lockFile = lockFile
-      builder.entitySource = entitySource
-      init?.invoke(builder)
-      return builder
-    }
-  }
-  //endregion
-
 }
-
-//region generated code
-fun MutableEntityStorage.modifyTfLocalMetaEntity(
-  entity: TfLocalMetaEntity,
-  modification: TfLocalMetaEntity.Builder.() -> Unit,
-): TfLocalMetaEntity = modifyEntity(TfLocalMetaEntity.Builder::class.java, entity, modification)
-//endregion
