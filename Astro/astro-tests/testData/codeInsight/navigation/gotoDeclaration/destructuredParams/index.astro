@@ -1,0 +1,11 @@
+---
+const { la<caret>ng, version } = Astro.params;
+
+export function getStaticPaths () {
+    return [
+        {params: {lang: 'en', version: 'v1'}},
+        {params: {lang: 'fr', version: 'v2'}},
+    ];
+}
+---
+

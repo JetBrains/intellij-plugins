@@ -96,6 +96,7 @@
                      key="astro.inspection.display.name.missing.component.import" bundle="messages.AstroBundle"/>
 
     <platform.lsp.serverSupportProvider implementation="org.jetbrains.astro.service.AstroLspServerSupportProvider" />
+    <gotoDeclarationHandler implementation="org.jetbrains.astro.editor.AstroGotoDeclarationHandler" order="first"/>
     <projectConfigurable parentId="settings.typescriptcompiler"
                          instance="org.jetbrains.astro.service.settings.AstroServiceConfigurable"
                          id="settings.astroservice"
