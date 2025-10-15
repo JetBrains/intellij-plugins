@@ -10,7 +10,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinPystring;
 
 public class GherkinPystringImpl extends GherkinPsiElementBase implements GherkinPystring {
-  public GherkinPystringImpl(final @NotNull ASTNode node) {
+  public GherkinPystringImpl(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -30,7 +30,7 @@ public class GherkinPystringImpl extends GherkinPsiElementBase implements Gherki
   }
 
   @Override
-  public PsiLanguageInjectionHost updateText(final @NotNull String text) {
+  public PsiLanguageInjectionHost updateText(@NotNull String text) {
     final String docStringSep = getFirstChild().getText();
     final int startOffset = text.startsWith(docStringSep) ? docStringSep.length() : 0;
     final int endOffset = text.endsWith(docStringSep) ? docStringSep.length() : 0;

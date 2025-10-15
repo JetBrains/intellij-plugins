@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "types": [
+      "my-vue-items-library/dist/volar",
+    ]
+  }
+}

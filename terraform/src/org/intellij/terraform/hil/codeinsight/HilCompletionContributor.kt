@@ -44,7 +44,7 @@ import org.intellij.terraform.hil.patterns.HILPatterns.IlseEphemeralResource
 import org.intellij.terraform.hil.patterns.HILPatterns.IlseFromKnownScope
 import org.intellij.terraform.hil.patterns.HILPatterns.IlseNotFromKnownScope
 import org.intellij.terraform.hil.patterns.HILPatterns.InsideForExpressionBody
-import org.intellij.terraform.hil.patterns.HILPatterns.MethodPosition
+import org.intellij.terraform.hil.patterns.HILPatterns.TfMethodPosition
 import org.intellij.terraform.hil.patterns.HILPatterns.VariableTypePosition
 import org.intellij.terraform.hil.psi.FakeTypeProperty
 import org.intellij.terraform.hil.psi.ForVariableCompletion
@@ -58,6 +58,8 @@ import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionMetho
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.IlseOpenTofuEncryptionMethod
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.IlseOpenTofuKeyProvider
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.KeyProviderBlock
+import org.intellij.terraform.terragrunt.codeinsight.TerragruntMethodCompletionProvider
+import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns.TerragruntMethodPosition
 
 open class HilCompletionContributor : CompletionContributor(), DumbAware {
   private val scopeProviders = listOf(
@@ -75,8 +77,9 @@ open class HilCompletionContributor : CompletionContributor(), DumbAware {
   ).associateBy { it.scope }
 
   init {
-    extend(CompletionType.BASIC, MethodPosition, MethodsCompletionProvider)
-    extend(CompletionType.BASIC, MethodPosition, ResourceTypesCompletionProvider)
+    extend(CompletionType.BASIC, TfMethodPosition, MethodsCompletionProvider)
+    extend(CompletionType.BASIC, TerragruntMethodPosition, TerragruntMethodCompletionProvider)
+    extend(CompletionType.BASIC, TfMethodPosition, ResourceTypesCompletionProvider)
 
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
       .withParent(Identifier::class.java).withSuperParent(2, IlseFromKnownScope), KnownScopeCompletionProvider())

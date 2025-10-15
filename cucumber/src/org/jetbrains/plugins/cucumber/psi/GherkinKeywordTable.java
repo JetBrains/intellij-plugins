@@ -113,7 +113,7 @@ public class GherkinKeywordTable {
     return myType2KeywordsTable.keySet();
   }
 
-  public @Nullable Collection<String> getKeywords(final IElementType type) {
+  public @Nullable Collection<String> getKeywords(IElementType type) {
     return myType2KeywordsTable.get(type);
   }
 

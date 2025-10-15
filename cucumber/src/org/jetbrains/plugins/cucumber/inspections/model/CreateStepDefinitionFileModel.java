@@ -27,8 +27,8 @@ public class CreateStepDefinitionFileModel {
   private final @NotNull PsiFile myContext;
 
   public CreateStepDefinitionFileModel(@NotNull PsiFile context,
-                                       final @NotNull Map<BDDFrameworkType, String> fileTypeToDefaultNameMap,
-                                       final @NotNull Map<BDDFrameworkType, String> fileTypeToDefaultDirectoryMap) {
+                                       @NotNull Map<BDDFrameworkType, String> fileTypeToDefaultNameMap,
+                                       @NotNull Map<BDDFrameworkType, String> fileTypeToDefaultDirectoryMap) {
     myContext = context;
     myProject = context.getProject();
     List<FileTypeComboboxItem> myFileTypeList = new ArrayList<>();
@@ -56,7 +56,7 @@ public class CreateStepDefinitionFileModel {
     return myFileName;
   }
 
-  public void setFileName(final @NotNull String fileName) {
+  public void setFileName(@NotNull String fileName) {
     myFileName = fileName;
   }
 
@@ -68,7 +68,7 @@ public class CreateStepDefinitionFileModel {
     return myDirectory;
   }
 
-  public void setDirectory(final @Nullable String directory) {
+  public void setDirectory(@Nullable String directory) {
     myDirectory = directory;
   }
 

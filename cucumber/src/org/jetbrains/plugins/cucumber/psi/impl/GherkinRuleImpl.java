@@ -11,7 +11,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
 
 public class GherkinRuleImpl extends GherkinPsiElementBase implements GherkinRule {
-  public GherkinRuleImpl(final @NotNull ASTNode node) {
+  public GherkinRuleImpl(@NotNull ASTNode node) {
     super(node);
   }
 

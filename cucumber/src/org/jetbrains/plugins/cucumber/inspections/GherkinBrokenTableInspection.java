@@ -12,7 +12,7 @@ import java.util.List;
 
 public final class GherkinBrokenTableInspection extends GherkinInspection {
   @Override
-  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new GherkinElementVisitor() {
       @Override
       public void visitScenarioOutline(GherkinScenarioOutline outline) {
@@ -34,7 +34,7 @@ public final class GherkinBrokenTableInspection extends GherkinInspection {
     };
   }
 
-  private static void checkTable(final @NotNull GherkinTable table, final @NotNull ProblemsHolder holder) {
+  private static void checkTable(@NotNull GherkinTable table, @NotNull ProblemsHolder holder) {
     GherkinTableRow header = table.getHeaderRow();
     for (GherkinTableRow row : table.getDataRows()) {
       if (header == null) {

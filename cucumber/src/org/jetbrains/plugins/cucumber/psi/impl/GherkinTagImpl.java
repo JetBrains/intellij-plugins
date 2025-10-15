@@ -12,7 +12,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTag;
 
 
 public class GherkinTagImpl extends GherkinPsiElementBase implements GherkinTag {
-  public GherkinTagImpl(final @NotNull ASTNode node) {
+  public GherkinTagImpl(@NotNull ASTNode node) {
     super(node);
   }
 

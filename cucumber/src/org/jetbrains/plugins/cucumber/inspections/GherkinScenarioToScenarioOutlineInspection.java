@@ -52,7 +52,7 @@ public final class GherkinScenarioToScenarioOutlineInspection extends GherkinIns
     }
 
     @Override
-    public void applyFix(final @NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       GherkinScenario scenario = (GherkinScenario)descriptor.getPsiElement();
       String language = GherkinUtil.getFeatureLanguage((GherkinFile)scenario.getContainingFile());
 

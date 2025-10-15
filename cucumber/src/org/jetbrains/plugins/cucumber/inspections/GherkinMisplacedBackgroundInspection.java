@@ -12,7 +12,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
 
 public final class GherkinMisplacedBackgroundInspection extends GherkinInspection {
   @Override
-  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new GherkinElementVisitor() {
       @Override
       public void visitScenario(GherkinScenario scenario) {

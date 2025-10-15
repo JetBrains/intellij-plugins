@@ -2390,9 +2390,11 @@ private open class TcbExpressionTranslator(
           ?.asSafely<JSReferenceExpression>()
           ?.takeIf { it.qualifier == null && it.referenceName == "\$any" } != null
         && node.argumentSize == 1) {
-      result.append("(")
-      translate(node.arguments[0])
-      result.append(" as any)")
+      result.withSourceSpan(node.textRange) {
+        result.append("(")
+        translate(node.arguments[0])
+        result.append(" as any)")
+      }
     }
     else if (methodExpression
         ?.asSafely<JSReferenceExpression>()

@@ -162,8 +162,8 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
     }
   }
 
-  private void highlightOutlineParamsForText(final String text, final int textStartInElementOffset, final Pattern pattern,
-                                             final GherkinStep step) {
+  private void highlightOutlineParamsForText(String text, int textStartInElementOffset, Pattern pattern,
+                                             GherkinStep step) {
     if (StringUtil.isEmpty(text)) {
       return;
     }

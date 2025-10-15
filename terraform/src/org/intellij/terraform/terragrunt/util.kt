@@ -5,4 +5,4 @@ import com.intellij.psi.PsiFile
 
 internal fun isTerragruntPsiFile(file: PsiFile?): Boolean = file?.fileType == TerragruntFileType
 
-internal fun isTerragruntStack(file: PsiFile?): Boolean = isTerragruntPsiFile(file) && file?.virtualFile?.name == TERRAGRUNT_STACK_EXTENSION
+internal fun isTerragruntStack(file: PsiFile?): Boolean = isTerragruntPsiFile(file) && file?.virtualFile?.name == TERRAGRUNT_STACK_FILE

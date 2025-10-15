@@ -4,7 +4,6 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.openapi.wm.impl.content.ToolWindowContentUi;
 import com.intellij.plugins.serialmonitor.ui.ConnectPanel;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
 import com.intellij.ui.content.Content;
@@ -19,7 +18,7 @@ import javax.swing.*;
 public class SerialMonitorToolWindowFactory implements ToolWindowFactory, DumbAware {
   @Override
   public void init(@NotNull ToolWindow toolWindow) {
-    ToolWindowContentUi.setAllowTabsReordering(toolWindow, true);
+    toolWindow.setTabsSplittingAllowed(true);
     toolWindow.setToHideOnEmptyContent(false);
     toolWindow.setStripeTitle(SerialMonitorBundle.message("toolwindow.stripe.title"));
     toolWindow.setAvailable(true);

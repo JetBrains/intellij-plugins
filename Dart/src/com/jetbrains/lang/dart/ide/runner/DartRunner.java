@@ -20,6 +20,7 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
@@ -160,7 +161,7 @@ public final class DartRunner extends GenericProgramRunner {
       }
     });
 
-    return debugSession.getRunContentDescriptor();
+    return ((XDebugSessionImpl)debugSession).getMockRunContentDescriptor();
   }
 
   private DartUrlResolver getDartUrlResolver(final @NotNull Project project, final @NotNull VirtualFile contextFileOrDir) {

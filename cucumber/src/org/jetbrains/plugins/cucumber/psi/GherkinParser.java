@@ -279,7 +279,7 @@ public class GherkinParser implements PsiParser {
     rowMarker.done(headerRow ? GherkinElementTypes.TABLE_HEADER_ROW : GherkinElementTypes.TABLE_ROW);
   }
 
-  private static int getTokenLength(final @Nullable String tokenText) {
+  private static int getTokenLength(@Nullable String tokenText) {
     return tokenText != null ? tokenText.length() : 0;
   }
 }

@@ -7,7 +7,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 
 
 public class GherkinFeatureHeaderImpl extends GherkinPsiElementBase {
-  public GherkinFeatureHeaderImpl(final @NotNull ASTNode node) {
+  public GherkinFeatureHeaderImpl(@NotNull ASTNode node) {
     super(node);
   }
 

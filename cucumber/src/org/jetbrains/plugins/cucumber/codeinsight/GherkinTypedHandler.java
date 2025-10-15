@@ -44,7 +44,7 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
    *
    * @return GherkinTableRow if caret is inside row, null otherwise
    */
-  private static @Nullable GherkinTableRow findCurrentRow(final Editor editor, final PsiFile file) {
+  private static @Nullable GherkinTableRow findCurrentRow(Editor editor, PsiFile file) {
     int offset = editor.getCaretModel().getOffset();
     PsiElement cursorElement = file.findElementAt(offset - 1);
     if (cursorElement == null) {
@@ -96,7 +96,7 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
    * @param currentRow row to start
    * @return GherkinTableRow (or header) if there is a row above or null otherwise
    */
-  private static @Nullable GherkinTableRow getPreviousRow(final GherkinTableRow currentRow) {
+  private static @Nullable GherkinTableRow getPreviousRow(GherkinTableRow currentRow) {
     if (currentRow.getParent() != null && currentRow.getParent() instanceof GherkinTable table) {
       int i = table.getDataRows().indexOf(currentRow);
       if (i > 0) {
@@ -115,7 +115,7 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
    * @param row where to look for
    * @return number of the column
    */
-  private static int getColumnNumber(final GherkinTableRow row, final int caretPosition) {
+  private static int getColumnNumber(GherkinTableRow row, int caretPosition) {
     final String rowText = row.getText();
     final int length = Math.min(caretPosition, rowText.length());
     int count = 0;
@@ -139,7 +139,7 @@ public final class GherkinTypedHandler extends TypedHandlerDelegate {
    * @param row a row above current
    * @return offset in parent that corresponds preferred position of typed pipe symbol
    */
-  private static int getPreferredPipeOffset(final GherkinTableRow row, final int columnNumber) {
+  private static int getPreferredPipeOffset(GherkinTableRow row, int columnNumber) {
     final String rowText = row.getText();
     int i = 0;
     int passedPipeCount = 0;

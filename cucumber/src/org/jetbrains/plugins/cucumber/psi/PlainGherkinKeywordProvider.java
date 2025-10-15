@@ -59,7 +59,7 @@ public class PlainGherkinKeywordProvider implements GherkinKeywordProvider {
   }
 
   @Override
-  public @NotNull GherkinKeywordTable getKeywordsTable(final @Nullable String language) {
+  public @NotNull GherkinKeywordTable getKeywordsTable(@Nullable String language) {
     return DEFAULT_KEYWORD_TABLE;
   }
 }

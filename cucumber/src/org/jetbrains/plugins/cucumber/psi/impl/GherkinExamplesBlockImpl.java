@@ -14,7 +14,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTable;
 public class GherkinExamplesBlockImpl extends GherkinPsiElementBase implements GherkinExamplesBlock {
   private static final TokenSet TABLE_FILTER = TokenSet.create(GherkinElementTypes.TABLE);
 
-  public GherkinExamplesBlockImpl(final @NotNull ASTNode node) {
+  public GherkinExamplesBlockImpl(@NotNull ASTNode node) {
     super(node);
   }
 

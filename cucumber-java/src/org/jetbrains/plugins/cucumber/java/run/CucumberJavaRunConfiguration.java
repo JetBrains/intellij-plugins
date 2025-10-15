@@ -120,7 +120,7 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
         return params;
       }
 
-      private @NotNull ConsoleView createConsole(final @NotNull Executor executor, ProcessHandler processHandler) {
+      private @NotNull ConsoleView createConsole(@NotNull Executor executor, ProcessHandler processHandler) {
         @NonNls String testFrameworkName = "cucumber";
         final CucumberJavaRunConfiguration runConfiguration = CucumberJavaRunConfiguration.this;
         final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor) {

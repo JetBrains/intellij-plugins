@@ -64,12 +64,16 @@ class VueHighlightingTest : BasePlatformTestCase() {
 
   private fun doDirTest(
     addNodeModules: List<VueTestModule> = emptyList(),
+    additionalDependencies: Map<String, String> = emptyMap(),
     fileName: String? = null,
     vararg additionalFilesToCheck: String,
   ) {
     val testName = getTestName(true)
     if (addNodeModules.isNotEmpty()) {
-      myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
+      myFixture.configureVueDependencies(
+        modules = addNodeModules.toTypedArray(),
+        additionalDependencies = additionalDependencies,
+      )
     }
     myFixture.copyDirectoryToProject(testName, ".")
 
@@ -191,6 +195,14 @@ const props = {seeMe: {}}
     myFixture.copyDirectoryToProject("../common/customDirectives", ".")
     myFixture.configureFromTempProjectFile("CustomDirectives.vue")
     myFixture.checkHighlighting(true, false, true)
+  }
+
+  fun testGlobalItemsAugmentedFromCompilerOptionsTypes() {
+    doDirTest(
+      fileName = "App.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
+      additionalDependencies = mapOf("my-vue-items-library" to "*"),
+    )
   }
 
   fun testDirectivesFromGlobalDirectives() {
@@ -557,17 +569,26 @@ const props = {seeMe: {}}
 
   fun testSlotTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2, VueTestModule.QUASAR_2_6_5), "MyTable.vue")
+    doDirTest(
+      fileName = "MyTable.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_2_2, VueTestModule.QUASAR_2_6_5),
+    )
   }
 
   fun testGlobalScriptSetup() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), "HelloWorld.vue")
+    doDirTest(
+      fileName = "HelloWorld.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_2_2),
+    )
   }
 
   fun testDynamicArguments() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), "HelloWorld.vue")
+    doDirTest(
+      fileName = "HelloWorld.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_2_2),
+    )
   }
 
   fun testWithPropsFromFunctionCall() {
@@ -587,7 +608,10 @@ const props = {seeMe: {}}
 
   fun testLocalWebTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(emptyList(), "main.vue", "main2.vue")
+    doDirTest(
+      fileName = "main.vue",
+      additionalFilesToCheck = arrayOf("main2.vue"),
+    )
   }
 
   fun testPropertyReferenceInLambda() {
@@ -597,7 +621,10 @@ const props = {seeMe: {}}
 
   fun testSourceScopedSlots() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), "Catalogue.vue")
+    doDirTest(
+      fileName = "Catalogue.vue",
+      addNodeModules = listOf(VueTestModule.VUE_3_2_2),
+    )
   }
 
   fun testCustomEvents() {
@@ -605,7 +632,9 @@ const props = {seeMe: {}}
   }
 
   fun testCustomEventsTypedComponent() {
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doDirTest(
+      addNodeModules = listOf(VueTestModule.VUE_3_2_2),
+    )
   }
 
   fun testLifecycleEventsVue2ClassComponent() {
@@ -677,7 +706,9 @@ const props = {seeMe: {}}
   }
 
   fun testGenericComponentUsage() {
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+    doDirTest(
+      addNodeModules = listOf(VueTestModule.VUE_3_3_4),
+    )
   }
 
   fun testComponentFromFunctionPlugin() {
@@ -881,7 +912,10 @@ const props = {seeMe: {}}
   }
 
   fun testTypedMixins() {
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_4_0), fileName = "index.js")
+    doDirTest(
+      fileName = "index.js",
+      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+    )
   }
 
   fun testVaporSimpleApplication() {

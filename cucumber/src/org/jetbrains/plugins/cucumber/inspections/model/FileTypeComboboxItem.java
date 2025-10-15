@@ -11,7 +11,7 @@ public class FileTypeComboboxItem {
 
   private final String myDefaultFileName;
 
-  public FileTypeComboboxItem(final @NotNull BDDFrameworkType frameworkType, final @NotNull String defaultFileName) {
+  public FileTypeComboboxItem(@NotNull BDDFrameworkType frameworkType, @NotNull String defaultFileName) {
     myFrameworkType = frameworkType;
     myDefaultFileName = defaultFileName;
   }

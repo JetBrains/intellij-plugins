@@ -44,7 +44,7 @@ public class CucumberJavaScenarioRunConfigurationProducer extends CucumberJavaFe
   }
 
   @Override
-  protected String getConfigurationName(final @NotNull ConfigurationContext context) {
+  protected String getConfigurationName(@NotNull ConfigurationContext context) {
     final PsiElement sourceElement = context.getPsiLocation();
     final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(sourceElement, GherkinScenario.class, GherkinScenarioOutline.class);
 

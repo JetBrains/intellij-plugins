@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil
 
 import com.intellij.openapi.util.TextRange
@@ -32,7 +32,7 @@ internal class ILLanguageInjector : LanguageInjector {
   companion object {
     fun getLanguagesToInject(host: PsiLanguageInjectionHost, places: InjectedLanguagePlaces, type: Type = Type.ANY) {
       if (host !is HCLStringLiteral && host !is HCLHeredocContent) return
-      // Only .tf (Terraform config) files
+
       val file = host.containingFile
       if (file !is HCLFile || !file.isInterpolationsAllowed()) return
       // Restrict interpolations in .tfvars files // TODO: This file shouldn't know about .tfvars here

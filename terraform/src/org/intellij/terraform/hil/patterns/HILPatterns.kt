@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.patterns
 
+import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiElementPattern.Capture
@@ -20,7 +21,7 @@ import org.intellij.terraform.hcl.psi.common.SelectExpression
 import org.intellij.terraform.hil.HILLanguage
 import org.intellij.terraform.hil.codeinsight.withLanguages
 
-object HILPatterns {
+internal object HILPatterns {
   private val InVariableBlock: PatternCondition<HCLElement?> = object : PatternCondition<HCLElement?>("In Variable block") {
     override fun accepts(t: HCLElement, context: ProcessingContext?): Boolean {
       val topmost = t.parentsOfType(HCLBlock::class.java).lastOrNull() ?: return false
@@ -34,12 +35,12 @@ object HILPatterns {
     }
   }
 
-  val MethodPosition: Capture<PsiElement> = PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage).withParent(
-    PlatformPatterns.psiElement(Identifier::class.java).with(NotBlockIdentifier).withHCLHost(
-      PlatformPatterns.psiElement(HCLElement::class.java).without(InVariableBlock).andNot(
-        PlatformPatterns.psiElement().inside(DependsOnPattern))
-    )
-  ).andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
+  val TfMethodPosition: Capture<PsiElement> = getMethodIdentifierPattern(
+    PlatformPatterns.psiElement(HCLElement::class.java)
+      .inFile(TfPsiPatterns.TerraformConfigFile)
+      .without(InVariableBlock)
+      .andNot(PlatformPatterns.psiElement().inside(DependsOnPattern))
+  )
 
   val VariableTypePosition: Capture<PsiElement> = PlatformPatterns.psiElement().withLanguages(HCLLanguage)
     .withParent(PlatformPatterns.psiElement(HCLIdentifier::class.java).with(NotBlockIdentifier).with(InVariableBlock)).andNot(
@@ -86,7 +87,7 @@ object HILPatterns {
     }
   }
 
-  internal fun getScopeSelectPatternCondition(scopes: Set<String>): PatternCondition<SelectExpression<*>?> {
+  fun getScopeSelectPatternCondition(scopes: Set<String>): PatternCondition<SelectExpression<*>?> {
     return object : PatternCondition<SelectExpression<*>?>("ScopeSelect($scopes)") {
       override fun accepts(t: SelectExpression<*>, context: ProcessingContext): Boolean {
         val from = t.from
@@ -94,4 +95,11 @@ object HILPatterns {
       }
     }
   }
+
+  fun getMethodIdentifierPattern(hclHostPattern: ElementPattern<HCLElement>): Capture<PsiElement> =
+    PlatformPatterns.psiElement().withLanguages(HILLanguage, HCLLanguage)
+      .withParent(PlatformPatterns.psiElement(Identifier::class.java)
+                    .with(NotBlockIdentifier)
+                    .withHCLHost(hclHostPattern)
+      ).andNot(PlatformPatterns.psiElement().withSuperParent(2, SelectExpression::class.java))
 }

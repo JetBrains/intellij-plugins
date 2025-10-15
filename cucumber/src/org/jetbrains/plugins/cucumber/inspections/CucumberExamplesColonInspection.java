@@ -32,7 +32,7 @@ public final class CucumberExamplesColonInspection extends GherkinInspection {
   }
 
   @Override
-  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new GherkinElementVisitor() {
       @Override
       public void visitExamplesBlock(GherkinExamplesBlockImpl block) {

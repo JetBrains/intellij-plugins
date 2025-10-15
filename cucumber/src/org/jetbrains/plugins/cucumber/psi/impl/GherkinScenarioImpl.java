@@ -9,7 +9,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
 
 public class GherkinScenarioImpl extends GherkinStepsHolderBase implements GherkinScenario {
-  public GherkinScenarioImpl(final @NotNull ASTNode node) {
+  public GherkinScenarioImpl(@NotNull ASTNode node) {
     super(node);
   }
 

@@ -113,10 +113,10 @@ public final class CucumberUtil {
    * @return whether reference was found and reported to consumer
    * @see #findPossibleGherkinElementUsages(PsiElement, String, TextOccurenceProcessor, SearchScope)
    */
-  public static boolean findGherkinReferencesToElement(final @NotNull PsiElement stepDefinitionElement,
-                                                       final @NotNull String regexp,
-                                                       final @NotNull Processor<? super PsiReference> consumer,
-                                                       final @NotNull SearchScope effectiveSearchScope) {
+  public static boolean findGherkinReferencesToElement(@NotNull PsiElement stepDefinitionElement,
+                                                       @NotNull String regexp,
+                                                       @NotNull Processor<? super PsiReference> consumer,
+                                                       @NotNull SearchScope effectiveSearchScope) {
     return findPossibleGherkinElementUsages(stepDefinitionElement, regexp,
                                             new MyReferenceCheckingProcessor(stepDefinitionElement, consumer),
                                             effectiveSearchScope);
@@ -134,10 +134,10 @@ public final class CucumberUtil {
    * @return whether reference was found and passed to processor
    * @see #findGherkinReferencesToElement(PsiElement, String, Processor, SearchScope)
    */
-  public static boolean findPossibleGherkinElementUsages(final @NotNull PsiElement stepDefinitionElement,
-                                                         final @NotNull String regexp,
-                                                         final @NotNull TextOccurenceProcessor processor,
-                                                         final @NotNull SearchScope effectiveSearchScope) {
+  public static boolean findPossibleGherkinElementUsages(@NotNull PsiElement stepDefinitionElement,
+                                                         @NotNull String regexp,
+                                                         @NotNull TextOccurenceProcessor processor,
+                                                         @NotNull SearchScope effectiveSearchScope) {
     final String word = getTheBiggestWordToSearchByIndex(regexp);
     if (StringUtil.isEmptyOrSpaces(word)) {
       return true;
@@ -151,10 +151,10 @@ public final class CucumberUtil {
     return instance.processElementsWithWord(processor, searchScope, word, context, true);
   }
 
-  public static void findPossibleGherkinElementUsages(final @NotNull PsiElement stepDefinitionElement,
-                                                      final @NotNull String regexp,
-                                                      final @NotNull ReferencesSearch.SearchParameters params,
-                                                      final @NotNull RequestResultProcessor processor) {
+  public static void findPossibleGherkinElementUsages(@NotNull PsiElement stepDefinitionElement,
+                                                      @NotNull String regexp,
+                                                      @NotNull ReferencesSearch.SearchParameters params,
+                                                      @NotNull RequestResultProcessor processor) {
     final String word = getTheBiggestWordToSearchByIndex(regexp);
     if (StringUtil.isEmptyOrSpaces(word)) {
       return;
@@ -542,14 +542,14 @@ public final class CucumberUtil {
     private final @NotNull PsiElement myElementToFind;
     private final @NotNull Processor<? super PsiReference> myConsumer;
 
-    private MyReferenceCheckingProcessor(final @NotNull PsiElement elementToFind,
-                                         final @NotNull Processor<? super PsiReference> consumer) {
+    private MyReferenceCheckingProcessor(@NotNull PsiElement elementToFind,
+                                         @NotNull Processor<? super PsiReference> consumer) {
       myElementToFind = elementToFind;
       myConsumer = consumer;
     }
 
     @Override
-    public boolean execute(final @NotNull PsiElement element, final int offsetInElement) {
+    public boolean execute(@NotNull PsiElement element, int offsetInElement) {
       final PsiElement parent = element.getParent();
       final boolean result = executeInternal(element);
       // We check element and its parent (StringLiteral is probably child of GherkinStep that has reference)
@@ -566,7 +566,7 @@ public final class CucumberUtil {
      * @param referenceOwner element with injected references
      * @return true if element found and consumed
      */
-    private boolean executeInternal(final @NotNull PsiElement referenceOwner) {
+    private boolean executeInternal(@NotNull PsiElement referenceOwner) {
       for (final PsiReference ref : referenceOwner.getReferences()) {
         if ((ref != null) && ref.isReferenceTo(myElementToFind)) {
           if (!myConsumer.process(ref)) {

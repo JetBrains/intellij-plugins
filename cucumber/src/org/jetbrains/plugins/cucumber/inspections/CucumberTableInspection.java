@@ -27,7 +27,7 @@ public final class CucumberTableInspection extends GherkinInspection {
   }
 
   @Override
-  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new GherkinElementVisitor() {
       @Override
       public void visitScenarioOutline(GherkinScenarioOutline outline) {

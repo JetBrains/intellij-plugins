@@ -25,7 +25,7 @@ public final class GherkinLanguageInjector implements MultiHostInjector {
   }
 
   @Override
-  public void getLanguagesToInject(final MultiHostRegistrar registrar, final PsiElement context) {
+  public void getLanguagesToInject(MultiHostRegistrar registrar, PsiElement context) {
     if (!(context instanceof GherkinPystring host)) {
       return;
     }

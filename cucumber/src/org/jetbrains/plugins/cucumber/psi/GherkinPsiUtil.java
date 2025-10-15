@@ -24,7 +24,7 @@ public final class GherkinPsiUtil {
   private GherkinPsiUtil() {
   }
 
-  public static @Nullable GherkinFileImpl getGherkinFile(final @NotNull PsiElement element) {
+  public static @Nullable GherkinFileImpl getGherkinFile(@NotNull PsiElement element) {
     if (!element.isValid()) {
       return null;
     }
@@ -34,7 +34,7 @@ public final class GherkinPsiUtil {
 
   public static @Nullable List<TextRange> buildParameterRanges(@NotNull GherkinStep step,
                                                                @NotNull AbstractStepDefinition definition,
-                                                               final int shiftOffset) {
+                                                               int shiftOffset) {
 
     OutlineStepSubstitution substitution = convertOutlineStepName(step);
 

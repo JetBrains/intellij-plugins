@@ -52,11 +52,11 @@ public abstract class GherkinElementVisitor extends PsiElementVisitor {
     visitElement(gherkinStepParameter);
   }
 
-  public void visitGherkinTableCell(final GherkinTableCell cell) {
+  public void visitGherkinTableCell(GherkinTableCell cell) {
     visitElement(cell);
   }
 
-  public void visitPystring(final GherkinPystring phstring) {
+  public void visitPystring(GherkinPystring phstring) {
     visitElement(phstring);
   }
 }

@@ -1,0 +1,9 @@
+{
+  "name": "global-items-augmented-from-compiler-options-types",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "my-vue-items-library": "*",
+    "typescript": "*"
+  }
+}
