@@ -21,6 +21,17 @@
       Initial release by <a href="https://github.com/dmitry-cherkas">Dmitry Cherkas</a>
 
     ]]></description>
+  <change-notes><![CDATA[
+    <b>2025.3</b>
+    <ul>
+      <li>Migrated to the jSerialComm library</li>
+      <li>Added short descriptive name to ports</li>
+      <li>Updated the plugin’s logo and icon, together with other cosmetic updates</li>
+      <li>Added the ability to reconnect to an open port with a different profile</li>
+      <li>Custom baud rate support</li>
+      <li>Bug fixes (see the <a href="https://youtrack.jetbrains.com/articles/CPP-A-230654424/CLion-2025.3">YouTrack release notes</a> for the complete list)</li>
+    </ul>
+  ]]></change-notes>
 
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
