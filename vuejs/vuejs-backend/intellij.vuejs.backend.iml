@@ -68,5 +68,6 @@
     <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />
     <orderEntry type="module" module-name="intellij.vuejs.common" />
     <orderEntry type="module" module-name="intellij.platform.backend" />
+    <orderEntry type="module" module-name="intellij.javascript.plugin" />
   </component>
 </module>
