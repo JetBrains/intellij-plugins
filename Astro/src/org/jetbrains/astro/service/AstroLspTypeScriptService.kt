@@ -2,7 +2,7 @@
 package org.jetbrains.astro.service
 
 import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.lang.typescript.compiler.TypeScriptService
+import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionMergeStrategy
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -13,5 +13,7 @@ class AstroLspTypeScriptService(project: Project)
   override val name = "Astro LSP"
   override val prefix = "Astro"
 
-  override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): TypeScriptService.CompletionMergeStrategy = TypeScriptService.CompletionMergeStrategy.MERGE
+  override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy = CompletionMergeStrategy.MERGE
+
+  override fun isServiceNavigationEnabled(): Boolean = true
 }
