@@ -11,6 +11,7 @@ import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInst
 import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInstrumentationApi
 import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
+import org.jetbrains.vuejs.libraries.nuxt.library.ModifiableNuxtFolderEntity
 import org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity
 
 @GeneratedCodeApiVersion(3)
@@ -50,7 +51,7 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
 
 
   internal class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(
-    result), NuxtFolderEntity.Builder {
+    result), ModifiableNuxtFolderEntity {
     internal constructor() : this(NuxtFolderEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
@@ -166,7 +167,7 @@ internal class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
   internal fun isNuxtFolderUrlInitialized(): Boolean = ::nuxtFolderUrl.isInitialized
   internal fun isLibraryFileUrlsInitialized(): Boolean = ::libraryFileUrls.isInitialized
 
-  override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntity.Builder<NuxtFolderEntity> {
+  override fun wrapAsModifiable(diff: MutableEntityStorage): ModifiableWorkspaceEntity<NuxtFolderEntity> {
     val modifiable = NuxtFolderEntityImpl.Builder(null)
     modifiable.diff = diff
     modifiable.id = createEntityId()
@@ -199,7 +200,7 @@ internal class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
     return NuxtFolderEntity::class.java
   }
 
-  override fun createDetachedEntity(parents: List<WorkspaceEntity.Builder<*>>): WorkspaceEntity.Builder<*> {
+  override fun createDetachedEntity(parents: List<ModifiableWorkspaceEntity<*>>): ModifiableWorkspaceEntity<*> {
     return NuxtFolderEntity(nuxtFolderUrl, libraryFileUrls, entitySource) {
     }
   }
