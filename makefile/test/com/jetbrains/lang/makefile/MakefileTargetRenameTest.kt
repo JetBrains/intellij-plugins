@@ -4,7 +4,7 @@ import com.intellij.testFramework.fixtures.*
 
 class MakefileTargetRenameTest : BasePlatformTestCase() {
   fun testSimple() = doTest("qwerty")
-
+  fun testPrerequisites() = doTest("qwerty")
 
   fun doTest(newName: String) {
     myFixture.configureByFile("$basePath/${getTestName(true)}.mk")
