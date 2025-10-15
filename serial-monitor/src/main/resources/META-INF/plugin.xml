@@ -4,13 +4,16 @@
   <category>Embedded Development</category>
   <vendor>JetBrains</vendor>
   <description><![CDATA[
-      This plugin provides the Serial Monitor Tool Window,
-      which allows you to communicate to serial devices like Arduino via the CLion window.
+      This plugin allows you to communicate with external devices over a serial connection in the Serial Connections tool window.
       <br/>
       <b>Features:</b>
       <ul>
-       <li>Multiple serial port connections</li>
-       <li>Duplex Console View (Regular view + HEX)</li>
+        <li>Multiple simultaneous serial port connections</li>
+        <li>Fully customizable parameters with profiles</li>
+        <li>Regular and Hex view</li>
+        <li>Timestamps for every received line</li>
+        <li>Ability to save output to a file</li>
+        <li>Manual hardware flow control</li>
       </ul>
       <br/>
       <br/>
