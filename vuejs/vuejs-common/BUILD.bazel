@@ -26,6 +26,7 @@ jvm_library(
     "@community//xml/xml-psi-impl:psi-impl",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
     "@community//platform/ide-core",
+    "//plugins/JavaScriptLanguage:javascript-plugin",
   ]
 )
 ### auto-generated section `build intellij.vuejs.common` end

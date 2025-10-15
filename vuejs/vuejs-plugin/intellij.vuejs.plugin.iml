@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="intellij.vuejs.debugger" />
     <orderEntry type="module" module-name="intellij.vuejs.markdown" />
     <orderEntry type="module" module-name="intellij.vuejs.prettier" />
+    <orderEntry type="module" module-name="intellij.javascript.plugin" />
   </component>
 </module>
