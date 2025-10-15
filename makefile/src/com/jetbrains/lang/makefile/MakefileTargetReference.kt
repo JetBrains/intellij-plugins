@@ -40,4 +40,8 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
         .map(::PsiElementResolveResult)
         .toTypedArray()
   }
+
+  override fun isReferenceTo(element: PsiElement): Boolean {
+        return element is MakefileTarget && prerequisite.text == element.name
+  }
 }
