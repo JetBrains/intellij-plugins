@@ -1,3 +1,13 @@
+<script>
+export default {
+  name: "styled"
+}
+</script>
+
+<template>
+  <caret><div class="example">hi</div>
+</template>
+
 <style scoped>
 .example {
   color: red;
@@ -7,13 +17,3 @@
 .other {
 }
 </style>
-
-<template>
-  <caret><div class="example">hi</div>
-</template>
-
-<script>
-export default {
-  name: "styled"
-}
-</script>

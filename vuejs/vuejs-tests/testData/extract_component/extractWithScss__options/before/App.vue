@@ -1,8 +1,3 @@
-<template>
-  <caret><header class="">
-    <h1>TEXT <a class="t-btn" @click="showTools"><span></span></a></h1>
-  </header>
-</template>
 <script>
 export default {
   methods: {
@@ -12,6 +7,12 @@ export default {
   }
 }
 </script>
+
+<template>
+  <caret><header class="">
+    <h1>TEXT <a class="t-btn" @click="showTools"><span></span></a></h1>
+  </header>
+</template>
 
 <style lang="scss" rel="stylesheet/scss">
 header {
