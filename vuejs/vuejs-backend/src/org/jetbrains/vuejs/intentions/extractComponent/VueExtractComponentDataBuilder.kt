@@ -131,7 +131,10 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     }
   }
 
-  private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0]) { TEMPLATE_TAG_NAME == (it as? XmlTag)?.name } as? XmlTag
+  private fun findTemplate(): XmlTag? =
+    PsiTreeUtil.findFirstParent(list.first()) {
+      (it as? XmlTag)?.name == TEMPLATE_TAG_NAME
+    } as XmlTag?
 
   fun createNewComponent(newComponentName: String): VirtualFile? {
     val newText = generateNewComponentText(newComponentName)
@@ -183,7 +186,10 @@ ${copyStyles()}
     return newText
   }
 
-  private fun psiOperationOnText(text: String, operation: (PsiFile) -> Unit): String {
+  private fun psiOperationOnText(
+    text: String,
+    operation: (PsiFile) -> Unit,
+  ): String {
     val dummyFile = createVueFileFromText(containingFile.project, text)
     operation(dummyFile)
     return dummyFile.text
@@ -211,7 +217,10 @@ ${copyStyles()}
   }
 
   private fun hasMeaningfulChildren(element: PsiElement) =
-    !PsiTreeUtil.processElements({ !(it !is PsiWhiteSpace && it !is PsiComment) }, *element.children)
+    !PsiTreeUtil.processElements(
+      { !(it !is PsiWhiteSpace && it !is PsiComment) },
+      *element.children,
+    )
 
   private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"$lang\""
 
@@ -234,9 +243,14 @@ ${copyStyles()}
     return members.joinToString("")
   }
 
-  fun modifyCurrentComponent(newComponentName: String, currentFile: PsiFile, newPsiFile: PsiFile) {
+  fun modifyCurrentComponent(
+    newComponentName: String,
+    currentFile: PsiFile,
+    newPsiFile: PsiFile,
+  ) {
     VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(currentFile))
       ?.insertComponentImport(newComponentName, newPsiFile)
+
     optimizeUnusedComponentsAndImports(currentFile)
   }
 
@@ -271,7 +285,9 @@ ${copyStyles()}
           if (scriptTag != element) recursion(element)
         }
       })
-      componentsInitializer.filter { it.name != null && names.contains(toAsset(it.name!!, true)) }.forEach { it.delete() }
+      componentsInitializer
+        .filter { it.name != null && names.contains(toAsset(it.name!!, true)) }
+        .forEach { it.delete() }
     }
     ES6CreateImportUtil.optimizeImports(file)
     optimizeAndRemoveEmptyStyles(file)
@@ -285,28 +301,45 @@ ${copyStyles()}
 
   private fun sortedProps(distinct: Boolean): List<RefData> {
     val flatten = refDataMap.values.flatten()
-    return (if (distinct) flatten.distinctBy { it.getRefName() } else flatten).sortedBy { it.getRefName() }
+    return (if (distinct) flatten.distinctBy { it.getRefName() } else flatten)
+      .sortedBy { it.getRefName() }
   }
 
-  private class RefData(val ref: PsiReference, val tag: XmlTag, val offset: Int) {
+  private class RefData(
+    val ref: PsiReference,
+    val tag: XmlTag,
+    val offset: Int,
+  ) {
     fun getRefName(): String {
-      val jsRef = ref as? JSReferenceExpression ?: return ref.canonicalText
-      return JSResolveUtil.getLeftmostQualifier(jsRef).asSafely<JSReferenceExpression>()?.referenceName ?: ref.canonicalText
+      val jsRef = ref as? JSReferenceExpression
+                  ?: return ref.canonicalText
+
+      return JSResolveUtil.getLeftmostQualifier(jsRef)
+               .asSafely<JSReferenceExpression>()
+               ?.referenceName
+             ?: ref.canonicalText
     }
 
     fun resolve(): PsiElement? {
-      val jsRef = ref as? JSReferenceExpression ?: return ref.resolve()
-      return JSResolveUtil.getLeftmostQualifier(jsRef).asSafely<JSReferenceExpression>()?.resolve()
+      val jsRef = ref as? JSReferenceExpression
+                  ?: return ref.resolve()
+
+      return JSResolveUtil.getLeftmostQualifier(jsRef)
+        .asSafely<JSReferenceExpression>()
+        ?.resolve()
     }
 
     fun getReplaceRange(): TextRange? {
-      val call = (ref as? PsiElement)?.parent as? JSCallExpression ?: return null
+      val call = (ref as? PsiElement)?.parent as? JSCallExpression
+                 ?: return null
+
       val range = call.textRange
       return TextRange(offset + range.startOffset, offset + range.endOffset)
     }
 
     fun getExpressionText(): String {
-      return ((ref as? PsiElement)?.parent as? JSCallExpression)?.text ?: return getRefName()
+      return ((ref as? PsiElement)?.parent as? JSCallExpression)?.text
+             ?: return getRefName()
     }
   }
 }
