@@ -12,9 +12,9 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
   resources = [":sarif_resources"],
-  exports = ["@ultimate_lib//:qodana-sarif"],
+  exports = ["@lib//:qodana-sarif"],
   runtime_deps = [
-    "@ultimate_lib//:qodana-sarif",
+    "@lib//:qodana-sarif",
     "@community//platform/backend",
   ]
 )
