@@ -17,7 +17,12 @@ import java.util.function.Predicate
 
 class PlatformioBuildConfigurationHelper(private val project: Project) : CidrBuildConfigurationHelper<PlatformioBuildConfiguration, PlatformioBuildTarget>() {
   override fun getTargets(): List<PlatformioBuildTarget> {
-    return project.service<PlatformioService>().buildConfigurationTargets
+    return if (PlatformioWorkspace.isPlatformioProject(project)) {
+      project.service<PlatformioService>().buildConfigurationTargets
+    }
+    else {
+      emptyList()
+    }
   }
 }
 
