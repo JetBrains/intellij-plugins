@@ -37,7 +37,9 @@ import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.model.VueModelManager
 
-class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
+class VueExtractComponentDataBuilder(
+  private val list: List<XmlTag>,
+) {
   private val containingFile = list[0].containingFile
   private val scriptTag = if (containingFile is XmlFile) findScriptTag(containingFile, false) else null
   private val scriptLanguage = detectLanguage(scriptTag)
@@ -110,10 +112,14 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     return refs
   }
 
-  private fun addElementReferences(element: PsiElement, tag: XmlTag, offset: Int): List<RefData> {
-    return element.references.filter { it != null && (it as? PsiElement)?.parent !is PsiReference }.map {
-      RefData(it, tag, offset)
-    }
+  private fun addElementReferences(
+    element: PsiElement,
+    tag: XmlTag,
+    offset: Int,
+  ): List<RefData> {
+    return element.references
+      .filter { it != null && (it as? PsiElement)?.parent !is PsiReference }
+      .map { RefData(it, tag, offset) }
   }
 
   private fun generateNewTemplateContents(mapHasDirectUsage: Set<String>): String {
@@ -180,7 +186,8 @@ ${copyStyles()}
 
     newText = psiOperationOnText(newText) { optimizeAndRemoveEmptyStyles(it) }
     newText = psiOperationOnText(newText) {
-      CodeStyleManager.getInstance(containingFile.project).reformatText(it, 0, it.textRange.endOffset)
+      CodeStyleManager.getInstance(containingFile.project)
+        .reformatText(it, 0, it.textRange.endOffset)
     }
 
     return newText
@@ -200,9 +207,14 @@ ${copyStyles()}
   }
 
   private fun findStyles(file: PsiFile): List<XmlTag> {
-    val xmlFile = file as? XmlFile ?: return emptyList()
-    val document = xmlFile.document ?: return emptyList()
-    return document.children.filter { STYLE_TAG_NAME == (it as? XmlTag)?.name }.map { it as XmlTag }
+    val document = file.asSafely<XmlFile>()
+                     ?.document
+                   ?: return emptyList()
+
+    return document.children.asSequence()
+      .filterIsInstance<XmlTag>()
+      .filter { it.name == STYLE_TAG_NAME }
+      .toList()
   }
 
   private fun optimizeAndRemoveEmptyStyles(file: PsiFile) {
@@ -225,10 +237,14 @@ ${copyStyles()}
   private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"$lang\""
 
   private fun generateImports(): String {
-    if (importsToCopy.isEmpty()) return ""
-    return importsToCopy.keys.sorted().joinToString("\n", "\n") {
-      "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}"
-    }
+    if (importsToCopy.isEmpty())
+      return ""
+
+    return importsToCopy.keys
+      .sorted()
+      .joinToString("\n", "\n") {
+        "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}"
+      }
   }
 
   private fun generateDescriptorMembers(mapHasDirectUsage: Set<String>): String {
@@ -330,7 +346,9 @@ ${copyStyles()}
     }
 
     fun getReplaceRange(): TextRange? {
-      val call = (ref as? PsiElement)?.parent as? JSCallExpression
+      val call = ref.asSafely<PsiElement>()
+                   ?.parent
+                   .asSafely<JSCallExpression>()
                  ?: return null
 
       val range = call.textRange
@@ -338,7 +356,10 @@ ${copyStyles()}
     }
 
     fun getExpressionText(): String {
-      return ((ref as? PsiElement)?.parent as? JSCallExpression)?.text
+      return ref.asSafely<PsiElement>()
+               ?.parent
+               .asSafely<JSCallExpression>()
+               ?.text
              ?: return getRefName()
     }
   }
