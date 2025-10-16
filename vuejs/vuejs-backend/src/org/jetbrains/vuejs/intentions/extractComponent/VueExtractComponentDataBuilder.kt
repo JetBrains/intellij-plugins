@@ -48,17 +48,17 @@ class VueExtractComponentDataBuilder(
   private var unusedStylesInExistingComponent: List<CssSelectorSuffix> = emptyList()
 
   private val importsToCopy: MutableMap<String, ES6ImportDeclaration> = mutableMapOf()
-  private val refDataMap: MutableMap<XmlTag, MutableList<RefData>> = calculateProps()
 
-  private fun calculateProps(): MutableMap<XmlTag, MutableList<RefData>> {
-    val refList: List<RefData> = gatherReferences()
-    val map: MutableMap<XmlTag, MutableList<RefData>> = mutableMapOf()
-    refList.forEach { refData ->
+  private val refDataMap: Map<XmlTag, List<RefData>> = buildMap {
+    for (refData in gatherReferences()) {
       if (refData.ref is TagNameReference) {
         processVueComponent(refData.ref)
-        return@forEach
+        continue
       }
-      val resolved = refData.resolve() ?: return@forEach
+
+      val resolved = refData.resolve()
+                     ?: continue
+
       var parentTag = resolved.parentOfType<XmlTag>()
       if (parentTag == null && isVueExprMetaLanguage(resolved.language)) {
         val host = InjectedLanguageManager.getInstance(list[0].project).getInjectionHost(resolved)
@@ -66,12 +66,13 @@ class VueExtractComponentDataBuilder(
           parentTag = host.parentOfType<XmlTag>()
         }
       }
+
       if (scriptTag != null && parentTag == scriptTag || PsiTreeUtil.isAncestor(parentTag, refData.tag, true)) {
-        map.putIfAbsent(refData.tag, mutableListOf())
-        map[refData.tag]!!.add(refData)
+        compute(refData.tag) { _, oldValue ->
+          if (oldValue != null) oldValue + refData else listOf(refData)
+        }
       }
     }
-    return map
   }
 
   private fun processVueComponent(ref: TagNameReference) {
