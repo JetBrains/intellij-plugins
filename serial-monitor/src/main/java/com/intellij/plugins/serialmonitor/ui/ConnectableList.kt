@@ -39,7 +39,7 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
-  abstract inner class Connectable(val entityName: @NlsSafe String, @Volatile var status: PortStatus) {
+  abstract inner class Connectable(val entityName: @NlsSafe String, val status: PortStatus, val isUsed: Boolean) {
 
     abstract val selectionKey: Pair<Char, String>
 
@@ -60,11 +60,23 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
       override fun actionPerformed(e: AnActionEvent) {
         parentPanel.disconnectPort(portName())
       }
+
+      override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+      override fun update(e: AnActionEvent) {
+        e.presentation.isEnabled = isUsed
+      }
     }
     protected val openConsole = object : DumbAwareAction(SerialMonitorBundle.message("action.open.console.text"), null,
                                                          AllIcons.Actions.OpenNewTab) {
       override fun actionPerformed(e: AnActionEvent) {
         parentPanel.openConsole(portName())
+      }
+
+      override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+      override fun update(e: AnActionEvent) {
+        e.presentation.isEnabled = isUsed
       }
     }
 
@@ -81,7 +93,7 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
     }
   }
 
-  inner class ConnectableProfile(@NlsSafe profileName: String, status: PortStatus, val isUsed: Boolean) : Connectable(profileName, status) {
+  inner class ConnectableProfile(@NlsSafe profileName: String, status: PortStatus, isUsed: Boolean) : Connectable(profileName, status, isUsed) {
 
     override fun portName(): String? = application.service<SerialProfileService>().getProfiles()[entityName]?.portName
 
@@ -114,7 +126,7 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
       }
   }
 
-  inner class ConnectablePort(portName: String, status: PortStatus) : Connectable(portName, status) {
+  inner class ConnectablePort(portName: String, status: PortStatus, isUsed: Boolean) : Connectable(portName, status, isUsed) {
 
     override fun portName() = entityName
 
@@ -190,7 +202,8 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
     portService.getPortsNames().forEach {
       // Use global status for the icon to indicate that other windows are connected.
       val status = portService.portStatus(it)
-      newModel.addElement(ConnectablePort(it, status))
+      val isUsed = parentPanel.getOpenedMonitor(it) != null
+      newModel.addElement(ConnectablePort(it, status, isUsed))
       checkCanceled()
     }
 
