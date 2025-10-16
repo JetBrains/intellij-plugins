@@ -7,6 +7,7 @@ import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Key
 import com.intellij.task.ProjectTask
@@ -48,6 +49,11 @@ abstract class PlatformioBeforeRunTaskProvider : BeforeRunTaskProvider<Platformi
     }
     return true
   }
+
+  protected fun createPlatformioBeforeRunTask(project: Project, taskGenerator: (env: ExecutionEnvironment) -> ProjectTask): PlatformioBeforeRunTask? {
+    if (!PlatformioWorkspace.isPlatformioProject(project)) return null
+    return PlatformioBeforeRunTask(id, taskGenerator)
+  }
 }
 
 class PlatformioBeforeRunTask(id: Key<PlatformioBeforeRunTask>,
@@ -60,8 +66,8 @@ class PlatformioCleanBeforeRunTaskProvider : PlatformioBeforeRunTaskProvider() {
   private val ID = Key.create<PlatformioBeforeRunTask>("PlatformioCleanBeforeRun")
   override fun getId(): Key<PlatformioBeforeRunTask> = ID
 
-  override fun createTask(runConfiguration: RunConfiguration): PlatformioBeforeRunTask =
-    PlatformioBeforeRunTask(id) { CidrCleanTaskImpl(PlatformioBuildConfiguration) }
+  override fun createTask(runConfiguration: RunConfiguration): PlatformioBeforeRunTask? =
+    createPlatformioBeforeRunTask(runConfiguration.project) { CidrCleanTaskImpl(PlatformioBuildConfiguration) }
 
   override fun getName(): String = ClionEmbeddedPlatformioBundle.message("platformio.clean")
 
@@ -72,8 +78,8 @@ class PlatformioUploadBeforeRunTaskProvider : PlatformioBeforeRunTaskProvider() 
   private val ID = Key.create<PlatformioBeforeRunTask>("PlatformioUploadBeforeRun")
   override fun getId(): Key<PlatformioBeforeRunTask> = ID
 
-  override fun createTask(runConfiguration: RunConfiguration): PlatformioBeforeRunTask =
-    PlatformioBeforeRunTask(id) { PlatformioTargetTask(name, "run", "-t", "upload") }
+  override fun createTask(runConfiguration: RunConfiguration): PlatformioBeforeRunTask? =
+    createPlatformioBeforeRunTask(runConfiguration.project) { PlatformioTargetTask(name, "run", "-t", "upload") }
 
   override fun getName(): String = ClionEmbeddedPlatformioBundle.message("platformio.upload")
 
@@ -84,15 +90,15 @@ class PlatformioBuildBeforeRunTaskProvider : PlatformioBeforeRunTaskProvider() {
   private val ID = Key.create<PlatformioBeforeRunTask>("PlatformioBuildBeforeRun")
   override fun getId(): Key<PlatformioBeforeRunTask> = ID
 
-  override fun createTask(runConfiguration: RunConfiguration): PlatformioBeforeRunTask =
-    PlatformioBeforeRunTask(id) { env ->
+  override fun createTask(runConfiguration: RunConfiguration): PlatformioBeforeRunTask? =
+    createPlatformioBeforeRunTask(runConfiguration.project) { env ->
       if (env.executor is DefaultDebugExecutor) {
         PlatformioTargetTask(name, "debug")
       }
       else {
         PlatformioTargetTask(name, "run")
       }
-    }.apply { isEnabled = runConfiguration is PlatformioDebugConfiguration } // Add to all PIO run configurations by default
+    }?.apply { isEnabled = runConfiguration is PlatformioDebugConfiguration } // Add to all PIO run configurations by default
 
   override fun getName(): String = ClionEmbeddedPlatformioBundle.message("platformio.build")
 }
