@@ -1,6 +1,3 @@
-<template>
-  <NewComponent :show-tools="showTools"/>
-</template>
 <script>
 import NewComponent from "./NewComponent.vue";
 
@@ -13,6 +10,10 @@ export default {
   }
 }
 </script>
+
+<template>
+  <NewComponent :show-tools="showTools"/>
+</template>
 
 <style lang="scss" rel="stylesheet/scss">
 header {

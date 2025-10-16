@@ -1,6 +1,3 @@
-<template>
-  <NewComponent :prop-with-camel="propWithCamel"/>
-</template>
 <script>
 import NewComponent from "./NewComponent.vue";
 
@@ -11,3 +8,7 @@ export default {
   }
 }
 </script>
+
+<template>
+  <NewComponent :prop-with-camel="propWithCamel"/>
+</template>

@@ -1,9 +1,3 @@
-<template>
-  <div v-for="item in items">
-    <NewComponent :item="item"/>
-  </div>
-</template>
-
 <script>
 import NewComponent from "./NewComponent.vue";
 
@@ -17,3 +11,9 @@ export default {
   }
 }
 </script>
+
+<template>
+  <div v-for="item in items">
+    <NewComponent :item="item"/>
+  </div>
+</template>

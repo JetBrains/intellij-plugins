@@ -1,6 +1,3 @@
-<template>
-  <NewComponent :comp-method="compMethod()" :one="one"/>
-</template>
 <script>
 import NewComponent from "./NewComponent.vue";
 
@@ -15,3 +12,7 @@ export default {
   }
 }
 </script>
+
+<template>
+  <NewComponent :comp-method="compMethod()" :one="one"/>
+</template>

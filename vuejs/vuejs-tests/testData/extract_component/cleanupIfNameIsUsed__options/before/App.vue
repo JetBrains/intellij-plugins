@@ -1,7 +1,3 @@
-<template>
-  <caret><p>Very first paragraph {{ propWithCamel }}</p>
-  <p>Second paragraph {{ propWithCamel }}</p>
-</template>
 <script>
 export default {
   props: {
@@ -9,3 +5,8 @@ export default {
   }
 }
 </script>
+
+<template>
+  <caret><p>Very first paragraph {{ propWithCamel }}</p>
+  <p>Second paragraph {{ propWithCamel }}</p>
+</template>

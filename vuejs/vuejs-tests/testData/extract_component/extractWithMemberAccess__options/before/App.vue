@@ -1,3 +1,9 @@
+<script>
+export default {
+  props: {item: {}}
+}
+</script>
+
 <template>
   <caret><div v-if="item">
     <p>
@@ -5,8 +11,3 @@
     </p>
   </div>
 </template>
-<script>
-export default {
-  props: {item: {}}
-}
-</script>

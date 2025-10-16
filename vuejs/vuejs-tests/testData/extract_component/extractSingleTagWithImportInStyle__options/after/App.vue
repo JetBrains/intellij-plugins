@@ -4,6 +4,7 @@ import NewComponent from "./NewComponent.vue";
 <template>
   <NewComponent/>
 </template>
+
 <style lang="stylus">
 @import './stylus/main'
 </style>

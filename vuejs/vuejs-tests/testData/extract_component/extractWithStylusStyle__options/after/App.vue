@@ -1,9 +1,3 @@
-<template>
-  <transition>
-    <NewComponent :show="show"/>
-  </transition>
-</template>
-
 <script>
 import NewComponent from "./NewComponent.vue";
 
@@ -14,6 +8,12 @@ export default {
   serverCacheKey: props => props.show
 }
 </script>
+
+<template>
+  <transition>
+    <NewComponent :show="show"/>
+  </transition>
+</template>
 
 <style lang="stylus">
 $offset = 126

@@ -1,6 +1,3 @@
-<template>
-  <NewComponent :one="one"/>
-</template>
 <script>
 import NewComponent from "./NewComponent.vue";
 
@@ -12,3 +9,7 @@ export default {
   }
 }
 </script>
+
+<template>
+  <NewComponent :one="one"/>
+</template>

@@ -1,7 +1,3 @@
-<template>
-  <selection><p>Paragraph! {{ one + 1 }}</p>
-  <div>And div {{ unresolved }}</div></selection>
-</template>
 <script>
 export default {
   name: 'existing',
@@ -10,3 +6,8 @@ export default {
   }
 }
 </script>
+
+<template>
+  <selection><p>Paragraph! {{ one + 1 }}</p>
+    <div>And div {{ unresolved }}</div></selection>
+</template>

@@ -1,9 +1,3 @@
-<template>
-  <div v-for="item in items">
-    <caret><span>Text: {{ item }}</span>
-  </div>
-</template>
-
 <script>
 export default {
   name: "test-v-for",
@@ -14,3 +8,9 @@ export default {
   }
 }
 </script>
+
+<template>
+  <div v-for="item in items">
+    <caret><span>Text: {{ item }}</span>
+  </div>
+</template>

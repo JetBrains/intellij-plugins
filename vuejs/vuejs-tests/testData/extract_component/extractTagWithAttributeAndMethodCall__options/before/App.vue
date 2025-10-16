@@ -1,6 +1,3 @@
-<template>
-  <caret><p v-if="one">Paragraph! {{ compMethod() }}</p>
-</template>
 <script>
 export default {
   props: {
@@ -12,3 +9,7 @@ export default {
   }
 }
 </script>
+
+<template>
+  <caret><p v-if="one">Paragraph! {{ compMethod() }}</p>
+</template>
