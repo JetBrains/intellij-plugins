@@ -101,7 +101,7 @@ open class AngularProjectImpl(override val name: String,
 
   override val globalStyleSheets: List<VirtualFile>
     get() = ngProject.targets?.build?.options?.styles
-              ?.mapNotNull { rootDir?.findFileByRelativePath(it) }
+              ?.mapNotNull { resolveFile(it) }
             ?: emptyList()
 
   override val stylePreprocessorIncludeDirs: List<VirtualFile>

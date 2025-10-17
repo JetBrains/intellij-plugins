@@ -101,6 +101,7 @@ open class AngularJsonBuildOptionsBase {
   val stylePreprocessorOptions: AngularJsonStylePreprocessorOptions? = null
 
   @JsonProperty("index")
+  @JsonDeserialize(using = IndexPropertyDeserializer::class)
   val index: String? = null
 
   @JsonProperty("tsConfig")
@@ -227,4 +228,28 @@ private class StringOrStringArrayDeserializer : JsonDeserializer<List<String>>()
     return items
   }
 
+}
+
+private class IndexPropertyDeserializer : JsonDeserializer<String>() {
+  @Throws(IOException::class)
+  override fun deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): String? =
+    when (jsonParser.currentToken()) {
+      JsonToken.VALUE_STRING -> jsonParser.valueAsString
+      JsonToken.START_OBJECT -> {
+        var input: String? = null
+        while (jsonParser.nextToken() !== JsonToken.END_OBJECT) {
+          if (jsonParser.currentToken() === JsonToken.FIELD_NAME) {
+            val propName = jsonParser.currentName()
+            jsonParser.nextToken()
+            if (propName == "input")
+              input = jsonParser.valueAsString
+          }
+        }
+        input
+      }
+      else -> {
+        deserializationContext.handleUnexpectedToken(String::class.java, jsonParser)
+        null
+      }
+    }
 }
