@@ -1,0 +1,20 @@
+ AngularConfig {
+   defaultProject: null
+   projects: [
+     AngularProjectImpl {
+       name: nw-buddy
+       type: APPLICATION
+       rootDir: temp:///src/apps/web
+       sourceDir: temp:///src/apps/web
+       indexHtml: temp:///src/apps/web/index.html
+       tsConfig: temp:///src/apps/web/tsconfig.app.json
+       globalStyleSheets: [temp:///src/apps/web/style.css]
+       stylePreprocessorIncludeDirs: [temp:///src]
+       karmaConfigFile: null
+       protractorConfigFile: null
+       tsLintConfigurations: [
+
+       ]
+     }
+   ]
+ }

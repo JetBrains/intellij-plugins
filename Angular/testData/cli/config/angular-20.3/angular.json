@@ -1,0 +1,358 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ],
+    "analytics": false
+  },
+  "version": 1,
+  "newProjectRoot": "apps",
+  "projects": {
+    "nw-buddy": {
+      "root": "apps/web",
+      "prefix": "nwb",
+      "sourceRoot": "apps/web",
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "css"
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "loader": {
+              ".ttf": "binary"
+            },
+            "outputPath": "dist/web",
+            "externalDependencies": ["assets/*"],
+            "index": {
+              "input": "apps/web/index.html",
+              "preloadInitial": false
+            },
+            "browser": "apps/web/main.ts",
+            "server": "apps/web/main.server.ts",
+            "ssr": {
+              "entry": "apps/server/main.ts"
+            },
+            "tsConfig": "apps/web/tsconfig.app.json",
+            "webWorkerTsConfig": "apps/web/tsconfig.worker.json",
+            "polyfills": ["apps/web/polyfills.ts"],
+            "assets": [
+              "apps/web/_routes.json",
+              "apps/web/_headers",
+              "apps/web/favicon.ico",
+              "apps/web/robots.txt",
+              "apps/web/sitemap.txt",
+              "apps/web/embed.js",
+              "apps/web/assets",
+              "apps/web/version",
+              {
+                "glob": "**/*",
+                "input": "node_modules/monaco-editor",
+                "output": "/assets/monaco-editor"
+              },
+              {
+                "glob": "**/*",
+                "ignore": [
+                  "*.gz",
+                  "*.zip",
+
+                  "**/items_hires/**"
+                ],
+                "input": "dist/nw-data/.current",
+                "output": "/nw-data/",
+                "followSymlinks": true
+              },
+              {
+                "glob": "**/*",
+                "ignore": [
+                  "*.gz",
+                  "*.zip"
+                ],
+                "input": "dist/nw-data/.current",
+                "output": "/nw-data/",
+                "followSymlinks": true
+              }
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "",
+                "./node_modules"
+              ]
+            },
+            "styles": [
+              "apps/web/style.css"
+            ],
+            "inlineStyleLanguage": "css",
+            "scripts": []
+          },
+          "configurations": {
+            "dev": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "ssr": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/web/environments/environment.ts",
+                  "with": "apps/web/environments/environment.dev.ts"
+                },
+                {
+                  "replace": "apps/web/environments/env.ts",
+                  "with": "apps/web/environments/env.generated.ts"
+                }
+              ]
+            },
+            "dev-cdn": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "ssr": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/web/environments/environment.ts",
+                  "with": "apps/web/environments/environment.dev-cdn.ts"
+                },
+                {
+                  "replace": "apps/web/environments/env.ts",
+                  "with": "apps/web/environments/env.generated.ts"
+                }
+              ]
+            },
+            "dev-ssr": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "ssr": true,
+              "fileReplacements": [
+                {
+                  "replace": "apps/web/environments/environment.ts",
+                  "with": "apps/web/environments/environment.dev.ts"
+                },
+                {
+                  "replace": "apps/web/environments/env.ts",
+                  "with": "apps/web/environments/env.generated.ts"
+                }
+              ]
+            },
+            "web": {
+              "outputPath": "dist/web",
+              "optimization": true,
+              "outputHashing": "all",
+              "baseHref": "/",
+              "fileReplacements": [
+                {
+                  "replace": "apps/web/environments/environment.ts",
+                  "with": "apps/web/environments/environment.web.ts"
+                },
+                {
+                  "replace": "apps/web/environments/env.ts",
+                  "with": "apps/web/environments/env.generated.ts"
+                }
+              ]
+            },
+            "web-cdn": {
+              "outputPath": "dist/web",
+              "optimization": true,
+              "outputHashing": "all",
+              "baseHref": "/",
+              "assets": [
+                "apps/web/_routes.json",
+                "apps/web/_headers",
+                "apps/web/favicon.ico",
+                "apps/web/robots.txt",
+                "apps/web/sitemap.txt",
+                "apps/web/embed.js",
+                "apps/web/assets",
+                "apps/web/version",
+                {
+                "glob": "**/*",
+                  "input": "node_modules/monaco-editor",
+                  "output": "/assets/monaco-editor"
+                },
+                {
+                  "glob": "**/*",
+                  "ignore": [
+                    "*.gz",
+                    "*.zip",
+                    "**/lyshineui/**"
+                  ],
+                  "input": "dist/nw-data/.current",
+                  "output": "/nw-data/",
+                  "followSymlinks": true
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/web/environments/environment.ts",
+                  "with": "apps/web/environments/environment.web-cdn.ts"
+                },
+                {
+                  "replace": "apps/web/environments/env.ts",
+                  "with": "apps/web/environments/env.generated.ts"
+                }
+              ]
+            },
+            "standalone": {
+              "outputPath": "dist/web-standalone",
+              "optimization": true,
+              "outputHashing": "all",
+              "baseHref": "/",
+              "sourceMap": false,
+              "namedChunks": false,
+              "ssr": false,
+              "aot": true,
+              "extractLicenses": true,
+              "fileReplacements": [
+                {
+                  "replace": "apps/web/environments/environment.ts",
+                  "with": "apps/web/environments/environment.standalone.ts"
+                },
+                {
+                  "replace": "apps/web/environments/env.ts",
+                  "with": "apps/web/environments/env.generated.ts"
+                }
+              ]
+            },
+            "test": {
+              "outputPath": "dist/test",
+              "optimization": true,
+              "outputHashing": "all",
+              "baseHref": "/",
+              "fileReplacements": [
+                {
+                  "replace": "apps/web/environments/environment.ts",
+                  "with": "apps/web/environments/environment.dev.ts"
+                },
+                {
+                  "replace": "apps/web/environments/env.ts",
+                  "with": "apps/web/environments/env.generated.ts"
+                }
+              ],
+              "assets": [
+                "apps/web/_routes.json",
+                "apps/web/_headers",
+                "apps/web/favicon.ico",
+                "apps/web/robots.txt",
+                "apps/web/sitemap.txt",
+                "apps/web/embed.js",
+                "apps/web/assets",
+                "apps/web/version",
+                {
+                  "glob": "**/*",
+                  "input": "node_modules/monaco-editor",
+                  "output": "/assets/monaco-editor"
+                },
+                {
+                  "glob": "**/*",
+                  "ignore": [
+                    "*.gz",
+                    "*.zip",
+
+                    "**/items_hires/**"
+                  ],
+                  "input": "dist/nw-data/.current",
+                  "output": "/nw-data/",
+                  "followSymlinks": true
+                },
+                {
+                  "glob": "**/*",
+                  "ignore": [
+                    "*.gz",
+                    "*.zip"
+                  ],
+                  "input": "dist/nw-data/.current",
+                  "output": "/nw-data/",
+                  "followSymlinks": true
+                },
+                 {
+                  "glob": "**/*.png",
+                  "input": "apps/web/app",
+                  "output": "/test-data/",
+                  "followSymlinks": true
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "host": "0.0.0.0",
+            "proxyConfig": "angular.proxy.js"
+          },
+          "configurations": {
+            "dev": {
+              "buildTarget": "nw-buddy:build:dev"
+            },
+            "dev-cdn": {
+              "buildTarget": "nw-buddy:build:dev-cdn"
+            },
+            "dev-ssr": {
+              "buildTarget": "nw-buddy:build:dev-ssr"
+            },
+            "web": {
+              "buildTarget": "nw-buddy:build:web"
+            },
+            "production": {
+              "buildTarget": "nw-buddy:build:production"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "runner": "vitest",
+            "browsers": [
+              "chromium"
+            ],
+            "tsConfig": "apps/web/tsconfig.spec.json",
+            "include": ["**/*.spec.ts", "../../libs/**/*.spec.ts"],
+            "buildTarget": "nw-buddy:build:test"
+          }
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "configDir": "apps/storybook",
+            "browserTarget": "nw-buddy:build",
+            "port": 5200,
+            "compodoc": false,
+            "styles": [
+              "apps/web/style.css"
+            ]
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "configDir": "apps/storybook",
+            "browserTarget": "nw-buddy:build",
+            "compodoc": false,
+            "styles": [
+              "apps/web/style.css"
+            ],
+            "outputDir": "dist/web-storybook",
+            "quiet": true,
+            "enableProdMode": false
+          }
+        }
+      }
+    }
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "nwb",
+      "style": "css"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "nwb"
+    }
+  }
+}
