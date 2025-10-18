@@ -11,6 +11,8 @@
     <qodana.coverage.cloudArtifactsProcessor implementation="org.jetbrains.qodana.js.JSCoverageArtifactProcessor"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="static.analysis.use.js.configurator" defaultValue="false"
+                 description="Whether to autoconfigure JavaScript project"/>
     <!--<commandLineInspectionProjectConfigurator implementation="org.jetbrains.qodana.js.JsProjectConfigurator"/>-->
     <globalInspection hasStaticDescription="true"
                       language="JavaScript"
