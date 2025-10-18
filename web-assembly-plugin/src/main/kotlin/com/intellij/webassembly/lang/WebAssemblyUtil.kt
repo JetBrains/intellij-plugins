@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.webassembly.lang.psi.*
 
-object WebAssemblyUtil {
+internal object WebAssemblyUtil {
   fun findParamsLocals(parent: PsiElement): Array<WebAssemblyNamedElement> {
     val result: MutableList<WebAssemblyNamedElement> = mutableListOf()
 
