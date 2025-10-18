@@ -65,6 +65,7 @@ jvm_library(
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
     "//plugins/JavaScriptDebugger/debugger-ui:javascript-debugger-ui",
+    "@community//platform/core-impl",
   ]
 )
 
@@ -144,6 +145,7 @@ jvm_library(
     "@community//xml/testFramework",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
+    "@community//platform/core-impl",
   ]
 )
 ### auto-generated section `build intellij.dart` end

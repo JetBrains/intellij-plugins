@@ -39,6 +39,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/core-impl",
   ]
 )
 
@@ -75,6 +76,7 @@ jvm_library(
     "@community//xml/relaxng",
     "@community//xml/relaxng:relaxng_test_lib",
     "@community//xml/testFramework",
+    "@community//platform/core-impl",
   ]
 )
 ### auto-generated section `build intellij.handlebars` end

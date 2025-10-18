@@ -19,6 +19,7 @@ jvm_library(
     "@community//platform/lang-impl",
     "@community//java/java-psi-api:psi",
     "@community//plugins/groovy/groovy-psi:psi",
+    "@community//platform/core-impl",
     "@community//plugins/groovy",
     "//contrib/qodana",
   ]
@@ -35,6 +36,7 @@ jvm_library(
     "@community//platform/lang-impl",
     "@community//java/java-psi-api:psi",
     "@community//plugins/groovy/groovy-psi:psi",
+    "@community//platform/core-impl",
     "@community//plugins/groovy",
     "@community//plugins/groovy:groovy_test_lib",
     "//contrib/qodana",

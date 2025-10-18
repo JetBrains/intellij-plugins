@@ -23,6 +23,11 @@ jvm_provided_library(
 )
 
 jvm_provided_library(
+  name = "community_platform_core-impl_provided",
+  lib = "@community//platform/core-impl"
+)
+
+jvm_provided_library(
   name = "contrib_qodana_provided",
   lib = "//contrib/qodana"
 )
@@ -67,6 +72,7 @@ jvm_library(
     ":community_platform_ide_provided",
     ":community_platform_ide-impl_provided",
     ":community_platform_lang-impl_provided",
+    ":community_platform_core-impl_provided",
     ":contrib_qodana_provided",
     ":goland_intellij-go_plugin_provided",
     ":goland_intellij-go_go-coverage_provided",
@@ -111,6 +117,7 @@ jvm_library(
     ":community_platform_ide_provided",
     ":community_platform_ide-impl_provided",
     ":community_platform_lang-impl_provided",
+    ":community_platform_core-impl_provided",
     ":contrib_qodana_provided",
     ":goland_intellij-go_plugin_provided",
     ":goland_intellij-go_go-coverage_provided",

@@ -28,6 +28,7 @@ jvm_library(
     "@community//platform/lang-impl",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/core-impl",
   ]
 )
 
@@ -49,6 +50,7 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/code-style-impl:codeStyle-impl",
+    "@community//platform/core-impl",
   ]
 )
 ### auto-generated section `build intellij.tsr` end
