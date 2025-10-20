@@ -126,13 +126,13 @@ class VueExtractComponentDataBuilder(
       .map { RefData(it, tag, offset) }
   }
 
-  private fun generateNewTemplateContents(mapHasDirectUsage: Set<String>): String {
+  private fun generateNewTemplateContents(hasDirectUsage: Set<String>): String {
     return list.joinToString("")
     { tag ->
       val sb = StringBuilder(tag.text)
       val tagStart = tag.textRange.startOffset
       val replaces = refDataMap[tag]?.mapNotNull {
-        if (mapHasDirectUsage.contains(it.getRefName())) return@mapNotNull null
+        if (hasDirectUsage.contains(it.getRefName())) return@mapNotNull null
         val absRange = it.getReplaceRange() ?: return@mapNotNull null
         Trinity(absRange.startOffset - tagStart, absRange.endOffset - tagStart, it.getRefName())
       }?.sortedByDescending { it.first }
@@ -156,7 +156,7 @@ class VueExtractComponentDataBuilder(
 
   private fun generateNewComponentText(newComponentName: String): String {
     // this piece of code is responsible for handling the cases when the same function is use in a call and passed further as function
-    val hasDirectUsageSet = mutableSetOf<String>()
+    val hasDirectUsage = mutableSetOf<String>()
     val hasReplaceMap = mutableMapOf<String, Boolean>()
     refDataMap.forEach { pair ->
       pair.value.any {
@@ -164,7 +164,7 @@ class VueExtractComponentDataBuilder(
         val refName = it.getRefName()
         val existing = hasReplaceMap[refName]
         if (existing != null && state != existing) {
-          hasDirectUsageSet.add(refName)
+          hasDirectUsage.add(refName)
           true
         }
         else {
@@ -176,7 +176,7 @@ class VueExtractComponentDataBuilder(
 
     val componentDeclaration = """
     export default {
-      name: '$newComponentName'${generateDescriptorMembers(hasDirectUsageSet)}
+      name: '$newComponentName'${generateDescriptorMembers(hasDirectUsage)}
     }
     """.trimIndent()
 
@@ -196,7 +196,7 @@ class VueExtractComponentDataBuilder(
       createTag(
         name = "template",
         attributes = listOfNotNull(langAttribute(templateLanguage)),
-        content = generateNewTemplateContents(hasDirectUsageSet),
+        content = generateNewTemplateContents(hasDirectUsage),
       ),
     ).plus(styleTags.map { it.text })
       .joinToString("\n\n")
@@ -271,14 +271,14 @@ class VueExtractComponentDataBuilder(
       }
   }
 
-  private fun generateDescriptorMembers(mapHasDirectUsage: Set<String>): String {
+  private fun generateDescriptorMembers(hasDirectUsage: Set<String>): String {
     val members = mutableListOf<String>()
     if (componentsImportMap.isNotEmpty()) {
       members.add(componentsImportMap.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
     }
     if (refDataMap.isNotEmpty()) {
       members.add(getPropReferences().joinToString(",\n", ",\nprops: {\n", "\n}")
-      { "${it.getRefName()}: ${if (mapHasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"}" })
+      { "${it.getRefName()}: ${if (hasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"}" })
     }
     return members.joinToString("")
   }
