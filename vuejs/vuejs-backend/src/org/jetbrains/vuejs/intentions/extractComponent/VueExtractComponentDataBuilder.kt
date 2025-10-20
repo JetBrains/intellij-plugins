@@ -171,19 +171,32 @@ class VueExtractComponentDataBuilder(
       }
     }
 
-    var newText = """
-<script${langAttribute(scriptLanguage)}>${generateImports()}
-export default {
-  name: '$newComponentName'${generateDescriptorMembers(hasDirectUsageSet)}
-}
-</script>
+    val componentDeclaration = """
+    export default {
+      name: '$newComponentName'${generateDescriptorMembers(hasDirectUsageSet)}
+    }
+    """.trimIndent()
 
-<template${langAttribute(templateLanguage)}>
-${generateNewTemplateContents(hasDirectUsageSet)}
-</template>
+    val scriptContent = listOfNotNull(
+      generateImports(),
+      componentDeclaration,
+    ).joinToString("\n")
 
-${copyStyles()}
-""".trim()
+    var newText = sequenceOf(
+      createTag(
+        name = "script",
+        attributes = listOfNotNull(
+          langAttribute(scriptLanguage),
+        ),
+        content = scriptContent,
+      ),
+      createTag(
+        name = "template",
+        attributes = listOfNotNull(langAttribute(templateLanguage)),
+        content = generateNewTemplateContents(hasDirectUsageSet),
+      ),
+    ).plus(styleTags.map { it.text })
+      .joinToString("\n\n")
 
     newText = psiOperationOnText(newText) { optimizeAndRemoveEmptyStyles(it) }
     newText = psiOperationOnText(newText) {
@@ -194,18 +207,25 @@ ${copyStyles()}
     return newText
   }
 
+  private fun createTag(
+    name: String,
+    attributes: List<String>,
+    content: String,
+  ): String {
+    return listOf(
+      "<$name  ${attributes.joinToString(" ")}>",
+      content,
+      "</$name>",
+    ).joinToString("\n")
+  }
+
   private fun psiOperationOnText(
     text: String,
     operation: (PsiFile) -> Unit,
-  ): String {
-    val dummyFile = createVueFileFromText(containingFile.project, text)
-    operation(dummyFile)
-    return dummyFile.text
-  }
-
-  private fun copyStyles(): String {
-    return styleTags.joinToString("\n\n") { it.text }
-  }
+  ): String =
+    createVueFileFromText(containingFile.project, text)
+      .also(operation)
+      .text
 
   private fun findStyles(file: PsiFile): List<XmlTag> {
     val document = file.asSafely<XmlFile>()
@@ -235,16 +255,17 @@ ${copyStyles()}
       *element.children,
     )
 
-  private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"$lang\""
+  private fun langAttribute(lang: String?) =
+    if (lang != null) """lang="$lang"""" else null
 
-  private fun generateImports(): String {
+  private fun generateImports(): String? {
     if (importsToCopy.isEmpty())
-      return ""
+      return null
 
-    return importsToCopy.keys
-      .sorted()
-      .joinToString("\n", "\n") {
-        "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}"
+    return importsToCopy.entries
+      .sortedBy { it.key }
+      .joinToString("\n") { (name, declaration) ->
+        "import ${name} from ${declaration.fromClause?.referenceText ?: "''"}"
       }
   }
 
