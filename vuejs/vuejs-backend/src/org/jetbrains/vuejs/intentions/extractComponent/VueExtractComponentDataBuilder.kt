@@ -159,18 +159,16 @@ class VueExtractComponentDataBuilder(
     val hasDirectUsage = mutableSetOf<String>()
     val hasReplaceMap = mutableMapOf<String, Boolean>()
     refDataMap.forEach { pair ->
-      pair.value.any {
-        val state = it.getReplaceRange() == null
-        val refName = it.getRefName()
+      for (data in pair.value) {
+        val state = data.getReplaceRange() == null
+        val refName = data.getRefName()
         val existing = hasReplaceMap[refName]
         if (existing != null && state != existing) {
           hasDirectUsage.add(refName)
-          true
+          break
         }
-        else {
-          hasReplaceMap[refName] = state
-          false
-        }
+
+        hasReplaceMap[refName] = state
       }
     }
 
