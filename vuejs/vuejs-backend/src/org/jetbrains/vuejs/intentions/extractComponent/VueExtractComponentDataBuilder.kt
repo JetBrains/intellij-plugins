@@ -75,18 +75,19 @@ class VueExtractComponentDataBuilder(
 
   private fun processVueComponent(ref: TagNameReference) {
     val name = fromAsset(ref.nameElement.text)
-    val foundImport = sequenceOf(findModule(scriptTag, false), findModule(scriptTag, true))
-                        .filterNotNull()
-                        .flatMap { JSResolveUtil.getStubbedChildren(it, ES6_IMPORT_DECLARATION).asSequence() }
-                        .filterIsInstance<ES6ImportDeclaration>()
-                        .firstOrNull { importDeclaration ->
-                          importDeclaration.importedBindings.find { binding ->
-                            !binding.isNamespaceImport && binding.name.let { it != null && name == fromAsset(it) }
-                          } != null
-                        }
-                      ?: return
+    val import = sequenceOf(false, true)
+      .mapNotNull { setup -> findModule(scriptTag, setup = setup) }
+      .flatMap { JSResolveUtil.getStubbedChildren(it, ES6_IMPORT_DECLARATION).asSequence() }
+      .filterIsInstance<ES6ImportDeclaration>()
+      .firstOrNull { importDeclaration ->
+        importDeclaration.importedBindings.find { binding ->
+          !binding.isNamespaceImport && binding.name.let { it != null && name == fromAsset(it) }
+        } != null
+      }
 
-    componentsImportMap[toAsset(ref.nameElement.text, true)] = foundImport
+    import ?: return
+
+    componentsImportMap[toAsset(ref.nameElement.text, true)] = import
   }
 
   private fun gatherReferences(): List<RefData> {
@@ -143,7 +144,7 @@ class VueExtractComponentDataBuilder(
         }
         .sortedByDescending { it.first }
         .forEach { builder.replace(it.first, it.second, it.third) }
-      
+
       builder.toString()
     }
   }
