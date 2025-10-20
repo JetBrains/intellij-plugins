@@ -243,14 +243,14 @@ class VueExtractComponentDataBuilder(
   }
 
   private fun optimizeAndRemoveEmptyStyles(file: PsiFile) {
-    val currentlyUnused = ArrayList(getUnusedStyles(file))
-    currentlyUnused.removeAll(unusedStylesInExistingComponent)
-    currentlyUnused.forEach { suffix -> RemoveUnusedSymbolIntentionAction.removeUnused(suffix) }
-    val toDelete = findStyles(file).filter { styleTag ->
-      styleTag.isValid &&
-      PsiTreeUtil.processElements(styleTag) { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) }
-    }
-    toDelete.forEach { styleTag -> styleTag.delete() }
+    getUnusedStyles(file).asSequence()
+      .minus(unusedStylesInExistingComponent)
+      .forEach(RemoveUnusedSymbolIntentionAction::removeUnused)
+
+    findStyles(file)
+      .filter { it.isValid }
+      .filter { styleTag -> PsiTreeUtil.processElements(styleTag) { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) } }
+      .forEach { it.delete() }
   }
 
   private fun hasMeaningfulChildren(element: PsiElement) =
