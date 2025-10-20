@@ -270,18 +270,27 @@ class VueExtractComponentDataBuilder(
     componentName: String,
     hasDirectUsage: Set<String>,
   ): String {
-    val members = mutableListOf<String>()
-    if (componentsImportMap.isNotEmpty()) {
-      members.add(componentsImportMap.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
-    }
-    if (refDataMap.isNotEmpty()) {
-      members.add(getPropReferences().joinToString(",\n", ",\nprops: {\n", "\n}")
-      { "${it.getRefName()}: ${if (hasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"}" })
+    val members = buildList {
+      add("name" to "'$componentName'")
+
+      if (componentsImportMap.isNotEmpty()) {
+        add("components" to componentsImportMap.keys.sorted().joinToString(", ", "{", "}"))
+      }
+      if (refDataMap.isNotEmpty()) {
+        val props = getPropReferences().joinToString(",\n", "{\n", "\n}") {
+          val type = if (hasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"
+          "${it.getRefName()}: $type"
+        }
+
+        add("props" to props)
+      }
+    }.joinToString(",\n") { (name, value) ->
+      "$name: $value"
     }
 
     return """
     export default {
-      name: '$componentName'${members.joinToString("")}
+      $members
     }
     """.trimIndent()
   }
