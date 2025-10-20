@@ -326,7 +326,7 @@
     <codeInsight.codeVisionSettingsPreviewLanguage language="Vue" modelId="component.usage"/>
   </extensions>
 
-  <actions>
+  <actions resource-bundle="messages.VueBundle">
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp"
             icon="org.jetbrains.vuejs.VuejsIcons.Vue">
       <add-to-group group-id="NewWebDevelopment" anchor="before" relative-to-action="NewJavaScriptFile"/>
