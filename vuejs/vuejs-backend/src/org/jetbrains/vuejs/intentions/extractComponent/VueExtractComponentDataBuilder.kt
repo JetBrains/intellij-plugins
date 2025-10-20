@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.vfs.VfsUtil
@@ -94,15 +93,17 @@ class VueExtractComponentDataBuilder(
   private fun gatherReferences(): List<RefData> {
     val refs = mutableListOf<RefData>()
     val injManager = InjectedLanguageManager.getInstance(list[0].project)
-    list.forEach { tag ->
+
+    for (tag in list) {
       PsiTreeUtil.processElements(tag) {
         refs.addAll(addElementReferences(it, tag, 0))
         true
       }
+
       val tagOffset = tag.textRange.startOffset
       val hosts = PsiTreeUtil.findChildrenOfType(tag, PsiLanguageInjectionHost::class.java)
-      hosts.forEach { host ->
-        injManager.getInjectedPsiFiles(host)?.forEach { pair: Pair<PsiElement, TextRange> ->
+      for (host in hosts) {
+        injManager.getInjectedPsiFiles(host)?.forEach { pair ->
           PsiTreeUtil.processElements(pair.first) { element ->
             val offset = host.textRange.startOffset - tagOffset
             refs.addAll(addElementReferences(element, tag, offset + pair.second.startOffset))
@@ -111,6 +112,7 @@ class VueExtractComponentDataBuilder(
         }
       }
     }
+
     return refs
   }
 
