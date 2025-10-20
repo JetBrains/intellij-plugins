@@ -47,7 +47,7 @@ class VueExtractComponentDataBuilder(
   private val styleTags = findStyles(containingFile)
   private var unusedStylesInExistingComponent: List<CssSelectorSuffix> = emptyList()
 
-  private val importsToCopy: MutableMap<String, ES6ImportDeclaration> = mutableMapOf()
+  private val componentsImportMap: MutableMap<String, ES6ImportDeclaration> = mutableMapOf()
 
   private val refDataMap: Map<XmlTag, List<RefData>> = buildMap {
     for (refData in gatherReferences()) {
@@ -87,7 +87,8 @@ class VueExtractComponentDataBuilder(
                           } != null
                         }
                       ?: return
-    importsToCopy[toAsset(ref.nameElement.text, true)] = foundImport
+
+    componentsImportMap[toAsset(ref.nameElement.text, true)] = foundImport
   }
 
   private fun gatherReferences(): List<RefData> {
@@ -258,10 +259,10 @@ class VueExtractComponentDataBuilder(
     if (lang != null) """lang="$lang"""" else null
 
   private fun generateImports(): String? {
-    if (importsToCopy.isEmpty())
+    if (componentsImportMap.isEmpty())
       return null
 
-    return importsToCopy.entries
+    return componentsImportMap.entries
       .sortedBy { it.key }
       .joinToString("\n") { (name, declaration) ->
         "import ${name} from ${declaration.fromClause?.referenceText ?: "''"}"
@@ -270,8 +271,8 @@ class VueExtractComponentDataBuilder(
 
   private fun generateDescriptorMembers(mapHasDirectUsage: Set<String>): String {
     val members = mutableListOf<String>()
-    if (importsToCopy.isNotEmpty()) {
-      members.add(importsToCopy.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
+    if (componentsImportMap.isNotEmpty()) {
+      members.add(componentsImportMap.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
     }
     if (refDataMap.isNotEmpty()) {
       members.add(getPropReferences().joinToString(",\n", ",\nprops: {\n", "\n}")
