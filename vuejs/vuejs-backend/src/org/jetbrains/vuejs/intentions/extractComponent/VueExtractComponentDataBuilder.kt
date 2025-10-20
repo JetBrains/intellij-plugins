@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
@@ -126,18 +125,26 @@ class VueExtractComponentDataBuilder(
       .map { RefData(it, tag, offset) }
   }
 
-  private fun generateNewTemplateContents(hasDirectUsage: Set<String>): String {
-    return list.joinToString("")
-    { tag ->
-      val sb = StringBuilder(tag.text)
+  private fun generateNewTemplateContents(
+    hasDirectUsage: Set<String>,
+  ): String {
+    return list.joinToString("") { tag ->
+      val dataList = refDataMap[tag]
+                     ?: return@joinToString tag.text
+
+      val builder = StringBuilder(tag.text)
       val tagStart = tag.textRange.startOffset
-      val replaces = refDataMap[tag]?.mapNotNull {
-        if (hasDirectUsage.contains(it.getRefName())) return@mapNotNull null
-        val absRange = it.getReplaceRange() ?: return@mapNotNull null
-        Trinity(absRange.startOffset - tagStart, absRange.endOffset - tagStart, it.getRefName())
-      }?.sortedByDescending { it.first }
-      replaces?.forEach { sb.replace(it.first, it.second, it.third) }
-      sb.toString()
+
+      dataList.asSequence()
+        .filter { it.getRefName() !in hasDirectUsage }
+        .mapNotNull {
+          val absRange = it.getReplaceRange() ?: return@mapNotNull null
+          Triple(absRange.startOffset - tagStart, absRange.endOffset - tagStart, it.getRefName())
+        }
+        .sortedByDescending { it.first }
+        .forEach { builder.replace(it.first, it.second, it.third) }
+      
+      builder.toString()
     }
   }
 
