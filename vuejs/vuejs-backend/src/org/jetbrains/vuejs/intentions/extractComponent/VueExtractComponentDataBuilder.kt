@@ -80,9 +80,10 @@ class VueExtractComponentDataBuilder(
       .flatMap { JSResolveUtil.getStubbedChildren(it, ES6_IMPORT_DECLARATION).asSequence() }
       .filterIsInstance<ES6ImportDeclaration>()
       .firstOrNull { importDeclaration ->
-        importDeclaration.importedBindings.find { binding ->
-          !binding.isNamespaceImport && binding.name.let { it != null && name == fromAsset(it) }
-        } != null
+        importDeclaration.importedBindings.asSequence()
+          .filter { !it.isNamespaceImport }
+          .mapNotNull { it.name }
+          .any { fromAsset(it) == name }
       }
 
     import ?: return
