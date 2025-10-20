@@ -254,7 +254,7 @@ ${copyStyles()}
       members.add(importsToCopy.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
     }
     if (refDataMap.isNotEmpty()) {
-      members.add(sortedProps(true).joinToString(",\n", ",\nprops: {\n", "\n}")
+      members.add(getPropReferences().joinToString(",\n", ",\nprops: {\n", "\n}")
       { "${it.getRefName()}: ${if (mapHasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"}" })
     }
     return members.joinToString("")
@@ -311,16 +311,15 @@ ${copyStyles()}
   }
 
   private fun generateProps(): String {
-    return sortedProps(true).joinToString(" ") {
+    return getPropReferences().joinToString(" ") {
       ":${fromAsset(it.getRefName())}=\"${it.getExpressionText()}\""
     }
   }
 
-  private fun sortedProps(distinct: Boolean): List<RefData> {
-    val flatten = refDataMap.values.flatten()
-    return (if (distinct) flatten.distinctBy { it.getRefName() } else flatten)
+  private fun getPropReferences(): List<RefData> =
+    refDataMap.values.flatten()
+      .distinctBy { it.getRefName() }
       .sortedBy { it.getRefName() }
-  }
 
   private class RefData(
     val ref: PsiReference,
