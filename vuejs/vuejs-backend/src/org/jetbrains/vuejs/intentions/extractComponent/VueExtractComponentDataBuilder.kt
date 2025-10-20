@@ -173,11 +173,7 @@ class VueExtractComponentDataBuilder(
       }
     }
 
-    val componentDeclaration = """
-    export default {
-      name: '$newComponentName'${generateDescriptorMembers(hasDirectUsage)}
-    }
-    """.trimIndent()
+    val componentDeclaration = optionsComponentDeclaration(newComponentName, hasDirectUsage)
 
     val scriptContent = listOfNotNull(
       generateImports(),
@@ -270,7 +266,10 @@ class VueExtractComponentDataBuilder(
       }
   }
 
-  private fun generateDescriptorMembers(hasDirectUsage: Set<String>): String {
+  private fun optionsComponentDeclaration(
+    componentName: String,
+    hasDirectUsage: Set<String>,
+  ): String {
     val members = mutableListOf<String>()
     if (componentsImportMap.isNotEmpty()) {
       members.add(componentsImportMap.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
@@ -279,7 +278,12 @@ class VueExtractComponentDataBuilder(
       members.add(getPropReferences().joinToString(",\n", ",\nprops: {\n", "\n}")
       { "${it.getRefName()}: ${if (hasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"}" })
     }
-    return members.joinToString("")
+
+    return """
+    export default {
+      name: '$componentName'${members.joinToString("")}
+    }
+    """.trimIndent()
   }
 
   fun modifyCurrentComponent(
