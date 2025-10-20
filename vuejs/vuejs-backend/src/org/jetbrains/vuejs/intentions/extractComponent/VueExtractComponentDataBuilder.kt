@@ -156,19 +156,20 @@ class VueExtractComponentDataBuilder(
 
   private fun generateNewComponentText(newComponentName: String): String {
     // this piece of code is responsible for handling the cases when the same function is use in a call and passed further as function
-    val hasDirectUsage = mutableSetOf<String>()
-    val hasReplaceMap = mutableMapOf<String, Boolean>()
-    for ((_, dataList) in refDataMap) {
-      for (data in dataList) {
-        val state = data.getReplaceRange() == null
-        val refName = data.getRefName()
-        val existing = hasReplaceMap[refName]
-        if (existing != null && state != existing) {
-          hasDirectUsage.add(refName)
-          break
-        }
+    val hasDirectUsage: Set<String> = buildSet {
+      val hasReplaceMap = mutableMapOf<String, Boolean>()
+      for ((_, dataList) in refDataMap) {
+        for (data in dataList) {
+          val state = data.getReplaceRange() == null
+          val refName = data.getRefName()
+          val existing = hasReplaceMap[refName]
+          if (existing != null && state != existing) {
+            add(refName)
+            break
+          }
 
-        hasReplaceMap[refName] = state
+          hasReplaceMap[refName] = state
+        }
       }
     }
 
