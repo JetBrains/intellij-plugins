@@ -158,8 +158,8 @@ class VueExtractComponentDataBuilder(
     // this piece of code is responsible for handling the cases when the same function is use in a call and passed further as function
     val hasDirectUsage = mutableSetOf<String>()
     val hasReplaceMap = mutableMapOf<String, Boolean>()
-    refDataMap.forEach { pair ->
-      for (data in pair.value) {
+    for ((_, dataList) in refDataMap) {
+      for (data in dataList) {
         val state = data.getReplaceRange() == null
         val refName = data.getRefName()
         val existing = hasReplaceMap[refName]
