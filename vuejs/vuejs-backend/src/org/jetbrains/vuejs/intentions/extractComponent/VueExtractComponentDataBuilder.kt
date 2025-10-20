@@ -182,7 +182,7 @@ class VueExtractComponentDataBuilder(
       componentDeclaration,
     ).joinToString("\n")
 
-    var newText = sequenceOf(
+    return sequenceOf(
       createTag(
         name = "script",
         attributes = listOfNotNull(
@@ -197,14 +197,13 @@ class VueExtractComponentDataBuilder(
       ),
     ).plus(styleTags.map { it.text })
       .joinToString("\n\n")
-
-    newText = psiOperationOnText(newText) { optimizeAndRemoveEmptyStyles(it) }
-    newText = psiOperationOnText(newText) {
-      CodeStyleManager.getInstance(containingFile.project)
-        .reformatText(it, 0, it.textRange.endOffset)
-    }
-
-    return newText
+      .let { text -> psiOperationOnText(text, ::optimizeAndRemoveEmptyStyles) }
+      .let { text ->
+        psiOperationOnText(text) { file ->
+          CodeStyleManager.getInstance(containingFile.project)
+            .reformatText(file, 0, file.textRange.endOffset)
+        }
+      }
   }
 
   private fun createTag(
