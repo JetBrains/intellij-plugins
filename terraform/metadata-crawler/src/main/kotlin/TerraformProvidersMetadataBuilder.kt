@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import com.bertramlabs.plugins.hcl4j.HCLParser
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -23,7 +24,7 @@ object TerraformProvidersMetadataBuilder {
   private val httpClient: HttpClient = HttpClient.newBuilder().build()
 
   private val terraformRegistryHost = System.getenv("TERRAFORM_REGISTRY_HOST") ?: "https://registry.terraform.io"
-  private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 10000
+  private val downloadsLimitForProvider = System.getenv("DOWNLOADS_LIMIT_FOR_PROVIDER")?.toInt() ?: 20000
   private val cleanDownloadedData = System.getenv("CLEAN_DOWNLOADED_DATA")?.toBoolean() ?: true
 
   private val logger = LoggerFactory.getLogger(TerraformProvidersMetadataBuilder::class.java.simpleName)
@@ -46,7 +47,7 @@ object TerraformProvidersMetadataBuilder {
         val jsonResponse = objectMapper.readTree(httpResponse.body())
         val page = jsonResponse.get("meta")?.get("pagination")?.get("current-page")?.asLong() ?: 0
         val pageTotal = jsonResponse.get("meta")?.get("pagination")?.get("total-pages")?.asLong()
-        logger.info("Loaded page ${page} of ${pageTotal}  ...")
+        logger.info("Loaded page $page of $pageTotal  ...")
         when (val responseData = jsonResponse["data"]) {
           is ObjectNode -> yield(responseData)
           is ArrayNode -> yieldAll(responseData.elements())
@@ -66,7 +67,7 @@ object TerraformProvidersMetadataBuilder {
     if (!allOut.exists()) {
       objectMapper.writerWithDefaultPrettyPrinter().writeValue(allOut, getProvidersDataFromPages().asIterable())
     }
-    logger.info("Providers from $terraformRegistryHost are loaded to ${allOut}")
+    logger.info("Providers from $terraformRegistryHost are loaded to $allOut")
     val buildInProvider = objectMapper.nodeFactory.let { nf ->
       nf.objectNode().set<JsonNode>("attributes",
                                     nf.objectNode()
@@ -108,10 +109,10 @@ object TerraformProvidersMetadataBuilder {
       throw IllegalStateException("Not all official providers are loaded. Missing providers: ${officialProviders.joinToString()}")
     }
     if (cleanDownloadedData) {
-      logger.info("Deleting data about providers from file: ${allOut}")
+      logger.info("Deleting data about providers from file: $allOut")
       allOut.deleteOnExit()
     }
-    logger.info("Providing processing finished, processed ${totalProviders} providers, errors: ${errors}")
+    logger.info("Providing processing finished, processed $totalProviders providers, errors: $errors")
   }
 
   private fun loadOfficialProvidersList(): MutableSet<String> {
@@ -153,7 +154,7 @@ object TerraformProvidersMetadataBuilder {
     }
     else {
       storeRegistryData(data, tfgendir, outputDir, dir, file)
-      logger.info("Schema file generated: ${file}")
+      logger.info("Schema file generated: $file")
     }
     deleteDirRecursively(tfgendir)
     return schemaFile

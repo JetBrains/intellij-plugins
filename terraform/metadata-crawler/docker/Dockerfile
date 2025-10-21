@@ -23,7 +23,7 @@ COPY terraform-metadata/ /opt/terraform-metadata
 RUN chmod +x /opt/terraform-metadata/ls-schemas-extractor/bin/ls-schemas-extractor
 RUN mkdir /opt/terraform-metadata/plugins-meta
 ENV TERRAFORM_REGISTRY_HOST=https://registry.terraform.io
-ENV DOWNLOADS_LIMIT_FOR_PROVIDER=10000
+ENV DOWNLOADS_LIMIT_FOR_PROVIDER=20000
 ENV CLEAN_DOWNLOADED_DATA=true
 WORKDIR /opt/terraform-metadata
 

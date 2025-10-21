@@ -1,5 +1,6 @@
-import com.bmuschko.gradle.docker.tasks.image.*
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import com.bmuschko.gradle.docker.tasks.container.*
+import com.bmuschko.gradle.docker.tasks.image.*
 
 plugins {
   id 'java'
@@ -23,7 +24,7 @@ def repoUsername = System.getenv('REPO_USERNAME') ?: 'spaceUsername'
 def repoPassword = System.getenv('REPO_PASSWORD') ?: 'spacePassword'
 
 def artifactGroup = System.getenv('ARTIFACT_GROUP') ?: 'org.intellij.plugins.hcl.terraform'
-def artifactVersion = System.getenv('ARTIFACT_VERSION') ?: '2024.1.2'
+def artifactVersion = System.getenv('ARTIFACT_VERSION') ?: '2025.3'
 def artifactName = "terraform-metadata"
 
 def crawlerContainerName = "terraform_metadata_crawler"
@@ -88,7 +89,7 @@ tasks.register('createContainer', DockerCreateContainer) {
   targetImageId buildDockerImage.imageId
   containerName = "$crawlerContainerName"
   envVars.put('TERRAFORM_REGISTRY_HOST', System.getenv('TERRAFORM_REGISTRY_HOST') ?: 'https://registry.terraform.io')
-  envVars.put('DOWNLOADS_LIMIT_FOR_PROVIDER', System.getenv('DOWNLOADS_LIMIT_FOR_PROVIDER') ?: '10000')
+  envVars.put('DOWNLOADS_LIMIT_FOR_PROVIDER', System.getenv('DOWNLOADS_LIMIT_FOR_PROVIDER') ?: '20000')
   envVars.put('CLEAN_DOWNLOADED_DATA', System.getenv('CLEAN_DOWNLOADED_DATA') ?: 'true')
   hostConfig.getBinds().put("$metadataPath", "/opt/terraform-metadata/build/libs")
   hostConfig.getBinds().put("$logPath", "/opt/terraform-metadata/plugins-meta")
