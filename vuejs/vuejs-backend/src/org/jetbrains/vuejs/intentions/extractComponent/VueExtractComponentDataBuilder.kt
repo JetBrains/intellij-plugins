@@ -143,10 +143,10 @@ class VueExtractComponentDataBuilder(
         .filter { it.getRefName() !in hasDirectUsage }
         .mapNotNull {
           val absRange = it.getReplaceRange() ?: return@mapNotNull null
-          Triple(absRange.startOffset - tagStart, absRange.endOffset - tagStart, it.getRefName())
+          Pair(absRange.shiftLeft(tagStart), it.getRefName())
         }
-        .sortedByDescending { it.first }
-        .forEach { builder.replace(it.first, it.second, it.third) }
+        .sortedByDescending { (range) -> range.startOffset }
+        .forEach { (range, name) -> builder.replace(range.startOffset, range.endOffset, name) }
 
       builder.toString()
     }
