@@ -24,6 +24,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
+import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.*
@@ -34,6 +35,9 @@ import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
+import org.jetbrains.vuejs.model.source.NAME_PROP
+import org.jetbrains.vuejs.model.source.PROPS_PROP
 
 class VueExtractComponentDataBuilder(
   private val tags: List<XmlTag>,
@@ -191,14 +195,14 @@ class VueExtractComponentDataBuilder(
 
     return sequenceOf(
       createTag(
-        name = "script",
+        name = SCRIPT_TAG_NAME,
         attributes = listOfNotNull(
           langAttribute(scriptLanguage),
         ),
         content = scriptContent,
       ),
       createTag(
-        name = "template",
+        name = TEMPLATE_TAG_NAME,
         attributes = listOfNotNull(langAttribute(templateLanguage)),
         content = generateNewTemplateContents(hasDirectUsage),
       ),
@@ -280,10 +284,10 @@ class VueExtractComponentDataBuilder(
     hasDirectUsage: Set<String>,
   ): String {
     val members = buildList {
-      add("name" to "'$componentName'")
+      add(NAME_PROP to "'$componentName'")
 
       if (componentsImportMap.isNotEmpty()) {
-        add("components" to componentsImportMap.keys.sorted().joinToString(", ", "{", "}"))
+        add(COMPONENTS_PROP to componentsImportMap.keys.sorted().joinToString(", ", "{", "}"))
       }
       if (refDataMap.isNotEmpty()) {
         val props = getPropReferences().joinToString(",\n", "{\n", "\n}") {
@@ -291,7 +295,7 @@ class VueExtractComponentDataBuilder(
           "${it.getRefName()}: $type"
         }
 
-        add("props" to props)
+        add(PROPS_PROP to props)
       }
     }.joinToString(",\n") { (name, value) ->
       "$name: $value"
@@ -335,7 +339,7 @@ class VueExtractComponentDataBuilder(
 
   private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
     val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, false)))
-      ?.findProperty("components")?.value?.asSafely<JSObjectLiteralExpression>()?.properties
+      ?.findProperty(COMPONENTS_PROP)?.value?.asSafely<JSObjectLiteralExpression>()?.properties
     if (!componentsInitializer.isNullOrEmpty()) {
       val names = componentsInitializer.map { toAsset(it.name ?: "", true) }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
