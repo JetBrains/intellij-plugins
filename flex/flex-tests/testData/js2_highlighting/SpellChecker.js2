@@ -5,6 +5,6 @@ class com.xmxmxm.manager.clazz {
     typpo = 1;
 
     var v:String = "foo\bline\fline\nline\rline\tline\u12abline\xabline" +
-        "<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\b<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\f<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\n<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\r<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\t<TYPO descr="Typo: In word 'typoo\u12abtypoo'">typoo\u12abtypoo</TYPO>\xab<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>";
+        "<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\b<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\f<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\n<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\r<TYPO descr="Typo: In word 'typoo'">typoo</TYPO>\ttypoo\u12abtypoo\xabtypoo";
   }
 }
