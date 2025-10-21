@@ -24,9 +24,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
-import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
