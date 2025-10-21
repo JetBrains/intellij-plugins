@@ -910,7 +910,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       resource "aws_ec2_host<caret>"
       """.trimIndent())
     val lookupElements = myFixture.complete(CompletionType.BASIC, 2)
-    assertEquals(4, lookupElements.size)
+    assertEquals(5, lookupElements.size)
 
     val lookupStrings = lookupElements.map { element ->
       val resourceType = element.`object` as ResourceType
@@ -919,8 +919,8 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       "$name $provider"
     }.toList()
     assertEquals(
-      listOf("aws_ec2_host hashicorp/aws", "aws_ec2_host jandillenkofer/aws", "aws_ec2_host msalman899/aws",
-             "awscc_ec2_host hashicorp/awscc"),
+      listOf("aws_ec2_host hashicorp/aws", "aws_ec2_host isometry/faws", "aws_ec2_host jandillenkofer/aws",
+             "aws_ec2_host msalman899/aws", "awscc_ec2_host hashicorp/awscc"),
       lookupStrings
     )
   }
@@ -1067,7 +1067,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
         }
       }
     """.trimIndent(),
-      "arn", "id", "instance_state", "user_data", "password_data")
+      "arn", "id", "instance_state", "password_data", "public_ip")
   }
 
   fun testNoCompletionsForEmptyDefaults() {

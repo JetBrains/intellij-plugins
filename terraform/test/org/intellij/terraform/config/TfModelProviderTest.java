@@ -79,7 +79,7 @@ public class TfModelProviderTest extends LightPlatformTestCase {
 
     PropertyType contextProperty = (PropertyType)depends_on;
     HclType type = contextProperty.getType();
-    assertEquals("list", type.getPresentableText().toLowerCase());
+    assertEquals("list", type.getPresentableText().toLowerCase(Locale.ROOT));
   }
 
   // Have explicit mode == attr, yet it's a block
@@ -124,7 +124,7 @@ public class TfModelProviderTest extends LightPlatformTestCase {
     assertInstanceOf(result, PropertyType.class);
     PropertyType resultAsProperty = (PropertyType)result;
     HclType type = resultAsProperty.getType();
-    assertEquals("map(string)", type.getPresentableText().toLowerCase());
+    assertEquals("map(string)", type.getPresentableText().toLowerCase(Locale.ROOT));
   }
 
   public void test_kubernetes_provider_exec() {
@@ -137,13 +137,13 @@ public class TfModelProviderTest extends LightPlatformTestCase {
     assertInstanceOf(pobt, BlockType.class);
     BlockType prop = (BlockType)pobt;
     assertEquals("exec({api_version=string, args=list(string), command=string, env=map(string)})",
-                 prop.getPresentableText().toLowerCase());
+                 prop.getPresentableText().toLowerCase(Locale.ROOT));
   }
 
   public void testAllResourcesForSameProviderHasSamePrefix() {
     final TfTypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
-    Set<String> exceptions = Set.of("marcozj/centrify", "max-gabriel-susman/gaia", "catchpoint/catchpoint");
+    Set<String> exceptions = Set.of("catchpoint/catchpoint", "sap-cloud-infrastructure/sci");
     model.allProviders().iterator().forEachRemaining(provider -> {
       String providerFullName = provider.getFullName().toLowerCase(Locale.getDefault());
       final Set<String> names = new HashSet<>();
@@ -162,10 +162,10 @@ public class TfModelProviderTest extends LightPlatformTestCase {
     });
   }
 
-  public void testAllDatasourcesForSameProviderHasSamePrefix() {
+  public void testAllDataSourcesForSameProviderHasSamePrefix() {
     final TfTypeModel model = TypeModelProvider.Companion.getGlobalModel();
     assertNotNull(model);
-    Set<String> exceptions = Set.of("cloudposse/awsutils", "marcozj/centrify", "axiotl/nftower");
+    Set<String> exceptions = Set.of("cloudposse/awsutils", "sap-cloud-infrastructure/sci");
     model.allProviders().iterator().forEachRemaining(provider -> {
       String providerFullName = provider.getFullName().toLowerCase(Locale.getDefault());
       final Set<String> names = new HashSet<>();
@@ -211,7 +211,5 @@ public class TfModelProviderTest extends LightPlatformTestCase {
     List<@NotNull ProvisionerType> provisionerTypes = model.getProvisioners().stream().filter(prov -> prov.getType().contains("chef")).toList();
     assertEquals(1, provisionerTypes.size());
   }
-
-
 
 }

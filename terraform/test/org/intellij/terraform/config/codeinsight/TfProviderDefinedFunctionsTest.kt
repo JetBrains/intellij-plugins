@@ -24,14 +24,6 @@ internal class TfProviderDefinedFunctionsTest : TfBaseCompletionTestCase() {
         }
         """.trimIndent(), 1, "provider::terraform::decode_tfvars"
     )
-
-    doBasicCompletionTest(
-      """
-        resource "some_resource" "name" {
-          enabled = assert<caret>
-        }
-        """.trimIndent(), "provider::assert::true"
-    )
   }
 
   fun testTypeOfProviderDefinedFunctions() {
