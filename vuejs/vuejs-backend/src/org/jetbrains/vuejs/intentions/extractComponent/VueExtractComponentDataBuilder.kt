@@ -41,7 +41,7 @@ class VueExtractComponentDataBuilder(
   private val tags: List<XmlTag>,
 ) {
   private val sourceFile = tags[0].containingFile as XmlFile
-  private val scriptTag = findScriptTag(sourceFile, false)
+  private val scriptTag = findScriptTag(sourceFile, setup = false)
   private val scriptLanguage = detectLanguage(scriptTag)
   private val templateLanguage = detectLanguage(findTemplate())
   private val styleTags = findStyles(sourceFile)
@@ -340,7 +340,7 @@ class VueExtractComponentDataBuilder(
   }
 
   private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
-    val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, false)))
+    val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, setup = false)))
       ?.findProperty(COMPONENTS_PROP)?.value?.asSafely<JSObjectLiteralExpression>()?.properties
     if (!componentsInitializer.isNullOrEmpty()) {
       val names = componentsInitializer.map { toAsset(it.name ?: "", true) }.toMutableSet()
