@@ -285,8 +285,12 @@ class VueExtractComponentDataBuilder(
       add(NAME_PROP to "'$componentName'")
 
       if (componentsImportMap.isNotEmpty()) {
-        add(COMPONENTS_PROP to componentsImportMap.keys.sorted().joinToString(", ", "{", "}"))
+        val components = componentsImportMap.keys.sorted()
+          .joinToString(", ", "{", "}")
+
+        add(COMPONENTS_PROP to components)
       }
+
       if (refDataMap.isNotEmpty()) {
         val props = getPropReferences().joinToString(",\n", "{\n", "\n}") {
           val type = if (hasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"
