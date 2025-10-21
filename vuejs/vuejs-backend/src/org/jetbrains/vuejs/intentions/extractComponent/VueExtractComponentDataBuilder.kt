@@ -123,7 +123,7 @@ class VueExtractComponentDataBuilder(
     offset: Int,
   ): List<RefData> {
     return element.references
-      .filter { it != null && (it as? PsiElement)?.parent !is PsiReference }
+      .filter { (it as? PsiElement)?.parent !is PsiReference }
       .map { RefData(it, tag, offset) }
   }
 
