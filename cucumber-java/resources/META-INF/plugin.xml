@@ -40,6 +40,10 @@
 
     <dependencySupport kind="java" coordinate="io.cucumber:cucumber-java8" displayName="Cucumber"/>
     <dependencySupport kind="java" coordinate="io.cucumber:cucumber-java" displayName="Cucumber"/>
+
+    <registryKey key="cucumber.java.run.configuration.glue.use.idea"
+                 description="Find glue using Cucumber for Java IntelliJ plugin instead of cucumber-jvm (applies only to cucumber-jvm v6 and newer)"
+                 defaultValue="false"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">

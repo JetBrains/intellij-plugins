@@ -13,6 +13,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
@@ -138,6 +139,12 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
       if (isCucumber60orMore(module)) {
         // Cucumber can automatically find glue packages since v6. See IDEA-243074
         // Do not reset glue in case it's set manually.
+
+        // Some users reported in IDEA-377245 that this breaks their workflows.
+        // Until the root cause and fix are known, let's expose a registry key.
+        if (Registry.is("cucumber.java.run.configuration.glue.use.idea")) {
+          configuration.setGlueProvider(getGlueProvider(element));
+        }
       }
       else {
         configuration.setGlueProvider(getGlueProvider(element));
