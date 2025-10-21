@@ -341,21 +341,35 @@ class VueExtractComponentDataBuilder(
 
   private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
     val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, setup = false)))
-      ?.findProperty(COMPONENTS_PROP)?.value?.asSafely<JSObjectLiteralExpression>()?.properties
+      ?.findProperty(COMPONENTS_PROP)
+      ?.value
+      ?.asSafely<JSObjectLiteralExpression>()
+      ?.properties
+
     if (!componentsInitializer.isNullOrEmpty()) {
-      val names = componentsInitializer.map { toAsset(it.name ?: "", true) }.toMutableSet()
-      (file as XmlFile).accept(object : VueFileVisitor() {
+      val names = componentsInitializer
+        .map { toAsset(it.name ?: "", true) }
+        .toMutableSet()
+
+      file as XmlFile
+
+      file.accept(object : VueFileVisitor() {
         override fun visitElement(element: PsiElement) {
           if (element is XmlTag) {
             names.remove(toAsset(element.name, true))
           }
-          if (scriptTag != element) recursion(element)
+
+          if (scriptTag != element) {
+            recursion(element)
+          }
         }
       })
+
       componentsInitializer
-        .filter { it.name != null && names.contains(toAsset(it.name!!, true)) }
+        .filter { it.name != null && toAsset(it.name!!, true) in names }
         .forEach { it.delete() }
     }
+
     ES6CreateImportUtil.optimizeImports(file)
     optimizeAndRemoveEmptyStyles(file)
   }
