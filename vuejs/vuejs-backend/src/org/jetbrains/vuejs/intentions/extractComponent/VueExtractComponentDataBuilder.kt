@@ -27,13 +27,12 @@ import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
-import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
-import org.jetbrains.vuejs.index.VueFileVisitor
-import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.index.findScriptTag
+import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
+import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
+import org.jetbrains.vuejs.model.source.DEFINE_PROPS_FUN
 import org.jetbrains.vuejs.model.source.NAME_PROP
 import org.jetbrains.vuejs.model.source.PROPS_PROP
 
@@ -41,7 +40,16 @@ class VueExtractComponentDataBuilder(
   private val tags: List<XmlTag>,
 ) {
   private val sourceFile = tags[0].containingFile as XmlFile
-  private val scriptTag = findScriptTag(sourceFile, setup = false)
+
+  private val scriptTag = findScriptTag(sourceFile, setup = true)
+                          ?: findScriptTag(sourceFile, setup = false)
+
+  private val mode = when {
+    scriptTag.isScriptVaporTag() -> VueMode.VAPOR
+    scriptTag.isScriptSetupTag() -> VueMode.CLASSIC
+    else -> null
+  }
+
   private val scriptLanguage = detectLanguage(scriptTag)
   private val templateLanguage = detectLanguage(findTemplate())
   private val styleTags = findStyles(sourceFile)
@@ -184,7 +192,21 @@ class VueExtractComponentDataBuilder(
       }
     }
 
-    val componentDeclaration = optionsComponentDeclaration(newComponentName, hasDirectUsage)
+    val componentDeclaration = if (mode != null) {
+      compositionComponentDeclaration(hasDirectUsage)
+    }
+    else {
+      optionsComponentDeclaration(newComponentName, hasDirectUsage)
+    }
+
+    val scriptAttributes = listOfNotNull(
+      when (mode) {
+        VueMode.CLASSIC -> SETUP_ATTRIBUTE_NAME
+        VueMode.VAPOR -> VAPOR_ATTRIBUTE_NAME
+        else -> null
+      },
+      langAttribute(scriptLanguage),
+    )
 
     val scriptContent = listOfNotNull(
       generateImports(),
@@ -194,9 +216,7 @@ class VueExtractComponentDataBuilder(
     return sequenceOf(
       createTag(
         name = SCRIPT_TAG_NAME,
-        attributes = listOfNotNull(
-          langAttribute(scriptLanguage),
-        ),
+        attributes = scriptAttributes,
         content = scriptContent,
       ),
       createTag(
@@ -275,6 +295,21 @@ class VueExtractComponentDataBuilder(
       .joinToString("\n") { (name, declaration) ->
         "import ${name} from ${declaration.fromClause?.referenceText ?: "''"}"
       }
+  }
+
+  private fun compositionComponentDeclaration(
+    hasDirectUsage: Set<String>,
+  ): String {
+    if (refDataMap.isEmpty())
+      return ""
+
+    val props = getPropReferences()
+      .joinToString("\n", "{\n", "\n}") {
+        val type = if (hasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"
+        "${it.getRefName()}: $type,"
+      }
+
+    return "$DEFINE_PROPS_FUN($props)"
   }
 
   private fun optionsComponentDeclaration(
@@ -373,8 +408,10 @@ class VueExtractComponentDataBuilder(
   }
 
   private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
-    cleanupOptionsComponentDeclaration(file)
-    
+    if (mode == null) {
+      cleanupOptionsComponentDeclaration(file)
+    }
+
     ES6CreateImportUtil.optimizeImports(file)
     optimizeAndRemoveEmptyStyles(file)
   }
