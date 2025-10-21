@@ -339,37 +339,42 @@ class VueExtractComponentDataBuilder(
     return newlyAdded
   }
 
-  private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
-    val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, setup = false)))
+  private fun cleanupOptionsComponentDeclaration(file: PsiFile) {
+    val componentInitializers = objectLiteralFor(findDefaultExport(findModule(file, setup = false)))
       ?.findProperty(COMPONENTS_PROP)
       ?.value
       ?.asSafely<JSObjectLiteralExpression>()
       ?.properties
+      ?.takeIf { it.isNotEmpty() }
 
-    if (!componentsInitializer.isNullOrEmpty()) {
-      val names = componentsInitializer
-        .map { toAsset(it.name ?: "", true) }
-        .toMutableSet()
+    componentInitializers ?: return
 
-      file as XmlFile
+    val names = componentInitializers
+      .map { toAsset(it.name ?: "", true) }
+      .toMutableSet()
 
-      file.accept(object : VueFileVisitor() {
-        override fun visitElement(element: PsiElement) {
-          if (element is XmlTag) {
-            names.remove(toAsset(element.name, true))
-          }
+    file as XmlFile
 
-          if (scriptTag != element) {
-            recursion(element)
-          }
+    file.accept(object : VueFileVisitor() {
+      override fun visitElement(element: PsiElement) {
+        if (element is XmlTag) {
+          names.remove(toAsset(element.name, true))
         }
-      })
 
-      componentsInitializer
-        .filter { it.name != null && toAsset(it.name!!, true) in names }
-        .forEach { it.delete() }
-    }
+        if (scriptTag != element) {
+          recursion(element)
+        }
+      }
+    })
 
+    componentInitializers
+      .filter { it.name != null && toAsset(it.name!!, true) in names }
+      .forEach { it.delete() }
+  }
+
+  private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
+    cleanupOptionsComponentDeclaration(file)
+    
     ES6CreateImportUtil.optimizeImports(file)
     optimizeAndRemoveEmptyStyles(file)
   }
