@@ -12,22 +12,22 @@ class AstroTypeScriptServiceGotoDeclarationTest : AstroLspTestCase("codeInsight/
     )
 
   fun testDestructuredParams() = doConfiguredTest(AstroTestModule.ASTRO_5_14_4, dir = true, configureFileName = "index.astro") {
-    myFixture.checkGotoDeclaration("la<caret>ng", "<caret>lang: 'en'")
+    checkGotoDeclaration("la<caret>ng", "<caret>lang: 'en'")
   }
 
   fun testReactComponentImport() = doConfiguredTest(AstroTestModule.ASTRO_5_14_4, dir = true, configureFileName = "index.astro") {
-    myFixture.checkGotoDeclaration("MyCompo<caret>nent", "function <caret>MyComponent", "MyComponent.tsx")
+    checkGotoDeclaration("MyCompo<caret>nent", "function <caret>MyComponent", "MyComponent.tsx")
   }
 
   fun testAstroComponentImport() = doConfiguredTest(AstroTestModule.ASTRO_5_14_4, dir = true, configureFileName = "index.astro") {
-    myFixture.checkGotoDeclaration("MyCompo<caret>nent", "<caret><div", "MyComponent.astro")
+    checkGotoDeclaration("MyCompo<caret>nent", "<caret><div", "MyComponent.astro")
   }
 
   fun testSvelteComponentImport() = doConfiguredTest(AstroTestModule.ASTRO_5_14_4, AstroTestModule.ASTRO_SVELTE_7_2_2, dir = true, configureFileName = "index.astro") {
-    myFixture.checkGotoDeclaration("MyCompo<caret>nent", "<caret><script", "MyComponent.svelte")
+    checkGotoDeclaration("MyCompo<caret>nent", "<caret><script", "MyComponent.svelte")
   }
 
   fun testVueComponentImport() = doConfiguredTest(AstroTestModule.ASTRO_5_14_4, AstroTestModule.ASTRO_VUE_5_1_1, dir = true, configureFileName = "index.astro") {
-    myFixture.checkGotoDeclaration("MyCompo<caret>nent", "<caret><template", "MyComponent.vue")
+    checkGotoDeclaration("MyCompo<caret>nent", "<caret><template", "MyComponent.vue")
   }
 }
