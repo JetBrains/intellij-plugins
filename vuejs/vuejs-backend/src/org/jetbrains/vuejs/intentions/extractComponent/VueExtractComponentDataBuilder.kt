@@ -40,11 +40,11 @@ import org.jetbrains.vuejs.model.source.PROPS_PROP
 class VueExtractComponentDataBuilder(
   private val tags: List<XmlTag>,
 ) {
-  private val containingFile = tags[0].containingFile
-  private val scriptTag = if (containingFile is XmlFile) findScriptTag(containingFile, false) else null
+  private val sourceFile = tags[0].containingFile as XmlFile
+  private val scriptTag = findScriptTag(sourceFile, false)
   private val scriptLanguage = detectLanguage(scriptTag)
   private val templateLanguage = detectLanguage(findTemplate())
-  private val styleTags = findStyles(containingFile)
+  private val styleTags = findStyles(sourceFile)
   private var unusedStylesInExistingComponent: List<CssSelectorSuffix> = emptyList()
 
   private val componentsImportMap: MutableMap<String, ES6ImportDeclaration> = mutableMapOf()
@@ -159,7 +159,7 @@ class VueExtractComponentDataBuilder(
 
   fun createNewComponent(newComponentName: String): VirtualFile? {
     val newText = generateNewComponentText(newComponentName)
-    val folder: PsiDirectory = containingFile.parent ?: return null
+    val folder: PsiDirectory = sourceFile.parent ?: return null
     val virtualFile = folder.virtualFile.createChildData(this, toAsset(newComponentName, true) + VUE_FILE_EXTENSION)
     VfsUtil.saveText(virtualFile, newText)
     return virtualFile
@@ -209,7 +209,7 @@ class VueExtractComponentDataBuilder(
       .let { text -> psiOperationOnText(text, ::optimizeAndRemoveEmptyStyles) }
       .let { text ->
         psiOperationOnText(text) { file ->
-          CodeStyleManager.getInstance(containingFile.project)
+          CodeStyleManager.getInstance(sourceFile.project)
             .reformatText(file, 0, file.textRange.endOffset)
         }
       }
@@ -231,7 +231,7 @@ class VueExtractComponentDataBuilder(
     text: String,
     operation: (PsiFile) -> Unit,
   ): String =
-    createVueFileFromText(containingFile.project, text)
+    createVueFileFromText(sourceFile.project, text)
       .also(operation)
       .text
 
@@ -318,7 +318,7 @@ class VueExtractComponentDataBuilder(
   }
 
   fun replaceWithNewTag(replaceName: String): XmlTag {
-    unusedStylesInExistingComponent = getUnusedStyles(containingFile)
+    unusedStylesInExistingComponent = getUnusedStyles(sourceFile)
 
     val leader = tags[0]
     val newTagName = toAsset(replaceName, true) // Pascal case
