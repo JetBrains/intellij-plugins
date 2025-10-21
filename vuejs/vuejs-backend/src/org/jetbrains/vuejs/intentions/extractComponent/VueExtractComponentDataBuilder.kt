@@ -36,9 +36,9 @@ import org.jetbrains.vuejs.lang.expr.isVueExprMetaLanguage
 import org.jetbrains.vuejs.model.VueModelManager
 
 class VueExtractComponentDataBuilder(
-  private val list: List<XmlTag>,
+  private val tags: List<XmlTag>,
 ) {
-  private val containingFile = list[0].containingFile
+  private val containingFile = tags[0].containingFile
   private val scriptTag = if (containingFile is XmlFile) findScriptTag(containingFile, false) else null
   private val scriptLanguage = detectLanguage(scriptTag)
   private val templateLanguage = detectLanguage(findTemplate())
@@ -59,7 +59,7 @@ class VueExtractComponentDataBuilder(
 
       var parentTag = resolved.parentOfType<XmlTag>()
       if (parentTag == null && isVueExprMetaLanguage(resolved.language)) {
-        val host = InjectedLanguageManager.getInstance(list[0].project).getInjectionHost(resolved)
+        val host = InjectedLanguageManager.getInstance(tags[0].project).getInjectionHost(resolved)
         if (host != null) {
           parentTag = host.parentOfType<XmlTag>()
         }
@@ -93,9 +93,9 @@ class VueExtractComponentDataBuilder(
 
   private fun gatherReferences(): List<RefData> {
     val refs = mutableListOf<RefData>()
-    val injManager = InjectedLanguageManager.getInstance(list[0].project)
+    val injManager = InjectedLanguageManager.getInstance(tags[0].project)
 
-    for (tag in list) {
+    for (tag in tags) {
       PsiTreeUtil.processElements(tag) {
         refs.addAll(addElementReferences(it, tag, 0))
         true
@@ -130,7 +130,7 @@ class VueExtractComponentDataBuilder(
   private fun generateNewTemplateContents(
     hasDirectUsage: Set<String>,
   ): String {
-    return list.joinToString("") { tag ->
+    return tags.joinToString("") { tag ->
       val dataList = refDataMap[tag]
                      ?: return@joinToString tag.text
 
@@ -151,7 +151,7 @@ class VueExtractComponentDataBuilder(
   }
 
   private fun findTemplate(): XmlTag? =
-    PsiTreeUtil.findFirstParent(list.first()) {
+    PsiTreeUtil.findFirstParent(tags.first()) {
       (it as? XmlTag)?.name == TEMPLATE_TAG_NAME
     } as XmlTag?
 
@@ -318,7 +318,7 @@ class VueExtractComponentDataBuilder(
   fun replaceWithNewTag(replaceName: String): XmlTag {
     unusedStylesInExistingComponent = getUnusedStyles(containingFile)
 
-    val leader = list[0]
+    val leader = tags[0]
     val newTagName = toAsset(replaceName, true) // Pascal case
     val replaceText = if (templateLanguage in setOf("pug", "jade"))
       "<template lang=\"pug\">\n$newTagName(${generateProps()})\n</template>"
@@ -329,7 +329,7 @@ class VueExtractComponentDataBuilder(
     val newTag = PsiTreeUtil.findChildOfType(template, XmlTag::class.java)!!
 
     val newlyAdded = leader.replace(newTag) as XmlTag
-    list.subList(1, list.size).forEach { it.delete() }
+    tags.subList(1, tags.size).forEach { it.delete() }
     return newlyAdded
   }
 
