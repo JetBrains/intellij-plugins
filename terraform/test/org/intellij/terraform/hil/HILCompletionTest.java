@@ -326,10 +326,8 @@ public class HILCompletionTest extends CompletionTestCase {
   }
 
   public void testDefinedFunctionsCompletion() {
-    doBasicCompletionTest(
-      "test = '${aws<caret>}'",
-      5,
-      "provider::aws::arn_build", "provider::aws::arn_parse", "provider::aws::trim_iam_role_path", "provider::timeconv::aws_at",
-      "provider::timeconv::aws_cron");
+    doBasicCompletionTest("test = '${aws<caret>}'",
+                          "provider::aws::arn_build", "provider::aws::arn_parse", "provider::aws::trim_iam_role_path",
+                          "provider::timeconv::aws_at", "provider::timeconv::aws_cron");
   }
 }
