@@ -12,7 +12,7 @@ import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.actions.AddProviderAction
-import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.config.model.TypeModelProvider
@@ -46,7 +46,7 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
         holder.registerProblem(block,
                                HCLBundle.message("unknown.resource.identifier.inspection.error.message", blockTypeString, identifier),
                                *listOfNotNull(
-                                 TfInitAction.createQuickFixNotInitialized(block),
+                                 createQuickFixNotInitialized(block),
                                  AddProviderAction(block)
                                ).toArray(LocalQuickFix.EMPTY_ARRAY)
         )
@@ -55,7 +55,7 @@ internal class TfUnknownResourceInspection : LocalInspectionTool() {
         holder.registerProblem(block,
                                HCLBundle.message("unknown.resource.identifier.for.known.provider", blockTypeString, identifier, provider.fullName),
                                *listOfNotNull(
-                                 TfInitAction.createQuickFixNotInitialized(block)
+                                 createQuickFixNotInitialized(block)
                                ).toArray(LocalQuickFix.EMPTY_ARRAY)
         )
       }

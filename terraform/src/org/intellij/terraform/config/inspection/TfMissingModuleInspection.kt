@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.*
@@ -14,7 +14,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.config.model.ModuleDetectionUtil
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.util.TfExecutor
@@ -70,7 +70,7 @@ class TfMissingModuleInspection : LocalInspectionTool() {
     holder.registerProblem(block, HCLBundle.message("missing.module.inspection.missing.module.error.message", err),
                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                            *listOfNotNull(RunTFToolGetFix(directory.name, applicableToolType.executableName),
-                                          TfInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
+                                          createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
     )
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfTypes
-import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
@@ -81,7 +81,7 @@ class TfUnknownBlockTypeInspection : LocalInspectionTool() {
 
   private fun registerUnknownBlockProblem(block: HCLBlock, holder: ProblemsHolder, type: String) {
     holder.problem(block.nameElements.first(), HCLBundle.message("unknown.block.type.inspection.unknown.block.type.error.message", type))
-      .maybeFix(TfInitAction.createQuickFixNotInitialized(block))
+      .maybeFix(createQuickFixNotInitialized(block))
       .fix(RemoveBlockQuickFix(block))
       .register()
   }

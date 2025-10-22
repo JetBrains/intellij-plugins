@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.inspection
 
 import com.intellij.BundleBase
@@ -18,7 +18,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.config.patterns.TfPsiPatterns.FromPropertyInMovedBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
@@ -107,7 +107,7 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool(), DumbAware {
           if (reference is LocalQuickFixProvider) {
             addAll(reference.quickFixes.orEmpty())
           }
-          addIfNotNull(TfInitAction.createQuickFixNotInitialized(reference.element))
+          addIfNotNull(createQuickFixNotInitialized(reference.element))
         }
         holder.registerProblem(value, description, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, referenceRange, *fixes.toArray(LocalQuickFix.EMPTY_ARRAY))
       }
