@@ -1,0 +1,1 @@
+<script>export default {name: "cool-stuck"}</script>
