@@ -24,20 +24,24 @@ import org.jetbrains.vuejs.model.hasSrcReference
 import org.jetbrains.vuejs.model.source.DEFINE_OPTIONS_FUN
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.getStubSafeDefineCalls
-import java.util.*
 
 class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
 
   override fun getName(): ID<Boolean, Void> = VUE_NO_INITIALIZER_COMPONENTS_INDEX
 
   override fun getIndexer(): DataIndexer<Boolean, Void, FileContent> = DataIndexer { inputData ->
-    inputData.psiFile.let { file ->
-      file is XmlFile
-      && hasEmptyScriptSetupInitializer(findScriptTag(file, true))
-      && hasEmptyScriptInitializer(findScriptTag(file, false))
-    }.let {
-      Collections.singletonMap<Boolean, Void>(it, null)
+    val file = inputData.psiFile as? XmlFile
+               ?: return@DataIndexer mapOf(false to null)
+
+    val setupScript = findScriptTag(file, setup = true)
+    val result = if (setupScript != null) {
+      hasEmptyScriptSetupInitializer(setupScript)
     }
+    else {
+      hasEmptyScriptInitializer(findScriptTag(file, setup = false))
+    }
+
+    mapOf(result to null)
   }
 
   private fun hasEmptyScriptInitializer(script: XmlTag?): Boolean =
@@ -61,9 +65,8 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
       else true
     }
 
-  private fun hasEmptyScriptSetupInitializer(script: XmlTag?): Boolean =
-    script
-      ?.let { PsiTreeUtil.getStubChildOfType(it, JSEmbeddedContent::class.java) }
+  private fun hasEmptyScriptSetupInitializer(script: XmlTag): Boolean =
+    PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
       ?.getStubSafeDefineCalls()
       ?.find { call ->
         call.methodExpression?.let { JSSymbolUtil.isAccurateReferenceExpressionName(it, DEFINE_OPTIONS_FUN) } ?: false
@@ -78,7 +81,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
       ?.properties
       ?.count { it is JSPropertyImpl } == 0
 
-  override fun getVersion(): Int = 11
+  override fun getVersion(): Int = 12
 
   override fun getInputFilter(): FileBasedIndex.InputFilter = object : DefaultFileTypeSpecificInputFilter(VueFileType) {
     override fun acceptInput(file: VirtualFile): Boolean {
@@ -92,4 +95,5 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
 
 }
 
-val VUE_NO_INITIALIZER_COMPONENTS_INDEX = ID.create<Boolean, Void>("VueNoScriptFilesIndex")
+val VUE_NO_INITIALIZER_COMPONENTS_INDEX: ID<Boolean, Void> =
+  ID.create("VueNoScriptFilesIndex")
