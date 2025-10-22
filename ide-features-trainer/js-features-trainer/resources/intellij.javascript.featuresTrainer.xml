@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <idea-plugin>
+  <dependencies>
+    <plugin id="training"/>
+  </dependencies>
+
   <extensions defaultExtensionNs="training">
     <!--<ift.language.extension language="JavaScript" defaultProductName="WebStorm"-->
     <!--                        implementationClass="com.intellij.javascript.ift.JavaScriptLangSupport"/>-->
