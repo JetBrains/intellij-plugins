@@ -829,6 +829,30 @@ class VueCompletionTest : VueTestCase("completion") {
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  fun testComponentsWithTwoScriptTags() =
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<<caret>MyButton",
+        "<My<caret>Label",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testComponentsWithTwoScriptTags_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<<caret>MyButton",
+        "<My<caret>Label",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
   fun testDirectivesFromFunctionPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
