@@ -24,12 +24,22 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractSingleTag__vapor() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractSingleTagWithName__options() {
     doExtractTest()
   }
 
   @Test
   fun testExtractSingleTagWithName__composition() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractSingleTagWithName__vapor() {
     doExtractTest()
   }
 
@@ -44,12 +54,22 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractTwoTagsWithProp__vapor() {
+    doExtractTest(numTags = 2)
+  }
+
+  @Test
   fun testExtractTagWithAttributeAndMethodCall__options() {
     doExtractTest()
   }
 
   @Test
   fun testExtractTagWithAttributeAndMethodCall__composition() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractTagWithAttributeAndMethodCall__vapor() {
     doExtractTest()
   }
 
@@ -64,6 +84,11 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractComponentWithOtherComponentInside__vapor() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractComponentWithOtherComponentInsideTS__options() {
     doExtractTest()
   }
@@ -74,12 +99,22 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractComponentWithOtherComponentInsideTS__vapor() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractWithVFor__options() {
     doExtractTest()
   }
 
   @Test
   fun testExtractWithVFor__composition() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractWithVFor__vapor() {
     doExtractTest()
   }
 
@@ -100,6 +135,11 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testSameNamedFunctionCalls__vapor() {
+    doExtractTest(numTags = 4)
+  }
+
+  @Test
   fun testSameNamedProps__options() {
     doExtractTest(numTags = 2)
   }
@@ -110,12 +150,22 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testSameNamedProps__vapor() {
+    doExtractTest(numTags = 2)
+  }
+
+  @Test
   fun testCleanupIfNameIsUsed__options() {
     doExtractTest(newCompName = "dd")
   }
 
   @Test
   fun testCleanupIfNameIsUsed__composition() {
+    doExtractTest(newCompName = "dd")
+  }
+
+  @Test
+  fun testCleanupIfNameIsUsed__vapor() {
     doExtractTest(newCompName = "dd")
   }
 
@@ -136,12 +186,22 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testFindImport__vapor() {
+    doExtractTest()
+  }
+
+  @Test
   fun testFindNonExistingImport__options() {
     doExtractTest()
   }
 
   @Test
   fun testFindNonExistingImport__composition() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testFindNonExistingImport__vapor() {
     doExtractTest()
   }
 
@@ -156,12 +216,22 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractWithMemberAccess__vapor() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractWithStyle__options() {
     doExtractTest()
   }
 
   @Test
   fun testExtractWithStyle__composition() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractWithStyle__vapor() {
     doExtractTest()
   }
 
@@ -176,6 +246,11 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractWithStylusStyle__vapor() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractWithScss__options() {
     doExtractTest()
   }
@@ -186,12 +261,22 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractWithScss__vapor() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractSingleTagWithImportInStyle__options() {
     doExtractTest()
   }
 
   @Test
   fun testExtractSingleTagWithImportInStyle__composition() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractSingleTagWithImportInStyle__vapor() {
     doExtractTest()
   }
 
