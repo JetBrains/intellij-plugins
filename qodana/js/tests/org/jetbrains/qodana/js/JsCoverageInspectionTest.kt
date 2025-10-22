@@ -4,10 +4,8 @@ import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageRunner
 import com.intellij.coverage.CoverageSuitesBundle
-import com.intellij.javascript.jest.coverage.JestCoverageEngine
+import com.intellij.javascript.testing.coverage.jest.JestCoverageEngine
 import com.intellij.rt.coverage.util.ProjectDataLoader
-import com.intellij.testFramework.UsefulTestCase
-import junit.framework.TestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.QodanaCoverageInspectionTest
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.remapCoverageFromCloud
 import org.junit.Test
@@ -38,8 +36,8 @@ class JsCoverageInspectionTest: QodanaCoverageInspectionTest("JsCoverageInspecti
     suite.setCoverageData(data)
     val bundle = remapCoverageFromCloud(CoverageSuitesBundle(suite))
     val coverageData = bundle?.coverageData
-    TestCase.assertNotNull(coverageData)
-    UsefulTestCase.assertSize(2, coverageData!!.classes.entries)
+    assertNotNull(coverageData)
+    assertSize(2, coverageData!!.classes.entries)
     // assert that prefix was restored and bundle was correctly built
     assertTrue(coverageData.classes.all { Path.of(it.key).startsWith(projectDir) })
   }

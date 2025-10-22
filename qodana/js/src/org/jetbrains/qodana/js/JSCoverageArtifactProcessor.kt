@@ -3,7 +3,7 @@ package org.jetbrains.qodana.js
 import com.intellij.coverage.CoverageEngine
 import com.intellij.coverage.CoverageFileProvider
 import com.intellij.coverage.CoverageSuitesBundle
-import com.intellij.javascript.jest.coverage.JestCoverageEngine
+import com.intellij.javascript.testing.coverage.jest.JestCoverageEngine
 import com.intellij.openapi.project.Project
 import com.intellij.rt.coverage.util.ProjectDataLoader
 import kotlinx.coroutines.withContext

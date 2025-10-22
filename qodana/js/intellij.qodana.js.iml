@@ -32,5 +32,6 @@
     <orderEntry type="module" module-name="intellij.platform.duplicatesDetector" scope="TEST" />
     <orderEntry type="module" module-name="intellij.nodeJS.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.common" />
+    <orderEntry type="module" module-name="intellij.javascript.coverage" />
   </component>
 </module>

@@ -3,7 +3,7 @@ package org.jetbrains.qodana.js
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.options.OptPane
 import com.intellij.codeInspection.options.OptPane.number
-import com.intellij.javascript.jest.coverage.JestCoverageEngine
+import com.intellij.javascript.testing.coverage.jest.JestCoverageEngine
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.JSFunctionExpression
@@ -24,14 +24,12 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.coverage.*
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 
+private val jest = Key.create<Lazy<ProjectData?>>("qodana.jest.coverage")
+private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.js.normalizedPaths")
+
 private class JsCoverageInspection : CoverageInspectionBase() {
   @Suppress("MemberVisibilityCanBePrivate")
   var fileThreshold = 50
-
-  companion object {
-    private val jest = Key.create<Lazy<ProjectData?>>("qodana.jest.coverage")
-    private val normalizedPaths = Key.create<Lazy<Map<String, String>>>("qodana.js.normalizedPaths")
-  }
 
   override fun loadCoverage(globalContext: QodanaGlobalInspectionContext) {
     globalContext.putUserData(jest, lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
