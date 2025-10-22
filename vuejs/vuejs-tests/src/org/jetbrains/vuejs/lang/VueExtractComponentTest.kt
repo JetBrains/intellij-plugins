@@ -19,7 +19,17 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractSingleTag__composition() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractSingleTagWithName__options() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractSingleTagWithName__composition() {
     doExtractTest()
   }
 
@@ -29,7 +39,17 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractTwoTagsWithProp__composition() {
+    doExtractTest(numTags = 2)
+  }
+
+  @Test
   fun testExtractTagWithAttributeAndMethodCall__options() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractTagWithAttributeAndMethodCall__composition() {
     doExtractTest()
   }
 
@@ -39,12 +59,27 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractComponentWithOtherComponentInside__composition() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractComponentWithOtherComponentInsideTS__options() {
     doExtractTest()
   }
 
   @Test
+  fun testExtractComponentWithOtherComponentInsideTS__composition() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractWithVFor__options() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractWithVFor__composition() {
     doExtractTest()
   }
 
@@ -60,12 +95,27 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testSameNamedFunctionCalls__composition() {
+    doExtractTest(numTags = 4)
+  }
+
+  @Test
   fun testSameNamedProps__options() {
     doExtractTest(numTags = 2)
   }
 
   @Test
+  fun testSameNamedProps__composition() {
+    doExtractTest(numTags = 2)
+  }
+
+  @Test
   fun testCleanupIfNameIsUsed__options() {
+    doExtractTest(newCompName = "dd")
+  }
+
+  @Test
+  fun testCleanupIfNameIsUsed__composition() {
     doExtractTest(newCompName = "dd")
   }
 
@@ -81,7 +131,17 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testFindImport__composition() {
+    doExtractTest()
+  }
+
+  @Test
   fun testFindNonExistingImport__options() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testFindNonExistingImport__composition() {
     doExtractTest()
   }
 
@@ -91,7 +151,17 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractWithMemberAccess__composition() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractWithStyle__options() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractWithStyle__composition() {
     doExtractTest()
   }
 
@@ -101,12 +171,27 @@ class VueExtractComponentTest :
   }
 
   @Test
+  fun testExtractWithStylusStyle__composition() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractWithScss__options() {
     doExtractTest()
   }
 
   @Test
+  fun testExtractWithScss__composition() {
+    doExtractTest()
+  }
+
+  @Test
   fun testExtractSingleTagWithImportInStyle__options() {
+    doExtractTest()
+  }
+
+  @Test
+  fun testExtractSingleTagWithImportInStyle__composition() {
     doExtractTest()
   }
 
