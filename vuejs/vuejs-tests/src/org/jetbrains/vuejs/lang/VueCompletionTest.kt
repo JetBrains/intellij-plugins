@@ -156,7 +156,7 @@ class VueCompletionTest : VueTestCase("completion") {
         "<My<caret>SpecialButton>",
         "<MySpecial<caret>Button>",
         "<MyVery<caret>RegularLabel>",
-        
+
         // directives
         "<main v-<caret>my-click-outside>",
         "<main v-my<caret>-click-outside>",
