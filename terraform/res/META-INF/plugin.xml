@@ -523,6 +523,8 @@
     <internalFileTemplate name="Main"/>
     <internalFileTemplate name="Outputs"/>
     <internalFileTemplate name="Variables"/>
+    <internalFileTemplate name="Terragrunt File"/>
+    <internalFileTemplate name="Terragrunt Stack"/>
 
     <!--OpenTofu support-->
     <fileType name="OpenTofu" language="HCL-Terraform" extensions="tofu"

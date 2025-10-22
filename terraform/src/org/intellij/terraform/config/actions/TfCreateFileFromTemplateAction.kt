@@ -22,6 +22,10 @@ class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware
       addKind(HCLBundle.message("action.new.template.terraform.file.description"), TerraformIcons.Terraform, TEMPLATE_TF_TEMPLATE)
       addKind(HCLBundle.message("action.new.outputs.terraform.file.description"), TerraformIcons.Terraform, OUTPUTS_TF_TEMPLATE)
       addKind(HCLBundle.message("action.new.variables.terraform.file.description"), TerraformIcons.Terraform, VARIABLES_TF_TEMPLATE)
+
+      // Terragrunt template files
+      addKind(HCLBundle.message("action.new.terragrunt.file.description"), TerraformIcons.Terragrunt, TERRAGRUNT_TEMPLATE)
+      addKind(HCLBundle.message("action.new.terragrunt.stack.file.description"), TerraformIcons.Terragrunt, TERRAGRUNT_STACK)
     }
   }
 
@@ -37,6 +41,8 @@ class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware
     val newName = when (template?.name) {
       OUTPUTS_TF_TEMPLATE -> "outputs"
       VARIABLES_TF_TEMPLATE -> "variables"
+      TERRAGRUNT_TEMPLATE -> "terragrunt"
+      TERRAGRUNT_STACK -> "terragrunt.stack"
       else -> name
     }
     return if (isDefaultName) newName else name
@@ -49,5 +55,8 @@ private const val EMPTY_TF_TEMPLATE = "Empty File"
 private const val TEMPLATE_TF_TEMPLATE = "Main"
 private const val OUTPUTS_TF_TEMPLATE = "Outputs"
 private const val VARIABLES_TF_TEMPLATE = "Variables"
+
+private const val TERRAGRUNT_TEMPLATE = "Terragrunt File"
+private const val TERRAGRUNT_STACK = "Terragrunt Stack"
 
 private const val DEFAULT_FILE_NAME = "main"
