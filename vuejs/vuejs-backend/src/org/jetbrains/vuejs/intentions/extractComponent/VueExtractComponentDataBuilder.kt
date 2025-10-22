@@ -240,11 +240,12 @@ class VueExtractComponentDataBuilder(
     attributes: List<String>,
     content: String,
   ): String {
-    return listOf(
+    return sequenceOf(
       "<$name  ${attributes.joinToString(" ")}>",
       content,
       "</$name>",
-    ).joinToString("\n")
+    ).filter { it.isNotEmpty() }
+      .joinToString("\n")
   }
 
   private fun psiOperationOnText(
@@ -299,9 +300,9 @@ class VueExtractComponentDataBuilder(
 
   private fun compositionComponentDeclaration(
     hasDirectUsage: Set<String>,
-  ): String {
+  ): String? {
     if (refDataMap.isEmpty())
-      return ""
+      return null
 
     val props = getPropReferences()
       .joinToString("\n", "{\n", "\n}") {
