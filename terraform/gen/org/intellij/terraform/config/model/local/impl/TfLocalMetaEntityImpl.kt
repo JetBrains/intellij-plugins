@@ -3,10 +3,9 @@ package org.intellij.terraform.config.model.local.impl
 
 import com.intellij.platform.workspace.storage.ConnectionId
 import com.intellij.platform.workspace.storage.EntitySource
-import com.intellij.platform.workspace.storage.EntityType
 import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
 import com.intellij.platform.workspace.storage.GeneratedCodeImplVersion
-import com.intellij.platform.workspace.storage.ModifiableWorkspaceEntity
+import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
 import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntity
 import com.intellij.platform.workspace.storage.WorkspaceEntityInternalApi
@@ -17,8 +16,8 @@ import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInst
 import com.intellij.platform.workspace.storage.instrumentation.EntityStorageInstrumentationApi
 import com.intellij.platform.workspace.storage.metadata.model.EntityMetadata
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
-import org.intellij.terraform.config.model.local.ModifiableTfLocalMetaEntity
 import org.intellij.terraform.config.model.local.TfLocalMetaEntity
+import org.intellij.terraform.config.model.local.TfLocalMetaEntityBuilder
 
 @GeneratedCodeApiVersion(3)
 @GeneratedCodeImplVersion(7)
@@ -67,7 +66,7 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
 
 
   internal class Builder(result: TfLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TfLocalMetaEntity, TfLocalMetaEntityData>(
-    result), ModifiableTfLocalMetaEntity {
+    result), TfLocalMetaEntityBuilder {
     internal constructor() : this(TfLocalMetaEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
@@ -181,7 +180,7 @@ internal class TfLocalMetaEntityData : WorkspaceEntityData<TfLocalMetaEntity>() 
   internal fun isJsonPathInitialized(): Boolean = ::jsonPath.isInitialized
   internal fun isLockFileInitialized(): Boolean = ::lockFile.isInitialized
 
-  override fun wrapAsModifiable(diff: MutableEntityStorage): ModifiableWorkspaceEntity<TfLocalMetaEntity> {
+  override fun wrapAsModifiable(diff: MutableEntityStorage): WorkspaceEntityBuilder<TfLocalMetaEntity> {
     val modifiable = TfLocalMetaEntityImpl.Builder(null)
     modifiable.diff = diff
     modifiable.id = createEntityId()
@@ -207,7 +206,7 @@ internal class TfLocalMetaEntityData : WorkspaceEntityData<TfLocalMetaEntity>() 
     return TfLocalMetaEntity::class.java
   }
 
-  override fun createDetachedEntity(parents: List<ModifiableWorkspaceEntity<*>>): ModifiableWorkspaceEntity<*> {
+  override fun createDetachedEntity(parents: List<WorkspaceEntityBuilder<*>>): WorkspaceEntityBuilder<*> {
     return TfLocalMetaEntity(timeStampLow, timeStampHigh, jsonPath, lockFile, entitySource) {
     }
   }
