@@ -11,7 +11,7 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TfPsiPatterns
@@ -32,7 +32,7 @@ class HILUnknownResourceTypeInspection : LocalInspectionTool() {
     return MyEV(holder)
   }
 
-  inner class MyEV(val holder: ProblemsHolder) : ILElementVisitor() {
+  class MyEV(val holder: ProblemsHolder) : ILElementVisitor() {
     override fun visitILVariable(element: ILVariable) {
       ProgressIndicatorProvider.checkCanceled()
       val host = element.getHCLHost() ?: return
@@ -57,7 +57,7 @@ class HILUnknownResourceTypeInspection : LocalInspectionTool() {
 
       holder.registerProblem(element, HCLBundle.message("hil.unknown.resource.type.inspection.unknown.resource.type.error.message"),
                              ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                             *listOfNotNull(TfInitAction.createQuickFixNotInitialized(element)).toArray(LocalQuickFix.EMPTY_ARRAY))
+                             *listOfNotNull(createQuickFixNotInitialized(element)).toArray(LocalQuickFix.EMPTY_ARRAY))
     }
   }
 

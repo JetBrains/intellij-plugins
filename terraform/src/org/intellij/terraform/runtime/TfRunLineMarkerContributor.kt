@@ -11,7 +11,7 @@ import com.intellij.openapi.actionSystem.Separator
 import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.ui.IconManager
-import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.actions.isInitRequired
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -42,7 +42,7 @@ class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
 
     val icon: Icon
     val tooltipProvider: Function<PsiElement, String>
-    if (TfInitAction.isInitRequired(leaf.project, leaf.containingFile.virtualFile)) {
+    if (isInitRequired(leaf.project, leaf.containingFile.virtualFile)) {
       icon = IconManager.getInstance().createLayered(AllIcons.RunConfigurations.TestState.Run, AllIcons.Nodes.WarningMark)
       tooltipProvider = Function<PsiElement, String> { HCLBundle.message("not.initialized.inspection.error.message") }
     }

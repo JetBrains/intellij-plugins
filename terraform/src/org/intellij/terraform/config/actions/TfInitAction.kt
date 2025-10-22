@@ -19,38 +19,35 @@ internal open class TfInitAction(private val notifyOnSuccess: Boolean = true) : 
     virtualFiles.firstOrNull()?.let { project.service<TfActionService>().initTerraform(it, notifyOnSuccess) }
   }
 
-  companion object {
+}
 
-    fun createQuickFixNotInitialized(element: PsiElement): LocalQuickFix? {
-      val virtualFile = element.containingFile.virtualFile ?: return null
-      if (!isInitRequired(element.project, virtualFile)) return null
+internal fun createQuickFixNotInitialized(element: PsiElement): LocalQuickFix? {
+  val virtualFile = element.containingFile.virtualFile ?: return null
+  if (!isInitRequired(element.project, virtualFile)) return null
 
-      return object : LocalQuickFix {
+  return object : LocalQuickFix {
 
-        override fun startInWriteAction(): Boolean = false
+    override fun startInWriteAction(): Boolean = false
 
-        override fun getFamilyName(): String = HCLBundle.message("action.TfInitRequiredAction.text")
+    override fun getFamilyName(): String = HCLBundle.message("action.TfInitRequiredAction.text")
 
-        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-          project.service<TfActionService>()
-            .scheduleTerraformInit(
-              descriptor.psiElement.containingFile.virtualFile, notifyOnSuccess = false
-            )
-        }
-
-      }
-    }
-
-    fun isInitRequired(project: Project, virtualFile: VirtualFile): Boolean {
-      val lock = project.service<TfLocalSchemaService>().findLockFile(virtualFile) ?: return true
-      val terraformDirectory = lock.parent.findChild(".terraform") ?: return true
-      return !terraformDirectory.isDirectory || terraformDirectory.children.isEmpty()
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+      project.service<TfActionService>()
+        .scheduleTerraformInit(
+          descriptor.psiElement.containingFile.virtualFile, notifyOnSuccess = false
+        )
     }
 
   }
 }
 
+internal fun isInitRequired(project: Project, virtualFile: VirtualFile): Boolean {
+  val lock = project.service<TfLocalSchemaService>().findLockFile(virtualFile) ?: return true
+  val terraformDirectory = lock.parent.findChild(".terraform") ?: return true
+  return !terraformDirectory.isDirectory || terraformDirectory.children.isEmpty()
+}
+
 internal fun isInitializedDir(file: PsiFile): Boolean =
-  ApplicationManager.getApplication().isUnitTestMode || !TfInitAction.isInitRequired(file.project, file.virtualFile)
+  ApplicationManager.getApplication().isUnitTestMode || !isInitRequired(file.project, file.virtualFile)
 
 internal class TfInitRequiredAction : TfInitAction(false)

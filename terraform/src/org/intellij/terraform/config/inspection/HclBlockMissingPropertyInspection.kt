@@ -12,7 +12,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.config.codeinsight.ResourcePropertyInsertHandler
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.*
@@ -153,7 +153,7 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
       *listOfNotNull(
         AddResourcePropertiesFix(required),
-        TfInitAction.createQuickFixNotInitialized(nameOfBlock),
+        createQuickFixNotInitialized(nameOfBlock),
         createDisableDeepVariableSearchQuickFix()
       ).toArray(LocalQuickFix.EMPTY_ARRAY)
     )

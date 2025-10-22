@@ -9,7 +9,7 @@ import com.intellij.modcommand.ModPsiUpdater
 import com.intellij.modcommand.PsiUpdateModCommandAction
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.config.actions.isInitializedDir
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.patterns.TfPsiPatterns
@@ -39,7 +39,7 @@ class TfUnknownPropertyInspection : LocalInspectionTool() {
         holder.problem(
           property,
           HCLBundle.message("unknown.property.in.block.inspection.error.message", propertyName))
-          .maybeFix(TfInitAction.createQuickFixNotInitialized(property))
+          .maybeFix(createQuickFixNotInitialized(property))
           .fix(RemovePropertyQuickFix(property))
           .register()
       }

@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
@@ -9,7 +9,7 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.toArray
-import org.intellij.terraform.config.actions.TfInitAction
+import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.PropertyOrBlockType
@@ -59,7 +59,7 @@ class HCLDeprecatedElementInspection : LocalInspectionTool() {
             "deprecated.element.inspection.deprecated.property.error.message", name, reason,
             if (reason.isNotEmpty()) 0 else 1),
           ProblemHighlightType.LIKE_DEPRECATED,
-          *listOfNotNull(TfInitAction.createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
+          *listOfNotNull(createQuickFixNotInitialized(block)).toArray(LocalQuickFix.EMPTY_ARRAY)
         )
       }
     }
