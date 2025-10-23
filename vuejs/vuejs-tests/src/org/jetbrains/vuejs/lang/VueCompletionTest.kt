@@ -13,6 +13,10 @@ import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCach
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import org.jetbrains.vuejs.VueTestCase
 
+private val FILTER_DEFAULT_ATTRIBUTES = (filterOutStandardHtmlSymbols
+  and filterOutMostOfGlobalJSSymbolsInVue
+  and { info -> info.lookupString.let { !it.contains("aria-") && !it.startsWith("on") } })
+
 class VueCompletionTest : VueTestCase("completion") {
 
   override fun setUp() {
@@ -630,9 +634,7 @@ class VueCompletionTest : VueTestCase("completion") {
         ":<caret>foo=",
         "<<caret>Foo",
       ),
-      lookupItemFilter = filterOutStandardHtmlSymbols
-        and filterOutMostOfGlobalJSSymbolsInVue
-        and { info -> info.lookupString.let { !it.contains("aria-") && !it.startsWith("on") } }
+      lookupItemFilter = FILTER_DEFAULT_ATTRIBUTES,
     )
 
   fun testScriptSetupTs() {
@@ -851,6 +853,34 @@ class VueCompletionTest : VueTestCase("completion") {
         "<My<caret>Label",
       ),
       lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
+
+  fun testPropsOfComponentsWithTwoScriptTags() =
+    doLookupTest(
+      VueTestModule.VUE_3_5_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<MyCardC <caret>ad/>",
+        "<MyCardC a<caret>d/>",
+        "<MyCardC ad<caret>/>",
+      ),
+      lookupItemFilter = FILTER_DEFAULT_ATTRIBUTES
+        and { info -> info.priority > 10 },
+    )
+
+  fun testPropsOfComponentsWithTwoScriptTags_vapor() =
+    doLookupTest(
+      VueTestModule.VUE_3_6_0,
+      dir = true,
+      configureFileName = "App.vue",
+      locations = listOf(
+        "<MyCardC <caret>ad/>",
+        "<MyCardC a<caret>d/>",
+        "<MyCardC ad<caret>/>",
+      ),
+      lookupItemFilter = FILTER_DEFAULT_ATTRIBUTES
+        and { info -> info.priority > 10 },
     )
 
   fun testDirectivesFromFunctionPlugin() =
