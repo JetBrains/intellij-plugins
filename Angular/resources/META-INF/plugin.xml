@@ -449,6 +449,12 @@
                          nonDefaultProject="true"
     />
 
+    <advancedSetting default="true"
+                     id="angular.gtr.toolbar.enable"
+                     groupKey="advanced.setting.angular"
+                     bundle="messages.Angular2Bundle"
+    />
+
     <!-- ReactiveForms support contributions -->
     <polySymbols.queryResultsCustomizerFactory
       implementation="org.angular2.library.forms.Angular2FormsPolySymbolQueryResultsCustomizer$Factory"/>
@@ -536,5 +542,6 @@
 
   <applicationListeners>
     <listener class="org.angular2.cli.config.AngularConfigFileListener" topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+    <listener class="org.angular2.navigation.Angular2GotoRelatedToolbarSettingsListener" topic="com.intellij.openapi.options.advanced.AdvancedSettingsChangeListener"/>
   </applicationListeners>
 </idea-plugin>
