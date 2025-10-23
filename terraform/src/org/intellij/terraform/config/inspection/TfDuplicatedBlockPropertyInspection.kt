@@ -21,7 +21,6 @@ class TfDuplicatedBlockPropertyInspection : TfDuplicatedInspectionBase() {
     return MyEV(holder)
   }
 
-
   inner class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitBlock(block: HCLBlock) {
       // TODO: Check whether it's correct to check FQN
