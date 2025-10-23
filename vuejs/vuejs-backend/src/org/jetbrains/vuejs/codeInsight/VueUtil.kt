@@ -208,26 +208,28 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
           .mapNotNullTo(queue) { if (it.isValidResult) it.element else null }
         is ES6ImportCall -> cur.resolveReferencedElements()
           .toCollection(queue)
-        is JSEmbeddedContent -> {
-          if (cur is VueScriptSetupEmbeddedContentImpl) {
-            val expectsEmbeddedContent = classes.any { it == JSEmbeddedContent::class }
-            if (expectsEmbeddedContent && cur.getStubSafeDefineCalls().any { VueComponents.isDefineOptionsCall(it) }) {
-              @Suppress("UNCHECKED_CAST")
-              return cur as T
-            }
 
-            val exportScope = cur.contextExportScope
-            if (exportScope != null) {
-              queue.add(exportScope)
-            }
-            else if (expectsEmbeddedContent) {
-              @Suppress("UNCHECKED_CAST")
-              return cur as T
-            }
-            else return null
+        is VueScriptSetupEmbeddedContentImpl -> {
+          val expectsEmbeddedContent = classes.any { it == JSEmbeddedContent::class }
+          if (expectsEmbeddedContent && cur.getStubSafeDefineCalls().any { VueComponents.isDefineOptionsCall(it) }) {
+            @Suppress("UNCHECKED_CAST")
+            return cur as T
           }
-          else findDefaultExport(cur)?.let { queue.add(it) }
+
+          val exportScope = cur.contextExportScope
+          if (exportScope != null) {
+            queue.add(exportScope)
+          }
+          else if (expectsEmbeddedContent) {
+            @Suppress("UNCHECKED_CAST")
+            return cur as T
+          }
+          else return null
         }
+
+        is JSEmbeddedContent,
+          -> findDefaultExport(cur)?.let { queue.add(it) }
+
         else -> JSStubBasedPsiTreeUtil.calculateMeaningfulElements(cur)
           .toCollection(queue)
       }
