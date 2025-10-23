@@ -3,7 +3,9 @@ package org.jetbrains.astro
 import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.HybridTestMode
+import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
+import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
@@ -16,6 +18,19 @@ import org.jetbrains.astro.service.settings.AstroServiceMode
 import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
 abstract class AstroLspTestCase(testCasePath: String) : AstroCodeInsightTestCase(testCasePath, HybridTestMode.CodeInsightFixture) {
+  protected open val tsconfigJsonContent: String = (
+    """
+    {
+      "extends": "astro/tsconfigs/strict",
+      "include": [".astro/types.d.ts", "**/*"],
+      "exclude": ["dist"],
+      "compilerOptions": {
+        "strictNullChecks": true,
+        "allowJs": true,
+      }
+    }
+    """.trimIndent()
+                                                   )
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
     super.beforeConfiguredTest(configuration)
@@ -37,7 +52,7 @@ abstract class AstroLspTestCase(testCasePath: String) : AstroCodeInsightTestCase
     configureCodeStyleSettings: (CodeStyleSettings.() -> Unit)?,
     test: CodeInsightTestFixture.() -> Unit,
   ) {
-    val combinedConfigurators = configurators + AstroLspConfigurator()
+    val combinedConfigurators = configurators + AstroLspConfigurator() + AstroLspTsConfigConfigurator(tsconfigJsonContent)
     super.doConfiguredTest(
       *modules,
       fileContents = fileContents,
@@ -69,8 +84,17 @@ class AstroLspConfigurator : WebFrameworkTestConfigurator {
 
     serviceSettings.serviceMode = AstroServiceMode.ENABLED
     RegistryManager.getInstance().get("astro.language.server.bundled.enabled").setValue(true, contextDisposable)
+    TypeScriptExternalDefinitionsRegistry.testTypingsRootPath = TypeScriptDefinitionFilesDirectory.getGlobalAutoDownloadTypesDirectoryPath()
     TypeScriptServiceTestMixin.setUpTypeScriptService(fixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
       it::class == AstroLspTypeScriptService::class
+    }
+  }
+}
+
+class AstroLspTsConfigConfigurator(val tsconfigJsonContent: String) : WebFrameworkTestConfigurator {
+  override fun configure(fixture: CodeInsightTestFixture, disposable: Disposable?) {
+    if (fixture.tempDirFixture.getFile("tsconfig.json") == null) {
+      fixture.addFileToProject("tsconfig.json", tsconfigJsonContent)
     }
   }
 }

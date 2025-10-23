@@ -1,0 +1,1 @@
+MyAstroComponent (typeText='./MyAstroComponent.astro'; priority=0.0; typeGreyed)
