@@ -1,0 +1,71 @@
+{
+  "runs": [
+    {
+      "tool": {
+      },
+      "originalUriBaseIds": {
+        "PROJECTROOT": {
+          "description": {
+            "text": "The root directory of the repository or workspace (--repository-root qodana CLI parameter)"
+          }
+        },
+        "SRCROOT": {
+          "uri": "src/",
+          "uriBaseId": "PROJECTROOT",
+          "description": {
+            "text": "The subdirectory within the project that was analyzed (--project-dir qodana CLI parameter)"
+          }
+        }
+      },
+      "results": [
+        {
+          "ruleId": "INSPECTION_ID",
+          "message": {
+            "text": "PROBLEM_1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Logic.java",
+                  "uriBaseId": "SRCROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "endLine": 1,
+                  "endColumn": 16
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "ANOTHER_INSPECTION_ID",
+          "message": {
+            "text": "PROBLEM_2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Main.java",
+                  "uriBaseId": "PROJECTROOT"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 14,
+                  "charLength": 1
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "automationDetails": {
+        "id": "REPORT_WITH_ORIGIN_BASE_URI_IDS",
+        "guid": "REPORT_WITH_ORIGIN_BASE_URI_IDS"
+      }
+    }
+  ]
+}

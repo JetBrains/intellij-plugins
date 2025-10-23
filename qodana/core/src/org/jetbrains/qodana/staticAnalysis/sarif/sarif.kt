@@ -39,10 +39,12 @@ import kotlin.math.max
 
 private val LOG = logger<SarifReport>()
 
-const val SARIF_AUTOMATION_GUID_PROPERTY = "qodana.automation.guid"
+const val SARIF_AUTOMATION_GUID_PROPERTY: String = "qodana.automation.guid"
+const val PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY: String = "qodana.path.to.project.dir.from.project.root"
 
 private const val PROJECT_DIR_PREFIX = "file://\$PROJECT_DIR\$/"
 internal const val SRCROOT_URI_BASE = "SRCROOT"
+internal const val PROJECTROOT_URI_BASE = "PROJECTROOT"
 
 /** The CI job build URL where Qodana is run, e.g. `https://github.com/JetBrains/qodana-action/actions/runs/1`. */
 internal const val QODANA_JOB_URL = "QODANA_JOB_URL"
@@ -65,6 +67,10 @@ internal const val PROBLEM_TYPE = "problemType"
 internal const val PROBLEM_HAS_FIXES = "hasFixes"
 internal const val PROBLEM_HAS_CLEANUP = "hasCleanup"
 
+internal const val SRCROOT_DESCRIPTION = "The subdirectory within the project that was analyzed (--project-dir qodana CLI parameter)"
+
+internal const val PROJECTROOT_DESCRIPTION = "The root directory of the repository or workspace (--repository-root qodana CLI parameter)"
+
 fun createSarifReport(runs: List<Run>): SarifReport {
   val schema = URI("https://raw.githubusercontent.com/schemastore/schemastore/master/src/schemas/json/sarif-2.1.0-rtm.5.json")
   return SarifReport(SarifReport.Version._2_1_0, runs).`with$schema`(schema)
@@ -83,6 +89,7 @@ fun createRun(): Run {
     .withProperties(PropertyBag().apply {
       put("deviceId", EventLogConfiguration.getInstance().getOrCreate("FUS").deviceId)
     })
+    .withOriginalUriBaseIds(createOriginalUriBaseIds())
 }
 
 internal fun SarifReport.getOrCreateRun(): Run {
@@ -124,6 +131,40 @@ private fun createDriver(): ToolComponent {
     .withRules(mutableListOf())
 }
 
+internal fun createOriginalUriBaseIds() = OriginalUriBaseIds().apply {
+  val relativePath = normalizeUriBasePath(System.getProperty(PATH_FROM_PROJECT_ROOT_TO_PROJECT_DIR_PROPERTY) ?: "")
+  if (relativePath.isNotEmpty()) {
+    put(
+      SRCROOT_URI_BASE,
+      ArtifactLocation()
+        .withUri(relativePath)
+        .withUriBaseId(PROJECTROOT_URI_BASE)
+        .withDescription(Message().withText(SRCROOT_DESCRIPTION))
+    )
+    put(
+      PROJECTROOT_URI_BASE,
+      ArtifactLocation().withDescription(Message().withText(PROJECTROOT_DESCRIPTION))
+    )
+  } else {
+    put(SRCROOT_URI_BASE, ArtifactLocation().withDescription(Message().withText(SRCROOT_DESCRIPTION)))
+  }
+}
+
+private fun normalizeUriBasePath(path: String): String {
+  var normalized = path.trim()
+
+  // Convert backslashes to forward slashes for URI compatibility
+  normalized = normalized.replace('\\', '/')
+
+  // Remove leading slashes to ensure it's relative
+  normalized = normalized.trimStart('/')
+
+  // Ensure it ends with a trailing slash
+  if (normalized.isNotEmpty() && !normalized.endsWith('/')) {
+    normalized += '/'
+  }
+  return normalized
+}
 
 private fun buildReportId(project: Project): String {
   qodanaEnv().QODANA_REPORT_ID.value?.let { return it }
