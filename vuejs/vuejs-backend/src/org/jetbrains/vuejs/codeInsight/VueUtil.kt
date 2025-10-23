@@ -210,21 +210,17 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
           .toCollection(queue)
 
         is VueScriptSetupEmbeddedContentImpl -> {
-          val expectsEmbeddedContent = classes.any { it == JSEmbeddedContent::class }
-          if (expectsEmbeddedContent && cur.getStubSafeDefineCalls().any { VueComponents.isDefineOptionsCall(it) }) {
+          val exportScope = cur.contextExportScope
+
+          if (classes.any { it == JSEmbeddedContent::class }
+              && (exportScope == null || findDefaultExport(exportScope) == null)) {
             @Suppress("UNCHECKED_CAST")
             return cur as T
           }
 
-          val exportScope = cur.contextExportScope
-          if (exportScope != null) {
-            queue.add(exportScope)
-          }
-          else if (expectsEmbeddedContent) {
-            @Suppress("UNCHECKED_CAST")
-            return cur as T
-          }
-          else return null
+          exportScope ?: return null
+
+          queue.add(exportScope)
         }
 
         is JSEmbeddedContent,
