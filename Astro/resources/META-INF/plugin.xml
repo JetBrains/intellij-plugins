@@ -68,8 +68,10 @@
     <lang.documentationProvider language="Astro" implementationClass="com.intellij.xml.util.documentation.HtmlDocumentationProvider"
                                 id="html"/>
     <completion.contributor language="AstroFrontmatter"
+                            order="before TypeScriptServiceCompletionContributor"
                             implementationClass="org.jetbrains.astro.codeInsight.completion.AstroServiceCompletionContributor"/>
     <completion.contributor language="Astro"
+                            order="before HtmlSymbolsCompletionContributor, before TypeScriptServiceCompletionContributor"
                             implementationClass="org.jetbrains.astro.codeInsight.completion.AstroServiceCompletionContributor"/>
 
     <lang.formatter language="Astro" implementationClass="org.jetbrains.astro.lang.formatter.AstroFormattingModelBuilder"/>
