@@ -10,13 +10,17 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.EditorKind
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
+import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.editor.toolbar.floating.FloatingToolbarComponent
 import com.intellij.openapi.editor.toolbar.floating.FloatingToolbarProvider
 import com.intellij.openapi.editor.toolbar.floating.isInsideMainEditor
 import com.intellij.openapi.keymap.KeymapUtil.getShortcutText
+import com.intellij.openapi.options.advanced.AdvancedSettings
+import com.intellij.openapi.options.advanced.AdvancedSettingsChangeListener
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -60,6 +64,20 @@ internal class Angular2GotoRelatedToolbarProvider : FloatingToolbarProvider {
   }
 }
 
+private class Angular2GotoRelatedToolbarSettingsListener : AdvancedSettingsChangeListener {
+  override fun advancedSettingChanged(
+    id: String,
+    oldValue: Any,
+    newValue: Any,
+  ) {
+    if (id == "angular.gtr.toolbar.enable") {
+      EditorFactory.getInstance().allEditors.forEach {
+        (it as? EditorImpl)?.refreshEditorFloatingToolbar()
+      }
+    }
+  }
+}
+
 /**
  * Should suppress [com.intellij.ide.browsers.actions.OpenInBrowserBaseGroupAction.OpenInBrowserEditorContextBarGroupAction]
  */
@@ -80,6 +98,7 @@ private fun angular2GTRToolbarCanBeShown(dataContext: DataContext): Boolean {
   return isInsideMainEditor(dataContext)
          && editor.editorKind == EditorKind.MAIN_EDITOR
          && isAngular2Context(file)
+         && AdvancedSettings.getBoolean("angular.gtr.toolbar.enable")
 }
 
 private class Angular2GotoRelatedItemActionGroup : ActionGroup() {
