@@ -24,6 +24,10 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
   private val problemsWithComplexGraph by lazy { getReport(sarifProblemTestDir.resolve("reportWithComplexGraph.sarif.json")) }
   private val problemsMultipleRuns by lazy { getReport(sarifProblemTestDir.resolve("reportMultipleRuns.sarif.json")) }
 
+  private val problemsWithOriginalUriBaseIds by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIds.sarif.json")) }
+
+  private val problemsBadWithOriginalUriBaseIds by lazy { getReport(sarifProblemTestDir.resolve("reportBadWithOriginalUriBaseIds.sarif.json")) }
+
 
   private fun projectPath() = Path(myFixture.testDataPath, "SarifProblemTest/project")
 
@@ -172,6 +176,26 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertNull(problem.endColumn)
     assertThat(problem.baselineState).isEqualTo(BaselineState.NEW)
     assertThat(problem.isInBaseline).isFalse
+  }
+
+  fun `test originUriIds resolved correctly`() {
+    assertThat(problemsWithOriginalUriBaseIds.size).isEqualTo(2)
+
+    val problem1 = problemsWithOriginalUriBaseIds[0]
+    assertThat(problem1.relativePathToFile).isEqualTo("src/Logic.java")
+
+    val problem2 = problemsWithOriginalUriBaseIds[1]
+    assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
+  }
+
+  fun `test originUriIds cyclic resolution`() {
+    assertThat(problemsBadWithOriginalUriBaseIds.size).isEqualTo(2)
+
+    val problem1 = problemsBadWithOriginalUriBaseIds[0]
+    assertThat(problem1.relativePathToFile).isEqualTo("Logic.java")
+
+    val problem2 = problemsBadWithOriginalUriBaseIds[1]
+    assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
   }
 
   private fun getDocument(documentName: String): Document? {

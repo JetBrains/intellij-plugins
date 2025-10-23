@@ -3,6 +3,7 @@ package org.jetbrains.qodana.report
 import com.jetbrains.qodana.sarif.SarifUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.qodana.QodanaPluginLightTestBase
+import org.jetbrains.qodana.problem.revisionId
 
 class ReportValidatorTest : QodanaPluginLightTestBase() {
   fun `test valid report`() {
@@ -15,7 +16,7 @@ class ReportValidatorTest : QodanaPluginLightTestBase() {
 
     assertThat(validatedSarif.sarif).isEqualTo(report)
     assertThat(validatedSarif.runs).isNotEmpty
-    assertThat(validatedSarif.revisionsToResults).isNotNull
+    assertThat(validatedSarif.runsToResults.mapKeys { (run, _) -> run.revisionId() }).isNotNull
     assertThat(validatedSarif.tools).isNotNull
   }
 
