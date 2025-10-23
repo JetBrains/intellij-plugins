@@ -19,66 +19,71 @@ import org.intellij.plugins.markdown.lang.psi.MarkdownAstFactory
 import org.junit.Test
 
 class MdxParsingTest : ParsingTestCase(
-    "",
-    "mdx",
-    MdxParserDefinition(),
-    MarkdownParserDefinition(),
-    MdxJSParserDefinition(),
-    ECMA6ParserDefinition()
+  "",
+  "mdx",
+  MdxParserDefinition(),
+  MarkdownParserDefinition(),
+  MdxJSParserDefinition(),
+  ECMA6ParserDefinition()
 ) {
 
-    override fun getTestDataPath(): String {
-        return "src/test/testData/parsing"
-    }
+  override fun getTestDataPath(): String {
+    return "src/test/testData/parsing"
+  }
 
-    override fun checkAllPsiRoots(): Boolean {
-        return false
-    }
+  override fun checkAllPsiRoots(): Boolean {
+    return false
+  }
 
-    override fun setUp() {
-        super.setUp()
-        addExplicitExtension(LanguageFileViewProviders.INSTANCE, MdxLanguage, MdxFileViewProviderFactory())
-        addExplicitExtension(LanguageFileViewProviders.INSTANCE, MdxLanguage, MarkdownFileViewProviderFactory())
-        addExplicitExtension(LanguageASTFactory.INSTANCE, MarkdownLanguage.INSTANCE, MarkdownAstFactory())
-        addExplicitExtension(LanguageASTFactory.INSTANCE, JavascriptLanguage, JavascriptASTFactory())
-        addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, XmlASTFactory())
-    }
+  override fun setUp() {
+    super.setUp()
+    addExplicitExtension(LanguageFileViewProviders.INSTANCE, MdxLanguage, MdxFileViewProviderFactory())
+    addExplicitExtension(LanguageFileViewProviders.INSTANCE, MdxLanguage, MarkdownFileViewProviderFactory())
+    addExplicitExtension(LanguageASTFactory.INSTANCE, MarkdownLanguage.INSTANCE, MarkdownAstFactory())
+    addExplicitExtension(LanguageASTFactory.INSTANCE, JavascriptLanguage, JavascriptASTFactory())
+    addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, XmlASTFactory())
+  }
 
-    override fun skipSpaces(): Boolean {
-        return false
-    }
+  override fun skipSpaces(): Boolean {
+    return false
+  }
 
-    override fun includeRanges(): Boolean {
-        return true
-    }
+  override fun includeRanges(): Boolean {
+    return true
+  }
 
-    @Test
-    fun testParsingTestData() {
-        doTest(true)
-    }
+  @Test
+  fun testParsingTestData() {
+    doTest(true)
+  }
 
-    @Test
-    fun testParsingList() {
-        doTest(true)
-    }
+  @Test
+  fun testParsingList() {
+    doTest(true)
+  }
 
-    @Test
-    fun testParsingWithNewLines() {
-        doTest(true)
-    }
+  @Test
+  fun testParsingWithNewLines() {
+    doTest(true)
+  }
 
-    @Test
-    fun testParsingAlert() {
-        doTest(true)
-    }
+  @Test
+  fun testParsingAlert() {
+    doTest(true)
+  }
 
-    @Test
-    fun testParsingEmbedded() {
-        doTest(true)
-    }
+  @Test
+  fun testParsingEmbedded() {
+    doTest(true)
+  }
 
-    @Test
-    fun testParsingPrisma() {
-        doTest(true)
-    }
+  @Test
+  fun testParsingPrisma() {
+    doTest(true)
+  }
+
+  @Test
+  fun testParsingLongText() {
+    doTest(true)
+  }
 }
