@@ -40,17 +40,14 @@ class TfDuplicatedOutputInspection : TfDuplicatedInspectionBase() {
     if (inOverride) return null
 
     val module = block.getTerraformModule()
-
     val name = block.getNameElementUnquoted(1) ?: return null
 
-    val same = module.getDefinedOutputs().filter { name == it.getNameElementUnquoted(1) && !TfPsiPatterns.ConfigOverrideFile.accepts(it.containingFile) }
-    if (same.isEmpty()) return null
-    if (same.size == 1) {
-      if (same.first() == block) {
-        return null
-      }
+    val sameOutputs = module.getDefinedOutputs().filter { name == it.getNameElementUnquoted(1) && !TfPsiPatterns.ConfigOverrideFile.accepts(it.containingFile) }
+    if (sameOutputs.isEmpty()) return null
+    if (sameOutputs.size == 1 && sameOutputs.first() == block) {
+      return null
     }
-    return same
+    return sameOutputs
   }
 
   private fun getFixes(block: HCLBlock, duplicates: List<HCLBlock>): Array<LocalQuickFix> {

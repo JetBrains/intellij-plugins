@@ -38,17 +38,14 @@ class TfDuplicatedVariableInspection : TfDuplicatedInspectionBase() {
     if (TfPsiPatterns.ConfigOverrideFile.accepts(block.containingFile)) return null
 
     val module = block.getTerraformModule()
-
     val name = block.getNameElementUnquoted(1) ?: return null
 
-    val same = module.findVariables(name).filter { !TfPsiPatterns.ConfigOverrideFile.accepts(it.declaration.containingFile) }
-    if (same.isEmpty()) return null
-    if (same.size == 1) {
-      if (same.first().declaration == block) {
-        return null
-      }
+    val sameVariables = module.findVariables(name).filter { !TfPsiPatterns.ConfigOverrideFile.accepts(it.declaration.containingFile) }
+    if (sameVariables.isEmpty()) return null
+    if (sameVariables.size == 1 && sameVariables.first().declaration == block) {
+      return null
     }
-    return same.map { it.declaration }
+    return sameVariables.map { it.declaration }
   }
 
   private fun getFixes(block: HCLBlock, duplicates: List<HCLBlock>): Array<LocalQuickFix> {
@@ -66,7 +63,6 @@ class TfDuplicatedVariableInspection : TfDuplicatedInspectionBase() {
     fixes.add(RenameVariableFix())
     return fixes.toTypedArray()
   }
-
 
   private class DeleteVariableFix : PsiUpdateModCommandQuickFix(), LowPriorityAction {
     override fun getFamilyName(): String = HCLBundle.message("duplicated.variable.inspection.delete.variable.quick.fix.name")

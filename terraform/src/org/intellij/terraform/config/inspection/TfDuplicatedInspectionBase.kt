@@ -58,8 +58,8 @@ abstract class TfDuplicatedInspectionBase : LocalInspectionTool() {
     }
   }
 
-  protected fun createShowOtherDupesFix(element: PsiNamedElement, duplicates: NullableFunction<PsiElement, List<PsiElement>?>): LocalQuickFix {
-
+  protected fun createShowOtherDupesFix(psiElement: PsiElement, duplicates: NullableFunction<PsiElement, List<PsiElement>?>): LocalQuickFix {
+    val psiPointer = psiElement.createSmartPointer()
     return object : LocalQuickFix {
       var myTitle: String? = null
 
@@ -73,7 +73,9 @@ abstract class TfDuplicatedInspectionBase : LocalInspectionTool() {
         } ?: return
 
         val presentation = UsageViewPresentation()
+        val element = psiPointer.element ?: return
         val target = PsiElement2UsageTargetAdapter(element, true)
+
         if (myTitle == null) myTitle = "Duplicate of " + target.presentableText
         val title = myTitle!!
         presentation.searchString = title
