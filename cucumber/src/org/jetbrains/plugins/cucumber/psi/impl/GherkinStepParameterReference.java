@@ -1,21 +1,40 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
 
 @NotNullByDefault
-public class GherkinStepParameterReference extends GherkinSimpleReference {
+public class GherkinStepParameterReference extends PsiReferenceBase<GherkinStepParameter> {
   public GherkinStepParameterReference(GherkinStepParameter stepParameter) {
-    super(stepParameter);
+    super(stepParameter, new TextRange(0, stepParameter.getTextLength()));
   }
 
   @Override
   public GherkinStepParameter getElement() {
-    return (GherkinStepParameter)super.getElement();
+    return super.getElement();
+  }
+
+  @Override
+  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    return myElement.setName(newElementName);
+  }
+
+  @Override
+  public boolean isReferenceTo(PsiElement element) {
+    PsiElement myResolved = resolve();
+    PsiElement resolved = element.getReference() != null ? element.getReference().resolve() : null;
+    if (resolved == null) {
+      // We enter here if the element is GherkinStepParameter.
+      resolved = element;
+    }
+    return resolved.equals(myResolved);
   }
 
   @Override
