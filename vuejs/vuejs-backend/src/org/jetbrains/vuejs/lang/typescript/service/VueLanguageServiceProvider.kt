@@ -31,8 +31,14 @@ internal class VueLanguageServiceProvider(project: Project) : TypeScriptServiceP
 }
 
 @Service(Service.Level.PROJECT)
-private class VueTypeScriptPluginServiceWrapper(project: Project) : Disposable {
-  val service = VuePluginTypeScriptService(project)
+internal class VueTypeScriptPluginServiceWrapper(project: Project) : Disposable {
+  var service = VuePluginTypeScriptService(project)
+    private set
+
+  fun refreshService(project: Project) {
+    Disposer.dispose(service)
+    service = VuePluginTypeScriptService(project)
+  }
 
   override fun dispose() {
     Disposer.dispose(service)

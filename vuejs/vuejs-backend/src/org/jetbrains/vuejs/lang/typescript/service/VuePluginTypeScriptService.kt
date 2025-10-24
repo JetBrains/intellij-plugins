@@ -15,15 +15,17 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.options.VueConfigurable
+import org.jetbrains.vuejs.options.VueTSPluginVersion
+import org.jetbrains.vuejs.options.getVueSettings
 
-private val vueTypeScriptPlugin = DownloadableTypeScriptServicePlugin(
+private fun getVueTypeScriptPlugin(version: VueTSPluginVersion) = DownloadableTypeScriptServicePlugin(
   shortLabel = "Vue",
-  activationRule = VueTSPluginActivationRule,
+  activationRule = VueTSPluginLoaderFactory.getActivationRule(version),
 )
 
 class VuePluginTypeScriptService(project: Project) : PluggableTypeScriptService(
   project = project,
-  servicePlugin = vueTypeScriptPlugin
+  servicePlugin = getVueTypeScriptPlugin(getVueSettings(project).tsPluginVersion)
 ) {
   override fun getInitialOpenCommands(): List<JSLanguageServiceSimpleCommand> {
     return listOf(createConfigureCommand()) + super.getInitialOpenCommands()

@@ -18,8 +18,10 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.VueSettings
+import org.jetbrains.vuejs.options.VueTSPluginVersion
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 private const val vuePluginPath = "vuejs/vuejs-backend"
 
@@ -96,16 +98,9 @@ private object VueLspActivationHelper : ServiceActivationHelper {
   }
 }
 
-private val vueTSPluginPackageVersion = PackageVersion.bundled<VueTSPluginPackageDescriptor>(
-  version = "3.0.1",
-  pluginPath = vuePluginPath,
-  localPath = "vue-language-tools/typescript-plugin/3.0.1",
-  isBundledEnabled = { Registry.`is`("vue.ts.plugin.bundled.enabled") },
-)
-
-private object VueTSPluginPackageDescriptor : LspServerPackageDescriptor(
+private class VueTSPluginPackageDescriptor(version: PackageVersion) : LspServerPackageDescriptor(
   name = "@vue/typescript-plugin",
-  defaultVersion = vueTSPluginPackageVersion,
+  defaultVersion = version,
   defaultPackageRelativePath = "",
 ) {
   override val registryVersion: String
@@ -113,13 +108,15 @@ private object VueTSPluginPackageDescriptor : LspServerPackageDescriptor(
 }
 
 @ApiStatus.Experimental
-object VueTSPluginLoader : TSPluginLoader(VueTSPluginPackageDescriptor) {
+class VueTSPluginLoader(descriptor: LspServerPackageDescriptor) :
+  TSPluginLoader(descriptor) {
   override fun getSelectedPackageRef(project: Project): NodePackageRef {
     return getVueSettings(project).tsPluginPackageRef
   }
 }
 
-object VueTSPluginActivationRule : TSPluginActivationRule(VueTSPluginLoader, VueTSPluginActivationHelper) {
+class VueTSPluginActivationRule(loader: VueTSPluginLoader) :
+  TSPluginActivationRule(loader, VueTSPluginActivationHelper) {
   override fun isEnabled(project: Project, context: VirtualFile): Boolean {
     if (!getVueSettings(project).tsPluginPreviewEnabled)
       return false
@@ -135,6 +132,33 @@ private object VueTSPluginActivationHelper : ServiceActivationHelper {
 
   override fun isEnabledInSettings(project: Project): Boolean {
     return getVueSettings(project).tsPluginPreviewEnabled
+  }
+}
+
+@ApiStatus.Experimental
+object VueTSPluginLoaderFactory {
+  private val loaders = ConcurrentHashMap<String, VueTSPluginLoader>()
+
+  fun getLoader(version: VueTSPluginVersion): VueTSPluginLoader {
+    return loaders.getOrPut(version.versionString) {
+      createLoader(version.versionString)
+    }
+  }
+
+  fun getActivationRule(version: VueTSPluginVersion): VueTSPluginActivationRule {
+    return VueTSPluginActivationRule(getLoader(version))
+  }
+
+  private fun createLoader(versionString: String): VueTSPluginLoader {
+    val packageVersion = PackageVersion.bundled<VueTSPluginPackageDescriptor>(
+      version = versionString,
+      pluginPath = vuePluginPath,
+      localPath = "vue-language-tools/typescript-plugin/$versionString",
+      isBundledEnabled = { Registry.`is`("vue.ts.plugin.bundled.enabled") },
+    )
+
+    val descriptor = VueTSPluginPackageDescriptor(packageVersion)
+    return VueTSPluginLoader(descriptor)
   }
 }
 

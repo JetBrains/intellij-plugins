@@ -70,6 +70,23 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           }
           .onChanged { tsPluginPreviewDisabled.set(!it.isSelected) }
       }
+
+      buttonsGroup(null, true) {
+        row {
+          radioButton(
+            text = VueTSPluginVersion.V3_1_1.versionString,
+            value = VueTSPluginVersion.V3_1_1,
+          ).comment(VueBundle.message("vue.configurable.service.vue2.not.supported"))
+        }
+        row {
+          radioButton(
+            text = VueTSPluginVersion.V3_0_1.versionString,
+            value = VueTSPluginVersion.V3_0_1,
+          ).comment(VueBundle.message("vue.configurable.service.vue2.supported"))
+        }
+      }
+        .bind(settings::tsPluginVersion)
+        .enabledIf(!tsPluginPreviewDisabled)
     }
   }
 
