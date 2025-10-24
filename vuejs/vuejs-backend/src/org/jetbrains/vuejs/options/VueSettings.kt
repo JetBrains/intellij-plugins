@@ -11,12 +11,15 @@ import com.intellij.lang.typescript.lsp.extractRefText
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.NlsSafe
 import org.jetbrains.annotations.ApiStatus.Obsolete
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
-import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginLoader
+import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginLoaderFactory
+import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptPluginServiceWrapper
 
 fun getVueSettings(project: Project): VueSettings = project.service<VueSettings>()
 
@@ -57,7 +60,10 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
     }
 
   var tsPluginPackageRef: NodePackageRef
-    get() = createPackageRef(state.tsPluginPackageName, VueTSPluginLoader.packageDescriptor.serverPackage)
+    get() = createPackageRef(
+      ref = state.tsPluginPackageName,
+      defaultPackage = VueTSPluginLoaderFactory.getLoader(tsPluginVersion).packageDescriptor.serverPackage,
+    )
     set(value) {
       val refText = extractRefText(value)
       val changed = state.tsPluginPackageName != refText
@@ -90,6 +96,19 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
         project.service<TypeScriptServiceRestartService>().restartServices(false)
       }
     }
+
+  var tsPluginVersion: VueTSPluginVersion
+    get() {
+      return state.tsPluginVersion
+    }
+    set(value) {
+      val prevTsPluginVersion = state.tsPluginVersion
+      state.tsPluginVersion = value
+      if (prevTsPluginVersion != value) {
+        project.service<VueTypeScriptPluginServiceWrapper>().refreshService(project)
+        project.service<TypeScriptServiceRestartService>().restartServices(false)
+      }
+    }
 }
 
 class VueSettingsState : BaseState() {
@@ -98,6 +117,15 @@ class VueSettingsState : BaseState() {
   var useTypesFromServer: Boolean by property(false)
   var tsPluginPackageName: String? by string(defaultPackageKey)
   var tsPluginPreviewEnabled: Boolean by property(true)
+  var tsPluginVersion: VueTSPluginVersion by enum(VueTSPluginVersion.V3_0_1)
+}
+
+enum class VueTSPluginVersion(
+  @param:NlsSafe val versionString: String,
+) {
+  V3_0_1("3.0.1"),
+  V3_1_1("3.1.1"),
+  ;
 }
 
 enum class VueServiceSettings {
