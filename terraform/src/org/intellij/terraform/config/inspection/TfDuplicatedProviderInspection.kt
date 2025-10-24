@@ -1,11 +1,9 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
-import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.util.NullableFunction
 import org.intellij.terraform.config.model.getProviderFQName
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TfPsiPatterns
@@ -26,7 +24,7 @@ class TfDuplicatedProviderInspection : TfDuplicatedInspectionBase() {
       @NonNls val fqn = block.getProviderFQName() ?: return
       holder.registerProblem(block,
                              HCLBundle.message("duplicated.provider.inspection.display.name.multiple.declaration.error.message", fqn),
-                             ProblemHighlightType.GENERIC_ERROR, *getFixes(block, duplicates))
+                             ProblemHighlightType.GENERIC_ERROR, *getDefaultFixes(block, duplicates))
     }
   }
 
@@ -43,16 +41,6 @@ class TfDuplicatedProviderInspection : TfDuplicatedInspectionBase() {
       return null
     }
     return sameProviders.map { it.first }
-  }
-
-  private fun getFixes(block: HCLBlock, duplicates: List<HCLBlock>): Array<LocalQuickFix> {
-    val fixes = ArrayList<LocalQuickFix>()
-
-    val first = duplicates.firstOrNull { it != block }
-    first?.containingFile?.virtualFile?.let { createNavigateToDupeFix(first, duplicates.size <= 2).let { fixes.add(it) } }
-    block.containingFile?.virtualFile?.let { createShowOtherDupesFix(block, NullableFunction { param -> getDuplicates(param as HCLBlock) }).let { fixes.add(it) } }
-
-    return fixes.toTypedArray()
   }
 }
 

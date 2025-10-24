@@ -103,8 +103,8 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
   open fun skipCheckPreview(intentionAction: IntentionAction): Boolean = intentionAction.text in skipPreview
 
   private val skipQuickFix = setOf(
-    HCLBundle.message("duplicated.inspection.base.navigate.to.duplicate.quick.fix.name", ""),
-    HCLBundle.message("duplicated.inspection.base.show.other.duplicates.quick.fix.name"),
+    HCLBundle.message("navigate.to.duplicate.quick.fix.name"),
+    HCLBundle.message("show.all.duplicates.quick.fix.name"),
     HCLBundle.message("action.TfInitRequiredAction.text", TfToolType.TERRAFORM.executableName),
     HCLBundle.message("disable.deep.variable.search"),
     HCLBundle.message("action.AddProviderAction.text"),

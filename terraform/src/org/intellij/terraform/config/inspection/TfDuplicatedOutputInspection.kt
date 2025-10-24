@@ -1,8 +1,7 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
 import com.intellij.codeInsight.intention.LowPriorityAction
-import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.modcommand.ModPsiUpdater
@@ -10,7 +9,6 @@ import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.util.NullableFunction
 import com.intellij.util.text.UniqueNameGenerator
 import org.intellij.terraform.config.model.getTerraformModule
 import org.intellij.terraform.config.patterns.TfPsiPatterns
@@ -29,8 +27,12 @@ class TfDuplicatedOutputInspection : TfDuplicatedInspectionBase() {
     override fun visitBlock(block: HCLBlock) {
       val duplicates = getDuplicates(block) ?: return
       val name = block.getNameElementUnquoted(1) ?: return
-      holder.registerProblem(block, HCLBundle.message("duplicated.output.inspection.output.declared.multiple.times.error.message", name),
-                             ProblemHighlightType.GENERIC_ERROR, *getFixes(block, duplicates))
+      holder.registerProblem(
+        block,
+        HCLBundle.message("duplicated.output.inspection.output.declared.multiple.times.error.message", name),
+        ProblemHighlightType.GENERIC_ERROR,
+        RenameOutputFix(), DeleteOutputFix(), *getDefaultFixes(block, duplicates)
+      )
     }
   }
 
@@ -48,22 +50,6 @@ class TfDuplicatedOutputInspection : TfDuplicatedInspectionBase() {
       return null
     }
     return sameOutputs
-  }
-
-  private fun getFixes(block: HCLBlock, duplicates: List<HCLBlock>): Array<LocalQuickFix> {
-    val fixes = ArrayList<LocalQuickFix>()
-
-    val first = duplicates.first { it != block }
-    first.containingFile?.virtualFile?.let { createNavigateToDupeFix(first, duplicates.size <= 2).let { fixes.add(it) } }
-    block.containingFile?.virtualFile?.let {
-      createShowOtherDupesFix(block, NullableFunction { param ->
-        getDuplicates(param as HCLBlock)
-      }).let { fixes.add(it) }
-    }
-
-    fixes.add(DeleteOutputFix())
-    fixes.add(RenameOutputFix())
-    return fixes.toTypedArray()
   }
 
   private class DeleteOutputFix : PsiUpdateModCommandQuickFix(), LowPriorityAction {
