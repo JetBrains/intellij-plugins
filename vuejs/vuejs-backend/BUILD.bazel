@@ -75,7 +75,6 @@ jvm_library(
     "@ultimate_lib//:eclipse-lsp4j",
     "@community//platform/backend/workspace",
     "@community//libraries/commons/text",
-    "@community//plugins/markdown/core:markdown",
     "//plugins/css/common/psi",
     "@community//platform/polySymbols/backend",
     "//contrib/vuejs/vuejs-common:common",

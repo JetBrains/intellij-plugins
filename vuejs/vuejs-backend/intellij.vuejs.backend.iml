@@ -63,7 +63,6 @@
     <orderEntry type="library" name="eclipse.lsp4j" level="project" />
     <orderEntry type="module" module-name="intellij.platform.backend.workspace" />
     <orderEntry type="module" module-name="intellij.libraries.commons.text" />
-    <orderEntry type="module" module-name="intellij.markdown" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.platform.polySymbols.backend" />
     <orderEntry type="module" module-name="intellij.vuejs.common" />
