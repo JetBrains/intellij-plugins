@@ -3,6 +3,7 @@ package org.jetbrains.idea.perforce;
 import com.intellij.execution.process.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PluginPathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
@@ -31,6 +32,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.vcsUtil.VcsUtil;
+import junit.framework.AssertionFailedError;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.application.*;
@@ -86,9 +88,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
 
     String tempDir = myTempDirFixture.findOrCreateDir(FileUtil.sanitizeFileName(getTestName())).getPath();
 
-    URL resource = getClass().getResource(getPerforceExecutableDir());
-    assertNotNull(myClientBinaryPath + " doesn't exist!", resource);
-    myClientBinaryPath = new File(resource.getFile());
+    myClientBinaryPath = resolveClientBinaryPath();
     assertTrue(myClientBinaryPath + " doesn't exist!", myClientBinaryPath.exists());
     myClientRoot = createSubDirectory(tempDir, "clientRoot");
     setupP4Ignore();
@@ -110,12 +110,33 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     }
   }
 
-  protected String getPerforceExecutableDir() {
+  /**
+   * Expect a path relative to {@code testResources} start with {@code /} path separator.
+   */
+  protected @NotNull String getPerforceExecutableDir() {
     return "/testData/p4d/" + getPerforceVersion();
   }
 
-  protected String getPerforceVersion() {
+  protected @NotNull String getPerforceVersion() {
     return "2015.1";
+  }
+
+  private @NotNull File resolveClientBinaryPath() {
+    String perforceExecutableDir = getPerforceExecutableDir();
+    URL resource = getClass().getResource(perforceExecutableDir);
+    assertNotNull(perforceExecutableDir + " doesn't exist!", resource);
+
+    switch (resource.getProtocol()) {
+      case "file" -> {
+        return new File(resource.getFile());
+      }
+      case "jar" -> {
+        //noinspection IO_FILE_USAGE
+        return PluginPathManager.getPluginHome("PerforceIntegration")
+          .toPath().resolve("testResources" + perforceExecutableDir).toFile();
+      }
+      default -> throw new AssertionFailedError("Unsupported protocol: " + resource.getProtocol());
+    }
   }
 
   private void initProject(final File root) {
