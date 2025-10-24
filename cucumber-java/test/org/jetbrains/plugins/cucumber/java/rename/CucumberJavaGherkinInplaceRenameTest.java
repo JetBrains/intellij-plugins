@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.java.rename;
 
 
+import com.intellij.idea.TestFor;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.java.resolve.BaseCucumberJavaResolveTest;
@@ -32,12 +33,18 @@ public class CucumberJavaGherkinInplaceRenameTest extends BaseCucumberJavaResolv
     myFixture.checkResultByFile("test.feature", getTestName(true) + "/after/test.feature", false);
   }
 
+  public void testParameterDefinition() {
+    doTest("newStart");
+  }
+
+  @TestFor(issues = "IDEA-376182")
   public void _testParameterUsage() {
     // Disabled because of IDEA-376182.
     doTest("newStart");
   }
 
-  public void testParameterDefinition() {
+  @TestFor(issues = "IDEA-376182")
+  public void testParameterUsageOnUnresolvedStep() {
     doTest("newStart");
   }
 }
