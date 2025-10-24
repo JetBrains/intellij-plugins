@@ -2,18 +2,25 @@
 package org.jetbrains.astro.service
 
 import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionMergeStrategy
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
+import com.intellij.lang.typescript.lsp.LspAnnotationError
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 
 class AstroLspTypeScriptService(project: Project)
   : JSFrameworkLspTypeScriptService(project, AstroLspServerSupportProvider::class.java, AstroLspServerActivationRule) {
-  override val name = "Astro LSP"
-  override val prefix = "Astro"
+  override val name: String = "Astro LSP"
+  override val prefix: String = "Astro"
 
   override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy = CompletionMergeStrategy.MERGE
 
   override fun isServiceNavigationEnabled(): Boolean = true
+
+  override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
+    return (result as? LspAnnotationError)?.quickFixes ?: emptyList()
+  }
 }
