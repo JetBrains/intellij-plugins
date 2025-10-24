@@ -298,6 +298,9 @@
     <extensionPoint name="qodanaHighlightingSupportInfoProvider"
                     interface="org.jetbrains.qodana.extensions.QodanaHighlightingSupportInfoProvider"
                     dynamic="true"/>
+    <extensionPoint name="qodanaInspectionRetrievalLauncher"
+                    interface="org.jetbrains.qodana.extensions.QodanaInspectionRetrievalLauncher"
+                    dynamic="true"/>
     <extensionPoint name="qodanaHighlightInfoComparator"
                     interface="org.jetbrains.qodana.extensions.QodanaHighlightInfoComparator"
                     dynamic="true"/>
