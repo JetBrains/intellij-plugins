@@ -24,7 +24,7 @@ object JsxBlockUtil {
     }
 
     //only if it isn't an attribute
-    if (!ATTRIBUTES_REGEX.matches(text) /*&& text.length < 1000*/) {
+    if (!ATTRIBUTES_REGEX.matches(text) && text.length < 1000) {
       TAG_REGEX.findAll(text).iterator().forEach {
         groups.add(Pair(it.groupValues[0], it.range))
       }
