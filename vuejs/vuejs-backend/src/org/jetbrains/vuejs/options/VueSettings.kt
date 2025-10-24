@@ -93,15 +93,16 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
 }
 
 class VueSettingsState : BaseState() {
-  var innerServiceType by enum(VueServiceSettings.AUTO)
-  var packageName by string(defaultPackageKey)
-  var useTypesFromServer by property(false)
+  var innerServiceType: VueServiceSettings by enum(VueServiceSettings.AUTO)
+  var packageName: String? by string(defaultPackageKey)
+  var useTypesFromServer: Boolean by property(false)
   var tsPluginPackageName: String? by string(defaultPackageKey)
   var tsPluginPreviewEnabled: Boolean by property(true)
 }
 
 enum class VueServiceSettings {
   AUTO,
+
   /**
    * Must work exactly the same as AUTO, kept for settings deserialization compatibility, aka Vue LSP
    */
