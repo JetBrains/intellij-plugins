@@ -22,7 +22,7 @@ class CucumberGradleProjectTaskRunnerTest : GradleProjectTaskRunnerTestCase() {
     delegatedBuild: Boolean, delegatedRun: Boolean,
     shouldBuild: Boolean, shouldRun: Boolean,
   ) {
-    testEmptyProject(gradleVersion) {
+    testJavaProject(gradleVersion) {
       Disposer.newDisposable().use { testDisposable ->
         val configurationType = CucumberJavaRunConfigurationType.getInstance()
         setupGradleDelegationMode(delegatedBuild, delegatedRun, testDisposable)
