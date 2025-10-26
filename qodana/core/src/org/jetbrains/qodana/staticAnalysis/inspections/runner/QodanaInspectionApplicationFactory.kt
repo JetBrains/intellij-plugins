@@ -158,7 +158,7 @@ class QodanaInspectionApplicationFactory {
         yamlConfig.failureConditions.copy(severityThresholds = yamlConfig.failureConditions.severityThresholds.copy(any = failThresholdArg))
       }
     )
-    if (qodanaConfig.script.name == "distillate-commits") {
+    if (qodanaConfig.script.name == "distillate-commits" || qodanaConfig.script.name == "pr-edict") {
       qodanaConfig.apply {
         forceThresholdsOnMainProfile = true
         fileSuspendThreshold = -1
