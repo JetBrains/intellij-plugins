@@ -23,7 +23,8 @@ open class QodanaRunContext(
   val project: Project,
   val loadedProfile: LoadedProfile,
   val scope: QodanaAnalysisScope,
-  val qodanaProfile: QodanaProfile,
+  //TODO fix
+  var qodanaProfile: QodanaProfile,
   val config: QodanaConfig,
   val runCoroutineScope: CoroutineScope,
   val messageReporter: QodanaMessageReporter,

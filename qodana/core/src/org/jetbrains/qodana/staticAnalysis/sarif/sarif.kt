@@ -92,7 +92,7 @@ fun createRun(): Run {
     .withOriginalUriBaseIds(createOriginalUriBaseIds())
 }
 
-internal fun SarifReport.getOrCreateRun(): Run {
+fun SarifReport.getOrCreateRun(): Run {
   return if (runs.isNotEmpty()) {
     runs.first()
   } else {

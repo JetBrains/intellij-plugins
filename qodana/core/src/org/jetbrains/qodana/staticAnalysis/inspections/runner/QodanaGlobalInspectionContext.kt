@@ -34,7 +34,7 @@ open class QodanaGlobalInspectionContext(
   override fun getOutputPath(): Path = outputPath
 
   val profileState: QodanaProfile.QodanaProfileState = profile.createState(this)
-  val effectiveProfile: QodanaInspectionProfile = profile.effectiveProfile
+  var effectiveProfile: QodanaInspectionProfile = profile.effectiveProfile
   val database = QodanaToolResultDatabase.create(outputPath)
   val consumer = QodanaProblemConsumer(project, database, profileState, qodanaRunScope)
 

@@ -158,7 +158,7 @@ class QodanaProfile(
     }
 
     fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
-      return stateByInspectionId[inspectionId]?.shouldSkip(inspectionId, file, wrappers) ?: true
+      return stateByInspectionId[inspectionId]?.shouldSkip(inspectionId, file, wrappers) ?: false
     }
 
     fun onFinish() {
