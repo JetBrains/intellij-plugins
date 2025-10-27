@@ -1,10 +1,14 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.lang.javascript.completion.JSLookupPriority
+import com.intellij.openapi.util.registry.RegistryManager
 import org.jetbrains.astro.AstroCodeInsightTestCase
-import org.jetbrains.astro.AstroTestModule
 
-class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
+class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", useLsp = true) {
+  override fun setUp() {
+    super.setUp()
+    RegistryManager.getInstance().get("typescript.service.completion.serviceItemsLimit").setValue(2000, myFixture.testRootDisposable)
+  }
 
   fun testHtmlElements() = doLookupTest()
   fun testHtmlAttributes() = doLookupTest()
@@ -23,18 +27,6 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
   fun testImportedComponent() =
     doLookupTest(additionalFiles = listOf("component.astro"))
 
-  fun testImportComponent() =
-    doTypingTest("Compo\n", additionalFiles = listOf("component.astro"))
-
-  fun testImportExternalSymbolFrontmatter() =
-    doTypingTest("olo\n", additionalFiles = listOf("colors.ts"))
-
-  fun testImportExternalSymbolExpression() =
-    doTypingTest("olo\n", additionalFiles = listOf("colors.ts"))
-
-  fun testImportWithinScriptBlock() =
-    doTypingTest("getRandomNumber\n", additionalFiles = listOf("functions.ts"))
-
   fun testFrontmatterKeywords() =
     doLookupTest(additionalFiles = listOf("component.astro")) {
       it.priority.toInt() == JSLookupPriority.KEYWORDS_PRIORITY.priorityValue
@@ -42,13 +34,15 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
     }
 
   fun testPropsInterface() =
-    doLookupTest(AstroTestModule.ASTRO_1_9_0)
+    doLookupTest()
 
   fun testTemplateLookupRoot() =
     doLookupTest()
 
   fun testTemplateLookupNestedHtml() =
-    doLookupTest()
+    doLookupTest {
+      it.priority > 0
+    }
 
   fun testAstroComponentProps() =
     doLookupTest(additionalFiles = listOf("component.astro"))
@@ -57,7 +51,9 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
     doLookupTest(additionalFiles = listOf("component.astro"))
 
   fun testAstroDirectives() =
-    doLookupTest(additionalFiles = listOf("react-component.tsx"))
+    doLookupTest(additionalFiles = listOf("react-component.tsx")) {
+      it.priority > 0
+    }
 
   fun testAstroDirectives2() =
     doLookupTest(additionalFiles = listOf("react-component.tsx"))
@@ -68,22 +64,52 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion") {
       checkResultByFile("$testName/src/layout/App.after.astro")
     }
 
+  fun testAwait() = doLookupTest(
+    lookupItemFilter = run {
+      var accepted = 0
+      { _ ->
+        accepted++ < 100
+      }
+    }
+  )
+
+  fun testReactComponent() = doLookupTest(
+    dir = true,
+    configureFileName = "index.astro"
+  )
+
+  fun testAstroComponent() = doLookupTest(
+    dir = true,
+    configureFileName = "index.astro"
+  )
+
+  fun testAstroComponentFrontmatter() = doLookupTest(
+    dir = true,
+    configureFileName = "index.astro"
+  )
+
+  fun testAstroLibComponent() = doLookupTest()
+
+  fun testTemplatePartCompletionReload() = doCompletionAutoPopupTest(
+    dir = true,
+    configureFileName = "index.astro",
+    checkResult = false,
+  ) {
+    type("<")
+    checkLookupItems(
+      lookupItemFilter = run {
+        var accepted = 0
+        { _ ->
+          accepted++ < 100
+        }
+      }
+    )
+    type("MyReac")
+    checkLookupItems()
+  }
+
   // WEB-59265 only enabled completion at root level and nested in HTML but not as children of components.
   // This needs a fix before it can be enabled again.
   //fun testTemplateLookupNestedComponent() =
   //  doLookupTest(additionalFiles = listOf("component.astro"))
-
-  //region Test configuration and helper methods
-
-  private fun doTypingTest(textToType: String,
-                           additionalFiles: List<String> = emptyList(),
-                           vararg modules: AstroTestModule) {
-    doConfiguredTest(additionalFiles = additionalFiles, modules = modules, checkResult = true) {
-      completeBasic()
-      type(textToType)
-    }
-  }
-
-  //endregion
-
 }

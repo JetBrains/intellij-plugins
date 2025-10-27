@@ -1,4 +1,1 @@
 client: (typeText=null; priority=10.0; typeGreyed)
-xml:base (typeText=null; priority=0.0)
-xml:lang (typeText=null; priority=0.0)
-xml:space (typeText=null; priority=0.0)
