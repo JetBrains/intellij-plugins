@@ -15,7 +15,7 @@ import org.jetbrains.astro.service.settings.getAstroServiceSettings
 
 
 private val astroLspServerPackageVersion = PackageVersion.bundled<AstroLspServerPackageDescriptor>(
-  version = "2.10.0",
+  version = "2.15.5",
   pluginPath = "Astro",
   localPath = "astro-language-server",
   isBundledEnabled = {
