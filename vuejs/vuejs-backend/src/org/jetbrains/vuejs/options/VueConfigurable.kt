@@ -9,6 +9,7 @@ import com.intellij.lang.typescript.lsp.bind
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
+import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValueComponentPredicate
@@ -71,22 +72,19 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           .onChanged { tsPluginPreviewDisabled.set(!it.isSelected) }
       }
 
-      buttonsGroup(null, true) {
+      indent {
         row {
-          radioButton(
-            text = VueTSPluginVersion.V3_1_1.versionString,
-            value = VueTSPluginVersion.V3_1_1,
-          ).comment(VueBundle.message("vue.configurable.service.vue2.not.supported"))
-        }
-        row {
-          radioButton(
-            text = VueTSPluginVersion.V3_0_1.versionString,
-            value = VueTSPluginVersion.V3_0_1,
-          ).comment(VueBundle.message("vue.configurable.service.vue2.supported"))
+          label(VueBundle.message("vue.configurable.service.typescriptPluginBundleVersion"))
+            .comment(VueBundle.message("vue.configurable.service.vue2SupportNote"))
+
+          comboBox(
+            items = VueTSPluginVersion.entries,
+            renderer = SimpleListCellRenderer.create("", VueTSPluginVersion::versionString)
+          )
+            .enabledIf(tsPluginPreviewDisabled.not())
+            .bindItem(settings::tsPluginVersion.toNullableProperty())
         }
       }
-        .bind(settings::tsPluginVersion)
-        .enabledIf(!tsPluginPreviewDisabled)
     }
   }
 
