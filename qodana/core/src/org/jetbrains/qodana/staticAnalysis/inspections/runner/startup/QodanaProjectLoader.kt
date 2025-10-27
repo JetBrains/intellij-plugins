@@ -100,7 +100,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     val project = ProjectManagerEx.getInstanceEx().openProjectAsync(config.projectPath, options) ?: throw QodanaException(
       InspectionsBundle.message("inspection.application.unable.open.project")
     )
-    Observation.awaitConfiguration(project)
+    doConfigure(project)
     QodanaWorkflowExtension.callManualProjectsImport(config, project)
     return project
   }
@@ -109,7 +109,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
     val openedProject = ProjectUtil.openOrImportAsync(config.projectPath) ?: throw QodanaException(
       InspectionsBundle.message("inspection.application.unable.open.project")
     )
-    Observation.awaitConfiguration(openedProject)
+    doConfigure(openedProject)
     if (isOpenedByPlatformProcessor(openedProject)) {
       QodanaWorkflowExtension.callAutomaticProjectsImport(config, openedProject)
     }
