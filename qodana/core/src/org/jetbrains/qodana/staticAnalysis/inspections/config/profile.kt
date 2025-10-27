@@ -60,14 +60,14 @@ data class QodanaProfileConfig(
     fun fromYaml(yaml: QodanaProfileYamlConfig, profileNameFromCli: String, profilePathFromCli: String): QodanaProfileConfig {
       val profileName = when {
         profileNameFromCli.isNotBlank() -> profileNameFromCli
-        yaml.base.name.isNotBlank() -> yaml.base.name
         yaml.name.isNotBlank() -> yaml.name
+        yaml.base.name.isNotBlank() -> yaml.base.name
         else -> ""
       }
       val profilePath = when {
         profilePathFromCli.isNotBlank() -> profilePathFromCli
-        yaml.base.path.isNotBlank() -> yaml.base.path
         yaml.path.isNotBlank() -> yaml.path
+        yaml.base.path.isNotBlank() -> yaml.base.path
         else -> ""
       }
       val base = QodanaProfileYamlConfig.BaseProfile(name = profileName, path = profilePath)
