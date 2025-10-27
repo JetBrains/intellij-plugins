@@ -12,15 +12,13 @@ class AstroQuickFixHighlightingTest : AstroCodeInsightTestCase("codeInsight/high
   }
 
   fun testAutoImport() {
-    doConfiguredTest(dir = true, configureFileName = "index.astro") {
+    doConfiguredTest(additionalFiles = listOf("MyComponent.astro"), checkResult = true) {
       checkLspHighlighting()
       val intention = availableIntentions.firstOrNull { it.text.contains("import") && it.text.contains("MyComponent") }
                       ?: availableIntentions.firstOrNull { it.familyName.contains("import", ignoreCase = true) && it.text.contains("MyComponent") }
 
       assertNotNull("Auto-import quick fix for 'MyComponent' was not found among available intentions", intention)
       launchAction(intention!!)
-
-      checkResultByFile("$testName/index.after.astro")
     }
   }
 }
