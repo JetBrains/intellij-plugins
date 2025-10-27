@@ -3,11 +3,11 @@ package org.jetbrains.astro
 
 import org.jetbrains.astro.codeInsight.*
 import org.jetbrains.astro.codeInsight.highlighting.AstroHighlightingTest
+import org.jetbrains.astro.codeInsight.highlighting.AstroQuickFixHighlightingTest
 import org.jetbrains.astro.codeInsight.highlighting.AstroSuppressedInspectionsHighlightingTest
 import org.jetbrains.astro.lang.AstroHighlightingLexerTest
 import org.jetbrains.astro.lang.AstroLexerTest
 import org.jetbrains.astro.lang.AstroParserTest
-import org.jetbrains.astro.service.AstroTypeScriptServiceGotoDeclarationTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
@@ -29,6 +29,7 @@ import org.junit.runners.Suite
   AstroGotoDeclarationTest::class,
   AstroFindUsagesTest::class,
   AstroRenameTest::class,
-  AstroTypeScriptServiceGotoDeclarationTest::class,
+  AstroQuickFixHighlightingTest::class,
+  AstroCompletionTypingTest::class,
 )
 class AstroTestSuite

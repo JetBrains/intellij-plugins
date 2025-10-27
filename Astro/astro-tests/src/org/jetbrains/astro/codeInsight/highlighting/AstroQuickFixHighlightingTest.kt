@@ -1,14 +1,13 @@
-package org.jetbrains.astro.service
+package org.jetbrains.astro.codeInsight.highlighting
 
 import com.intellij.platform.lsp.tests.checkLspHighlighting
-import org.jetbrains.astro.AstroLspTestCase
+import org.jetbrains.astro.AstroCodeInsightTestCase
 
-class AstroServiceHighlightingTest : AstroLspTestCase("service/highiligting") {
+class AstroQuickFixHighlightingTest : AstroCodeInsightTestCase("codeInsight/highlighting/quickFix", useLsp = true) {
 
-  fun testAutoImportQuickFix() {
+  fun testAutoImport() {
     doConfiguredTest(dir = true, configureFileName = "index.astro") {
       checkLspHighlighting()
-
       val intention = availableIntentions.firstOrNull { it.text.contains("import") && it.text.contains("MyComponent") }
                       ?: availableIntentions.firstOrNull { it.familyName.contains("import", ignoreCase = true) && it.text.contains("MyComponent") }
 

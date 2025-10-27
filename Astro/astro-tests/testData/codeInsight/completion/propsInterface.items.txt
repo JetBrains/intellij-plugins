@@ -8,3 +8,11 @@ propertyIsEnumerable (typeText='boolean'; priority=98.0)
 toLocaleString (typeText='string'; priority=98.0)
 toString (typeText='string'; priority=98.0)
 valueOf (typeText='Object'; priority=98.0)
+export const getStaticPaths = (() => {
+	$1
+	return [];
+}) satisfies GetStaticPaths; (typeText='Create a new getStaticPaths function'; priority=0.0; typeGreyed)
+export const prerender = ${1|true,false,import.meta.env.|} (typeText='Add prerender export'; priority=0.0; typeGreyed)
+interface Props {
+	$1
+} (typeText='Create a new interface to type your props'; priority=0.0; typeGreyed)
