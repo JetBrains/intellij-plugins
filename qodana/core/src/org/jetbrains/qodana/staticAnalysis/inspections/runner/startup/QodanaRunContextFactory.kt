@@ -20,23 +20,23 @@ import kotlin.io.path.readText
 private val logger = logger<QodanaRunContextFactory>()
 
 fun interface QodanaRunContextFactory {
-  suspend fun openRunContext(): QodanaRunContext
+  suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext
 }
 
 internal class DefaultRunContextFactory(
   private val reporter: QodanaMessageReporter,
   private val config: QodanaConfig,
-  private val scope: CoroutineScope,
+  //private val scope: CoroutineScope,
   private val projectLoader: QodanaProjectLoader = QodanaProjectLoader(reporter),
 ) : QodanaRunContextFactory {
 
-  override suspend fun openRunContext(): QodanaRunContext {
+  override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     val project = projectLoader.openProject(config)
     projectLoader.configureProject(config, project)
     reporter.reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.initializing.project"))
 
     val loadedProfile = LoadedProfile.load(config, project, reporter)
-    reportUsage(loadedProfile, project)
+    reportUsage(loadedProfile, project, scope)
     reporter.reportMessage(1, InspectionsBundle.message("inspection.application.chosen.profile.log.message", loadedProfile.profile.name))
     scope.launch {
       try {
@@ -47,11 +47,11 @@ internal class DefaultRunContextFactory(
       }
     }
     // Awkward, but the easiest way to share code with tests which need to control parts of the run context
-    return PreconfiguredRunContextFactory(config, reporter, project, loadedProfile, scope)
-      .openRunContext()
+    return PreconfiguredRunContextFactory(config, reporter, project, loadedProfile)
+      .openRunContext(scope)
   }
 
-  private fun reportUsage(loadedProfile: LoadedProfile, project: Project) {
+  private fun reportUsage(loadedProfile: LoadedProfile, project: Project, scope: CoroutineScope) {
     UsageCollector.logEnv(qodanaEnv().QODANA_ENV.value)
     UsageCollector.logConfig(config, loadedProfile.nameForReporting, loadedProfile.pathForReporting)
     UsageCollector.logLicense(config.license)

@@ -6,6 +6,9 @@ import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.Options
 import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.job
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
@@ -33,52 +36,55 @@ abstract class ComparingScript(
   override suspend fun execute(report: SarifReport): QodanaScriptResult {
     val run = report.getOrCreateRun()
     val scriptResult: QodanaScriptResult
-    val runContext = contextFactory.openRunContext()
-    fillComponents(run.tool, runContext.qodanaProfile)
-    runContext.appendRunDetails(run, analysisKind)
+    return supervisorScope {
+      val runContext = contextFactory.openRunContext(this)
+      fillComponents(run.tool, runContext.qodanaProfile)
+      runContext.appendRunDetails(run, analysisKind)
 
-    setUpAll(runContext)
+      setUpAll(runContext)
 
-    val beforeRun: Run = createRun()
-    runContext.appendRunDetails(beforeRun, analysisKind)
-    val beforeReport = createSarifReport(mutableListOf(beforeRun))
+      val beforeRun: Run = createRun()
+      runContext.appendRunDetails(beforeRun, analysisKind)
+      val beforeReport = createSarifReport(mutableListOf(beforeRun))
 
-    try {
-      setUpBefore(runContext)
       try {
-        runBefore(beforeReport, beforeRun, runContext)
+        setUpBefore(runContext)
+        try {
+          runBefore(beforeReport, beforeRun, runContext)
+        }
+        finally {
+          tearDownBefore(runContext)
+        }
+
+        setUpAfter(runContext)
+        try {
+          scriptResult = runAfter(report, run, runContext)
+        }
+        finally {
+          tearDownAfter(runContext)
+        }
       }
       finally {
-        tearDownBefore(runContext)
+        tearDownAll(runContext)
+        withContext(NonCancellable) {
+          runContext.writeProjectDescriptionAfterWork()
+        }
       }
 
-      setUpAfter(runContext)
-      try {
-        scriptResult = runAfter(report, run, runContext)
-      }
-      finally {
-        tearDownAfter(runContext)
-      }
+      writeReport(Paths.get(PathManager.getLogPath(), "before.qodana.sarif.json"), SarifReport().withRuns(listOf(beforeRun)))
+      writeReport(Paths.get(PathManager.getLogPath(), "after.qodana.sarif.json"), SarifReport().withRuns(listOf(run)))
+      // compare before and current, keeping only 'NEW' issues in current
+      BaselineCalculation.compare(report, beforeReport, Options(false, false, false))
+      // compare current and baseline to generate the final report
+      applyBaselineCalculation(report, config, runContext.scope, messageReporter)
+
+      maybeApplyFixes(run, runContext)
+
+      SarifReportContributor.runContributors(run, runContext.project, runContext.config)
+      CoverageFeatureEventsCollector.logCoverageStatistics(runContext, scriptResult.coverageStats)
+      this.coroutineContext.job.cancelChildren()
+      scriptResult
     }
-    finally {
-      tearDownAll(runContext)
-      withContext(NonCancellable) {
-        runContext.writeProjectDescriptionAfterWork()
-      }
-    }
-
-    writeReport(Paths.get(PathManager.getLogPath(), "before.qodana.sarif.json"), SarifReport().withRuns(listOf(beforeRun)))
-    writeReport(Paths.get(PathManager.getLogPath(), "after.qodana.sarif.json"), SarifReport().withRuns(listOf(run)))
-    // compare before and current, keeping only 'NEW' issues in current
-    BaselineCalculation.compare(report, beforeReport, Options(false, false, false))
-    // compare current and baseline to generate the final report
-    applyBaselineCalculation(report, config, runContext.scope, messageReporter)
-
-    maybeApplyFixes(run, runContext)
-
-    SarifReportContributor.runContributors(run, runContext.project, runContext.config)
-    CoverageFeatureEventsCollector.logCoverageStatistics(runContext, scriptResult.coverageStats)
-    return scriptResult
   }
 
   /**

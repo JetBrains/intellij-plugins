@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
 import com.intellij.openapi.vfs.toNioPathOrNull
+import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
@@ -67,12 +68,12 @@ private class TeamcityRunContextFactory(
   private val changes: List<TeamcityChangesRecord>
 ) : QodanaRunContextFactory {
 
-  override suspend fun openRunContext(): QodanaRunContext {
+  override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     val recordMap = changes.filter { it.status != TeamcityChangeStatus.REMOVED }
       .associateBy { Path(it.relativePath) }
     val scopeBuffer = StringBuilder()
     scopeBuffer.appendLine("Script teamcity-changes scope:")
-    val context = delegate.openRunContext()
+    val context = delegate.openRunContext(scope)
     return context.asIncremental(
       emptyMap(),
       recordMap.keys

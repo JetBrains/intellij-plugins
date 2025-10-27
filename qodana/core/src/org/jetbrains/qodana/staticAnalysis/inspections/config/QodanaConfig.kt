@@ -185,9 +185,11 @@ data class QodanaConfig(
   val skipPreamble: Boolean = System.getProperty("qodana.skip.preamble").toBoolean(), // Set by CLI for second run in scoped script
   val skipResultStrategy: SkipResultStrategy = SkipResultStrategy.fromParameters(),
   val stopThreshold: Int? = System.getProperty("qodana.stop.threshold")?.toInt(),
-  val fileSuspendThreshold: Int = System.getProperty("qodana.file.suspend.threshold", DEFAULT_FILE_SUSPEND_THRESHOLD).toInt(),
-  val moduleSuspendThreshold: Int = System.getProperty("qodana.module.suspend.threshold", DEFAULT_MODULE_SUSPEND_THRESHOLD).toInt(),
-  val projectSuspendThreshold: Int = System.getProperty("qodana.project.suspend.threshold", DEFAULT_PROJECT_SUSPEND_THRESHOLD).toInt(),
+  //TODO: Fix
+  var forceThresholdsOnMainProfile: Boolean = System.getProperty("qodana.force.thresholds.on.main.profile").toBoolean(),
+  var fileSuspendThreshold: Int = System.getProperty("qodana.file.suspend.threshold", DEFAULT_FILE_SUSPEND_THRESHOLD).toInt(),
+  var moduleSuspendThreshold: Int = System.getProperty("qodana.module.suspend.threshold", DEFAULT_MODULE_SUSPEND_THRESHOLD).toInt(),
+  var projectSuspendThreshold: Int = System.getProperty("qodana.project.suspend.threshold", DEFAULT_PROJECT_SUSPEND_THRESHOLD).toInt(),
 ) {
 
   companion object {

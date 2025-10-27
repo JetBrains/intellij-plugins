@@ -139,8 +139,8 @@ class QodanaProfile(
   }
 
   class QodanaProfileState(val mainState: MainInspectionGroup.State,
-                           val stateByInspectionId: Map<String, NamedInspectionGroup.State>,
-                           val stateByGroupName: Map<String, NamedInspectionGroup.State>) {
+                           val stateByInspectionId: Map<String, GroupState>,
+                           val stateByGroupName: Map<String, GroupState>) {
 
     private val receivedCounters = ConcurrentHashMap<String, Int>()
 

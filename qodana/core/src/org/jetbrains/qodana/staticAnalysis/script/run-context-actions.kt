@@ -28,6 +28,7 @@ import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
+import org.jetbrains.qodana.staticAnalysis.profile.GroupState
 import org.jetbrains.qodana.staticAnalysis.profile.NamedInspectionGroup
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
@@ -98,7 +99,7 @@ suspend fun QodanaRunContext.runAnalysis(
 
 suspend fun QodanaRunContext.getResultsForInspectionGroup(
   context: QodanaGlobalInspectionContext,
-  inspectionGroupState: NamedInspectionGroup.State = context.profileState.mainState
+  inspectionGroupState: GroupState = context.profileState.mainState
 ): List<Result> {
   val consumer = context.consumer
   consumer.close()

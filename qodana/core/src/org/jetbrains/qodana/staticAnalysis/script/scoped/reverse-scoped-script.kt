@@ -8,6 +8,7 @@ import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.Options
 import com.jetbrains.qodana.sarif.model.PropertyBag
 import com.jetbrains.qodana.sarif.model.Run
 import com.jetbrains.qodana.sarif.model.SarifReport
+import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
@@ -203,11 +204,11 @@ internal open class ReverseScopedRunContextFactory(
       .toMap()
   }
 
-  override suspend fun openRunContext(): QodanaRunContext {
+  override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     val changedFiles = parseChangedFiles(scopeFile)
     val addedLines = collectAddedLines(changedFiles, config)
     val paths = changedFiles.files.map { Path.of(it.path) }
-    val context = delegate.openRunContext()
+    val context = delegate.openRunContext(scope)
     val files = resolveVirtualFiles(config.projectPath, paths)
 
     val additionalFiles = computeAdditionalFiles(context, files, changedFiles.extendedFiles)

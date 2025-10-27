@@ -1,6 +1,8 @@
 package org.jetbrains.qodana.staticAnalysis.profile
 
+import com.intellij.codeInspection.ex.EnabledInspectionsProvider
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import kotlinx.coroutines.cancel
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaCancellationException
@@ -10,10 +12,15 @@ import java.util.concurrent.atomic.AtomicInteger
 class MainInspectionGroup(profile: QodanaInspectionProfile) : NamedInspectionGroup("", profile) {
   override fun createState(context: QodanaGlobalInspectionContext) = State(context)
 
-  inner class State(context: QodanaGlobalInspectionContext) : NamedInspectionGroup.State(context) {
+  inner class State(context: QodanaGlobalInspectionContext) : GroupState(context, this) {
+    val thresholdState: StateWithThreshold? =
+      if (context.config.forceThresholdsOnMainProfile) StateWithThreshold(context, this@MainInspectionGroup) else null
+
     private val problemsCounter = AtomicInteger()
 
     override fun onConsumeProblem(inspectionId: String, relativePath: String?, module: String?): Boolean {
+      val keepConsuming = thresholdState?.onConsumeProblem(inspectionId, relativePath, module)
+      if (keepConsuming == false) return false
       if (context.config.isAboveStopThreshold(problemsCounter.get())) {
         val errorMessage = "Analysis cancelled since stopThreshold ${context.config.stopThreshold} is surpassed."
 
@@ -22,6 +29,16 @@ class MainInspectionGroup(profile: QodanaInspectionProfile) : NamedInspectionGro
       }
       problemsCounter.incrementAndGet()
       return super.onConsumeProblem(inspectionId, relativePath, module)
+    }
+
+
+    override fun onFinish() {
+      thresholdState?.onFinish()
+      super.onFinish()
+    }
+
+    override fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {
+      return thresholdState?.shouldSkip(inspectionId, file, wrappers) ?: false
     }
 
     fun getCount() = problemsCounter.get()

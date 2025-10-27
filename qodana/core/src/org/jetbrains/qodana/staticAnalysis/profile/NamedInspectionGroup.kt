@@ -8,29 +8,27 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspec
 import java.util.concurrent.ConcurrentHashMap
 
 abstract class NamedInspectionGroup(val name: String, val profile: QodanaInspectionProfile) {
-  open fun createState(context: QodanaGlobalInspectionContext): State = State(context)
+  open fun createState(context: QodanaGlobalInspectionContext): GroupState = GroupState(context, this)
 
   open fun applyConfig(config: QodanaConfig, project: Project, addDefaultExclude: Boolean): NamedInspectionGroup {
     profile.tools.forEach { tool ->
-      if (tool.tools.none { it.isEnabled } ) {
+      if (tool.tools.none { it.isEnabled }) {
         tool.isEnabled = false
       }
     }
     return this
   }
+}
 
-  open inner class State(val context: QodanaGlobalInspectionContext) {
-    private val inspectionIds = ConcurrentHashMap<String, Boolean>()
+open class GroupState(val context: QodanaGlobalInspectionContext, val inspectionGroup: NamedInspectionGroup) {
+  private val inspectionIds = ConcurrentHashMap<String, Boolean>()
 
-    open fun onConsumeProblem(inspectionId: String, relativePath: String?, module: String?): Boolean {
-      inspectionIds[inspectionId] = true
-      return true
-    }
-
-    open fun onFinish() = Unit
-
-    open fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers) = false
-
-    val inspectionGroup get() = this@NamedInspectionGroup
+  open fun onConsumeProblem(inspectionId: String, relativePath: String?, module: String?): Boolean {
+    inspectionIds[inspectionId] = true
+    return true
   }
+
+  open fun onFinish() = Unit
+
+  open fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers) = false
 }

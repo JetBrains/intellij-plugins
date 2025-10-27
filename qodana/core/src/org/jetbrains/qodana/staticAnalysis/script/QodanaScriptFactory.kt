@@ -57,17 +57,18 @@ interface QodanaScriptFactory {
     val EP_NAME: ExtensionPointName<QodanaScriptFactory> = create("org.intellij.qodana.qodanaScriptFactory")
 
     fun parseConfigFromArgument(argument: String): QodanaScriptConfig? {
+      val unEscaped = argument.trim('"')
       for (factory in EP_NAME.extensionList) {
         val scriptName = factory.scriptName
-        if (argument.startsWith(scriptName)) {
-          val afterName = argument.substring(scriptName.length)
+        if (unEscaped.startsWith(scriptName)) {
+          val afterName = unEscaped.substring(scriptName.length)
           if (afterName.isEmpty()) {
             return QodanaScriptConfig(scriptName, factory.parseParameters(""))
           }
           if (afterName.startsWith(":")) {
             val parameters = afterName.substring(1)
             if (parameters.isEmpty()) {
-              throw QodanaException("Script parameters in '--script $argument' must not be empty")
+              throw QodanaException("Script parameters in '--script=$argument' must not be empty")
             }
             return QodanaScriptConfig(scriptName, factory.parseParameters(parameters))
           }

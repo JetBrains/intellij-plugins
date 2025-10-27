@@ -16,10 +16,9 @@ class PreconfiguredRunContextFactory(
   private val reporter: QodanaMessageReporter,
   private val project: Project,
   private val loadedProfile: LoadedProfile,
-  private val coroutineScope: CoroutineScope
 ) : QodanaRunContextFactory {
 
-  override suspend fun openRunContext(): QodanaRunContext {
+  override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     val analysisScope = QodanaAnalysisScope.fromConfigOrDefault(config, project, onPathNotFound = { notFound ->
       reporter.reportError(InspectionsBundle.message("inspection.application.directory.cannot.be.found", notFound))
     })
@@ -29,8 +28,7 @@ class PreconfiguredRunContextFactory(
       project,
       loadedProfile,
       analysisScope,
-      coroutineScope
-    ).openRunContext()
+    ).openRunContext(scope)
 
     QodanaWorkflowExtension.callBeforeLaunch(context)
     return context

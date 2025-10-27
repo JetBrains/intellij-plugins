@@ -150,7 +150,7 @@ class QodanaTestManager {
       val app = qodanaApp!!
       val loadedProfile = loadInspectionProfile(project)
       val runner = app.constructQodanaRunner(
-        PreconfiguredRunContextFactory(qodanaConfig, messageReporter, project, loadedProfile, this),
+        PreconfiguredRunContextFactory(qodanaConfig, messageReporter, project, loadedProfile),
         messageReporter
       )
       try {

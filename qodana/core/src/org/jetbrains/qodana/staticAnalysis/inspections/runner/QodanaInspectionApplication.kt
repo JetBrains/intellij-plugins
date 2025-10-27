@@ -43,6 +43,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolute
+import kotlin.io.path.exists
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.minutes
 
@@ -110,7 +111,7 @@ class QodanaInspectionApplication(
       waitForStatisticsSchemaUpdate()
       checkPlugins()
       supervisorScope {
-        val contextFactory = DefaultRunContextFactory(reporter, config, this)
+        val contextFactory = DefaultRunContextFactory(reporter, config)
         val runner = constructQodanaRunner(contextFactory)
         val sarif = launchRunner(runner)
         this.coroutineContext.job.cancelChildren()
@@ -158,25 +159,41 @@ class QodanaInspectionApplication(
     }
 
     if (!config.skipResultStrategy.shouldSkip(sarif.getOrCreateRun())) {
-      val openInIdeCloudMetadata = publishResultsToCloudIfNeeded()
+      val openInIdeCloudMetadata = publishResultsToCloudIfNeeded(config.outPath)
       if (openInIdeCloudMetadata != null) {
         val openInIdeMetadata = OpenInIdeMetadata(
           openInIdeCloudMetadata,
           OpenInIdeMetadata.Vcs(sarif.runs?.firstOrNull()?.versionControlProvenance?.firstOrNull()?.repositoryUri?.toString())
         )
-        writeOpenInIdeMetadata(openInIdeMetadata, config.outPath)
+        writeOpenInIdeMetadata(openInIdeMetadata, config.outPath.resolve(OPEN_IN_IDE_METADATA_JSON))
       }
+
+      publishFixedProblemsReport(sarif)
     }
     return sarif
   }
 
-  private suspend fun publishResultsToCloudIfNeeded(): OpenInIdeMetadata.Cloud? {
+  private suspend fun publishFixedProblemsReport(sarif: SarifReport) {
+    val fixedProblemsReport = config.outPath.resolve("edict/fixedIssuesReport/qodana.sarif.json")
+    if (!fixedProblemsReport.exists()) return
+
+    val openInIdeCloudMetadata = publishResultsToCloudIfNeeded(config.outPath.resolve("edict/fixedIssuesReport"))
+    if (openInIdeCloudMetadata != null) {
+      val openInIdeMetadata = OpenInIdeMetadata(
+        openInIdeCloudMetadata,
+        OpenInIdeMetadata.Vcs(sarif.runs?.firstOrNull()?.versionControlProvenance?.firstOrNull()?.repositoryUri?.toString())
+      )
+      writeOpenInIdeMetadata(openInIdeMetadata, config.outPath.resolve("edict/fixedIssuesReport/open-in-ide.json"))
+    }
+  }
+
+  private suspend fun publishResultsToCloudIfNeeded(path: Path): OpenInIdeMetadata.Cloud? {
     if (projectApi == null) return null
 
     return coroutineScope {
       copyConfigToOutputIfNeeded(config)
       val uploadedReportDeferred: Deferred<UploadedReport?> = async {
-        when (val result = publishToCloud(projectApi.api, config.outPath)) {
+        when (val result = publishToCloud(projectApi.api, path)) {
           is PublishResult.Success -> return@async result.uploadedReport
           is PublishResult.Error -> {
             reporter.reportError(result.message)
@@ -218,7 +235,7 @@ class QodanaInspectionApplication(
     runInterruptible(StaticAnalysisDispatchers.IO) {
       try {
         path.createParentDirectories()
-        Files.writeString(path.resolve(OPEN_IN_IDE_METADATA_JSON), json)
+        Files.writeString(path, json)
       }
       catch (e: IOException) {
         thisLogger().error("Failed to write $openInIdeMetadata", e)
@@ -229,7 +246,7 @@ class QodanaInspectionApplication(
   @Suppress("unused")
   private class OpenInIdeMetadata(
     val cloud: Cloud,
-    val vcs: Vcs
+    val vcs: Vcs,
   ) {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     class Cloud(

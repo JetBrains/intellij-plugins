@@ -21,11 +21,10 @@ class QodanaInIdeRunContextFactory(
   private val project: Project,
   private val loadedProfile: LoadedProfile,
   private val analysisScope: QodanaAnalysisScope,
-  private val coroutineScope: CoroutineScope
 ) : QodanaRunContextFactory {
-  override suspend fun openRunContext(): QodanaRunContext {
+  override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     project.addQodanaAnalysisConfig(config)
-    coroutineScope.awaitCancellationAndInvoke {
+    scope.awaitCancellationAndInvoke {
       project.removeQodanaAnalysisConfig()
     }
 
@@ -43,7 +42,7 @@ class QodanaInIdeRunContextFactory(
       analysisScope,
       qodanaProfile,
       config,
-      coroutineScope,
+      scope,
       reporter
     )
 

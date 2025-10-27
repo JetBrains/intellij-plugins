@@ -30,13 +30,13 @@ abstract class QodanaConfigurationIntegrationBaseTest : HeavyPlatformTestCase() 
     for ((path, content) in projectFiles) createTempFile("${testProject.basePath}/$path", content)
     val app = QodanaInspectionApplicationFactory().buildApplication(cliArgs)!!
     val loadedProfile = LoadedProfile.load(app.config, testProject, QodanaMessageReporter.DEFAULT)
-    val contextFactory = PreconfiguredRunContextFactory(app.config, QodanaMessageReporter.DEFAULT, testProject, loadedProfile, scope)
+    val contextFactory = PreconfiguredRunContextFactory(app.config, QodanaMessageReporter.DEFAULT, testProject, loadedProfile, )
     val runner = app.constructQodanaRunner(contextFactory)
 
     val script = runner.script
     val scriptContextFactory = (script as? QodanaSingleRunScript)?.runContextFactory ?: contextFactory
 
-    return ScriptEnv(script, scriptContextFactory.openRunContext(), app.config, app)
+    return ScriptEnv(script, scriptContextFactory.openRunContext(scope), app.config, app)
   }
 
   @Language("XML")

@@ -161,8 +161,7 @@ class QodanaRunInIdeServiceImpl(private val project: Project, private val scope:
         project,
         loadedInspectionProfile,
         analysisScope,
-        scope
-      ).openRunContext()
+      ).openRunContext(scope)
     }
 
     private suspend fun writeQodanaYaml(destination: Path) {

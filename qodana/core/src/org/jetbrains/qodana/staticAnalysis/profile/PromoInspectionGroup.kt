@@ -15,9 +15,9 @@ internal const val QODANA_PROMO_ANALYZE_EACH_N_FILE_KEY = "qodana.promo.analyze.
  */
 internal class PromoInspectionGroup(name: String, profile: QodanaInspectionProfile) : NamedInspectionGroup(name, profile) {
 
-  override fun createState(context: QodanaGlobalInspectionContext): State = PromoState(context)
+  override fun createState(context: QodanaGlobalInspectionContext): GroupState = PromoState(context)
 
-  inner class PromoState(context: QodanaGlobalInspectionContext) : State(context) {
+  inner class PromoState(context: QodanaGlobalInspectionContext) : GroupState(context, this) {
     private val analyzeEachNth: Int = System.getProperty(QODANA_PROMO_ANALYZE_EACH_N_FILE_KEY, "10").toInt()
 
     override fun shouldSkip(inspectionId: String, file: PsiFile, wrappers: EnabledInspectionsProvider.ToolWrappers): Boolean {

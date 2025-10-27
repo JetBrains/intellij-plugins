@@ -4,6 +4,7 @@ import com.jetbrains.qodana.sarif.SarifUtil
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation
 import com.jetbrains.qodana.sarif.baseline.BaselineCalculation.Options
 import com.jetbrains.qodana.sarif.model.SarifReport
+import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.QodanaCoverageComputationState
@@ -93,11 +94,11 @@ internal class ScopedRunContextFactory(
   val config: QodanaConfig,
 ) : QodanaRunContextFactory {
 
-  override suspend fun openRunContext(): QodanaRunContext {
+  override suspend fun openRunContext(scope: CoroutineScope): QodanaRunContext {
     val changedFiles = parseChangedFiles(scopeFile)
     val paths = changedFiles.files.map { Path.of(it.path) }
     val addedLines = collectAddedLines(changedFiles, config)
-    return delegate.openRunContext()
+    return delegate.openRunContext(scope)
       .asIncremental(changes = addedLines, paths = paths)
   }
 }

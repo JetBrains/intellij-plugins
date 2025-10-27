@@ -58,9 +58,8 @@ abstract class QodanaTestCase : LightPlatformTestCase() {
       QodanaMessageReporter.DEFAULT,
       project,
       loaded,
-      this
     )
-    val context = factory.openRunContext()
+    val context = factory.openRunContext(this)
     this.coroutineContext.cancelChildren() // to cancel child coroutines which blocks execution
     context.qodanaProfile
   }
