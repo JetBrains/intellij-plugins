@@ -1,4 +1,4 @@
 # intention: "TfDuplicatedVariable"
-# fix: "Delete variable"
+# fix: "Delete block"
 # position: 0: "variable "x" {"
 #

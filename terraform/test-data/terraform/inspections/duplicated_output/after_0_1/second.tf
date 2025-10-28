@@ -1,4 +1,4 @@
 # intention: "TfDuplicatedOutput"
-# fix: "Delete output"
+# fix: "Delete block"
 # position: 0: "output "a" {"
 #
