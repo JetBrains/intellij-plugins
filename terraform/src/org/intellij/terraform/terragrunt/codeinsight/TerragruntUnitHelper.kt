@@ -5,6 +5,7 @@ import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.hcl.psi.HCLBlock
+import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.terragrunt.isTerragruntStack
 import org.intellij.terraform.terragrunt.model.StackRootBlocksMap
@@ -20,5 +21,23 @@ internal object TerragruntUnitHelper {
     val rootBlocks = if (isTerragruntStack(file)) StackRootBlocksMap else TerragruntRootBlocksMap
 
     return rootBlocks[type]?.properties.orEmpty()
+  }
+
+  fun collectMatchingBlocks(block: HCLBlock, keyword: String, firstArgument: String): List<HCLBlock> {
+    val found = mutableListOf<HCLBlock>()
+    val file = block.containingFile.originalFile
+
+    file.acceptChildren(object : HCLElementVisitor() {
+      override fun visitBlock(block: HCLBlock) {
+        if (keyword != block.getNameElementUnquoted(0)) return
+
+        val label = block.getNameElementUnquoted(1) ?: return
+        if (label != firstArgument) return
+
+        found.add(block)
+      }
+    })
+
+    return found
   }
 }

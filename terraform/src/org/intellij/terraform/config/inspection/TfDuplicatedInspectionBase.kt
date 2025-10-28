@@ -1,11 +1,14 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.inspection
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter
+import com.intellij.modcommand.ModPsiUpdater
+import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
@@ -16,9 +19,11 @@ import com.intellij.usages.UsageInfo2UsageAdapter
 import com.intellij.usages.UsageSearcher
 import com.intellij.usages.UsageViewManager
 import com.intellij.usages.UsageViewPresentation
+import com.intellij.util.text.UniqueNameGenerator
 import org.intellij.terraform.config.model.getTerraformSearchScope
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
+import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.isTerraformCompatiblePsiFile
 
@@ -109,3 +114,25 @@ internal class ShowDuplicatesQuickFix(psiElement: PsiElement, duplicates: Collec
   }
 }
 
+internal class RenameBlockQuickFix : PsiUpdateModCommandQuickFix() {
+  override fun getFamilyName(): String {
+    return HCLBundle.message("rename.hcl.block.quick.fix.name")
+  }
+
+  override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
+    val block = element as? HCLBlock ?: return
+    val currentName = block.name
+    val uniqueName = UniqueNameGenerator.generateUniqueNameOneBased(currentName) { it != currentName }
+    updater.rename(block, listOf(currentName, uniqueName))
+  }
+}
+
+internal class DeleteBlockQuickFix : PsiUpdateModCommandQuickFix(), LowPriorityAction {
+  override fun getFamilyName(): String {
+    return HCLBundle.message("delete.hcl.block.quick.fix.name")
+  }
+
+  override fun applyFix(project: Project, element: PsiElement, updater: ModPsiUpdater) {
+    (element as? HCLBlock)?.delete()
+  }
+}
