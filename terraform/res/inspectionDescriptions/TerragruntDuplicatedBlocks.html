@@ -1,0 +1,35 @@
+<html>
+<body>
+<p>Reports duplicated Terragrunt blocks defined at the file root that share the same label (name), such as <code>dependency</code>,
+  <code>feature</code>, <code>generate</code>, <code>include</code>, <code>stack</code>, or <code>unit</code>.</p>
+
+<p>The inspection highlights multiple blocks of the same type that use an identical label. Only top‑level blocks are checked.</p>
+
+<p>Example:</p>
+<pre><code>
+unit "vpc" {
+  source = "git::git@github.com:acme/infrastructure-catalog.git//units/vpc?ref=v0.0.1"
+  path   = "vpc"
+}
+
+# duplicate
+unit "vpc" {
+  source = "git::git@github.com:acme/infrastructure-catalog.git//units/database?ref=v0.0.1"
+  path   = "database"
+  values = {
+    engine   = "postgres"
+    version  = "13"
+    vpc_path = "../vpc"
+  }
+}
+</code></pre>
+<!-- tooltip end -->
+<p>Quick fixes available:</p>
+<ul>
+  <li>Navigate to duplicate</li>
+  <li>Rename block</li>
+  <li>Show all duplicates</li>
+  <li>Delete block</li>
+</ul>
+</body>
+</html>

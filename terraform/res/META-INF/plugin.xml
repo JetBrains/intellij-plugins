@@ -568,6 +568,12 @@
     <!--Terragrunt support-->
     <fileType name="Terragrunt" language="HCL" patterns="*terragrunt.hcl;*root.hcl;*terragrunt.stack.hcl"
               implementationClass="org.intellij.terraform.terragrunt.TerragruntFileType" fieldName="INSTANCE"/>
+    <localInspection bundle="messages.HCLBundle" language="HCL"
+                     applyToDialects="true"
+                     implementationClass="org.intellij.terraform.terragrunt.inspection.TerragruntDuplicatedBlocksInspection"
+                     key="terragrunt.duplicated.blocks.inspection.display.name"
+                     groupKey="terragrunt.files.inspection.group.display.name"
+                     enabledByDefault="true" level="WARNING"/>
 
     <completion.contributor language="HCL" implementationClass="org.intellij.terraform.terragrunt.codeinsight.TerragruntCompletionContributor"/>
   </extensions>
