@@ -82,6 +82,7 @@ jvm_library(
     "@community//libraries/jediterm-ui",
     "//CIDR/cidr-common-testFramework/core",
     "//CIDR/cidr-common-testFramework/nolang",
+    "//CIDR/cidr-common-testFramework/nolang:nolang_test_lib",
     "//CIDR/cidr-core",
     "//CIDR/cidr-debugger/backend-api:cidr-debugger-backend",
     "//CIDR/cidr-debugger/core",
