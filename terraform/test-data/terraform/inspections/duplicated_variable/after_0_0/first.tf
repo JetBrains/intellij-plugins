@@ -1,5 +1,5 @@
 # intention: "TfDuplicatedVariable"
-# fix: "Rename variable"
+# fix: "Rename block"
 # position: 0: "variable "x" {"
 #
 variable "newVar" {

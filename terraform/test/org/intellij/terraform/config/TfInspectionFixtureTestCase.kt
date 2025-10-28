@@ -38,10 +38,12 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
     checkQuickFixes(globalContext, toolWrapper, sourceDir, testDir)
   }
 
-  private fun checkQuickFixes(globalContext: GlobalInspectionContextForTests,
-                              toolWrapper: LocalInspectionToolWrapper,
-                              sourceDir: VirtualFile,
-                              testDir: String) {
+  private fun checkQuickFixes(
+    globalContext: GlobalInspectionContextForTests,
+    toolWrapper: LocalInspectionToolWrapper,
+    sourceDir: VirtualFile,
+    testDir: String,
+  ) {
     for ((refEntity, descriptors) in globalContext.getPresentation(toolWrapper).problemElements.map) {
       for ((i, descriptor) in descriptors.withIndex()) {
         for (j in descriptor.fixes.orEmpty<QuickFix<*>>().indices) {
@@ -93,10 +95,9 @@ abstract class TfInspectionFixtureTestCase : InspectionFixtureTestCase() {
   //TODO: Fix preview
   private val skipPreview = setOf(
     "Add variable 'x'",
-    "Rename output",
     "Rename",
+    "Rename block",
     "Convert to HCL2 expression",
-    "Rename variable",
     "Run Terraform init",
   )
 
