@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -33,7 +32,6 @@ class VueScriptSetupLocalDirective(
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
         getDirectiveModifiers(source, mode),
-        DumbService.getInstance(source.project).modificationTracker,
         PsiModificationTracker.MODIFICATION_COUNT,
       )
     }

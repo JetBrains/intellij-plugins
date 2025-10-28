@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.DumbService
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -32,7 +31,6 @@ class VueTypedDirective(
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
         getDirectiveModifiers(source, VueMode.CLASSIC),
-        DumbService.getInstance(source.project).modificationTracker,
         PsiModificationTracker.MODIFICATION_COUNT,
       )
     }
