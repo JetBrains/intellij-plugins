@@ -449,7 +449,7 @@
                          nonDefaultProject="true"
     />
 
-    <advancedSetting default="true"
+    <advancedSetting default="false"
                      id="angular.gtr.toolbar.enable"
                      groupKey="advanced.setting.angular"
                      bundle="messages.Angular2Bundle"
