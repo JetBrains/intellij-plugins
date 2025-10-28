@@ -58,8 +58,8 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
 
     assertNotEmpty(completionVariants)
-    assertEquals(2, completionVariants.size)
-    assertContainsElements(completionVariants, "unit", "stack")
+    assertEquals(3, completionVariants.size)
+    assertContainsElements(completionVariants, "unit", "stack", "locals")
   }
 
   fun testAutoInsertCompletionTest() {

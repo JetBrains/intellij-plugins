@@ -174,7 +174,7 @@ internal val TerragruntBlocksAndAttributes: List<PropertyOrBlockType> = Terragru
 internal val UnitBlockType: BlockType = BlockType(TERRAGRUNT_UNIT, args = 1, properties = createStacksProperties())
 internal val StackBlockType: BlockType = BlockType(TERRAGRUNT_STACK, args = 1, properties = createStacksProperties())
 
-internal val StackRootBlocks: List<BlockType> = listOf(UnitBlockType, StackBlockType)
+internal val StackRootBlocks: List<BlockType> = listOf(UnitBlockType, StackBlockType, LocalsBlockType)
 internal val StackRootBlocksMap: Map<String, BlockType> = StackRootBlocks.associateBy { it.literal }
 
 private fun createHooksProperties(): Map<String, PropertyOrBlockType> = listOf(
