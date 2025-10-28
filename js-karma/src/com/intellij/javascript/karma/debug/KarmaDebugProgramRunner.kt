@@ -46,6 +46,7 @@ import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
+import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.jetbrains.debugger.wip.BrowserChromeDebugProcess
 import com.jetbrains.debugger.wip.WipRemoteVmConnection
 import org.jetbrains.concurrency.Promise
@@ -138,7 +139,7 @@ internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
           }
         }
       )
-      return KarmaUtil.withReusePolicy(session.runContentDescriptor, karmaServer)
+      return KarmaUtil.withReusePolicy((session as XDebugSessionImpl).getMockRunContentDescriptor(), karmaServer)
     }
 
     private fun createDebugProcess(session: XDebugSession,

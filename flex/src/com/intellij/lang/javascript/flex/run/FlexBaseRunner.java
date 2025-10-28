@@ -72,6 +72,7 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.*;
+import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -228,7 +229,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       }
     });
 
-    return debugSession.getRunContentDescriptor();
+    return ((XDebugSessionImpl)debugSession).getMockRunContentDescriptor();
   }
 
   private static void iosStopForwardTcpPortIfNeeded(final FlexBuildConfiguration bc, final BCBasedRunnerParameters params) {

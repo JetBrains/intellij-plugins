@@ -80,6 +80,7 @@ jvm_library(
     "//plugins/css/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
     "@community//platform/workspace/storage",
+    "@community//platform/xdebugger-impl:debugger-impl",
   ],
   runtime_deps = ["//contrib/flex/jps-plugin:jps"]
 )

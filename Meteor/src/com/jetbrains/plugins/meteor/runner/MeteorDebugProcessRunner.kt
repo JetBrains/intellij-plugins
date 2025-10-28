@@ -19,6 +19,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.Key
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
+import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.jetbrains.plugins.meteor.settings.MeteorSettings
 import org.jetbrains.debugger.connection.RemoteVmConnection
 import java.net.InetSocketAddress
@@ -42,7 +43,7 @@ class MeteorDebugProcessRunner : GenericProgramRunner<RunnerSettings>() {
       val socketAddress = configuration.computeDebugAddress(state)
       val mainProcessHandler = profileState.getProcessHandler(socketAddress.port)
       val session = createSession(environment, socketAddress, DefaultExecutionResult(null, mainProcessHandler))
-      return session.runContentDescriptor
+      return (session as XDebugSessionImpl).getMockRunContentDescriptor()
     }
 
     var mainProcessHandler: MeteorMainProcessHandler? = null
@@ -68,13 +69,14 @@ class MeteorDebugProcessRunner : GenericProgramRunner<RunnerSettings>() {
     val executionResult = DefaultExecutionResult(null, debuggableProcessHandler)
 
     val session = createSession(environment, socketAddress, executionResult)
-    val descriptor = session.runContentDescriptor
-    val view = session.consoleView
+    val descriptor = (session as XDebugSessionImpl).getMockRunContentDescriptor()
 
     val workingDirectory = configuration.effectiveWorkingDirectory
-    view.addMessageFilter(NodeConsoleAdditionalFilter(environment.project, workingDirectory))
-    view.addMessageFilter(UrlFilter())
-    view.addMessageFilter(MeteorErrorFilter(environment.project, workingDirectory))
+    session.consoleView?.run {
+      addMessageFilter(NodeConsoleAdditionalFilter(environment.project, workingDirectory))
+      addMessageFilter(UrlFilter())
+      addMessageFilter(MeteorErrorFilter(environment.project, workingDirectory))
+    }
 
     val process = session.debugProcess as JavaScriptDebugProcess<*>
     debuggableProcessHandler.setVmConnection(process.connection as RemoteVmConnection)
