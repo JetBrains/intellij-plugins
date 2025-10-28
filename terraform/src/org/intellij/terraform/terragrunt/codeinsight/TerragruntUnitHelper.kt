@@ -2,16 +2,26 @@
 package org.intellij.terraform.terragrunt.codeinsight
 
 import com.intellij.psi.PsiFile
+import org.intellij.terraform.config.Constants.HCL_LOCAL_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.model.PropertyOrBlockType
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.terragrunt.isTerragruntStack
+import org.intellij.terraform.terragrunt.*
 import org.intellij.terraform.terragrunt.model.StackRootBlocksMap
 import org.intellij.terraform.terragrunt.model.TerragruntRootBlocksMap
 
 internal object TerragruntUnitHelper {
+  val TerragruntScope = sortedSetOf(
+    TERRAGRUNT_INCLUDE,
+    HCL_LOCAL_IDENTIFIER,
+    TERRAGRUNT_DEPENDENCY,
+    TERRAGRUNT_GENERATE,
+    TERRAGRUNT_FEATURE
+  )
+  val StackScope = sortedSetOf(TERRAGRUNT_UNIT, TERRAGRUNT_STACK, HCL_LOCAL_IDENTIFIER)
+
   fun getBlockProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(0) ?: return emptyMap()
     // For now, only root blocks are supported

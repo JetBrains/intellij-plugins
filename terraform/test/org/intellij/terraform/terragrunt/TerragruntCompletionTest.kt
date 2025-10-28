@@ -7,6 +7,7 @@ import com.intellij.testFramework.common.waitUntilAssertSucceeds
 import org.intellij.terraform.config.CompletionTestCase
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.hcl.HCLLanguage
+import org.intellij.terraform.terragrunt.codeinsight.TerragruntUnitHelper
 import org.intellij.terraform.terragrunt.model.StackRootBlocks
 import org.intellij.terraform.terragrunt.model.TerragruntBlocksAndAttributes
 import org.intellij.terraform.terragrunt.model.TerragruntFunctions
@@ -172,7 +173,7 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
       inputs = {
         caller_arn = <caret>
       }
-    """.trimIndent(), getPartialMatcher(allTerragruntFunctions))
+    """.trimIndent(), getPartialMatcher(allTerragruntFunctions + TerragruntUnitHelper.TerragruntScope))
 
     doBasicCompletionTest("""
       remote_state {
@@ -182,7 +183,8 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
         }
       }
     """.trimIndent(), Matcher.not(
-      "provider::aws::arn_parse", "provider::azurerm::parse_resource_id", "provider::kubernetes::manifest_decode")
+      "provider::aws::arn_parse", "provider::azurerm::parse_resource_id", "provider::kubernetes::manifest_decode",
+      "unit", "stack")
     )
     doBasicCompletionTest("include \"root\" {\n  <caret>path = find_in_parent_folders(\"root.hcl\")\n}", emptyList())
   }

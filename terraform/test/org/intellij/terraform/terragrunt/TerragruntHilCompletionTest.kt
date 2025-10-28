@@ -25,5 +25,16 @@ internal class TerragruntHilCompletionTest : CompletionTestCase() {
         }
       }
     """.trimIndent(), "path_relative_from_include", "path_relative_to_include")
+
+    doBasicCompletionTest($$"""
+      include "env" {
+        path   = "${get_terragrunt_dir()}/../../_env/app.hcl"
+      }
+      # Construct the terraform.source attribute using the source_base_url and custom version v0.2.0
+      terraform {
+        source = "${incl<caret>}?ref=v0.2.0"
+      },
+    """.trimIndent(), "include"
+    )
   }
 }
