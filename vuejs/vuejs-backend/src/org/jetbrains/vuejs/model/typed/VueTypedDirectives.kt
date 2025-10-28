@@ -44,17 +44,14 @@ internal object VueTypedDirectives {
 
     return modifiersType.asRecordType()
       .properties
-      .mapNotNull { signature ->
-        val source = when (signature) {
-          is PsiElement -> signature
-          is TypeMember -> signature.memberSource.singleElement
+      .map { property ->
+        val source = when (property) {
+          is PsiElement -> property
+          is TypeMember -> property.memberSource.singleElement
           else -> null
         }
 
-        if (source != null) {
-          VueTypedDirectiveModifier(signature.memberName, source)
-        }
-        else null
+        VueTypedDirectiveModifier(property.memberName, source)
       }
   }
 

@@ -8,14 +8,14 @@ import org.jetbrains.vuejs.model.VueDirectiveModifier
 
 data class VueTypedDirectiveModifier(
   override val name: String,
-  override val source: PsiElement,
+  override val source: PsiElement?,
 ) : VueDirectiveModifier {
 
   override fun createPointer(): Pointer<out VueTypedDirectiveModifier> {
     val name = this.name
-    val sourcePtr = source.createSmartPointer()
+    val sourcePointer = source?.createSmartPointer()
     return Pointer {
-      val source = sourcePtr.dereference() ?: return@Pointer null
+      val source = sourcePointer?.let { it.dereference() ?: return@Pointer null }
       VueTypedDirectiveModifier(name, source)
     }
   }
