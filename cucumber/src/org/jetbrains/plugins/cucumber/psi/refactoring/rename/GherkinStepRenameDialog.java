@@ -29,8 +29,6 @@ import java.awt.*;
 import java.util.EnumSet;
 import java.util.List;
 
-import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
-
 /// A rename dialog for Cucumber step definitions.
 ///
 /// Features:
@@ -40,7 +38,7 @@ import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReferen
 ///
 /// It is not clear whether the equivalent functionality can be provided with inline rename, so it is a dialog.
 public final class GherkinStepRenameDialog extends RenameDialog {
-  private AbstractStepDefinition myStepDefinition;
+  private AbstractStepDefinition stepDefinition;
   private int oldParameterCount;
 
   public GherkinStepRenameDialog(@NotNull Project project,
@@ -96,7 +94,7 @@ public final class GherkinStepRenameDialog extends RenameDialog {
           }
         });
 
-        String expr = myStepDefinition.getExpression();
+        String expr = stepDefinition.getExpression();
         if (expr == null) throw new IllegalStateException("expression in the step definition being renamed must not be null");
         if (CucumberUtil.isCucumberExpression(expr)) {
           guardCukexSpecialSymbols(editor);
@@ -109,16 +107,6 @@ public final class GherkinStepRenameDialog extends RenameDialog {
 
     // TODO: Migrate to ApplicationManager.getApplication().invokeLater with the right ModalityState
     SwingUtilities.invokeLater(guardRunnable);
-  }
-
-  private AbstractStepDefinition getStepDefinition() {
-    if (myStepDefinition == null) {
-      final CucumberStepReference ref = getCucumberStepReference(getPsiElement());
-      if (ref != null) {
-        myStepDefinition = ref.resolveToDefinition();
-      }
-    }
-    return myStepDefinition;
   }
 
   @RequiresEdt
@@ -146,7 +134,12 @@ public final class GherkinStepRenameDialog extends RenameDialog {
 
   @Override
   public String[] getSuggestedNames() {
-    AbstractStepDefinition stepDefinition = getStepDefinition();
+    if (stepDefinition == null) {
+      final CucumberStepReference ref = CucumberUtil.getCucumberStepReference(getPsiElement());
+      if (ref != null) {
+        stepDefinition = ref.resolveToDefinition();
+      }
+    }
     if (stepDefinition == null) {
       throw new IllegalStateException("step definition must not be null");
     }
