@@ -2,7 +2,7 @@
   "inspections": [
     {
       "id": "TsLint",
-      "codeQualityCategory": "Code Style"
+      "codeQualityCategory": "Unspecified"
     }
   ]
 }

@@ -2,11 +2,11 @@
   "inspections": [
     {
       "id": "CucumberTableInspection",
-      "codeQualityCategory": "Code Style"
+      "codeQualityCategory": "Reliability"
     },
     {
       "id": "GherkinMisplacedBackground",
-      "codeQualityCategory": "Code Style"
+      "codeQualityCategory": "Sanity"
     },
     {
       "id": "CucumberUndefinedStep",
@@ -14,19 +14,19 @@
     },
     {
       "id": "GherkinBrokenTableInspection",
-      "codeQualityCategory": "Reliability"
+      "codeQualityCategory": "Sanity"
     },
     {
       "id": "CucumberExamplesColon",
-      "codeQualityCategory": "Code Style"
+      "codeQualityCategory": "Sanity"
     },
     {
       "id": "GherkinScenarioToScenarioOutline",
-      "codeQualityCategory": "Reliability"
+      "codeQualityCategory": "Sanity"
     },
     {
       "id": "CucumberMissedExamples",
-      "codeQualityCategory": "Reliability"
+      "codeQualityCategory": "Sanity"
     }
   ]
 }

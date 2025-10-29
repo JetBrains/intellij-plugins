@@ -6,11 +6,11 @@
     },
     {
       "id": "VueDeprecatedSymbol",
-      "codeQualityCategory": "Sanity"
+      "codeQualityCategory": "Code Style"
     },
     {
       "id": "VueUnrecognizedDirective",
-      "codeQualityCategory": "Sanity"
+      "codeQualityCategory": "Reliability"
     },
     {
       "id": "VueDuplicateTag",
@@ -22,7 +22,7 @@
     },
     {
       "id": "VueUnrecognizedSlot",
-      "codeQualityCategory": "Sanity"
+      "codeQualityCategory": "Reliability"
     }
   ]
 }

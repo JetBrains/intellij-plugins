@@ -2,7 +2,7 @@
   "inspections": [
     {
       "id": "KarmaConfigFile",
-      "codeQualityCategory": "Sanity"
+      "codeQualityCategory": "Reliability"
     }
   ]
 }

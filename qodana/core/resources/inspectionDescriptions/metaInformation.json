@@ -10,15 +10,15 @@
     },
     {
       "id": "QodanaJavaSanity",
-      "codeQualityCategory": "Reliability"
+      "codeQualityCategory": "Sanity"
     },
     {
       "id": "JvmLinesOfCodeInspection",
-      "codeQualityCategory": "Code Style"
+      "codeQualityCategory": "Unspecified"
     },
     {
       "id": "CyclomaticComplexityInspection",
-      "codeQualityCategory": "Performance"
+      "codeQualityCategory": "Code Style"
     },
     {
       "id": "KotlinAnnotator",

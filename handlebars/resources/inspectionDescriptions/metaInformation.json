@@ -2,7 +2,7 @@
   "inspections": [
     {
       "id": "HbEmptyBlock",
-      "codeQualityCategory": "Code Style"
+      "codeQualityCategory": "Reliability"
     }
   ]
 }

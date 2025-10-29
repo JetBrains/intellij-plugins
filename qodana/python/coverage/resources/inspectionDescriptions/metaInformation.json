@@ -2,7 +2,7 @@
   "inspections": [
     {
       "id": "PyCoverageInspection",
-      "codeQualityCategory": "Reliability"
+      "codeQualityCategory": "Unspecified"
     }
   ]
 }

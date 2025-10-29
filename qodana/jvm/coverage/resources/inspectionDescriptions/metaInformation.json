@@ -2,7 +2,7 @@
   "inspections": [
     {
       "id": "JvmCoverageInspection",
-      "codeQualityCategory": "Reliability"
+      "codeQualityCategory": "Unspecified"
     }
   ]
 }

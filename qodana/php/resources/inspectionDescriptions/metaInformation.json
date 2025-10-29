@@ -2,7 +2,7 @@
   "inspections": [
     {
       "id": "PhpCoverageInspection",
-      "codeQualityCategory": "Reliability"
+      "codeQualityCategory": "Unspecified"
     }
   ]
 }

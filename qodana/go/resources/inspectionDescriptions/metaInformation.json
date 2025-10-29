@@ -2,7 +2,7 @@
   "inspections": [
     {
       "id": "GoCoverageInspection",
-      "codeQualityCategory": "Reliability"
+      "codeQualityCategory": "Unspecified"
     }
   ]
 }
