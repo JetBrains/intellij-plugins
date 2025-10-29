@@ -1,16 +1,15 @@
 package org.jetbrains.plugins.cucumber.java.rename;
 
-
 import com.intellij.idea.TestFor;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.java.resolve.BaseCucumberJavaResolveTest;
+import org.jetbrains.plugins.cucumber.refactoring.rename.GherkinStepParameterRenameTest;
 
-
-/// Tests that [GherkinInplaceRenameTest][org.jetbrains.plugins.cucumber.refactoring.rename.GherkinInplaceRenameTest]
+/// Tests that [GherkinStepParameterRenameTest][GherkinStepParameterRenameTest]
 /// works fine in a language-specific setting (Java).
 ///
-/// See also: IDEA-376182.
+/// The "language-specific-setting" part matters! To learn why, see IDEA-376182.
 public class CucumberJavaStepParameterRenameTest extends BaseCucumberJavaResolveTest {
 
   @Override

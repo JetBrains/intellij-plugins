@@ -3,7 +3,7 @@ package org.jetbrains.plugins.cucumber.refactoring.rename;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 
-public class GherkinInplaceRenameTest extends BasePlatformTestCase {
+public class GherkinStepParameterRenameTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {
@@ -14,6 +14,7 @@ public class GherkinInplaceRenameTest extends BasePlatformTestCase {
     myFixture.configureByFile(getTestName(true) + ".feature");
 
     myFixture.renameElementAtCaretUsingHandler(newName);
+
     myFixture.checkResultByFile(getTestName(true) + ".after.feature");
   }
 
