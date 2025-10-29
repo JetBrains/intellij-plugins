@@ -1,9 +1,15 @@
 package org.jetbrains.astro.codeInsight.highlighting
 
 import com.intellij.platform.lsp.tests.checkLspHighlighting
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroQuickFixHighlightingTest : AstroCodeInsightTestCase("codeInsight/highlighting/quickFix", useLsp = true) {
+
+  override fun setUp() {
+    super.setUp()
+    (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
+  }
 
   fun testAutoImport() {
     doConfiguredTest(dir = true, configureFileName = "index.astro") {
