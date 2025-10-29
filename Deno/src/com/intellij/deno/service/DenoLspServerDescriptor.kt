@@ -5,6 +5,7 @@ import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSyntaxException
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.deno.*
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.filters.Filter
@@ -14,6 +15,7 @@ import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.execution.withBackgroundProgress
+import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.typescript.compiler.TypeScriptServiceRestarter
 import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
 import com.intellij.openapi.application.ApplicationManager
@@ -24,6 +26,7 @@ import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
@@ -34,6 +37,7 @@ import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.eclipse.lsp4j.Command
+import org.eclipse.lsp4j.Diagnostic
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -152,7 +156,17 @@ class DenoLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     override val goToTypeDefinitionCustomizer = LspGoToTypeDefinitionDisabled
     override val hoverCustomizer = LspHoverDisabled
     override val completionCustomizer = BaseLspTypeScriptServiceCompletionSupport()
-    override val diagnosticsCustomizer = LspDiagnosticsDisabled
+    override val diagnosticsCustomizer: LspDiagnosticsCustomizer = object : LspDiagnosticsSupport() {
+
+      override fun shouldAskServerForDiagnostics(file: VirtualFile): Boolean {
+        if (!isDenoEnableForContextDirectory(project, file)) return false
+        if (project.getService(DenoTypeScriptService::class.java)?.isAcceptable(file) != true) return false
+        return true
+      }
+
+      override fun createAnnotation(holder: AnnotationHolder, diagnostic: Diagnostic, textRange: TextRange, quickFixes: List<IntentionAction>) {
+      }
+    }
     override val findReferencesCustomizer = LspFindReferencesDisabled
     override val foldingRangeCustomizer = LspFoldingRangeDisabled
     override val inlayHintCustomizer: LspInlayHintCustomizer = LspInlayHintDisabled
