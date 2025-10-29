@@ -55,6 +55,17 @@ public class GherkinStepParameterRenameHandler extends PsiElementRenameHandler {
     if (element == null) {
       element = CommonDataKeys.PSI_ELEMENT.getData(context);
     }
+    if (element != null) {
+      final ASTNode node = element.getNode();
+      if (node != null) {
+        if (node.getElementType() == GherkinTokenTypes.STEP_PARAMETER_BRACE) {
+          if (element.getPrevSibling() instanceof GherkinStepParameter stepParameter) {
+            // Handle renaming when the caret is at the position of the closing angle bracket. See IDEA-372546.
+            element = stepParameter;
+          }
+        }
+      }
+    }
     return PsiTreeUtil.getParentOfType(element, GherkinStepParameter.class, false);
   }
 }

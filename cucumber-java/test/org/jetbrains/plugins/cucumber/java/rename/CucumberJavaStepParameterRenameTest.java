@@ -46,4 +46,9 @@ public class CucumberJavaStepParameterRenameTest extends BaseCucumberJavaResolve
   public void testParameterUsageOnUnresolvedStep() {
     doTest("newStart");
   }
+
+  @TestFor(issues = "IDEA-374108")
+  public void testParameterUsageWithCaretJustBeforeClosingBracket() {
+    doTest("helloDarkness");
+  }
 }
