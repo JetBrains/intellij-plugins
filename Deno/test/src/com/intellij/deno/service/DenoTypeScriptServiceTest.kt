@@ -16,6 +16,7 @@ class DenoTypeScriptServiceTest : DenoServiceTestBase() {
   fun testSimpleDeno() {
     DenoSettings.getService(project).setUseDeno(UseDeno.ENABLE)
     // one error comes from JSReferenceChecker.reportUnresolvedReference, another one - from Deno LSP server
+    myFixture.addFileToProject("deno.json", "{}")
     myFixture.configureByText("foo.ts", "console.log(Deno)\n" +
                                         "console.log(<error descr=\"Deno: Cannot find name 'Deno1'. Did you mean 'Deno'?\">Deno1</error>)")
     myFixture.checkLspHighlighting()
@@ -23,6 +24,7 @@ class DenoTypeScriptServiceTest : DenoServiceTestBase() {
 
   fun testDenoOpenCloseFile() {
     DenoSettings.getService(project).setUseDeno(UseDeno.ENABLE)
+    myFixture.addFileToProject("deno.json", "{}")
     val file = myFixture.configureByText("bar.ts", "console.log(<error descr=\"Deno: Cannot find name 'UnknownName'.\">UnknownName</error>);\n")
     myFixture.type("export class Hello {}\n")
     FileEditorManager.getInstance(project).closeFile(file.virtualFile)
@@ -65,7 +67,7 @@ class DenoTypeScriptServiceTest : DenoServiceTestBase() {
 
   fun testDenoFileRename() {
     myFixture.addFileToProject("deno.json", "{}")
-
+    myFixture.addFileToProject("subdir/deno.json", "{}")
     val errorWithMarkup = "<error descr=\"Deno: Cannot find name 'UnknownName'.\">UnknownName</error>"
 
     myFixture.configureByText("foo.ts",
@@ -88,6 +90,7 @@ class DenoTypeScriptServiceTest : DenoServiceTestBase() {
     myFixture.moveFile("subdir/bar1.ts", "")
     FileDocumentManager.getInstance().saveAllDocuments()
     myFixture.moveFile("foo1.ts", "subdir")
+
     preventTypeScriptServiceRestartOnContextChange { myFixture.renameElement(bar.containingDirectory, "subdir1") }
     WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
     UIUtil.dispatchAllInvocationEvents()
@@ -139,7 +142,7 @@ class DenoTypeScriptServiceTest : DenoServiceTestBase() {
 
     myFixture.checkResult("""
       console.log(
-          'Deno',
+        'Deno',
       );
       
       """.trimIndent())
