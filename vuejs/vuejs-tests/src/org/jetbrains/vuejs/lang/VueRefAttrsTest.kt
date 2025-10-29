@@ -65,7 +65,7 @@ class VueRefAttrsTest : BasePlatformTestCase() {
       Pair("\$refs.input<caret>Ref", "ref='inputRef'"),
       Pair("\$refs.inputRef[0].validation<caret>Message",
            "/**\n" +
-           "     * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as \"this is a required field\". The result is that the user sees validation messages without actually submitting.\n" +
+           "     * The **`validationMessage`** read-only property of the HTMLInputElement interface returns a string representing a localized message that describes the validation constraints that the input control does not satisfy (if any).\n" +
            "     *\n" +
            "     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLInputElement/validationMessage)\n" +
            "     */\n" +
