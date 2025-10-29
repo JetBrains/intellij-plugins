@@ -618,7 +618,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       "(my-event) (typeText='MyEvent')",
       "(problematicOutput) (typeText='T')",
       "(complex-event) (typeText='MyEvent | MouseEvent')",
-      "(click) (typeText='MouseEvent')",
+      "(click) (typeText='PointerEvent')",
       "(blur) (typeText='FocusEvent')",
       "(focusin) (typeText='FocusEvent')",
       "(copy) (typeText='ClipboardEvent')",
@@ -838,7 +838,7 @@ class Angular2AttributesTest : Angular2CodeInsightFixtureTestCase() {
       Pair("i<caret>d=", mutableListOf("id", "id: /*c1*/ string")),
       Pair("[i<caret>d]=", mutableListOf("""
         |/**
-        |     * Returns the value of element's id content attribute. Can be set to change it.
+        |     * The **`id`** property of the Element interface represents the element's identifier, reflecting the **`id`** global attribute.
         |     *
         |     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/id)
         |     */
