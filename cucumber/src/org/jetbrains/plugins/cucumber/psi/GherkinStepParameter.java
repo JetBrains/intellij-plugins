@@ -1,6 +1,10 @@
 package org.jetbrains.plugins.cucumber.psi;
 
-import com.intellij.psi.PsiNameIdentifierOwner;
+import org.jetbrains.annotations.NotNullByDefault;
 
-public interface GherkinStepParameter extends GherkinPsiElement, PsiNameIdentifierOwner {
+@NotNullByDefault
+public interface GherkinStepParameter extends GherkinPsiElement {
+  GherkinStepParameter setName(String name);
+
+  String getName();
 }

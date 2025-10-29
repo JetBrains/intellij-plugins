@@ -32,7 +32,7 @@ public class GherkinStepParameterImpl extends GherkinPsiElementBase implements G
   }
 
   @Override
-  public PsiElement setName(@NonNls String name) throws IncorrectOperationException {
+  public GherkinStepParameter setName(@NonNls String name) throws IncorrectOperationException {
     final LeafPsiElement content = PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
     if (content != null) {
       PsiElement[] elements = GherkinElementFactory.getTopLevelElements(getProject(), name);
@@ -49,11 +49,6 @@ public class GherkinStepParameterImpl extends GherkinPsiElementBase implements G
   @Override
   public String getName() {
     return getText();
-  }
-
-  @Override
-  public PsiElement getNameIdentifier() {
-    return this;
   }
 
   @Override

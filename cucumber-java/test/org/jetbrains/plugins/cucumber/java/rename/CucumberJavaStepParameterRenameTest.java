@@ -11,7 +11,7 @@ import org.jetbrains.plugins.cucumber.java.resolve.BaseCucumberJavaResolveTest;
 /// works fine in a language-specific setting (Java).
 ///
 /// See also: IDEA-376182.
-public class CucumberJavaGherkinInplaceRenameTest extends BaseCucumberJavaResolveTest {
+public class CucumberJavaStepParameterRenameTest extends BaseCucumberJavaResolveTest {
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
@@ -38,8 +38,7 @@ public class CucumberJavaGherkinInplaceRenameTest extends BaseCucumberJavaResolv
   }
 
   @TestFor(issues = "IDEA-376182")
-  public void _testParameterUsage() {
-    // Disabled because of IDEA-376182.
+  public void testParameterUsage() {
     doTest("newStart");
   }
 

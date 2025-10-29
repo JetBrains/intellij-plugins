@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.psi.refactoring.rename;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
@@ -16,7 +15,10 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
-import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.GherkinPsiElement;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.psi.GherkinStepParameter;
+import org.jetbrains.plugins.cucumber.psi.GherkinTableCell;
 
 /**
  * Handles renaming {@link GherkinStep} PSI elements.
@@ -50,7 +52,9 @@ public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
 
   private static @Nullable GherkinStep getGherkinStep(@Nullable DataContext context) {
     PsiElement element = null;
-    if (context == null) return null;
+    if (context == null) {
+      return null;
+    }
     final Editor editor = CommonDataKeys.EDITOR.getData(context);
     if (editor != null) {
       final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(context);
@@ -61,28 +65,11 @@ public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
     if (element == null) {
       element = CommonDataKeys.PSI_ELEMENT.getData(context);
     }
-
-    final GherkinTable table = PsiTreeUtil.getParentOfType(element, GherkinTable.class);
-    if (table != null) {
-      // There is GherkinParameterRenameHandler that should handle rename inside the GherkinTable
-      return null;
-    }
-    if (element != null) {
-      final ASTNode node = element.getNode();
-      if (node != null) {
-        if (node.getElementType() == GherkinTokenTypes.STEP_PARAMETER_BRACE) {
-          if (element.getPrevSibling() instanceof GherkinStepParameter) {
-            // This case should be handled by GherkinParameterRenameHandler too. See IDEA-372546.
-            return null;
-          }
-        }
-      }
-    }
     element = PsiTreeUtil.getParentOfType(element, GherkinPsiElement.class, false);
     if (element instanceof GherkinStepParameter || element instanceof GherkinTableCell) {
-      // There is GherkinParameterRenameHandler that should handle rename inside parameter usages or definitions
+      // This handler cares only about renames of steps, not step parameters.
       return null;
     }
-    return element instanceof GherkinStep step ? step : PsiTreeUtil.getParentOfType(element, GherkinStep.class);
+    return PsiTreeUtil.getParentOfType(element, GherkinStep.class, false);
   }
 }
