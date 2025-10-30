@@ -17,8 +17,10 @@ import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpTT;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
+import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
@@ -51,8 +53,16 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
       final String expression = stepDefinition.getExpression();
       if (expression != null && regexp != null) {
         final boolean expressionIsRegex = expression.equals(regexp);
+        ParameterTypeManager parameterTypeManager = MapParameterTypeManager.DEFAULT;
+        for (CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
+          ParameterTypeManager moreSpecificParameterTypeManager = ep.getParameterTypeManager(stepDefinition);
+          if (moreSpecificParameterTypeManager != null) {
+            parameterTypeManager = moreSpecificParameterTypeManager;
+            break;
+          }
+        }
         final Pattern oldStepDefPattern = Pattern.compile(
-          (expressionIsRegex ? prepareRegexAndGetStaticTexts(regexp).getFirst() : prepareRegexFromCukex(expression))
+          (expressionIsRegex ? prepareRegexAndGetStaticTexts(regexp).getFirst() : prepareRegexFromCukex(expression, parameterTypeManager))
         );
         final List<String> newStaticTexts = expressionIsRegex ? prepareRegexAndGetStaticTexts(newName) : getStaticTextsFromCukex(newName);
         if (expressionIsRegex) {
@@ -168,8 +178,8 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     return result;
   }
 
-  public static String prepareRegexFromCukex(String cukex) {
-    String preparedRegex = CucumberUtil.buildRegexpFromCucumberExpression(cukex, MapParameterTypeManager.DEFAULT);
+  public static String prepareRegexFromCukex(String cukex, ParameterTypeManager parameterTypeManager) {
+    String preparedRegex = CucumberUtil.buildRegexpFromCucumberExpression(cukex, parameterTypeManager);
     return preparedRegex.substring(1).substring(0, preparedRegex.length() - 2);
   }
 

@@ -10,6 +10,9 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNullByDefault;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.ParameterTypeManager;
+import org.jetbrains.plugins.cucumber.java.steps.AbstractJavaStepDefinition;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.steps.AbstractCucumberExtension;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
@@ -60,5 +63,17 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
       }
     }
     return result;
+  }
+
+  @Override
+  public @Nullable ParameterTypeManager getParameterTypeManager(AbstractStepDefinition stepDefinition) {
+    if (stepDefinition instanceof AbstractJavaStepDefinition javaStepDefinition) {
+      final PsiElement stepDefinitionElement = stepDefinition.getElement();
+      if (stepDefinitionElement == null) {
+        throw new IllegalStateException(stepDefinition + " has no backing PSI element");
+      }
+      return CucumberJavaUtil.getAllParameterTypes(javaStepDefinition.getModule());
+    }
+    return null;
   }
 }

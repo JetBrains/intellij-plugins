@@ -33,4 +33,8 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
 
     return definitionText;
   }
+
+  public Module getModule() {
+    return module;
+  }
 }

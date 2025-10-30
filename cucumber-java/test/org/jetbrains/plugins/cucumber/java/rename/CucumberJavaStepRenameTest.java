@@ -80,6 +80,10 @@ public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
     doTest("i_have_EUR_on_my_account", "I have {int} EUR on my account", "I possess the amount of {int} USD on my acc");
   }
 
+  public void testCukexWithArgument_CustomParameterType() {
+    doTest("customParameterTypeIsUsed", "custom parameter type {customType} is used", "a type {customType} is mentioned");
+  }
+
   public void testCukexWithArgumentAndAlternativeText() {
     doTest("i_have_different_feelings",
            "I have no/few/many feeling(s) about this/that",

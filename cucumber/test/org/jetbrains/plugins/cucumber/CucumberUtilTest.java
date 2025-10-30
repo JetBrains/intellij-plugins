@@ -168,7 +168,7 @@ public class CucumberUtilTest {
     String oldStepDef = "I have few/many feeling(s)";
     String oldStepName = "I have few feelings";
 
-    String oldStepDefRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(oldStepDef);
+    String oldStepDefRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(oldStepDef, MapParameterTypeManager.DEFAULT);
     assertEquals("I have (few|many) feeling(s)?", oldStepDefRegex);
 
     String newName = GherkinStepRenameProcessor.getNewStepName(
@@ -185,7 +185,7 @@ public class CucumberUtilTest {
     String oldStepDef = "I have {int} feeling(s)";
     String oldStepName = "I have 1 feeling";
 
-    String oldStepDefRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(oldStepDef);
+    String oldStepDefRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(oldStepDef, MapParameterTypeManager.DEFAULT);
     assertEquals("I have (-?\\d+) feeling(s)?", oldStepDefRegex);
 
     String newName = GherkinStepRenameProcessor.getNewStepName(
@@ -202,7 +202,7 @@ public class CucumberUtilTest {
     String oldStepDef = "I have {int} feeling(s)";
     String oldStepName = "I have 7 feelings";
 
-    String oldStepDefRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(oldStepDef);
+    String oldStepDefRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(oldStepDef, MapParameterTypeManager.DEFAULT);
     assertEquals("I have (-?\\d+) feeling(s)?", oldStepDefRegex);
 
     String newName = GherkinStepRenameProcessor.getNewStepName(
@@ -220,7 +220,7 @@ public class CucumberUtilTest {
     String oldStepDef = "I have \\{int} {int} feeling(s)";
     String oldStepName = "I have 2 feelings";
 
-    String oldStepDefRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(oldStepDef);
+    String oldStepDefRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(oldStepDef, MapParameterTypeManager.DEFAULT);
     assertEquals("I have \\\\{int} (-?\\d+) feeling(s)?", oldStepDefRegex);
 
     String newName = GherkinStepRenameProcessor.getNewStepName(

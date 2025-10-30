@@ -1,11 +1,11 @@
 package org.jetbrains.plugins.cucumber.refactoring.rename;
 
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class CucumberRenameCukexPreparationTest {
@@ -80,7 +80,7 @@ public class CucumberRenameCukexPreparationTest {
   }
 
   private static void doTest(String sourceCukex, String expectedPattern, String... expectedStaticTexts) {
-    String preparedRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(sourceCukex);
+    String preparedRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(sourceCukex, MapParameterTypeManager.DEFAULT);
     Assert.assertEquals(expectedPattern, preparedRegex);
 
     List<String> actualStaticTexts = GherkinStepRenameProcessor.getStaticTextsFromCukex(sourceCukex);

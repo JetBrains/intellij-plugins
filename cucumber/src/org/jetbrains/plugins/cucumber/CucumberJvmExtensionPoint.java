@@ -71,4 +71,11 @@ public interface CucumberJvmExtensionPoint {
     }
     return gherkinStep.getSubstitutedName();
   }
+
+  /// Returns a [ParameterTypeManager] that can provide parameter types to the passed `stepDefinition`.
+  ///
+  /// Implementations in language-specific Cucumber plugins are expected to use `instanceof` to determine that.
+  default @Nullable ParameterTypeManager getParameterTypeManager(AbstractStepDefinition stepDefinition) {
+    return null;
+  }
 }
