@@ -4,15 +4,16 @@ package org.jetbrains.plugins.cucumber.java.steps;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
+@NotNullByDefault
 public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition {
-  public AbstractJavaStepDefinition(@NotNull PsiElement element) {
+  public AbstractJavaStepDefinition(PsiElement element) {
     super(element);
   }
 
