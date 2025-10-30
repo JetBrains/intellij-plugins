@@ -1,0 +1,165 @@
+PsiJavaFile:Steps.java
+  PsiImportList
+    PsiImportStatement
+      PsiKeyword:import('import')
+      PsiWhiteSpace(' ')
+      PsiJavaCodeReferenceElement:io.cucumber.java.en.When
+        PsiJavaCodeReferenceElement:io.cucumber.java.en
+          PsiJavaCodeReferenceElement:io.cucumber.java
+            PsiJavaCodeReferenceElement:io.cucumber
+              PsiJavaCodeReferenceElement:io
+                PsiIdentifier:io('io')
+                PsiReferenceParameterList
+                  <empty list>
+              PsiJavaToken:DOT('.')
+              PsiIdentifier:cucumber('cucumber')
+              PsiReferenceParameterList
+                <empty list>
+            PsiJavaToken:DOT('.')
+            PsiIdentifier:java('java')
+            PsiReferenceParameterList
+              <empty list>
+          PsiJavaToken:DOT('.')
+          PsiIdentifier:en('en')
+          PsiReferenceParameterList
+            <empty list>
+        PsiJavaToken:DOT('.')
+        PsiIdentifier:When('When')
+        PsiReferenceParameterList
+          <empty list>
+      PsiJavaToken:SEMICOLON(';')
+  PsiWhiteSpace('\n\n')
+  PsiClass:Steps
+    PsiModifierList:public
+      PsiKeyword:public('public')
+    PsiWhiteSpace(' ')
+    PsiKeyword:class('class')
+    PsiWhiteSpace(' ')
+    PsiIdentifier:Steps('Steps')
+    PsiTypeParameterList
+      <empty list>
+    PsiReferenceList
+      <empty list>
+    PsiReferenceList
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiJavaToken:LBRACE('{')
+    PsiWhiteSpace('\n  ')
+    PsiMethod:iAskForAdvice
+      PsiModifierList:@When("I ask for {what}")
+  public
+        PsiAnnotation
+          PsiJavaToken:AT('@')
+          PsiJavaCodeReferenceElement:When
+            PsiIdentifier:When('When')
+            PsiReferenceParameterList
+              <empty list>
+          PsiAnnotationParameterList
+            PsiJavaToken:LPARENTH('(')
+            PsiNameValuePair
+              PsiLiteralExpression:"I ask for {what}"
+                PsiJavaToken:STRING_LITERAL('"I ask for {what}"')
+            PsiJavaToken:RPARENTH(')')
+        PsiWhiteSpace('\n  ')
+        PsiKeyword:public('public')
+      PsiTypeParameterList
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiTypeElement:void
+        PsiKeyword:void('void')
+      PsiWhiteSpace(' ')
+      PsiIdentifier:iAskForAdvice('iAskForAdvice')
+      PsiParameterList:(String what)
+        PsiJavaToken:LPARENTH('(')
+        PsiParameter:what
+          PsiModifierList:
+            <empty list>
+          PsiTypeElement:String
+            PsiJavaCodeReferenceElement:String
+              PsiIdentifier:String('String')
+              PsiReferenceParameterList
+                <empty list>
+          PsiWhiteSpace(' ')
+          PsiIdentifier:what('what')
+        PsiJavaToken:RPARENTH(')')
+      PsiReferenceList
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiCodeBlock
+        PsiJavaToken:LBRACE('{')
+        PsiWhiteSpace('\n  ')
+        PsiJavaToken:RBRACE('}')
+    PsiWhiteSpace('\n\n  ')
+    PsiMethod:i_pay
+      PsiModifierList:@When("^I pay (\\d+)$")
+  public
+        PsiAnnotation
+          PsiJavaToken:AT('@')
+          PsiJavaCodeReferenceElement:When
+            PsiIdentifier:When('When')
+            PsiReferenceParameterList
+              <empty list>
+          PsiAnnotationParameterList
+            PsiJavaToken:LPARENTH('(')
+            PsiNameValuePair
+              PsiLiteralExpression:"^I pay (\\d+)$"
+                PsiJavaToken:STRING_LITERAL('"^I pay (\\d+)$"')
+                REGEXP_FILE
+                  RegExpPatternImpl: <^I pay (\\d+)$>
+                    RegExpBranchImpl: <^I pay (\\d+)$>
+                      RegExpBoundaryImpl: <^>
+                        PsiElement(CARET)('^')
+                      RegExpCharImpl: <I>
+                        PsiElement(CHARACTER)('I')
+                      RegExpCharImpl: < >
+                        PsiElement(CHARACTER)(' ')
+                      RegExpCharImpl: <p>
+                        PsiElement(CHARACTER)('p')
+                      RegExpCharImpl: <a>
+                        PsiElement(CHARACTER)('a')
+                      RegExpCharImpl: <y>
+                        PsiElement(CHARACTER)('y')
+                      RegExpCharImpl: < >
+                        PsiElement(CHARACTER)(' ')
+                      RegExpGroupImpl: <(\\d+)>
+                        PsiElement(GROUP_BEGIN)('(')
+                        RegExpPatternImpl: <\\d+>
+                          RegExpBranchImpl: <\\d+>
+                            RegExpClosureImpl: <\\d+>
+                              RegExpSimpleClassImpl: <\\d>
+                                PsiElement(CHAR_CLASS)('\\d')
+                              RegExpQuantifierImpl: <+>
+                                PsiElement(PLUS)('+')
+                        PsiElement(GROUP_END)(')')
+                      RegExpBoundaryImpl: <$>
+                        PsiElement(DOLLAR)('$')
+            PsiJavaToken:RPARENTH(')')
+        PsiWhiteSpace('\n  ')
+        PsiKeyword:public('public')
+      PsiTypeParameterList
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiTypeElement:void
+        PsiKeyword:void('void')
+      PsiWhiteSpace(' ')
+      PsiIdentifier:i_pay('i_pay')
+      PsiParameterList:(int amount)
+        PsiJavaToken:LPARENTH('(')
+        PsiParameter:amount
+          PsiModifierList:
+            <empty list>
+          PsiTypeElement:int
+            PsiKeyword:int('int')
+          PsiWhiteSpace(' ')
+          PsiIdentifier:amount('amount')
+        PsiJavaToken:RPARENTH(')')
+      PsiReferenceList
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiCodeBlock
+        PsiJavaToken:LBRACE('{')
+        PsiWhiteSpace('\n  ')
+        PsiJavaToken:RBRACE('}')
+    PsiWhiteSpace('\n')
+    PsiJavaToken:RBRACE('}')
+  PsiWhiteSpace('\n')

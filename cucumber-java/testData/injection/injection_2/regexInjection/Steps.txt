@@ -1,0 +1,222 @@
+PsiJavaFile:Steps.java
+  PsiImportList
+    PsiImportStatement
+      PsiKeyword:import('import')
+      PsiWhiteSpace(' ')
+      PsiJavaCodeReferenceElement:cucumber.api.java.en.When
+        PsiJavaCodeReferenceElement:cucumber.api.java.en
+          PsiJavaCodeReferenceElement:cucumber.api.java
+            PsiJavaCodeReferenceElement:cucumber.api
+              PsiJavaCodeReferenceElement:cucumber
+                PsiIdentifier:cucumber('cucumber')
+                PsiReferenceParameterList
+                  <empty list>
+              PsiJavaToken:DOT('.')
+              PsiIdentifier:api('api')
+              PsiReferenceParameterList
+                <empty list>
+            PsiJavaToken:DOT('.')
+            PsiIdentifier:java('java')
+            PsiReferenceParameterList
+              <empty list>
+          PsiJavaToken:DOT('.')
+          PsiIdentifier:en('en')
+          PsiReferenceParameterList
+            <empty list>
+        PsiJavaToken:DOT('.')
+        PsiIdentifier:When('When')
+        PsiReferenceParameterList
+          <empty list>
+      PsiJavaToken:SEMICOLON(';')
+  PsiWhiteSpace('\n\n')
+  PsiClass:Steps
+    PsiModifierList:public
+      PsiKeyword:public('public')
+    PsiWhiteSpace(' ')
+    PsiKeyword:class('class')
+    PsiWhiteSpace(' ')
+    PsiIdentifier:Steps('Steps')
+    PsiTypeParameterList
+      <empty list>
+    PsiReferenceList
+      <empty list>
+    PsiReferenceList
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiJavaToken:LBRACE('{')
+    PsiWhiteSpace('\n  ')
+    PsiMethod:test_should_pass
+      PsiModifierList:@When("test should pass")
+  public
+        PsiAnnotation
+          PsiJavaToken:AT('@')
+          PsiJavaCodeReferenceElement:When
+            PsiIdentifier:When('When')
+            PsiReferenceParameterList
+              <empty list>
+          PsiAnnotationParameterList
+            PsiJavaToken:LPARENTH('(')
+            PsiNameValuePair
+              PsiLiteralExpression:"test should pass"
+                PsiJavaToken:STRING_LITERAL('"test should pass"')
+                REGEXP_FILE
+                  RegExpPatternImpl: <test should pass>
+                    RegExpBranchImpl: <test should pass>
+                      RegExpCharImpl: <t>
+                        PsiElement(CHARACTER)('t')
+                      RegExpCharImpl: <e>
+                        PsiElement(CHARACTER)('e')
+                      RegExpCharImpl: <s>
+                        PsiElement(CHARACTER)('s')
+                      RegExpCharImpl: <t>
+                        PsiElement(CHARACTER)('t')
+                      RegExpCharImpl: < >
+                        PsiElement(CHARACTER)(' ')
+                      RegExpCharImpl: <s>
+                        PsiElement(CHARACTER)('s')
+                      RegExpCharImpl: <h>
+                        PsiElement(CHARACTER)('h')
+                      RegExpCharImpl: <o>
+                        PsiElement(CHARACTER)('o')
+                      RegExpCharImpl: <u>
+                        PsiElement(CHARACTER)('u')
+                      RegExpCharImpl: <l>
+                        PsiElement(CHARACTER)('l')
+                      RegExpCharImpl: <d>
+                        PsiElement(CHARACTER)('d')
+                      RegExpCharImpl: < >
+                        PsiElement(CHARACTER)(' ')
+                      RegExpCharImpl: <p>
+                        PsiElement(CHARACTER)('p')
+                      RegExpCharImpl: <a>
+                        PsiElement(CHARACTER)('a')
+                      RegExpCharImpl: <s>
+                        PsiElement(CHARACTER)('s')
+                      RegExpCharImpl: <s>
+                        PsiElement(CHARACTER)('s')
+            PsiJavaToken:RPARENTH(')')
+        PsiWhiteSpace('\n  ')
+        PsiKeyword:public('public')
+      PsiTypeParameterList
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiTypeElement:void
+        PsiKeyword:void('void')
+      PsiWhiteSpace(' ')
+      PsiIdentifier:test_should_pass('test_should_pass')
+      PsiParameterList:(Integer nr)
+        PsiJavaToken:LPARENTH('(')
+        PsiParameter:nr
+          PsiModifierList:
+            <empty list>
+          PsiTypeElement:Integer
+            PsiJavaCodeReferenceElement:Integer
+              PsiIdentifier:Integer('Integer')
+              PsiReferenceParameterList
+                <empty list>
+          PsiWhiteSpace(' ')
+          PsiIdentifier:nr('nr')
+        PsiJavaToken:RPARENTH(')')
+      PsiReferenceList
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiCodeBlock
+        PsiJavaToken:LBRACE('{')
+        PsiWhiteSpace('\n  ')
+        PsiJavaToken:RBRACE('}')
+    PsiWhiteSpace('\n\n  ')
+    PsiMethod:I_set_number_to
+      PsiModifierList:@When("I set number to (\\d{2})")
+  public
+        PsiAnnotation
+          PsiJavaToken:AT('@')
+          PsiJavaCodeReferenceElement:When
+            PsiIdentifier:When('When')
+            PsiReferenceParameterList
+              <empty list>
+          PsiAnnotationParameterList
+            PsiJavaToken:LPARENTH('(')
+            PsiNameValuePair
+              PsiLiteralExpression:"I set number to (\\d{2})"
+                PsiJavaToken:STRING_LITERAL('"I set number to (\\d{2})"')
+                REGEXP_FILE
+                  RegExpPatternImpl: <I set number to (\\d{2})>
+                    RegExpBranchImpl: <I set number to (\\d{2})>
+                      RegExpCharImpl: <I>
+                        PsiElement(CHARACTER)('I')
+                      RegExpCharImpl: < >
+                        PsiElement(CHARACTER)(' ')
+                      RegExpCharImpl: <s>
+                        PsiElement(CHARACTER)('s')
+                      RegExpCharImpl: <e>
+                        PsiElement(CHARACTER)('e')
+                      RegExpCharImpl: <t>
+                        PsiElement(CHARACTER)('t')
+                      RegExpCharImpl: < >
+                        PsiElement(CHARACTER)(' ')
+                      RegExpCharImpl: <n>
+                        PsiElement(CHARACTER)('n')
+                      RegExpCharImpl: <u>
+                        PsiElement(CHARACTER)('u')
+                      RegExpCharImpl: <m>
+                        PsiElement(CHARACTER)('m')
+                      RegExpCharImpl: <b>
+                        PsiElement(CHARACTER)('b')
+                      RegExpCharImpl: <e>
+                        PsiElement(CHARACTER)('e')
+                      RegExpCharImpl: <r>
+                        PsiElement(CHARACTER)('r')
+                      RegExpCharImpl: < >
+                        PsiElement(CHARACTER)(' ')
+                      RegExpCharImpl: <t>
+                        PsiElement(CHARACTER)('t')
+                      RegExpCharImpl: <o>
+                        PsiElement(CHARACTER)('o')
+                      RegExpCharImpl: < >
+                        PsiElement(CHARACTER)(' ')
+                      RegExpGroupImpl: <(\\d{2})>
+                        PsiElement(GROUP_BEGIN)('(')
+                        RegExpPatternImpl: <\\d{2}>
+                          RegExpBranchImpl: <\\d{2}>
+                            RegExpClosureImpl: <\\d{2}>
+                              RegExpSimpleClassImpl: <\\d>
+                                PsiElement(CHAR_CLASS)('\\d')
+                              RegExpQuantifierImpl: <{2}>
+                                PsiElement(LBRACE)('{')
+                                RegExpNumberImpl: <2>
+                                  PsiElement(NUMBER)('2')
+                                PsiElement(RBRACE)('}')
+                        PsiElement(GROUP_END)(')')
+            PsiJavaToken:RPARENTH(')')
+        PsiWhiteSpace('\n  ')
+        PsiKeyword:public('public')
+      PsiTypeParameterList
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiTypeElement:void
+        PsiKeyword:void('void')
+      PsiWhiteSpace(' ')
+      PsiIdentifier:I_set_number_to('I_set_number_to')
+      PsiParameterList:(Integer nr)
+        PsiJavaToken:LPARENTH('(')
+        PsiParameter:nr
+          PsiModifierList:
+            <empty list>
+          PsiTypeElement:Integer
+            PsiJavaCodeReferenceElement:Integer
+              PsiIdentifier:Integer('Integer')
+              PsiReferenceParameterList
+                <empty list>
+          PsiWhiteSpace(' ')
+          PsiIdentifier:nr('nr')
+        PsiJavaToken:RPARENTH(')')
+      PsiReferenceList
+        <empty list>
+      PsiWhiteSpace(' ')
+      PsiCodeBlock
+        PsiJavaToken:LBRACE('{')
+        PsiWhiteSpace('\n  ')
+        PsiJavaToken:RBRACE('}')
+    PsiWhiteSpace('\n')
+    PsiJavaToken:RBRACE('}')
+  PsiWhiteSpace('\n')

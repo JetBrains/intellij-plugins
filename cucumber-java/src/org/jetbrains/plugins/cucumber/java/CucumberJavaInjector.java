@@ -8,8 +8,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiLiteralUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +24,9 @@ public final class CucumberJavaInjector implements MultiHostInjector {
     if (regexpLanguage == null) {
       return;
     }
-    if (element instanceof PsiLiteralExpression && element instanceof PsiLanguageInjectionHost injectionHost && element.getTextLength() > 2) {
+    if (element instanceof PsiLiteralExpression literalExpression &&
+        element instanceof PsiLanguageInjectionHost languageInjectionHost &&
+        element.getTextLength() > 2) {
       final PsiElement firstChild = element.getFirstChild();
       if (firstChild != null && firstChild.getNode().getElementType() == JavaTokenType.STRING_LITERAL) {
         PsiAnnotation annotation = PsiTreeUtil.getParentOfType(element, PsiAnnotation.class);
@@ -30,9 +34,17 @@ public final class CucumberJavaInjector implements MultiHostInjector {
             (CucumberJavaUtil.isCucumberStepAnnotation(annotation) || CucumberJavaUtil.isCucumberHookAnnotation(annotation))) {
           final TextRange range = new TextRange(1, element.getTextLength() - 1);
           Module module = ModuleUtilCore.findModuleForPsiElement(element);
-          if (module != null && !CucumberJavaVersionUtil.isCucumber3OrMore(module)) {
-            registrar.startInjecting(regexpLanguage).addPlace(null, null, injectionHost, range).doneInjecting();
-          } 
+          if (module != null) {
+            if (CucumberJavaVersionUtil.isCucumber3OrMore(module)) {
+              String content = PsiLiteralUtil.getStringLiteralContent(literalExpression);
+              if (content != null && !CucumberUtil.isCucumberExpression(content)) {
+                registrar.startInjecting(regexpLanguage).addPlace(null, null, languageInjectionHost, range).doneInjecting();
+              }
+            }
+            else {
+              registrar.startInjecting(regexpLanguage).addPlace(null, null, languageInjectionHost, range).doneInjecting();
+            }
+          }
         }
       }
     }
