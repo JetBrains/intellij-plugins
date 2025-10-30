@@ -20,6 +20,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.markGenFolderAsGeneratedSources
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
+import java.nio.file.Path
 
 class LocalChangesScriptTest : LocalChangesScriptBaseTest() {
   /** The project is not under version control, so there cannot be any local changes. */
@@ -186,7 +187,7 @@ class LocalChangesScriptTest : LocalChangesScriptBaseTest() {
       it.copy(
         script = QodanaScriptConfig("local-changes"),
         includeAbsent = false,
-        sourceDirectory = "test-module"
+        onlyDirectory = Path.of("test-module")
       )
     }
     runAnalysis()
@@ -205,7 +206,7 @@ class LocalChangesScriptTest : LocalChangesScriptBaseTest() {
       it.copy(
         script = QodanaScriptConfig("local-changes"),
         includeAbsent = false,
-        sourceDirectory = "test-module/other-folder"
+        onlyDirectory = Path.of("test-module/other-folder")
       )
     }
     runAnalysis()

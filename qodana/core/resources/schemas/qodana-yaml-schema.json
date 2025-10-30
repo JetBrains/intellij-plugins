@@ -704,6 +704,10 @@
       "items": {
         "type": "string"
       }
+    },
+    "onlyDirectory": {
+      "description": "Path to the project directory to be analyzed. By default, the entire project is analyzed.",
+      "type": "string"
     }
   },
   "required": ["version"],

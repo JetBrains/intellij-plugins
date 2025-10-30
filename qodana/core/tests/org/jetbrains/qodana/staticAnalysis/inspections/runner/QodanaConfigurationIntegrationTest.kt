@@ -6,6 +6,7 @@ import org.jetbrains.qodana.staticAnalysis.script.CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.LocalChangesScript
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
 import org.junit.Test
+import java.nio.file.Path
 
 class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTest() {
 
@@ -31,7 +32,7 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
     val (script, runContext, config, app) = buildScript(cliArgs, testProject, projectFiles, this)
 
     assertEquals(CHANGES_SCRIPT_NAME, app.config.script.name) // from -c
-    assertEquals("test", config.sourceDirectory)
+    assertEquals(Path.of("test"), config.onlyDirectory)
     assertEquals(15, config.failureConditions.severityThresholds.any)
     assertEquals(false, config.runPromoInspections)
     assertEquals(true, config.disableSanityInspections)
@@ -51,6 +52,7 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
       failThreshold: -17
       runPromoInspections: true
       disableSanityInspections: true
+      onlyDirectory: src
     """.trimIndent()
 
     val projectFiles = listOf(
@@ -65,6 +67,7 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
       "--fail-threshold", "10",
       "--disable-sanity",
       "--run-promo", "false",
+      "--source-directory", "src2",
       "$testProjectPath",
       "$testProjectPath/out")
 
@@ -76,6 +79,7 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
     assertEquals(true, config.disableSanityInspections)
     assertEquals("default.name.conventions", runContext.baseProfile.name)
     assertEquals(true, script is LocalChangesScript)
+    assertEquals(Path.of("src2"), config.onlyDirectory)
   }
 
   @Test

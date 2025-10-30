@@ -26,7 +26,7 @@ import java.time.Duration
 import java.time.Instant
 
 object UsageCollector : CounterUsagesCollector() {
-  private val GROUP = QodanaEventLogGroup("qodana.usage", 13)
+  private val GROUP = QodanaEventLogGroup("qodana.usage", 14)
 
   override fun getGroup() = GROUP.eventLogGroup
 
@@ -92,7 +92,7 @@ object UsageCollector : CounterUsagesCollector() {
   private val failureConditionMinimumTotalCoverageField = EventFields.RoundedInt("failureConditionMinimumTotalCoverage")
   private val failureConditionMinimumFreshCoverageField = EventFields.RoundedInt("failureConditionMinimumFreshCoverage")
 
-  private val sourceDirField = EventFields.Boolean("sourceDirectory")
+  private val onlyDirectoryField = EventFields.Boolean("onlyDirectory")
   private val includeAbsentField = EventFields.Boolean("includeAbsent")
   private val fixesStrategyField = EventFields.Enum<FixesStrategy>("fixesStrategy") { it.name.lowercase() }
   private val baselineField = EventFields.String("baselineType", listOf("none", "local", "cloud"))
@@ -115,7 +115,7 @@ object UsageCollector : CounterUsagesCollector() {
     failureConditionInfoField,
     failureConditionMinimumTotalCoverageField,
     failureConditionMinimumFreshCoverageField,
-    sourceDirField,
+    onlyDirectoryField,
     includeAbsentField,
     fixesStrategyField,
     baselineField
@@ -235,7 +235,7 @@ object UsageCollector : CounterUsagesCollector() {
         args += scriptField with "other"
       }
     }
-    args += sourceDirField with (config.sourceDirectory != null)
+    args += onlyDirectoryField with (config.onlyDirectory != null)
     args += fixesStrategyField with config.fixesStrategy
     args += includeAbsentField with config.includeAbsent
     args += baselineField with when (config.baseline) {

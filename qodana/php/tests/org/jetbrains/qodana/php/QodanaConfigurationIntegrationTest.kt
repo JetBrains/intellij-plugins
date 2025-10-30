@@ -86,8 +86,7 @@ class QodanaConfigurationIntegrationTest : QodanaConfigurationIntegrationBaseTes
 
     val cliArgs = listOf(
       "--script", "php-migration:7.2-to-8.1",
-      //TODO: QD-2598 --source-directory is treated like an absolute path
-      //"--source-directory", "src",
+      "--only-directory", "src",
       "-p", "$testProjectPath/empty.xml",
       "--disable-sanity",
       "$testProjectPath",
