@@ -7,6 +7,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,25 +31,14 @@ public final class Java8StepDefinition extends AbstractJavaStepDefinition {
     // NOTE(bartekpacia): This implementation doesn't conform to this method's name because it can return either a regex or a cukex.
     //  However, it has been like this for many years, and it seems to work fine. If possible, consider refactoring in the future.
     if (!(element instanceof PsiMethodCallExpression methodCallExpression)) return null;
-    final PsiExpressionList argumentList = methodCallExpression.getArgumentList();
-    if (argumentList.getExpressions().length <= 1) return null;
-    final PsiExpression stepExpression = argumentList.getExpressions()[0];
-    final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();
-    final Object constantValue = evaluationHelper.computeConstantExpression(stepExpression, false);
-
-    if (constantValue instanceof String string) {
-      return string;
-    }
-
-    return null;
+    return CucumberJavaUtil.getJava8StepName(methodCallExpression);
   }
 
   @Override
   public void setValue(String newValue) {
     if (!(getElement() instanceof PsiMethodCallExpression methodCallExpression)) return;
-    final PsiExpressionList argumentList = methodCallExpression.getArgumentList();
-    if (argumentList.getExpressions().length <= 1) return;
-    final PsiExpression stepExpression = argumentList.getExpressions()[0];
+    final PsiExpression stepExpression = CucumberJavaUtil.getJava8StepNameExpression(methodCallExpression);
+    if (stepExpression == null) return;
     final PsiElementFactory factory = JavaPsiFacade.getElementFactory(getElement().getProject());
     PsiExpression newFirstArgument = factory.createExpressionFromText("\"" + newValue + "\"", null);
     stepExpression.replace(newFirstArgument);

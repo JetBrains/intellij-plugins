@@ -2,9 +2,11 @@
 package org.jetbrains.plugins.cucumber.java.steps.reference;
 
 import com.intellij.pom.PomNamedTarget;
-import com.intellij.psi.*;
+import com.intellij.psi.DelegatePsiTarget;
+import com.intellij.psi.PsiMethodCallExpression;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 @NotNullByDefault
 public final class CucumberJavaLambdaStepPomTarget extends DelegatePsiTarget implements PomNamedTarget {
@@ -14,19 +16,7 @@ public final class CucumberJavaLambdaStepPomTarget extends DelegatePsiTarget imp
 
   @Override
   public @Nullable String getName() {
-    final PsiElement element = getNavigationElement();
-    // TODO: This code is duplicated from Java8StepDefinition#getCucumberRegexFromElement.
-    if (!(element instanceof PsiMethodCallExpression methodCallExpression)) return null;
-    final PsiExpressionList argumentList = methodCallExpression.getArgumentList();
-    if (argumentList.getExpressions().length <= 1) return null;
-    final PsiExpression stepExpression = argumentList.getExpressions()[0];
-    final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();
-    final Object constantValue = evaluationHelper.computeConstantExpression(stepExpression, false);
-
-    if (constantValue instanceof String string) {
-      return string;
-    }
-
-    return null;
+    if (!(getNavigationElement() instanceof PsiMethodCallExpression methodCallExpression)) return null;
+    return CucumberJavaUtil.getJava8StepName(methodCallExpression);
   }
 }
