@@ -166,7 +166,7 @@ data class QodanaConfig(
   val includeAbsent: Boolean,
   val outputFormat: OutputFormat,
   var license: QodanaLicense,
-  val sourceDirectory: String?,
+  val onlyDirectory: Path?,
   val exclude: InspectScopes,
   val include: InspectScopes,
   val bootstrap: String?,
@@ -209,7 +209,7 @@ data class QodanaConfig(
       includeAbsent: Boolean = yaml.includeAbsent,
       outputFormat: OutputFormat = getOutputFormat(),
       license: QodanaLicense = QodanaLicense(QodanaLicenseType.ULTIMATE_PLUS, false, null),
-      sourceDirectory: String? = null,
+      onlyDirectory: Path? = yaml.onlyDirectory,
       exclude: InspectScopes = yaml.exclude,
       include: InspectScopes = yaml.include,
       bootstrap: String? = yaml.bootstrap,
@@ -244,7 +244,7 @@ data class QodanaConfig(
         includeAbsent = includeAbsent,
         outputFormat = outputFormat,
         license = license,
-        sourceDirectory = sourceDirectory,
+        onlyDirectory = onlyDirectory,
         exclude = exclude,
         include = include,
         bootstrap = bootstrap,
@@ -319,7 +319,8 @@ enum class SkipResultStrategy {
     val newByBaseline: (Result) -> Boolean = { result ->
       result.baselineState == null
       || (result.baselineState != Result.BaselineState.ABSENT
-          && result.baselineState != Result.BaselineState.UNCHANGED) }
+          && result.baselineState != Result.BaselineState.UNCHANGED)
+    }
     return withContext(StaticAnalysisDispatchers.Default) {
       when (this@SkipResultStrategy) {
         ALWAYS -> true

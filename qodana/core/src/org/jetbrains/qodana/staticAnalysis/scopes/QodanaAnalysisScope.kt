@@ -47,7 +47,7 @@ class QodanaAnalysisScope : AnalysisScope {
 
   companion object {
     fun fromConfigOrDefault(config: QodanaConfig, project: Project, onPathNotFound: (Path) -> Unit): QodanaAnalysisScope {
-      val configured = config.sourceDirectory?.let(::Path) ?: return QodanaAnalysisScope(GlobalSearchScope.projectScope(project), project)
+      val configured = config.onlyDirectory ?: return QodanaAnalysisScope(GlobalSearchScope.projectScope(project), project)
       val absolute = configured.let { if (!it.isAbsolute) config.projectPath.resolve(it) else it }
 
       val vfsDir = LocalFileSystem.getInstance().findFileByPath(absolute.invariantSeparatorsPathString)

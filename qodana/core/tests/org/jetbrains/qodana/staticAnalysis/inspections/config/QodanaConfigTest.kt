@@ -320,9 +320,11 @@ class QodanaConfigTest {
     assertEquals(schemaRoots, rootProps)
   }
 
-  private fun testProviderInspectionScopes(name: String,
-                                           fieldSelector: (QodanaYamlConfig) -> InspectScopes,
-                                           paths: List<String> = emptyList()) {
+  private fun testProviderInspectionScopes(
+    name: String,
+    fieldSelector: (QodanaYamlConfig) -> InspectScopes,
+    paths: List<String> = emptyList(),
+  ) {
     val pathPart = if (paths.isNotEmpty()) {
       "paths:\n" + paths.joinToString(separator = "\n") { "            - $it" }
     }
@@ -339,6 +341,78 @@ class QodanaConfigTest {
   private fun testProviderInspectionScopesWithTwoPath(name: String, fieldSelector: (QodanaYamlConfig) -> InspectScopes) =
     testProviderInspectionScopes(name, fieldSelector, listOf("./first path", "second-path"))
 
+
+  @Test
+  fun `parse full qodana_yaml and populate QodanaConfig`() {
+    val yaml = load(
+      """
+      version: "1.0"
+      profile:
+        name: My Profile
+        path: profiles/custom.xml
+      include:
+        - name: SomeInspection
+          paths:
+            - src
+      exclude:
+        - name: All
+      disableSanityInspections: true
+      fixesStrategy: CLEANUP
+      runPromoInspections: false
+      bootstrap: ./scripts/bootstrap.sh
+      script:
+        name: custom
+        parameters:
+          foo: bar
+          answer: 42
+      includeAbsent: true
+      failOnErrorNotification: true
+      maxRuntimeNotifications: 10
+      coverage:
+        reportProblems: false
+      onlyDirectory: subdir
+      failThreshold: 5
+      """.trimIndent()
+    )
+
+    val config = getQodanaConfig(yaml)
+
+    // profile
+    assertEquals("My Profile", config.profile.base.name)
+    assertEquals("profiles/custom.xml", config.profile.base.path)
+
+    // include/exclude
+    assertEquals(1, config.include.size)
+    assertEquals("SomeInspection", config.include[0].name)
+    assertEquals(listOf("src"), config.include[0].paths)
+    assertEquals(1, config.exclude.size)
+    assertEquals("All", config.exclude[0].name)
+
+    // switches and strategies
+    assertEquals(true, config.disableSanityInspections)
+    assertEquals(FixesStrategy.CLEANUP.stageName, config.fixesStrategy.stageName)
+    assertEquals(false, config.runPromoInspections)
+    assertEquals(true, config.includeAbsent)
+    assertEquals(true, config.failOnErrorNotification)
+    assertEquals(10, config.maxRuntimeNotifications)
+
+    // script
+    assertEquals("custom", config.script.name)
+    assertEquals("bar", config.script.parameters["foo"])
+    assertEquals(42, (config.script.parameters["answer"] as Number).toInt())
+
+    // coverage
+    assertEquals(false, config.coverage.reportProblems)
+
+    // paths
+    assertEquals(Path.of("subdir"), config.onlyDirectory)
+
+    // failure conditions (from legacy failThreshold)
+    assertEquals(
+      FailureConditions(FailureConditions.SeverityThresholds(any = 5)),
+      config.failureConditions
+    )
+  }
 
   private fun load(@Language("YAML") yaml: String): QodanaYamlConfig =
     QodanaYamlReader.parse(yaml).getOrThrow()

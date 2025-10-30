@@ -11,6 +11,7 @@ import org.jetbrains.qodana.staticAnalysis.stat.UsageCollector.profileForReporti
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import java.nio.file.Path
 import java.nio.file.Paths
 
 @RunWith(JUnit4::class)
@@ -137,7 +138,7 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
                 "baselineType" to "none",
                 "fixesStrategy" to "none",
                 "includeAbsent" to false,
-                "sourceDirectory" to false
+                "onlyDirectory" to false
     )
   }
 
@@ -165,7 +166,7 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
         baseline = "something not null",
         fixesStrategy = FixesStrategy.CLEANUP,
         includeAbsent = true,
-        sourceDirectory = "another thing that's not null",
+        onlyDirectory = Path.of("another thing that's not null")
       )
       UsageCollector.logConfig(config, "qodana.recommended", "")
     }
@@ -179,7 +180,7 @@ class UsageCollectorTest : HeavyPlatformTestCase() {
                 "baselineType" to "local",
                 "fixesStrategy" to "cleanup",
                 "includeAbsent" to true,
-                "sourceDirectory" to true
+                "onlyDirectory" to true
     )
   }
 

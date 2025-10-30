@@ -39,7 +39,8 @@ class QodanaInspectionApplicationFactory {
     addOption("n", "profile-name", true, QodanaBundle.message("profileName.option.description"))
     addOption("p", "profile-path", true, QodanaBundle.message("profilePath.option.description"))
     addOption("c", "changes", false, QodanaBundle.message("changes.option.description"))
-    addOption("d", "source-directory", true, QodanaBundle.message("source.directory.option.description"))
+    addOption(null, "source-directory", true, QodanaBundle.message("source.directory.option.description"))
+    addOption("d", "only-directory", true, QodanaBundle.message("only.directory.option.description"))
     addOption("profileName", null, true, QodanaBundle.message("profileName.deprecated.option.description"))
     addOption("profilePath", null, true, QodanaBundle.message("profilePath.deprecated.option.description"))
     addOption("changes", null, false, QodanaBundle.message("changes.deprecated.option.description"))
@@ -111,7 +112,15 @@ class QodanaInspectionApplicationFactory {
     val outPath = commandLine.args[1]
     val profileName = commandLine.getOptionValue("n") ?: commandLine.getOptionValue("profileName") ?: ""
     val profilePath = commandLine.getOptionValue("p") ?: commandLine.getOptionValue("profilePath") ?: ""
-    val dirToAnalyze = commandLine.getOptionValue("d") ?: commandLine.getOptionValue("source-directory")
+    val onlyDirectory = commandLine.getOptionValue("d")
+                        ?: commandLine.getOptionValue("only-directory")
+                        ?: commandLine.getOptionValue("source-directory")
+
+    if(commandLine.getOptionValue("source-directory") != null) {
+      LOG.warn("The '--source-directory' option is deprecated, use '-d' or '--only-directory' instead")
+    }
+
+    val dirToAnalyze = onlyDirectory?.let {Path.of(it) }
 
     val effectiveQodanaYamlPath = qodanaYamlFiles.effectiveQodanaYaml
     @Suppress("DEPRECATION")
@@ -141,7 +150,7 @@ class QodanaInspectionApplicationFactory {
       runPromoInspections = runPromo,
       script = script,
       includeAbsent = includeAbsent,
-      sourceDirectory = dirToAnalyze,
+      onlyDirectory = dirToAnalyze,
       failureConditions = if (failThresholdArg == null) {
         yamlConfig.failureConditions
       }

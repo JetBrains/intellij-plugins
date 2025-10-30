@@ -696,6 +696,10 @@
       "description": "Show license problems like other inspections",
       "type": "boolean",
       "default": false
+    },
+    "onlyDirectory": {
+      "description": "Path to the project directory to be analyzed. By default, the entire project is analyzed.",
+      "type": "string"
     }
   },
   "required": ["version"],
