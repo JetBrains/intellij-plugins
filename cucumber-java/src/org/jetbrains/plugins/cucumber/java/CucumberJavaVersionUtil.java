@@ -94,7 +94,7 @@ public final class CucumberJavaVersionUtil {
       }
     }
 
-    String theLatestVersion = VERSION_CLASS_MARKERS.getLast().second;
+    String theLatestVersion = VERSION_CLASS_MARKERS.getFirst().second;
     LOG.debug("Can't detect cucumber-core version by marker class, assume the latest version: " + theLatestVersion);
 
     return theLatestVersion;
