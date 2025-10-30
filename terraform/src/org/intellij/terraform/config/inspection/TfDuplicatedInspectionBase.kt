@@ -49,10 +49,10 @@ abstract class TfDuplicatedInspectionBase : LocalInspectionTool() {
 
     val first = duplicates.firstOrNull { it != current }
     first?.containingFile?.virtualFile?.let {
-      NavigateToDuplicatesQuickFix(first).let { fixes.add(it) }
+      fixes.add(NavigateToDuplicatesQuickFix(first))
     }
     current.containingFile?.virtualFile?.let {
-      ShowDuplicatesQuickFix(current, duplicates).let { fixes.add(it) }
+      fixes.add(ShowDuplicatesQuickFix(current, duplicates))
     }
 
     return fixes.toTypedArray()
@@ -86,16 +86,7 @@ internal class ShowDuplicatesQuickFix(psiElement: PsiElement, duplicates: Collec
   override fun getFamilyName(): String = HCLBundle.message("show.all.duplicates.quick.fix.name")
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-    val element = psiPointer.element
-    if (element == null || !element.isValid) return
-
-    val usageInfos = runReadAction {
-      duplicatePointers.mapNotNull { pointer ->
-        val element = pointer.element
-        if (element != null && element.isValid) UsageInfo(element) else null
-      }
-    }
-    if (usageInfos.isEmpty()) return
+    val element = psiPointer.element ?: return
 
     val target = PsiElement2UsageTargetAdapter(element, true)
     val presentation = UsageViewPresentation().apply {
@@ -105,6 +96,13 @@ internal class ShowDuplicatesQuickFix(psiElement: PsiElement, duplicates: Collec
       searchString = title
       scopeText = descriptor.psiElement.getTerraformSearchScope().displayName
     }
+
+    val usageInfos = runReadAction {
+      duplicatePointers.mapNotNull { pointer ->
+        pointer.element?.let { UsageInfo(it) }
+      }
+    }
+    if (usageInfos.isEmpty()) return
 
     UsageViewManager.getInstance(project).searchAndShowUsages(arrayOf(target), {
       UsageSearcher { processor ->
