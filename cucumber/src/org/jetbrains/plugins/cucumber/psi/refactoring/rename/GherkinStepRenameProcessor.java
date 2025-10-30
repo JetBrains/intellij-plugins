@@ -17,10 +17,7 @@ import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpTT;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
-import org.jetbrains.plugins.cucumber.CucumberUtil;
-import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
-import org.jetbrains.plugins.cucumber.ParameterTypeManager;
+import org.jetbrains.plugins.cucumber.*;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
@@ -46,9 +43,28 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     if (reference != null) {
       List<AbstractStepDefinition> stepDefinitions = reference.resolveToDefinitions().stream().toList();
       if (stepDefinitions.size() != 1) {
-        throw new IllegalStateException("there must be exactly 1 step definition for rename, but there are " + stepDefinitions.size());
+        throw new IncorrectOperationException(
+          CucumberBundle.message("cucumber.refactor.rename.step.definition.not.single", stepDefinitions.size())
+        );
       }
       final AbstractStepDefinition stepDefinition = stepDefinitions.getFirst();
+      final PsiElement stepDefinitionElement = stepDefinition.getElement();
+      if (stepDefinitionElement == null) {
+        throw new IllegalStateException("step definition must have have a backing PSI element");
+      }
+      boolean isWritable = false;
+      for (CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
+        if (ep.isWritableStepLikeFile(stepDefinitionElement.getContainingFile(), stepDefinitionElement.getContainingFile())) {
+          isWritable = true;
+          break;
+        }
+      }
+      if (!isWritable) {
+        String stepDefinitionFilePath = stepDefinitionElement.getContainingFile().getVirtualFile().getPresentableUrl();
+        throw new IncorrectOperationException(
+          CucumberBundle.message("cucumber.refactor.rename.step.definition.file.not.writable", stepDefinitionFilePath)
+        );
+      }
       final String regexp = stepDefinition.getCucumberRegex();
       final String expression = stepDefinition.getExpression();
       if (expression != null && regexp != null) {
@@ -82,9 +98,8 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
         final String suffix = expression.endsWith("$") ? "$" : "";
         stepDefinition.setValue(prefix + newName + suffix);
 
-        final PsiElement elementToRename = stepDefinition.getElement();
-        if (listener != null && elementToRename != null) {
-          listener.elementRenamed(elementToRename);
+        if (listener != null) {
+          listener.elementRenamed(stepDefinitionElement);
         }
       }
     }
