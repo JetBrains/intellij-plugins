@@ -8,19 +8,20 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.util.*;
 
+@NotNullByDefault
 public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
 
-  public JavaAnnotatedStepDefinition(@NotNull PsiAnnotation element) {
+  public JavaAnnotatedStepDefinition(PsiAnnotation element) {
     super(element);
   }
 
-  public static JavaAnnotatedStepDefinition create(@NotNull PsiAnnotation element) {
+  public static JavaAnnotatedStepDefinition create(PsiAnnotation element) {
     final JavaAnnotatedStepDefinition stepDefinition = CachedValuesManager.getCachedValue(element, () -> {
       return CachedValueProvider.Result.create(new JavaAnnotatedStepDefinition(element), element);
     });
@@ -28,7 +29,7 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   }
 
   @Override
-  protected @Nullable String getCucumberRegexFromElement(PsiElement element) {
+  protected @Nullable String getCucumberRegexFromElement(@Nullable PsiElement element) {
     // NOTE(bartekpacia): This implementation doesn't conform to this method's name because it can return either a regex or a cukex.
     //  However, it has been like this for many years, and it seems to work fine. If possible, consider refactoring in the future.
     if (!(element instanceof PsiAnnotation annotation)) return null;
@@ -36,7 +37,7 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   }
 
   @Override
-  public void setValue(@NotNull String newValue) {
+  public void setValue(String newValue) {
     if (!(getElement() instanceof PsiAnnotation annotation)) {
       return;
     }
