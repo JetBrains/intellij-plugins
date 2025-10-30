@@ -10,7 +10,7 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
-import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
+import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaLambdaStepPomTarget;
 
 import java.util.List;
 
@@ -41,13 +41,13 @@ public final class CucumberJavaStepDefinitionSearch extends QueryExecutorBase<Ps
     }
 
     if (elementToSearch instanceof PomTargetPsiElement pomTargetPsiElement) {
-      if (pomTargetPsiElement.getTarget() instanceof Java8StepDefinition stepDefinition) {
-        final String regexp = stepDefinition.getExpression();
+      if (pomTargetPsiElement.getTarget() instanceof CucumberJavaLambdaStepPomTarget pomTarget) {
+        final String regexp = pomTarget.getName();
         if (regexp == null) {
           return;
         }
-        final PsiMethodCallExpression methodCallExpression = stepDefinition.getElement();
-        if (methodCallExpression == null) {
+        final PsiElement methodCallExpression = pomTarget.getNavigationElement();
+        if (!(methodCallExpression instanceof PsiMethodCallExpression)) {
           return;
         }
         CucumberUtil.findGherkinReferencesToElement(methodCallExpression, regexp, consumer, searchScope);

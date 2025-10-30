@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
-import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
+import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaLambdaStepPomTarget;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterPomTarget;
 
 /// Provides "Find Usages" functionality for the definition of a Cucumber `ParameterType`.
@@ -51,7 +51,8 @@ public final class CucumberJavaPomDeclarationSearcher extends PomDeclarationSear
     final PsiMethodCallExpression methodCallExpression = PsiTreeUtil.getParentOfType(literalExpression, PsiMethodCallExpression.class);
     if (methodCallExpression == null) return;
     if (CucumberJavaUtil.isJava8StepDefinition(methodCallExpression)) {
-      consumer.consume(Java8StepDefinition.create(methodCallExpression));
+      final PomTarget pomTarget = new CucumberJavaLambdaStepPomTarget(methodCallExpression);
+      consumer.consume(pomTarget);
     }
   }
 
@@ -69,7 +70,8 @@ public final class CucumberJavaPomDeclarationSearcher extends PomDeclarationSear
       if (classReference != null) {
         final String fqn = classReference.getQualifiedName();
         if (CucumberJavaUtil.PARAMETER_TYPE_CLASS.equals(fqn)) {
-          consumer.consume(new CucumberJavaParameterPomTarget(element, stringValue));
+          final PomTarget pomTarget = new CucumberJavaParameterPomTarget(element, stringValue);
+          consumer.consume(pomTarget);
         }
       }
     }

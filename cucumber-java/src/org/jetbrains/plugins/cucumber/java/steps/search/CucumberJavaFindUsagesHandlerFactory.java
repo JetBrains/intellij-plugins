@@ -10,7 +10,7 @@ import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
-import org.jetbrains.plugins.cucumber.java.steps.Java8StepDefinition;
+import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaLambdaStepPomTarget;
 
 @NotNullByDefault
 public final class CucumberJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
@@ -22,8 +22,8 @@ public final class CucumberJavaFindUsagesHandlerFactory extends FindUsagesHandle
   private static @Nullable PsiElement getStepDefinition(PsiElement element) {
     if (element instanceof PomTargetPsiElement pomTargetPsiElement) {
       final PomTarget target = pomTargetPsiElement.getTarget();
-      if (target instanceof Java8StepDefinition stepDefinition) {
-        return stepDefinition.getElement();
+      if (target instanceof CucumberJavaLambdaStepPomTarget pomTarget) {
+        return pomTarget.getNavigationElement();
       }
     }
 
