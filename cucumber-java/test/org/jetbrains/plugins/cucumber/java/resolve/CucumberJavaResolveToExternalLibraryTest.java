@@ -22,8 +22,7 @@ public class CucumberJavaResolveToExternalLibraryTest extends BaseCucumberJavaRe
     checkReference("<caret>I have that parameter", "alternative");
     checkReference("<caret>I have or not parameter", "optional");
     checkReference("<caret>I have or not", "optional");
-    // FIXME: doesn't work for custom '@ParameterType's defined in external libraries. See IDEA-211600.
-    // checkReference("<caret>I have a custom blah parameter", "custom");
+    checkReference("<caret>I have a custom blah parameter", "custom");
   }
 
   @Override

@@ -2,7 +2,6 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
@@ -17,13 +16,13 @@ import java.util.*;
 @NotNullByDefault
 public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
 
-  public JavaAnnotatedStepDefinition(PsiAnnotation element) {
-    super(element);
+  public JavaAnnotatedStepDefinition(PsiAnnotation element, Module module) {
+    super(element, module);
   }
 
-  public static JavaAnnotatedStepDefinition create(PsiAnnotation element) {
+  public static JavaAnnotatedStepDefinition create(PsiAnnotation element, Module module) {
     final JavaAnnotatedStepDefinition stepDefinition = CachedValuesManager.getCachedValue(element, () -> {
-      return CachedValueProvider.Result.create(new JavaAnnotatedStepDefinition(element), element);
+      return CachedValueProvider.Result.create(new JavaAnnotatedStepDefinition(element, module), element);
     });
     return stepDefinition;
   }
@@ -39,10 +38,6 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   @Override
   public void setValue(String newValue) {
     if (!(getElement() instanceof PsiAnnotation annotation)) {
-      return;
-    }
-    final Module module = ModuleUtilCore.findModuleForPsiElement(annotation);
-    if (module == null) {
       return;
     }
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);

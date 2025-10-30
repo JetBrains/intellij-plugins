@@ -2,7 +2,6 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
@@ -13,8 +12,11 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 @NotNullByDefault
 public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition {
-  public AbstractJavaStepDefinition(PsiElement element) {
+  protected final Module module;
+
+  public AbstractJavaStepDefinition(PsiElement element, Module module) {
     super(element);
+    this.module = module;
   }
 
   @Override
@@ -25,7 +27,6 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
     if (element == null) return null;
 
     if (CucumberUtil.isCucumberExpression(definitionText)) {
-      Module module = ModuleUtilCore.findModuleForPsiElement(element);
       ParameterTypeManager parameterTypes = CucumberJavaUtil.getAllParameterTypes(module);
       return CucumberUtil.buildRegexpFromCucumberExpression(definitionText, parameterTypes);
     }
