@@ -19,7 +19,7 @@ import java.util.*;
 @NotNullByDefault
 public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExtension {
   @Override
-  public boolean isStepLikeFile(PsiElement child, PsiElement parent) {
+  public boolean isStepLikeFile(PsiElement child) {
     if (child instanceof PsiClassOwner) {
       return true;
     }
@@ -27,7 +27,7 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
   }
 
   @Override
-  public boolean isWritableStepLikeFile(PsiElement child, PsiElement parent) {
+  public boolean isWritableStepLikeFile(PsiElement child) {
     if (child instanceof PsiClassOwner) {
       final PsiFile file = child.getContainingFile();
       if (file != null) {
@@ -54,8 +54,7 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
       PsiElement stepDefElement = stepDef.getElement();
       if (stepDefElement != null) {
         final PsiFile psiFile = stepDefElement.getContainingFile();
-        PsiDirectory psiDirectory = psiFile.getParent();
-        if (psiDirectory != null && isWritableStepLikeFile(psiFile, psiDirectory)) {
+        if (isWritableStepLikeFile(psiFile)) {
           result.add(psiFile);
         }
       }

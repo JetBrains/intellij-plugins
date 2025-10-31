@@ -27,13 +27,13 @@ import java.util.List;
 @NotNullByDefault
 public final class GrCucumberExtension extends AbstractCucumberJavaExtension {
   @Override
-  public boolean isStepLikeFile(PsiElement child, PsiElement parent) {
+  public boolean isStepLikeFile(PsiElement child) {
     return child instanceof GroovyFile file && file.getName().endsWith(".groovy");
   }
 
   @Override
-  public boolean isWritableStepLikeFile(PsiElement child, PsiElement parent) {
-    return isStepLikeFile(child, parent);
+  public boolean isWritableStepLikeFile(PsiElement child) {
+    return isStepLikeFile(child);
   }
 
   @Override
