@@ -21,27 +21,21 @@ public interface CucumberJvmExtensionPoint {
 
   // ToDo: remove parent
 
-  /**
-   * Checks if the child could be step definition file
-   *
-   * @param child  a PsiFile
-   * @param parent container of the child
-   * @return true if the child could be step definition file, else otherwise
-   */
+  /// Checks if the child could be step definition file
+  ///
+  /// @param child  a PsiFile
+  /// @param parent container of the child
+  /// @return true if the child could be step definition file, else otherwise
   boolean isStepLikeFile(PsiElement child, PsiElement parent);
 
-  /**
-   * Checks if the child could be a step definition container
-   *
-   * @param child  PsiElement to check
-   * @param parent it's container
-   * @return true if child could be step definition container and it's possible to write in it
-   */
+  /// Checks if the child could be a step definition container
+  ///
+  /// @param child  PsiElement to check
+  /// @param parent it's container
+  /// @return true if child could be step definition container and it's possible to write in it
   boolean isWritableStepLikeFile(PsiElement child, PsiElement parent);
 
-  /**
-   * Returns type of the step definition file handled by this extension point.
-   */
+  /// Returns the type of the step definition file handled by this extension point.
   BDDFrameworkType getStepFileType();
 
   StepDefinitionCreator getStepDefinitionCreator();
