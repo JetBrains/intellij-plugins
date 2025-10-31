@@ -424,7 +424,7 @@
             "$ref": "#/definitions/hpNameValueRule"
           }
         },
-        "ignpreVariableNames": {
+        "ignoreVariableNames": {
           "description": "Regular expressions for variable names to ignore as hardcoded password",
           "type": "array",
           "minItems": 0,
