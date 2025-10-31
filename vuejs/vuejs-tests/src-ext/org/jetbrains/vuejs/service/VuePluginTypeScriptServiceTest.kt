@@ -60,52 +60,27 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
     }
   }
 
-  fun testBasicErrors() {
-    myFixture.configureByText("main.vue", """
-      <script lang="ts">
-        const <error descr="TS6133: 'unusedVar' is declared but its value is never read.">unusedVar</error> = 213;
-        const <error descr="TS2322: Type 'number' is not assignable to type 'string'."><error descr="TS6133: 'abc' is declared but its value is never read.">abc</error></error>: string = 213;
-      </script>
-    """.trimIndent())
+  private fun doSimpleHighlightTest(
+    vararg modules: VueTestModule,
+    fileName: String = "App",
+    warnings: Boolean = false,
+  ) {
+    myFixture.configureVueDependencies(modules = modules)
+    copyDirectory()
+    myFixture.configureFromTempProjectFile("$fileName.$extension")
+    checkHighlightingByOptions(warnings)
+  }
 
-    myFixture.testHighlighting()
+  fun testBasicErrors() {
+    doSimpleHighlightTest()
   }
 
   fun testSimpleVue() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
-    myFixture.configureByText("Simple.vue", """
-      <script setup lang="ts">
-      let <error descr="TS2322: Type 'number' is not assignable to type 'string'."><error descr="TS6133: 'a' is declared but its value is never read.">a</error></error>: string = 1;
-      
-      function acceptNumber(num: number): number { return num; }
-      
-      acceptNumber(<error descr="TS2345: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error>);
-      </script>
-      
-      <template>
-        <div v-text="acceptNumber(<error descr="TS2345: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error>)" />
-        <div>{{acceptNumber(<error descr="Argument type true is not assignable to parameter type number"><error descr="TS2345: Argument of type 'boolean' is not assignable to parameter of type 'number'.">true</error></error>)}}</div>
-      </template>
-    """.trimIndent())
-
-    myFixture.checkHighlighting()
+    doSimpleHighlightTest(VueTestModule.VUE_3_0_0)
   }
 
   fun testEnableSuggestions() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
-    myFixture.configureByText("Simple.vue", """
-      <script setup lang="ts">
-        export function hello(<weak_warning descr="TS6133: 'p' is declared but its value is never read." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">p</weak_warning>: number, p2: number) {
-          console.log(p2);
-        }
-        let <error descr="TS2322: Type 'number' is not assignable to type 'string'." textAttributesKey="ERRORS_ATTRIBUTES"><error descr="TS6133: 'a' is declared but its value is never read." textAttributesKey="ERRORS_ATTRIBUTES">a</error></error>: string = 1;
-      </script>
-
-      <template>
-      </template>
-    """.trimIndent())
-
-    myFixture.checkHighlighting()
+    doSimpleHighlightTest(VueTestModule.VUE_3_0_0)
   }
 
   fun testSimpleRename() {
