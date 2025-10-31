@@ -1,16 +1,16 @@
 package org.jetbrains.plugins.cucumber.java.steps.reference;
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Processor;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNullByDefault;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
-
-import java.util.List;
+import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 @NotNullByDefault
 public final class CucumberJavaImplicitUsageProvider implements ImplicitUsageProvider {
@@ -22,23 +22,14 @@ public final class CucumberJavaImplicitUsageProvider implements ImplicitUsagePro
     else if (element instanceof PsiMethod method) {
       if (CucumberJavaUtil.isHook(method) || CucumberJavaUtil.isParameterType(method)) return true;
       if (CucumberJavaUtil.isAnnotationStepDefinition(method)) {
-        // This code is unnecessarily duplicated. See IDEA-379826.
-        final List<PsiAnnotation> stepAnnotations = CucumberJavaUtil.getCucumberStepAnnotations(method);
-        for (final PsiAnnotation stepAnnotation : stepAnnotations) {
-          final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
-          if (regexp == null) continue;
-          final Ref<@Nullable PsiReference> psiReferenceRef = new Ref<>(null);
-          Processor<@Nullable PsiReference> processor = (PsiReference psiReference) -> {
-            if (psiReference == null) return true;
-            psiReferenceRef.set(psiReference);
-            return false;
-          };
-          CucumberUtil.findGherkinReferencesToElement(stepAnnotation, regexp, processor, method.getResolveScope());
-          if (psiReferenceRef.get() != null) return true;
-        }
+        final CommonProcessors.FindFirstProcessor<PsiReference> processor = new CommonProcessors.FindFirstProcessor<>();
+        final GlobalSearchScope projectScope = GlobalSearchScope.projectScope(element.getProject());
+        final GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes(projectScope, GherkinFileType.INSTANCE);
+        final ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(method, restrictedScope, false);
+        ReferencesSearch.search(searchParameters).forEach(processor);
+        return processor.isFound();
       }
     }
-
     return false;
   }
 
