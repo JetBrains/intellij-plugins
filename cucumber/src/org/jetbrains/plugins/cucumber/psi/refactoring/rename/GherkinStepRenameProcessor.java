@@ -54,7 +54,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
       }
       boolean isWritable = false;
       for (CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
-        if (ep.isWritableStepLikeFile(stepDefinitionElement.getContainingFile(), stepDefinitionElement.getContainingFile())) {
+        if (ep.isWritableStepLikeFile(stepDefinitionElement.getContainingFile())) {
           isWritable = true;
           break;
         }
