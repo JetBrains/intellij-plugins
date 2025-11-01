@@ -20,12 +20,17 @@ import org.jetbrains.vuejs.options.VueConfigurable
 import org.jetbrains.vuejs.options.VueTSPluginVersion
 import org.jetbrains.vuejs.options.getVueSettings
 
-private fun getVueTypeScriptPlugin(version: VueTSPluginVersion) = DownloadableTypeScriptServicePlugin(
-  shortLabel = "Vue",
-  activationRule = VueTSPluginLoaderFactory.getActivationRule(version),
-)
+private fun getVueTypeScriptPlugin(
+  version: VueTSPluginVersion,
+): DownloadableTypeScriptServicePlugin =
+  DownloadableTypeScriptServicePlugin(
+    shortLabel = "Vue",
+    activationRule = VueTSPluginLoaderFactory.getActivationRule(version),
+  )
 
-class VuePluginTypeScriptService(project: Project) : PluggableTypeScriptService(
+class VuePluginTypeScriptService(
+  project: Project,
+) : PluggableTypeScriptService(
   project = project,
   servicePlugin = getVueTypeScriptPlugin(getVueSettings(project).tsPluginVersion)
 ) {
