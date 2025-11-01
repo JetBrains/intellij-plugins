@@ -101,6 +101,8 @@ jvm_library(
     "@community//platform/testFramework:testFramework_test_lib",
     "@community//platform/testFramework/junit5",
     "@community//platform/testFramework/junit5:junit5_test_lib",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
+    "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "@ultimate_lib//:cucumber-java-cucumber-expressions",
     "@ultimate_lib//:cucumber-java-cucumber-java",
     "@ultimate_lib//:cucumber-java-cucumber-core-3",
