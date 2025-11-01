@@ -13,6 +13,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.VuejsIcons
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.options.VueConfigurable
 import org.jetbrains.vuejs.options.VueTSPluginVersion
@@ -51,6 +53,11 @@ class VuePluginTypeScriptService(project: Project) : PluggableTypeScriptService(
   ): Boolean {
     return super.isAcceptableNonTsFile(project, service, virtualFile)
            || virtualFile.isVueFile
+  }
+
+  override fun supportsInjectedFile(file: PsiFile): Boolean {
+    return file.language is VueJSLanguage
+           || file.language is VueTSLanguage
   }
 
   override fun createWidgetItem(currentFile: VirtualFile?): LanguageServiceWidgetItem {
