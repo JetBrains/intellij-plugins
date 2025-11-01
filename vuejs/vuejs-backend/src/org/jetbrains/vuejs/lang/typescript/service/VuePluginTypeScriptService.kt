@@ -42,7 +42,7 @@ class VuePluginTypeScriptService(
     return ConfigurePluginRequest(
       ConfigurePluginRequestArguments(
         pluginName = "typescript-vue-plugin",
-        configuration = mapOf(),
+        configuration = emptyMap(),
       ))
   }
 
