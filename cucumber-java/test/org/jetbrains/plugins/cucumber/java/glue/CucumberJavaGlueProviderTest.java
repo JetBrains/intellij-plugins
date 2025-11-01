@@ -54,6 +54,6 @@ public class CucumberJavaGlueProviderTest extends CucumberCodeInsightTestCase {
 
   private void init() {
     myFixture.copyDirectoryToProject("glue", "");
-    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("test.feature"));
+    myFixture.configureByFile("test.feature");
   }
 }

@@ -8,16 +8,11 @@ import org.jetbrains.plugins.cucumber.java.resolve.BaseCucumberJavaResolveTest;
 /// We extend [BaseCucumberJavaResolveTest] because we need to be able to resolve
 /// between Cucumber feature files and step definitions in Java to test the inspection.
 public class UnusedJavaMethodInspectionTest extends BaseCucumberJavaResolveTest {
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    myFixture.allowTreeAccessForAllFiles();
-  }
 
   protected void doTest(String file) {
     myFixture.enableInspections(new UnusedDeclarationInspectionBase(true));
     myFixture.copyDirectoryToProject(".", "");
-    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir(file));
+    myFixture.configureByFile(file);
     myFixture.testHighlighting();
   }
 
