@@ -10,7 +10,6 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.resolve.CucumberResolveTest;
 
 public abstract class BaseCucumberJavaResolveTest extends CucumberResolveTest {

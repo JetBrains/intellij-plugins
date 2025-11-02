@@ -2,7 +2,6 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.application.options.ModuleDescriptionsComboBox;
-import com.intellij.execution.configurations.ConfigurationUtil;
 import com.intellij.execution.ui.*;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.fileChooser.FileChooser;
