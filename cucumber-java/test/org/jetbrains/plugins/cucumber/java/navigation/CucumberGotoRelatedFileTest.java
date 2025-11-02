@@ -6,12 +6,12 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 import java.util.List;
 
-public class CucumberGotoRelatedFileTest extends CucumberJavaCodeInsightTestCase {
+public class CucumberGotoRelatedFileTest extends BasePlatformTestCase {
   public void testGotoRelated() {
     myFixture.copyDirectoryToProject("gotoRelated", "");
     myFixture.configureByFile("gotoRelated/test.feature");

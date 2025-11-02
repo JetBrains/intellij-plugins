@@ -7,13 +7,13 @@ import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 // When no version of cucumber-jvm can be determined, ensure that injections are performed as if on the latest cucumber-jvm version. 
-public class CucumberJavaDefaultVersionInjectionTest extends CucumberJavaCodeInsightTestCase {
+public class CucumberJavaDefaultVersionInjectionTest extends BasePlatformTestCase {
   @Override
   protected String getBasePath() {
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "injection/injection_7";

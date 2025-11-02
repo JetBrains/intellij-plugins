@@ -4,8 +4,8 @@ package org.jetbrains.plugins.cucumber.java.glue;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.CollectConsumer;
-import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.java.run.CucumberJavaAllFeaturesInFolderGlueProvider;
 import org.jetbrains.plugins.cucumber.java.run.CucumberJavaFeatureGlueProvider;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil.RELATED_TEST_DATA_PATH;
 
-public class CucumberJavaGlueProviderTest extends CucumberCodeInsightTestCase {
+public class CucumberJavaGlueProviderTest extends BasePlatformTestCase {
   public void testFeatureGlueCalculation() {
     init();
 

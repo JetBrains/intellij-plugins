@@ -15,13 +15,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.TestApplicationManager;
 import com.intellij.testFramework.TestDataProvider;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTestCase {
+public class CucumberJavaRunConfigurationTest extends BasePlatformTestCase {
   public void testScenarioOutlineNameFilter() {
     doTest("^a few cukes$");
   }

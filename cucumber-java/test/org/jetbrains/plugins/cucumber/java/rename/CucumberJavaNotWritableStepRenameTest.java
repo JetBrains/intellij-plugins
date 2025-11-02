@@ -7,19 +7,19 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.project.IntelliJProjectConfiguration;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PsiTestUtil;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
-import org.jetbrains.plugins.cucumber.java.resolve.BaseCucumberJavaResolveTest;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil.attachCucumberExpressionsLibrary;
 
 /// Verify that we correctly detect and handle an attempt to rename a step definition which is in a not-writable file.
 /// Such a step definition likely comes from an external JAR.
-public class CucumberJavaNotWritableStepRenameTest extends BaseCucumberJavaResolveTest {
+public class CucumberJavaNotWritableStepRenameTest extends BasePlatformTestCase {
 
   @Override
-  protected String getRelatedTestDataPath() {
+  protected String getBasePath() {
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "renameStep";
   }
 

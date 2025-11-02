@@ -4,11 +4,11 @@ package org.jetbrains.plugins.cucumber.java.run;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.util.Ref;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-public class CucumberJavaRunConfigurationWithoutCucumberPresentTest extends CucumberCodeInsightTestCase {
+public class CucumberJavaRunConfigurationWithoutCucumberPresentTest extends BasePlatformTestCase {
 
   public void testDoNotCreateRunConfigurationWithoutCucumberLibrariesPresentInProject() {
     myFixture.copyDirectoryToProject(getTestName(true), "");

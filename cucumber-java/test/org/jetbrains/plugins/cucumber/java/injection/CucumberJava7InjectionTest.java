@@ -6,11 +6,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-public class CucumberJava7InjectionTest extends CucumberJavaCodeInsightTestCase {
+public class CucumberJava7InjectionTest extends BasePlatformTestCase {
   @Override
   protected String getBasePath() {
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "injection/injection_7";

@@ -2,7 +2,7 @@
 package org.jetbrains.plugins.cucumber.java.rename;
 
 import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterTypeReference;
 
@@ -10,7 +10,7 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameter
 /// ([learn more](https://github.com/cucumber/cucumber-jvm/blob/main/release-notes/v5.0.0.md#new-package-structure)).
 ///
 /// @see CucumberJavaParameterTypeReference
-public class CucumberJava5ParameterTypeRenameTest extends CucumberCodeInsightTestCase {
+public class CucumberJava5ParameterTypeRenameTest extends BasePlatformTestCase {
   private void doTest(String newName) {
     myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
     myFixture.configureByFile("Steps.java");

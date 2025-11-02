@@ -2,13 +2,13 @@
 package org.jetbrains.plugins.cucumber.java.intentions;
 
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
-import org.jetbrains.plugins.cucumber.java.resolve.BaseCucumberJavaResolveTest;
 
 import static com.intellij.testFramework.fixtures.CodeInsightTestUtil.doIntentionTest;
 
-public class ConvertScenarioTest extends BaseCucumberJavaResolveTest {
+public class ConvertScenarioTest extends BasePlatformTestCase {
   public void testOptionalParameter() {
     doTest();
   }
@@ -25,7 +25,7 @@ public class ConvertScenarioTest extends BaseCucumberJavaResolveTest {
   }
 
   @Override
-  protected String getRelatedTestDataPath() {
+  protected String getBasePath() {
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "intentions";
   }
 

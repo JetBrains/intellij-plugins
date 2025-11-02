@@ -8,7 +8,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor;
@@ -16,7 +16,7 @@ import org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor;
 import javax.swing.*;
 import java.util.Date;
 
-public class CucumberScenarioRunLineContributorTest extends CucumberJavaCodeInsightTestCase {
+public class CucumberScenarioRunLineContributorTest extends BasePlatformTestCase {
   private static final String myTestFeature = """
     Feature: My feature
     

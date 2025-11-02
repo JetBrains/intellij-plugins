@@ -7,13 +7,13 @@ import com.intellij.execution.testframework.sm.runner.states.TestStateInfo;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor;
 
 import java.util.Date;
 
-public class CucumberFeatureRunLineContributorTest extends CucumberJavaCodeInsightTestCase {
+public class CucumberFeatureRunLineContributorTest extends BasePlatformTestCase {
   public void testFeatureRunLineContributorWhenFeatureNeverHaveBeenRan() {
     PsiFile file = myFixture.configureByText("test.feature", "Feature: My feature");
     RunLineMarkerContributor.Info info = new CucumberRunLineMarkerContributor().getInfo(file.findElementAt(myFixture.getCaretOffset()));
@@ -42,7 +42,7 @@ public class CucumberFeatureRunLineContributorTest extends CucumberJavaCodeInsig
     assertNotNull(info);
     assertEquals(AllIcons.RunConfigurations.TestState.Green2, info.icon);
   }
-  
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();

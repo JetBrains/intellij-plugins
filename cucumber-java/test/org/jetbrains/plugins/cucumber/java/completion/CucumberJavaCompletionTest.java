@@ -2,14 +2,14 @@ package org.jetbrains.plugins.cucumber.java.completion;
 
 
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.CompletionTester;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.io.File;
 
-public class CucumberJavaCompletionTest extends CucumberJavaCodeInsightTestCase {
+public class CucumberJavaCompletionTest extends BasePlatformTestCase {
   private CompletionTester myCompletionTester;
 
   @Override

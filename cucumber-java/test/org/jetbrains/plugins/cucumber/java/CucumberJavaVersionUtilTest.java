@@ -2,8 +2,9 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
-public class CucumberJavaVersionUtilTest extends CucumberJavaCodeInsightTestCase {
+public class CucumberJavaVersionUtilTest extends BasePlatformTestCase {
   public void testCucumber_4_5_VersionDetection() {
     assertEquals("4.5", CucumberJavaVersionUtil.getCucumberCoreVersion(getModule(), getProject()));
   }

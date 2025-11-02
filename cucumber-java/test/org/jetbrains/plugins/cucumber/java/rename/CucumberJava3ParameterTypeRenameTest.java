@@ -2,12 +2,12 @@
 package org.jetbrains.plugins.cucumber.java.rename;
 
 import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameterTypeReference;
 
 /// @see CucumberJavaParameterTypeReference
-public class CucumberJava3ParameterTypeRenameTest extends CucumberCodeInsightTestCase {
+public class CucumberJava3ParameterTypeRenameTest extends BasePlatformTestCase {
   private void doTest(String newName) {
     myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
     myFixture.configureByFile("Steps.java");

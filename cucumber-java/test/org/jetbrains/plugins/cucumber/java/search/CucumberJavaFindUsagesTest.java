@@ -2,11 +2,11 @@
 package org.jetbrains.plugins.cucumber.java.search;
 
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.usages.Usage;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-public class CucumberJavaFindUsagesTest extends CucumberJavaCodeInsightTestCase {
+public class CucumberJavaFindUsagesTest extends BasePlatformTestCase {
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
