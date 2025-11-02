@@ -1,13 +1,13 @@
 package org.jetbrains.plugins.cucumber.completion;
 
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.testFramework.fixtures.CompletionTester;
-import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.io.File;
 
-public class CucumberCompletionVariantsTest extends CucumberCodeInsightTestCase {
+public class CucumberCompletionVariantsTest extends BasePlatformTestCase {
   private CompletionTester myCompletionTester;
 
   public void testScenarioPriority() throws Throwable {

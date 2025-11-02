@@ -1,11 +1,11 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.resolve;
 
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.usages.Usage;
-import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 
-public class GherkinStepParameterFindUsagesTest extends CucumberCodeInsightTestCase {
+public class GherkinStepParameterFindUsagesTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return CucumberTestUtil.getTestDataPath() + "/refactoring";

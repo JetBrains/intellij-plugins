@@ -2,15 +2,15 @@ package org.jetbrains.plugins.cucumber.completion;
 
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
-import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 
-public class CompletionTest extends CucumberCodeInsightTestCase {
+public class CompletionTest extends BasePlatformTestCase {
   public void testOutline() {
     doTest();
   }
 
- public void testOutlineWithoutColon() {
+  public void testOutlineWithoutColon() {
     doTest();
   }
 
