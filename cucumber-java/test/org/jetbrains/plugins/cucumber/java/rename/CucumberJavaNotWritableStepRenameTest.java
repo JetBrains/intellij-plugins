@@ -45,7 +45,7 @@ public class CucumberJavaNotWritableStepRenameTest extends BaseCucumberJavaResol
 
   public void testNotWritableStep() {
     myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
-    myFixture.configureByFiles("test.feature");
+    myFixture.configureByFile("test.feature");
     assertThrows(
       () -> myFixture.renameElementAtCaretUsingHandler("newName"),
       RuntimeException.class,

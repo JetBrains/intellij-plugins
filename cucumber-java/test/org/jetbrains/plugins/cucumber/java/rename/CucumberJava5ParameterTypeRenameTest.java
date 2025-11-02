@@ -13,7 +13,7 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaParameter
 public class CucumberJava5ParameterTypeRenameTest extends CucumberCodeInsightTestCase {
   private void doTest(String newName) {
     myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
-    myFixture.configureByFiles("Steps.java");
+    myFixture.configureByFile("Steps.java");
     myFixture.testHighlighting("Steps.java"); // ensure everything is resolved
 
     myFixture.renameElementAtCaretUsingHandler(newName);

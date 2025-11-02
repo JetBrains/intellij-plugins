@@ -24,7 +24,7 @@ public class CucumberJavaStepParameterRenameTest extends BaseCucumberJavaResolve
 
   private void doTest(String newName) {
     myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
-    myFixture.configureByFiles("test.feature");
+    myFixture.configureByFile("test.feature");
     myFixture.testHighlighting("test.feature"); // ensure everything is resolved
 
     myFixture.renameElementAtCaretUsingHandler(newName);

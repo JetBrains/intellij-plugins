@@ -15,8 +15,6 @@ import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 import java.util.ArrayList;
 import java.util.List;
 
-/// See IDEA-107390.
-@SuppressWarnings("NonAsciiCharacters")
 public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
 
   @Override
@@ -45,7 +43,7 @@ public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
     myFixture.enableInspections(new CucumberStepInspection());
     myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
 
-    myFixture.configureByFiles("test.feature", "Steps.java");
+    myFixture.configureByFile("test.feature");
 
     PsiReference reference = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
     ResolveResult[] resolveResults = getResolveResult(reference);
@@ -68,10 +66,12 @@ public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
     doTest("foo", "I am close", "I am finding a bug");
   }
 
+  @SuppressWarnings("NonAsciiCharacters")
   public void testCukexSimpleInPolishWithJava8() {
     doTest("Wtedy", "jem ciastko", "pożeram ogóreczka");
   }
 
+  @SuppressWarnings("NonAsciiCharacters")
   public void testCukexSimpleInPolish() {
     doTest("jestemGłodny", "jestem głodny", "teraz jestem bardzo głodny");
   }
@@ -97,7 +97,7 @@ public class CucumberJavaStepRenameTest extends BaseCucumberJavaResolveTest {
 
   public void testNoDefinition() {
     myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
-    myFixture.configureByFiles("test.feature", "Steps.java");
+    myFixture.configureByFile("test.feature");
     assertThrows(CommonRefactoringUtil.RefactoringErrorHintException.class,
                  "Cannot perform refactoring. This step can't be renamed due to no definition, several definitions or several steps pointing to one definition. Please rename it manually.",
                  () -> myFixture.renameElementAtCaretUsingHandler("newName"));
