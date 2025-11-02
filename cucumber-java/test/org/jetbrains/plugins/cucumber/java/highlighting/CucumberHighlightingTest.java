@@ -22,6 +22,10 @@ public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
     doTest();
   }
 
+  public void testAmbiguousStep() {
+    doTest();
+  }
+
   protected void doTest() {
     myFixture.testHighlighting(true, true, true);
   }

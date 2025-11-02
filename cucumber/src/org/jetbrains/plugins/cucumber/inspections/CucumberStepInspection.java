@@ -5,13 +5,13 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.ResolveResult;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
-import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
@@ -37,8 +37,8 @@ public final class CucumberStepInspection extends GherkinInspection {
           if (reference == null) {
             return;
           }
-          final AbstractStepDefinition definition = reference.resolveToDefinition();
-          if (definition == null) {
+          final ResolveResult[] resolveResults = reference.multiResolve(false);
+          if (resolveResults.length == 0) {
             LocalQuickFix[] fixes = null;
             if (!CucumberJvmExtensionPoint.EP_NAME.getExtensionList().isEmpty()) {
               fixes = new LocalQuickFix[]{new CucumberCreateStepFix(), new CucumberCreateAllStepsFix()};
@@ -46,6 +46,10 @@ public final class CucumberStepInspection extends GherkinInspection {
             holder.registerProblem(reference.getElement(), reference.getRangeInElement(),
                                    CucumberBundle.message("cucumber.inspection.undefined.step.msg.name"),
                                    fixes);
+          }
+          else if (resolveResults.length > 1) {
+            holder.registerProblem(reference.getElement(), reference.getRangeInElement(),
+                                   CucumberBundle.message("cucumber.inspection.ambiguous.step.msg.name", resolveResults.length));
           }
         }
       }
