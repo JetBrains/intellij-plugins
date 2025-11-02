@@ -24,4 +24,8 @@ public class ShoppingStepdefs {
   @Then("I am double annotated happy")
   public void i_am_happy_double_annotated() {
   }
+
+  @Given("I am never used")
+  public void <warning descr="Method 'i_am_never_used()' is never used">i_am_never_used</warning>() {
+  }
 }
