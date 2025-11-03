@@ -1,11 +1,11 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.cssModules
 
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.lang.javascript.psi.types.primitives.JSStringType
+import com.intellij.lang.javascript.psi.types.primitives.JSStringTypeImpl
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.css.*
@@ -29,7 +29,7 @@ class CssModuleType private constructor(val container: PsiElement, source: JSTyp
     stylesheet.rulesets.forEach {
       processSelectors(it, allClasses)
     }
-    val propertyType = JSStringType.STRING_EMPTY_EXPLICIT_TYPE
+    val propertyType = JSStringTypeImpl.STRING_EMPTY_EXPLICIT_TYPE
 
     return JSRecordTypeImpl(source, allClasses.entrySet().map { (name, sources) ->
       val source = JSRecordMemberSourceFactory.createSource(

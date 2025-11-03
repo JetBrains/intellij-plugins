@@ -1,11 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.scopes
 
-import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
-import com.intellij.polySymbols.html.StandardHtmlSymbol
-import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
-import com.intellij.polySymbols.js.jsType
-import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -15,7 +10,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
-import com.intellij.lang.javascript.psi.types.primitives.JSStringType
+import com.intellij.lang.javascript.psi.types.primitives.JSStringTypeImpl
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
@@ -24,10 +19,10 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.html.HTML_ATTRIBUTES
-import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
-import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
-import com.intellij.polySymbols.html.htmlAttributeValue
+import com.intellij.polySymbols.html.*
+import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
+import com.intellij.polySymbols.js.jsType
+import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -108,7 +103,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
     val PROP_DELEGATE_PRIORITY: PolySymbolProperty<PolySymbol.Priority> = PolySymbolProperty["ng-delegate-priority"]
 
     private val ONE_TIME_BINDING_EXCLUDES = listOf(Angular2AttributeValueProvider.NG_CLASS_ATTR)
-    private val STRING_TYPE: JSType = JSStringType.STRING_EMPTY_EXPLICIT_TYPE
+    private val STRING_TYPE: JSType = JSStringTypeImpl.STRING_EMPTY_EXPLICIT_TYPE
 
     @JvmStatic
     fun isOneTimeBindingProperty(property: PolySymbol): Boolean {

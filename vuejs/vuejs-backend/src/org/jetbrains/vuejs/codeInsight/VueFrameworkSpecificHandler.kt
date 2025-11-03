@@ -1,18 +1,17 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.codeInsight
 
-import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
-import com.intellij.polySymbols.js.jsType
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
-import com.intellij.lang.javascript.psi.types.JSTypeContext
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
-import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
+import com.intellij.polySymbols.js.jsType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
@@ -53,7 +52,7 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
           attributeInfo is VueAttributeNameParser.VueDirectiveInfo &&
           attributeInfo.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND &&
           attributeInfo.arguments == SLOT_NAME_ATTRIBUTE) {
-        return JSStringType(true, JSTypeSourceFactory.createTypeSource(element, true), JSTypeContext.INSTANCE)
+        return JSNamedTypeFactory.createStringPrimitiveType(JSTypeSourceFactory.createTypeSource(element, true))
       }
     }
 
