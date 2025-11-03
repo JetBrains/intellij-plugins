@@ -76,15 +76,15 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   fun testSimpleVue() {
-    doSimpleHighlightTest(VueTestModule.VUE_3_0_0)
+    doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
   }
 
   fun testEnableSuggestions() {
-    doSimpleHighlightTest(VueTestModule.VUE_3_0_0)
+    doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
   }
 
   fun testSimpleRename() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     val fileToRename = myFixture.addFileToProject("Usage.vue", """
       <script setup lang="ts">
         console.log("test");
@@ -109,7 +109,7 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   fun testBasicCompletion() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureByText("main.vue", """
       <script setup>
         import { ref } from 'vue'
