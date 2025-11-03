@@ -137,7 +137,7 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   fun testBasicDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureByText("main.vue", """
       <script setup>
         import { ref } from 'vue'
