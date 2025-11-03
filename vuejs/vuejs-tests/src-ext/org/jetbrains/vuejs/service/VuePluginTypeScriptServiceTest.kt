@@ -87,6 +87,10 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
     doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
   }
 
+  fun testAugmentedComponentCustomPropertiesWithOverridesErrors() {
+    doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
+  }
+
   fun testSimpleRename() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     val fileToRename = myFixture.addFileToProject("Usage.vue", """
