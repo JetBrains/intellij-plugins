@@ -11,13 +11,12 @@ import com.intellij.util.ThrowableConsumer
 import com.intellij.util.gist.GistManager
 import com.intellij.util.io.DataExternalizer
 import org.intellij.terraform.config.model.ProviderType
-import org.intellij.terraform.config.model.TfTypeModel.Companion.getTerraformBlock
+import org.intellij.terraform.config.model.TfTypeModel.Companion.getTerraformBlockInModule
 import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersProperty
 import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersSource
 import org.intellij.terraform.hcl.psi.HCLProperty
 import java.io.DataInput
 import java.io.DataOutput
-import java.io.IOException
 
 @Service
 internal class LocalProviderNamesService {
@@ -28,7 +27,7 @@ internal class LocalProviderNamesService {
   }
 
   val providersNamesGist =
-    GistManager.getInstance().newPsiFileGist<Map<String, String>>("TF_PROVIDER_LIST", 1, object : DataExternalizer<Map<String, String>> {
+    GistManager.getInstance().newPsiFileGist("TF_PROVIDER_LIST", 1, object : DataExternalizer<Map<String, String>> {
       override fun save(out: DataOutput, value: Map<String, String>) {
         DataInputOutputUtilRt.writeMap(out, value,
                                        ThrowableConsumer { out.writeUTF(it) },
@@ -37,12 +36,12 @@ internal class LocalProviderNamesService {
 
       override fun read(input: DataInput): Map<String, String> {
         return DataInputOutputUtilRt.readMap(input,
-                                             ThrowableComputable<String, IOException> { input.readUTF() },
-                                             ThrowableComputable<String, IOException> { input.readUTF() })
+                                             ThrowableComputable { input.readUTF() },
+                                             ThrowableComputable { input.readUTF() })
       }
     }) { psiFile ->
       val localNames = mutableMapOf<String, String>()
-      val terraformRootBlock = getTerraformBlock(psiFile)
+      val terraformRootBlock = getTerraformBlockInModule(psiFile)
       terraformRootBlock?.accept(RequiredProvidersVisitor(localNames))
       localNames
     }

@@ -106,7 +106,7 @@ internal object TfCompletionUtil {
 
   fun buildLookupForRequiredProvider(provider: ProviderType, element: PsiElement): LookupElement =
     createProviderLookupElement(provider, element)
-      .withInsertHandler { context, item ->
+      .withInsertHandler { context, _ ->
         val project = context.project
         val providerProperty = TfElementGenerator(project).createRequiredProviderProperty(provider)
         val document = context.document
@@ -114,8 +114,8 @@ internal object TfCompletionUtil {
         PsiDocumentManager.getInstance(project).commitDocument(document)
 
         val psiFile = context.file
-        val terraformBlock = TfTypeModel.getTerraformBlock(psiFile) ?: return@withInsertHandler
-        CodeStyleManager.getInstance(project).reformatText(psiFile, listOf(terraformBlock.textRange))
+        val terraformBlock = TfTypeModel.getTerraformBlockInModule(psiFile) ?: return@withInsertHandler
+        CodeStyleManager.getInstance(project).reformatText(terraformBlock.containingFile, listOf(terraformBlock.textRange))
       }
 
   private fun createProviderLookupElement(provider: ProviderType, element: PsiElement): LookupElementBuilder =

@@ -86,8 +86,8 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
 
   @RequiresReadLock
   internal fun addBlockRequiredProperties(file: PsiFile, editor: Editor, project: Project) {
-    val blockPointer = PsiTreeUtil.getParentOfType<HCLBlock>(file.findElementAt(editor.caretModel.offset),
-                                                             HCLBlock::class.java)?.createSmartPointer() ?: return
+    val blockPointer = PsiTreeUtil.getParentOfType(file.findElementAt(editor.caretModel.offset),
+                                                   HCLBlock::class.java)?.createSmartPointer() ?: return
     coroutineScope.launch(Dispatchers.Default) {
       addHCLBlockRequiredProperties(project, blockPointer)
     }
@@ -131,15 +131,16 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
   @RequiresWriteLock
   internal fun addRequiredProvidersBlockToConfig(provider: ProviderType, file: PsiFile) {
     val elementGenerator = TfElementGenerator(project)
-    val terraformBlock = (TfTypeModel.getTerraformBlock(file)
+    val terraformBlock = (TfTypeModel.getTerraformBlockInModule(file)
                           ?: file.addBefore(elementGenerator.createBlock(HCL_TERRAFORM_IDENTIFIER), file.firstChild)) as HCLBlock
-    val requiredProvidersBlock = (PsiTreeUtil.findChildrenOfType<HCLBlock>(terraformBlock, HCLBlock::class.java).firstOrNull {
+    val requiredProvidersBlock = (PsiTreeUtil.findChildrenOfType(terraformBlock, HCLBlock::class.java).firstOrNull {
       RequiredProvidersBlock.accepts(it)
-    }?: terraformBlock.`object`
-      ?.addBefore(elementGenerator.createBlock(HCL_TERRAFORM_REQUIRED_PROVIDERS), terraformBlock.`object`?.lastChild)) as HCLBlock
+    } ?: terraformBlock.`object`?.addBefore(
+      elementGenerator.createBlock(HCL_TERRAFORM_REQUIRED_PROVIDERS), terraformBlock.`object`?.lastChild
+    )) as HCLBlock
 
     val providerProperty = elementGenerator.createRequiredProviderProperty(provider)
     requiredProvidersBlock.`object`?.addBefore(providerProperty, requiredProvidersBlock.`object`?.lastChild)
-    CodeStyleManager.getInstance(project).reformatText(file, listOf(terraformBlock.textRange), true)
+    CodeStyleManager.getInstance(project).reformatText(requiredProvidersBlock.containingFile, listOf(terraformBlock.textRange), true)
   }
 }
