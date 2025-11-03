@@ -82,6 +82,10 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
   fun testEnableSuggestions() {
     doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
   }
+  
+  fun testAugmentedComponentCustomPropertiesWithOverrides() {
+    doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
+  }
 
   fun testSimpleRename() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
