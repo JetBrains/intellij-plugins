@@ -74,9 +74,7 @@ internal class TfExecutableTestButton(
     add(button)
     add(spinnerIcon)
     add(resultLabel)
-    if (toolType.getDownloadUrl().isNotEmpty()) {
-      add(installButton)
-    }
+    add(installButton)
 
     button.addActionListener {
       spinnerIcon.isVisible = true
