@@ -87,8 +87,16 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
     doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
   }
 
+  fun testAugmentedComponentCustomPropertiesWithOverrides__vapor() {
+    doSimpleHighlightTest(VueTestModule.VUE_3_6_0)
+  }
+
   fun testAugmentedComponentCustomPropertiesWithOverridesErrors() {
     doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
+  }
+
+  fun testAugmentedComponentCustomPropertiesWithOverridesErrors__vapor() {
+    doSimpleHighlightTest(VueTestModule.VUE_3_6_0)
   }
 
   fun testSimpleRename() {
