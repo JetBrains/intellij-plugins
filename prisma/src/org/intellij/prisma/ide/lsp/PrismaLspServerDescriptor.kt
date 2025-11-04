@@ -1,3 +1,4 @@
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.prisma.ide.lsp
 
 import com.intellij.application.options.CodeStyle
@@ -29,6 +30,7 @@ class PrismaLspServerDescriptor(project: Project)
     override val documentHighlightsCustomizer: LspDocumentHighlightsCustomizer = LspDocumentHighlightsDisabled
     override val documentSymbolCustomizer: LspDocumentSymbolCustomizer = LspDocumentSymbolDisabled
     override val signatureHelpCustomizer: LspSignatureHelpCustomizer = LspSignatureHelpDisabled
+    override val selectionRangeCustomizer: LspSelectionRangeCustomizer = LspSelectionRangeDisabled
 
     override val diagnosticsCustomizer: LspDiagnosticsCustomizer = object : LspDiagnosticsSupport() {
       override fun getTooltip(diagnostic: Diagnostic): @NlsSafe String = convertMarkdownToHtml(diagnostic.message)
