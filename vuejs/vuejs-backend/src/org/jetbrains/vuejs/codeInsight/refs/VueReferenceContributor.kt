@@ -1,6 +1,8 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.codeInsight.refs
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.html.refs.PATH_ATTRIBUTES
 import com.intellij.lang.javascript.frameworks.jsx.JSXReferenceContributor
 import com.intellij.lang.javascript.frameworks.jsx.JSXReferenceContributor.createPathReferenceProvider
 import com.intellij.openapi.fileTypes.FileType
@@ -10,7 +12,9 @@ import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.*
 import com.intellij.psi.css.resolve.CssReferenceProviderUtil.getFileReferenceData
 import com.intellij.psi.css.resolve.StylesheetFileReferenceSet
+import com.intellij.psi.filters.ElementFilter
 import com.intellij.psi.filters.position.FilterPattern
+import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.ProcessingContext
@@ -99,5 +103,19 @@ private class VueRefReference(element: PsiElement, private val target: PsiElemen
 private fun createSrcAttrValuePattern(tagName: String): XmlAttributeValuePattern =
   XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).withAncestor(2, XmlPatterns.xmlTag().withLocalName(tagName))
 
-private fun creatPathAttributeValuePattern(): XmlAttributeValuePattern = XmlPatterns.xmlAttributeValue("href", "to")
+private class VuePathAttributeFilter: ElementFilter {
+  override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
+    if (element !is XmlAttributeValue) return false
+    if (element.childrenOfType<ASTWrapperPsiElement>().isNotEmpty()) return false
+    val xmlAttribute = element.parent.asSafely<XmlAttribute>() ?: return false
+    val attributeName = xmlAttribute.name
+    if (attributeName.contains(":")) return false
+    return xmlAttribute.localName in PATH_ATTRIBUTES
+  }
+
+  override fun isClassAcceptable(hintClass: Class<*>?): Boolean = true
+}
+
+private fun creatPathAttributeValuePattern(): XmlAttributeValuePattern = XmlPatterns.xmlAttributeValue()
+  .and(FilterPattern(VuePathAttributeFilter()))
   .withSuperParent(2, XmlPatterns.xmlTag().and(FilterPattern(JSXReferenceContributor.createPathContainedTagFilter(false))))

@@ -65,6 +65,10 @@ class NuxtResolveTest : BasePlatformTestCase() {
     doPathResolveTest()
   }
 
+  fun testNuxtJSStringTemplateValue() {
+    doPathResolveTest("component.vue")
+  }
+
   fun testRoutePathImportNotResolve() {
     doPathResolveTest()
   }
