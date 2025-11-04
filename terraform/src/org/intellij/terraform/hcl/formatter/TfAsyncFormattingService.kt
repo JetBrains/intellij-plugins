@@ -11,6 +11,7 @@ import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.eel.EelProcess
 import com.intellij.platform.eel.provider.getEelDescriptor
+import com.intellij.platform.eel.provider.toEelApi
 import com.intellij.platform.eel.provider.utils.readWholeText
 import com.intellij.platform.eel.provider.utils.sendWholeText
 import com.intellij.platform.eel.spawnProcess

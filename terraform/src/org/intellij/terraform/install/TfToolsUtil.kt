@@ -9,6 +9,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.platform.eel.ExecuteProcessException
 import com.intellij.platform.eel.provider.getEelDescriptor
+import com.intellij.platform.eel.provider.toEelApi
 import com.intellij.platform.eel.provider.utils.readWholeText
 import com.intellij.platform.eel.spawnProcess
 import com.intellij.util.io.HttpRequests
