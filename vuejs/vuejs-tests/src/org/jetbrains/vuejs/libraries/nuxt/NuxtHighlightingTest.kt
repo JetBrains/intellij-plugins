@@ -77,6 +77,13 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.configureByFile(getTestName(false) + ".vue")
     myFixture.checkHighlighting()
   }
+  
+  fun testNoErrorForUnresolvedPathAttribute() {
+    myFixture.enableInspections(HtmlUnknownTargetInspection::class.java)
+    myFixture.copyDirectoryToProject("pathAttributeHighlighting", ".")
+    myFixture.configureFromTempProjectFile("app.vue")
+    myFixture.checkHighlighting(true, false, true)
+  }
 
 }
 
