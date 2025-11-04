@@ -24,7 +24,7 @@ export const <warning descr="Unused constant Usage">Usage</warning> = () => {
     <a href={"/normal/declaration/index"}/>
     <a href={"/normal/declaration/"}/>
     <a href={"/normal/declaration"}/>
-    <link href="/<warning descr="Cannot resolve file 'insideNotApp'">insideNotApp</warning>"/>
+    <link href="/insideNotApp"/>
     <link href="/notApp/insideNotApp"/>
   </>
 }
