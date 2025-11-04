@@ -1,11 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.refs
 
+import com.intellij.lang.javascript.frameworks.jsx.JSXReferenceContributor
+import com.intellij.lang.javascript.frameworks.jsx.JSXReferenceContributor.createPathReferenceProvider
 import com.intellij.lang.javascript.patterns.JSPatterns
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSThisExpression
+import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase
@@ -26,6 +29,7 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_ID_INDEX_KEY
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.NAME_PROP
 import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
@@ -37,13 +41,14 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
     registrar.registerReferenceProvider(THIS_INSIDE_COMPONENT, VueComponentLocalReferenceProvider())
     registrar.registerReferenceProvider(COMPONENT_NAME, VueComponentNameReferenceProvider())
     registrar.registerReferenceProvider(TEMPLATE_ID_REF, VueTemplateIdReferenceProvider())
+    registrar.registerReferenceProvider(PATH_ATTRIBUTE_VALUE, createPathReferenceProvider())
   }
 }
 
 private val THIS_INSIDE_COMPONENT: ElementPattern<out PsiElement> = createThisInsideComponentPattern()
 private val COMPONENT_NAME: ElementPattern<out PsiElement> = createComponentNamePattern()
-private val TEMPLATE_ID_REF = JSPatterns.jsLiteral()
-  .withParent(JSPatterns.jsProperty().withName(TEMPLATE_PROP))
+private val TEMPLATE_ID_REF = JSPatterns.jsLiteral().withParent(JSPatterns.jsProperty().withName(TEMPLATE_PROP))
+private val PATH_ATTRIBUTE_VALUE: ElementPattern<out PsiElement> = creatPathAttributeValuePattern()
 
 private fun createThisInsideComponentPattern(): ElementPattern<out PsiElement> {
   return PlatformPatterns.psiElement(JSReferenceExpression::class.java)
@@ -77,6 +82,19 @@ private fun createComponentNamePattern(): ElementPattern<out PsiElement> {
 
     }))
 }
+
+private fun creatPathAttributeValuePattern() = JSPatterns.stringTemplate()
+  .withAncestor(2, PlatformPatterns.psiElement(VueJSEmbeddedExpressionContent::class.java)
+    .withAncestor(2, PlatformPatterns.psiElement().withParent(JSXReferenceContributor.createPathAttributePattern(true))))
+  .and(FilterPattern(object : ElementFilter {
+    override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
+      if (element !is JSStringTemplateExpression) return false
+      val text = element.text
+      return text.startsWith("/") || element.text.startsWith("`/")
+    }
+    override fun isClassAcceptable(hintClass: Class<*>?): Boolean = true
+  }))
+
 
 private class VueTemplateIdReferenceProvider : PsiReferenceProvider() {
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
