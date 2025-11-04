@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,7 +54,28 @@ public final class Java8StepDefinition extends AbstractJavaStepDefinition {
 
   @Override
   public List<String> getVariableNames() {
-    return Collections.emptyList(); // This was never implemented. See IDEA-379823.
+    final PsiMethodCallExpression methodCall = getElement();
+    if (methodCall == null) {
+      return Collections.emptyList();
+    }
+
+    final PsiExpression[] arguments = methodCall.getArgumentList().getExpressions();
+    if (arguments.length < 2) {
+      return Collections.emptyList();
+    }
+
+    final PsiExpression lambdaArg = arguments[1];
+    if (!(lambdaArg instanceof PsiLambdaExpression lambda)) {
+      return Collections.emptyList();
+    }
+
+    final PsiParameterList parameterList = lambda.getParameterList();
+    final PsiParameter[] parameters = parameterList.getParameters();
+    final List<String> result = new ArrayList<>();
+    for (final PsiParameter parameter : parameters) {
+      result.add(parameter.getName());
+    }
+    return result;
   }
 
   @Override

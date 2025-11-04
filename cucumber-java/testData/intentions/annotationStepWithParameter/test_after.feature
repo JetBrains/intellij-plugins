@@ -4,6 +4,7 @@ Feature: Some interesting feature
     Given I am hungry
     When I ask for advice
     Then I eat a <color> cookie
+    Then I eat a <color> cookie
     Examples:
       | color |
-      | red   |
+      | blue  |

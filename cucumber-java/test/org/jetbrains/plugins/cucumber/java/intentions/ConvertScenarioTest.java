@@ -18,15 +18,17 @@ public class ConvertScenarioTest extends BasePlatformTestCase {
     doTest();
   }
 
-  @TestFor(issues = "IDEA-379823")
-  public void _testJava8ParameterType() {
-    // Disabled because this was never implemented.
+  public void testAnnotationStepWithParameter() {
     doTest();
   }
 
   @TestFor(issues = "IDEA-379823")
-  public void _testJava8CustomParameterType() {
-    // Disabled because this was never implemented.
+  public void testLambdaStepWithParameter() {
+    doTest();
+  }
+
+  @TestFor(issues = "IDEA-379823")
+  public void testLambdaStepWithCustomParameter() {
     doTest();
   }
 
@@ -44,6 +46,6 @@ public class ConvertScenarioTest extends BasePlatformTestCase {
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();
+    return CucumberJavaTestUtil.createCucumber7ProjectDescriptor();
   }
 }
