@@ -2,24 +2,25 @@
 package org.intellij.terraform.config.actions
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.openapi.application.runReadAction
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.common.waitUntilAssertSucceeds
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.runInEdtAndWait
 import org.intellij.terraform.TfTestUtils
+import kotlin.io.path.Path
+import kotlin.io.path.readText
 
 internal class TfAddRequiredProvidersBlockTest : BasePlatformTestCase() {
+  override fun getTestDataPath(): String = "${TfTestUtils.getTestDataPath()}/terraform/addRequiredProviders"
 
   override fun runInDispatchThread(): Boolean {
     return false
   }
 
-  internal fun getTestClassName(): String {
-    return PlatformTestUtil.lowercaseFirstLetter(javaClass.simpleName, true)
-  }
-
   private fun doCompletionWithDelay() {
-    val filePath = "${TfTestUtils.getTestDataRelativePath()}/terraform/completion/${getTestClassName()}/${getTestName(true)}"
+    val filePath = "${getTestName(true)}/main"
     myFixture.configureByFile("$filePath.tf")
     val variants = myFixture.complete(CompletionType.BASIC, 2)
     assertNull(variants)
@@ -48,5 +49,29 @@ internal class TfAddRequiredProvidersBlockTest : BasePlatformTestCase() {
 
   fun testAddProviderForEphemeralBlock() {
     doCompletionWithDelay()
+  }
+
+  fun testAddProviderToAnotherFile() {
+    val filePaths = listOf("main", "providers").map { "$testDataPath/${getTestName(true)}/$it" }
+
+    val psiFiles = myFixture.configureByFiles(*filePaths.map { "$it.tf" }.toTypedArray())
+    val variants = myFixture.complete(CompletionType.BASIC, 2)
+    assertNull(variants)
+
+    runInEdtAndWait {
+      PsiDocumentManager.getInstance(project).commitAllDocuments()
+    }
+
+    runReadAction {
+      psiFiles.forEachIndexed { index, psiFile ->
+        val expectedFilePath = "${filePaths[index]}.after.tf"
+        val expectedText = Path(expectedFilePath).readText()
+        assertEquals(
+          "File ${psiFile.name} does not match expected content",
+          expectedText.trim(),
+          psiFile.text.trim()
+        )
+      }
+    }
   }
 }
