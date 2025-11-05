@@ -19,28 +19,6 @@ public interface CucumberJvmExtensionPoint {
   ExtensionPointName<CucumberJvmExtensionPoint> EP_NAME =
     ExtensionPointName.create("org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint");
 
-  /// Checks if the child could be step definition file
-  ///
-  /// @param child  a PsiFile
-  /// @param parent container of the child
-  /// @return true if the child could be step definition file, else otherwise
-  /// @deprecated The `parent` parameter is not needed. Use [#isStepLikeFile(PsiElement)] instead.
-  @Deprecated(forRemoval = true)
-  default boolean isStepLikeFile(PsiElement child, PsiElement parent) {
-    return isStepLikeFile(child);
-  }
-
-  /// Checks if the child could be a step definition container
-  ///
-  /// @param child  PsiElement to check
-  /// @param parent it's container
-  /// @return true if child could be step definition container and it's possible to write in it
-  /// @deprecated The `parent` parameter is not needed. Use [#isWritableStepLikeFile(PsiElement)] instead.
-  @Deprecated(forRemoval = true)
-  default boolean isWritableStepLikeFile(PsiElement child, PsiElement parent) {
-    return isWritableStepLikeFile(child);
-  }
-
   /// Returns if `child` can be a file containing step definitions.
   boolean isStepLikeFile(PsiElement child);
 
