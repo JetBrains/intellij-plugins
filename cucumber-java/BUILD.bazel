@@ -118,6 +118,7 @@ jvm_library(
     "@ultimate_lib//:cucumber-java-cucumber-java8-7",
     "@ultimate_lib//:cucumber-java-cucumber-java-5-5",
     "@ultimate_lib//:cucumber-java-cucumber-java8-5-5",
+    "@community//platform/testFramework/junit5/codeInsight",
   ]
 )
 ### auto-generated section `build intellij.cucumber.java` end
