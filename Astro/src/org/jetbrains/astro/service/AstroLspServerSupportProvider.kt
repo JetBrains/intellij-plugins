@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.customization.*
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
+import org.eclipse.lsp4j.ConfigurationItem
 import org.jetbrains.astro.AstroIcons
 import org.jetbrains.astro.service.settings.AstroServiceConfigurable
 
@@ -37,5 +38,16 @@ class AstroLspServerDescriptor(project: Project) : JSFrameworkLspServerDescripto
     override val workspaceSymbolCustomizer = LspWorkspaceSymbolDisabled
     override val documentHighlightsCustomizer = LspDocumentHighlightsDisabled
     override val signatureHelpCustomizer = LspSignatureHelpDisabled
+  }
+
+  override fun getWorkspaceConfiguration(item: ConfigurationItem): Any? {
+    if (item.section == "emmet") {
+      return mapOf(
+        "showExpandedAbbreviation" to "always",
+        "showAbbreviationSuggestions" to true,
+        "optimizeStylesheetParsing" to true,
+      )
+    }
+    return super.getWorkspaceConfiguration(item)
   }
 }
