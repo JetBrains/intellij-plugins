@@ -28,6 +28,7 @@ public interface CucumberJvmExtensionPoint {
   /// Returns the type of the step definition file handled by this extension point.
   BDDFrameworkType getStepFileType();
 
+  /// Returns an object that can create step implementations in a specific language.
   StepDefinitionCreator getStepDefinitionCreator();
 
   /// Returns all step definitions available from `featureFile`.
@@ -39,6 +40,9 @@ public interface CucumberJvmExtensionPoint {
 
   Collection<? extends PsiFile> getStepDefinitionContainers(GherkinFile file);
 
+  /// Whether this extension supports Gherkin v6.
+  ///
+  /// Gherkin v6 added [the `Rule` keyword](https://cucumber.io/docs/gherkin/reference/#rule).
   default boolean isGherkin6Supported(Module module) {
     return false;
   }
