@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import com.intellij.util.DocumentUtil
 import com.intellij.util.LineSeparator
 
 fun interface PrettierFormattingApplier {
@@ -21,9 +20,7 @@ fun interface PrettierFormattingApplier {
       return PrettierFormattingApplier { project, psiFile ->
         if (diff.isEmpty()) return@PrettierFormattingApplier false
 
-        DocumentUtil.executeInBulk(document) {
-          applyTextDifferencesToDocument(context, diff)
-        }
+        applyTextDifferencesToDocument(context, diff)
         val lineSeparatorUpdate = updateLineSeparatorIfNeeded(project, psiFile.virtualFile, context.detectedLineSeparator)
 
         snapshot?.restore(document, psiFile)
