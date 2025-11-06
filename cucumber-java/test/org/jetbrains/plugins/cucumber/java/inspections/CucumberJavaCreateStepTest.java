@@ -13,6 +13,7 @@ public class CucumberJavaCreateStepTest extends AbstractCucumberJavaCreateStepTe
   }
 
   public void testJava8Step() {
+    myFixture.allowTreeAccessForAllFiles();
     doTest(false);
   }
 

@@ -27,22 +27,15 @@ public class CucumberHighlightingTest extends BasePlatformTestCase {
   }
 
   protected void doTest() {
+    myFixture.enableInspections(new CucumberStepInspection());
+    myFixture.copyDirectoryToProject(getTestName(true), "");
+    myFixture.configureByFile(getTestName(true) + "/test.feature");
     myFixture.testHighlighting(true, true, true);
   }
 
   @Override
   protected String getBasePath() {
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "highlighting";
-  }
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    myFixture.allowTreeAccessForAllFiles();
-
-    myFixture.enableInspections(new CucumberStepInspection());
-    myFixture.copyDirectoryToProject(getTestName(true), "");
-    myFixture.configureByFile(getTestName(true) + "/test.feature");
   }
 
   @Override

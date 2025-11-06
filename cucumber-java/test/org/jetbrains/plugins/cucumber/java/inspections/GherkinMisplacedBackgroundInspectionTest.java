@@ -23,12 +23,6 @@ public class GherkinMisplacedBackgroundInspectionTest extends BasePlatformTestCa
   }
 
   @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    myFixture.allowTreeAccessForAllFiles();
-  }
-
-  @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
