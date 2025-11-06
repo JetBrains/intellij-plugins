@@ -11,9 +11,10 @@ import com.intellij.platform.eel.ExecuteProcessException
 import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.utils.readWholeText
 import com.intellij.platform.eel.spawnProcess
-import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.system.CpuArch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.opentofu.runtime.OpenTofuProjectSettings
 import org.intellij.terraform.runtime.TfProjectSettings
@@ -27,7 +28,8 @@ import java.nio.file.Paths
 internal enum class TfToolType(@param:Nls val executableName: String) {
   TERRAFORM("terraform") {
     override val displayName = "Terraform"
-    override suspend fun getDownloadUrl(): String {
+
+    override fun fetchDownloadUrl(): String {
       val latestTfVersion = fetchTfLatestStableVersion() ?: DEFAULT_TERRAFORM_VERSION
       return "$downloadServerUrl/$latestTfVersion/terraform_${latestTfVersion}_${getOSName()}_${getArchName()}.zip"
     }
@@ -53,7 +55,8 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
   },
   OPENTOFU("tofu") {
     override val displayName = "OpenTofu"
-    override suspend fun getDownloadUrl(): String {
+
+    override fun fetchDownloadUrl(): String {
       val latestTofuVersion = fetchTofuLatestStableVersion() ?: DEFAULT_OPENTOFU_VERSION
       return "$downloadServerUrl/v$latestTofuVersion/tofu_${latestTofuVersion}_${getOSName()}_${getArchName()}.zip"
     }
@@ -79,7 +82,8 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
   },
   TERRAGRUNT("terragrunt") {
     override val displayName: String = "Terragrunt"
-    override suspend fun getDownloadUrl(): String {
+
+    override fun fetchDownloadUrl(): String {
       val latestTerragruntVersion = fetchTerragruntStableVersion() ?: DEFAULT_TERRAGRUNT_VERSION
       return "$downloadServerUrl/$latestTerragruntVersion/terragrunt_${getOSName()}_${getArchName()}${if (getOSName() == "windows") ".exe" else ""}"
     }
@@ -108,9 +112,11 @@ internal enum class TfToolType(@param:Nls val executableName: String) {
 
   abstract val displayName: String
   abstract fun getToolSettings(project: Project): TfToolSettings
+  protected abstract fun fetchDownloadUrl(): String
 
-  @RequiresBackgroundThread
-  abstract suspend fun getDownloadUrl(): String
+  suspend fun getDownloadUrl(): String = withContext(Dispatchers.IO) {
+    fetchDownloadUrl()
+  }
 
   protected fun getOSName(): String = when {
     SystemInfoRt.isWindows -> "windows"
