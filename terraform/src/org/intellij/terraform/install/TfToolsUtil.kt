@@ -7,9 +7,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfoRt
-import com.intellij.platform.eel.EelExecApi
 import com.intellij.platform.eel.ExecuteProcessException
-import com.intellij.platform.eel.environmentVariables
 import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.utils.readWholeText
 import com.intellij.platform.eel.spawnProcess
@@ -163,17 +161,11 @@ internal fun getBinaryName(executableName: String): String {
 
 internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath: String): @NlsSafe String {
   val eelApi = project.getEelDescriptor().toEelApi()
-  val envVariables = try {
-    eelApi.exec.environmentVariables().onlyActual(true).eelIt().await()
-  }
-  catch (e: EelExecApi.EnvironmentVariablesException) {
-    logger<TfBinaryInstaller>().warn("Failed to get environment variables for getting version of ${tool.displayName}: ${e.message}")
-    null
-  }
-
+  val envVariables = eelApi.exec.fetchLoginShellEnvVariables()
   val processBuilder = eelApi.exec.spawnProcess(exePath)
     .args("--version")
-    .apply { envVariables?.let { env(it) } }
+    .env(envVariables)
+
   val version = try {
     processBuilder.eelIt().stdout.readWholeText()
   }
