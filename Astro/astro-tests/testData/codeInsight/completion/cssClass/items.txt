@@ -1,0 +1,2 @@
+my-visible-global-class (typeText='global.css:1'; priority=0.0)
+my-visible-local-class (typeText='index.astro'; priority=0.0)

@@ -110,6 +110,8 @@
     <include.provider implementation="org.jetbrains.astro.AstroFileIncludeProvider"/>
     <codeInsight.codeVisionSettingsPreviewLanguage language="Astro" modelId="component.usage"/>
 
+    <css.inclusionContext implementation="org.jetbrains.astro.lang.css.AstroCssInclusionContext"/>
+    <css.embeddedCssProvider implementation="org.jetbrains.astro.lang.css.AstroEmbeddedCssProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

@@ -108,6 +108,12 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
     checkLookupItems()
   }
 
+  fun testCssClass() = doLookupTest(
+    dir = true,
+    configureFileName = "index.astro",
+    additionalFiles = listOf("global.css", "foo.astro")
+  )
+
   fun testEmmetAbbreviation() = doLookupTest()
 
   // WEB-59265 only enabled completion at root level and nested in HTML but not as children of components.
