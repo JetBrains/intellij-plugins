@@ -66,7 +66,7 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
     warnings: Boolean = false,
   ) {
     myFixture.configureVueDependencies(modules = modules)
-    copyDirectory()
+    myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("$fileName.$extension")
     checkHighlightingByOptions(warnings)
   }
