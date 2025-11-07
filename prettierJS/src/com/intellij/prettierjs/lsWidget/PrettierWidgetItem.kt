@@ -135,9 +135,9 @@ private class PerformPrettierErrorServiceAction(
 ) : DumbAwareAction(when (error) {
                       is PrettierError.ShowDetails -> PrettierBundle.message("prettier.action.show.details")
                       is PrettierError.Unsupported -> PrettierBundle.message("prettier.action.show.details")
-                      is PrettierError.NodeSettings -> PrettierBundle.message("prettier.action.configure.node")
                       is PrettierError.InstallPackage -> PrettierBundle.message("prettier.action.install.package", NpmManager.getInstance(project).npmInstallPresentableText)
-                      is PrettierError.EditSettings -> PrettierBundle.message("prettier.action.open.settings.simple")
+                      is PrettierError.NodeSettings -> PrettierBundle.message("error.invalid.interpreter")
+                      is PrettierError.EditSettings -> PrettierBundle.message("error.no.valid.package")
                     }, null, AllIcons.General.Error) {
   override fun actionPerformed(e: AnActionEvent) {
     when (error) {
