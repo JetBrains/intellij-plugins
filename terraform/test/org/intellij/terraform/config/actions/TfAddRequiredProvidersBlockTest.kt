@@ -4,13 +4,13 @@ package org.intellij.terraform.config.actions
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.testFramework.assertEqualsToFile
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.common.waitUntilAssertSucceeds
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
 import org.intellij.terraform.TfTestUtils
-import kotlin.io.path.Path
-import kotlin.io.path.readText
+import java.io.File
 
 internal class TfAddRequiredProvidersBlockTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = "${TfTestUtils.getTestDataPath()}/terraform/addRequiredProviders"
@@ -64,11 +64,10 @@ internal class TfAddRequiredProvidersBlockTest : BasePlatformTestCase() {
 
     runReadAction {
       psiFiles.forEachIndexed { index, psiFile ->
-        val expectedFilePath = "${filePaths[index]}.after.tf"
-        val expectedText = Path(expectedFilePath).readText()
-        assertEquals(
+        val expectedFile = File("${filePaths[index]}.after.tf")
+        assertEqualsToFile(
           "File ${psiFile.name} does not match expected content",
-          expectedText.trim(),
+          expectedFile,
           psiFile.text.trim()
         )
       }
