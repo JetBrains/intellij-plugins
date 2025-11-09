@@ -16,6 +16,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
@@ -29,14 +30,12 @@ import org.intellij.terraform.config.Constants.HCL_VAR_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
+import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.Icons
-import org.intellij.terraform.hcl.psi.HCLIdentifier
-import org.intellij.terraform.hcl.psi.HCLObject
-import org.intellij.terraform.hcl.psi.HCLPsiUtil
-import org.intellij.terraform.hcl.psi.HCLStringLiteral
+import org.intellij.terraform.hcl.psi.*
 import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
 import org.intellij.terraform.opentofu.OpenTofuConstants.OpenTofuScopes
 import org.intellij.terraform.opentofu.OpenTofuFileType
@@ -113,8 +112,9 @@ internal object TfCompletionUtil {
         document.replaceString(context.startOffset, context.tailOffset, providerProperty.text)
         PsiDocumentManager.getInstance(project).commitDocument(document)
 
-        val psiFile = context.file
-        val terraformBlock = TfTypeModel.getTerraformBlockInModule(psiFile) ?: return@withInsertHandler
+        // It's safe to assume the current file contains a Terraform block with 'required_providers'
+        val terraformBlock = context.file.childrenOfType<HCLBlock>().firstOrNull { TfPsiPatterns.TerraformRootBlock.accepts(it) }
+                             ?: return@withInsertHandler
         CodeStyleManager.getInstance(project).reformatText(terraformBlock.containingFile, listOf(terraformBlock.textRange))
       }
 
