@@ -26,7 +26,6 @@ import org.jetbrains.qodana.staticAnalysis.sarif.hasFixes
 import org.jetbrains.qodana.staticAnalysis.script.DEFAULT_SCRIPT_NAME
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.*
 
@@ -335,9 +334,9 @@ enum class SkipResultStrategy {
 /**
  * Always write qodana.yaml even if config was read from file with different name
  */
-internal suspend fun copyConfigToLog(config: QodanaConfig) {
+internal suspend fun copyConfigToDir(config: QodanaConfig, outDir: Path = PathManager.getLogDir()) {
   runInterruptible(StaticAnalysisDispatchers.IO) {
-    val filesWithNamesInLog = listOfNotNull(
+    val filesWithNamesInDir = listOfNotNull(
       config.yamlFiles.localQodanaYaml?.let { it to QodanaYamlFiles.LOCAL_QODANA_YAML_FILENAME },
       config.yamlFiles.qodanaConfigJson?.let { it to QodanaYamlFiles.QODANA_CONFIG_JSON_FILENAME },
 
@@ -345,11 +344,11 @@ internal suspend fun copyConfigToLog(config: QodanaConfig) {
       config.yamlFiles.effectiveQodanaYaml?.let { it to QodanaYamlFiles.LOCAL_QODANA_YAML_FILENAME },
     )
 
-    filesWithNamesInLog.forEach { (file, nameInLog) ->
-      val pathInLog = Paths.get(PathManager.getLogPath(), nameInLog)
-      runCatching { Files.deleteIfExists(pathInLog) }
+    filesWithNamesInDir.forEach { (file, nameInLog) ->
+      val pathInDir = outDir.resolve(nameInLog)
+      runCatching { Files.deleteIfExists(pathInDir) }
 
-      Files.copy(file, pathInLog, StandardCopyOption.REPLACE_EXISTING)
+      Files.copy(file, pathInDir, StandardCopyOption.REPLACE_EXISTING)
     }
   }
 }
