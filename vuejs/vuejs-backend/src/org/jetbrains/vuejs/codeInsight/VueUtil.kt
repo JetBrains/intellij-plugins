@@ -156,7 +156,9 @@ fun detectLanguage(tag: XmlTag?): String? = tag?.getAttribute(LANG_ATTRIBUTE_NAM
 
 fun detectVueScriptLanguage(file: PsiFile): String? {
   val xmlFile = file as? XmlFile ?: return null
-  val scriptTag = findScriptTag(xmlFile, false) ?: findScriptTag(xmlFile, true) ?: return null
+  val scriptTag = findScriptTag(xmlFile, setup = true)
+                  ?: findScriptTag(xmlFile, setup = false)
+                  ?: return null
   return detectLanguage(scriptTag)
 }
 
