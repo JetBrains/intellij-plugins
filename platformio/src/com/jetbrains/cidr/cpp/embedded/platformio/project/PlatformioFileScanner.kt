@@ -11,7 +11,12 @@ import com.intellij.openapi.vfs.*
 import com.intellij.util.asSafely
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType
-import com.jetbrains.cidr.cpp.project.command.*
+import com.jetbrains.cidr.cpp.external.system.project.command.CPPCommandObject
+import com.jetbrains.cidr.cpp.external.system.project.command.CPPCommandParserResult
+import com.jetbrains.cidr.cpp.external.system.project.command.CPPCompilationCommand
+import com.jetbrains.cidr.cpp.external.system.project.command.CPPCompilationCommandConverter
+import com.jetbrains.cidr.cpp.external.system.project.command.CPPCompilationCommandParser
+import com.jetbrains.cidr.cpp.external.system.project.command.CantFindCompilerExecutable
 import com.jetbrains.cidr.cpp.toolchains.CPPCompilerSwitchesUtil
 import com.jetbrains.cidr.external.system.model.ExternalLanguageConfiguration
 import com.jetbrains.cidr.external.system.model.impl.ExternalResolveConfigurationBuilder
