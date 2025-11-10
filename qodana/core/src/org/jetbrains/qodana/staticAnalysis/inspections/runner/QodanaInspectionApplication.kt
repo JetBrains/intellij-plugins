@@ -12,6 +12,7 @@ import com.intellij.internal.statistic.eventLog.validator.storage.persistence.Ev
 import com.intellij.internal.statistic.updater.StatisticsValidationUpdatedService
 import com.intellij.internal.statistic.updater.updateValidationRules
 import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
@@ -33,7 +34,7 @@ import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.addQodanaAnalysisConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.config.copyConfigToLog
+import org.jetbrains.qodana.staticAnalysis.inspections.config.copyConfigToDir
 import org.jetbrains.qodana.staticAnalysis.inspections.config.removeQodanaAnalysisConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.DefaultRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
@@ -43,6 +44,7 @@ import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.Qodana
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.absolute
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.minutes
 
@@ -140,7 +142,7 @@ class QodanaInspectionApplication(
 
   @VisibleForTesting
   suspend fun launchRunner(runner: QodanaRunner): SarifReport {
-    copyConfigToLog(config)
+    copyConfigToDir(config)
     val sarif = try {
       try {
         application.addQodanaAnalysisConfig(config)
@@ -177,6 +179,7 @@ class QodanaInspectionApplication(
     if (projectApi == null) return null
 
     return coroutineScope {
+      copyConfigToOutputIfNeeded(config)
       val uploadedReportDeferred: Deferred<UploadedReport?> = async {
         when (val result = publishToCloud(projectApi.api, config.outPath)) {
           is PublishResult.Success -> return@async result.uploadedReport
@@ -207,6 +210,12 @@ class QodanaInspectionApplication(
         host = projectApi.frontendUrl
       )
     }
+  }
+
+  // handle case when log dir is outside results, but we still need to upload configuration to cloud
+  private suspend fun copyConfigToOutputIfNeeded(config: QodanaConfig) {
+    if (PathManager.getLogDir().startsWith(config.outPath.absolute())) return
+    copyConfigToDir(config, config.outPath)
   }
 
   private suspend fun writeOpenInIdeMetadata(openInIdeMetadata: OpenInIdeMetadata, path: Path) {
