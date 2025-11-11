@@ -10,6 +10,7 @@ import com.intellij.ide.projectView.ProjectViewNodeDecorator
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
 import com.intellij.ui.LayeredIcon
+import com.intellij.ui.treeStructure.ProjectViewUpdateCause
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ class DtsProjectViewDecorator(
 
   override fun settingsChanged(settings: DtsSettings) {
     parentScope.launch(Dispatchers.EDT) {
-      ProjectView.getInstance(project).refresh()
+      ProjectView.getInstance(project).refresh(ProjectViewUpdateCause.PLUGIN_DTS)
     }
   }
 
