@@ -82,17 +82,10 @@ public class TsLintFileFixAction extends JSLinterFixAction {
       completeCallback.run();
     };
 
-    if (modalProgress) {
-      return new Task.Modal(project, TsLintBundle.message("tslint.action.modal.title"), true) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) { task.consume(indicator); }
-      };
-    }
-    else {
-      return new Task.Backgroundable(project, TsLintBundle.message("tslint.action.background.title"), true) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) { task.consume(indicator); }
-      };
-    }
+    Task.Backgroundable t = new Task.Backgroundable(project, TsLintBundle.message("tslint.action.modal.title"), true) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) { task.consume(indicator); }
+    };
+    return t.toModalIfNeeded(modalProgress);
   }
 }
