@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
+import com.intellij.ui.treeStructure.ProjectViewUpdateCause;
 import com.intellij.util.Alarm;
 import com.intellij.util.ModalityUiUtil;
 import com.intellij.util.concurrency.AppExecutorUtil;
@@ -74,7 +75,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
         if (myFilesWithErrorsHash != hash) {
           // refresh red squiggles managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
           myFilesWithErrorsHash = hash;
-          ProjectView.getInstance(myProject).refresh();
+          ProjectView.getInstance(myProject).refresh(ProjectViewUpdateCause.PLUGIN_DART);
         }
       }
 
@@ -325,7 +326,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
   public void clearAll() {
     ThreadingAssertions.assertEventDispatchThread();
 
-    ProjectView.getInstance(myProject).refresh(); // refresh red waves managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
+    ProjectView.getInstance(myProject).refresh(ProjectViewUpdateCause.PLUGIN_DART); // refresh red waves managed by com.jetbrains.lang.dart.projectView.DartNodeDecorator
 
     synchronized (myLock) {
       myAlarm.cancelAllRequests();
