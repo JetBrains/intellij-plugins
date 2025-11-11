@@ -64,6 +64,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/util/text-matching",
+    "@community//platform/util/text-matching:text-matching_test_lib",
   ]
 )
 ### auto-generated section `build intellij.yeoman` end
