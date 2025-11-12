@@ -7,6 +7,8 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
+import org.intellij.terraform.config.actions.ImportProviderService
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.TfTypeModel
@@ -84,7 +86,7 @@ internal class BlockSubNameInsertHandler(val type: BlockType) : BasicInsertHandl
     if (settings.IMPORT_PROVIDERS_AUTOMATICALLY) {
       val provider = getProviderForBlockType(type)
       if (provider != null && provider.tier !in tiersNotToInsert && !TfTypeModel.collectProviderLocalNames(file).containsValue(provider.fullName)) {
-        TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(provider, file)
+        ImportProviderService.getInstance(project).addSelectedProvider(provider, file.createSmartPointer())
       }
     }
     PsiDocumentManager.getInstance(project).commitDocument(editor.document)
