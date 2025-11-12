@@ -227,7 +227,8 @@ private fun platformJars(classLoader: ClassLoader): List<File> {
     return !jarName.endsWith(".jar") ||
            jarName.startsWith("util-") ||
            jarName.startsWith("app") ||
-           jarName.contains("annotation", ignoreCase = true)
+           jarName.contains("annotation", ignoreCase = true) ||
+           jarName.contains("analysis")
   }
 
   return scriptCompilationClasspathFromContext(classLoader = classLoader, wholeClasspath = true).filter { isPlatformJarAccepted(it.name) }
