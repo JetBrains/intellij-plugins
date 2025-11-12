@@ -2,7 +2,6 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
@@ -10,9 +9,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Query;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
@@ -45,23 +41,20 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
     final long stepLoadingStart = System.currentTimeMillis();
-    final List<AbstractStepDefinition> stepDefinitions = CachedValuesManager.getManager(module.getProject()).getCachedValue(module, () -> {
-      final var javaPsiModificationTracker = PsiModificationTracker.getInstance(module.getProject()).forLanguage(JavaLanguage.INSTANCE);
-      final Collection<PsiClass> allStepAnnotationClasses = CucumberJavaUtil.getAllStepAnnotationClasses(module, dependenciesScope);
-      final List<AbstractStepDefinition> result = new ArrayList<>();
-      for (PsiClass annotationClass : allStepAnnotationClasses) {
-        String annotationClassName = annotationClass.getQualifiedName();
-        if (annotationClass.isAnnotationType() && annotationClassName != null) {
-          final Query<PsiMethod> javaStepDefinitions = AnnotatedElementsSearch.searchPsiMethods(annotationClass, dependenciesScope);
-          result.addAll(javaStepDefinitions
-                          .allowParallelProcessing()
-                          .transforming(stepDefMethod -> CucumberJavaUtil.getCucumberStepAnnotations(stepDefMethod, annotationClassName))
-                          .mapping(annotation -> JavaAnnotatedStepDefinition.create(annotation, module))
-                          .findAll());
-        }
+    final List<AbstractStepDefinition> stepDefinitions = new ArrayList<>();
+    final Collection<PsiClass> allStepAnnotationClasses = CucumberJavaUtil.getAllStepAnnotationClasses(module, dependenciesScope);
+    for (PsiClass annotationClass : allStepAnnotationClasses) {
+      String annotationClassName = annotationClass.getQualifiedName();
+      if (annotationClass.isAnnotationType() && annotationClassName != null) {
+        final Query<PsiMethod> javaStepDefinitions = AnnotatedElementsSearch.searchPsiMethods(annotationClass, dependenciesScope);
+        stepDefinitions.addAll(javaStepDefinitions
+                                 .allowParallelProcessing()
+                                 .transforming(
+                                   stepDefMethod -> CucumberJavaUtil.getCucumberStepAnnotations(stepDefMethod, annotationClassName))
+                                 .mapping(annotation -> JavaAnnotatedStepDefinition.create(annotation, module))
+                                 .findAll());
       }
-      return CachedValueProvider.Result.create(result, javaPsiModificationTracker);
-    });
+    }
     final long stepLoadingEnd = System.currentTimeMillis();
     LOG.trace("loaded " + stepDefinitions.size() + " step definitions in " + (stepLoadingEnd - stepLoadingStart) + "ms");
     return stepDefinitions;
