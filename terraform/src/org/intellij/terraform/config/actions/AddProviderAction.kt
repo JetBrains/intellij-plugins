@@ -39,7 +39,6 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.isTerraformCompatiblePsiFile
-import org.jetbrains.annotations.Nls
 import javax.swing.Icon
 import javax.swing.event.HyperlinkEvent
 
@@ -63,7 +62,7 @@ internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentio
 
   override fun invoke(project: Project, psiFile: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
     if (editor != null && startElement is HCLBlock) {
-      project.service<ImportProviderService>().scheduleAddProvider(editor, startElement.createSmartPointer())
+      ImportProviderService.getInstance(project).scheduleAddProvider(editor, startElement.createSmartPointer())
     }
   }
 
@@ -75,11 +74,11 @@ internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentio
 }
 
 @Service(Service.Level.PROJECT)
-private class ImportProviderService(val coroutineScope: CoroutineScope) {
+internal class ImportProviderService(val coroutineScope: CoroutineScope) {
 
   private fun showResourceSelectionPopup(title: String, possibleTypes: List<BlockType>, editor: Editor, filePointer: SmartPsiElementPointer<PsiFile>) {
     JBPopupFactory.getInstance()
-      .createListPopup(SelectUnknownResourceStep(title, possibleTypes, filePointer, coroutineScope))
+      .createListPopup(SelectUnknownResourceStep(title, possibleTypes, filePointer))
       .showInBestPositionFor(editor)
   }
 
@@ -100,16 +99,15 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
       .show(JBPopupFactory.getInstance().guessBestPopupLocation(editor), Balloon.Position.below)
   }
 
-
   fun scheduleAddProvider(editor: Editor, blockPointer: SmartPsiElementPointer<HCLBlock>) {
     coroutineScope.launch(Dispatchers.Default) {
       val possibleTypes = readAction { getAllTypesForBlockByIdentifier(blockPointer) }
       if (possibleTypes.isEmpty()) {
         val message = readAction {
-          blockPointer.element ?.let { block ->
+          blockPointer.element?.let { block ->
             HCLBundle.message("popup.content.could.not.find.bundled.provider.for",
-                                                block.getNameElementUnquoted(0) ?: "",
-                                                block.getNameElementUnquoted(1) ?: "",
+                              block.getNameElementUnquoted(0) ?: "",
+                              block.getNameElementUnquoted(1) ?: "",
                               TfTypeModel.getResourcePrefix(block.getNameElementUnquoted(1) ?: ""))
           }
         } ?: return@launch
@@ -119,35 +117,49 @@ private class ImportProviderService(val coroutineScope: CoroutineScope) {
       }
       else {
         val filePointer = readAction { blockPointer.element?.containingFile?.createSmartPointer() } ?: return@launch
-        val title = HCLBundle.message("terraform.add.provider.dialog.title", possibleTypes.first().name.replaceFirstChar { it.titlecase() })
         if (possibleTypes.size == 1) {
-          addRequiredProvider(title, possibleTypes.first(), filePointer)
+          addRequiredProvider(possibleTypes.first(), filePointer)
         }
         else {
           withContext(Dispatchers.EDT) {
+            val title = HCLBundle.message("terraform.add.provider.dialog.title", possibleTypes.first().name.replaceFirstChar { it.titlecase() })
             showResourceSelectionPopup(title, possibleTypes, editor, filePointer)
           }
         }
       }
     }
   }
-}
 
-internal suspend fun addRequiredProvider(commandName: @Nls String, blockType: BlockType, filePointer: SmartPsiElementPointer<PsiFile>) {
-  readAndEdtWriteAction {
-    val file = filePointer.element ?: return@readAndEdtWriteAction value(Unit)
-    val project = file.project
-    writeCommandAction(project, commandName) {
-      getProviderForBlockType(blockType)?.let { TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(it, file) }
+  fun addSelectedProvider(blockType: BlockType, filePointer: SmartPsiElementPointer<PsiFile>) {
+    coroutineScope.launch(Dispatchers.Default) {
+      addRequiredProvider(blockType, filePointer)
     }
+  }
+
+  private suspend fun addRequiredProvider(blockType: BlockType, filePointer: SmartPsiElementPointer<PsiFile>) {
+    readAndEdtWriteAction {
+      val file = filePointer.element ?: return@readAndEdtWriteAction value(Unit)
+      val project = file.project
+      val commandName = HCLBundle.message("terraform.add.provider.dialog.title", blockType.literal)
+
+      val terraformBlock = TfTypeModel.getTerraformBlockInModule(file)
+      writeCommandAction(project, commandName) {
+        getProviderForBlockType(blockType)?.let { TfInsertHandlerService.getInstance(project).addRequiredProvidersBlockToConfig(it, terraformBlock, file) }
+      }
+    }
+  }
+
+  companion object {
+    @JvmStatic
+    fun getInstance(project: Project): ImportProviderService = project.service()
   }
 }
 
 
 private class SelectUnknownResourceStep(
-  @NlsSafe title: String, types: List<BlockType>,
+  @NlsSafe title: String,
+  types: List<BlockType>,
   private val pointer: SmartPsiElementPointer<PsiFile>,
-  val coroutineScope: CoroutineScope,
 ) : BaseListPopupStep<BlockType>(title, types) {
 
   override fun getTextFor(value: BlockType?): String {
@@ -162,10 +174,8 @@ private class SelectUnknownResourceStep(
 
   override fun onChosen(selectedValue: BlockType?, finalChoice: Boolean): PopupStep<*>? {
     if (selectedValue != null) {
-      coroutineScope.launch(Dispatchers.Default) {
-        val commandName = HCLBundle.message("terraform.add.provider.dialog.title", selectedValue.literal)
-        addRequiredProvider(commandName, selectedValue, pointer)
-      }
+      val project = pointer.project
+      ImportProviderService.getInstance(project).addSelectedProvider(selectedValue, pointer)
     }
     return FINAL_CHOICE
   }

@@ -3,14 +3,21 @@ package org.intellij.terraform.config.actions
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.assertEqualsToFile
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.common.waitUntilAssertSucceeds
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.job
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.withTimeout
 import org.intellij.terraform.TfTestUtils
 import java.io.File
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 internal class TfAddRequiredProvidersBlockTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = "${TfTestUtils.getTestDataPath()}/terraform/addRequiredProviders"
@@ -25,6 +32,7 @@ internal class TfAddRequiredProvidersBlockTest : BasePlatformTestCase() {
     val variants = myFixture.complete(CompletionType.BASIC, 2)
     assertNull(variants)
     timeoutRunBlocking {
+      waitForImportProviderTasks(project)
       waitUntilAssertSucceeds("Cannot complete variants asynchronously for test file: $filePath") {
         myFixture.checkResultByFile("$filePath.after.tf")
       }
@@ -58,6 +66,7 @@ internal class TfAddRequiredProvidersBlockTest : BasePlatformTestCase() {
     val variants = myFixture.complete(CompletionType.BASIC, 2)
     assertNull(variants)
 
+    timeoutRunBlocking { waitForImportProviderTasks(project) }
     runInEdtAndWait {
       PsiDocumentManager.getInstance(project).commitAllDocuments()
     }
@@ -71,6 +80,24 @@ internal class TfAddRequiredProvidersBlockTest : BasePlatformTestCase() {
           psiFile.text.trim()
         )
       }
+    }
+  }
+}
+
+internal suspend fun waitForImportProviderTasks(project: Project) {
+  ImportProviderService.getInstance(project).coroutineScope.suspendUntilAllJobsCompleted()
+}
+
+/**
+ * Inspired by com/intellij/amper/testUtils.kt:43
+ */
+internal suspend fun CoroutineScope.suspendUntilAllJobsCompleted(timeout: Duration = 3.seconds) {
+  val job = coroutineContext.job
+  withTimeout(timeout) {
+    while (true) {
+      val childrenJobs = job.children.toList()
+      if (childrenJobs.isEmpty()) break
+      childrenJobs.joinAll()
     }
   }
 }
