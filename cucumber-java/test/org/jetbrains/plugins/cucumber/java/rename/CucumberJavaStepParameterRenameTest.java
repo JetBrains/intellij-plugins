@@ -8,7 +8,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt;
 import com.intellij.project.IntelliJProjectConfiguration;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiPackage;
@@ -17,7 +16,6 @@ import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.junit5.RunInEdt;
 import com.intellij.testFramework.junit5.TestApplication;
-import com.intellij.testFramework.junit5.fixture.FixturesKt;
 import com.intellij.testFramework.junit5.fixture.TestFixture;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
@@ -28,6 +26,8 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
+import static com.intellij.platform.testFramework.junit5.codeInsight.fixture.CodeInsightFixtureKt.codeInsightFixture;
+import static com.intellij.testFramework.junit5.fixture.FixturesKt.*;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_5;
 
 /// Tests that [GherkinStepParameterRenameTest][GherkinStepParameterRenameTest]
@@ -39,18 +39,17 @@ import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMB
 @TestApplication
 public class CucumberJavaStepParameterRenameTest {
 
-  private static final TestFixture<Path> tempDir = FixturesKt.tempPathFixture();
-  private static final TestFixture<Project> project = FixturesKt.projectFixture(tempDir, OpenProjectTask.build(), true);
-  @SuppressWarnings("unused")
-  private static final TestFixture<Module> module = FixturesKt.moduleFixture(project, tempDir);
+  private static final TestFixture<Path> pathFixture = tempPathFixture();
+  private static final TestFixture<Project> projectFixture = projectFixture(pathFixture, OpenProjectTask.build(), true);
+  private static final TestFixture<Module> moduleFixture = moduleFixture(projectFixture, pathFixture);
 
-  private final TestFixture<String> testNameFixture = FixturesKt.testNameFixture();
-  private final TestFixture<CodeInsightTestFixture> fixture = CodeInsightFixtureKt.codeInsightFixture(project, tempDir);
+  private final TestFixture<String> testNameFixture = testNameFixture();
+  private final TestFixture<CodeInsightTestFixture> codeInsightFixture = codeInsightFixture(projectFixture, pathFixture);
 
   @BeforeAll
   public static void setUpProjectDescriptor() {
     String version = "7";
-    ModifiableRootModel model = ModuleRootManager.getInstance(module.get()).getModifiableModel();
+    ModifiableRootModel model = ModuleRootManager.getInstance(moduleFixture.get()).getModifiableModel();
     IntelliJProjectConfiguration.LibraryRoots libraryRoots;
     libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-core-" + version);
     PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
@@ -71,7 +70,7 @@ public class CucumberJavaStepParameterRenameTest {
   }
 
   private void doTest(String newName) {
-    CodeInsightTestFixture myFixture = fixture.get();
+    CodeInsightTestFixture myFixture = codeInsightFixture.get();
     myFixture.copyDirectoryToProject(testNameFixture.get() + "/before", "");
     myFixture.configureByFile("test.feature");
     myFixture.testHighlighting("test.feature"); // ensure everything is resolved
