@@ -570,6 +570,38 @@ class AstroParserTest : JSHtmlParsingTest("astro", AstroParserDefinition()) {
     """.trimIndent())
   }
 
+  fun testRawTextUnclosedBrace() {
+    doTestAstro("<title>{</title>")
+  }
+
+  fun testRawTextUnclosedTemplateLiteral() {
+    doTestAstro("<title>{`</title>")
+  }
+
+  fun testRawTextEmptyBraces() {
+    doTestAstro("<title>{}</title>")
+  }
+
+  fun testRawTextUnclosedNestedTemplateExpression() {
+    doTestAstro($$"<title>{`foo ${</title>")
+  }
+
+  fun testTextareaUnclosedBrace() {
+    doTestAstro("<textarea>{</textarea>")
+  }
+
+  fun testTextareaUnclosedTemplateLiteral() {
+    doTestAstro("<textarea>{`</textarea>")
+  }
+
+  fun testTextareaUnclosedNestedTemplateExpression() {
+    doTestAstro($$"<textarea>{`foo ${</textarea>")
+  }
+
+  fun testTextareaEmptyBraces() {
+    doTestAstro("<textarea>{}</textarea>")
+  }
+
   override fun setUp() {
     super.setUp()
 
