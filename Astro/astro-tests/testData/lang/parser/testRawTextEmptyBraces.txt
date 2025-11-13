@@ -1,0 +1,17 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:title
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('title')
+      XmlToken:XML_TAG_END('>')
+      HtmlRawText
+        JSEmbeddedContent:ASTRO_EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          PsiErrorElement:Empty expression not allowed
+            <empty list>
+          PsiElement(JS:XML_RBRACE)('}')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('title')
+      XmlToken:XML_TAG_END('>')

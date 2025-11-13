@@ -80,6 +80,7 @@ TAG_NAME=({ALPHA}|"_"|":")({ALPHA}|{DIGIT}|"_"|":"|"."|"-")*
 
   [^] { }
   <<EOF>> {
+        yybegin(YYINITIAL);
         return AstroElementTypes.ASTRO_EMBEDDED_EXPRESSION;
   }
 }
@@ -93,6 +94,7 @@ TAG_NAME=({ALPHA}|"_"|":")({ALPHA}|{DIGIT}|"_"|":"|"."|"-")*
   }
   [^] { }
   <<EOF>> {
+        yybegin(YYINITIAL);
         return AstroElementTypes.ASTRO_EMBEDDED_EXPRESSION;
   }
 }
