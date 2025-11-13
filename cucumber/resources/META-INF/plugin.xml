@@ -119,6 +119,10 @@
     <renameHandler
       implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepParameterRenameHandler"/>
 
+    <lang.elementManipulator
+      forClass="org.jetbrains.plugins.cucumber.psi.GherkinStepParameter"
+      implementationClass="org.jetbrains.plugins.cucumber.psi.impl.GherkinStepParameterElementManipulator"/>
+
     <renamePsiElementProcessor
       implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameProcessor"
       order="first"/>

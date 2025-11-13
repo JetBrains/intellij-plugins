@@ -5,7 +5,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
@@ -19,11 +18,6 @@ public class GherkinStepParameterReference extends PsiReferenceBase<GherkinStepP
   @Override
   public GherkinStepParameter getElement() {
     return super.getElement();
-  }
-
-  @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-    return myElement.setName(newElementName);
   }
 
   @Override
