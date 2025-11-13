@@ -63,6 +63,7 @@ fun InspectionKts.__asTool__(exceptionReporter: (Exception) -> Unit): Inspection
           return object : PsiElementVisitor() {
             override fun visitFile(psiFile: PsiFile) {
               loggingExceptions {
+                logger<InspectionKts>().debug("Checking file: ${psiFile.name} by ${getShortName()}")
                 tool.checker.invoke(psiFile, inspection)
               }
             }
