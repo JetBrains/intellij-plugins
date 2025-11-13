@@ -99,7 +99,7 @@ public final class CucumberJavaParameterTypeReference extends PsiReferenceBase<P
       return false;
     }
     PsiElement resolved = resolve();
-    return resolved != null && resolved.equals(element);
+    return element.getManager().areElementsEquivalent(element, resolved);
   }
 
   private String getParameterTypeName() {
