@@ -16,11 +16,6 @@ public class GherkinStepParameterReference extends PsiReferenceBase<GherkinStepP
   }
 
   @Override
-  public GherkinStepParameter getElement() {
-    return super.getElement();
-  }
-
-  @Override
   public boolean isReferenceTo(PsiElement element) {
     PsiElement resolved = resolve();
     return element.getManager().areElementsEquivalent(element, resolved);
