@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.refactoring;
 
 import com.intellij.codeInsight.TargetElementUtil;
@@ -188,7 +188,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInlineFunRename() {
     String name = getTestName(false);
-    myFixture.configureByFile(getBasePath() + name + ".mxml");
+    myFixture.configureByFile(name + ".mxml");
 
     CodeInsightTestUtil.doInlineRename(
       new JSInplaceRenameHandler(),
@@ -196,7 +196,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
       InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myFixture.getEditor(), myFixture.getFile()),
       myFixture.getElementAtCaret()
     );
-    myFixture.checkResultByFile((getBasePath() + name + "_after.mxml"));
+    myFixture.checkResultByFile(name + "_after.mxml");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
@@ -324,7 +324,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     myFixture.configureByFiles(name + "/mytest/boo/" + name + ".js2", name + "/mytest/foo/" + name + "_2.js2");
     int referencesCount = findRenamedRefsToReferencedElementAtCaret().length;
     performDialogRename(helper().defaultParameters().withName(name + "_3"));
-    myFixture.checkResultByFile(getBasePath() + name + "_after.js2");
+    myFixture.checkResultByFile(name + "_after.js2");
 
     assertEquals(referencesCount, findRenamedRefsToReferencedElementAtCaret().length);
 
