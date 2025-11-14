@@ -2,15 +2,12 @@ package org.jetbrains.qodana.run
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.util.io.copy
+import com.intellij.util.io.copyRecursively
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.sarif.SarifConverter
-import org.jetbrains.qodana.staticAnalysis.inspections.config.QODANA_YAML_CONFIG_FILENAME
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.FULL_SARIF_REPORT_NAME
+import org.jetbrains.qodana.sarif.QodanaReportConverter
 import java.io.IOException
 import java.nio.file.Path
-import kotlin.io.path.exists
 
 private val LOG = Logger.getInstance("#org.jetbrains.qodana.run")
 
@@ -26,29 +23,22 @@ data class QodanaConverterResults(val path: Path) {
 
 suspend fun runQodanaConverter(input: QodanaConverterInput): QodanaConverterResults {
   return runInterruptible(QodanaDispatchers.IO) {
-    val converterTempDir = FileUtilRt.createTempDirectory("qodana-converter", "", true).toPath()
+    val converterOutTempDir = FileUtilRt.createTempDirectory("qodana-converter", "", true).toPath()
+    val converterInputTempDir = FileUtilRt.createTempDirectory("qodana-converter-input", "", true).toPath()
     when (input) {
       is QodanaConverterInput.FullQodanaOutput -> {
-        input.qodanaOutput.toFile().copyRecursively(converterTempDir.toFile())
+        input.qodanaOutput.copyRecursively(converterInputTempDir)
       }
       is QodanaConverterInput.SarifFileOnly -> {
-        input.sarifFile.toFile().copyRecursively(converterTempDir.resolve("qodana.sarif.json").toFile())
+        input.sarifFile.copyRecursively(converterInputTempDir.resolve("qodana.sarif.json"))
       }
     }
-    val yamlFile = converterTempDir.resolve("log").resolve(QODANA_YAML_CONFIG_FILENAME)
-    try {
-      if (yamlFile.exists()) {
-        yamlFile.copy(converterTempDir.resolve(QODANA_YAML_CONFIG_FILENAME))
-      }
-    }
-    catch (e : IOException) {
-      LOG.info("Failed copying yaml", e)
-    }
-    SarifConverter().convert(converterTempDir.resolve(FULL_SARIF_REPORT_NAME).toFile(), converterTempDir)
+    val options = QodanaReportConverter.Options(Int.MAX_VALUE, converterInputTempDir.toFile(), converterOutTempDir.toFile())
+    QodanaReportConverter(options).convert()
 
-    LOG.info("Ran Qodana converter, results directory: $converterTempDir")
+    LOG.info("Ran Qodana converter, results directory: $converterOutTempDir")
 
-    QodanaConverterResults(converterTempDir)
+    QodanaConverterResults(converterOutTempDir)
   }
 }
 
