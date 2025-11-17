@@ -87,9 +87,9 @@ internal object TfCompletionUtil {
   fun createScopeLookup(value: String): LookupElementBuilder = LookupElementBuilder.create(value)
     .withInsertHandler(ScopeSelectInsertHandler)
     .withRenderer(object : LookupElementRenderer<LookupElement?>() {
-      override fun renderElement(element: LookupElement?, presentation: LookupElementPresentation?) {
-        presentation?.icon = AllIcons.Nodes.Tag
-        presentation?.itemText = element?.lookupString
+      override fun renderElement(element: LookupElement, presentation: LookupElementPresentation) {
+        presentation.icon = AllIcons.Nodes.Tag
+        presentation.itemText = element.lookupString
       }
     })
 
