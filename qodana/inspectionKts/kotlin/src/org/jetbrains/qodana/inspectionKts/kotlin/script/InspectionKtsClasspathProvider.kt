@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.inspectionKts.kotlin.script
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.cl.PluginClassLoader
@@ -223,7 +224,10 @@ private fun pluginJars(pluginClassLoader: PluginClassLoader): List<File> {
 }
 
 private fun platformJars(classLoader: ClassLoader): List<File> {
+  val psiFileBaseJarName = PathManager.getJarForClass(PsiFileBase::class.java)?.name // hack to find jar with com.intellij.extapi.psi
+
   fun isPlatformJarAccepted(jarName: String): Boolean {
+    if (psiFileBaseJarName != null && jarName.contains(psiFileBaseJarName)) return true
     return !jarName.endsWith(".jar") ||
            jarName.startsWith("util-") ||
            jarName.startsWith("app") ||
