@@ -374,6 +374,10 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testNgDeepSemantic() =
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "css", checkSymbolNames = true, checkInformation = false, checkWarnings = false, checkWeakWarnings = false)
 
+  fun testSignalStore() =
+    checkHighlighting(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0, extension = "ts",
+                      checkSymbolNames = true)
+
   fun testCssCustomProperty() =
     checkHighlighting(ANGULAR_CORE_19_2_0, extension = "ts")
 

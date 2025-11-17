@@ -15,6 +15,7 @@ import org.angular2.codeInsight.navigation.Angular2GotoDeclarationTest
 import org.angular2.codeInsight.navigation.Angular2GotoRelatedTest
 import org.angular2.codeInsight.navigation.Angular2GotoSymbolTest
 import org.angular2.codeInsight.navigation.Angular2JumpToSourceTest
+import org.angular2.codeInsight.navigation.Angular2TscGotoDeclarationTest
 import org.angular2.codeInsight.refactoring.*
 import org.angular2.css.*
 import org.angular2.lang.expr.*
@@ -82,6 +83,7 @@ import org.junit.runners.Suite
   Angular2ServiceInlayHintsTest::class,
   Angular2MoveTest::class,
   Angular2RenameTest::class,
+  Angular2TscRenameTest::class,
   Angular2InlineTest::class,
   Angular2ConfigTest::class,
   Angular2EditorTest::class,
@@ -92,6 +94,7 @@ import org.junit.runners.Suite
   Angular2GotoSymbolTest::class,
   Angular2GotoRelatedTest::class,
   Angular2GotoDeclarationTest::class,
+  Angular2TscGotoDeclarationTest::class,
   Angular2RearrangerTest::class,
   Angular2JumpToSourceTest::class,
   Angular2CssClassTest::class,
