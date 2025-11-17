@@ -344,7 +344,7 @@ public final class AssistUtils {
     String value = suggestion.getValue();
     return LookupElementBuilder.create(value).withRenderer(new LookupElementRenderer<>() {
       @Override
-      public void renderElement(final LookupElement element, final LookupElementPresentation presentation) {
+      public void renderElement(final @NotNull LookupElement element, final @NotNull LookupElementPresentation presentation) {
         final Icon icon = getIcon(suggestion.getKind());
         presentation.setIcon(icon);
         presentation.setItemText(value);

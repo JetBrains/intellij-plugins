@@ -154,7 +154,7 @@ public class BowerCompletionContributor extends CompletionContributor {
     LookupElementBuilder builder = LookupElementBuilder.create(info, lookupString);
     builder = builder.withRenderer(new LookupElementRenderer<>() {
       @Override
-      public void renderElement(LookupElement element, LookupElementPresentation presentation) {
+      public void renderElement(@NotNull LookupElement element, @NotNull LookupElementPresentation presentation) {
         presentation.setItemText(info.getName());
         presentation.setTypeGrayed(true);
         presentation.setTypeText(info.getDescription());
@@ -224,7 +224,7 @@ public class BowerCompletionContributor extends CompletionContributor {
     LookupElementBuilder builder = LookupElementBuilder.create(version, lookupString);
     builder = builder.withRenderer(new LookupElementRenderer<>() {
       @Override
-      public void renderElement(LookupElement element, LookupElementPresentation presentation) {
+      public void renderElement(@NotNull LookupElement element, @NotNull LookupElementPresentation presentation) {
         presentation.setItemText(value);
         presentation.setTypeGrayed(true);
       }
