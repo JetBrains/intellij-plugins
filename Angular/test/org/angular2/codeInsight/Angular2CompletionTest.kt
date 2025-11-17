@@ -278,6 +278,10 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
                  locations = (1..6).map { "\"<caret>area$it\"" })
 
+  fun testSignalStore() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_20_1_4, Angular2TestModule.NGRX_SIGNALS_20_1_0, extension = "ts",
+                 configurators = listOf(Angular2TsConfigFile()))
+
   fun testTemplateBindingsNgIf() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, Angular2TestModule.ANGULAR_COMMON_17_3_0, extension = "ts",
                  lookupItemFilter = { it.priority > 0 && it.lookupString != "Component" },
