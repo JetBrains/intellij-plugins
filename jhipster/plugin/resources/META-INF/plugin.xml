@@ -1,4 +1,4 @@
-<idea-plugin package="com.intellij.jhipster">
+<idea-plugin>
   <id>org.strangeway.jdl</id>
   <name>JHipster JDL</name>
   <vendor>JetBrains</vendor>

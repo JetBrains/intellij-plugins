@@ -18,6 +18,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.analysis" />
     <orderEntry type="module" module-name="intellij.diagram.impl" />
+    <orderEntry type="module" module-name="intellij.platform.graph" />
     <orderEntry type="module" module-name="intellij.platform.core.impl" />
   </component>
 </module>

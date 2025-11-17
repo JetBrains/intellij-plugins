@@ -69,6 +69,7 @@ jvm_library(
     "//plugins/css/backend",
     "//plugins/css/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/graph",
   ]
 )
 ### auto-generated section `build intellij.flex.tests` end

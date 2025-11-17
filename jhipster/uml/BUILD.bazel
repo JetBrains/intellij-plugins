@@ -24,6 +24,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/analysis-api:analysis",
     "//plugins/uml/impl",
+    "//plugins/graph",
     "@community//platform/core-impl",
   ]
 )
