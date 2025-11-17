@@ -4,6 +4,8 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
+import org.angular2.Angular2TestModule.NGRX_SIGNALS_20_1_0
 import org.angular2.Angular2TsConfigFile
 
 class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
@@ -101,6 +103,9 @@ class Angular2DocumentationTest : Angular2TestCase("documentation", true) {
   fun testDefaultValueJSDoc() = doTest()
 
   fun testUnknownNgClass() = doTest()
+
+  fun testSignalStore() = doTest(ANGULAR_CORE_20_1_4, NGRX_SIGNALS_20_1_0,
+                                 configurators = listOf(Angular2TsConfigFile()))
 
   private fun doTestWithDeps(useConfig: Boolean = false) {
     doConfiguredTest(Angular2TestModule.ANGULAR_CORE_16_2_8,

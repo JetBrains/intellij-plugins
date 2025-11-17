@@ -63,6 +63,7 @@ enum class Angular2TestModule(myPackageName: String, myVersion: String) : WebFra
   NGNEAT_TRANSLOCO_2_6_0_IVY("@ngneat/transloco", "2.6.0-ivy"),
   NGXS_STORE_3_6_2("@ngxs/store", "3.6.2"),
   NGXS_STORE_3_6_2_MIXED("@ngxs/store", "3.6.2-mixed"),
+  NGRX_SIGNALS_20_1_0("@ngrx/signals", "20.1.0"),
   NG_ZORRO_ANTD_8_5_0_IVY("ng-zorro-antd", "8.5.0-ivy"),
   RXJS_6_4_0("rxjs", "6.4.0"),
   RXJS_7_8_1("rxjs", "7.8.1"),
