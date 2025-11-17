@@ -73,7 +73,7 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
                       .eelIt()
 
                     process.stdin.sendWholeText(request.documentText)
-                    process.stdin.close()
+                    process.stdin.close(null)
 
                     val formattedText = process.stdout.readWholeText()
                     val exitCode = process.exitCode.await()
