@@ -63,7 +63,7 @@ fun collectToolchains(project: Project?): ToolchainsSection {
       envs.add(
         CppEnvironmentInfo(
           toolchainName = tc.name,
-          osType = tc.osType.toString(),
+          osType = tc.os.toString(),
           kind = tc.toolSetKind.toString(),
           toolSetPath = tc.toolSetPath,
           options = tc.toolSetOptions.map { opt -> opt.uniqueID },
@@ -197,7 +197,7 @@ private fun processCPPEnvironment(environment: CPPEnvironment): CppEnvironmentIn
 
   return CppEnvironmentInfo(
     toolchainName = toolchain.name,
-    osType = toolchain.osType.toString(),
+    osType = toolchain.os.toString(),
     kind = toolchain.toolSetKind.toString(),
     toolSetPath = toolchain.toolSetPath,
     options = toolchain.toolSetOptions.map { it.uniqueID },
