@@ -75,6 +75,7 @@ jvm_library(
     "@community//jps/model-serialization",
     "@community//platform/lang-api:lang",
     "@community//java/java-impl:impl",
+    "@community//java/java-impl:impl_test_lib",
     "@community//platform/ide-core-impl",
     "@community//json/backend",
     "@community//platform/platform-impl:ide-impl",

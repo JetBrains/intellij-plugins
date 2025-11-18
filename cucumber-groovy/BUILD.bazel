@@ -60,6 +60,7 @@ jvm_library(
     "@community//java/testFramework",
     "@ultimate_lib//:cucumber-groovy-cucumber-groovy",
     "@community//java/java-impl:impl",
+    "@community//java/java-impl:impl_test_lib",
     "@lib//:cucumber-core-1",
     "//contrib/cucumber-java",
     "//contrib/cucumber-java:cucumber-java_test_lib",

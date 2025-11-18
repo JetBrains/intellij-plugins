@@ -78,6 +78,7 @@ jvm_library(
     "@lib//:assert_j",
     "@community//java/openapi:java",
     "@community//java/java-impl:impl",
+    "@community//java/java-impl:impl_test_lib",
     "@community//java/testFramework",
     "@community//platform/smRunner",
     "@community//platform/smRunner:smRunner_test_lib",

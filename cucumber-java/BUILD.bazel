@@ -63,6 +63,7 @@ jvm_library(
     "@community//java/execution/openapi:java-execution",
     "@community//java/execution/impl",
     "@community//java/java-impl:impl",
+    "@community//java/java-impl:impl_test_lib",
     "@community//java/java-indexing-api:indexing",
     "@community//java/java-psi-api:psi",
     "@community//java/java-psi-impl:psi-impl",

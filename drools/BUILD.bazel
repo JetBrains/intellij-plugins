@@ -61,6 +61,7 @@ jvm_library(
     "@community//java/java-psi-api:psi",
     "@community//java/java-psi-impl:psi-impl",
     "@community//java/java-impl:impl",
+    "@community//java/java-impl:impl_test_lib",
     "@community//java/java-indexing-api:indexing",
     "@community//java/idea-ui:ui",
     "@community//java/testFramework",
