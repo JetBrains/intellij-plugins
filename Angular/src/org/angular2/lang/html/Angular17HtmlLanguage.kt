@@ -28,8 +28,8 @@ object Angular17HtmlFileType : Angular2TemplateFileTypeBase(Angular17HtmlLanguag
 
 open class Angular17HtmlParserDefinition : Angular2TemplateParserDefinitionBase(Angular17HtmlLanguage)
 
-class Angular17HtmlSyntaxHighlighterFactory : Angular2HtmlSyntaxHighlighterFactoryBase(Angular17HtmlLanguage)
+private class Angular17HtmlSyntaxHighlighterFactory : Angular2HtmlSyntaxHighlighterFactoryBase(Angular17HtmlLanguage)
 
-class Angular17HtmlTodoIndexer : Angular2HtmlTodoIndexer(Angular17HtmlLanguage)
+private class Angular17HtmlTodoIndexer : Angular2HtmlTodoIndexer(Angular17HtmlLanguage)
 
-internal class Angular17HtmlIdIndexer : Angular2HtmlIdIndexer(Angular17HtmlLanguage)
+private class Angular17HtmlIdIndexer : Angular2HtmlIdIndexer(Angular17HtmlLanguage)

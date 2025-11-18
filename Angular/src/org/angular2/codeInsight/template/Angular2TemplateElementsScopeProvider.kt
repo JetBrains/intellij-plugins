@@ -6,8 +6,8 @@ import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
-import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.utils.withNavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -29,8 +29,7 @@ import org.angular2.web.ELEMENT_NG_TEMPLATE
 import org.jetbrains.annotations.NonNls
 import java.util.function.Consumer
 
-class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
-
+private class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<Angular2TemplateScope> {
     val hostFile = CompletionUtil.getOriginalOrSelf(hostElement ?: element).containingFile
 
@@ -294,15 +293,15 @@ class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
 @NonNls
 private const val LEGACY_TEMPLATE_TAG = "template"
 
-fun isTemplateTag(tag: XmlTag?): Boolean {
+internal fun isTemplateTag(tag: XmlTag?): Boolean {
   return tag != null && isTemplateTag(tag.localName)
 }
 
-fun isTemplateTag(tagName: String?): Boolean {
+internal fun isTemplateTag(tagName: String?): Boolean {
   return ELEMENT_NG_TEMPLATE.equals(tagName!!, ignoreCase = true) || LEGACY_TEMPLATE_TAG.equals(tagName, ignoreCase = true)
 }
 
-fun getTemplateElementsScopeFor(element: PsiElement): Angular2TemplateScope? =
+internal fun getTemplateElementsScopeFor(element: PsiElement): Angular2TemplateScope? =
   Angular2TemplateScopesResolver
     .getScopes(element, listOf(Angular2TemplateElementsScopeProvider()))
     .firstOrNull()

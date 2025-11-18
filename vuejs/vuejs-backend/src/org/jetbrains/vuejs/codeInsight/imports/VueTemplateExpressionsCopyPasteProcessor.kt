@@ -47,8 +47,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueProperty
 import java.awt.datatransfer.DataFlavor
 
-class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExpressionsImportsTransferableData>() {
-
+private class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExpressionsImportsTransferableData>() {
   override val dataFlavor: DataFlavor
     get() = VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR
 

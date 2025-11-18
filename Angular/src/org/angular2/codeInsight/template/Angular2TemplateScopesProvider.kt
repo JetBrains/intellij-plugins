@@ -5,9 +5,7 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 
-abstract class Angular2TemplateScopesProvider {
-
-
+internal abstract class Angular2TemplateScopesProvider {
   /**
    * If Angular expression is injected the @{code hostElement} is not null.
    */

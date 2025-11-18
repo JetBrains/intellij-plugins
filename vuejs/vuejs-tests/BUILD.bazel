@@ -37,6 +37,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//plugins/htmltools:html-tools",
     "@community//xml/xml-parser:parser",
+    "@community//xml/xml-analysis-api:analysis",
     "@community//spellchecker",
     "@community//spellchecker:spellchecker_test_lib",
     "@community//plugins/grazie/src:core",

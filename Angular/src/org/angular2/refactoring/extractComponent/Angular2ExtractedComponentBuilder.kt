@@ -30,8 +30,7 @@ import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.*
 import org.angular2.web.ELEMENT_NG_CONTENT
 
-
-class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private val selectionStart: Int, private val selectionEnd: Int) {
+internal class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private val selectionStart: Int, private val selectionEnd: Int) {
   private var extractedRange: TextRange = TextRange.EMPTY_RANGE
   private var enclosingTag: XmlTag? = null
 

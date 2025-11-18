@@ -71,6 +71,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/xml-psi-api:psi",
     "@community//xml/impl",
+    "@community//xml/xml-analysis-api:analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
   ]
 )

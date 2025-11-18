@@ -69,6 +69,7 @@ jvm_library(
   deps = [
     "@community//libraries/gson",
     "@community//platform/analysis-api:analysis",
+    "@community//xml/xml-analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/execution-impl",

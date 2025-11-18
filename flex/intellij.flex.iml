@@ -81,5 +81,6 @@
     <orderEntry type="module" module-name="intellij.platform.workspace.storage" />
     <orderEntry type="module" module-name="intellij.platform.debugger.impl" />
     <orderEntry type="module" module-name="intellij.javascript.duplicatesDetection" />
+    <orderEntry type="module" module-name="intellij.xml.analysis" />
   </component>
 </module>

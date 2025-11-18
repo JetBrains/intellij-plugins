@@ -23,8 +23,7 @@ import org.angular2.lang.types.Angular2HostEventType
 import org.jetbrains.annotations.NonNls
 import java.util.function.Consumer
 
-class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
-
+internal class Angular2StandardSymbolsScopesProvider : Angular2TemplateScopesProvider() {
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<Angular2TemplateScope> {
     val result = SmartList<Angular2TemplateScope>(Angular2AnyScope(element.containingFile))
     if (hostElement != null) {

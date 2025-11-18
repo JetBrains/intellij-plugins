@@ -14,7 +14,7 @@ import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateScope
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 
-class Angular2TemplateScope(context: PsiElement) :
+internal class Angular2TemplateScope(context: PsiElement) :
   PolySymbolScopeWithCache<PsiElement, Unit>(Angular2Framework.ID, context.project, context, Unit) {
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =

@@ -54,6 +54,7 @@
     <orderEntry type="module" module-name="intellij.platform.structuralSearch.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.psi" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.structuralSearch" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />

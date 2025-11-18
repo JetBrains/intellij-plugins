@@ -62,6 +62,7 @@ jvm_library(
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/structure-view-impl:structureView-impl",
     "@community//xml/impl",
+    "@community//xml/xml-analysis-api:analysis",
     "@community//xml/xml-parser:parser",
     "@community//platform/ide-core-impl",
     "//plugins/JavaScriptLanguage/javascript-parser",

@@ -82,6 +82,7 @@ jvm_library(
     "@community//platform/workspace/storage",
     "@community//platform/xdebugger-impl:debugger-impl",
     "//plugins/JavaScriptLanguage/javascript-duplicates-detection:javascript-duplicatesDetection",
+    "@community//xml/xml-analysis-api:analysis",
   ],
   runtime_deps = ["//contrib/flex/jps-plugin:jps"]
 )

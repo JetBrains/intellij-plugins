@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.index
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.psi.stubs.StubIndexKey
 
-class VueGlobalDirectivesIndex : VueIndexBase<JSImplicitElementProvider>(VUE_GLOBAL_DIRECTIVES_INDEX_KEY)
+private class VueGlobalDirectivesIndex : VueIndexBase<JSImplicitElementProvider>(VUE_GLOBAL_DIRECTIVES_INDEX_KEY)
 
-val VUE_GLOBAL_DIRECTIVES_INDEX_KEY: StubIndexKey<String, JSImplicitElementProvider> =
+internal val VUE_GLOBAL_DIRECTIVES_INDEX_KEY: StubIndexKey<String, JSImplicitElementProvider> =
   StubIndexKey.createIndexKey("vue.global.directives.index")
-val VUE_GLOBAL_DIRECTIVES_INDEX_JS_KEY: String = VueIndexBase.createJSKey(VUE_GLOBAL_DIRECTIVES_INDEX_KEY)
+internal val VUE_GLOBAL_DIRECTIVES_INDEX_JS_KEY: String = VueIndexBase.createJSKey(VUE_GLOBAL_DIRECTIVES_INDEX_KEY)

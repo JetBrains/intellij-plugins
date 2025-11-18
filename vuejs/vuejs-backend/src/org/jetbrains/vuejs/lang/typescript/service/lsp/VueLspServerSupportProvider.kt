@@ -15,15 +15,14 @@ import org.jetbrains.vuejs.lang.typescript.service.vueLspNewEvalVersion
 import org.jetbrains.vuejs.options.VueConfigurable
 import org.jetbrains.vuejs.options.VueSettings
 
-
-class VueLspServerSupportProvider : JSFrameworkLspServerSupportProvider(VueLspServerActivationRule) {
+internal class VueLspServerSupportProvider : JSFrameworkLspServerSupportProvider(VueLspServerActivationRule) {
   override fun createLspServerDescriptor(project: Project): JSFrameworkLspServerDescriptor = VueLspServerDescriptor(project)
 
   override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
     JSLspServerWidgetItem(lspServer, currentFile, VuejsIcons.Vue, VuejsIcons.Vue, VueConfigurable::class.java)
 }
 
-class VueLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueLspServerActivationRule, "Vue") {
+internal class VueLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueLspServerActivationRule, "Vue") {
   val newEvalMode = project.service<VueSettings>().useTypesFromServer
 
   init {

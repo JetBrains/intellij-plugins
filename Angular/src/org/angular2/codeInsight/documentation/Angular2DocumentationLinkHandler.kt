@@ -23,7 +23,7 @@ import org.angular2.entities.Angular2EntitiesProvider
  * - for [PsiElement]s from core Angular libraries, it prepends `https://angular.io/` to relative URLs
  * - allows to navigate to [PsiElement]s from [Angular2ElementDocumentationTarget]
  */
-class Angular2DocumentationLinkHandler : DocumentationLinkHandler {
+private class Angular2DocumentationLinkHandler : DocumentationLinkHandler {
   override fun resolveLink(target: DocumentationTarget, url: String): LinkResolveResult? {
     if (url.none { it == ':' }) {
       val sourceElement = (target as? PsiElementDocumentationTarget)?.targetElement

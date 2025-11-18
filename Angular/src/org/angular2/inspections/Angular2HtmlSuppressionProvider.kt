@@ -10,8 +10,7 @@ import com.intellij.psi.xml.XmlAttributeValue
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.Companion.INTERPOLATION_START
 
-class Angular2HtmlSuppressionProvider : DefaultXmlSuppressionProvider() {
-
+private class Angular2HtmlSuppressionProvider : DefaultXmlSuppressionProvider() {
   private val HTML_UNKNOWN_TARGET_INSPECTION_ID = InspectionProfileEntry.getShortName(HtmlUnknownTargetInspection::class.java.simpleName)
 
   override fun isProviderAvailable(file: PsiFile): Boolean {

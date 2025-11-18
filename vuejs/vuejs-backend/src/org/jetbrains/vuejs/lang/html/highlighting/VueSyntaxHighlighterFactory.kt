@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.html.VueFileElementType
 import org.jetbrains.vuejs.lang.html.isVueFile
 
-class VueSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
+internal class VueSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
     val langMode = VueScriptLangs.getLatestKnownLang(project, virtualFile)
     return Util.getSyntaxHighlighter(project, virtualFile, langMode)

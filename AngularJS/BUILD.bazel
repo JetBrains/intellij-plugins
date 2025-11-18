@@ -102,6 +102,7 @@ jvm_library(
     "@community//libraries/gson",
     "//plugins/JSIntentionPowerPack:javascript-intentions",
     "//plugins/JSIntentionPowerPack:javascript-intentions_test_lib",
+    "@community//xml/xml-analysis-api:analysis",
     "@ultimate_lib//:angular_j_s-oleaster-matcher",
     "@ultimate_lib//:angular_j_s-oleaster-runner",
     "//plugins/IntelliLang-js:javascript-langInjection",

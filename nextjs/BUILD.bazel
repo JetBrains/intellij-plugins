@@ -59,6 +59,7 @@ jvm_library(
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/projectModel-api:projectModel",
     "@community//xml/impl",
+    "@community//xml/xml-analysis-api:analysis",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",

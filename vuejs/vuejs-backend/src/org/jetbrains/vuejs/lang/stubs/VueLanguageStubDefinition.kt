@@ -10,7 +10,7 @@ import com.intellij.xml.HtmlLanguageStubVersionUtil
 import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.stub.impl.VueFileStubImpl
 
-class VueLanguageStubDefinition : LanguageStubDefinition {
+private class VueLanguageStubDefinition : LanguageStubDefinition {
   companion object {
     private const val VUE_STUB_VERSION: Int = 10
     private const val VUEJS_STUB_VERSION: Int = 3

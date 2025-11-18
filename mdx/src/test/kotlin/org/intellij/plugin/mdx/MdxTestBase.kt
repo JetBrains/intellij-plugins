@@ -7,7 +7,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 
-
 abstract class MdxTestBase : BasePlatformTestCase() {
     @Throws(Exception::class)
     public override fun setUp() {

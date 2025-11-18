@@ -10,8 +10,7 @@ import com.intellij.util.Processor
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 
-object Angular2TemplateScopesResolver {
-
+internal object Angular2TemplateScopesResolver {
   @JvmStatic
   fun getScopes(element: PsiElement, providers: List<Angular2TemplateScopesProvider>? = null): List<Angular2TemplateScope> {
     val original = CompletionUtil.getOriginalOrSelf(element)

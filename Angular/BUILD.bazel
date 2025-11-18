@@ -75,6 +75,7 @@ jvm_library(
     "//plugins/css/backend",
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
+    "@community//xml/xml-analysis-api:analysis",
   ]
 )
 ### auto-generated section `build intellij.angular` end
@@ -115,6 +116,7 @@ jvm_library(
     "@community//jps/model-api:model",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/refactoring",
+    "@community//xml/xml-analysis-api:analysis",
     "@community//platform/usageView-impl",
     "@community//platform/util/progress",
     "@community//platform/indexing-api:indexing",

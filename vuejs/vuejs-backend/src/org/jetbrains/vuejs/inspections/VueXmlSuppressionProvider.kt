@@ -9,8 +9,7 @@ import com.intellij.xml.util.XmlDuplicatedIdInspection
 import com.intellij.xml.util.XmlInvalidIdInspection
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueXmlSuppressionProvider : DefaultXmlSuppressionProvider() {
-
+private class VueXmlSuppressionProvider : DefaultXmlSuppressionProvider() {
   override fun isProviderAvailable(file: PsiFile): Boolean = file.language.isKindOf(VueLanguage)
 
   override fun isSuppressedFor(element: PsiElement, inspectionId: String): Boolean {

@@ -12,8 +12,7 @@ import org.angular2.entities.source.Angular2SourceUtil
 import org.angular2.lang.types.Angular2TypeUtils
 import java.util.function.Consumer
 
-class Angular2ComponentScopeProvider : Angular2TemplateScopesProvider() {
-
+private class Angular2ComponentScopeProvider : Angular2TemplateScopesProvider() {
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<Angular2TemplateScope> {
     return Angular2SourceUtil.findComponentClass(element)
              ?.let { listOf(Angular2ComponentScope(it)) }

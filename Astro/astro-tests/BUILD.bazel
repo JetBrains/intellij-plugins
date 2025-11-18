@@ -37,6 +37,7 @@ jvm_library(
     "@community//platform/lang-impl",
     "@community//libraries/stream",
     "@community//platform/core-ui",
+    "@community//xml/xml-analysis-api:analysis",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
     "@community//platform/polySymbols",
     "//contrib/postcss",

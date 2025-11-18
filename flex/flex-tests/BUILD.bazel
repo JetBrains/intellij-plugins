@@ -66,6 +66,7 @@ jvm_library(
     "@community//platform/structuralsearch:structuralSearch-tests_test_lib",
     "@community//xml/xml-psi-api:psi",
     "@community//platform/structuralsearch:structuralSearch",
+    "@community//xml/xml-analysis-api:analysis",
     "//plugins/css/backend",
     "//plugins/css/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
