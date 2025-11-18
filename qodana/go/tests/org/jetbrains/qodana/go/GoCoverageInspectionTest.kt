@@ -59,6 +59,7 @@ class GoCoverageInspectionTest: QodanaCoverageInspectionTest("GoCoverageInspecti
 
       override fun getRootsToAttach(): MutableCollection<VirtualFile> = mutableListOf()
 
+      override fun toString(): String = "Test Go SDK"
     }, false)
   }
 
