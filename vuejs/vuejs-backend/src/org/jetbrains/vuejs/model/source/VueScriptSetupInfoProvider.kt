@@ -330,9 +330,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         MODEL_VALUE_PROP
       }
 
-      val options = when {
-        arguments.size == 2 -> arguments[1]
-        arguments.size == 1 && arguments[0] is JSObjectLiteralExpression -> arguments[0]
+      val options = when (arguments.size) {
+        2 -> arguments[1]
+        1 if arguments[0] is JSObjectLiteralExpression -> arguments[0]
         else -> null
       } as? JSObjectLiteralExpression
 
