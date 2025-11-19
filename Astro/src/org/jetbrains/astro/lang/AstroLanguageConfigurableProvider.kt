@@ -3,6 +3,7 @@ package org.jetbrains.astro.lang
 
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSLanguageDialect
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.psi.JSBlockStatement
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
@@ -19,6 +20,15 @@ class AstroLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvid
   }
 
   override fun createJSContentFromText(project: Project, text: String, dialect: JSLanguageDialect?): JSElement {
+    val trimmedText = text.trim()
+
+    // For comments (JSDoc /** */ or single/multi-line // /* */), delegate to TypeScript directly
+    if (trimmedText.startsWith("/**") ||
+        trimmedText.startsWith("/*") ||
+        trimmedText.startsWith("//")) {
+      return super.createJSContentFromText(project, text, JavaScriptSupportLoader.TYPESCRIPT)
+    }
+
     val statement = "{() => {$text}}"
     val astroFile = PsiFileFactory.getInstance(project).createFileFromText("dummy.astro", language, statement, false, true)
     return (astroFile as AstroFileImpl)

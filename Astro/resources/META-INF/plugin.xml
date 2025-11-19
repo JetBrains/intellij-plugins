@@ -65,8 +65,8 @@
                       id="astro"/>
     <xml.zenCodingGenerator implementation="org.jetbrains.astro.editor.AstroHtmlZenCodingGenerator" />
     <xml.fileNSInfoProvider implementation="org.jetbrains.astro.codeInsight.AstroNSInfoProvider"/>
-    <lang.documentationProvider language="Astro" implementationClass="com.intellij.xml.util.documentation.HtmlDocumentationProvider"
-                                id="html"/>
+    <lang.documentationProvider language="Astro" implementationClass="org.jetbrains.astro.lang.AstroDocumentationProvider"/>
+    <lang.documentationProvider language="AstroFrontmatter" implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterDocumentationProvider"/>
     <completion.contributor language="AstroFrontmatter"
                             order="before TypeScriptServiceCompletionContributor"
                             implementationClass="org.jetbrains.astro.codeInsight.completion.AstroServiceCompletionContributor"/>
