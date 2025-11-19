@@ -111,6 +111,9 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
     return TypeScriptConfigUtil.getConfigForPsiFile(context.getContainingFile())?.strictNullChecks() == true
   }
 
+  override fun shouldForceBuiltInTypeEngine(element: PsiElement): Boolean =
+    false
+
   override fun isAccessible(subject: PsiElement, accessType: JSAttributeList.AccessType, subjectClass: JSClass?, from: PsiElement, options: JSVisibilityUtil.Options): Boolean =
     super.isAccessible(subject, accessType, subjectClass, from, options)
     || (accessType == JSAttributeList.AccessType.PROTECTED && isProtectedMemberAccessibleFromTemplate(subject, from))
