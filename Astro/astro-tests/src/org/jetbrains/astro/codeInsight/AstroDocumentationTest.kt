@@ -5,7 +5,7 @@ import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
-class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentation") {
+class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentation", useLsp = true) {
 
   fun testHtmlTag() = doTest()
 
@@ -20,6 +20,12 @@ class AstroDocumentationTest : AstroCodeInsightTestCase("codeInsight/documentati
   }
 
   fun testAstroDirective() = doTest()
+
+  fun testComponentProp() {
+    doConfiguredTest(additionalFiles = listOf("component.astro")) {
+      checkDocumentationAtCaret()
+    }
+  }
 
   //region Test configuration and helper methods
   private fun doTest() {
