@@ -108,7 +108,7 @@ class AngularInaccessibleSymbolInspection : JSInspection() {
                   AngularChangeModifierQuickFix(minAccessType, inputOwner.name))
               }
               else if (input.attributeList?.hasModifier(JSAttributeList.ModifierType.READONLY) == true
-                       && !withTypeEvaluationLocation(element) { Angular2SignalUtils.isSignal(input, null) }) {
+                       && !withTypeEvaluationLocation(element) { Angular2SignalUtils.isDirectiveSignalInputOrOutput(input) }) {
                 holder.registerProblem(
                   element.nameElement,
                   Angular2Bundle.htmlMessage(

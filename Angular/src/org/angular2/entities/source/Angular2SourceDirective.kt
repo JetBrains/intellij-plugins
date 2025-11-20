@@ -261,7 +261,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         ?: field.asSafely<TypeScriptField>()
           ?.initializerOrStub
           ?.asSafely<JSCallExpression>()
-          ?.let { Angular2SourceUtil.createPropertyInfo(it, functionNames, property.memberName, ::getFunctionNameFromIndex) }
+          ?.let { Angular2SourceUtil.createPropertyInfo(it, functionNames, property.memberName) }
       if (info != null) {
         result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(sourceClass, property, qualifiedKind, info))
       }

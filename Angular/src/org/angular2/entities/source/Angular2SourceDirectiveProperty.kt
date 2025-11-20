@@ -1,10 +1,10 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
-import com.intellij.polySymbols.js.apiStatus
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.guard.JSTypeGuardUtil
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
@@ -15,6 +15,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbolApiStatus
 import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.js.apiStatus
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.polySymbols.utils.coalesceApiStatus
@@ -23,12 +24,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
-import org.angular2.Angular2DecoratorUtil
 import org.angular2.entities.Angular2ClassBasedDirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropertySources
 import org.angular2.lang.expr.service.tcb.R3Identifiers
 import org.angular2.lang.types.Angular2TypeUtils
+import org.angular2.signals.Angular2SignalUtils
+import org.angular2.signals.Angular2SignalUtils.isDirectiveSignalInputOrOutput
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 abstract class Angular2SourceDirectiveProperty(
@@ -62,11 +64,7 @@ abstract class Angular2SourceDirectiveProperty(
     get() = signature.memberName
 
   override val isSignalProperty: Boolean
-    get() = withTypeEvaluationLocation(owner) {
-      signature.jsType
-        ?.asRecordType()
-        ?.findPropertySignature(R3Identifiers.InputSignalBrandWriteType.name) != null
-    }
+    get() = isDirectiveSignalInputOrOutput(signature.memberSource.singleElement)
 
   override val type: JSType?
     get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS)
@@ -134,13 +132,22 @@ abstract class Angular2SourceDirectiveProperty(
               ?.context?.asSafely<JSObjectLiteralExpression>()
 
   val typeFromSignal: JSType?
-    get() = withTypeEvaluationLocation(owner) {
-      signature.jsType
-        ?.takeIf { it !is JSPrimitiveType }
-        ?.asRecordType()
-        ?.findPropertySignature(R3Identifiers.InputSignalBrandWriteType.name)
-        ?.jsTypeWithOptionality
-    }
+    get() = if (isSignalProperty)
+      signature.memberSource
+        .singleElement.asSafely<TypeScriptField>()
+        ?.initializerOrStub?.asSafely<JSCallExpression>()
+        ?.typeArguments
+        ?.takeIf { it.size == 1 }
+        ?.getOrNull(0)
+        ?.jsType
+      ?: withTypeEvaluationLocation(owner) {
+        signature.jsType
+          ?.takeIf { it !is JSPrimitiveType }
+          ?.asRecordType()
+          ?.findPropertySignature(R3Identifiers.InputSignalBrandWriteType.name)
+          ?.jsTypeWithOptionality
+      }
+    else null
 
   private class Angular2SourceFieldDirectiveProperty(
     owner: TypeScriptClass,
