@@ -32,4 +32,22 @@ class KarmaRunConfigurationTreeTestNodeV22: KarmaRunConfigurationTestsBase() {
       )
     )
   }
+
+  // WEB-75680
+  fun `test angularV21`() {
+    doTreeTest(
+      {
+        it.setScopeKind(KarmaScopeKind.TEST_FILE)
+          .setTestFilePath(getAbsolutePathToProjectDirOrFile("/src/app/app.spec.ts"))
+      },
+      PassedTest(
+        "Chrome .*",
+        PassedTest(
+          "App",
+          PassedTest("should create the app"),
+          PassedTest("should render title"),
+        )
+      ).withNameAsRegex()
+    )
+  }
 }

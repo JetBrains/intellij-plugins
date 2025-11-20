@@ -205,11 +205,26 @@ public final class KarmaServer {
           commandLine.addParameter(projectName);
           commandLineFolder.addPlaceholderText(projectName);
         }
-        commandLine.addParameter("--karma-config");
-        commandLine.addParameter(targetRun.path(configFile));
-        commandLineFolder.addPlaceholderText("--karma-config=" + userConfigFileName);
 
-        commandLine.addParameter("--source-map");
+        TargetValue<String> configurationPath = targetRun.path(configFile);
+
+        if (version != null && version.isGreaterOrEqualThan(21, 0, 0)) {
+          // Since v21 passing config API was changed for unification with other test runners
+          // see https://github.com/angular/angular-cli/commit/20079ed73dc138db3f22aea20eeaa4b0f8b46c52
+          commandLine.addParameter(
+            TargetValue.map(configurationPath, path -> "--runner-config=\"" + path + "\"")
+          );
+          commandLineFolder.addPlaceholderText("--runner-config=" + userConfigFileName);
+          // Note about passing `source-maps` in 21. The option was missed during the generalization wrappers above.
+          // However long time ago it was changed to default for Karma https://github.com/angular/angular-cli/blob/8df6fcd43f4ca57594a3e483d9d0435bf9f5e33b/packages/angular/build/src/builders/karma/schema.json#L197.
+          // So it's ok to ignore passing the option.
+        } else {
+          commandLine.addParameter("--karma-config");
+          commandLine.addParameter(configurationPath);
+          commandLineFolder.addPlaceholderText("--karma-config=" + userConfigFileName);
+          commandLine.addParameter("--source-map");
+        }
+
       }
       else {
         commandLine.addParameter("--config");
