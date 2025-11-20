@@ -19,7 +19,7 @@ const <symbolName descr="identifiers//local variable">initialState</symbolName>:
   <symbolName descr="instance field">filter</symbolName>: { <symbolName descr="instance field">query</symbolName>: '', <symbolName descr="instance field">order</symbolName>: 'asc' },
 };
 
-export const <symbolName descr="identifiers//exported function">BookSearchStore</symbolName> = <symbolName descr="identifiers//exported function">signalStore</symbolName>(
+export const <symbolName descr="identifiers//exported variable">BookSearchStore</symbolName> = <symbolName descr="identifiers//exported function">signalStore</symbolName>(
   // 👇 Providing `BookSearchStore` at the root level.
   { <symbolName descr="instance field">providedIn</symbolName>: 'root' },
   <symbolName descr="identifiers//exported function">withState</symbolName>(<symbolName descr="identifiers//local variable">initialState</symbolName>)
@@ -33,10 +33,10 @@ export const <symbolName descr="identifiers//exported function">BookSearchStore<
     Loading: {{ <symbolName descr="instance field">store</symbolName>.<error descr="TS2339: Property 'isEmpty' does not exist on type '{ books: Signal<Book[]>; isLoading: Signal<boolean>; filter: DeepSignal<{ query: string; order: \"asc\" | \"desc\"; }>; } & StateSource<{ books: Book[]; isLoading: boolean; filter: { ...; }; }>'.">isEmpty</error>() }}
   </inject>`,
   <symbolName descr="instance field">styles</symbolName>: ``,
-  <symbolName descr="instance field">providers</symbolName>: [<symbolName descr="identifiers//exported function">BookSearchStore</symbolName>],
+  <symbolName descr="instance field">providers</symbolName>: [<symbolName descr="identifiers//exported variable">BookSearchStore</symbolName>],
 })
 export class <symbolName descr="classes//exported class">Charts</symbolName> {
-  <info descr="null">readonly</info> <symbolName descr="instance field">store</symbolName> = <symbolName descr="identifiers//exported function">inject</symbolName>(<symbolName descr="identifiers//exported function">BookSearchStore</symbolName>);
+  <info descr="null">readonly</info> <symbolName descr="instance field">store</symbolName> = <symbolName descr="identifiers//exported function">inject</symbolName>(<symbolName descr="identifiers//exported variable">BookSearchStore</symbolName>);
 
   <warning descr="Unused method foo"><symbolName descr="instance method">foo</symbolName></warning>() {
     this.<symbolName descr="instance field">store</symbolName>.<symbolName descr="ng-signal">books</symbolName>()
