@@ -76,7 +76,8 @@ fun collectToolchains(project: Project?): ToolchainsSection {
           tools = emptyList(),
           pathMappings = emptyList(),
           rootPath = null,
-          headerRootsCache = null
+          headerRootsCache = null,
+          environmentFile = tc.environment,
         )
       )
     }
@@ -207,7 +208,8 @@ private fun processCPPEnvironment(environment: CPPEnvironment): CppEnvironmentIn
     tools = tools,
     pathMappings = pathMappings,
     rootPath = rootPath,
-    headerRootsCache = headerRootsCache
+    headerRootsCache = headerRootsCache,
+    environmentFile = toolchain.environment,
   )
 }
 

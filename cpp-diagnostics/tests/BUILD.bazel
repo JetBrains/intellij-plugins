@@ -1,0 +1,41 @@
+### auto-generated section `build intellij.clion.diagnostics.tests` start
+load("@rules_jvm//:jvm.bzl", "jvm_library")
+
+jvm_library(
+  name = "tests",
+  visibility = ["//visibility:public"],
+  srcs = glob([], allow_empty = True)
+)
+
+jvm_library(
+  name = "tests_test_lib",
+  module_name = "intellij.clion.diagnostics.tests",
+  visibility = ["//visibility:public"],
+  srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
+  deps = [
+    "//CIDR/cidr-common-testFramework/nolang",
+    "//CIDR/cidr-common-testFramework/nolang:nolang_test_lib",
+    "//contrib/cpp-diagnostics:clion-diagnostics",
+    "//CIDR/clion-testFramework-nolang/junit5/core",
+    "//CIDR/clion-testFramework-nolang/junit5/core:core_test_lib",
+    "//CIDR/clion-testFramework-nolang",
+    "//CIDR/clion-testFramework-nolang:clion-testFramework-nolang_test_lib",
+    "//CIDR/clion-toolchains",
+    "@community//libraries/assertj-core",
+    "@community//platform/core-api:core",
+    "@community//platform/testFramework",
+    "@community//platform/testFramework:testFramework_test_lib",
+    "@community//platform/testFramework/junit5",
+    "@community//platform/testFramework/junit5:junit5_test_lib",
+  ]
+)
+### auto-generated section `build intellij.clion.diagnostics.tests` end
+
+### auto-generated section `test intellij.clion.diagnostics.tests` start
+load("@community//build:tests-options.bzl", "jps_test")
+
+jps_test(
+  name = "tests_test",
+  runtime_deps = [":tests_test_lib"]
+)
+### auto-generated section `test intellij.clion.diagnostics.tests` end

@@ -128,7 +128,8 @@ data class CppEnvironmentInfo(
   val tools: List<ExecutableToolInfo>,
   val pathMappings: List<PathMappingItem>?,
   val rootPath: String?,
-  val headerRootsCache: String?
+  val headerRootsCache: String?,
+  val environmentFile: String?,
 ) : Reportable {
   fun appendTo(log: CdIndenter) {
     log.put("Toolchain: ${toolchainName}")
@@ -136,6 +137,11 @@ data class CppEnvironmentInfo(
       log.put("OS: ${osType}")
       log.put("Kind: ${kind}")
       log.put("Path: ${toolSetPath}")
+
+      if (environmentFile != null) {
+        log.put("Environment file: ${environmentFile}")
+      }
+
       if (options.isNotEmpty()) {
         log.put("Options:")
         log.scope { options.forEach { log.put(it) } }
