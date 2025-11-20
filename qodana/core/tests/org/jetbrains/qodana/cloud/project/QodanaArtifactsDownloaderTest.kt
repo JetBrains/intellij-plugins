@@ -9,6 +9,8 @@ import org.jetbrains.qodana.assertNoNotifications
 import org.jetbrains.qodana.cloud.UserState
 import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
+import org.jetbrains.qodana.cloud.testutils.doInitialTransitionToAuthorized
+import org.jetbrains.qodana.cloud.testutils.respondReportFiles
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.reinstansiateService
 import org.jetbrains.qodana.report.ReportMetadata
@@ -40,6 +42,7 @@ class QodanaArtifactsDownloaderTest : QodanaPluginLightTestBase() {
         respondReportFiles("*") { files, _ ->
           val fileName = files.single()
           val path = testData.resolve(testDataBasePath).resolve(fileName)
+
           @Language("JSON")
           val response = """
             {
@@ -100,7 +103,7 @@ class QodanaArtifactsDownloaderTest : QodanaPluginLightTestBase() {
 
   private data class TestArtifact(override val name: String,
                                   override val fileName: String,
-                                  override val presentableFileName: String): ReportMetadataArtifactProvider {
+                                  override val presentableFileName: String) : ReportMetadataArtifactProvider {
     override suspend fun readReport(path: Path): ReportMetadata {
       return object : ReportMetadata {
         override val id: String

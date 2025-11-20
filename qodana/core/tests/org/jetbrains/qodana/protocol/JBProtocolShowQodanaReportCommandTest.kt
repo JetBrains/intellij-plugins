@@ -32,7 +32,11 @@ import org.jetbrains.qodana.cloud.UserState
 import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
 import org.jetbrains.qodana.cloud.authorization.QodanaCloudOAuthService
+import org.jetbrains.qodana.cloud.testutils.doTransitionToLinked
 import org.jetbrains.qodana.cloud.project.*
+import org.jetbrains.qodana.cloud.testutils.QodanaCloudOAuthServiceMock
+import org.jetbrains.qodana.cloud.testutils.doTransitionToAuthorized
+import org.jetbrains.qodana.cloud.testutils.respondReportFiles
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.getDocument
 import org.jetbrains.qodana.highlight.HighlightedReportData

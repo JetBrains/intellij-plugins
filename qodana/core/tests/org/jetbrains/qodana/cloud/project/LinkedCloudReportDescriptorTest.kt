@@ -8,6 +8,9 @@ import org.jetbrains.qodana.*
 import org.jetbrains.qodana.cloud.UserState
 import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
+import org.jetbrains.qodana.cloud.testutils.doInitialTransitionToAuthorized
+import org.jetbrains.qodana.cloud.testutils.doTransitionToLinked
+import org.jetbrains.qodana.cloud.testutils.respondReportFiles
 import org.jetbrains.qodana.cloudclient.MockQDCloudHttpClient
 import org.jetbrains.qodana.cloudclient.QDCloudException
 import org.jetbrains.qodana.cloudclient.QDCloudResponse

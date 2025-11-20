@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.cloud.project
+package org.jetbrains.qodana.cloud.testutils
 
 import com.intellij.collaboration.auth.services.OAuthRequest
 import com.intellij.openapi.Disposable

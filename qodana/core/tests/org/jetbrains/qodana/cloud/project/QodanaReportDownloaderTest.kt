@@ -11,6 +11,8 @@ import org.jetbrains.qodana.*
 import org.jetbrains.qodana.cloud.UserState
 import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
+import org.jetbrains.qodana.cloud.testutils.doInitialTransitionToAuthorized
+import org.jetbrains.qodana.cloud.testutils.respondReportFiles
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -56,7 +58,9 @@ class QodanaReportDownloaderTest : QodanaPluginLightTestBase() {
           val path = savedReportInfo.path ?: continue
           try {
             Paths.get(path).delete()
-          } catch (ignored: Exception) {}
+          }
+          catch (ignored: Exception) {
+          }
         }
         scope.cancel()
       }
@@ -150,7 +154,7 @@ class QodanaReportDownloaderTest : QodanaPluginLightTestBase() {
     assertThat(requestsCount[projectId2]).isEqualTo(1)
   }
 
-  fun `test load different projects no requests`() = runDispatchingOnUi{
+  fun `test load different projects no requests`() = runDispatchingOnUi {
     val reportPath1 = getTmpPath(sarifTestReports.valid1, "tmp1")
     val projectId1 = "projectIdValid1"
     val reportPath2 = getTmpPath(sarifTestReports.valid1, "tmp1")
@@ -236,7 +240,7 @@ class QodanaReportDownloaderTest : QodanaPluginLightTestBase() {
    * already existing files are not copied to tmp directories, so we need to create temporary copies for them.
    * Use this function each time you want to mock downloading report.
    */
-  private fun getTmpPath(reportPath:Path, tmpName: String): Path {
+  private fun getTmpPath(reportPath: Path, tmpName: String): Path {
     val tmpFile = FileUtil.createTempFile(tmpName, null, true).toPath()
     return reportPath.copy(tmpFile)
   }

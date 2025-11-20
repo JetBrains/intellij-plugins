@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.cloud.project
+package org.jetbrains.qodana.cloud.testutils
 
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.awaitCancellation
@@ -6,6 +6,12 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.qodana.cloud.UserState
 import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
+import org.jetbrains.qodana.cloud.project.CloudOrganizationPrimaryData
+import org.jetbrains.qodana.cloud.project.CloudProjectData
+import org.jetbrains.qodana.cloud.project.CloudProjectPrimaryData
+import org.jetbrains.qodana.cloud.project.CloudProjectProperties
+import org.jetbrains.qodana.cloud.project.LinkState
+import org.jetbrains.qodana.cloud.project.QodanaCloudProjectLinkService
 import org.jetbrains.qodana.cloudclient.MockQDCloudHttpClient
 import org.jetbrains.qodana.cloudclient.QDCloudRequest
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
