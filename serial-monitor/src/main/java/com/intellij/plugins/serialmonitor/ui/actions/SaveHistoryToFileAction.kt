@@ -4,7 +4,6 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.fileChooser.FileSaverDescriptor
-import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.plugins.serialmonitor.SerialMonitorCollector
 import com.intellij.plugins.serialmonitor.SerialPortProfile
@@ -30,7 +29,7 @@ class SaveHistoryToFileAction(val terminalTextBuffer: TerminalTextBuffer, val se
     val file = fileSaverDialog.save(serialPortProfile.defaultLogFilename())?.file
     if (file == null) return
 
-    currentThreadCoroutineScope().launch(Dispatchers.Default) {
+    e.coroutineScope.launch(Dispatchers.Default) {
       val lines = try {
         terminalTextBuffer.lock()
         val historyLines = terminalTextBuffer.historyLinesStorage

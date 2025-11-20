@@ -6,7 +6,6 @@ import com.intellij.openapi.application.UI
 import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.progress.checkCanceled
-import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.MessageDialogBuilder
 import com.intellij.openapi.util.NlsSafe
@@ -344,7 +343,7 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
     override fun actionPerformed(e: AnActionEvent) {
       val selectedProfile = selectedValue.asSafely<ConnectableProfile>() ?: return
       val entityName = selectedProfile.entityName
-      currentThreadCoroutineScope().launch {
+      e.coroutineScope.launch {
         createNewProfile(entityName)
       }
     }
@@ -357,7 +356,7 @@ internal class ConnectableList(val parentPanel: ConnectPanel) : JBList<Any>() {
     }
     override fun actionPerformed(e: AnActionEvent) {
       val portName = getSelectedPortName()
-      currentThreadCoroutineScope().launch {
+      e.coroutineScope.launch {
         createNewProfile(null, portName)
       }
     }
