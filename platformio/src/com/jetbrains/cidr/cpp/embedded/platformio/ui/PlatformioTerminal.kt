@@ -14,7 +14,6 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.UiWithModelAccess
 import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts.TabTitle
@@ -70,7 +69,7 @@ fun doRun(service: PlatformioService,
       override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
       override fun actionPerformed(e: AnActionEvent) {
-        currentThreadCoroutineScope().launch(Dispatchers.IO) {
+        e.coroutineScope.launch(Dispatchers.IO) {
           processHandler.destroyProcess()
         }
       }
@@ -95,7 +94,7 @@ fun doRun(service: PlatformioService,
       }
 
       override fun actionPerformed(e: AnActionEvent) {
-        currentThreadCoroutineScope().launch(Dispatchers.IO) {
+        e.coroutineScope.launch(Dispatchers.IO) {
           processHandler.destroyProcess()
           if (processHandler.waitFor(TIMEOUT_MS)) {
             withContext(Dispatchers.UiWithModelAccess) {

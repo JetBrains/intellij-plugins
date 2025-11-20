@@ -8,7 +8,6 @@ import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy
 import com.intellij.openapi.externalSystem.ui.ExternalSystemIconProvider
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
-import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioProjectResolvePolicyCleanCache
 import com.jetbrains.cidr.cpp.embedded.platformio.project.ID
@@ -34,7 +33,7 @@ class PlatformioRefreshAction : AnAction() {
     val project = e.project
     if (project == null) return
 
-    currentThreadCoroutineScope().launch(Dispatchers.EDT) {
+    e.coroutineScope.launch(Dispatchers.EDT) {
       // Don't refresh untrusted projects
       // Refreshing the project would run pio, which can execute python code via advanced scripting.
       // Just show the untrusted project dialog and do nothing instead.

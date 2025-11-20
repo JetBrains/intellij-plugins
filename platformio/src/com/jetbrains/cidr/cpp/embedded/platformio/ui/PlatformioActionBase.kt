@@ -14,7 +14,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.ShowSettingsUtil
-import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.TabTitle
@@ -27,11 +26,11 @@ import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioCliBuilder
 import icons.ClionEmbeddedPlatformioIcons
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import javax.swing.Icon
 import javax.swing.SwingConstants
-import kotlinx.coroutines.withContext
 
 private val NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("PlatformIO plugin")
 
@@ -48,7 +47,7 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
     val project = e.project
     if (project == null) return
 
-    currentThreadCoroutineScope().launch(Dispatchers.EDT) {
+    e.coroutineScope.launch(Dispatchers.EDT) {
       ensureProjectIsTrusted(project)
       val commandLine = PlatformioCliBuilder(true, project, appendEnvKey, verboseAllowed).withParams(*arguments).build()
       val runContentManager = RunContentManager.getInstance(project)
@@ -72,7 +71,7 @@ abstract class PlatformioActionBase(private  val text:  () -> @TabTitle String,
     val project = e.project
     if (project == null) return
 
-    currentThreadCoroutineScope().launch(Dispatchers.EDT) {
+    e.coroutineScope.launch(Dispatchers.EDT) {
       ensureProjectIsTrusted(project)
       val commandLine = PlatformioCliBuilder(true, project, appendEnvKey, verboseAllowed).withParams(*arguments).build()
       val alreadyRunningDescriptor = getAlreadyRunningDescriptor(RunContentManager.getInstance(project), commandLine)
