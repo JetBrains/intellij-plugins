@@ -49,6 +49,7 @@ jvm_library(
     "//plugins/css/psi",
     "@community//platform/polySymbols/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "@community//libraries/gson",
   ]
 )
 ### auto-generated section `build intellij.astro` end
