@@ -24,10 +24,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
+import com.intellij.util.ui.EDT;
 import com.thoughtworks.gauge.findUsages.helper.ReferenceSearchHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.List;
 
 public final class GaugeReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
@@ -42,7 +42,7 @@ public final class GaugeReferenceSearch extends QueryExecutorBase<PsiReference, 
                            @NotNull Processor<? super PsiReference> processor) {
     ApplicationManager.getApplication().runReadAction(() -> {
       if (!helper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())) return;
-      if (EventQueue.isDispatchThread()) {
+      if (EDT.isCurrentThreadEdt()) {
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
           () -> processElements(searchParameters, processor),
           FindBundle.message("find.usages.progress.title"), true, searchParameters.getElementToSearch().getProject()

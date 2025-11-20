@@ -36,6 +36,7 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.util.Consumer;
 import com.intellij.util.EmptyConsumer;
 import com.intellij.util.MemoryDumpHelper;
+import com.intellij.util.ui.EDT;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -47,7 +48,6 @@ import org.jetbrains.idea.perforce.perforce.P4Command;
 import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
 import org.jetbrains.idea.perforce.perforce.PerforceTimeoutException;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -371,7 +371,7 @@ public abstract class AbstractP4Connection implements P4Connection {
     private MyInterruptibleProcess(final Project project, final Process process, final long timeout) {
       super(process, timeout, TimeUnit.MILLISECONDS);
       myProject = project;
-      myNeedStallDialog = SwingUtilities.isEventDispatchThread() || ProgressManager.getInstance().hasModalProgressIndicator();
+      myNeedStallDialog = EDT.isCurrentThreadEdt() || ProgressManager.getInstance().hasModalProgressIndicator();
     }
 
     @Override
