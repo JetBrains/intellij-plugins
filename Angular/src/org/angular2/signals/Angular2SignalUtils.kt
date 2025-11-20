@@ -3,17 +3,8 @@ package org.angular2.signals
 
 import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
-import com.intellij.lang.javascript.psi.JSArgumentList
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSExpression
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.StubUnsafe
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.*
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
@@ -24,7 +15,14 @@ import com.intellij.lang.javascript.psi.types.recordImpl.ComputedPropertySignatu
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
+import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.INPUT_DEC
+import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
+import org.angular2.index.getFunctionNameFromIndex
+import org.angular2.isFromImportedPackage
 import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_RX_INTEROP_PACKAGE
 
 object Angular2SignalUtils {
 
@@ -35,7 +33,6 @@ object Angular2SignalUtils {
   const val WRITABLE_SIGNAL_TYPE: String = "WritableSignal"
   const val SIGNAL_FUNCTION: String = "signal"
   const val OUTPUT_FROM_OBSERVABLE_FUN: String = "outputFromObservable"
-
 
   const val VIEW_CHILD_FUN: String = "viewChild"
   const val VIEW_CHILDREN_FUN: String = "viewChildren"
@@ -112,6 +109,22 @@ object Angular2SignalUtils {
     return false
   }
 
+  fun isDirectiveSignalInputOrOutput(psiElement: PsiElement?): Boolean =
+    psiElement.asSafely<TypeScriptField>()
+      ?.initializerOrStub
+      ?.asSafely<JSCallExpression>()
+      ?.let { isSignalInputOutFunctionCall(it) } == true
+
+  fun isSignalInputOutFunctionCall(call: JSCallExpression): Boolean =
+    getFunctionNameFromIndex(call)
+      ?.split('.')
+      ?.takeIf { it.size == 1 || it.size == 2 && it[1] == REQUIRED_FUN }
+      ?.get(0)
+      ?.takeIf { it == INPUT_FUN || it == OUTPUT_FUN || it == MODEL_FUN || it == OUTPUT_FROM_OBSERVABLE_FUN }
+      ?.let {
+        isFromImportedPackage(it, call, ANGULAR_CORE_PACKAGE, ANGULAR_CORE_RX_INTEROP_PACKAGE)
+      } == true
+
   fun addWritableSignal(context: PsiElement?, propertyType: JSType): JSType {
     val signal = writableSignalInterface(context)?.jsType
                  ?: return propertyType
@@ -134,9 +147,11 @@ object Angular2SignalUtils {
             null
           else
             Pair(qualifier.referenceName ?: return@let null, expr.referenceName)
-        } else if (qualifier == null){
+        }
+        else if (qualifier == null) {
           expr.referenceName?.let { Pair(it, null) }
-        } else null
+        }
+        else null
       }
       ?.takeIf { Angular2LangUtil.isAngular2Context(expression) }
 

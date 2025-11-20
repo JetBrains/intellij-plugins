@@ -16,6 +16,7 @@ import org.angular2.lang.html.Angular2TemplateSyntax
 
 object Angular2LangUtil {
   const val ANGULAR_CORE_PACKAGE: String = "@angular/core"
+  const val ANGULAR_CORE_RX_INTEROP_PACKAGE: String = "@angular/core/rxjs-interop"
   const val ANGULAR_COMMON_PACKAGE: String = "@angular/common"
   const val ANGULAR_FORMS_PACKAGE: String = "@angular/forms"
   const val ANGULAR_ROUTER_PACKAGE: String = "@angular/router"
