@@ -20,7 +20,6 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
@@ -144,8 +143,7 @@ public final class DartRunner extends GenericProgramRunner {
 
     FileDocumentManager.getInstance().saveAllDocuments();
 
-    final XDebuggerManager debuggerManager = XDebuggerManager.getInstance(project);
-    final XDebugSession debugSession = debuggerManager.startSession(env, new XDebugProcessStarter() {
+    XDebugProcessStarter starter = new XDebugProcessStarter() {
       @Override
       public @NotNull XDebugProcess start(final @NotNull XDebugSession session) throws ExecutionException {
         final DartUrlResolver dartUrlResolver = getDartUrlResolver(project, contextFileOrDir);
@@ -159,9 +157,10 @@ public final class DartRunner extends GenericProgramRunner {
         debugProcess.start();
         return debugProcess;
       }
-    });
-
-    return ((XDebugSessionImpl)debugSession).getMockRunContentDescriptor();
+    };
+    return XDebuggerManager.getInstance(project).newSessionBuilder(starter)
+      .environment(env)
+      .startSession().getRunContentDescriptor();
   }
 
   private DartUrlResolver getDartUrlResolver(final @NotNull Project project, final @NotNull VirtualFile contextFileOrDir) {

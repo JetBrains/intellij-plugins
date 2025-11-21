@@ -46,7 +46,6 @@ import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
-import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.jetbrains.debugger.wip.BrowserChromeDebugProcess
 import com.jetbrains.debugger.wip.WipRemoteVmConnection
 import org.jetbrains.concurrency.Promise
@@ -112,34 +111,34 @@ internal class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
       val karmaServer = consoleView.karmaServer
       val url = newFromEncoded(karmaServer.formatUrl("/"))
       val fileFinder = getDebuggableFileFinder(karmaServer)
-      val session = XDebuggerManager.getInstance(environment.project).startSession(
-        environment,
-        object : XDebugProcessStarter() {
-          override fun start(session: XDebugSession): XDebugProcess {
-            val debugProcess = createDebugProcess(session, karmaServer, fileFinder, executionResult, debuggableWebBrowser, url)
-            debugProcess.scriptsCanBeReloaded = true
-            debugProcess.addFirstLineBreakpointPattern("\\.browserify$")
-            debugProcess.elementsInspectorEnabled = false
-            debugProcess.setConsoleMessagesSupportEnabled(false)
-            debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess))
-            karmaServer.onBrowsersReady {
-              openConnectionIfRemoteDebugging(karmaServer, debugProcess.connection)
-              val resumeTestRunning = ConcurrencyUtil.once { resumeTestRunning(executionResult.processHandler as OSProcessHandler) }
-              val alarm = SingleAlarm(resumeTestRunning, 5000)
-              alarm.request()
-              debugProcess.connection.executeOnStart { vm ->
-                if (Registry.`is`("js.debugger.break.on.first.statement.karma")) {
-                  vm.breakpointManager.setBreakOnFirstStatement()
-                }
-                alarm.cancelAllRequests()
-                resumeTestRunning.run()
+      val starter = object : XDebugProcessStarter() {
+        override fun start(session: XDebugSession): XDebugProcess {
+          val debugProcess = createDebugProcess(session, karmaServer, fileFinder, executionResult, debuggableWebBrowser, url)
+          debugProcess.scriptsCanBeReloaded = true
+          debugProcess.addFirstLineBreakpointPattern("\\.browserify$")
+          debugProcess.elementsInspectorEnabled = false
+          debugProcess.setConsoleMessagesSupportEnabled(false)
+          debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess))
+          karmaServer.onBrowsersReady {
+            openConnectionIfRemoteDebugging(karmaServer, debugProcess.connection)
+            val resumeTestRunning = ConcurrencyUtil.once { resumeTestRunning(executionResult.processHandler as OSProcessHandler) }
+            val alarm = SingleAlarm(resumeTestRunning, 5000)
+            alarm.request()
+            debugProcess.connection.executeOnStart { vm ->
+              if (Registry.`is`("js.debugger.break.on.first.statement.karma")) {
+                vm.breakpointManager.setBreakOnFirstStatement()
               }
+              alarm.cancelAllRequests()
+              resumeTestRunning.run()
             }
-            return debugProcess
           }
+          return debugProcess
         }
-      )
-      return KarmaUtil.withReusePolicy((session as XDebugSessionImpl).getMockRunContentDescriptor(), karmaServer)
+      }
+      val descriptor = XDebuggerManager.getInstance(environment.project).newSessionBuilder(starter)
+        .environment(environment)
+        .startSession().runContentDescriptor
+      return KarmaUtil.withReusePolicy(descriptor!!, karmaServer)
     }
 
     private fun createDebugProcess(session: XDebugSession,

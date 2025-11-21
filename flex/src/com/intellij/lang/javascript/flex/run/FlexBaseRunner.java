@@ -72,7 +72,6 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.*;
-import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -194,42 +193,45 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                     final FlexBuildConfiguration bc,
                                                     final BCBasedRunnerParameters params,
                                                     final ExecutionEnvironment env) throws ExecutionException {
-    final XDebugSession debugSession =
-      XDebuggerManager.getInstance(module.getProject()).startSession(env, new XDebugProcessStarter() {
-        @Override
-        public @NotNull XDebugProcess start(final @NotNull XDebugSession session) throws ExecutionException {
-          try {
-            if (params instanceof FlexUnitRunnerParameters) {
-              return new FlexDebugProcess(session, bc, params) {
-                @Override
-                public @NotNull ExecutionConsole createConsole() {
-                  try {
-                    return createFlexUnitRunnerConsole(session.getProject(), env, getProcessHandler());
-                  }
-                  catch (ExecutionException e) {
-                    Logger.getInstance(FlexBaseRunner.class.getName()).error(e);
-                  }
-                  return super.createConsole();
+    XDebugProcessStarter starter = new XDebugProcessStarter() {
+      @Override
+      public @NotNull XDebugProcess start(final @NotNull XDebugSession session) throws ExecutionException {
+        try {
+          if (params instanceof FlexUnitRunnerParameters) {
+            return new FlexDebugProcess(session, bc, params) {
+              @Override
+              public @NotNull ExecutionConsole createConsole() {
+                try {
+                  return createFlexUnitRunnerConsole(session.getProject(), env, getProcessHandler());
                 }
-              };
-            }
-            return new FlexDebugProcess(session, bc, params);
+                catch (ExecutionException e) {
+                  Logger.getInstance(FlexBaseRunner.class.getName()).error(e);
+                }
+                return super.createConsole();
+              }
+            };
           }
-          catch (IOException e) {
-            iosStopForwardTcpPortIfNeeded(bc, params);
-            throw new ExecutionException(e.getMessage(), e);
-          }
+          return new FlexDebugProcess(session, bc, params);
         }
-      });
+        catch (IOException e) {
+          iosStopForwardTcpPortIfNeeded(bc, params);
+          throw new ExecutionException(e.getMessage(), e);
+        }
+      }
+    };
 
-    debugSession.addSessionListener(new XDebugSessionListener() {
+    var result = XDebuggerManager.getInstance(module.getProject()).newSessionBuilder(starter)
+      .environment(env)
+      .startSession();
+
+    result.getSession().addSessionListener(new XDebugSessionListener() {
       @Override
       public void sessionStopped() {
         iosStopForwardTcpPortIfNeeded(bc, params);
       }
     });
 
-    return ((XDebugSessionImpl)debugSession).getMockRunContentDescriptor();
+    return result.getRunContentDescriptor();
   }
 
   private static void iosStopForwardTcpPortIfNeeded(final FlexBuildConfiguration bc, final BCBasedRunnerParameters params) {

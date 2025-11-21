@@ -17,9 +17,8 @@ import com.intellij.javascript.debugger.JavaScriptDebugProcess
 import com.intellij.javascript.nodejs.NodeConsoleAdditionalFilter
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.Key
-import com.intellij.xdebugger.XDebugSession
+import com.intellij.xdebugger.XSessionStartedResult
 import com.intellij.xdebugger.XDebuggerManager
-import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.jetbrains.plugins.meteor.settings.MeteorSettings
 import org.jetbrains.debugger.connection.RemoteVmConnection
 import java.net.InetSocketAddress
@@ -34,7 +33,7 @@ class MeteorDebugProcessRunner : GenericProgramRunner<RunnerSettings>() {
   }
 
   @Throws(ExecutionException::class)
-  override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor {
+  override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
     FileDocumentManager.getInstance().saveAllDocuments()
     val profileState = state as MeteorRunProfileState
     val configuration = environment.runProfile as MeteorRunConfiguration
@@ -42,8 +41,7 @@ class MeteorDebugProcessRunner : GenericProgramRunner<RunnerSettings>() {
     if (isOnceEnabled) {
       val socketAddress = configuration.computeDebugAddress(state)
       val mainProcessHandler = profileState.getProcessHandler(socketAddress.port)
-      val session = createSession(environment, socketAddress, DefaultExecutionResult(null, mainProcessHandler))
-      return (session as XDebugSessionImpl).getMockRunContentDescriptor()
+      return createSession(environment, socketAddress, DefaultExecutionResult(null, mainProcessHandler)).runContentDescriptor!!
     }
 
     var mainProcessHandler: MeteorMainProcessHandler? = null
@@ -68,8 +66,9 @@ class MeteorDebugProcessRunner : GenericProgramRunner<RunnerSettings>() {
     val debuggableProcessHandler = MeteorDebuggableProcessHandler(mainProcessHandler)
     val executionResult = DefaultExecutionResult(null, debuggableProcessHandler)
 
-    val session = createSession(environment, socketAddress, executionResult)
-    val descriptor = (session as XDebugSessionImpl).getMockRunContentDescriptor()
+    val result = createSession(environment, socketAddress, executionResult)
+    val session = result.session
+    val descriptor = result.runContentDescriptor
 
     val workingDirectory = configuration.effectiveWorkingDirectory
     session.consoleView?.run {
@@ -94,16 +93,19 @@ class MeteorDebugProcessRunner : GenericProgramRunner<RunnerSettings>() {
       get() = MeteorSettings.getInstance().isStartOnce
 
     @Throws(ExecutionException::class)
-    private fun createSession(environment: ExecutionEnvironment,
-                              socketAddress: InetSocketAddress,
-                              executionResult: DefaultExecutionResult): XDebugSession {
+    private fun createSession(
+      environment: ExecutionEnvironment,
+      socketAddress: InetSocketAddress,
+      executionResult: DefaultExecutionResult,
+    ): XSessionStartedResult {
       val configuration = environment.runProfile as MeteorRunConfiguration
       val starter = MeteorDebugProcessStarter(configuration.isNode8,
                                               configuration.createFileFinder(environment.project) as MeteorFileFinder,
                                               socketAddress,
                                               executionResult)
-      val session = XDebuggerManager.getInstance(environment.project).startSession(environment, starter)
-      return session
+      return XDebuggerManager.getInstance(environment.project).newSessionBuilder(starter)
+        .environment(environment)
+        .startSession()
     }
 
     fun getListenerForMainProcess(debugProcessHandler: MeteorDebuggableProcessHandler): ProcessAdapter {
