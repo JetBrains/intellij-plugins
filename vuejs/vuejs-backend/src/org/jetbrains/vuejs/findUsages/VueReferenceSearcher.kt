@@ -209,8 +209,8 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
 }
 
 private class ScriptSetupImportProcessor(
-  target: PsiElement?,
-  queryParameters: ReferencesSearch.SearchParameters?,
+  target: PsiElement,
+  queryParameters: ReferencesSearch.SearchParameters,
 ) : JSFindReferencesResultProcessor(target, queryParameters) {
   override fun proceedWithReference(element: PsiElement, collector: SearchRequestCollector): Boolean {
     if (element !is ES6ImportSpecifier) return false
