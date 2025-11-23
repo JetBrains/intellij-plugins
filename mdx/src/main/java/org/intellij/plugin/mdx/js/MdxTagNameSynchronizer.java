@@ -33,6 +33,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.core.impl.PomModelImpl;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiDocumentManagerBase;
+import com.intellij.psi.impl.PsiDocumentManagerEx;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.templateLanguages.OuterLanguageElement;
@@ -168,7 +169,7 @@ public final class MdxTagNameSynchronizer implements EditorFactoryListener {
 
   private static final class TagNameSynchronizer implements DocumentListener, Disposable {
     private static final Key<Couple<RangeMarker>> MARKERS_KEY = Key.create("tag.name.synchronizer.markers");
-    private final PsiDocumentManagerBase myDocumentManager;
+    private final PsiDocumentManagerEx myDocumentManager;
     private final Language myLanguage;
     private final EditorImpl myEditor;
     private final Project myProject;
@@ -177,7 +178,7 @@ public final class MdxTagNameSynchronizer implements EditorFactoryListener {
     private TagNameSynchronizer(EditorImpl editor, Project project, Language language) {
       myEditor = editor;
       myLanguage = language;
-      myDocumentManager = (PsiDocumentManagerBase)PsiDocumentManager.getInstance(project);
+      myDocumentManager = (PsiDocumentManagerEx)PsiDocumentManager.getInstance(project);
       myProject = project;
     }
 
