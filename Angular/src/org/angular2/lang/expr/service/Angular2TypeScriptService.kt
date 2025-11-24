@@ -37,6 +37,7 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction.computeCancellable
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.DumbService
@@ -209,8 +210,12 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     return@withServiceTraceSpan errors.map { error ->
       if (error is TypeScriptLanguageServiceAnnotationResult) {
         if (error.line < 0) return@map error
-        val textRange = error.getTextRange(document)
-                        ?: return@map error
+        val textRange = try {
+          error.getTextRange(document)
+        } catch (e: Exception) {
+          thisLogger().error(e)
+          null
+        } ?: return@map error
         val nameMap = file.nameMaps[templateFile]
           ?.subMap(textRange.startOffset, true, textRange.endOffset, false)
           ?.values
