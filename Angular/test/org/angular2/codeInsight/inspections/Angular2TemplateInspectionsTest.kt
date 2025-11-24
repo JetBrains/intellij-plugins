@@ -7,7 +7,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeIn
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
 import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.lang.javascript.JavaScriptBundle
-import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection
+import com.intellij.lang.typescript.inspections.TypeScriptExplicitMemberTypeInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase

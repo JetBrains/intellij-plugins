@@ -7,7 +7,7 @@ import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
 import com.intellij.lang.javascript.inspections.*
-import com.intellij.lang.javascript.modules.TypeScriptCheckImportInspection
+import com.intellij.lang.javascript.inspections.TypeScriptCheckImportInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.psi.css.inspections.CssUnknownPropertyInspection
