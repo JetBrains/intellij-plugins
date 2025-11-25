@@ -92,9 +92,12 @@ public final class PerforceCachingContentRevision extends PerforceContentRevisio
   }
 
   private static void saveCachedContent(VirtualFile vFile, long revision, byte @NotNull [] content) throws IOException {
-    if (content.length > VFSAttributesStorage.MAX_ATTRIBUTE_VALUE_SIZE) {
+    int allSizeToStore =
+      content.length + Long.BYTES + Integer.BYTES; //content.length + revision bytes + content.length bytes
+
+    if (allSizeToStore >= VFSAttributesStorage.MAX_ATTRIBUTE_VALUE_SIZE) {
       LOG.warn(String.format("Trying to cache file %s with %s size but max %s allowed. Skip caching.",
-                             vFile.getPath(), content.length, VFSAttributesStorage.MAX_ATTRIBUTE_VALUE_SIZE));
+                             vFile.getPath(), allSizeToStore, VFSAttributesStorage.MAX_ATTRIBUTE_VALUE_SIZE));
       return;
     }
     try (DataOutputStream stream = PERFORCE_CONTENT_ATTRIBUTE.writeFileAttribute(vFile)) {
