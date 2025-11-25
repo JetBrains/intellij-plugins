@@ -99,6 +99,15 @@ open class Angular2HtmlLexer(
       super.advance()
     }
 
+    override fun getCurrentPosition(): LexerPosition {
+      return Angular2HtmlMergingLexerPosition(super.getCurrentPosition(), prevExpansionFormNestingLevel)
+    }
+
+    override fun restore(position: LexerPosition) {
+      super.restore((position as Angular2HtmlMergingLexerPosition).originalPosition)
+      prevExpansionFormNestingLevel = position.prevExpansionFormNestingLevel
+    }
+
     override fun getMergeFunction(): MergeFunction {
       return MergeFunction { type, originalLexer -> merge(type, originalLexer) }
     }
@@ -136,6 +145,14 @@ open class Angular2HtmlLexer(
         }
       }
       return result
+    }
+
+    private class Angular2HtmlMergingLexerPosition(
+      val originalPosition: LexerPosition,
+      val prevExpansionFormNestingLevel: Int,
+    ): LexerPosition {
+      override fun getOffset(): Int = originalPosition.offset
+      override fun getState(): Int = originalPosition.state
     }
 
     companion object {

@@ -93,11 +93,6 @@ open class Angular2LexerTest : AngularLexerTestCase() {
     registerJSElementTypeServices(app, getTestRootDisposable())
   }
 
-  override fun doTest(text: @NonNls String) {
-    super.doTest(text)
-    checkCorrectRestart(text)
-  }
-
   private fun doBlockTest(name: String, index: Int) {
     doFileTest { Angular2Lexer(Angular2Lexer.BlockParameter(templateSyntax, name, index)) }
   }

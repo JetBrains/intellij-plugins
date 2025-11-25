@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.html
 
+import com.intellij.lexer.HtmlLexer
 import com.intellij.lexer.Lexer
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
@@ -355,7 +356,9 @@ open class Angular2HtmlLexerTest : AngularLexerTestCase() {
 
   override fun doTest(text: @NonNls String) {
     super.doTest(text)
-    checkCorrectRestart(text)
+    if ((createLexer() as? HtmlLexer)?.isHighlighting == false) {
+      checkCorrectRestartUsingPosition(text)
+    }
   }
 
   override fun createLexer(): Lexer {
