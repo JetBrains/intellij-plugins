@@ -16,7 +16,6 @@ jvm_library(
   deps = [
     "@community//libraries/guava",
     "@lib//:cucumber-core-1",
-    "@ultimate_lib//:gherkin",
     "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
     "//contrib/cucumber:gherkin",
     "@community//java/openapi:java",
@@ -57,7 +56,6 @@ jvm_library(
   deps = [
     "@community//libraries/guava",
     "@lib//:cucumber-core-1",
-    "@ultimate_lib//:gherkin",
     "@community//plugins/cucumber-jvm-formatter:cucumber-jvmFormatter",
     "//contrib/cucumber:gherkin",
     "//contrib/cucumber:gherkin_test_lib",

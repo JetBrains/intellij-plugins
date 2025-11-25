@@ -20,7 +20,6 @@
     <orderEntry type="module" module-name="intellij.groovy" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
     <orderEntry type="module" module-name="intellij.java.psi.impl" />
-    <orderEntry type="library" name="gherkin" level="project" />
     <orderEntry type="module" module-name="intellij.java.psi" />
     <orderEntry type="module" module-name="intellij.platform.usageView" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
