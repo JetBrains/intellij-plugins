@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt
 
+import com.intellij.idea.IJIgnore
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
@@ -11,6 +12,7 @@ import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.withRenameUsages
 
+@IJIgnore(issue = "WEB-75792")
 class NuxtRenameTest : BasePlatformTestCase() {
 
   override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/nuxt/rename"
