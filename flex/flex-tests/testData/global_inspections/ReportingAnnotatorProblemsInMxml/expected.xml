@@ -3,12 +3,12 @@
   <problem>
     <file>ReportingAnnotatorProblemsInMxml.mxml</file>
     <line>7</line>
-    <description>Unresolved variable xxx #loc</description>
+    <description>Unresolved variable xxx</description>
   </problem>
   <problem>
     <file>ReportingAnnotatorProblemsInMxml.mxml</file>
     <line>3</line>
-    <description>Unresolved type IFoo #loc</description>
+    <description>Unresolved type IFoo</description>
   </problem>
 </problems>
 

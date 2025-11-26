@@ -3,7 +3,7 @@
   <problem>
     <file>ReportingAnnotatorProblemsInActionScript.as</file>
     <line>3</line>
-    <description>Unresolved variable or type xxx #loc</description>
+    <description>Unresolved variable or type xxx</description>
   </problem>
 </problems>
 
