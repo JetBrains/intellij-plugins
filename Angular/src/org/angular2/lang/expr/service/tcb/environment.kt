@@ -130,7 +130,7 @@ internal class Environment(
       }
       val importDescriptor = ES6CreateImportUtil.getImportDescriptor(
         null, element, element.containingFile.virtualFile, file, true)
-                             ?: throw RuntimeException("Cannot import class ${element.qualifiedName ?: element.name} from file ${element.containingFile.virtualFile}")
+                             ?: throw RuntimeException("Cannot import class ${element.qualifiedName ?: element.name} from file ${element.containingFile.virtualFile} to file ${file.virtualFile}")
       assert(importDescriptor.importType.let {
         !it.isBare && !it.isComposite && !it.isNamespace && !it.isBindingAll && !it.isTypeScriptRequire
       }) {
