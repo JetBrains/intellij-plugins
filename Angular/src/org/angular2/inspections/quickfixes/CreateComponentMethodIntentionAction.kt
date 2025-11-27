@@ -26,6 +26,10 @@ class CreateComponentMethodIntentionAction(methodExpression: JSReferenceExpressi
     doApplyFix(project, componentClass, componentClass.containingFile, null)
   }
 
+  override fun calculateInitialAnchor(predefinedAnchor: PsiElement?, nodeForAnchor: PsiElement?): PsiElement? {
+    return predefinedAnchor ?: nodeForAnchor
+  }
+
   override fun beforeStartTemplateAction(referenceExpression: JSReferenceExpression?,
                                          editor: Editor,
                                          anchor: PsiElement,

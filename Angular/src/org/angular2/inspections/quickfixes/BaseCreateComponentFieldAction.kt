@@ -24,6 +24,10 @@ abstract class BaseCreateComponentFieldAction(fieldName: String?)
     doApplyFix(project, targetClass, targetClass.containingFile, null)
   }
 
+  override fun calculateInitialAnchor(predefinedAnchor: PsiElement?, nodeForAnchor: PsiElement?): PsiElement? {
+    return predefinedAnchor ?: nodeForAnchor
+  }
+
   override fun assertValidContext(psiElement: PsiElement, referenceExpression: JSReferenceExpression?) {
     if (psiElement !is TypeScriptClass) super.assertValidContext(psiElement, referenceExpression)
   }
