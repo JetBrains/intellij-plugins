@@ -82,5 +82,6 @@
     <orderEntry type="module" module-name="intellij.platform.debugger.impl" />
     <orderEntry type="module" module-name="intellij.javascript.duplicatesDetection" />
     <orderEntry type="module" module-name="intellij.xml.analysis" />
+    <orderEntry type="module" module-name="intellij.platform.execution" />
   </component>
 </module>

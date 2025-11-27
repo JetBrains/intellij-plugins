@@ -14,5 +14,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="flex-plugin-shared" />
     <orderEntry type="module" module-name="flex-plugin-jps" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" />
   </component>
 </module>

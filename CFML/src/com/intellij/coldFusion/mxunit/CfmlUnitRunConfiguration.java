@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.mxunit;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.OutputStream;
 
-public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
+public final class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
   private CfmlUnitRunnerParameters myRunnerParameters;
 
   CfmlUnitRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {

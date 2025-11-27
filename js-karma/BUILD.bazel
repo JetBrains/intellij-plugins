@@ -61,6 +61,8 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "//plugins/JavaScriptDebugger/common",
     "@community//platform/xdebugger-impl:debugger-impl",
+    "@community//platform/execution",
+    "@community//platform/lang-api:lang",
   ]
 )
 
@@ -112,6 +114,8 @@ jvm_library(
     "//plugins/JavaScriptDebugger/common",
     "@community//platform/xdebugger-impl:debugger-impl",
     "@community//platform/xdebugger-impl:debugger-impl_test_lib",
+    "@community//platform/execution",
+    "@community//platform/lang-api:lang",
   ]
 )
 ### auto-generated section `build intellij.karma` end

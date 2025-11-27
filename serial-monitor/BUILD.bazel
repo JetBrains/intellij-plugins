@@ -32,6 +32,8 @@ jvm_library(
     "@community//libraries/jediterm-ui",
     "@community//libraries/commons/io",
     "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
+    "@community//platform/execution",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 
@@ -64,6 +66,8 @@ jvm_library(
     "@community//platform/testFramework/junit5",
     "@community//platform/testFramework/junit5:junit5_test_lib",
     "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
+    "@community//platform/execution",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 ### auto-generated section `build intellij.serial.monitor` end

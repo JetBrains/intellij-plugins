@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI.editorActions.typedHandlers;
 
 import com.intellij.codeInsight.editorActions.BackspaceHandlerDelegate;
@@ -10,11 +10,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
-/**
- * Created by Lera Nikolaenko
- */
-public final class CfmlBackspaceHandler extends BackspaceHandlerDelegate {
-
+final class CfmlBackspaceHandler extends BackspaceHandlerDelegate {
   @Override
   public void beforeCharDeleted(char c, PsiFile file, Editor editor) {
     if (file.getLanguage() != CfmlLanguage.INSTANCE) return;

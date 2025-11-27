@@ -23,6 +23,7 @@ jvm_library(
     "@community//platform/vcs-api:vcs",
     "@community//platform/core-impl",
     "@community//platform/util/concurrency",
+    "@community//platform/forms_rt:java-guiForms-rt",
     "@community//platform/analysis-api:analysis",
     "@community//platform/vcs-impl",
     "@community//platform/platform-impl:ide-impl",
@@ -80,6 +81,7 @@ jvm_library(
     "@community//platform/vcs-tests:vcs-testFramework",
     "@community//platform/platform-util-io:ide-util-io",
     "@lib//:mockito",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 ### auto-generated section `build intellij.vcs.perforce.tests` end

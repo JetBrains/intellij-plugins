@@ -38,6 +38,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/polySymbols",
     "@community//xml/xml-psi-api:psi",
+    "@community//platform/execution",
   ]
 )
 
@@ -72,6 +73,7 @@ jvm_library(
     "@community//platform/polySymbols",
     "@community//xml/xml-psi-api:psi",
     "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "@community//platform/execution",
   ]
 )
 ### auto-generated section `build intellij.nextjs` end

@@ -26,6 +26,7 @@ jvm_library(
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/core-api:core",
+    "@community//platform/lang-api:lang",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/lang-impl",
@@ -40,6 +41,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-impl",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 
@@ -54,6 +56,7 @@ jvm_library(
     "@community//platform/util/concurrency",
     "@community//platform/util/concurrency:concurrency_test_lib",
     "@community//platform/core-api:core",
+    "@community//platform/lang-api:lang",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/indexing-api:indexing",
@@ -78,6 +81,7 @@ jvm_library(
     "@community//xml/relaxng:relaxng_test_lib",
     "@community//xml/testFramework",
     "@community//platform/core-impl",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 ### auto-generated section `build intellij.handlebars` end

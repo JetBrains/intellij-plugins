@@ -47,6 +47,7 @@ jvm_library(
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
+    "@community//platform/execution",
   ]
 )
 
@@ -87,6 +88,7 @@ jvm_library(
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
     "@community//platform/core-impl",
+    "@community//platform/execution",
   ]
 )
 ### auto-generated section `build intellij.deno` end

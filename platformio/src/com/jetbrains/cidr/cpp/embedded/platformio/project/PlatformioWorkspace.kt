@@ -30,7 +30,7 @@ import kotlin.io.path.isDirectory
 
 @State(name = "PlatformIOWorkspace")
 @Service(Service.Level.PROJECT)
-class PlatformioWorkspace(project: Project) : ExternalWorkspace(project), WorkspaceWithEnvironment {
+internal class PlatformioWorkspace(project: Project) : ExternalWorkspace(project), WorkspaceWithEnvironment {
   override val clientKey: String
     get() = ID.id
 
@@ -101,7 +101,7 @@ class PlatformioWorkspace(project: Project) : ExternalWorkspace(project), Worksp
 
 val ID: ProjectSystemId = ProjectSystemId("PlatformIO", ClionEmbeddedPlatformioBundle.message("platformio.id"))
 
-class PlatformioWorkspaceProvider : CidrWorkspaceProvider {
+private class PlatformioWorkspaceProvider : CidrWorkspaceProvider {
   override fun getWorkspace(project: Project): PlatformioWorkspace =
     project.service<PlatformioWorkspace>()
 
@@ -114,11 +114,11 @@ class PlatformioWorkspaceProvider : CidrWorkspaceProvider {
   }
 }
 
-class PlatformioIconProvider : ExternalSystemIconProvider {
+private class PlatformioIconProvider : ExternalSystemIconProvider {
   override val reloadIcon: Icon
     get() = pioIcon(PlatformIcons.SYNCHRONIZE_ICON)
   override val projectIcon: Icon
     get() = ClionEmbeddedPlatformioIcons.LogoPlatformIO
 }
 
-val LOG: Logger = Logger.getInstance(PlatformioWorkspace::class.java)
+internal val LOG: Logger = Logger.getInstance(PlatformioWorkspace::class.java)

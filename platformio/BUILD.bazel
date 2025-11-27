@@ -58,6 +58,7 @@ jvm_library(
     "@community//platform/observable",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/lang-core",
+    "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/statistics",
@@ -66,6 +67,7 @@ jvm_library(
     "//plugins/profiler/clion",
     "@community//platform/util/coroutines",
     "@community//platform/core-impl",
+    "@community//platform/execution",
   ]
 )
 
@@ -122,6 +124,7 @@ jvm_library(
     "@community//platform/observable",
     "@community//platform/platform-util-io:ide-util-io",
     "@community//platform/lang-core",
+    "@community//platform/lang-api:lang",
     "@community//platform/lang-impl",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/statistics",
@@ -134,6 +137,7 @@ jvm_library(
     "//plugins/profiler/clion:clion_test_lib",
     "@community//platform/util/coroutines",
     "@community//platform/core-impl",
+    "@community//platform/execution",
   ]
 )
 ### auto-generated section `build intellij.clion.embedded.platformio` end

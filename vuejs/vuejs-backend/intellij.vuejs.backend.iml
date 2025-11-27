@@ -69,5 +69,6 @@
     <orderEntry type="module" module-name="intellij.platform.backend" />
     <orderEntry type="module" module-name="intellij.javascript.plugin" />
     <orderEntry type="module" module-name="intellij.xml.analysis" />
+    <orderEntry type="module" module-name="intellij.platform.execution" />
   </component>
 </module>

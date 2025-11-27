@@ -27,6 +27,7 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//platform/macro",
+    "@community//platform/forms_rt:java-guiForms-rt",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/core-impl",
@@ -64,6 +65,8 @@ jvm_library(
     "@community//platform/eel-provider",
     "@community//platform/util/progress",
     "@community//plugins/copyright",
+    "@community//platform/execution",
+    "@community//platform/lang-api:lang",
   ]
 )
 
@@ -82,6 +85,7 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/indexing-api:indexing",
     "@community//platform/macro",
+    "@community//platform/forms_rt:java-guiForms-rt",
     "@community//platform/projectModel-api:projectModel",
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/core-impl",
@@ -129,6 +133,8 @@ jvm_library(
     "@community//platform/util/progress",
     "@community//plugins/copyright",
     "@community//plugins/copyright:copyright_test_lib",
+    "@community//platform/execution",
+    "@community//platform/lang-api:lang",
   ]
 )
 ### auto-generated section `build intellij.terraform` end

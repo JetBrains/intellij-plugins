@@ -52,8 +52,10 @@ jvm_library(
     "@lib//:plexus-utils",
     "@community//xml/xml-psi-api:psi",
     "@lib//:jgoodies-forms",
+    "@community//platform/execution",
     "@community//xml/xml-analysis-api:analysis",
     "@community//java/codeserver/core",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 
@@ -106,8 +108,10 @@ jvm_library(
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "@community//xml/xml-psi-api:psi",
     "@lib//:jgoodies-forms",
+    "@community//platform/execution",
     "@community//xml/xml-analysis-api:analysis",
     "@community//java/codeserver/core",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 ### auto-generated section `build intellij.osgi` end

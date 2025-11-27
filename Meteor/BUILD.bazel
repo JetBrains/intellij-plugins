@@ -58,6 +58,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//platform/script-debugger/backend",
     "@community//platform/xdebugger-impl:debugger-impl",
+    "@community//platform/execution",
   ]
 )
 
@@ -111,6 +112,7 @@ jvm_library(
     "@community//platform/script-debugger/backend",
     "@community//platform/xdebugger-impl:debugger-impl",
     "@community//platform/xdebugger-impl:debugger-impl_test_lib",
+    "@community//platform/execution",
   ]
 )
 ### auto-generated section `build intellij.meteor` end

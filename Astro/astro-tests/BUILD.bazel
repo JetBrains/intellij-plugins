@@ -35,6 +35,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@community//xml/tests:tests_test_lib",
     "@community//platform/lang-impl",
+    "@community//platform/lang-api:lang",
     "@community//libraries/stream",
     "@community//platform/core-ui",
     "@community//xml/xml-analysis-api:analysis",

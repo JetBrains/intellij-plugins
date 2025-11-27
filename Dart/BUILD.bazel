@@ -18,6 +18,7 @@ jvm_library(
     "@community//platform/code-style-api:codeStyle",
     "@community//platform/util/concurrency",
     "@community//platform/core-api:core",
+    "@community//platform/lang-api:lang",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/execution-impl",
     "@community//platform/indexing-api:indexing",
@@ -66,6 +67,8 @@ jvm_library(
     "@community//platform/backend/workspace",
     "//plugins/JavaScriptDebugger/debugger-ui:javascript-debugger-ui",
     "@community//platform/core-impl",
+    "@community//platform/execution",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 
@@ -80,6 +83,7 @@ jvm_library(
     "@community//platform/util/concurrency",
     "@community//platform/util/concurrency:concurrency_test_lib",
     "@community//platform/core-api:core",
+    "@community//platform/lang-api:lang",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/execution-impl",
     "@community//platform/indexing-api:indexing",
@@ -147,6 +151,8 @@ jvm_library(
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark",
     "@community//tools/intellij.tools.ide.metrics.benchmark:ide-metrics-benchmark_test_lib",
     "@community//platform/core-impl",
+    "@community//platform/execution",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 ### auto-generated section `build intellij.dart` end

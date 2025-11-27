@@ -47,6 +47,7 @@ jvm_library(
     "@community//platform/indexing-impl",
     "@community//platform/lang-impl",
     "@community//platform/execution-impl",
+    "@community//platform/execution",
     "//plugins/JavaScriptLanguage:javascript-backend",
     "@community//xml/impl",
     "//plugins/css/plugin",

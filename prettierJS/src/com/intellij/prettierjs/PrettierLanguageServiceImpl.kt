@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.isRegularFile
 
-class PrettierLanguageServiceImpl(
+internal class PrettierLanguageServiceImpl(
   project: Project,
   private val workDir: VirtualFile,
 ) : JSLanguageServiceBase(project), PrettierLanguageService {

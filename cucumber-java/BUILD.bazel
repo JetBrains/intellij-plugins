@@ -45,6 +45,8 @@ jvm_library(
     "@community//platform/util/jdom",
     "@ultimate_lib//:cucumber-java-cucumber-expressions",
     "@ultimate_lib//:cucumber-java-cucumber-java",
+    "@community//platform/execution",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 
@@ -118,6 +120,8 @@ jvm_library(
     "@ultimate_lib//:cucumber-java-cucumber-java-5-5",
     "@ultimate_lib//:cucumber-java-cucumber-java8-5-5",
     "@community//platform/testFramework/junit5/codeInsight",
+    "@community//platform/execution",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 ### auto-generated section `build intellij.cucumber.java` end

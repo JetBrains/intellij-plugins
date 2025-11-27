@@ -47,6 +47,7 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@lib//:jgoodies-forms",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 
@@ -92,6 +93,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//xml/langInjection",
     "@lib//:jgoodies-forms",
+    "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
 ### auto-generated section `build intellij.gherkin` end

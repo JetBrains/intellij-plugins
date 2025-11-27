@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil
 
 import com.intellij.application.options.colors.InspectionColorSettingsPage
@@ -14,8 +14,7 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.Icons
 import javax.swing.Icon
 
-class HILColorPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrioritySortable {
-
+private class HILColorPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrioritySortable {
   private val descriptors: Array<out AttributesDescriptor> = arrayOf(
     AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.parentheses"), HILSyntaxHighlighter.TIL_PARENS),
     AttributesDescriptor(HCLBundle.message("hil.color.settings.braces.operators.braces"), HILSyntaxHighlighter.TIL_BRACES),

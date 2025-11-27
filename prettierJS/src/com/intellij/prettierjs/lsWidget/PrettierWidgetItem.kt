@@ -32,7 +32,7 @@ import com.intellij.platform.lang.lsWidget.impl.fus.LanguageServiceWidgetUsagesC
 import com.intellij.prettierjs.*
 import javax.swing.Icon
 
-class PrettierWidgetItem(
+internal class PrettierWidgetItem(
   private val project: Project,
   private val currentFile: VirtualFile?,
   private val location: MultiRootJSLinterLanguageServiceManager.Location,

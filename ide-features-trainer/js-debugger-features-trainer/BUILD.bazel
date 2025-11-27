@@ -37,6 +37,7 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@community//platform/core-ui",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "@community//platform/execution",
     ":plugins_javascript-backend_provided",
     ":plugins_JavaScriptDebugger_backend_provided",
   ]

@@ -28,6 +28,7 @@ jvm_library(
     "@community//platform/core-api:core",
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/execution-impl",
+    "@community//platform/forms_rt:java-guiForms-rt",
     "@community//platform/platform-api:ide",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/indexing-api:indexing",
@@ -46,6 +47,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//xml/xml-psi-api:psi",
     "@community//platform/util/jdom",
+    "@community//platform/execution",
   ],
   runtime_deps = [
     "//ultimate/platform-ultimate:commercial",
@@ -65,6 +67,7 @@ jvm_library(
     "@community//platform/editor-ui-api:editor-ui",
     "@community//platform/execution-impl",
     "@community//platform/foldings",
+    "@community//platform/forms_rt:java-guiForms-rt",
     "@community//platform/platform-api:ide",
     "//dbe/sql/impl",
     "//dbe/sql/backend-core:database-sql-backend-core",
@@ -91,6 +94,7 @@ jvm_library(
     "@community//platform/testFramework/extensions:testExtensions",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "@lib//:jet_check",
     "@lib//:kotlin-test",
     "@community//platform/core-ui",
     "@community//platform/editor-ui-ex:editor-ex",
@@ -98,6 +102,7 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@community//xml/xml-psi-api:psi",
     "@community//platform/util/jdom",
+    "@community//platform/execution",
   ]
 )
 ### auto-generated section `build intellij.cfml` end

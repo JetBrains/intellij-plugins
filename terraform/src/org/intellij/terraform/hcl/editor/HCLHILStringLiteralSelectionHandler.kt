@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.editor
 
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hil.HILElementTypes
 
-class HCLHILStringLiteralSelectionHandler : ExtendWordSelectionHandlerBase() {
+private class HCLHILStringLiteralSelectionHandler : ExtendWordSelectionHandlerBase() {
   override fun canSelect(e: PsiElement): Boolean {
     val type = e.node.elementType
     return type === HCLElementTypes.SINGLE_QUOTED_STRING
