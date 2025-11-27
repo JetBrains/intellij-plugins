@@ -1,0 +1,6 @@
+(animate.enter) (typeText=null; priority=10.0; typeGreyed)
+(animate.leave) (typeText=null; priority=10.0; typeGreyed)
+[animate.enter] (typeText='string | string[]'; priority=10.0; typeGreyed)
+[animate.leave] (typeText='string | string[]'; priority=10.0; typeGreyed)
+animate.enter (typeText=null; priority=10.0; typeGreyed)
+animate.leave (typeText=null; priority=10.0; typeGreyed)

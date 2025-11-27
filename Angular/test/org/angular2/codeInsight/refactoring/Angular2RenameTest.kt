@@ -289,4 +289,8 @@ class Angular2RenameTest : Angular2TestCase("refactoring/rename", false) {
 
   fun testCssCustomPropertyFromCssHostBinding() =
     checkSymbolRename("cssCustomProperty.ts", "--foo", dir = true)
+
+  fun testNewAngularAnimationBindings() =
+    checkSymbolRename("newName", Angular2TestModule.ANGULAR_CORE_20_2_2, dir = false)
+
 }

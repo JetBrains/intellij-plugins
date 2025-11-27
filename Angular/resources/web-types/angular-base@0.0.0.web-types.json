@@ -575,6 +575,10 @@
                 "priority": "high"
               },
               {
+                "items": "/js/ng-custom-property",
+                "priority": "normal"
+              },
+              {
                 "delegate": "/js/ng-unknown-property",
                 "priority": "lowest"
               }
