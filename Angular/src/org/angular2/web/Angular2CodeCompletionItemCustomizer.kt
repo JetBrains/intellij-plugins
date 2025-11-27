@@ -1,8 +1,6 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.polySymbols.js.decorateWithJsType
-import com.intellij.polySymbols.js.decorateWithSymbolType
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolQualifiedKind
@@ -10,9 +8,7 @@ import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
-import com.intellij.polySymbols.js.JS_EVENTS
-import com.intellij.polySymbols.js.JS_PROPERTIES
-import com.intellij.polySymbols.js.NAMESPACE_JS
+import com.intellij.polySymbols.js.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
@@ -26,7 +22,8 @@ private val typedKinds = setOf(JS_EVENTS,
                                NG_DIRECTIVE_ATTRIBUTES,
                                NG_DIRECTIVE_INPUTS,
                                NG_DIRECTIVE_OUTPUTS,
-                               NG_DIRECTIVE_IN_OUTS)
+                               NG_DIRECTIVE_IN_OUTS,
+                               NG_CUSTOM_PROPERTY)
 
 private val selectorKinds = setOf(NG_DIRECTIVE_ELEMENT_SELECTORS,
                                   NG_DIRECTIVE_ATTRIBUTE_SELECTORS)

@@ -316,6 +316,9 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
                  lookupItemFilter = { it.lookupString == "index" || it.lookupString == "last" || it.lookupString == "ngForOf" },
                  checkDocumentation = true)
 
+  fun testNewAngularAnimationBindings() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_20_2_2, extension = "ts", checkDocumentation = true)
+
   fun testCssCustomProperty() =
     doLookupTest(ANGULAR_CORE_19_2_0, extension = "ts", checkDocumentation = true, dir = true)
 

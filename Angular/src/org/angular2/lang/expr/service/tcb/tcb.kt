@@ -9,18 +9,14 @@
 
 package org.angular2.lang.expr.service.tcb
 
-import com.intellij.lang.ecmascript6.actions.JSImportDescriptorBuilder
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptParserBundle
-import com.intellij.lang.javascript.modules.JSImportPlaceInfo
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList.ModifierType
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSEvaluableType
-import com.intellij.lang.javascript.psi.types.JSTypeImpl
 import com.intellij.lang.javascript.psi.types.typescript.TypeScriptCompilerType
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -34,6 +30,8 @@ import com.intellij.psi.util.startOffset
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import com.intellij.util.containers.sequenceOfNotNull
+import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.ANIMATE_ENTER_ATTR
+import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.ANIMATE_LEAVE_ATTR
 import org.angular2.codeInsight.config.Angular2TypeCheckingConfig.ControlFlowPreventingContentProjectionKind
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_GUARD_PREFIX
@@ -1011,7 +1009,14 @@ private class TcbUnclaimedInputsOp(
 
       val expr = widenBinding(tcbExpression(binding.value, this.tcb, this.scope, binding.valueMappingOffset), this.tcb)
 
-      if (this.tcb.env.config.checkTypeOfDomBindings && isPropertyBinding) {
+      if ((binding.name == ANIMATE_ENTER_ATTR || binding.name == ANIMATE_LEAVE_ATTR)
+          && binding.type == BindingType.Property
+          && Angular2LangUtil.isAtLeastAngularVersion(this.tcb.env.file, AngularVersion.V_20_2)) {
+        val variableId = this.tcb.allocateId(binding.name, binding.keySpan)
+        val animateAssignment = tsDeclareVariable(variableId, Expression("string | string[]"), expr)
+        this.scope.addStatement(animateAssignment)
+      }
+      else if (this.tcb.env.config.checkTypeOfDomBindings && isPropertyBinding) {
         if (binding.name != "style" && binding.name != "class") {
           if (elId == null) {
             elId = this.scope.resolve(this.element)
@@ -1198,11 +1203,11 @@ private class TcbUnclaimedOutputsOp(
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, eventType)
         this.scope.addStatement(handler)
       }
-      else if ((output.name == "animate.enter" || output.name == "animate.leave")
-                   && Angular2LangUtil.isAtLeastAngularVersion(this.tcb.env.file,AngularVersion.V_20_2)) {
+      else if ((output.name == ANIMATE_ENTER_ATTR || output.name == ANIMATE_LEAVE_ATTR)
+               && Angular2LangUtil.isAtLeastAngularVersion(this.tcb.env.file, AngularVersion.V_20_2)) {
         val eventType = output.jsType?.substitute()
-            ?.let { if (it is JSEvaluableType) it.substitute() else it }
-            ?.let { if (it is TypeScriptCompilerType) it.substitute() else it }
+          ?.let { if (it is JSEvaluableType) it.substitute() else it }
+          ?.let { if (it is TypeScriptCompilerType) it.substitute() else it }
         val handler = tcbCreateEventHandler(output, this.tcb, this.scope, eventType ?: EventParamType.Any)
         this.scope.addStatement(handler)
       }

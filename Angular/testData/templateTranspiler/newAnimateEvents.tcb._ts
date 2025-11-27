@@ -13,4 +13,8 @@ var _t2 = document.createElement("div");
 ($event: _i1.AnimationCallbackEvent): any => {
 $event.animationComplete();
 };
+var _t3 = document.createElement("div");
+var _t4 : string | string[] = 'foo';
+var _t5 = document.createElement("div");
+var _t6 : string | string[] = ['bar', 'foo bar'];
 }

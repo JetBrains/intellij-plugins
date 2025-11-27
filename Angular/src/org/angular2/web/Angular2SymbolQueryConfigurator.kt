@@ -1,8 +1,6 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.polySymbols.js.css.CssClassListInJSLiteralInHtmlAttributeScope
-import com.intellij.polySymbols.js.css.CssClassListInJSLiteralInHtmlAttributeScope.Companion.isJSLiteralContextFromEmbeddedContent
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -18,6 +16,8 @@ import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.NAMESPACE_JS
+import com.intellij.polySymbols.js.css.CssClassListInJSLiteralInHtmlAttributeScope
+import com.intellij.polySymbols.js.css.CssClassListInJSLiteralInHtmlAttributeScope.Companion.isJSLiteralContextFromEmbeddedContent
 import com.intellij.polySymbols.query.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
@@ -41,7 +41,7 @@ import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostBindingClassValueLiteral
 import org.angular2.Angular2DecoratorUtil.isHostListenerDecoratorEventLiteral
 import org.angular2.codeInsight.Angular2DeclarationsScope
-import org.angular2.codeInsight.attributes.isNgClassAttribute
+import org.angular2.codeInsight.attributes.isNgClassOrAnimateAttribute
 import org.angular2.codeInsight.blocks.Angular2HtmlBlockReferenceExpressionCompletionProvider
 import org.angular2.codeInsight.blocks.isDeferOnTriggerParameterReference
 import org.angular2.codeInsight.blocks.isDeferOnTriggerReference
@@ -311,7 +311,7 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
 }
 
 private fun getCssClassesInJSLiteralInHtmlAttributeScope(element: PsiElement): PolySymbolScope? =
-  element.takeIf { isNgClassLiteralContext(it) }
+  element.takeIf { isNgClassOrAnimateLiteralContext(it) }
     ?.parentOfType<XmlAttribute>()
     ?.let { CssClassListInJSLiteralInHtmlAttributeScope(it) }
 
@@ -358,6 +358,7 @@ val NG_DEFER_ON_TRIGGERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAME
 val NG_TEMPLATE_BINDING_KEYWORDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-template-binding-keywords"]
 val NG_TEMPLATE_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-template-bindings"]
 val NG_KEY_EVENT_MODIFIERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "key-event-modifiers"]
+val NG_CUSTOM_PROPERTY: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-custom-property"]
 
-fun isNgClassLiteralContext(literal: PsiElement): Boolean =
-  isJSLiteralContextFromEmbeddedContent(literal, Angular2Binding::class.java, ::isNgClassAttribute)
+fun isNgClassOrAnimateLiteralContext(literal: PsiElement): Boolean =
+  isJSLiteralContextFromEmbeddedContent(literal, Angular2Binding::class.java, ::isNgClassOrAnimateAttribute)

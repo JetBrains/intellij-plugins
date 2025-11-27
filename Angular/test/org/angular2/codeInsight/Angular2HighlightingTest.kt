@@ -414,6 +414,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testNewAngularAnimationAttributes() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts", checkSymbolNames = true)
 
+  fun testNewAngularAnimationBindings() =
+    checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts", checkSymbolNames = true)
+
   fun testNewAngularAnimationEvents() =
     checkHighlighting(ANGULAR_CORE_20_2_2, extension = "ts")
 

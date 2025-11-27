@@ -2,18 +2,16 @@ package org.angular2.lang.expr.service
 
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.integration.JSAnnotationError
-import com.intellij.lang.javascript.integration.JSAnnotationRangeError
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
-import com.intellij.util.InjectionUtils
+import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.ANIMATE_ENTER_ATTR
+import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.Companion.ANIMATE_LEAVE_ATTR
 import org.angular2.inspections.Angular2InspectionSuppressor.isUnderscoredLocalVariableIdentifierInAngularTemplate
 import kotlin.math.max
-import kotlin.math.min
 
 object Angular2LanguageServiceErrorFilter {
 
@@ -28,6 +26,7 @@ object Angular2LanguageServiceErrorFilter {
     val document = file.viewProvider.document ?: return false
     val elementInfo = getElementInfoInjectionAware(file, document, error) ?: return false
     return isTemplateReferenceVariable(document, elementInfo)
+           || isNgAnimateBinding(document, elementInfo)
            || elementInfo.element?.let { isUnderscoredLocalVariableIdentifierInAngularTemplate(it) } == true
   }
 
@@ -36,6 +35,14 @@ object Angular2LanguageServiceErrorFilter {
     elementInfo.range?.startOffset
       ?.let { offset -> document.getText(TextRange(max(0, offset - 4), offset)) }
       ?.let { it.endsWith("#") || it.endsWith("ref-") } == true
+
+  private fun isNgAnimateBinding(document: Document, elementInfo: JSLanguageServiceUtil.PsiElementInfo) =
+    // Angular animation binding is defined as `[animate.enter]` or `[animate.leave]`.
+    elementInfo.range
+      ?.let { document.getText(it) }
+      ?.takeIf { it.startsWith("[") && it.endsWith("]") }
+      ?.let { it.substring(1, it.length - 1) }
+      .let { it == ANIMATE_ENTER_ATTR || it == ANIMATE_LEAVE_ATTR }
 
   fun getElementInfoInjectionAware(
     file: PsiFile,
