@@ -12,7 +12,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.job
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.withTimeout
 import org.intellij.terraform.TfTestUtils
 import java.io.File
@@ -94,10 +93,6 @@ internal suspend fun waitForImportProviderTasks(project: Project) {
 internal suspend fun CoroutineScope.suspendUntilAllJobsCompleted(timeout: Duration = 3.seconds) {
   val job = coroutineContext.job
   withTimeout(timeout) {
-    while (true) {
-      val childrenJobs = job.children.toList()
-      if (childrenJobs.isEmpty()) break
-      childrenJobs.joinAll()
-    }
+    job.children.forEach { it.join() }
   }
 }
