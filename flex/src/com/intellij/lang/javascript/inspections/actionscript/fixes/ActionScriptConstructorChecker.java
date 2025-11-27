@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.lang.javascript.validation.JSAnnotatingVisitor.getPlaceForNamedElementProblem;
+import static com.intellij.lang.javascript.highlighting.JSLineMarkerUtil.getPlaceForNamedElementProblem;
 
 public class ActionScriptConstructorChecker extends JSConstructorChecker {
   public ActionScriptConstructorChecker(@NotNull JSAnnotatorProblemReporter problemReporter) {

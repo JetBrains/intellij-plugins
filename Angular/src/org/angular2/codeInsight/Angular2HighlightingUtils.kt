@@ -6,10 +6,10 @@ import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
-import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter
-import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter.Companion.applyAttributes
-import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter.Companion.highlightName
-import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter.Companion.highlightWithLexer
+import com.intellij.lang.javascript.highlighting.JSTooltipWithHtmlHighlighter
+import com.intellij.lang.javascript.highlighting.JSTooltipWithHtmlHighlighter.Companion.applyAttributes
+import com.intellij.lang.javascript.highlighting.JSTooltipWithHtmlHighlighter.Companion.highlightName
+import com.intellij.lang.javascript.highlighting.JSTooltipWithHtmlHighlighter.Companion.highlightWithLexer
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.CodeInsightColors

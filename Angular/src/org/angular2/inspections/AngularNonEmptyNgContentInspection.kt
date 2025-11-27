@@ -2,7 +2,7 @@
 package org.angular2.inspections
 
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter.Companion.highlightWithLexer
+import com.intellij.lang.javascript.highlighting.JSTooltipWithHtmlHighlighter.Companion.highlightWithLexer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText

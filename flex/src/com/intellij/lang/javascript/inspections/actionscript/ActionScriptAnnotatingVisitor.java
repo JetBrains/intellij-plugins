@@ -20,6 +20,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
+import com.intellij.lang.javascript.highlighting.JSLineMarkerUtil;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
 import com.intellij.lang.javascript.inspections.JSClosureCompilerSyntaxInspection;
@@ -172,7 +173,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   protected @NotNull JSAnnotatorProblemReporter createProblemReporter(PsiElement context) {
     return new JSAnnotatorProblemReporter(myHolder) {
       @Override
-      protected @Nullable String getAnnotatorInspectionId() {
+      public @Nullable String getAnnotatorInspectionId() {
         return null;
       }
     };
@@ -1172,7 +1173,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                                                             setterType != null
                                                             ? setterType.getTypeText(JSType.TypeTextFormat.PRESENTABLE)
                                                             : "empty"))
-              .range(typeElement != null ? typeElement : getPlaceForNamedElementProblem(getter))
+              .range(typeElement != null ? typeElement : JSLineMarkerUtil.getPlaceForNamedElementProblem(getter))
               .create();
           }
 

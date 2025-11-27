@@ -14,7 +14,7 @@ import com.intellij.lang.javascript.psi.types.JSTupleType
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService.LOCATION
 import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeSource
-import com.intellij.lang.javascript.validation.JSTooltipWithHtmlHighlighter
+import com.intellij.lang.javascript.highlighting.JSTooltipWithHtmlHighlighter
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely

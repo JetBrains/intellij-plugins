@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatureProcessor;
+import com.intellij.lang.javascript.refactoring.changeSignature.RequiredImportProcessor;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -31,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class ActionScriptImportProcessor implements JSChangeSignatureProcessor.RequiredImportProcessor {
+public class ActionScriptImportProcessor implements RequiredImportProcessor {
   private final MultiMap<PsiElement, String> imports = new MultiMap<>();
 
   @Override

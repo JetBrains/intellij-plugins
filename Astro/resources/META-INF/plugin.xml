@@ -129,7 +129,7 @@
     <inheritedLanguagesConfigurableProvider language="AstroFrontmatter"
                                             implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterConfigurableProvider"/>
     <analysisHandlersFactory language="AstroFrontmatter" implementationClass="org.jetbrains.astro.inspections.AstroFrontmatterAnalysisHandlersFactory" />
-    <analysisHandlersFactory language="Astro" implementationClass="org.jetbrains.astro.inspections.AstroAnalysisHandlersFactory"/>
+    <highlightingHandlersFactory language="Astro" implementationClass="org.jetbrains.astro.inspections.AstroHighlightingHandlersFactory"/>
     <elementScopeProvider implementation="org.jetbrains.astro.AstroElementResolveScopeProvider"/>
     <componentUsageProvider language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroComponentUsageProvider"/>
     <tsImportResolver implementation="org.jetbrains.astro.lang.typescript.AstroTypeScriptImportsResolverProvider"/>

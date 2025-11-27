@@ -483,6 +483,7 @@
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2AnalysisHandlersFactory"/>
+    <highlightingHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2HighlightingHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="Angular2"
                                             implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
     <handlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2HandlersFactory"/>

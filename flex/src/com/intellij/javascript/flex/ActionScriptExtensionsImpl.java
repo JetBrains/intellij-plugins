@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.flex.ActionScriptExtensions;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
 import com.intellij.lang.javascript.psi.JSElvisOwner;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
-import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatureProcessor.RequiredImportProcessor;
+import com.intellij.lang.javascript.refactoring.changeSignature.RequiredImportProcessor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 

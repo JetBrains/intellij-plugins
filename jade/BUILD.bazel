@@ -60,6 +60,7 @@ jvm_library(
     "//plugins/css/common/psi",
     "//plugins/css/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/JavaScriptLanguage/javascript-ultimate",
   ]
 )
 
@@ -114,6 +115,7 @@ jvm_library(
     "//plugins/css/backend",
     "//plugins/css/paid/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/JavaScriptLanguage/javascript-ultimate",
   ]
 )
 ### auto-generated section `build intellij.jade` end

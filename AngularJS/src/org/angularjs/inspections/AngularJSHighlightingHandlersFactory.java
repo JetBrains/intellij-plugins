@@ -2,10 +2,10 @@
 package org.angularjs.inspections;
 
 import com.intellij.codeInspection.InspectionSuppressor;
-import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
+import com.intellij.lang.javascript.JSHighlightingHandlersFactory;
 import org.jetbrains.annotations.NotNull;
 
-public final class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory {
+public final class AngularJSHighlightingHandlersFactory extends JSHighlightingHandlersFactory {
 
   @Override
   public @NotNull InspectionSuppressor getInspectionSuppressor() {

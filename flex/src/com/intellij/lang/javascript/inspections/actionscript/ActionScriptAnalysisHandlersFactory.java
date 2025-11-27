@@ -1,10 +1,8 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
 import com.intellij.lang.javascript.validation.*;
 import com.intellij.psi.PsiElement;
@@ -17,12 +15,6 @@ public final class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandler
   @Override
   public @NotNull JSAnnotatingVisitor createAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
     return new ActionScriptAnnotatingVisitor(psiElement, holder);
-  }
-
-  @Override
-  public JSKeywordHighlighterVisitor createKeywordHighlighterVisitor(@NotNull HighlightInfoHolder holder,
-                                                                     @NotNull DialectOptionHolder dialectOptionHolder) {
-    return new ActionScriptKeywordHighlighterVisitor(holder);
   }
 
   @Override

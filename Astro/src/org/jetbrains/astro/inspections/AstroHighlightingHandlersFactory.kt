@@ -2,9 +2,9 @@
 package org.jetbrains.astro.inspections
 
 import com.intellij.codeInspection.InspectionSuppressor
-import com.intellij.lang.javascript.JSAnalysisHandlersFactory
+import com.intellij.lang.javascript.JSHighlightingHandlersFactory
 
-class AstroAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
+class AstroHighlightingHandlersFactory : JSHighlightingHandlersFactory() {
   override fun getInspectionSuppressor(): InspectionSuppressor {
     return AstroDefaultInspectionSuppressor.INSTANCE
   }

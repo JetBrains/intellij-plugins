@@ -23,6 +23,7 @@
     <module name="intellij.spellchecker"/>
     <plugin id="com.intellij.modules.xml"/>
     <module name="intellij.css.backend"/>
+    <module name="intellij.javascript.ultimate"/>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.modules.ultimate"/>
   </dependencies>
