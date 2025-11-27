@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeChildren
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -284,6 +285,7 @@ object Angular2SourceUtil {
         InjectedLanguageManager.getInstance(templateContext.project).getInjectionHost(file.originalFile))
       )
     }
+    if (DumbService.isDumb(file.project)) return emptyList()
     // external content
     val isStylesheet = isStylesheet(file)
     return CachedValuesManager.getCachedValue(hostFile) {

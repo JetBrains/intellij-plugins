@@ -100,7 +100,7 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
   }
 
   override fun isAcceptableForHighlighting(file: PsiFile): Boolean =
-    if ((file.language is Angular2HtmlDialect || file.language is Angular2ExprDialect) && !DumbService.isDumb(file.project))
+    if (file.language is Angular2HtmlDialect || file.language is Angular2ExprDialect)
       Angular2EntitiesProvider.findTemplateComponent(file) != null
       || isHostBindingExpression(file)
     else
