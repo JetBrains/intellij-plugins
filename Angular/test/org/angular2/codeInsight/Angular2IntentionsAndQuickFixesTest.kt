@@ -81,6 +81,11 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
 
+  fun testFieldCreationWithExportDefault() {
+    doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
+           dir = true, configureFileName = "template.html", checkIntentionPreview = false)
+  }
+
   fun testThisQualifiedFieldCreation() {
     doTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
@@ -92,6 +97,11 @@ class Angular2IntentionsAndQuickFixesTest : Angular2TestCase("intentionsAndQuick
   }
 
   fun testBasicMethodCreation() {
+    doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
+           dir = true, configureFileName = "template.html", checkIntentionPreview = false)
+  }
+
+  fun testMethodCreationWithExportDefault() {
     doTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"),
            dir = true, configureFileName = "template.html", checkIntentionPreview = false)
   }
