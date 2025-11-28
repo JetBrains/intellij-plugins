@@ -459,8 +459,7 @@ public final class CucumberJavaUtil {
                                                                  Map<String, SmartPsiElementPointer<PsiElement>> declarations) {
     CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<>();
     JavaMethodFindUsagesOptions options = new JavaMethodFindUsagesOptions(scope);
-
-    PsiClass parameterTypeClass = ClassUtil.findPsiClass(PsiManager.getInstance(module.getProject()), PARAMETER_TYPE_CLASS);
+    PsiClass parameterTypeClass = JavaPsiFacade.getInstance(module.getProject()).findClass(PARAMETER_TYPE_CLASS, scope);
     if (parameterTypeClass != null) {
       ProgressManager.getInstance().runProcess(() -> {
         for (PsiMethod method : parameterTypeClass.getMethods()) {
