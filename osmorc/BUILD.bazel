@@ -53,6 +53,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@lib//:jgoodies-forms",
     "@community//xml/xml-analysis-api:analysis",
+    "@community//java/codeserver/core",
   ]
 )
 
@@ -106,6 +107,7 @@ jvm_library(
     "@community//xml/xml-psi-api:psi",
     "@lib//:jgoodies-forms",
     "@community//xml/xml-analysis-api:analysis",
+    "@community//java/codeserver/core",
   ]
 )
 ### auto-generated section `build intellij.osgi` end
