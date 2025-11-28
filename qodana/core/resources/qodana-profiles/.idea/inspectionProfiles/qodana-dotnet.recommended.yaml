@@ -98,6 +98,8 @@ groups:
     inspections:
       - LanguageDetectionInspection
       - GrazieInspection
+      - GrazieInspectionRunner
+      - GrazieStyle
 
   - groupId: UnsupportedInspections # Annotator causes exceptions on MSBuild related files
     inspections:
