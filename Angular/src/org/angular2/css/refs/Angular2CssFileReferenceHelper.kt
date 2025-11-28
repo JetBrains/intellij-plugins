@@ -7,10 +7,12 @@ import com.intellij.lang.javascript.frameworks.modules.langs.getSyntheticResolve
 import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultFileReferenceContext
 import com.intellij.lang.javascript.frameworks.modules.resolver.JSParsedPathElement
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
+import com.intellij.psi.PsiManager
 import com.intellij.psi.css.CssSupportLoader
 import com.intellij.psi.css.StylesheetFile
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper
@@ -40,6 +42,8 @@ class Angular2CssFileReferenceHelper : FileReferenceHelper() {
     val angularProject = angularProject(element)
     if (angularProject == null) return true
 
+    angularProject.sourceDir?.let { element.manager.findDirectory(it) }?.let { processor.process(it)}
+
     if (!JSFileReferencesUtil.isRelative(pathString)) {
       hostFile.parent?.let {
         processor.process(TildeFileSystemItemCompletion(element.project, it, Angular2OverrideContextFilesProvider(angularProject, element)))
@@ -54,6 +58,16 @@ class Angular2CssFileReferenceHelper : FileReferenceHelper() {
 
     getContexts(angularProject, element).forEach(processor::process)
     return true
+  }
+
+
+  override fun getRoots(module: Module, hostFile: VirtualFile): Collection<PsiFileSystemItem> {
+    val project = module.project
+    return AngularConfigProvider.findAngularProject(project, hostFile)
+             ?.sourceDir
+             ?.let { PsiManager.getInstance(project).findDirectory(it) }
+             ?.let { listOf(it) }
+           ?: emptyList()
   }
 
   private fun getContexts(angularProject: AngularProject, element: PsiElement): Collection<PsiFileSystemItem> {
