@@ -697,6 +697,14 @@
       "type": "boolean",
       "default": false
     },
+    "rootJavaProjects": {
+      "description": "List of project directories to be analyzed as Java projects",
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "string"
+      }
+    },
     "onlyDirectory": {
       "description": "Path to the project directory to be analyzed. By default, the entire project is analyzed.",
       "type": "string"

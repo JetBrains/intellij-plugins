@@ -24,6 +24,7 @@ data class QodanaYamlConfig(
   val failOnErrorNotification: Boolean = false,
   val maxRuntimeNotifications: Int = 100,
   val coverage: QodanaCoverageYamlConfig = QodanaCoverageYamlConfig(),
+  val rootJavaProjects: List<Path> = emptyList(),
   val onlyDirectory: Path? = null,
 
   // deprecated, but used as anySeverity

@@ -112,6 +112,8 @@ jvm_library(
     "@community//plugins/IntelliLang:langInjection",
     "@community//platform/platform-impl/ui",
     "@ultimate_lib//:jetbrains-qodana-configuration",
+    "@community//platform/external-system-impl:externalSystem-impl",
+    "@community//platform/external-system-api:externalSystem",
   ]
 )
 
@@ -228,6 +230,8 @@ jvm_library(
     "@community//platform/platform-impl/ui",
     "@community//platform/statistics/testFramework",
     "@ultimate_lib//:jetbrains-qodana-configuration",
+    "@community//platform/external-system-impl:externalSystem-impl",
+    "@community//platform/external-system-api:externalSystem",
   ]
 )
 ### auto-generated section `build intellij.qodana` end

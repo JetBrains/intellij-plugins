@@ -7,6 +7,7 @@ import com.intellij.diagnostic.ThreadDumper
 import com.intellij.ide.CommandLineInspectionProgressReporter
 import com.intellij.ide.CommandLineInspectionProjectAsyncConfigurator
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.PatchProjectUtil
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -15,6 +16,7 @@ import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
@@ -22,14 +24,14 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.configuration.ConfigurationResult
 import com.intellij.openapi.project.configuration.HeadlessLogging
 import com.intellij.openapi.project.configuration.awaitCompleteProjectConfiguration
-import com.intellij.openapi.startup.StartupManager
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.Predicates
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.findOrCreateFile
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.platform.PlatformProjectOpenProcessor.Companion.isOpenedByPlatformProcessor
 import com.intellij.platform.backend.observation.Observation
 import kotlinx.coroutines.*
 import org.jetbrains.qodana.runActivityWithTiming
@@ -53,37 +55,65 @@ private val LOG = logger<QodanaProjectLoader>()
 
 class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   suspend fun openProject(config: QodanaConfig): Project {
+    verifyConfig(config)
     QodanaWorkflowExtension.callBeforeProjectOpened(config)
 
-    return runActivityWithTiming(QodanaActivityKind.PROJECT_OPENING) {
-      doOpen(config)
-    }
+    reporter.reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.opening.project"))
+    val project = doOpen(config)
+    reporter.reportMessage(1, InspectionsBundle.message("inspection.done"))
+
+    edtWriteAction { VirtualFileManager.getInstance().refreshWithoutFileWatcher(false) }
+    return project
   }
 
   private suspend fun doOpen(config: QodanaConfig): Project {
-    val projectPath = config.projectPath
+    return runActivityWithTiming(QodanaActivityKind.PROJECT_OPENING) {
+      tryConvertProject(config.projectPath)
+      if (config.rootJavaProjects.isEmpty()) {
+        openProjectAutomatically(config)
+      }
+      else {
+        openProjectManually(config)
+      }
+    }
+  }
+
+  private suspend fun verifyConfig(config: QodanaConfig) {
     val vfsProject = withContext(StaticAnalysisDispatchers.IO) {
       LocalFileSystem.getInstance().refreshAndFindFileByPath(
-        FileUtil.toSystemIndependentName(projectPath.toString())
+        FileUtil.toSystemIndependentName(config.projectPath.toString())
       )
     }
     if (vfsProject == null) {
-      throw QodanaException(InspectionsBundle.message("inspection.application.file.cannot.be.found", projectPath))
+      throw QodanaException(InspectionsBundle.message("inspection.application.file.cannot.be.found", config.projectPath))
     }
-    reporter.reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.opening.project"))
+  }
 
-    tryConvertProject(projectPath)
-
-    val project = ProjectUtil.openOrImportAsync(projectPath) ?: throw QodanaException(
+  private suspend fun openProjectManually(config: QodanaConfig): Project {
+    val options = OpenProjectTask {
+      beforeOpen = { project ->
+        project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, true)
+        project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
+        true
+      }
+    }
+    val project = ProjectManagerEx.getInstanceEx().openProjectAsync(config.projectPath, options) ?: throw QodanaException(
       InspectionsBundle.message("inspection.application.unable.open.project")
     )
-
-    awaitStartupActivities(project)
-    edtWriteAction { VirtualFileManager.getInstance().refreshWithoutFileWatcher(false) }
-
-    reporter.reportMessage(1, InspectionsBundle.message("inspection.done"))
-
+    doConfigure(project)
+    QodanaWorkflowExtension.callManualProjectsImport(config, project)
     return project
+  }
+
+  private suspend fun openProjectAutomatically(config: QodanaConfig): Project {
+    val openedProject = ProjectUtil.openOrImportAsync(config.projectPath) ?: throw QodanaException(
+      InspectionsBundle.message("inspection.application.unable.open.project")
+    )
+    doConfigure(openedProject)
+    if (isOpenedByPlatformProcessor(openedProject)) {
+      QodanaWorkflowExtension.callAutomaticProjectsImport(config, openedProject)
+    }
+    return openedProject
   }
 
   suspend fun configureProjectWithConfigurators(config: QodanaConfig, project: Project) {
@@ -135,9 +165,9 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
 
     if (ApplicationManager.getApplication().isUnitTestMode) { // should throw away
       blockOn(EmptyCoroutineContext) { PatchProjectUtil.patchProject(project) }
-    } else {
+    }
+    else {
       blockOn(StaticAnalysisDispatchers.UI) { PatchProjectUtil.patchProject(project) }
-      waitForInvokeLaterActivities()
     }
   }
 
@@ -231,27 +261,6 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
       .extensionList
       .filter { it.isApplicable(ctx) }
       .forEach { it.f(ctx) }
-  }
-
-  private suspend fun awaitStartupActivities(project: Project) {
-    reporter.reportMessage(3, "Waiting for startup activities")
-    // 180 minutes seem way too long, but is what the old code does
-    val timeout = Registry.intValue(REGISTRY_STARTUP_TIMEOUT_MINUTES, 180).minutes
-
-    val t = withTimeoutOrNull(timeout) {
-      project.serviceAsync<StartupManager>().allActivitiesPassedFuture.join()
-      waitForInvokeLaterActivities()
-      reporter.reportMessage(3, "Startup activities finished")
-    }
-    if (t == null) {
-      error("Cannot process startup activities in $timeout. " +
-            "You can try to increase $REGISTRY_STARTUP_TIMEOUT_MINUTES registry value. " +
-            "Thread Dump:\n${ThreadDumper.dumpThreadsToString()}")
-    }
-  }
-
-  private suspend fun waitForInvokeLaterActivities(repetitions: Int = 3) = repeat(repetitions) {
-    withContext(StaticAnalysisDispatchers.UI) { yield() }
   }
 
   private suspend fun <T> blockOn(context: CoroutineContext, action: () -> T) =

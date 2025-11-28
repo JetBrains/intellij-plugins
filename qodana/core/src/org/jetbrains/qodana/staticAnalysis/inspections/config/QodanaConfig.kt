@@ -174,6 +174,7 @@ data class QodanaConfig(
   val failureConditions: FailureConditions,
   val coverage: QodanaCoverageConfig,
   val hardcodedPasswords: HardcodedPasswords,
+  val rootJavaProjects: List<Path>,
 
   val dotnet: DotNetProjectConfiguration?,
   val cpp: QodanaCppConfig?,
@@ -218,7 +219,8 @@ data class QodanaConfig(
       coverage: QodanaCoverageConfig = QodanaCoverageConfig(
         reportProblems = yaml.coverage.reportProblems,
         coveragePath = outPath.resolve("$COVERAGE_OUTPUT_DIR/")
-      )
+      ),
+      rootJavaProjects: List<Path> = yaml.rootJavaProjects
     ): QodanaConfig {
       val dotnet = yaml.dotnet
       val php = yaml.php
@@ -257,6 +259,7 @@ data class QodanaConfig(
         php = php,
         jvm = jvm,
         dependencyAnalysis = dependencyAnalysis,
+        rootJavaProjects = rootJavaProjects
       )
     }
   }

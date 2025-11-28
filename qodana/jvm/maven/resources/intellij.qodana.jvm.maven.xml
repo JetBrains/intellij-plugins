@@ -4,6 +4,7 @@
   </dependencies>
   <extensions defaultExtensionNs="org.intellij.qodana">
     <projectDescriber implementation="org.jetbrains.qodana.jvm.maven.MavenProjectDescriber"/>
+    <workflowExtension implementation="org.jetbrains.qodana.jvm.maven.QodanaMavenProjectsImporter" />
     <workflowExtension implementation="org.jetbrains.qodana.jvm.maven.QodanaMavenReimporter" />
   </extensions>
   <projectListeners>
