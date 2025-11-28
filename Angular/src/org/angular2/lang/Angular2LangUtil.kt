@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang
 
-import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
@@ -9,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.context.PolyContext.Companion.KIND_FRAMEWORK
+import com.intellij.psi.stubs.StubBuildCachedValuesManager
 import org.angular2.Angular2Framework
 import org.angular2.angular2Framework
 import org.angular2.lang.html.Angular2HtmlDialect
@@ -40,7 +40,7 @@ object Angular2LangUtil {
 
   @JvmStatic
   fun isAngular2Context(context: PsiElement): Boolean =
-    if (JSStubElementImpl.isBuildingStubs())
+    if (StubBuildCachedValuesManager.isBuildingStubs)
       true
     else
       PolyContext.get(KIND_FRAMEWORK, context) == Angular2Framework.ID
