@@ -15,8 +15,7 @@ class ActionScriptAutoImportOptionsProvider : UiDslUnnamedConfigurable.Simple(),
       row {
         checkBox(ApplicationBundle.message("checkbox.add.unambiguous.imports.on.the.fly"))
           .bindSelected(::addUnambiguousImportsOnTheFly)
-          .gap(RightGap.SMALL)
-        contextHelp(ApplicationBundle.message("help.add.unambiguous.imports"))
+          .contextHelp(ApplicationBundle.message("help.add.unambiguous.imports"))
       }
     }
   }

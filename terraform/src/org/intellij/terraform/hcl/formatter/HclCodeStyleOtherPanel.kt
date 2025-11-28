@@ -33,12 +33,15 @@ internal class HclCodeStyleOtherPanel(settings: CodeStyleSettings) : CodeStyleAb
       row(HCLBundle.message("code.style.align.properties.title")) { comboBox(alignmentComboBox) }
       row(HCLBundle.message("code.style.line.commenter.character.title")) { comboBox(commentSymbolComboBox) }
       row {
-        importProviders = checkBox(HCLBundle.message("code.style.import.provider.automatically")).gap(RightGap.SMALL).component
-        contextHelp(HCLBundle.message("code.style.import.provider.text"), HCLBundle.message("code.style.import.provider.header"))
+        importProviders = checkBox(HCLBundle.message("code.style.import.provider.automatically"))
+          .contextHelp(HCLBundle.message("code.style.import.provider.text"), HCLBundle.message("code.style.import.provider.header"))
+          .component
       }
       row {
-        reformatCheckBox = checkBox(HCLBundle.message("code.style.run.tf.fmt.title")).gap(RightGap.SMALL).component
-        contextHelp(HCLBundle.message("code.style.run.tf.fmt.comment"), HCLBundle.message("code.style.run.tf.fmt.header"))
+        reformatCheckBox = checkBox(HCLBundle.message("code.style.run.tf.fmt.title"))
+          .contextHelp(HCLBundle.message("code.style.run.tf.fmt.comment"), HCLBundle.message("code.style.run.tf.fmt.header"))
+          .component
+
       }
     }.apply {
       border = BorderFactory.createEmptyBorder(UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP)
