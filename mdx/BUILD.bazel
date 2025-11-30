@@ -14,7 +14,7 @@ jvm_library(
   srcs = glob(["src/main/java/**/*.kt", "src/main/java/**/*.java", "src/main/java/**/*.form", "src/main/kotlin/**/*.kt", "src/main/kotlin/**/*.java", "src/main/kotlin/**/*.form"], allow_empty = True),
   resources = [":mdx_resources"],
   deps = [
-    "@lib//:kotlinx-coroutines-core",
+    "@community//libraries/kotlinx/coroutines/core",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//libraries/markdown",
     "@community//platform/analysis-api:analysis",
@@ -46,7 +46,7 @@ jvm_library(
   srcs = glob(["src/test/kotlin/**/*.kt", "src/test/kotlin/**/*.java", "src/test/kotlin/**/*.form"], allow_empty = True),
   associates = [":mdx"],
   deps = [
-    "@lib//:kotlinx-coroutines-core",
+    "@community//libraries/kotlinx/coroutines/core",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "@community//libraries/markdown",
     "@community//platform/analysis-api:analysis",

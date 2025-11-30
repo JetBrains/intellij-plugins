@@ -78,7 +78,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide.observable" />
     <orderEntry type="module" module-name="intellij.libraries.jackson.module.kotlin" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.netty" />
-    <orderEntry type="library" name="kotlinx-coroutines-core" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.kotlinx.coroutines.core" />
     <orderEntry type="library" name="netty-codec-http" level="project" />
     <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
     <orderEntry type="module" module-name="intellij.platform.vcs.dvcs.impl" />
@@ -98,7 +98,7 @@
     <orderEntry type="library" name="jetbrains.qodana.web.ui" level="project" />
     <orderEntry type="library" name="jetbrains.qodana.sarif.converter" level="project" />
     <orderEntry type="module" module-name="intellij.platform.sqlite" />
-    <orderEntry type="library" scope="TEST" name="kotlinx-coroutines-test" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.kotlinx.coroutines.test" scope="TEST" />
     <orderEntry type="module" module-name="intellij.yaml.backend" />
     <orderEntry type="module" module-name="intellij.platform.inspect" />
     <orderEntry type="module" module-name="intellij.platform.statistics" />

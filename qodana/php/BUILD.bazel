@@ -31,7 +31,7 @@ jvm_library(
     "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     "@community//libraries/gson",
     "//contrib/qodana/sarif",
-    "@lib//:kotlinx-coroutines-core",
+    "@community//libraries/kotlinx/coroutines/core",
     "@community//platform/backend/observation",
   ]
 )
@@ -73,7 +73,7 @@ jvm_library(
     "@lib//:assert_j",
     "@community//libraries/gson",
     "//contrib/qodana/sarif",
-    "@lib//:kotlinx-coroutines-core",
+    "@community//libraries/kotlinx/coroutines/core",
     "@community//platform/backend/observation",
     "@community//platform/backend/observation:observation_test_lib",
   ]
