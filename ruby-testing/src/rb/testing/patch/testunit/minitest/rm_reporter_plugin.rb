@@ -2,26 +2,20 @@
 
 # This file is the main entrypoint in the process of injection of RubyMine output formatter into minitest / minitest-reporters
 # infrastructure. It sets up the runner and reporter for minitest.
-# run with environment variable RM_MT_DEBUG=DEBUG to get a verbose output of the process
+# run with environment variable RM_MT_DEBUG=1 to get a verbose output of the process
 
 require 'teamcity/utils/service_message_factory'
-require 'logger'
 require 'set'
 require 'pp'
 
 module Minitest
   class << self
     def rm_logger
-      @rm_logger ||=
-        begin
-          rm_logger = Logger.new(STDERR)
-          rm_logger.level = ENV['RM_MT_DEBUG'] || Logger::ERROR
-          rm_logger.formatter = -> (severity, datetime, progname, msg) {
-            "#{datetime} #{severity} #{progname} #{Process.pid}##{Thread.current.object_id} #{msg}\n"
-          }
-          rm_logger.debug("Logger initialized")
-          rm_logger
-        end
+      @rm_logger ||= ->(msg) {
+        return unless ENV['RM_MT_DEBUG']
+
+        STDERR.write("#{Time.now} DEBUG #{Process.pid}##{Thread.current.object_id} #{msg}\n")
+      }
     end
 
     def plugin_rm_reporter_init(options)
@@ -273,7 +267,7 @@ module Minitest
     end
 
     def debug(msg)
-      Minitest.rm_logger.debug(msg)
+      Minitest.rm_logger.call(msg)
     end
 
     def suite_started(class_name, class_location, node_id = class_name, parent_node_id = '0')
