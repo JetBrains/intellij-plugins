@@ -9,7 +9,6 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
-import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.hcl.HCLBundle
 
 class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware, NewFileActionWithCategory {
@@ -18,14 +17,9 @@ class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware
       setTitle(HCLBundle.message("action.create.terraform.file.title"))
       setDefaultText(DEFAULT_FILE_NAME)
 
-      addKind(HCLBundle.message("action.new.empty.terraform.file.description"), TerraformIcons.Terraform, EMPTY_TF_TEMPLATE)
-      addKind(HCLBundle.message("action.new.template.terraform.file.description"), TerraformIcons.Terraform, TEMPLATE_TF_TEMPLATE)
-      addKind(HCLBundle.message("action.new.outputs.terraform.file.description"), TerraformIcons.Terraform, OUTPUTS_TF_TEMPLATE)
-      addKind(HCLBundle.message("action.new.variables.terraform.file.description"), TerraformIcons.Terraform, VARIABLES_TF_TEMPLATE)
-
-      // Terragrunt template files
-      addKind(HCLBundle.message("action.new.terragrunt.file.description"), TerraformIcons.Terragrunt, TERRAGRUNT_TEMPLATE)
-      addKind(HCLBundle.message("action.new.terragrunt.stack.file.description"), TerraformIcons.Terragrunt, TERRAGRUNT_STACK)
+      TerraformTemplate.entries.forEach { template ->
+        addKind(template.title, template.icon, template.templateName)
+      }
     }
   }
 
@@ -38,25 +32,15 @@ class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware
   private fun getDefaultFileName(name: String?, template: FileTemplate?): String? {
     val isDefaultName = name.isNullOrEmpty() || name == DEFAULT_FILE_NAME
 
-    val newName = when (template?.name) {
-      OUTPUTS_TF_TEMPLATE -> "outputs"
-      VARIABLES_TF_TEMPLATE -> "variables"
-      TERRAGRUNT_TEMPLATE -> "terragrunt"
-      TERRAGRUNT_STACK -> "terragrunt.stack"
-      else -> name
-    }
+    val newName = TerraformTemplate.entries
+      .find { it.templateName == template?.name }
+      ?.defaultFileName
+      ?: name
+
     return if (isDefaultName) newName else name
   }
 
   override fun getCategory(): String = "Deployment"
 }
-
-private const val EMPTY_TF_TEMPLATE = "Empty File"
-private const val TEMPLATE_TF_TEMPLATE = "Main"
-private const val OUTPUTS_TF_TEMPLATE = "Outputs"
-private const val VARIABLES_TF_TEMPLATE = "Variables"
-
-private const val TERRAGRUNT_TEMPLATE = "Terragrunt File"
-private const val TERRAGRUNT_STACK = "Terragrunt Stack"
 
 private const val DEFAULT_FILE_NAME = "main"
