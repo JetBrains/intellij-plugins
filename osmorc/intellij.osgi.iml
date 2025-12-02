@@ -65,7 +65,7 @@
     <orderEntry type="library" name="plexus-utils" level="project" />
     <orderEntry type="module" module-name="intellij.tools.ide.metrics.benchmark" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.psi" />
-    <orderEntry type="library" name="jgoodies-forms" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.jgoodies.forms" />
     <orderEntry type="module" module-name="intellij.platform.execution" />
     <orderEntry type="module" module-name="intellij.xml.analysis" />
     <orderEntry type="module" module-name="intellij.java.codeserver.core" />
