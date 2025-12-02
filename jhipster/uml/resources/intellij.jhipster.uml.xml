@@ -1,6 +1,7 @@
 <idea-plugin>
   <dependencies>
     <plugin id="com.intellij.diagram"/>
+    <module name="intellij.platform.graph.impl"/>
     <module name="intellij.jhipster.backend"/>
   </dependencies>
 
