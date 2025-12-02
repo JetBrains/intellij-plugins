@@ -3,12 +3,6 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 resourcegroup(
   name = "vuejs_resources",
-  srcs = glob(["resources/**/*"]),
-  strip_prefix = "resources"
-)
-
-resourcegroup(
-  name = "vuejs_resources_1",
   srcs = glob(["compatibilityResources/**/*"]),
   strip_prefix = "compatibilityResources"
 )
@@ -17,9 +11,6 @@ jvm_library(
   name = "vuejs",
   visibility = ["//visibility:public"],
   srcs = glob([], allow_empty = True),
-  resources = [
-    ":vuejs_resources",
-    ":vuejs_resources_1",
-  ]
+  resources = [":vuejs_resources"]
 )
 ### auto-generated section `build intellij.vuejs` end
