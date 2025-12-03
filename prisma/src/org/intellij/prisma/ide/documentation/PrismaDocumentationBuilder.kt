@@ -11,7 +11,11 @@ import org.intellij.prisma.ide.schema.PrismaSchemaProvider
 import org.intellij.prisma.ide.schema.builder.*
 import org.intellij.prisma.lang.PrismaConstants
 import org.intellij.prisma.lang.presentation.PrismaPsiRenderer
-import org.intellij.prisma.lang.psi.*
+import org.intellij.prisma.lang.psi.PrismaElementTypes.TYPE
+import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
+import org.intellij.prisma.lang.psi.PrismaFile
+import org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration
+import org.intellij.prisma.lang.psi.PrismaTypeAlias
 import org.intellij.prisma.lang.types.isNamedType
 
 private const val PARAM_INDENT = "\n\t\t"
@@ -39,7 +43,7 @@ class PrismaDocumentationBuilder(private val element: PsiElement) {
   }
 
   private fun buildDocumentationForSchemaElement(element: PsiElement): String? {
-    if (skipForDeprecatedElement(element)) {
+    if (element.elementType == TYPE && element.parent is PrismaTypeAlias) { // deprecated syntax
       return null
     }
 
@@ -64,6 +68,11 @@ class PrismaDocumentationBuilder(private val element: PsiElement) {
         else {
           append(toHtml(element.project, definition))
         }
+
+        if (schemaElement.deprecated) {
+          append(" ")
+          append(DocumentationMarkup.GRAYED_ELEMENT.addText(PrismaBundle.message("prisma.doc.deprecated")))
+        }
       }
 
       documentationMarkdownToHtml(schemaElement.documentation)?.let {
@@ -74,10 +83,6 @@ class PrismaDocumentationBuilder(private val element: PsiElement) {
 
       paramsSection(params)
     }
-  }
-
-  private fun skipForDeprecatedElement(element: PsiElement): Boolean {
-    return element.elementType == PrismaElementTypes.TYPE && element.parent is PrismaTypeAlias
   }
 
   private fun buildDefinitionFromSchema(

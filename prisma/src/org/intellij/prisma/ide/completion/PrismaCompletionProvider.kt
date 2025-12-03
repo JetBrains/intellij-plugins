@@ -31,6 +31,10 @@ abstract class PrismaCompletionProvider : CompletionProvider<CompletionParameter
       builder = builder.withTailText("()")
     }
 
+    if (schemaElement.deprecated) {
+      builder = builder.withStrikeoutness(true)
+    }
+
     return builder
   }
 

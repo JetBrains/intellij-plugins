@@ -13,6 +13,7 @@ sealed interface PrismaSchemaElement {
   val documentation: String?
   val insertHandler: InsertHandler<LookupElement>?
   val type: String?
+  val deprecated: Boolean
 }
 
 class PrismaSchemaDeclaration(
@@ -27,7 +28,12 @@ class PrismaSchemaDeclaration(
   override val variants: List<PrismaSchemaVariant> = emptyList(),
   override val type: String? = null,
   override val resolver: PrismaSchemaResolver? = null,
-) : PrismaSchemaElement, PrismaSchemaPatternCapability, PrismaSchemaVariantsCapability, PrismaSchemaDatasourcesCapability, PrismaSchemaDeclarationResolverCapability {
+  override val deprecated: Boolean = false,
+) : PrismaSchemaElement,
+    PrismaSchemaPatternCapability,
+    PrismaSchemaVariantsCapability,
+    PrismaSchemaDatasourcesCapability,
+    PrismaSchemaDeclarationResolverCapability {
   fun getAvailableParams(
     usedDatasources: Set<PrismaDatasourceProviderType>,
     location: PrismaSchemaParameterLocation,
@@ -62,6 +68,7 @@ class PrismaSchemaDeclaration(
     var datasources: Set<PrismaDatasourceProviderType>? = null
     var type: String? = null
     var resolver: PrismaSchemaResolver? = null
+    var deprecated: Boolean = false
 
     private var params: MutableList<PrismaSchemaParameter> = mutableListOf()
     private var variants: MutableList<PrismaSchemaVariant> = mutableListOf()
@@ -84,7 +91,7 @@ class PrismaSchemaDeclaration(
                ?.let {
                  PrismaSchemaDeclaration(
                    kind, it, documentation, signature, insertHandler,
-                   params, pattern, datasources, variants, type, resolver
+                   params, pattern, datasources, variants, type, resolver, deprecated
                  )
                }
              ?: error("label is not specified")
@@ -102,6 +109,7 @@ class PrismaSchemaParameter(
   val location: PrismaSchemaParameterLocation = PrismaSchemaParameterLocation.DEFAULT,
   val skipInCompletion: Boolean = false,
   override val resolver: PrismaSchemaResolver? = null,
+  override val deprecated: Boolean = false,
 ) : PrismaSchemaElement, PrismaSchemaVariantsCapability, PrismaSchemaDatasourcesCapability, PrismaSchemaDeclarationResolverCapability {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -125,6 +133,7 @@ class PrismaSchemaParameter(
     var location: PrismaSchemaParameterLocation = PrismaSchemaParameterLocation.DEFAULT
     var skipInCompletion: Boolean = false
     var resolver: PrismaSchemaResolver? = null
+    var deprecated: Boolean = false
 
     private var variants: MutableList<PrismaSchemaVariant> = mutableListOf()
 
@@ -140,7 +149,7 @@ class PrismaSchemaParameter(
                ?.let {
                  PrismaSchemaParameter(
                    it, documentation, insertHandler, datasources,
-                   variants, type, location, skipInCompletion, resolver
+                   variants, type, location, skipInCompletion, resolver, deprecated
                  )
                }
              ?: error("label is not specified")
@@ -157,7 +166,12 @@ class PrismaSchemaVariant(
   override val datasources: Set<PrismaDatasourceProviderType>? = null,
   override val pattern: ElementPattern<out PsiElement>? = null,
   override val resolver: PrismaSchemaResolver? = null,
-) : PrismaSchemaElement, PrismaSchemaRefCapability, PrismaSchemaPatternCapability, PrismaSchemaDatasourcesCapability, PrismaSchemaDeclarationResolverCapability {
+  override val deprecated: Boolean = false,
+) : PrismaSchemaElement,
+    PrismaSchemaRefCapability,
+    PrismaSchemaPatternCapability,
+    PrismaSchemaDatasourcesCapability,
+    PrismaSchemaDeclarationResolverCapability {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (javaClass != other?.javaClass) return false
@@ -184,6 +198,7 @@ class PrismaSchemaVariant(
     var datasources: Set<PrismaDatasourceProviderType>? = null
     var pattern: ElementPattern<out PsiElement>? = null
     var resolver: PrismaSchemaResolver? = null
+    var deprecated: Boolean = false
 
     private var ref: PrismaSchemaRef? = null
 
@@ -195,7 +210,7 @@ class PrismaSchemaVariant(
 
     override fun build(): PrismaSchemaVariant {
       val label = ref?.label ?: label
-      return PrismaSchemaVariant(label, documentation, insertHandler, type, ref, datasources, pattern, resolver)
+      return PrismaSchemaVariant(label, documentation, insertHandler, type, ref, datasources, pattern, resolver, deprecated)
     }
   }
 }
