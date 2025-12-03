@@ -598,6 +598,9 @@
                      enabledByDefault="true" level="WARNING"/>
 
     <completion.contributor language="HCL" implementationClass="org.intellij.terraform.terragrunt.codeinsight.TerragruntCompletionContributor"/>
+
+    <fileType name="Terraform Component" language="HCL" patterns="*tfcomponent.hcl"
+              implementationClass="org.intellij.terraform.stack.component.TfComponentFileType" fieldName="INSTANCE"/>
   </extensions>
 
   <projectListeners>
