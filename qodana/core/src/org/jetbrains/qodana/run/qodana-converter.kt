@@ -2,7 +2,6 @@ package org.jetbrains.qodana.run
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.util.io.copyRecursively
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.sarif.QodanaReportConverter
@@ -27,10 +26,10 @@ suspend fun runQodanaConverter(input: QodanaConverterInput): QodanaConverterResu
     val converterInputTempDir = FileUtilRt.createTempDirectory("qodana-converter-input", "", true).toPath()
     when (input) {
       is QodanaConverterInput.FullQodanaOutput -> {
-        input.qodanaOutput.copyRecursively(converterInputTempDir)
+        input.qodanaOutput.toFile().copyRecursively(converterInputTempDir.toFile())
       }
       is QodanaConverterInput.SarifFileOnly -> {
-        input.sarifFile.copyRecursively(converterInputTempDir.resolve("qodana.sarif.json"))
+        input.sarifFile.toFile().copyRecursively(converterInputTempDir.resolve("qodana.sarif.json").toFile())
       }
     }
     val options = QodanaReportConverter.Options(Int.MAX_VALUE, converterInputTempDir.toFile(), converterOutTempDir.toFile())
