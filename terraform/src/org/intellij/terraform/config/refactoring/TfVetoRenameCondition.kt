@@ -5,12 +5,12 @@ import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLProperty
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 
 internal class TfVetoRenameCondition : Condition<PsiElement> {
   override fun value(element: PsiElement?): Boolean {
     val file = element?.containingFile ?: return false
-    if (!isTerraformCompatiblePsiFile(file)) return false
+    if (!isTfOrTofuPsiFile(file)) return false
     return element is HCLIdentifier && isNotHclProperty(element)
   }
 

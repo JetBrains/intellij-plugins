@@ -7,7 +7,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
-import org.intellij.terraform.isTerraformCompatibleExtension
+import org.intellij.terraform.isTfOrTofuExtension
 
 private class TfRunManagerListener(val project: Project) : RunManagerListener {
 
@@ -26,7 +26,7 @@ private class TfRunManagerListener(val project: Project) : RunManagerListener {
     val daemonAnalyzer = DaemonCodeAnalyzer.getInstance(project)
 
     FileEditorManager.getInstance(project).allEditors
-      .mapNotNull { it.file?.takeIf { file -> isTerraformCompatibleExtension(file.extension) } }
+      .mapNotNull { it.file?.takeIf { file -> isTfOrTofuExtension(file.extension) } }
       .mapNotNull { psiManager.findFile(it) }
       .forEach { daemonAnalyzer.restart(it, this) }
   }

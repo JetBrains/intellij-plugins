@@ -162,7 +162,7 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
   companion object {
     fun create(holder: ProblemsHolder, recursive: Boolean): PsiElementVisitor {
       val psiFile = holder.file
-      if (!isTerraformCompatiblePsiFile(psiFile) && !isTerragruntPsiFile(psiFile)) {
+      if (!isTfOrTofuPsiFile(psiFile) && !isTerragruntPsiFile(psiFile)) {
         return EMPTY_VISITOR
       }
       return MissingPropertyVisitor(holder, recursive)

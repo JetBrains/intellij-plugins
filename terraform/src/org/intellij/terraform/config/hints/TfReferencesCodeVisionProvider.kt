@@ -19,11 +19,11 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.hcl.psi.getElementName
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class TfReferencesCodeVisionProvider : ReferencesCodeVisionProvider() {
-  override fun acceptsFile(file: PsiFile): Boolean = isTerraformCompatiblePsiFile(file)
+  override fun acceptsFile(file: PsiFile): Boolean = isTfOrTofuPsiFile(file)
 
   override fun acceptsElement(element: PsiElement): Boolean = when (element) {
     is HCLBlock ->

@@ -17,7 +17,7 @@ import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 import org.jetbrains.annotations.Nls
 
 internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
@@ -33,7 +33,7 @@ internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
     val psiFile = CommonDataKeys.PSI_FILE.getData(e.dataContext)
 
     val hclBlock = psiFile?.children?.firstOrNull { it is HCLBlock } as? HCLBlock
-    e.presentation.isEnabledAndVisible = project != null && isTerraformCompatiblePsiFile(psiFile) && hclBlock != null
+    e.presentation.isEnabledAndVisible = project != null && isTfOrTofuPsiFile(psiFile) && hclBlock != null
 
     hclBlock?.let {
       e.presentation.setText(getConfigurationName(getRootModule(hclBlock)), false)
@@ -45,7 +45,7 @@ internal sealed class TfRunBaseConfigAction : AnAction(), DumbAware {
     val project = CommonDataKeys.PROJECT.getData(e.dataContext) ?: return
     val psiFile = CommonDataKeys.PSI_FILE.getData(e.dataContext) ?: return
 
-    if (!isTerraformCompatiblePsiFile(psiFile)) return
+    if (!isTfOrTofuPsiFile(psiFile)) return
     val hclBlock = psiFile.children.firstOrNull { it is HCLBlock } as? HCLBlock ?: return
 
     val rootModule = getRootModule(hclBlock)

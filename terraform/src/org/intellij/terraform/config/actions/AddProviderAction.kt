@@ -38,7 +38,7 @@ import org.intellij.terraform.config.model.getProviderForBlockType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 import javax.swing.Icon
 import javax.swing.event.HyperlinkEvent
 
@@ -67,7 +67,7 @@ internal class AddProviderAction(element: PsiElement) : LocalQuickFixAndIntentio
   }
 
   override fun isAvailable(project: Project, psiFile: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement): Boolean {
-    return editor != null && isTerraformCompatiblePsiFile(psiFile)
+    return editor != null && isTfOrTofuPsiFile(psiFile)
            && startElement is HCLBlock
            && startElement.nameElements.size >= 2
   }

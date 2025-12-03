@@ -9,12 +9,12 @@ import com.intellij.psi.PsiFile
 import org.intellij.terraform.config.actions.createQuickFixNotInitialized
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 
 class TfNotInitializedInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformCompatiblePsiFile(file)
+    return isTfOrTofuPsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {

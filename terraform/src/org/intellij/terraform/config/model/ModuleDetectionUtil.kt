@@ -37,7 +37,7 @@ import org.intellij.terraform.hil.psi.HCLElementLazyReference
 import org.intellij.terraform.hil.psi.ILPsiFile
 import org.intellij.terraform.hil.psi.ILRecursiveVisitor
 import org.intellij.terraform.hil.psi.ILVariable
-import org.intellij.terraform.isOpenTofuFile
+import org.intellij.terraform.isTofuFile
 import java.net.URLEncoder
 import java.util.*
 
@@ -281,7 +281,7 @@ object ModuleDetectionUtil {
       return null //TODO IJPL-166297 implement inspection to prevent cyclic references
     }
 
-    val injectedHil = if (isOpenTofuFile(file)) {
+    val injectedHil = if (isTofuFile(file)) {
       InjectedLanguageManager.getInstance(sourceVal.project)
         .getInjectedPsiFiles(sourceVal)?.firstOrNull { it.first is ILPsiFile }?.first
     }

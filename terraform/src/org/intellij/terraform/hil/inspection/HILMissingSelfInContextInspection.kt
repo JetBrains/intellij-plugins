@@ -16,20 +16,20 @@ import org.intellij.terraform.hil.psi.ILElementVisitor
 import org.intellij.terraform.hil.psi.ILSelectExpression
 import org.intellij.terraform.hil.psi.ILVariable
 import org.intellij.terraform.hil.psi.impl.getHCLHost
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 
 class HILMissingSelfInContextInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
     val topLevelFile = InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file)
-    return isTerraformCompatiblePsiFile(topLevelFile)
+    return isTfOrTofuPsiFile(topLevelFile)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
   }
 
-  inner class MyEV(val holder: ProblemsHolder) : ILElementVisitor() {
+  class MyEV(val holder: ProblemsHolder) : ILElementVisitor() {
     override fun visitILVariable(element: ILVariable) {
       ProgressIndicatorProvider.checkCanceled()
       if (element.name != HCL_SELF_IDENTIFIER) return

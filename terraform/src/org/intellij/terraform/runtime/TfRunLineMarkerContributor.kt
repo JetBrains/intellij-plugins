@@ -16,14 +16,14 @@ import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.install.TfToolType
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 import java.util.function.Function
 import javax.swing.Icon
 
 class TfRunLineMarkerContributor : RunLineMarkerContributor(), DumbAware {
   override fun getInfo(leaf: PsiElement): Info? {
     val psiFile = leaf.containingFile
-    if (!isTerraformCompatiblePsiFile(psiFile)) {
+    if (!isTfOrTofuPsiFile(psiFile)) {
       return null
     }
 

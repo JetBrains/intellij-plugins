@@ -26,12 +26,12 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 
 class TfBlockNameValidnessInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformCompatiblePsiFile(file)
+    return isTfOrTofuPsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -46,7 +46,7 @@ class TfBlockNameValidnessInspection : LocalInspectionTool() {
     return super.getBatchSuppressActions(PsiTreeUtil.getParentOfType(element, HCLBlock::class.java, false))
   }
 
-  inner class MyEV(private val holder: ProblemsHolder) : HCLElementVisitor() {
+  class MyEV(private val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitStringLiteral(o: HCLStringLiteral) {
       val parent = o.parent as? HCLBlock ?: return
       if (parent.nameIdentifier !== o) return

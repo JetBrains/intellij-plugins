@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.inspection
 
 import com.intellij.codeInsight.FileModificationService
@@ -32,20 +32,20 @@ import org.intellij.terraform.hcl.psi.HCLPsiUtil.isUnderPropertyUnderPropertyWit
 import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hil.HILFileType
 import org.intellij.terraform.hil.psi.*
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 import java.util.function.BiConsumer
 
 class HILConvertToHCLInspection : LocalInspectionTool(), CleanupLocalInspectionTool {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformCompatiblePsiFile(file) || file.language == HCLLanguage
+    return isTfOrTofuPsiFile(file) || file.language == HCLLanguage
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
   }
 
-  inner class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
+  class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitStringLiteral(o: HCLStringLiteral) {
       if (!o.text.contains("\${")) return
       if (o.textFragments.any { it.second.startsWith("%{") }) return

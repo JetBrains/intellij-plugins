@@ -20,7 +20,7 @@ internal class TfComponentCompletionContributor : CompletionContributor(), DumbA
   }
 }
 
-val TfComponentFile: PsiFilePattern.Capture<HCLFile> = PlatformPatterns.psiFile(HCLFile::class.java)
+internal val TfComponentFile: PsiFilePattern.Capture<HCLFile> = PlatformPatterns.psiFile(HCLFile::class.java)
   .withFileType(StandardPatterns.instanceOf(TfComponentFileType::class.java))
 
 internal fun isTfComponentPsiFile(file: PsiFile?): Boolean = file?.fileType == TfComponentFileType

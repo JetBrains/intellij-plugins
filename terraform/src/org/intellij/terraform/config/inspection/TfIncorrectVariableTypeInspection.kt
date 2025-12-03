@@ -13,13 +13,13 @@ import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 import org.intellij.terraform.joinCommaOr
 
 class TfIncorrectVariableTypeInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformCompatiblePsiFile(file)
+    return isTfOrTofuPsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -31,7 +31,7 @@ class TfIncorrectVariableTypeInspection : LocalInspectionTool() {
     return MyEV(holder)
   }
 
-  inner class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
+  class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitBlock(block: HCLBlock) {
       if (!TfPsiPatterns.VariableRootBlock.accepts(block)) return
 

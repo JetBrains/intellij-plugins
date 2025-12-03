@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.inspection
 
 import com.intellij.codeInspection.LocalInspectionTool
@@ -18,20 +18,20 @@ import org.intellij.terraform.hil.HILTypes.ILBinaryBooleanOnlyOperations
 import org.intellij.terraform.hil.HILTypes.ILBinaryNumericOnlyOperations
 import org.intellij.terraform.hil.psi.*
 import org.intellij.terraform.hil.psi.impl.getHCLHost
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 
 class HILOperationTypesMismatchInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
     val topLevelFile = InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file)
-    return isTerraformCompatiblePsiFile(topLevelFile)
+    return isTfOrTofuPsiFile(topLevelFile)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
   }
 
-  inner class MyEV(val holder: ProblemsHolder) : ILElementVisitor() {
+  class MyEV(val holder: ProblemsHolder) : ILElementVisitor() {
     override fun visitILBinaryExpression(operation: ILBinaryExpression) {
       ProgressIndicatorProvider.checkCanceled()
       operation.getHCLHost() ?: return

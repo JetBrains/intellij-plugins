@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil.inspection
 
 import com.intellij.codeInsight.FileModificationService
@@ -18,19 +18,19 @@ import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.HCLElementVisitor
 import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLMethodCallExpression
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 
 class HCLSimplifyExpressionInspection : LocalInspectionTool(), CleanupLocalInspectionTool {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformCompatiblePsiFile(file) || file.language == HCLLanguage
+    return isTfOrTofuPsiFile(file) || file.language == HCLLanguage
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
   }
 
-  inner class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
+  class MyEV(val holder: ProblemsHolder) : HCLElementVisitor() {
     override fun visitMethodCallExpression(o: HCLMethodCallExpression) {
       val method = o.method
       val args = o.parameterList.elements

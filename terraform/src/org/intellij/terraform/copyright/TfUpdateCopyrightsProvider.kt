@@ -13,7 +13,7 @@ import com.maddyhome.idea.copyright.options.LanguageOptions
 import com.maddyhome.idea.copyright.psi.UpdateCopyright
 import com.maddyhome.idea.copyright.psi.UpdateCopyrightsProvider
 import com.maddyhome.idea.copyright.psi.UpdatePsiFileCopyright
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 
 internal class TfUpdateCopyrightsProvider : UpdateCopyrightsProvider() {
   override fun createInstance(
@@ -23,7 +23,7 @@ internal class TfUpdateCopyrightsProvider : UpdateCopyrightsProvider() {
     fileType: FileType?,
     options: CopyrightProfile?,
   ): UpdateCopyright = object : UpdatePsiFileCopyright(project, module, virtualFile, options) {
-    override fun accept(): Boolean = isTerraformCompatiblePsiFile(file)
+    override fun accept(): Boolean = isTfOrTofuPsiFile(file)
 
     override fun scanFile() {
       val firstChild = file.getFirstChild()

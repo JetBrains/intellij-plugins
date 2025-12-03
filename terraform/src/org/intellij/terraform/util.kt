@@ -16,19 +16,19 @@ internal fun isTerraformFileExtension(extension: String?): Boolean {
   return extension == TerraformFileType.defaultExtension || extension == TFVARS_EXTENSION
 }
 
-internal fun isTerraformCompatibleExtension(extension: String?): Boolean {
+internal fun isTfOrTofuExtension(extension: String?): Boolean {
   return isTerraformFileExtension(extension) || extension == OpenTofuFileType.defaultExtension
 }
 
-internal fun isTerraformCompatiblePsiFile(file: PsiFile?): Boolean {
-  return isTerraformFile(file) || isOpenTofuFile(file)
+internal fun isTfOrTofuPsiFile(file: PsiFile?): Boolean {
+  return isTerraformFile(file) || isTofuFile(file)
 }
 
 internal fun isTerraformFile(psiFile: PsiFile?): Boolean {
   return psiFile?.fileType is TerraformFileType
 }
 
-internal fun isOpenTofuFile(psiFile: PsiFile?): Boolean {
+internal fun isTofuFile(psiFile: PsiFile?): Boolean {
   return psiFile?.fileType is OpenTofuFileType
 }
 

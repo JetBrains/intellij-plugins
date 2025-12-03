@@ -44,7 +44,7 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLFile
 import org.intellij.terraform.hcl.psi.HCLObject
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 import org.intellij.terraform.opentofu.model.EncryptionBlockType
 
 enum class ProviderTier(val label: String) {
@@ -321,7 +321,7 @@ class TfTypeModel(
     fun collectProviderLocalNames(psiElement: PsiElement): Map<String, String> {
       val providerNamesService = LocalProviderNamesService.getInstance()
       val gists = getContainingDir(psiElement)?.childrenOfType<PsiFile>()
-                    ?.filter { file -> isTerraformCompatiblePsiFile(file) }
+                    ?.filter { file -> isTfOrTofuPsiFile(file) }
                     ?.map { providerNamesService.providersNamesGist.getFileData(it) } ?: return emptyMap<String, String>()
       return gists.flatMap { it.entries }.associate { it.key to it.value }
     }

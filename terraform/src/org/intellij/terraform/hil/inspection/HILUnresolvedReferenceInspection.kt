@@ -33,7 +33,7 @@ import org.intellij.terraform.hil.codeinsight.isResourcePropertyReference
 import org.intellij.terraform.hil.codeinsight.isScopeElementReference
 import org.intellij.terraform.hil.psi.impl.getHCLHost
 import org.intellij.terraform.hil.psi.resolve
-import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.isTfOrTofuPsiFile
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns.EncryptionBlock
 import org.jetbrains.annotations.Nls
 
@@ -42,8 +42,8 @@ class HILUnresolvedReferenceInspection : LocalInspectionTool(), DumbAware {
   private val allowedLanguages = setOf(HCLLanguage, HILLanguage)
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return (file.language in allowedLanguages || isTerraformCompatiblePsiFile(file)) &&
-           isTerraformCompatiblePsiFile(InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file))
+    return (file.language in allowedLanguages || isTfOrTofuPsiFile(file)) &&
+           isTfOrTofuPsiFile(InjectedLanguageManager.getInstance(file.project).getTopLevelFile(file))
   }
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return MyEV(holder)
