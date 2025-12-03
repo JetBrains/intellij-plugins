@@ -7,7 +7,7 @@ import com.jetbrains.cidr.cpp.cmake.presets.CMakeEnabledProfileInitializer
 
 class QodanaCppCMakeEnabledProfileInitializer : CMakeEnabledProfileInitializer {
   override fun isEnabled(profile: CMakeSettings.Profile): Boolean {
-    val profileName = requestedCMakeProfileName()
+    val profileName = qodanaConfig.cpp?.cmakePreset
     checkNotNull(profileName) {
       "This initializer should not be called if no CMake profile was requested"
     }
@@ -16,6 +16,6 @@ class QodanaCppCMakeEnabledProfileInitializer : CMakeEnabledProfileInitializer {
   }
 
   override fun isApplicable(project: Project): Boolean {
-    return PlatformUtils.isQodana() && requestedCMakeProfileName() != null
+    return PlatformUtils.isQodana() && qodanaConfig.cpp?.cmakePreset != null
   }
 }

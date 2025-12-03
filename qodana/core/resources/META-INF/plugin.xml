@@ -357,6 +357,9 @@
     <extensionPoint name="scopeExtender"
                     interface="org.jetbrains.qodana.staticAnalysis.scopes.InspectionToolScopeExtender"
                     dynamic="true"/>
+    <extensionPoint name="projectLoaderExtension"
+                    interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaProjectLoaderExtension"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.intellij.qodana">

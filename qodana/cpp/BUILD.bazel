@@ -26,6 +26,11 @@ jvm_library(
     "//CIDR/cidr-workspaceModel",
     "//CIDR/clion-radler/core",
     "@community//platform/projectModel-api:projectModel",
+    "@community//platform/ide-core-impl",
+    "//CIDR/clion-makefile",
+    "//CIDR/cidr-execution",
+    "//CIDR/clion-compdb",
+    "//CIDR/clion-meson",
   ]
 )
 ### auto-generated section `build intellij.qodana.cpp` end

@@ -8,6 +8,7 @@ import com.intellij.ide.CommandLineInspectionProgressReporter
 import com.intellij.ide.CommandLineInspectionProjectAsyncConfigurator
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
 import com.intellij.ide.impl.OpenProjectTask
+import com.intellij.ide.impl.OpenProjectTaskBuilder
 import com.intellij.ide.impl.PatchProjectUtil
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -16,6 +17,7 @@ import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.serviceAsync
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
@@ -52,6 +54,25 @@ private const val LOG_CONFIGURATION_ACTIVITIES_PERIOD_MINUTES = "qodana.log.conf
 private const val REGISTRY_STARTUP_TIMEOUT_MINUTES = "batch.inspections.startup.activities.timeout"
 
 private val LOG = logger<QodanaProjectLoader>()
+
+/**
+ * Extension point for customizing [QodanaProjectLoader].
+ */
+interface QodanaProjectLoaderExtension {
+  companion object {
+    val EP_NAME: ExtensionPointName<QodanaProjectLoaderExtension> = ExtensionPointName<QodanaProjectLoaderExtension>("org.intellij.qodana.projectLoaderExtension")
+
+    val buildProjectOpenTask: OpenProjectTaskBuilder.() -> Unit = {
+      EP_NAME.extensionList.forEach { it.buildProjectOpenTask.invoke(this) }
+    }
+  }
+
+  /**
+   * Modify a [OpenProjectTask] used to open a project during [QodanaProjectLoader.openProjectManually] or
+   * [QodanaProjectLoader.openProjectAutomatically].
+   */
+  val buildProjectOpenTask: OpenProjectTaskBuilder.() -> Unit
+}
 
 class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   suspend fun openProject(config: QodanaConfig): Project {
@@ -96,6 +117,7 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
         project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
         true
       }
+      QodanaProjectLoaderExtension.buildProjectOpenTask(this)
     }
     val project = ProjectManagerEx.getInstanceEx().openProjectAsync(config.projectPath, options) ?: throw QodanaException(
       InspectionsBundle.message("inspection.application.unable.open.project")
@@ -106,9 +128,13 @@ class QodanaProjectLoader(private val reporter: QodanaMessageReporter) {
   }
 
   private suspend fun openProjectAutomatically(config: QodanaConfig): Project {
-    val openedProject = ProjectUtil.openOrImportAsync(config.projectPath) ?: throw QodanaException(
-      InspectionsBundle.message("inspection.application.unable.open.project")
-    )
+    val openedProject = ProjectUtil.openOrImportAsync(
+      file = config.projectPath,
+      options = OpenProjectTask {
+        QodanaProjectLoaderExtension.buildProjectOpenTask(this)
+      }
+    ) ?: throw QodanaException(InspectionsBundle.message("inspection.application.unable.open.project"))
+
     doConfigure(openedProject)
     if (isOpenedByPlatformProcessor(openedProject)) {
       QodanaWorkflowExtension.callAutomaticProjectsImport(config, openedProject)

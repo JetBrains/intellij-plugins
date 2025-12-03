@@ -273,6 +273,12 @@
       "description": "Configuration for Qodana for C/C++",
       "type": "object",
       "properties": {
+        "buildSystem": {
+          "description": "Configure project using this build system",
+          "type": "string",
+          "enum": ["CMake", "CompDB"],
+          "caseSensitive": false
+        },
         "cmakePreset": {
           "description": "Name of a specific CMake preset to use during analysis",
           "type": "string",
