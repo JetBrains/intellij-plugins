@@ -34,6 +34,14 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     doBasicCompletionTest("generate = local.common.generate\n\"<caret>\" {}", TerragruntBlockKeywords)
   }
 
+  fun testKeywordCompletionInArray() {
+    doBasicCompletionTest("""
+      terraform {
+        include_in_copy = [<caret>]
+      }
+    """.trimIndent(), "null", "true", "false")
+  }
+
   fun testNotAllowedRootBlockInTerragrunt() {
     val file = myFixture.configureByText("test.terragrunt.hcl", "<caret>")
     val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name)

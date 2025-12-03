@@ -4,12 +4,10 @@ package org.intellij.terraform.terragrunt.codeinsight
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.project.DumbAware
-import org.intellij.terraform.hcl.codeinsight.AfterCommaOrBracketPattern
 import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createBlockPropertyKeyPattern
 import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createNestedBlockPropertyPattern
 import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createPropertyInBlockPattern
-import org.intellij.terraform.hcl.codeinsight.HclKeywordsCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createBlockHeaderPattern
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createRootBlockPattern
@@ -18,8 +16,6 @@ import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns.Terragru
 
 internal class TerragruntCompletionContributor : CompletionContributor(), DumbAware {
   init {
-    extend(CompletionType.BASIC, AfterCommaOrBracketPattern, HclKeywordsCompletionProvider)
-
     extend(CompletionType.BASIC, createRootBlockPattern(TerragruntFile), HclRootBlockCompletionProvider)
     extend(CompletionType.BASIC, createBlockHeaderPattern(TerragruntFile), HclRootBlockCompletionProvider)
 
