@@ -20,6 +20,8 @@ import org.intellij.terraform.hcl.patterns.HCLPatterns.WhiteSpace
 import org.intellij.terraform.hcl.psi.HCLFile
 import org.intellij.terraform.hcl.psi.afterSiblingSkipping2
 import org.intellij.terraform.isTerraformCompatiblePsiFile
+import org.intellij.terraform.stack.component.TfComponentRootBlocks
+import org.intellij.terraform.stack.component.isTfComponentPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntStack
 import org.intellij.terraform.terragrunt.model.StackRootBlocks
@@ -34,6 +36,7 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
     val rootBlocks = when {
       isTerraformCompatiblePsiFile(psiFile) -> RootBlockSorted
       isTerragruntPsiFile(psiFile) -> if (isTerragruntStack(psiFile)) StackRootBlocks else TerragruntBlocksAndAttributes
+      isTfComponentPsiFile(psiFile) -> TfComponentRootBlocks
       else -> return
     }
 

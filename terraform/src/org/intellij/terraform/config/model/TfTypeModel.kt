@@ -16,9 +16,11 @@ import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DEFAULT_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_DEPENDS_ON_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_FOR_EACH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_IMPORT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LIFECYCLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LOCALS_IDENTIFIER
@@ -101,12 +103,12 @@ class TfTypeModel(
                                                               injectionAllowed = false)
 
     private val DependsOnProperty: PropertyType = PropertyType(
-      "depends_on",
+      HCL_DEPENDS_ON_IDENTIFIER,
       Types.Array,
       ReferenceHint("resource.#name", "data_source.#name", "module.#name", "variable.#name", "ephemeral.#name")
     )
-    private val CountProperty = PropertyType(HCL_COUNT_IDENTIFIER, Types.Number, conflictsWith = listOf("for_each"))
-    private val ForEachProperty = PropertyType("for_each", Types.Any, conflictsWith = listOf(HCL_COUNT_IDENTIFIER))
+    private val CountProperty = PropertyType(HCL_COUNT_IDENTIFIER, Types.Number, conflictsWith = listOf(HCL_FOR_EACH_IDENTIFIER))
+    private val ForEachProperty = PropertyType(HCL_FOR_EACH_IDENTIFIER, Types.Any, conflictsWith = listOf(HCL_COUNT_IDENTIFIER))
     private val ProviderProperty = PropertyType("provider", Types.String, hint = ReferenceHint("provider.#type", "provider.#alias"))
 
     val DescriptionProperty: PropertyType = PropertyType("description", Types.String)
@@ -203,7 +205,7 @@ class TfTypeModel(
 
     val AbstractResourceDynamicContent: BlockType = BlockType(HCL_DYNAMIC_BLOCK_CONTENT_IDENTIFIER, 0, required = true)
     val ResourceDynamic: BlockType = BlockType(HCL_DYNAMIC_BLOCK_IDENTIFIER, 1, properties = listOf<PropertyOrBlockType>(
-      PropertyType("for_each", Types.Any, required = true),
+      PropertyType(HCL_FOR_EACH_IDENTIFIER, Types.Any, required = true),
       PropertyType("labels", Types.Array),
       PropertyType("iterator", Types.Identifier),
       AbstractResourceDynamicContent

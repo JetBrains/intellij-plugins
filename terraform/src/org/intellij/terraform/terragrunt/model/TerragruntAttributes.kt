@@ -1,13 +1,14 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.terragrunt.model
 
+import org.intellij.terraform.config.Constants.HCL_INPUTS_IDENTIFIER
 import org.intellij.terraform.config.model.ListType
 import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.Types
 
 // https://terragrunt.gruntwork.io/docs/reference/hcl/attributes/
 internal val TerragruntAttributes: List<PropertyType> = listOf(
-  PropertyType("inputs", Types.Object),
+  PropertyType(HCL_INPUTS_IDENTIFIER, Types.Object),
   PropertyType("download_dir", Types.String),
   PropertyType("prevent_destroy", Types.Boolean),
   PropertyType("skip", Types.Boolean),

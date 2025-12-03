@@ -38,10 +38,13 @@ internal object Constants {
   const val HCL_PATH_IDENTIFIER: String = "path"
   const val HCL_LOCAL_IDENTIFIER: String = "local"
   const val HCL_VAR_IDENTIFIER: String = "var"
+  const val HCL_DEPENDS_ON_IDENTIFIER: String = "depends_on"
+  const val HCL_FOR_EACH_IDENTIFIER: String = "for_each"
   const val HCL_COUNT_IDENTIFIER: String = "count"
   const val HCL_SOURCE_IDENTIFIER: String = "source"
   const val HCL_VERSION_IDENTIFIER: String = "version"
   const val HCL_DEFAULT_IDENTIFIER: String = "default"
+  const val HCL_INPUTS_IDENTIFIER: String = "inputs"
 
   const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   const val LATEST_VERSION: String = "latest"
