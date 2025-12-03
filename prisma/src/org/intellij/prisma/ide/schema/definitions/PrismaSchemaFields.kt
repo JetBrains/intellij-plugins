@@ -66,6 +66,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
         "Connection URL including authentication info. Each datasource provider documents the URL syntax. Most providers use the syntax provided by the database. [Learn more](https://pris.ly/d/connection-strings)."
       type = PrimitiveTypes.STRING
       insertHandler = PrismaInsertHandler.EQUALS
+      deprecated = true
 
       variant {
         ref {
@@ -80,6 +81,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
         "Connection URL for direct connection to the database. [Learn more](https://pris.ly/d/data-proxy-cli)."
       type = PrimitiveTypes.STRING
       insertHandler = PrismaInsertHandler.EQUALS
+      deprecated = true
 
       variant {
         ref {
@@ -111,6 +113,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
         "Connection URL including authentication info to use for Migrate's [shadow database](https://pris.ly/d/migrate-shadow)."
       type = PrimitiveTypes.STRING
       insertHandler = PrismaInsertHandler.EQUALS
+      deprecated = true
 
       variant {
         ref {
