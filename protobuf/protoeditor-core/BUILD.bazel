@@ -40,7 +40,7 @@ jvm_library(
     "@community//platform/projectModel-impl",
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
-    "@lib//:protobuf",
+    "@community//libraries/protobuf",
     "@lib//:google-protobuf-java-util",
   ]
 )
@@ -83,7 +83,7 @@ jvm_library(
     "@community//platform/projectModel-impl",
     "@community//platform/workspace/jps",
     "@community//platform/backend/workspace",
-    "@lib//:protobuf",
+    "@community//libraries/protobuf",
     "@lib//:google-protobuf-java-util",
   ]
 )

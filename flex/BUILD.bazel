@@ -64,7 +64,7 @@ jvm_library(
     "@community//plugins/properties/properties-psi-api:psi",
     "//plugins/uml:diagram",
     "//plugins/graph",
-    "@lib//:protobuf",
+    "@community//libraries/protobuf",
     "@community//platform/util/nanoxml",
     "@community//libraries/stream",
     "@community//libraries/fastutil",

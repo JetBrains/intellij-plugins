@@ -2,13 +2,15 @@
   <dependencies>
     <module name="intellij.platform.backend"/>
     <module name="intellij.vuejs.common"/>
-
     <plugin id="com.intellij.modules.xml"/>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.css"/>
     <plugin id="intellij.webpack"/>
     <plugin id="org.intellij.plugins.postcss"/>
     <module name="intellij.spellchecker"/>
+    <!-- editor-fold desc="Generated dependencies - do not edit manually" -->
+    <module name="intellij.libraries.commons.text"/>
+    <!-- end editor-fold -->
   </dependencies>
 
   <extensionPoints>

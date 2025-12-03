@@ -63,7 +63,7 @@
     <orderEntry type="module" module-name="intellij.diagram" />
     <orderEntry type="module" module-name="intellij.platform.graph" />
     <orderEntry type="module" module-name="intellij.flex.jps" scope="RUNTIME" />
-    <orderEntry type="library" name="protobuf" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.protobuf" />
     <orderEntry type="module" module-name="intellij.platform.util.nanoxml" />
     <orderEntry type="module" module-name="intellij.libraries.stream" />
     <orderEntry type="module" module-name="intellij.libraries.fastutil" />

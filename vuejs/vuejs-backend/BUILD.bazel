@@ -62,7 +62,6 @@ jvm_library(
     "@community//libraries/jackson/jackson",
     "@community//libraries/jackson/databind",
     "@community//libraries/commons/compress",
-    "@community//libraries/stream",
     "@community//libraries/gson",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
@@ -80,6 +79,7 @@ jvm_library(
     "//contrib/vuejs/vuejs-common:common",
     "@community//platform/backend",
     "//plugins/JavaScriptLanguage:javascript-plugin",
+    "@community//libraries/stream",
     "@community//xml/xml-analysis-api:analysis",
     "@community//platform/execution",
   ]
