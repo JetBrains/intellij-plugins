@@ -22,13 +22,12 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns.ModuleWithEmptySourc
 import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.psi.*
-import org.intellij.terraform.isTerraformCompatiblePsiFile
-import org.intellij.terraform.terragrunt.isTerragruntPsiFile
+import org.intellij.terraform.isHclCompatiblePsiFile
 
 class HclBlockMissingPropertyInspection : LocalInspectionTool() {
 
   override fun isAvailableForFile(file: PsiFile): Boolean {
-    return isTerraformCompatiblePsiFile(file) || isTerragruntPsiFile(file)
+    return isHclCompatiblePsiFile(file)
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -162,7 +161,7 @@ internal class MissingPropertyVisitor(val holder: ProblemsHolder, val recursive:
   companion object {
     fun create(holder: ProblemsHolder, recursive: Boolean): PsiElementVisitor {
       val psiFile = holder.file
-      if (!isTfOrTofuPsiFile(psiFile) && !isTerragruntPsiFile(psiFile)) {
+      if (!isHclCompatiblePsiFile(psiFile)) {
         return EMPTY_VISITOR
       }
       return MissingPropertyVisitor(holder, recursive)

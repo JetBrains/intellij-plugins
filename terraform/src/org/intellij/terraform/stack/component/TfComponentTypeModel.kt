@@ -25,3 +25,4 @@ internal val ComponentBlockType: BlockType = BlockType(
 )
 
 internal val TfComponentRootBlocks: List<BlockType> = listOf(ComponentBlockType)
+internal val TfComponentRootBlocksMap: Map<String, BlockType> = TfComponentRootBlocks.associateBy { it.literal }

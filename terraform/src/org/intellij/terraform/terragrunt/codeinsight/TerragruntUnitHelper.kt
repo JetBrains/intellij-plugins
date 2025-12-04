@@ -24,8 +24,8 @@ internal object TerragruntUnitHelper {
 
   fun getBlockProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val type = block.getNameElementUnquoted(0) ?: return emptyMap()
-    // For now, only root blocks are supported
-    if (block.parent !is PsiFile) return TfModelHelper.traverseParentBlockProperties(block, type)
+    if (block.parent !is PsiFile)
+      return TfModelHelper.traverseParentBlockProperties(block, type)
 
     val file = block.containingFile.originalFile
     val rootBlocks = if (isTerragruntStack(file)) StackRootBlocksMap else TerragruntRootBlocksMap

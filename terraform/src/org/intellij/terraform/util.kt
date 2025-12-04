@@ -11,6 +11,8 @@ import org.intellij.terraform.config.TFVARS_EXTENSION
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.opentofu.OpenTofuFileType
+import org.intellij.terraform.stack.component.isTfComponentPsiFile
+import org.intellij.terraform.terragrunt.isTerragruntPsiFile
 
 internal fun isTerraformFileExtension(extension: String?): Boolean {
   return extension == TerraformFileType.defaultExtension || extension == TFVARS_EXTENSION
@@ -22,6 +24,12 @@ internal fun isTfOrTofuExtension(extension: String?): Boolean {
 
 internal fun isTfOrTofuPsiFile(file: PsiFile?): Boolean {
   return isTerraformFile(file) || isTofuFile(file)
+}
+
+internal fun isHclCompatiblePsiFile(file: PsiFile?): Boolean {
+  return isTfOrTofuPsiFile(file) ||
+         isTfComponentPsiFile(file) ||
+         isTerragruntPsiFile(file)
 }
 
 internal fun isTerraformFile(psiFile: PsiFile?): Boolean {
@@ -38,7 +46,7 @@ internal fun joinCommaOr(list: List<String>): String = when (list.size) {
   else -> (list.dropLast(1).joinToString(postfix = " or " + list.last()))
 }
 
-fun hasHCLLanguageFiles(project: Project, fileTypes: Iterable<FileType>):Boolean {
+fun hasHCLLanguageFiles(project: Project, fileTypes: Iterable<FileType>): Boolean {
   return fileTypes
     .asSequence()
     .filter { type -> (type as? LanguageFileType)?.language?.isKindOf(HCLLanguage) == true }
