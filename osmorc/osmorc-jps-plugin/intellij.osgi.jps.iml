@@ -99,7 +99,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name="plexus-utils" level="project" />
+    <orderEntry type="module" module-name="intellij.libraries.plexus.utils" />
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module-library">
       <library name="bundlor">
