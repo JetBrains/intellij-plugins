@@ -1,5 +1,11 @@
 ### auto-generated section `build intellij.serial.monitor.tests` start
-load("@rules_jvm//:jvm.bzl", "jvm_library")
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "tests_test_resources",
+  srcs = glob(["testResources/**/*"]),
+  strip_prefix = "testResources"
+)
 
 jvm_library(
   name = "tests",
@@ -12,6 +18,7 @@ jvm_library(
   module_name = "intellij.serial.monitor.tests",
   visibility = ["//visibility:public"],
   srcs = glob(["testSrc/**/*.kt", "testSrc/**/*.java", "testSrc/**/*.form"], allow_empty = True),
+  resources = [":tests_test_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",

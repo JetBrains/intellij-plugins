@@ -1,0 +1,7 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="SerialPortMonitor"/>
+    <module name="intellij.platform.testFramework"/>
+    <module name="intellij.platform.testFramework.junit5"/>
+  </dependencies>
+</idea-plugin>
