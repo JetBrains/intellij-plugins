@@ -36,7 +36,7 @@ internal class AbstractEncryptionProvider(
     get() = "$literal ($type)"
 }
 
-private val abstractProviderInstance: BlockType = BlockType(literal = TOFU_KEY_PROVIDER)
+private val abstractProviderInstance: BlockType = BlockType(TOFU_KEY_PROVIDER)
 
 internal val Pbkdf2Provider = AbstractEncryptionProvider("pbkdf2", listOf(
   PropertyType("passphrase", Types.String, required = true, description = HCLBundle.message("opentofu.key_provider.pbkdf2.passphrase.description")),
@@ -89,7 +89,7 @@ internal class AbstractEncryptionMethod(
     get() = "$literal ($type)"
 }
 
-internal val AbstractEncryptionMethodInstance = BlockType(TOFU_ENCRYPTION_METHOD_BLOCK, args = 2)
+internal val AbstractEncryptionMethodInstance = BlockType(TOFU_ENCRYPTION_METHOD_BLOCK, 2)
 
 internal val UnencryptedMethod = AbstractEncryptionMethod("unencrypted", emptyList(), AbstractEncryptionMethodInstance)
 
@@ -120,11 +120,11 @@ internal val Plan: BlockType = BlockType("plan", properties = listOf(
 //</editor-fold>
 
 internal val RemoteStateDataSource: BlockType = BlockType("remote_state_data_source", 1, properties = listOf(
-  PropertyType(name = "method", type = Types.String)
+  PropertyType("method", Types.String)
 ).toMap())
 
 internal val DefaultDataSource: BlockType = BlockType(HCL_DEFAULT_IDENTIFIER, properties = listOf(
-  PropertyType(name = "method", type = Types.String)
+  PropertyType("method", Types.String)
 ).toMap())
 
 internal val RemoteStateDataSources: BlockType = BlockType("remote_state_data_sources", properties = listOf(
@@ -133,7 +133,7 @@ internal val RemoteStateDataSources: BlockType = BlockType("remote_state_data_so
 ).toMap())
 
 internal class EncryptionBlockType : BlockType(TOFU_ENCRYPTION, optional = true, properties = listOf(
-  BlockType(TOFU_KEY_PROVIDER, args = 2),
+  BlockType(TOFU_KEY_PROVIDER, 2),
   AbstractEncryptionMethodInstance,
   State,
   Plan,

@@ -266,7 +266,7 @@ class TfTypeModel(
     val Terraform: BlockType = BlockType(HCL_TERRAFORM_IDENTIFIER, properties = listOf<PropertyOrBlockType>(
       TerraformRequiredVersion,
       RequiredProviders,
-      BlockType("provider_meta", args = 1),
+      BlockType("provider_meta", 1),
       EncryptionBlockType(),
       Cloud,
       AbstractBackend,
@@ -276,7 +276,7 @@ class TfTypeModel(
     val Import: BlockType = BlockType(HCL_IMPORT_IDENTIFIER, properties = listOf(
       ToProperty,
       PropertyType("id", Types.String, required = true, conflictsWith = listOf("identity")),
-      BlockType("identity", args = 0, conflictsWith = listOf("id")),
+      BlockType("identity", conflictsWith = listOf("id")),
       PropertyType("provider", Types.String, required = false),
       ForEachProperty
     ).toMap())
