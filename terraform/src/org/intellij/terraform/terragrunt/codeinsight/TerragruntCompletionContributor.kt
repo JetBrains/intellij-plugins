@@ -5,23 +5,14 @@ import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.project.DumbAware
 import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
-import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createBlockPropertyKeyPattern
-import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createNestedBlockPropertyPattern
-import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createPropertyInBlockPattern
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
-import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createBlockHeaderPattern
-import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createRootBlockPattern
 import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns.TerragruntFile
 import org.intellij.terraform.terragrunt.patterns.TerragruntPsiPatterns.TerragruntMethodPosition
 
 internal class TerragruntCompletionContributor : CompletionContributor(), DumbAware {
   init {
-    extend(CompletionType.BASIC, createRootBlockPattern(TerragruntFile), HclRootBlockCompletionProvider)
-    extend(CompletionType.BASIC, createBlockHeaderPattern(TerragruntFile), HclRootBlockCompletionProvider)
-
-    extend(CompletionType.BASIC, createBlockPropertyKeyPattern(TerragruntFile), HclBlockPropertiesCompletionProvider)
-    extend(CompletionType.BASIC, createPropertyInBlockPattern(TerragruntFile), HclBlockPropertiesCompletionProvider)
-    extend(CompletionType.BASIC, createNestedBlockPropertyPattern(TerragruntFile), HclBlockPropertiesCompletionProvider)
+    HclRootBlockCompletionProvider.registerTo(this, TerragruntFile)
+    HclBlockPropertiesCompletionProvider.registerTo(this, TerragruntFile)
 
     extend(CompletionType.BASIC, TerragruntMethodPosition, TerragruntMethodCompletionProvider)
   }

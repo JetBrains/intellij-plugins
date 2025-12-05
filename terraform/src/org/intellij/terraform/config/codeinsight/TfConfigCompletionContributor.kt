@@ -41,13 +41,8 @@ import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.codeinsight.AfterCommaOrBracketPattern
 import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
-import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createBlockPropertyKeyPattern
-import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createNestedBlockPropertyPattern
-import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider.createPropertyInBlockPattern
 import org.intellij.terraform.hcl.codeinsight.HclKeywordsCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
-import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createBlockHeaderPattern
-import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createRootBlockPattern
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Array
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Block
 import org.intellij.terraform.hcl.patterns.HCLPatterns.File
@@ -71,8 +66,8 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
   init {
     extend(CompletionType.BASIC, AfterCommaOrBracketPattern, HclKeywordsCompletionProvider)
 
-    extend(CompletionType.BASIC, createRootBlockPattern(TerraformConfigFile), HclRootBlockCompletionProvider)
-    extend(CompletionType.BASIC, createBlockHeaderPattern(TerraformConfigFile), HclRootBlockCompletionProvider)
+    HclRootBlockCompletionProvider.registerTo(this, TerraformConfigFile)
+    HclBlockPropertiesCompletionProvider.registerTo(this, TerraformConfigFile)
 
     // Block type or name
     extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
@@ -83,10 +78,6 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       .inFile(TerraformConfigFile)
       .withParent(psiElement().and(IdentifierOrStringLiteral).afterSiblingSkipping2(WhiteSpace, IdentifierOrStringLiteralOrSimple))
       .withSuperParent(2, FileOrBlock), BlockTypeOrNameCompletionProvider)
-
-    extend(CompletionType.BASIC, createBlockPropertyKeyPattern(TerraformConfigFile), HclBlockPropertiesCompletionProvider)
-    extend(CompletionType.BASIC, createPropertyInBlockPattern(TerraformConfigFile), HclBlockPropertiesCompletionProvider)
-    extend(CompletionType.BASIC, createNestedBlockPropertyPattern(TerraformConfigFile), HclBlockPropertiesCompletionProvider)
 
     extend(CompletionType.BASIC, TfPsiPatterns.RequiredProviderIdentifier, RequiredProviderCompletion)
     extend(CompletionType.BASIC, TfPsiPatterns.IdentifierOfRequiredProviderProperty, RequiredProviderCompletion)

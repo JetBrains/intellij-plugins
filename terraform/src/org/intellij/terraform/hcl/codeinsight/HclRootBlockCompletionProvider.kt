@@ -1,9 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.codeinsight
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.*
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.patterns.PsiFilePattern
@@ -44,19 +42,24 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
     addResultsWithCustomSorter(result, rootLookups)
   }
 
-  fun createRootBlockPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> {
+  private fun getRootBlockPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> {
     return psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
       .inFile(filePattern)
       .withParent(File)
       .andNot(psiElement().afterSiblingSkipping2(WhiteSpace, IdentifierOrStringLiteralOrSimple))
   }
 
-  fun createBlockHeaderPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> {
+  private fun getBlockHeaderPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> {
     return psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
       .inFile(filePattern)
       .withParent(psiElement().and(IdentifierOrStringLiteral)
                     .andNot(psiElement().afterSiblingSkipping2(WhiteSpace, IdentifierOrStringLiteralOrSimple)))
       .withSuperParent(2, Block)
       .withSuperParent(3, File)
+  }
+
+  fun registerTo(contributor: CompletionContributor, filePattern: PsiFilePattern.Capture<HCLFile>) {
+    contributor.extend(CompletionType.BASIC, getRootBlockPattern(filePattern), this)
+    contributor.extend(CompletionType.BASIC, getBlockHeaderPattern(filePattern), this)
   }
 }

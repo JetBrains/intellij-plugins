@@ -2,21 +2,19 @@
 package org.intellij.terraform.stack.component
 
 import com.intellij.codeInsight.completion.CompletionContributor
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.project.DumbAware
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiFilePattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiFile
+import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
-import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createBlockHeaderPattern
-import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider.createRootBlockPattern
 import org.intellij.terraform.hcl.psi.HCLFile
 
 internal class TfComponentCompletionContributor : CompletionContributor(), DumbAware {
   init {
-    extend(CompletionType.BASIC, createRootBlockPattern(TfComponentFile), HclRootBlockCompletionProvider)
-    extend(CompletionType.BASIC, createBlockHeaderPattern(TfComponentFile), HclRootBlockCompletionProvider)
+    HclRootBlockCompletionProvider.registerTo(this, TfComponentFile)
+    HclBlockPropertiesCompletionProvider.registerTo(this, TfComponentFile)
   }
 }
 

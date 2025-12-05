@@ -1,10 +1,7 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.codeinsight
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.codeInsight.completion.CompletionSorter
+import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder.create
 import com.intellij.codeInsight.lookup.LookupElementWeigher
@@ -178,13 +175,13 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
   }
 
   // Psi Patterns
-  fun createBlockPropertyKeyPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> = psiElement()
+  private fun getBlockPropertyKeyPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> = psiElement()
     .withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
     .inFile(filePattern)
     .withParent(Object)
     .withSuperParent(2, Block)
 
-  fun createPropertyInBlockPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> = psiElement()
+  private fun getPropertyInBlockPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> = psiElement()
     .withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
     .inFile(filePattern)
     .withParent(IdentifierOrStringLiteral)
@@ -192,7 +189,7 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
     .withSuperParent(3, Object)
     .withSuperParent(4, Block)
 
-  fun createNestedBlockPropertyPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> = psiElement()
+  private fun getNestedBlockPropertyPattern(filePattern: PsiFilePattern.Capture<HCLFile>): PsiElementPattern.Capture<PsiElement> = psiElement()
     .withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
     .inFile(filePattern)
     .and(psiElement().insideStarting(Block))
@@ -200,6 +197,12 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
     .withSuperParent(2, Block)
     .withSuperParent(3, Object)
     .withSuperParent(4, Block)
+
+  fun registerTo(contributor: CompletionContributor, filePattern: PsiFilePattern.Capture<HCLFile>) {
+    contributor.extend(CompletionType.BASIC, getBlockPropertyKeyPattern(filePattern), this)
+    contributor.extend(CompletionType.BASIC, getPropertyInBlockPattern(filePattern), this)
+    contributor.extend(CompletionType.BASIC, getNestedBlockPropertyPattern(filePattern), this)
+  }
 }
 
 private data class HclPositionContext(
