@@ -2,6 +2,7 @@
 package org.intellij.terraform.terragrunt.model
 
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_CONFIG_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DEFAULT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LOCALS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PATH_IDENTIFIER
@@ -47,7 +48,7 @@ internal val RemoteStateBlockType: BlockType = BlockType(
   literal = TERRAGRUNT_REMOTE_STATE,
   properties = listOf(
     PropertyType(HCL_BACKEND_IDENTIFIER, Types.String, required = true, optional = false),
-    PropertyType("config", Types.Object, required = true, optional = false),
+    PropertyType(HCL_CONFIG_IDENTIFIER, Types.Object, required = true, optional = false),
     PropertyType("disable_init", Types.Boolean),
     PropertyType("disable_dependency_optimization", Types.Boolean),
     PropertyType(
