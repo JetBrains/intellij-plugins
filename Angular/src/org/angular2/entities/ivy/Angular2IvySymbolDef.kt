@@ -5,11 +5,7 @@ import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.ecma6.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
-import com.intellij.lang.javascript.psi.stubs.JSAttributeListStub
-import com.intellij.lang.javascript.psi.stubs.JSVarStatementStub
-import com.intellij.lang.javascript.psi.stubs.TypeScriptClassStub
-import com.intellij.lang.javascript.psi.stubs.TypeScriptFieldStub
-import com.intellij.lang.javascript.psi.stubs.TypeScriptSingleTypeStub
+import com.intellij.lang.javascript.psi.stubs.*
 import com.intellij.lang.typescript.TypeScriptElementTypes
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
@@ -22,6 +18,7 @@ import org.angular2.Angular2DecoratorUtil.DIRECTIVE_PROP
 import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
+import org.angular2.Angular2DecoratorUtil.IS_SIGNAL_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.REQUIRED_PROP
 import org.angular2.entities.source.Angular2PropertyInfo
@@ -120,16 +117,13 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
           when (type) {
             is TypeScriptStringLiteralType -> type.innerText?.let { Angular2PropertyInfo(it, false, null, declaringElement = type) }
             is TypeScriptObjectType -> {
-              val nameType = type.typeMembers
-                .firstNotNullOfOrNull { member -> (member as? TypeScriptPropertySignature)?.takeIf { it.name == ALIAS_PROP }?.typeDeclaration }
-                ?.asSafely<TypeScriptStringLiteralType>()
+              val nameType = type.getProperty<TypeScriptStringLiteralType>(ALIAS_PROP)
               val name = nameType?.innerText
-              val required = type.typeMembers
-                               .firstNotNullOfOrNull { member -> (member as? TypeScriptPropertySignature)?.takeIf { it.name == REQUIRED_PROP }?.typeDeclaration }
-                               ?.asSafely<TypeScriptBooleanLiteralType>()
-                               ?.value ?: false
+              val required = type.getProperty<TypeScriptBooleanLiteralType>(REQUIRED_PROP)?.value ?: false
+              val isSignal = type.getProperty<TypeScriptBooleanLiteralType>(IS_SIGNAL_PROP)?.value ?: false
               Angular2PropertyInfo(name ?: defaultName, required, null, nameType,
-                                   declarationRange = if (name != null) TextRange(1, 1 + name.length) else null)
+                                   declarationRange = if (name != null) TextRange(1, 1 + name.length) else null,
+                                   isSignalProperty = isSignal)
             }
             else -> null
           }
@@ -139,6 +133,14 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
         }
         else -> emptyMap()
       }
+
+    private inline fun <reified T> TypeScriptObjectType.getProperty(name: String): T? =
+      typeMembers
+        .firstNotNullOfOrNull { member ->
+          (member as? TypeScriptPropertySignature)
+            ?.takeIf { it.name == name }
+            ?.typeDeclaration
+        } as? T
 
   }
 

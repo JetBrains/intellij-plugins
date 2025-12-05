@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.testFramework.checkTextByFile
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
+import org.angular2.Angular2TestModule.ANGULAR_CORE_20_1_4
 import org.angular2.Angular2TsConfigFile
 import org.angular2.lang.expr.service.tcb.Angular2TemplateTranspiler.SourceMappingFlag
 import org.angular2.lang.expr.service.tcb.Angular2TranspiledDirectiveFileBuilder
@@ -178,6 +179,9 @@ class Angular2TemplateTranspilerTest : Angular2TestCase("templateTranspiler", tr
   fun testAnyInCallArgs() = checkTranspilation(
     Angular2TestModule.ANGULAR_CORE_20_2_2
   )
+
+  fun testLibraryWithSignals() =
+    checkTranspilation(ANGULAR_CORE_20_1_4, configureFileName = "my-component.ts", dir = true)
 
   private fun checkTranspilation(
     vararg modules: WebFrameworkTestModule,

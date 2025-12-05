@@ -224,15 +224,15 @@ object Angular2SourceUtil {
       1 -> {
         call.stubSafeCallArguments.lastOrNull().asSafely<JSObjectLiteralExpression>()
           ?.let { parseInputObjectLiteral(it, defaultName) }
-          ?.copy(required = false)
-        ?: Angular2PropertyInfo(defaultName, false, call, declaringElement = null)
+          ?.copy(required = false, isSignalProperty = true)
+        ?: Angular2PropertyInfo(defaultName, false, call, declaringElement = null, isSignalProperty = true)
       }
       2 -> {
         if (referenceNames[1] == Angular2DecoratorUtil.REQUIRED_PROP) {
           call.stubSafeCallArguments.lastOrNull().asSafely<JSObjectLiteralExpression>()
             ?.let { parseInputObjectLiteral(it, defaultName) }
-            ?.copy(required = true)
-          ?: Angular2PropertyInfo(defaultName, true, call, declaringElement = null)
+            ?.copy(required = true, isSignalProperty = true)
+          ?: Angular2PropertyInfo(defaultName, true, call, declaringElement = null, isSignalProperty = true)
         }
         else null
       }
