@@ -36,6 +36,7 @@ import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
+import org.intellij.terraform.config.Constants.HCL_TYPE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VALIDATION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_WORKSPACES_BLOCK_IDENTIFIER
@@ -128,7 +129,7 @@ class TfTypeModel(
 
     val ErrorMessageProperty: PropertyType = PropertyType("error_message", Types.String)
     val ConditionProperty: PropertyType = PropertyType("condition", Types.Boolean, injectionAllowed = false)
-    val VariableType: PropertyType = PropertyType("type", Types.Any, injectionAllowed = false)
+    val VariableType: PropertyType = PropertyType(HCL_TYPE_IDENTIFIER, Types.Any, injectionAllowed = false)
     val VariableDefault: PropertyType = PropertyType(HCL_DEFAULT_IDENTIFIER, Types.Any)
     val VariableValidation: BlockType = BlockType(HCL_VALIDATION_IDENTIFIER, 0, properties = listOf(
       ConditionProperty,
@@ -146,7 +147,7 @@ class TfTypeModel(
     ).toMap())
 
     val Connection: BlockType = BlockType(HCL_CONNECTION_IDENTIFIER, 0, properties = listOf(
-      PropertyType("type", Types.String,
+      PropertyType(HCL_TYPE_IDENTIFIER, Types.String,
                    description = "The connection type that should be used. Valid types are \"ssh\" and \"winrm\" This defaults to \"ssh\"."),
       PropertyType("user", Types.String),
       PropertyType("password", Types.String),
@@ -261,9 +262,10 @@ class TfTypeModel(
         PropertyType("tags", ListType(Types.String), conflictsWith = listOf("name"))
       ).toMap())
     ).toMap())
+    val RequiredProviders: BlockType = BlockType(HCL_TERRAFORM_REQUIRED_PROVIDERS)
     val Terraform: BlockType = BlockType(HCL_TERRAFORM_IDENTIFIER, properties = listOf<PropertyOrBlockType>(
       TerraformRequiredVersion,
-      BlockType(HCL_TERRAFORM_REQUIRED_PROVIDERS),
+      RequiredProviders,
       BlockType("provider_meta", args = 1),
       EncryptionBlockType(),
       Cloud,

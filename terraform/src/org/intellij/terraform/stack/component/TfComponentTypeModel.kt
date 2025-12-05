@@ -4,10 +4,21 @@ package org.intellij.terraform.stack.component
 import org.intellij.terraform.config.Constants.HCL_DEPENDS_ON_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_FOR_EACH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_INPUTS_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_TYPE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.model.BlockType
 import org.intellij.terraform.config.model.PropertyType
+import org.intellij.terraform.config.model.TfTypeModel.Companion.DescriptionProperty
+import org.intellij.terraform.config.model.TfTypeModel.Companion.EphemeralProperty
+import org.intellij.terraform.config.model.TfTypeModel.Companion.Locals
+import org.intellij.terraform.config.model.TfTypeModel.Companion.NullableProperty
+import org.intellij.terraform.config.model.TfTypeModel.Companion.RequiredProviders
+import org.intellij.terraform.config.model.TfTypeModel.Companion.SensitiveProperty
+import org.intellij.terraform.config.model.TfTypeModel.Companion.ValueProperty
+import org.intellij.terraform.config.model.TfTypeModel.Companion.VariableDefault
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.toMap
 
@@ -24,5 +35,39 @@ internal val ComponentBlockType: BlockType = BlockType(
   ).toMap()
 )
 
-internal val TfComponentRootBlocks: List<BlockType> = listOf(ComponentBlockType)
+internal val TypeProperty: PropertyType = PropertyType(HCL_TYPE_IDENTIFIER, Types.Any, required = true, optional = false)
+
+internal val ComponentVariable: BlockType = BlockType(
+  literal = HCL_VARIABLE_IDENTIFIER,
+  args = 1,
+  properties = listOf(
+    TypeProperty,
+    VariableDefault,
+    DescriptionProperty,
+    SensitiveProperty,
+    NullableProperty,
+    EphemeralProperty
+  ).toMap()
+)
+
+internal val ComponentOutput: BlockType = BlockType(
+  literal = HCL_OUTPUT_IDENTIFIER,
+  args = 1,
+  properties = listOf(
+    TypeProperty,
+    ValueProperty,
+    DescriptionProperty,
+    SensitiveProperty,
+    EphemeralProperty
+  ).toMap()
+)
+
+internal val TfComponentRootBlocks: List<BlockType> = listOf(
+  ComponentBlockType,
+  RequiredProviders,
+  ComponentVariable,
+  ComponentOutput,
+  Locals
+)
+
 internal val TfComponentRootBlocksMap: Map<String, BlockType> = TfComponentRootBlocks.associateBy { it.literal }

@@ -45,6 +45,7 @@ internal object Constants {
   const val HCL_VERSION_IDENTIFIER: String = "version"
   const val HCL_DEFAULT_IDENTIFIER: String = "default"
   const val HCL_INPUTS_IDENTIFIER: String = "inputs"
+  const val HCL_TYPE_IDENTIFIER: String = "type"
 
   const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   const val LATEST_VERSION: String = "latest"
