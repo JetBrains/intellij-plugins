@@ -8,6 +8,7 @@ import com.intellij.codeInsight.navigation.getPsiElementPopup
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfigurationImpl
+import com.intellij.lang.ecmascript6.psi.impl.JSImportsCoroutineScope
 import com.intellij.lang.ecmascript6.psi.impl.TypeScriptImportPathBuilder
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
@@ -17,12 +18,16 @@ import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
+import com.intellij.model.Pointer
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
@@ -31,9 +36,14 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.util.concurrency.ThreadingAssertions
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.containers.ContainerUtil.emptyList
 import com.intellij.util.containers.ContainerUtil.map2SetNotNull
 import com.intellij.util.containers.MultiMap
+import com.intellij.util.containers.mapValues
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.angular2.cli.config.AngularConfigProvider
 import org.angular2.cli.config.AngularProject
 import org.angular2.codeInsight.Angular2DeclarationsScope
@@ -64,7 +74,7 @@ object Angular2FixesFactory {
   @TestOnly
   @NonNls
   @JvmField
-  val DECLARATION_TO_CHOOSE: Key<String> = Key.create<String>("declaration.to.choose")
+  val DECLARATION_TO_CHOOSE: Key<String> = Key.create("declaration.to.choose")
 
   fun getCreateInputTransformFixes(attribute: XmlAttribute, expressionType: String): List<LocalQuickFixAndIntentionActionOnPsiElement> {
     val descriptor = attribute.descriptor.asSafely<Angular2AttributeDescriptor>() ?: return emptyList()
@@ -90,33 +100,57 @@ object Angular2FixesFactory {
   }
 
   @JvmStatic
+  @RequiresEdt
   fun ensureDeclarationResolvedAfterCodeCompletion(element: PsiElement, editor: Editor) {
-    val candidates = getCandidatesForResolution(element, true)
-    if (!candidates.get(DeclarationProximity.IMPORTABLE).isEmpty()) {
-      delayCompletionAutoPopupOnImport(editor)
-      Angular2ActionFactory.createNgModuleImportAction(editor, element, true).execute()
-    }
-    else if (!candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE).isEmpty()) {
-      delayCompletionAutoPopupOnImport(editor)
-      selectAndRun(editor,
-                   Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable",
-                                          getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
-                   candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE)) { candidate ->
-        Angular2ActionFactory.createAddNgModuleDeclarationAction(editor, element, candidate, true)
+    val elementPtr = element.createSmartPointer()
+    JSImportsCoroutineScope.get(element.project).launch {
+      val candidatePtrs = readAction {
+        val element = elementPtr.dereference() ?: return@readAction null
+        getCandidatesForResolution(element, true).mapValues { it.second.createPointer() }
+      } ?: return@launch
+      if (!candidatePtrs.get(DeclarationProximity.IMPORTABLE).isEmpty()) {
+        delayCompletionAutoPopupOnImport(editor)
+        readAction {
+          val element = elementPtr.dereference() ?: return@readAction null
+          Angular2ActionFactory.createNgModuleImportAction(editor, element, true)
+        }?.let { action ->
+          withContext(Dispatchers.EDT) {
+            action.execute()
+          }
+        }
       }
-    }
-    else if (!candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE).isEmpty()) {
-      delayCompletionAutoPopupOnImport(editor)
-      selectAndRun(editor,
-                   Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable",
-                                          getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
-                   candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE)) { candidate ->
-        Angular2ActionFactory.createExportNgModuleDeclarationAction(editor, element, candidate, true)
+      else if (!candidatePtrs.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE).isEmpty()) {
+        delayCompletionAutoPopupOnImport(editor)
+        val commonName = readAction {
+          getCommonNameForDeclarations(candidatePtrs.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE).mapNotNull { it.dereference() })
+        }
+        selectAndRun(
+          editor, elementPtr,
+          Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable", commonName),
+          candidatePtrs.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE)
+        ) { candidate, element ->
+          Angular2ActionFactory.createAddNgModuleDeclarationAction(editor, element, candidate, true)
+        }
       }
-    } else {
-      // Show parameter info popup immediately
-      if (shouldPopupParameterInfoOnCompletion(element) && CodeInsightSettings.getInstance().AUTO_POPUP_PARAMETER_INFO) {
-        ShowParameterInfoHandler.invoke(element.project, editor, element.containingFile, -1, null, false)
+      else if (!candidatePtrs.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE).isEmpty()) {
+        delayCompletionAutoPopupOnImport(editor)
+        val commonName = readAction {
+          getCommonNameForDeclarations(candidatePtrs.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE).mapNotNull { it.dereference() })
+        }
+        selectAndRun(
+          editor, elementPtr,
+          Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable", commonName),
+          candidatePtrs.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE)
+        ) { candidate, element ->
+          Angular2ActionFactory.createExportNgModuleDeclarationAction(editor, element, candidate, true)
+        }
+      }
+      else readAction {
+        // Show parameter info popup immediately
+        val element = elementPtr.dereference() ?: return@readAction
+        if (shouldPopupParameterInfoOnCompletion(element) && CodeInsightSettings.getInstance().AUTO_POPUP_PARAMETER_INFO) {
+          ShowParameterInfoHandler.invoke(element.project, editor, element.containingFile, -1, null, false)
+        }
       }
     }
   }
@@ -342,49 +376,66 @@ object Angular2FixesFactory {
       Angular2Bundle.message("angular.entity.directive")
   }
 
-  private fun selectAndRun(
+  private suspend fun selectAndRun(
     editor: Editor,
+    elementPointer: Pointer<PsiElement>,
     @Nls title: String,
-    declarations: Collection<Angular2Declaration>,
-    actionFactory: (Angular2Declaration) -> QuestionAction?,
+    declarations: Collection<Pointer<out Angular2Declaration>>,
+    actionFactory: (Angular2Declaration, PsiElement) -> QuestionAction?,
   ) {
     if (declarations.isEmpty()) {
       return
     }
 
     if (declarations.size == 1) {
-      actionFactory(declarations.first())?.execute()
+      readAction {
+        val element = elementPointer.dereference() ?: return@readAction null
+        val declaration = declarations.first().dereference() ?: return@readAction null
+        actionFactory(declaration, element)
+      }?.let { action ->
+        withContext(Dispatchers.EDT) {
+          action.execute()
+        }
+      }
       return
     }
 
-    ThreadingAssertions.assertEventDispatchThread()
-    val elementMap = declarations
-      .mapNotNull { it.entitySource?.let { src -> Pair(src, it) } }
-      .toMap()
+    withContext(Dispatchers.EDT) {
+      ThreadingAssertions.assertEventDispatchThread()
+      readAction {
+        val declarations = declarations.mapNotNull { it.dereference() }
+        val elementMap = declarations
+          .mapNotNull { it.entitySource?.let { src -> Pair(src, it) } }
+          .toMap()
 
-    val processor = PsiElementProcessor<PsiElement> { element ->
-      elementMap[element]?.let(actionFactory)?.execute()
-      false
+        val context = elementPointer.dereference() ?: return@readAction
+        val processor = PsiElementProcessor<PsiElement> { element ->
+          elementMap[element]?.let {
+            actionFactory(it, context)
+          }?.execute()
+          false
+        }
+
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+          @Suppress("TestOnlyProblems")
+          processor.execute(
+            editor.getUserData(DECLARATION_TO_CHOOSE)
+              ?.let { name -> declarations.find { declaration -> declaration.getName() == name } }
+              ?.entitySource
+            ?: throw AssertionError(
+              "Declaration name must be specified in test mode. Available names: " +
+              declarations.filter { it.entitySource != null }.joinToString { it.getName() }
+            )
+          )
+          return@readAction
+        }
+        if (editor.isDisposed) return@readAction
+
+        getPsiElementPopup(elements = elementMap.keys.toTypedArray<PsiElement>(),
+                           renderer = ES6QualifiedNamedElementRenderer(),
+                           title = title, processor = processor)
+          .showInBestPositionFor(editor)
+      }
     }
-
-    if (ApplicationManager.getApplication().isUnitTestMode) {
-      @Suppress("TestOnlyProblems")
-      processor.execute(
-        editor.getUserData(DECLARATION_TO_CHOOSE)
-          ?.let { name -> declarations.find { declaration -> declaration.getName() == name } }
-          ?.entitySource
-        ?: throw AssertionError(
-          "Declaration name must be specified in test mode. Available names: " +
-          declarations.filter { it.entitySource != null }.joinToString { it.getName() }
-        )
-      )
-      return
-    }
-    if (editor.isDisposed) return
-
-    getPsiElementPopup(elements = elementMap.keys.toTypedArray<PsiElement>(),
-                       renderer = ES6QualifiedNamedElementRenderer(),
-                       title = title, processor = processor)
-      .showInBestPositionFor(editor)
   }
 }
