@@ -43,9 +43,9 @@ abstract class QodanaExternalProjectsImporter(
   suspend fun importProjects(moduleImportersService: QodanaModuleImportersService, project: Project) {
     if (shouldRun()) {
       val detectedFiles = moduleImportersService.getFilesForImporter(openProcessorClass)
-      if (detectedFiles.isNotEmpty()) {
-        withContext(Dispatchers.Default) {
-          unlinkRemovedProjectsForImport(detectedFiles, project)
+      withContext(Dispatchers.Default) {
+        unlinkRemovedProjectsForImport(detectedFiles, project)
+        if (detectedFiles.isNotEmpty()) {
           getNewProjectsToImport(detectedFiles, project)
             .forEach {
               LOG.info("Importing ${externalSystemUnlinkedProjectAware.systemId.id} project file: ${it.path}")
