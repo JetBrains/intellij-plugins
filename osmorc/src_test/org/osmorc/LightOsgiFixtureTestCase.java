@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.osmorc;
 
 import com.intellij.facet.FacetManager;
@@ -19,7 +19,6 @@ import org.osmorc.facet.OsmorcFacetType;
 import java.io.File;
 
 import static com.intellij.project.IntelliJProjectConfiguration.getModuleLibrary;
-import static com.intellij.project.IntelliJProjectConfiguration.getProjectLibrary;
 
 public abstract class LightOsgiFixtureTestCase extends LightJavaCodeInsightFixtureTestCase {
   private static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
@@ -29,7 +28,7 @@ public abstract class LightOsgiFixtureTestCase extends LightJavaCodeInsightFixtu
 
       PsiTestUtil.addProjectLibrary(model, "bndlib", getModuleLibrary("intellij.osgi.jps", "bndlib").getClassesPaths());
       PsiTestUtil.addProjectLibrary(model, "bndlib-repository", getModuleLibrary("intellij.osgi.jps", "bndlib-repository").getClassesPaths());
-      PsiTestUtil.addProjectLibrary(model, "plexus-utils", getProjectLibrary("plexus-utils").getClassesPaths());
+      PsiTestUtil.addProjectLibrary(model, "plexus-utils", getModuleLibrary("intellij.libraries.plexus.utils", "plexus-utils").getClassesPaths());
 
       String annotationsPath = PathManager.getJarPathForClass(NotNull.class);
       assertNotNull(annotationsPath);
