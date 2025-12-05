@@ -36,47 +36,4 @@ jvm_library(
     "@community//platform/forms_rt:java-guiForms-rt",
   ]
 )
-
-jvm_library(
-  name = "serial-monitor_test_lib",
-  visibility = ["//visibility:public"],
-  srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
-  associates = [":serial-monitor"],
-  deps = [
-    "@community//platform/analysis-api:analysis",
-    "@community//platform/core-api:core",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/platform-api:ide",
-    "@community//platform/lang-core",
-    "@community//platform/projectModel-api:projectModel",
-    "@community//platform/util:util-ui",
-    "@community//platform/core-ui",
-    "@community//platform/execution-impl",
-    "@community//platform/lang-api:lang",
-    "@community//platform/lang-impl",
-    "@community//libraries/guava",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//platform/statistics",
-    "@community//platform/statistics:statistics_test_lib",
-    "@community//libraries/jediterm-core",
-    "@community//libraries/jediterm-ui",
-    "@community//libraries/commons/io",
-    "@community//platform/testFramework",
-    "@community//platform/testFramework:testFramework_test_lib",
-    "@community//platform/testFramework/junit5",
-    "@community//platform/testFramework/junit5:junit5_test_lib",
-    "@ultimate_lib//:jetbrains-intellij-deps-j_serial_comm",
-    "@community//platform/execution",
-    "@community//platform/forms_rt:java-guiForms-rt",
-  ]
-)
 ### auto-generated section `build intellij.serial.monitor` end
-
-### auto-generated section `test intellij.serial.monitor` start
-load("@community//build:tests-options.bzl", "jps_test")
-
-jps_test(
-  name = "serial-monitor_test",
-  runtime_deps = [":serial-monitor_test_lib"]
-)
-### auto-generated section `test intellij.serial.monitor` end
