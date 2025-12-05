@@ -62,7 +62,7 @@ jvm_library(
     "@community//libraries/jackson/jackson",
     "@community//libraries/jackson/databind",
     "@community//libraries/commons/compress",
-    "@lib//:stream_ex",
+    "@community//libraries/stream",
     "@community//libraries/gson",
     "@community//platform/core-ui",
     "@community//platform/code-style-impl:codeStyle-impl",
