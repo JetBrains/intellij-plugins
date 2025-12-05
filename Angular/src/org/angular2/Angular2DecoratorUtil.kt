@@ -62,6 +62,7 @@ object Angular2DecoratorUtil {
   const val STYLE_URL_PROP: String = "styleUrl"
   const val STYLES_PROP: String = "styles"
   const val REQUIRED_PROP: String = "required"
+  const val IS_SIGNAL_PROP: String = "isSignal"
   const val OPTIONAL_PROP: String = "optional"
   const val ALIAS_PROP: String = "alias"
   const val TRANSFORM_PROP: String = "transform"

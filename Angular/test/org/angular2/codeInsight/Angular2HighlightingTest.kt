@@ -437,6 +437,9 @@ class Angular2HighlightingTest : Angular2TestCase("highlighting", true) {
   fun testListenerInNestedIfBlocks() =
     checkHighlighting(ANGULAR_CORE_20_1_4, extension = "ts")
 
+  fun testLibraryWithSignals() =
+    checkHighlighting(ANGULAR_CORE_20_1_4, configureFileName = "my-component.ts", dir = true)
+
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())

@@ -1,0 +1,41 @@
+/* Angular type checking code */
+/* Imports */
+import * as _i1 from "test";
+import * as _i2 from "@angular/core";
+
+/* TCB for my-component.ts */
+
+function _tcb1(this: MyComponent) {
+var _t1 = document.createElement("lib-test");
+var _t2 = null! as _i1.Test;
+_t2.inputSignal[_i2.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = 'foo';
+_t2.modelSignal[_i2.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = _i2.ɵunwrapWritableSignal(this.title);
+_t2["outputSignal"].subscribe(($event): any => {
+this.checkType($event);
+});
+_t2["modelSignal"].subscribe(($event): any => {
+this.title;
+});
+var _t3 = document.createElement("lib-test");
+var _t4 = null! as _i1.Test;
+_t4.modelSignal[_i2.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = this.title();
+_t4["modelSignal"].subscribe(($event): any => {
+this.checkType($event);
+});
+var _t5 = document.createElement("my-component");
+var _t6 = null! as MyComponent;
+_t6.inputSignal[_i2.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = 'foo';
+_t6.modelSignal[_i2.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = _i2.ɵunwrapWritableSignal(this.title);
+_t6["outputSignal"].subscribe(($event): any => {
+this.checkType($event);
+});
+_t6["modelSignal"].subscribe(($event): any => {
+this.title;
+});
+var _t7 = document.createElement("my-component");
+var _t8 = null! as MyComponent;
+_t8.modelSignal[_i2.ɵINPUT_SIGNAL_BRAND_WRITE_TYPE] = this.title();
+_t8["modelSignal"].subscribe(($event): any => {
+this.checkType($event);
+});
+}
