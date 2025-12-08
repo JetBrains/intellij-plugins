@@ -4,6 +4,8 @@ package org.intellij.terraform.terragrunt
 import com.intellij.lang.Language
 import com.intellij.testFramework.common.timeoutRunBlocking
 import com.intellij.testFramework.common.waitUntilAssertSucceeds
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import junit.framework.TestCase.assertNull
 import org.intellij.terraform.config.CompletionTestCase
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.hcl.HCLLanguage
@@ -34,7 +36,7 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     doBasicCompletionTest("generate = local.common.generate\n\"<caret>\" {}", TerragruntBlockKeywords)
   }
 
-  fun testKeywordCompletionInArray() {
+  fun testKeywordsCompletionInArray() {
     doBasicCompletionTest("""
       terraform {
         include_in_copy = [<caret>]
@@ -42,7 +44,7 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     """.trimIndent(), "null", "true", "false")
   }
 
-  fun testNotAllowedRootBlockInTerragrunt() {
+  fun testNotAllowedRootBlocksInTerragrunt() {
     val file = myFixture.configureByText("test.terragrunt.hcl", "<caret>")
     val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name)
       ?.filterNot { it == "terraform" || it == "locals" }
@@ -71,13 +73,13 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     assertContainsElements(completionVariants, "unit", "stack", "locals")
   }
 
-  fun testAutoInsertCompletionTest() {
-    doAutoInsertCompletionTest("incl<caret>", """
+  fun testAutoInsertCompletion() {
+    doAutoInsertCompletionTest(myFixture, TERRAGRUNT_MAIN_FILE, "incl<caret>", """
       include "" {
         path = ""
       }
     """.trimIndent())
-    doAutoInsertCompletionTest("gene<caret>", """
+    doAutoInsertCompletionTest(myFixture, TERRAGRUNT_MAIN_FILE, "gene<caret>", """
       generate "" {
         contents = ""
         path     = ""
@@ -86,18 +88,18 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     )
 
     // Terragrunt Stack files
-    doAutoInsertCompletionTest("sta<caret>", """
+    doAutoInsertCompletionTest(myFixture, TERRAGRUNT_STACK_FILE, "sta<caret>", """
       stack "" {
         path   = ""
         source = ""
       }
-    """.trimIndent(), TERRAGRUNT_STACK_FILE)
-    doAutoInsertCompletionTest("un<caret>", """
+    """.trimIndent())
+    doAutoInsertCompletionTest(myFixture, TERRAGRUNT_STACK_FILE, "un<caret>", """
       unit "" {
         path   = ""
         source = ""
       }
-    """.trimIndent(), TERRAGRUNT_STACK_FILE)
+    """.trimIndent())
   }
 
   fun testPropertiesCompletion() {
@@ -197,21 +199,25 @@ internal class TerragruntCompletionTest : CompletionTestCase() {
     doBasicCompletionTest("include \"root\" {\n  <caret>path = find_in_parent_folders(\"root.hcl\")\n}", emptyList())
   }
 
-  private fun doAutoInsertCompletionTest(textBefore: String, textAfter: String, file: String = this.fileName) {
-    myFixture.configureByText(file, textBefore)
-    val variants = myFixture.completeBasic()
-    assertNull(variants)
-
-    timeoutRunBlocking {
-      waitUntilAssertSucceeds("Cannot add required properties to the import block") {
-        myFixture.checkResult(textAfter)
-      }
-    }
-  }
-
   companion object {
     val TerragruntBlockKeywords: List<String> = TerragruntBlocksAndAttributes.map { it.name }
-
     val StackBlockKeywords: List<String> = StackRootBlocks.map { it.literal }
+  }
+}
+
+internal fun doAutoInsertCompletionTest(
+  myFixture: CodeInsightTestFixture,
+  fileName: String,
+  textBefore: String,
+  textAfter: String,
+) {
+  myFixture.configureByText(fileName, textBefore)
+  val variants = myFixture.completeBasic()
+  assertNull(variants)
+
+  timeoutRunBlocking {
+    waitUntilAssertSucceeds("Cannot add required properties to the Hcl block") {
+      myFixture.checkResult(textAfter)
+    }
   }
 }
