@@ -1,9 +1,15 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
-import com.intellij.codeInsight.completion.*
-import com.intellij.codeInsight.lookup.*
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementBuilder.create
+import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.codeInsight.lookup.LookupElementRenderer
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -13,7 +19,6 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.parentOfType
 import com.intellij.util.Plow.Companion.toPlow
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
@@ -26,23 +31,17 @@ import org.intellij.terraform.config.Constants.HCL_PROVISIONER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_RESOURCE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.buildLookupForProviderBlock
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.buildLookupForRequiredProvider
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getClearTextValue
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getLookupIcon
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.patterns.TfPsiPatterns
 import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
-import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersBlock
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformVariablesFile
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLTokenTypes
-import org.intellij.terraform.hcl.codeinsight.AfterCommaOrBracketPattern
-import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
-import org.intellij.terraform.hcl.codeinsight.HclKeywordsCompletionProvider
-import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
+import org.intellij.terraform.hcl.codeinsight.*
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Array
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Block
 import org.intellij.terraform.hcl.patterns.HCLPatterns.File
@@ -79,8 +78,8 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       .withParent(psiElement().and(IdentifierOrStringLiteral).afterSiblingSkipping2(WhiteSpace, IdentifierOrStringLiteralOrSimple))
       .withSuperParent(2, FileOrBlock), BlockTypeOrNameCompletionProvider)
 
-    extend(CompletionType.BASIC, TfPsiPatterns.RequiredProviderIdentifier, RequiredProviderCompletion)
-    extend(CompletionType.BASIC, TfPsiPatterns.IdentifierOfRequiredProviderProperty, RequiredProviderCompletion)
+    extend(CompletionType.BASIC, TfPsiPatterns.RequiredProviderIdentifier, TfRequiredProviderCompletion)
+    extend(CompletionType.BASIC, TfPsiPatterns.IdentifierOfRequiredProviderProperty, TfRequiredProviderCompletion)
 
     //region InBlock Property value
     extend(null, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
@@ -173,39 +172,6 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
 
       val hint = (TfModelHelper.getBlockProperties(block)[property.name] as? PropertyType)?.hint
       return hint is SimpleValueHint || hint is ReferenceHint
-    }
-  }
-
-  object RequiredProviderCompletion : TfCompletionProvider() {
-    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-      val element = parameters.originalPosition ?: return
-      val superParent = element.parent?.parent
-
-      // Completion of all types of providers
-      if (RequiredProvidersBlock.accepts(superParent)) {
-        val prefix = result.prefixMatcher.prefix
-        val providers = TypeModelProvider.getModel(element).allProviders()
-          .filter { it.type.startsWith(prefix) }
-          .map { buildLookupForRequiredProvider(it, element) }
-          .toList()
-
-        val sorter = CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("tf.providers.weigher") {
-          override fun weigh(element: LookupElement): Int {
-            val providerType = element.`object` as? ProviderType
-            return if (providerType?.tier in ProviderTier.PreferedProviders) 0 else 1
-          }
-        })
-        result.withRelevanceSorter(sorter).addAllElements(providers)
-      }
-      // Completion properties in the required provider type
-      else {
-        val parent = element.parentOfType<HCLObject>() ?: return
-        if (!TfPsiPatterns.RequiredProvidersProperty.accepts(parent.parent))
-          return
-
-        val properties = listOf("source", "version").map { PropertyType(it, Types.String) }.filter { parent.findProperty(it.name) == null }
-        result.addAllElements(properties.map { createPropertyOrBlockType(it) })
-      }
     }
   }
 

@@ -637,7 +637,7 @@ class TfReferencesTest : BasePlatformTestCase() {
     assertEquals("aws", requiredProvider.name)
 
     val requiredProviderBlock = requiredProvider.parentOfType<HCLBlock>()
-    assertTrue(TfPsiPatterns.RequiredProvidersBlock.accepts(requiredProviderBlock))
+    assertTrue(TfPsiPatterns.TfRequiredProvidersBlock.accepts(requiredProviderBlock))
   }
 
   private val DLR = "$"

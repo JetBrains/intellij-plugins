@@ -110,12 +110,12 @@ object TfPsiPatterns {
     .and(RootBlock)
     .with(createBlockPattern(HCL_TERRAFORM_IDENTIFIER))
 
-  val RequiredProvidersBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
+  val TfRequiredProvidersBlock: PsiElementPattern.Capture<HCLBlock> = PlatformPatterns.psiElement(HCLBlock::class.java)
     .with(createBlockPattern(HCL_TERRAFORM_REQUIRED_PROVIDERS))
     .withSuperParent(2, TerraformRootBlock)
 
   val RequiredProvidersProperty: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
-    .withSuperParent(2, RequiredProvidersBlock)
+    .withSuperParent(2, TfRequiredProvidersBlock)
 
   val RequiredProviderIdentifier: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
     .inFile(TerraformConfigFile)

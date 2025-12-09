@@ -33,7 +33,7 @@ import org.intellij.terraform.config.Constants.HCL_TERRAFORM_REQUIRED_PROVIDERS
 import org.intellij.terraform.config.inspection.AddResourcePropertiesFix
 import org.intellij.terraform.config.inspection.MissingPropertyVisitor
 import org.intellij.terraform.config.model.ProviderType
-import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersBlock
+import org.intellij.terraform.config.patterns.TfPsiPatterns.TfRequiredProvidersBlock
 import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLTokenTypes
@@ -133,7 +133,7 @@ class TfInsertHandlerService(val project: Project, val coroutineScope: Coroutine
     val terraformBlock = (existingTerraformBlock
                           ?: file.addBefore(elementGenerator.createBlock(HCL_TERRAFORM_IDENTIFIER), file.firstChild)) as HCLBlock
     val requiredProvidersBlock = (PsiTreeUtil.findChildrenOfType(terraformBlock, HCLBlock::class.java).firstOrNull {
-      RequiredProvidersBlock.accepts(it)
+      TfRequiredProvidersBlock.accepts(it)
     } ?: terraformBlock.`object`?.addBefore(
       elementGenerator.createBlock(HCL_TERRAFORM_REQUIRED_PROVIDERS), terraformBlock.`object`?.lastChild
     )) as HCLBlock

@@ -204,7 +204,7 @@ internal object HCLPsiUtil {
 
     val requiredProvidersObject = providerProperty.parent as? HCLObject ?: return null
     val providerBlock = requiredProvidersObject.parent as? HCLBlock ?: return null
-    if (!TfPsiPatterns.RequiredProvidersBlock.accepts(providerBlock)) {
+    if (!TfPsiPatterns.TfRequiredProvidersBlock.accepts(providerBlock)) {
       return null
     }
     return providerProperty

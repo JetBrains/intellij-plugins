@@ -35,7 +35,7 @@ import org.intellij.terraform.config.TerraformLanguage
 import org.intellij.terraform.config.model.local.TfLocalSchemaService
 import org.intellij.terraform.config.model.version.VersionConstraint
 import org.intellij.terraform.config.patterns.TfPsiPatterns
-import org.intellij.terraform.config.patterns.TfPsiPatterns.RequiredProvidersBlock
+import org.intellij.terraform.config.patterns.TfPsiPatterns.TfRequiredProvidersBlock
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.hcl.psi.*
@@ -360,7 +360,7 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     val terraformBlocks = getDefinedHclBlocks(HCL_TERRAFORM_IDENTIFIER, numberOfArguments = 0)
 
     val blockWithRequiredProviders = terraformBlocks.firstOrNull { block ->
-      block.childrenOfType<HCLBlock>().any { RequiredProvidersBlock.accepts(it) }
+      block.childrenOfType<HCLBlock>().any { TfRequiredProvidersBlock.accepts(it) }
     }
     return blockWithRequiredProviders ?: terraformBlocks.firstOrNull()
   }
