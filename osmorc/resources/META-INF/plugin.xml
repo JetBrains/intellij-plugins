@@ -49,6 +49,9 @@
 
   <dependencies>
     <plugin id="com.intellij.java"/>
+    <!-- editor-fold desc="Generated dependencies - do not edit manually" -->
+    <module name="intellij.libraries.plexus.utils"/>
+    <!-- end editor-fold -->
   </dependencies>
 
   <content namespace="jetbrains">
