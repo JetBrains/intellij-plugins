@@ -1,12 +1,13 @@
 package org.jetbrains.qodana.staticAnalysis.script
 
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
-import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.platform.backend.observation.ActivityTracker
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.TestLoggerFactory.TestLoggerAssertionError
 import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.rethrowLoggedErrorsIn
@@ -161,6 +162,7 @@ class LocalChangesScriptTest : LocalChangesScriptBaseTest() {
 
   @Test
   fun `changes in generated files, do not analyze`() {
+    IndexingTestUtil.waitUntilIndexesAreReady(project)
     runBlocking {
       markGenFolderAsGeneratedSources(module)
       updateQodanaConfig {
