@@ -68,6 +68,8 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
     HclRootBlockCompletionProvider.registerTo(this, TerraformConfigFile)
     HclBlockPropertiesCompletionProvider.registerTo(this, TerraformConfigFile)
 
+    TfRequiredProvidersCompletion.registerTo(this)
+
     // Block type or name
     extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
       .inFile(TerraformConfigFile)
@@ -77,9 +79,6 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       .inFile(TerraformConfigFile)
       .withParent(psiElement().and(IdentifierOrStringLiteral).afterSiblingSkipping2(WhiteSpace, IdentifierOrStringLiteralOrSimple))
       .withSuperParent(2, FileOrBlock), BlockTypeOrNameCompletionProvider)
-
-    extend(CompletionType.BASIC, TfPsiPatterns.RequiredProviderIdentifier, TfRequiredProviderCompletion)
-    extend(CompletionType.BASIC, TfPsiPatterns.IdentifierOfRequiredProviderProperty, TfRequiredProviderCompletion)
 
     //region InBlock Property value
     extend(null, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)

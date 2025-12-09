@@ -4,7 +4,6 @@ package org.intellij.terraform.config.patterns
 import com.intellij.openapi.util.Ref
 import com.intellij.patterns.*
 import com.intellij.patterns.StandardPatterns.or
-import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
@@ -26,8 +25,6 @@ import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.TFVARS_EXTENSION
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TerraformLanguage
-import org.intellij.terraform.hcl.HCLElementTypes
-import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.patterns.HCLPatterns
 import org.intellij.terraform.hcl.psi.*
 
@@ -116,15 +113,6 @@ object TfPsiPatterns {
 
   val RequiredProvidersProperty: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
     .withSuperParent(2, TfRequiredProvidersBlock)
-
-  val RequiredProviderIdentifier: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-    .inFile(TerraformConfigFile)
-    .withParent(HCLPatterns.Object)
-    .withSuperParent(2, RequiredProvidersBlock)
-
-  val IdentifierOfRequiredProviderProperty: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement().withElementType(HCLElementTypes.ID)
-    .inFile(TerraformConfigFile)
-    .inside(HCLPatterns.Object.withParent(RequiredProvidersProperty))
 
   val RequiredProvidersSource: PsiElementPattern.Capture<HCLProperty> = PlatformPatterns.psiElement(HCLProperty::class.java)
     .withSuperParent(2, RequiredProvidersProperty)

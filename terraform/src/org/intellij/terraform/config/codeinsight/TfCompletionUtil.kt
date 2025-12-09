@@ -13,10 +13,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.util.childrenOfType
 import org.intellij.terraform.TerraformIcons
 import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
@@ -30,15 +27,17 @@ import org.intellij.terraform.config.Constants.HCL_VAR_IDENTIFIER
 import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
 import org.intellij.terraform.config.model.*
-import org.intellij.terraform.config.patterns.TfPsiPatterns
-import org.intellij.terraform.config.psi.TfElementGenerator
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
 import org.intellij.terraform.hcl.Icons
-import org.intellij.terraform.hcl.psi.*
+import org.intellij.terraform.hcl.psi.HCLIdentifier
+import org.intellij.terraform.hcl.psi.HCLObject
+import org.intellij.terraform.hcl.psi.HCLPsiUtil
+import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
 import org.intellij.terraform.opentofu.OpenTofuConstants.OpenTofuScopes
 import org.intellij.terraform.opentofu.OpenTofuFileType
+import org.intellij.terraform.stack.component.TfComponentFileType
 import java.util.*
 import javax.swing.Icon
 
@@ -103,22 +102,7 @@ internal object TfCompletionUtil {
       .withInsertHandler(BlockSubNameInsertHandler(provider))
       .withPsiElement(element.project.service<HclFakeElementPsiFactory>().createFakeHclBlock(provider, element.containingFile.originalFile))
 
-  fun buildLookupForRequiredProvider(provider: ProviderType, element: PsiElement): LookupElement =
-    createProviderLookupElement(provider, element)
-      .withInsertHandler { context, _ ->
-        val project = context.project
-        val providerProperty = TfElementGenerator(project).createRequiredProviderProperty(provider)
-        val document = context.document
-        document.replaceString(context.startOffset, context.tailOffset, providerProperty.text)
-        PsiDocumentManager.getInstance(project).commitDocument(document)
-
-        // It's safe to assume the current file contains a Terraform block with 'required_providers'
-        val terraformBlock = context.file.childrenOfType<HCLBlock>().firstOrNull { TfPsiPatterns.TerraformRootBlock.accepts(it) }
-                             ?: return@withInsertHandler
-        CodeStyleManager.getInstance(project).reformatText(terraformBlock.containingFile, listOf(terraformBlock.textRange))
-      }
-
-  private fun createProviderLookupElement(provider: ProviderType, element: PsiElement): LookupElementBuilder =
+  fun createProviderLookupElement(provider: ProviderType, element: PsiElement): LookupElementBuilder =
     create(provider, provider.type)
       .withTailText(" ${provider.fullName}")
       .withTypeText(provider.version)
@@ -149,13 +133,12 @@ internal object TfCompletionUtil {
   internal fun buildProviderTypeText(provider: ProviderType): String =
     """${provider.fullName}${if (provider.version.isNotBlank()) " ${provider.version}" else ""}"""
 
-
   @NlsSafe
   internal fun buildResourceDisplayString(block: BlockType, providerLocalNames: Map<String, String>): String {
     return when (block) {
       is ResourceOrDataSourceType -> {
         val providerLocalName = providerLocalNames[block.provider.fullName] ?: return block.type
-        return "${providerLocalName}_${TfTypeModel.getResourceName(block.type)}"
+        "${providerLocalName}_${TfTypeModel.getResourceName(block.type)}"
       }
       is ProviderType -> {
         val providerLocalName = providerLocalNames[block.fullName] ?: return block.type
@@ -168,22 +151,21 @@ internal object TfCompletionUtil {
   }
 
   @NlsSafe
-  internal fun buildResourceFullString(block: BlockType): String {
-    return when (block) {
-      is ResourceOrDataSourceType -> {
-        return "${block.type} (${buildProviderTypeText(block.provider)})"
-      }
-      is ProviderType -> {
-        return "${block.fullName} ${block.version}"
-      }
-      else -> {
-        block.presentableText
-      }
+  internal fun buildResourceFullString(block: BlockType): String = when (block) {
+    is ResourceOrDataSourceType -> {
+      "${block.type} (${buildProviderTypeText(block.provider)})"
+    }
+    is ProviderType -> {
+      "${block.fullName} ${block.version}"
+    }
+    else -> {
+      block.presentableText
     }
   }
 
   fun getLookupIcon(element: PsiElement): Icon = when (element.containingFile.fileType) {
     is TerraformFileType -> TerraformIcons.Terraform
+    is TfComponentFileType -> TerraformIcons.Terraform
     is OpenTofuFileType -> TerraformIcons.Opentofu
     else -> Icons.FileTypes.HCL
   }
