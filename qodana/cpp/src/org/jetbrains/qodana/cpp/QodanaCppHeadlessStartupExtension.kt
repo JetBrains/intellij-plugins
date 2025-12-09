@@ -1,6 +1,5 @@
 package org.jetbrains.qodana.cpp
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.PlatformUtils
@@ -9,12 +8,13 @@ import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceManager
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceState
 import com.intellij.clion.radler.core.inspections.RadHeadlessStartupExtension
+import com.intellij.openapi.diagnostic.logger
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 
 class QodanaCppHeadlessStartupExtension : RadHeadlessStartupExtension {
   companion object {
-    val LOG = Logger.getInstance(QodanaCppHeadlessStartupExtension::class.java)
+    private val LOG = logger<QodanaCppHeadlessStartupExtension>()
   }
 
   override suspend fun afterCidrWorkspacesReady(project: Project) {
@@ -39,7 +39,7 @@ class QodanaCppHeadlessStartupExtension : RadHeadlessStartupExtension {
       throw QodanaException("Failed to load project: all supported build systems failed to load")
     }
 
-    val requestedCMakeProfile = requestedCMakeProfileName()
+    val requestedCMakeProfile = qodanaConfig.cpp?.cmakePreset
     if (requestedCMakeProfile != null) {
       val cmakeWorkspace = CMakeWorkspace.getInstance(project)
       val cmakeWorkspaceState = wsManager.workspaces[cmakeWorkspace]

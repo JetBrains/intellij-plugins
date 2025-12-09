@@ -20,5 +20,10 @@
     <orderEntry type="module" module-name="intellij.cidr.workspaceModel" />
     <orderEntry type="module" module-name="intellij.clion.radler.core" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" />
+    <orderEntry type="module" module-name="intellij.platform.ide.core.impl" />
+    <orderEntry type="module" module-name="intellij.clion.makefile" />
+    <orderEntry type="module" module-name="intellij.cidr.execution" />
+    <orderEntry type="module" module-name="intellij.clion.compdb" />
+    <orderEntry type="module" module-name="intellij.clion.meson" />
   </component>
 </module>
