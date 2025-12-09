@@ -23,7 +23,7 @@ interface QDCloudLinterProjectApi {
 
 internal suspend fun obtainQodanaCloudProjectApi(): QDCloudResponse<QDCloudLinterProjectApi>? {
   val token = qodanaEnv().QODANA_TOKEN.value
-  if (token == null) {
+  if (token.isNullOrEmpty()) {
     LOG.info("${qodanaEnv().QODANA_TOKEN.key} environment variable is not defined")
     return null
   }
