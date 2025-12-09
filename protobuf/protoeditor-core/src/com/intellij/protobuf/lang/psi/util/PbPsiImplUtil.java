@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.StubBuildCachedValuesManager.StubBuildCachedValueProvider;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -31,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import static com.intellij.psi.stubs.StubBuildCachedValuesManager.getCachedValueStubBuildOptimized;
 
 /**
  * This class contains static utility methods that are used by various PSI implementations.
@@ -60,12 +63,14 @@ public final class PbPsiImplUtil {
   }
 
   public static @Nullable QualifiedName getQualifiedName(final PbSymbol element) {
-    return CachedValuesManager.getCachedValue(
-        element,
-        () ->
-            Result.create(
-              calculateQualifiedName(element), PbCompositeModificationTracker.byElement(element)));
+    return getCachedValueStubBuildOptimized(element, QUALIFIED_NAME_PROVIDER_NEW);
   }
+
+  private static final StubBuildCachedValueProvider<QualifiedName, PbSymbol>
+    QUALIFIED_NAME_PROVIDER_NEW = new StubBuildCachedValueProvider<>(
+    "protobuf.qualifiedName",
+    element -> Result.create(calculateQualifiedName(element), PbCompositeModificationTracker.byElement(element))
+  );
 
   private static @Nullable QualifiedName calculateQualifiedName(PbSymbol element) {
     String name = element.getName();
