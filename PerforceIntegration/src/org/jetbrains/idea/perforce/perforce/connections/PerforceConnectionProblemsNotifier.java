@@ -12,6 +12,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.impl.GenericNotifierImpl;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -144,10 +145,24 @@ public final class PerforceConnectionProblemsNotifier extends GenericNotifierImp
     });
   }
 
-  public static void showSingleConnectionState(Project project, final P4RootsInformation checkerResults) {
+  public static void showSingleConnectionState(@NotNull Project project, @NotNull P4RootsInformation checkerResults) {
     if (!checkerResults.hasAnyErrors() && !checkerResults.hasNotAuthorized() && !checkerResults.hasNoConnections()) {
-      Messages.showMessageDialog(project, PerforceBundle.message("connection.successful"), PerforceBundle.message("connection.state.title"), Messages.getInformationIcon());
-    } else {
+      Messages.showMessageDialog(project, PerforceBundle.message("connection.successful"), PerforceBundle.message("connection.state.title"),
+                                 Messages.getInformationIcon());
+    }
+    else {
+      String results = getSingleConnectionState(checkerResults);
+      if (results.isBlank()) return;
+
+      Messages.showMessageDialog(results, PerforceBundle.message("connection.problems.title"), Messages.getErrorIcon());
+    }
+  }
+
+  public static @NotNull @NlsSafe String getSingleConnectionState(@NotNull P4RootsInformation checkerResults) {
+    if (!checkerResults.hasAnyErrors() && !checkerResults.hasNotAuthorized() && !checkerResults.hasNoConnections()) {
+      return "";
+    }
+    else {
       final @Nls StringBuilder sb = new StringBuilder(PerforceBundle.message("connection.problems.message")).append(NEW_LINE_CHAR);
       final MultiMap<P4Connection, VcsException> errors = checkerResults.getErrors();
       if (checkerResults.hasNoConnections()) {
@@ -172,7 +187,7 @@ public final class PerforceConnectionProblemsNotifier extends GenericNotifierImp
           sb.append(root.getPath()).append(NEW_LINE_CHAR);
         }
       }
-      Messages.showMessageDialog(sb.toString(), PerforceBundle.message("connection.problems.title"), Messages.getErrorIcon());
+      return sb.toString();
     }
   }
 

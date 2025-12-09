@@ -117,6 +117,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <vcs name="Perforce" vcsClass="org.jetbrains.idea.perforce.application.PerforceVcs" displayName="Perforce"/>
+    <checkoutProvider implementation="org.jetbrains.idea.perforce.checkout.PerforceCheckoutProvider"/>
     <projectConfigurable id="vcs.Perforce" key="settings.perforce.option.group" instance="org.jetbrains.idea.perforce.perforce.PerforceConfigurable"
                          parentId="project.propVCSSupport.Mappings" groupWeight="-500"/>
     <vcs.changeListDecorator implementation="org.jetbrains.idea.perforce.application.PerforceLocalChangeListDecorator"/>

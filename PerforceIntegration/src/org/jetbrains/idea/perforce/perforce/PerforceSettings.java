@@ -80,7 +80,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
 
   public boolean useP4CONFIG = true;
   public boolean useP4IGNORE = true;
-  public String port = "<perforce_server>:1666";
+  public String port = PerforceBundle.message("settings.port.placeholder");
   public String client = "";
   public String user = "";
   public boolean showCmds = false;
