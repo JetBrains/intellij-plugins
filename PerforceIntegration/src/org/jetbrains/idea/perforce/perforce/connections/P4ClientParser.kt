@@ -8,6 +8,7 @@ import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.vcsUtil.VcsFileUtil
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.idea.perforce.perforce.ConnectionId
 import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
@@ -83,7 +84,9 @@ class P4ClientParser {
       return args.toTypedArray()
   }
 
-  private fun parseClientLine(line: String, parameters: P4ConnectionParameters): PerforceClient? {
+  @VisibleForTesting
+  @ApiStatus.Internal
+  fun parseClientLine(line: String, parameters: P4ConnectionParameters): PerforceClient? {
     val matchResult = CLIENT_REGEX.find(line)
     if (matchResult == null) return null
 
@@ -102,6 +105,6 @@ class P4ClientParser {
 
   companion object {
     private val LOG = logger<P4ClientParser>()
-    private val CLIENT_REGEX = """Client (\S+)\s+(\d+/\d+/\d+)\s+root (\S+) '(.+)'""".toRegex()
+    private val CLIENT_REGEX = """Client (\S+)\s+(\d+/\d+/\d+)\s+root (\S+) '(.*)'""".toRegex()
   }
 }
