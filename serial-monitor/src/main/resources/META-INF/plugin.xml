@@ -22,6 +22,10 @@
 
     ]]></description>
   <change-notes><![CDATA[
+    <b>2025.3.2</b>
+    <ul>
+      <li>Updated jSerialComm to 2.11.4</li>
+    </ul>
     <b>2025.3</b>
     <ul>
       <li>Migrated to the jSerialComm library</li>
