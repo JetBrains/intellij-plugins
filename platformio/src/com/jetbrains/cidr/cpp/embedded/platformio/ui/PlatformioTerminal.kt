@@ -11,7 +11,7 @@ import com.intellij.execution.ui.RunContentManager
 import com.intellij.icons.AllIcons
 import com.intellij.ide.ActivityTracker
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.application.UiWithModelAccess
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAwareAction
@@ -97,7 +97,7 @@ fun doRun(service: PlatformioService,
         e.coroutineScope.launch(Dispatchers.IO) {
           processHandler.destroyProcess()
           if (processHandler.waitFor(TIMEOUT_MS)) {
-            withContext(Dispatchers.UiWithModelAccess) {
+            withContext(Dispatchers.EDT) {
               doRun(service, text, commandLine, reloadProject)
             }
           }

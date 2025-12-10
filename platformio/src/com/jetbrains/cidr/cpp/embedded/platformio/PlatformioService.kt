@@ -2,7 +2,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.application.UiWithModelAccess
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.*
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
@@ -147,7 +147,7 @@ class PlatformioService(val project: Project, val cs: CoroutineScope) : Persiste
   override fun getStateModificationCount(): Long = stateModCounter.get()
 
   fun refreshProject(cleanCache: Boolean) {
-    cs.launch(Dispatchers.UiWithModelAccess) {
+    cs.launch(Dispatchers.EDT) {
       ensureProjectIsTrusted(project)
       writeAction {
         val policy = if (cleanCache) PlatformioProjectResolvePolicyCleanCache else PlatformioProjectResolvePolicyPreserveCache
@@ -158,7 +158,7 @@ class PlatformioService(val project: Project, val cs: CoroutineScope) : Persiste
   }
 
   fun initializeProject() {
-    cs.launch(Dispatchers.UiWithModelAccess) {
+    cs.launch(Dispatchers.EDT) {
       ensureProjectIsTrusted(project)
       writeAction {
         val policy = PlatformioProjectResolvePolicyInitialize
