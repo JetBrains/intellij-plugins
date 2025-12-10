@@ -338,14 +338,14 @@ class QodanaConfigTest {
     paths: List<String> = emptyList(),
   ) {
     val pathPart = if (paths.isNotEmpty()) {
-      "paths:\n" + paths.joinToString(separator = "\n") { "            - $it" }
+      "          paths:\n" + paths.joinToString(separator = "\n") { "            - $it" }
     }
     else ""
     val config = load("""
       version: "1.0"
       $name:
         - name: InspectionName
-          $pathPart
+${pathPart.prependIndent("")}
     """.trimIndent())
     assertEquals(listOf(InspectScope("InspectionName", paths, emptyList())), fieldSelector.invoke(config))
   }
@@ -362,6 +362,22 @@ class QodanaConfigTest {
       profile:
         name: My Profile
         path: profiles/custom.xml
+        groups:
+          - groupId: Group1
+            groups:
+              - "#category:Security"
+            inspections:
+              - SomeInspection
+        inspections:
+          - group: Group1
+            enabled: true
+          - inspection: SomeInspection
+            enabled: true
+            severity: ERROR
+            ignore:
+             - src
+            options:
+             option1: value1
       include:
         - name: SomeInspection
           paths:
@@ -392,6 +408,16 @@ class QodanaConfigTest {
     // profile
     assertEquals("My Profile", config.profile.base.name)
     assertEquals("profiles/custom.xml", config.profile.base.path)
+    assertEquals(1, config.profile.groups.size)
+    assertEquals(1, config.profile.groups[0].inspections.size)
+    assertEquals("SomeInspection", config.profile.groups[0].inspections[0])
+    assertEquals(1, config.profile.groups[0].groups.size)
+    assertEquals("#category:Security", config.profile.groups[0].groups[0])
+    assertEquals(2, config.profile.inspections.size)
+    assertEquals(true, config.profile.inspections[0].enabled)
+    assertEquals("ERROR", config.profile.inspections[1].severity)
+    assertEquals(listOf("src"), config.profile.inspections[1].ignore)
+    assertEquals(mapOf("option1" to "value1"), config.profile.inspections[1].options)
 
     // include/exclude
     assertEquals(1, config.include.size)
