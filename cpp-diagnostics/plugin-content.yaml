@@ -1,0 +1,6 @@
+- name: lib/clion-diagnostics.jar
+  modules:
+  - name: intellij.clion.diagnostics
+  contentModules:
+  - name: intellij.clion.diagnostics.cmake
+  - name: intellij.clion.diagnostics.docker

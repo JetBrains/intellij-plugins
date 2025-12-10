@@ -1,8 +1,6 @@
 - name: lib/clion-embedded-platformio.jar
-  projectLibraries:
-  - name: Java-WebSocket
-    files:
-    - name: $MAVEN_REPOSITORY$/org/java-websocket/Java-WebSocket/1/Java-WebSocket-1.jar
-    reason: <- intellij.clion.embedded.platformio
   modules:
   - name: intellij.clion.embedded.platformio
+- name: lib/modules/intellij.clion.embedded.platformio.terminal.jar
+  contentModules:
+  - name: intellij.clion.embedded.platformio.terminal
