@@ -13,22 +13,104 @@
             "name": {
               "description": "The profile name (embedded or located in the project)",
               "type": "string"
-            }
-          },
-          "required": ["name"],
-          "additionalProperties": false
-        },
-        {
-          "properties": {
+            },
             "path": {
               "description": "The path to the profile file relative to the project root",
               "type": "string"
+            },
+            "base": {
+              "type": "object",
+              "description": "Base profile to inherit from (by name or path)",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Base profile name"
+                },
+                "path": {
+                  "type": "string",
+                  "description": "Base profile path relative to the project root"
+                }
+              },
+              "additionalProperties": false
+            },
+            "groups": {
+              "type": "array",
+              "description": "Inspection groups definitions",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/definitions/inspectionGroup"
+              }
+            },
+            "inspections": {
+              "type": "array",
+              "description": "Inspection-specific configuration entries",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/definitions/inspectionConfig"
+              }
             }
           },
-          "required": ["path"],
           "additionalProperties": false
         }
       ]
+    },
+    "inspectionGroup": {
+      "type": "object",
+      "description": "Groups of inspections to run together",
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "description": "The identifier of the inspection group"
+        },
+        "inspections": {
+          "type": "array",
+          "minItems": 0,
+          "items": { "type": "string" },
+          "description": "Names of inspections to include in the group"
+        },
+        "groups": {
+          "type": "array",
+          "minItems": 0,
+          "items": { "type": "string" },
+          "description": "IDs of inspection groups to include in the group"
+        }
+      },
+      "required": ["groupId"],
+      "additionalProperties": false
+    },
+    "inspectionConfig": {
+      "type": "object",
+      "description": "Inspection-specific configuration entries",
+      "properties": {
+        "inspection": {
+          "type": ["string", "null"],
+          "description": "The ID of the inspection to configure"
+        },
+        "group": {
+          "type": ["string", "null"],
+          "description": "Group ID to configure"
+        },
+        "enabled": {
+          "type": ["boolean", "null"],
+          "description": "Whether the inspection (or group) is enabled or disabled"
+        },
+        "severity": {
+          "type": ["string", "null"],
+          "description": "The severity level to assign"
+        },
+        "ignore": {
+          "type": "array",
+          "minItems": 0,
+          "items": { "type": "string" },
+          "description": "Paths or patterns to ignore for this inspection"
+        },
+        "options": {
+          "type": ["object", "null"],
+          "description": "Key-value options for this inspection",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
     },
     "include": {
       "description": "The inspections to run in addition to those from the profile",
@@ -525,6 +607,12 @@
     "image": {
       "description": "The docker image to be used for analysis execution",
       "type": "string"
+    },
+    "imports": {
+      "description": "Paths to other configuration files to import",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type":  "string" }
     },
     "withinDocker": {
       "description": "Defines if analysis is performed within a docker container or not",

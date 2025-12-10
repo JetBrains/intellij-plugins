@@ -39,6 +39,8 @@ object QodanaYamlReader {
     roots.add("image") // qodana-cli
     roots.add("withinDocker") // qodana-cli
 
+    roots.add("imports") // for GPC
+
     roots.addAll(knownProps)
 
     roots
