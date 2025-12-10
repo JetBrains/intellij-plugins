@@ -8,9 +8,9 @@
     <plugin id="intellij.webpack"/>
     <plugin id="org.intellij.plugins.postcss"/>
     <module name="intellij.spellchecker"/>
-    <!-- editor-fold desc="Generated dependencies - do not edit manually" -->
+    <!-- region Generated dependencies - do not edit manually -->
     <module name="intellij.libraries.commons.text"/>
-    <!-- end editor-fold -->
+    <!-- endregion -->
   </dependencies>
 
   <extensionPoints>
