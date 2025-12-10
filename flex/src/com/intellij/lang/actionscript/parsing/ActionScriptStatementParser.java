@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.actionscript.parsing;
 
 import com.intellij.lang.PsiBuilder;
@@ -6,7 +6,10 @@ import com.intellij.lang.WhitespacesBinders;
 import com.intellij.lang.actionscript.ActionScriptElementTypes;
 import com.intellij.lang.actionscript.ActionScriptInternalElementTypes;
 import com.intellij.lang.actionscript.ActionScriptSpecificStubElementTypes;
-import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSKeywordSets;
+import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.JavaScriptParserBundle;
 import com.intellij.lang.javascript.parsing.FunctionParser;
 import com.intellij.lang.javascript.parsing.StatementParser;
 import com.intellij.psi.tree.IElementType;
@@ -341,5 +344,20 @@ public final class ActionScriptStatementParser extends StatementParser<ActionScr
       builder.advanceLexer();
     }
     return parseForLoopHeaderCondition();
+  }
+
+  @Override
+  public boolean parseBlock() {
+    if (builder.getTokenType() != JSTokenTypes.LBRACE) {
+      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.lbrace"));
+      return false;
+    }
+    PsiBuilder.Marker mark = builder.mark();
+    Boolean wasBlockBodyContext = builder.getUserData(IS_BLOCK_BODY_CONTEXT);
+    builder.putUserData(IS_BLOCK_BODY_CONTEXT, Boolean.TRUE);
+    parseBlockAndAttachStatementsDirectly();
+    builder.putUserData(IS_BLOCK_BODY_CONTEXT, wasBlockBodyContext);
+    mark.done(ActionScriptElementTypes.BLOCK_STATEMENT);
+    return true;
   }
 }

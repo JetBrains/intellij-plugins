@@ -21,6 +21,6 @@ JSFile:ConstInFor.js2
     PsiElement(JS:SEMICOLON)(';')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')

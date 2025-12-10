@@ -19,7 +19,7 @@ JSFile:XmlAttributeSelectionInWithStatement.js2
       PsiElement(JS:IDENTIFIER)('a')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       JSExpressionStatement

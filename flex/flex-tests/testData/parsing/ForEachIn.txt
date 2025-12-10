@@ -75,7 +75,7 @@ JSFile:ForEachIn.js2
       PsiElement(JS:IDENTIFIER)('obj')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       JSExpressionStatement

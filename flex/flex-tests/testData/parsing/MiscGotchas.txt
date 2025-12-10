@@ -191,13 +191,13 @@ JSFile:MiscGotchas.js2
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiWhiteSpace('\n      ')
           JSTryStatement
             PsiElement(JS:TRY_KEYWORD)('try')
             PsiWhiteSpace(' ')
-            JSBlockStatement
+            ActionScriptBlockStatement
               PsiElement(JS:LBRACE)('{')
               PsiWhiteSpace(' \n        ')
               JSImportStatement
@@ -254,7 +254,7 @@ JSFile:MiscGotchas.js2
               PsiWhiteSpace(' ')
               PsiElement(JS:RPAR)(')')
               PsiWhiteSpace(' ')
-              JSBlockStatement
+              ActionScriptBlockStatement
                 PsiElement(JS:LBRACE)('{')
                 PsiElement(JS:RBRACE)('}')
           PsiWhiteSpace('\n    ')
@@ -333,7 +333,7 @@ JSFile:MiscGotchas.js2
       PsiElement(JS:IDENTIFIER)('Object')
     PsiElement(JS:EXCL)('!')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       JSVarStatement

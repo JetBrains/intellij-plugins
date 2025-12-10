@@ -25,7 +25,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
     PsiWhiteSpace('\n')
@@ -57,7 +57,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
         PsiElement(JS:LPAR)('(')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
     PsiWhiteSpace('\n')

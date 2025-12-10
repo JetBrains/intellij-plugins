@@ -42,7 +42,7 @@ JSFile:E4X2.js2
       PsiElement(JS:IDENTIFIER)('x')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       JSExpressionStatement
@@ -164,7 +164,7 @@ JSFile:E4X2.js2
       PsiElement(JS:IDENTIFIER)('xml')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       JSExpressionStatement

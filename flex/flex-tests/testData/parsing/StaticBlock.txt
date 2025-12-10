@@ -14,7 +14,7 @@ JSFile:StaticBlock.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiWhiteSpace('\n      ')
         JSVarStatement

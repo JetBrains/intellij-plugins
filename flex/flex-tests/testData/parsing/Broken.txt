@@ -17,7 +17,7 @@ JSFile:Broken.js2
     PsiErrorElement:Newline or semicolon expected
       <empty list>
   PsiWhiteSpace(' ')
-  JSBlockStatement
+  ActionScriptBlockStatement
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
     ActionScriptClass
@@ -58,7 +58,7 @@ JSFile:Broken.js2
       PsiElement(JS:COLON)(':')
       PsiElement(JS:ANY_IDENTIFIER)('*')
       PsiWhiteSpace(' ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
     PsiWhiteSpace('\n    ')
@@ -78,7 +78,7 @@ JSFile:Broken.js2
       PsiElement(JS:COLON)(':')
       PsiElement(JS:VOID_KEYWORD)('void')
       PsiWhiteSpace(' ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
     PsiWhiteSpace('\n    ')
@@ -95,7 +95,7 @@ JSFile:Broken.js2
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('Object')
       PsiWhiteSpace(' ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
     PsiWhiteSpace('\n    ')
@@ -116,7 +116,7 @@ JSFile:Broken.js2
       PsiElement(JS:COLON)(':')
       PsiElement(JS:VOID_KEYWORD)('void')
       PsiWhiteSpace(' ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
     PsiWhiteSpace('\n  ')
@@ -152,7 +152,7 @@ JSFile:Broken.js2
       PsiElement(JS:LPAR)('(')
       PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n      ')
       JSExpressionStatement

@@ -174,7 +174,7 @@ JSFile:ASDoc.js2
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n\n')
@@ -199,7 +199,7 @@ JSFile:ASDoc.js2
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n\n')
@@ -236,7 +236,7 @@ JSFile:ASDoc.js2
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n\n')
@@ -267,7 +267,7 @@ JSFile:ASDoc.js2
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n\n')
@@ -298,7 +298,7 @@ JSFile:ASDoc.js2
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n\n')
@@ -315,7 +315,7 @@ JSFile:ASDoc.js2
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n\n')

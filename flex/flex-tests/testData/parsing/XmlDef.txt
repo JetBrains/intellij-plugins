@@ -153,7 +153,7 @@ JSFile:XmlDef.js2
                 PsiElement(JS:EACH_KEYWORD)('each')
               PsiElement(JS:RPAR)(')')
             PsiWhiteSpace(' ')
-            JSBlockStatement
+            ActionScriptBlockStatement
               PsiElement(JS:LBRACE)('{')
               PsiElement(JS:RBRACE)('}')
         PsiWhiteSpace('\n')

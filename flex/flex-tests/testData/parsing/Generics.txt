@@ -183,7 +183,7 @@ JSFile:Generics.js2
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('Boolean')
           PsiWhiteSpace(' ')
-          JSBlockStatement
+          ActionScriptBlockStatement
             PsiElement(JS:LBRACE)('{')
             PsiWhiteSpace('\n    ')
             JSReturnStatement

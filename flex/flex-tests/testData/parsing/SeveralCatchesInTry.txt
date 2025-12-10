@@ -26,13 +26,13 @@ JSFile:SeveralCatchesInTry.js2
       PsiElement(JS:COLON)(':')
       PsiElement(JS:VOID_KEYWORD)('void')
       PsiWhiteSpace('\n  ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiWhiteSpace('\n      ')
         JSTryStatement
           PsiElement(JS:TRY_KEYWORD)('try')
           PsiWhiteSpace('\n      ')
-          JSBlockStatement
+          ActionScriptBlockStatement
             PsiElement(JS:LBRACE)('{')
             PsiWhiteSpace('\n          ')
             JSExpressionStatement
@@ -62,7 +62,7 @@ JSFile:SeveralCatchesInTry.js2
                 PsiElement(JS:IDENTIFIER)('ItemPendingError')
             PsiElement(JS:RPAR)(')')
             PsiWhiteSpace('\n      ')
-            JSBlockStatement
+            ActionScriptBlockStatement
               PsiElement(JS:LBRACE)('{')
               PsiWhiteSpace('\n          ')
               JSExpressionStatement
@@ -90,7 +90,7 @@ JSFile:SeveralCatchesInTry.js2
                 PsiElement(JS:IDENTIFIER)('RangeError')
             PsiElement(JS:RPAR)(')')
             PsiWhiteSpace('\n      ')
-            JSBlockStatement
+            ActionScriptBlockStatement
               PsiElement(JS:LBRACE)('{')
               PsiWhiteSpace('\n          ')
               JSExpressionStatement
@@ -118,7 +118,7 @@ JSFile:SeveralCatchesInTry.js2
                 PsiElement(JS:IDENTIFIER)('Error')
             PsiElement(JS:RPAR)(')')
             PsiWhiteSpace('\n      ')
-            JSBlockStatement
+            ActionScriptBlockStatement
               PsiElement(JS:LBRACE)('{')
               PsiWhiteSpace('\n          ')
               JSThrowStatement

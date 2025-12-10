@@ -46,7 +46,7 @@ JSFile:Expressions.js2
         PsiElement(JS:IDENTIFIER)('UITextField')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')

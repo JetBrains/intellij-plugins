@@ -51,7 +51,7 @@ JSFile:Basic.js2
     JSReferenceExpression
       PsiElement(JS:IDENTIFIER)('Void')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
@@ -105,7 +105,7 @@ JSFile:Basic.js2
     JSReferenceExpression
       PsiElement(JS:IDENTIFIER)('Void')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
@@ -128,7 +128,7 @@ JSFile:Basic.js2
           PsiElement(JS:ANY_IDENTIFIER)('*')
       PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -148,7 +148,7 @@ JSFile:Basic.js2
     PsiElement(JS:COLON)(':')
     PsiElement(JS:VOID_KEYWORD)('void')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       JSExpressionStatement
@@ -218,7 +218,7 @@ JSFile:Basic.js2
   JSTryStatement
     PsiElement(JS:TRY_KEYWORD)('try')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       ActionScriptFunction
@@ -237,7 +237,7 @@ JSFile:Basic.js2
         PsiErrorElement:* or type name expected
           <empty list>
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n')
@@ -253,7 +253,7 @@ JSFile:Basic.js2
           PsiElement(JS:IDENTIFIER)('Error')
       PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -277,7 +277,7 @@ JSFile:Basic.js2
         PsiElement(JS:DOT_DOT_DOT)('...')
         PsiElement(JS:IDENTIFIER)('rest')
       PsiElement(JS:RPAR)(')')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       PsiComment(JS:END_OF_LINE_COMMENT)('// statement(s) ')
@@ -365,7 +365,7 @@ JSFile:Basic.js2
           PsiElement(JS:IDENTIFIER)('b')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
@@ -392,7 +392,7 @@ JSFile:Basic.js2
           PsiElement(JS:IDENTIFIER)('b')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')

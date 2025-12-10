@@ -102,7 +102,7 @@ JSFile:E4X.js2
       PsiElement(JS:IDENTIFIER)('height')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace(' ')
       JSExpressionStatement
@@ -159,7 +159,7 @@ JSFile:E4X.js2
         PsiElement(JS:IDENTIFIER)('cms')
       PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       JSVarStatement
@@ -515,7 +515,7 @@ JSFile:E4X.js2
       PsiElement(JS:IDENTIFIER)('name')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n')
       JSExpressionStatement
@@ -578,7 +578,7 @@ JSFile:E4X.js2
       PsiElement(JS:ANY_IDENTIFIER)('*')
     PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')
-    JSBlockStatement
+    ActionScriptBlockStatement
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')
       JSExpressionStatement

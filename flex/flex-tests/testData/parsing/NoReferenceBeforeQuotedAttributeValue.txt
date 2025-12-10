@@ -43,7 +43,7 @@ JSFile:NoReferenceBeforeQuotedAttributeValue.js2
         PsiElement(JS:COLON)(':')
         PsiElement(JS:VOID_KEYWORD)('void')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiWhiteSpace('\n    ')
           PsiElement(JS:RBRACE)('}')
