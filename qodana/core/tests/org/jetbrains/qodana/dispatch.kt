@@ -19,8 +19,10 @@ fun runDispatchingOnUi(action: suspend CoroutineScope.() -> Unit): Unit = runBlo
   val result = async(Dispatchers.EDT) {
     action()
   }
-  runInEdtAndWait {
-    dispatchAllTasksOnUi()
+  while (!result.isCompleted) {
+    runInEdtAndWait {
+      dispatchAllTasksOnUi()
+    }
   }
   result.await()
 }
