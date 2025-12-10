@@ -74,7 +74,7 @@ JSFile:ClassesPackagesNamespaces.js2
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiWhiteSpace('\n      ')
           PsiElement(JS:RBRACE)('}')
@@ -177,7 +177,7 @@ JSFile:ClassesPackagesNamespaces.js2
         PsiErrorElement:Interface functions declaration should have no body
           <empty list>
       PsiWhiteSpace(' ')
-      JSBlockStatement
+      ActionScriptBlockStatement
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n    ')
@@ -273,7 +273,7 @@ JSFile:ClassesPackagesNamespaces.js2
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('Object')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n    ')
@@ -300,7 +300,7 @@ JSFile:ClassesPackagesNamespaces.js2
         PsiElement(JS:COLON)(':')
         PsiElement(JS:VOID_KEYWORD)('void')
         PsiWhiteSpace(' ')
-        JSBlockStatement
+        ActionScriptBlockStatement
           PsiElement(JS:LBRACE)('{')
           PsiElement(JS:RBRACE)('}')
       PsiWhiteSpace('\n    ')

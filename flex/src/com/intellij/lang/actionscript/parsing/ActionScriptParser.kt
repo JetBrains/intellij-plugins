@@ -4,33 +4,100 @@ package com.intellij.lang.actionscript.parsing
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.flex.FlexSupportLoader
-import com.intellij.lang.javascript.parsing.JavaScriptParser
+import com.intellij.lang.javascript.parsing.JSParsingContextUtil
+import com.intellij.lang.javascript.parsing.JavaScriptParserBase
+import com.intellij.lang.javascript.parsing.modifiers.JSModifiersStructure
+import com.intellij.lang.javascript.parsing.modifiers.JSModifiersStructure.JSModifiersParseResult
 import com.intellij.psi.tree.IElementType
+import java.util.*
+import java.util.function.Predicate
 
 /**
  * @author Konstantin.Ulitin
  */
-class ActionScriptParser(
-  builder: PsiBuilder,
-) : JavaScriptParser(
-  FlexSupportLoader.ECMA_SCRIPT_L4,
-  builder,
-) {
-  override val expressionParser: ActionScriptExpressionParser =
+class ActionScriptParser(internal val builder: PsiBuilder) {
+
+  val expressionParser: ActionScriptExpressionParser =
     ActionScriptExpressionParser(this)
 
-  override val statementParser: ActionScriptStatementParser =
+  val statementParser: ActionScriptStatementParser =
     ActionScriptStatementParser(this)
 
-  override val functionParser: ActionScriptFunctionParser =
+  val functionParser: ActionScriptFunctionParser =
     ActionScriptFunctionParser(this)
 
-  override fun isIdentifierToken(tokenType: IElementType?): Boolean {
+  internal val typeParser: ActionScriptPsiTypeParser by lazy {
+    ActionScriptPsiTypeParser(this)
+  }
+
+  internal val xmlParser: ActionScriptXmlTokensParser by lazy {
+    ActionScriptXmlTokensParser(this)
+  }
+
+  fun parseJS(root: IElementType) {
+    val rootMarker = builder.mark()
+    val forceContext = builder.getUserData(JavaScriptParserBase.FORCE_CONTEXT_KEY)
+    if (forceContext != null) {
+      if (forceContext == JavaScriptParserBase.ForceContext.Parameter && builder.tokenType === JSTokenTypes.DOT_DOT_DOT) {
+        builder.advanceLexer()
+      }
+      else {
+        if (forceContext == JavaScriptParserBase.ForceContext.TypeAllowEmpty && builder.eof()) {
+          rootMarker.done(root)
+          return
+        }
+        typeParser.parseType()
+      }
+    }
+    else {
+      builder.putUserData(JSParsingContextUtil.ASYNC_METHOD_KEY, JSParsingContextUtil.IS_TOP_LEVEL_ASYNC)
+    }
+    doParseJS()
+    rootMarker.done(root)
+  }
+
+  fun isIdentifierName(firstToken: IElementType?): Boolean {
+    return JSKeywordSets.IDENTIFIER_NAMES.contains(firstToken)
+  }
+
+  fun parseModifiers(
+    structure: JSModifiersStructure,
+    dropIfEmpty: Boolean,
+    isPossibleStateAfterModifiers: Predicate<in PsiBuilder>,
+  ): EnumSet<JSModifiersParseResult> {
+    val offsetBefore = builder.currentOffset
+    var attrList = builder.mark()
+
+    var parseResults = structure.parseOptimistically(builder)
+
+    if (parseResults.contains(JSModifiersParseResult.LEXER_ADVANCED) && !isPossibleStateAfterModifiers.test(builder)) {
+      attrList.rollbackTo()
+      attrList = builder.mark()
+      parseResults = structure.parse(builder, isPossibleStateAfterModifiers)
+    }
+
+    val lexerAdvanced = builder.currentOffset > offsetBefore
+    if (lexerAdvanced) {
+      parseResults.add(JSModifiersParseResult.LEXER_ADVANCED)
+    }
+    else {
+      parseResults.remove(JSModifiersParseResult.LEXER_ADVANCED)
+    }
+    if (dropIfEmpty && !lexerAdvanced) {
+      attrList.drop()
+    }
+    else {
+      attrList.done(functionParser.attributeListElementType)
+    }
+
+    return parseResults
+  }
+
+  fun isIdentifierToken(tokenType: IElementType?): Boolean {
     return JSKeywordSets.AS_IDENTIFIER_TOKENS_SET.contains(tokenType)
   }
 
-  override fun buildTokenElement(type: IElementType) {
+  fun buildTokenElement(type: IElementType) {
     val marker = builder.mark()
     builder.advanceLexer()
     if (builder.tokenType === JSTokenTypes.GENERIC_SIGNATURE_START) {
@@ -39,7 +106,7 @@ class ActionScriptParser(
     marker.done(type)
   }
 
-  override fun doParseJS() {
+  fun doParseJS() {
     while (!builder.eof()) {
       if (builder.tokenType === JSTokenTypes.AT) {
         builder.advanceLexer()
