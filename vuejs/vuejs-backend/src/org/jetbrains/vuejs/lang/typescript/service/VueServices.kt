@@ -20,8 +20,9 @@ import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.VueSettings
 import org.jetbrains.vuejs.options.VueTSPluginVersion
 import org.jetbrains.vuejs.options.getVueSettings
-import java.io.File
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.absolute
 
 private const val vuePluginPath = "vuejs/vuejs-backend"
 
@@ -60,10 +61,19 @@ object VueLspServerLoader : LspServerLoader(VueLspServerPackageDescriptor) {
     val version =
       if (registryValue.startsWith("1")) "tsc-vue1" // explicit Registry value is needed for old Vue LS 1 New Eval
       else "tsc-vue"
-    val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
-                    "typescript/node_modules/$version/${packageDescriptor.defaultPackageRelativePath}")
-    val path = file.absolutePath
-    return path
+    val packagePathSegments = packageDescriptor.defaultPackageRelativePath.split("/")
+    val packagePath = Path.of(
+      if (packagePathSegments.isEmpty()) "" else packagePathSegments[0],
+      *packagePathSegments.drop(1).toTypedArray()
+    )
+    val path = TypeScriptUtil.getTypeScriptCompilerFolderFile().toPath()
+      .resolve("typescript")
+      .resolve("node_modules")
+      .resolve(version)
+      .resolve(packagePath)
+      .absolute()
+
+    return path.toString()
   }
 }
 
@@ -165,7 +175,7 @@ object VueTSPluginLoaderFactory {
 //<editor-fold desc="VueClassicTypeScriptService">
 
 /**
- * Refers to the classic service that predates official Vue LSP.
+ * Refers to the classic service that predates the official Vue LSP.
  */
 fun isVueClassicTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
   if (!isVueServiceContext(project, context) || getVueSettings(project).tsPluginPreviewEnabled)
