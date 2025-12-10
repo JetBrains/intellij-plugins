@@ -2,7 +2,7 @@
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.openapi.util.registry.Registry.Companion.get
+import com.intellij.openapi.util.registry.Registry
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.config.model.*
 import org.intellij.terraform.config.model.TypeModelProvider.Companion.globalModel
@@ -12,7 +12,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
 
   override fun setUp() {
     super.setUp()
-    get("ide.completion.variant.limit").setValue((ENTRIES_LIST_SIZE + 100) * 2, testRootDisposable)
+    Registry.get("ide.completion.variant.limit").setValue(COMPLETION_VARIANTS_LIMIT, testRootDisposable)
   }
 
   override fun tearDown() {
@@ -181,7 +181,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
 
     val azureResource = globalModel.getResourceType("azurerm_linux_virtual_machine", null)
     assertNotNull(azureResource)
-    azureResource?.properties?.values?.filter { it.configurable }?.map { properties.add(it.name) }
+    azureResource?.properties?.values?.filter { it.configurable }?.forEach { properties.add(it.name) }
 
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret>\n}", properties)
     doBasicCompletionTest("resource azurerm_linux_virtual_machine x {\n<caret> = \"name\"\n}", "size", "location")
@@ -389,7 +389,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     val properties = commonDataSourceProperties.toHashSet()
     val azureDataSource = globalModel.getDataSourceType("azurerm_kubernetes_cluster_node_pool", null)
     assertNotNull(azureDataSource)
-    azureDataSource?.properties?.values?.filter { it.configurable }?.map { properties.add(it.name) }
+    azureDataSource?.properties?.values?.filter { it.configurable }?.forEach { properties.add(it.name) }
 
     doBasicCompletionTest("data azurerm_kubernetes_cluster_node_pool x {\n<caret>\n}", properties)
     doBasicCompletionTest("data azurerm_kubernetes_cluster_node_pool x {\n<caret> = \"name\"\n}",
@@ -996,12 +996,7 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
   )
 
   fun testRequiredProvidersCompletion() {
-    val providers = globalModel.allProviders().filter { it.tier in ProviderTier.PreferedProviders }
-      .map { it.type }
-      .sorted()
-      .take(ENTRIES_LIST_SIZE)
-      .toList()
-    val matcher = getPartialMatcher(providers)
+    val matcher = getPartialMatcher(collectBundledProviders())
 
     doBasicCompletionTest("terraform { required_providers { <caret> } }", matcher)
     doBasicCompletionTest(
@@ -1077,6 +1072,15 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       }
     """.trimIndent(), 0)
   }
+
+  companion object {
+    fun collectBundledProviders(): List<String> = globalModel.allProviders().filter { it.tier in ProviderTier.PreferedProviders }
+      .map { it.type }
+      .sorted()
+      .take(ENTRIES_LIST_SIZE)
+      .toList()
+  }
 }
 
-private const val ENTRIES_LIST_SIZE = 900
+internal const val ENTRIES_LIST_SIZE = 900
+internal const val COMPLETION_VARIANTS_LIMIT = (ENTRIES_LIST_SIZE + 100) * 2

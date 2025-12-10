@@ -2,8 +2,11 @@
 package org.intellij.terraform.stack
 
 import com.intellij.lang.Language
+import com.intellij.openapi.util.registry.Registry
 import org.intellij.terraform.config.CompletionTestCase
+import org.intellij.terraform.config.codeinsight.COMPLETION_VARIANTS_LIMIT
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
+import org.intellij.terraform.config.codeinsight.TfConfigCompletionTest
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.stack.component.TF_COMPONENT_EXTENSION
 import org.intellij.terraform.stack.component.TfComponentRootBlocks
@@ -11,6 +14,11 @@ import org.intellij.terraform.terragrunt.TerragruntCompletionTest.Companion.Terr
 import org.intellij.terraform.terragrunt.doAutoInsertCompletionTest
 
 internal class TfComponentCompletionTest : CompletionTestCase() {
+  override fun setUp() {
+    super.setUp()
+    Registry.get("ide.completion.variant.limit").setValue(COMPLETION_VARIANTS_LIMIT, testRootDisposable)
+  }
+
   override fun getFileName(): String = "test$TF_COMPONENT_EXTENSION"
   override fun getExpectedLanguage(): Language = HCLLanguage
   override fun runInDispatchThread(): Boolean = false
@@ -86,6 +94,33 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
         <caret>
       }
     """.trimIndent(), "config")
+  }
+
+  fun testRequiredProvidersCompletion() {
+    val matcher = getPartialMatcher(TfConfigCompletionTest.collectBundledProviders())
+    doBasicCompletionTest("required_providers { <caret> }", matcher)
+    doBasicCompletionTest("""
+      required_providers {
+        <caret>
+      }
+    """.trimIndent(), "aws", "azurerm", "google", "kubernetes", "alicloud", "oci")
+
+    // Properties of required_provider completion
+    doBasicCompletionTest("""
+      required_providers {
+        kubernetes = {
+          <caret>
+        }
+      }
+    """.trimIndent(), 2, "source", "version")
+    doBasicCompletionTest("""
+      required_providers {
+        kubernetes = {
+          source = "hashicorp/kubernetes"
+          <caret>
+        }
+      }
+    """.trimIndent(), 1, "version")
   }
 
   companion object {
