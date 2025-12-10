@@ -8,7 +8,7 @@
     <plugin id="intellij.webpack"/>
     <plugin id="org.intellij.plugins.postcss"/>
     <module name="intellij.spellchecker"/>
-    <!-- region Generated dependencies - do not edit manually -->
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.libraries.commons.text"/>
     <!-- endregion -->
   </dependencies>

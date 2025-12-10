@@ -49,7 +49,7 @@
 
   <dependencies>
     <plugin id="com.intellij.java"/>
-    <!-- region Generated dependencies - do not edit manually -->
+    <!-- region Generated dependencies - run `Generate Product Layouts` to regenerate -->
     <module name="intellij.libraries.plexus.utils"/>
     <!-- endregion -->
   </dependencies>
