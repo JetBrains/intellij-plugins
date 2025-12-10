@@ -1,363 +1,347 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.intellij.lang.actionscript.parsing;
+package com.intellij.lang.actionscript.parsing
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.WhitespacesBinders;
-import com.intellij.lang.actionscript.ActionScriptElementTypes;
-import com.intellij.lang.actionscript.ActionScriptInternalElementTypes;
-import com.intellij.lang.actionscript.ActionScriptSpecificStubElementTypes;
-import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.JSKeywordSets;
-import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptParserBundle;
-import com.intellij.lang.javascript.parsing.FunctionParser;
-import com.intellij.lang.javascript.parsing.StatementParser;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.WhitespacesBinders
+import com.intellij.lang.actionscript.ActionScriptElementTypes
+import com.intellij.lang.actionscript.ActionScriptInternalElementTypes
+import com.intellij.lang.actionscript.ActionScriptSpecificStubElementTypes
+import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSKeywordSets
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.JavaScriptParserBundle.message
+import com.intellij.lang.javascript.parsing.FunctionParser
+import com.intellij.lang.javascript.parsing.StatementParser
+import com.intellij.psi.tree.IElementType
 
 /**
  * @author Konstantin.Ulitin
  */
-public final class ActionScriptStatementParser extends StatementParser<ActionScriptParser> {
-  ActionScriptStatementParser(ActionScriptParser parser) {
-    super(parser);
-  }
-
-  public void parseAttributeBody() {
-    final PsiBuilder.Marker attribute = builder.mark();
+class ActionScriptStatementParser internal constructor(parser: ActionScriptParser) : StatementParser<ActionScriptParser>(parser) {
+  fun parseAttributeBody() {
+    val attribute = builder.mark()
     if (!checkMatches(builder, JSTokenTypes.IDENTIFIER, "javascript.parser.message.expected.identifier")) {
-      attribute.drop();
-      return;
+      attribute.drop()
+      return
     }
-    parser.getFunctionParser().parseAttributeBody();
-    attribute.done(JSElementTypes.ATTRIBUTE);
+    parser.functionParser.parseAttributeBody()
+    attribute.done(JSElementTypes.ATTRIBUTE)
   }
 
-  /** advances lexer */
-  @Override
-  protected boolean parseVarName(PsiBuilder.Marker var) {
+  /** advances lexer  */
+  override fun parseVarName(variable: PsiBuilder.Marker): Boolean {
     if (!isIdentifierToken(builder.getTokenType())) {
-      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.variable.name"));
-      builder.advanceLexer();
-      var.drop();
-      return false;
+      builder.error(message("javascript.parser.message.expected.variable.name"))
+      builder.advanceLexer()
+      variable.drop()
+      return false
     }
 
-    parser.getTypeParser().parseQualifiedTypeName();
-    return true;
+    parser.typeParser.parseQualifiedTypeName()
+    return true
   }
 
-  @Override
-  public void parseStatement() {
-    final IElementType firstToken = builder.getTokenType();
+  override fun parseStatement() {
+    val firstToken = builder.getTokenType()
 
-    if (firstToken == JSTokenTypes.PACKAGE_KEYWORD) {
-      parsePackage();
-      return;
+    if (firstToken === JSTokenTypes.PACKAGE_KEYWORD) {
+      parsePackage()
+      return
     }
 
-    if (firstToken == JSTokenTypes.DEFAULT_KEYWORD) {
-      parseDefaultNsStatement();
-      return;
+    if (firstToken === JSTokenTypes.DEFAULT_KEYWORD) {
+      parseDefaultNsStatement()
+      return
     }
 
-    if (firstToken == JSTokenTypes.IMPORT_KEYWORD) {
-      parseImportStatement();
-      return;
+    if (firstToken === JSTokenTypes.IMPORT_KEYWORD) {
+      parseImportStatement()
+      return
     }
 
-    if (firstToken == JSTokenTypes.USE_KEYWORD) {
-      parseUseNamespaceDirective();
-      return;
+    if (firstToken === JSTokenTypes.USE_KEYWORD) {
+      parseUseNamespaceDirective()
+      return
     }
 
-    if (firstToken == JSTokenTypes.GOTO_KEYWORD && isIdentifierToken(builder.lookAhead(1))) {
-      final PsiBuilder.Marker statement = builder.mark();
-      builder.advanceLexer();
-      builder.advanceLexer();
-      checkForSemicolon();
-      statement.done(ActionScriptInternalElementTypes.GOTO_STATEMENT);
-      return;
+    if (firstToken === JSTokenTypes.GOTO_KEYWORD && isIdentifierToken(builder.lookAhead(1))) {
+      val statement = builder.mark()
+      builder.advanceLexer()
+      builder.advanceLexer()
+      checkForSemicolon()
+      statement.done(ActionScriptInternalElementTypes.GOTO_STATEMENT)
+      return
     }
 
-    if (firstToken == JSTokenTypes.INCLUDE_KEYWORD) {
-      parseIncludeDirective();
-      return;
+    if (firstToken === JSTokenTypes.INCLUDE_KEYWORD) {
+      parseIncludeDirective()
+      return
     }
 
-    if (firstToken == JSTokenTypes.NAMESPACE_KEYWORD) {
-      PsiBuilder.Marker marker = startAttributeListOwner();
+    if (firstToken === JSTokenTypes.NAMESPACE_KEYWORD) {
+      val marker = startAttributeListOwner()
       if (parseNamespaceNoMarker(marker)) {
-        return;
+        return
       }
     }
 
-    super.parseStatement();
+    super.parseStatement()
   }
 
-  void parseIncludeDirective() {
-    LOG.assertTrue(builder.getTokenType() == JSTokenTypes.INCLUDE_KEYWORD);
-    final PsiBuilder.Marker useNSStatement = builder.mark();
-    builder.advanceLexer();
-    checkMatches(builder, JSTokenTypes.STRING_LITERAL, "javascript.parser.message.expected.string.literal");
-    checkForSemicolon();
+  fun parseIncludeDirective() {
+    LOG.assertTrue(builder.getTokenType() === JSTokenTypes.INCLUDE_KEYWORD)
+    val useNSStatement = builder.mark()
+    builder.advanceLexer()
+    checkMatches(builder, JSTokenTypes.STRING_LITERAL, "javascript.parser.message.expected.string.literal")
+    checkForSemicolon()
 
-    useNSStatement.done(ActionScriptElementTypes.INCLUDE_DIRECTIVE);
+    useNSStatement.done(ActionScriptElementTypes.INCLUDE_DIRECTIVE)
   }
 
-  private boolean parseNamespaceNoMarker(final @NotNull PsiBuilder.Marker useNSStatement) {
-    LOG.assertTrue(builder.getTokenType() == JSTokenTypes.NAMESPACE_KEYWORD);
+  private fun parseNamespaceNoMarker(useNSStatement: PsiBuilder.Marker): Boolean {
+    LOG.assertTrue(builder.getTokenType() === JSTokenTypes.NAMESPACE_KEYWORD)
 
-    builder.advanceLexer();
+    builder.advanceLexer()
     if (!JSKeywordSets.IDENTIFIER_TOKENS_SET.contains(builder.getTokenType())) {
-      useNSStatement.rollbackTo();
-      return false;
+      useNSStatement.rollbackTo()
+      return false
     }
 
-    parser.getTypeParser().parseQualifiedTypeName();
+    parser.typeParser.parseQualifiedTypeName()
 
-    if (builder.getTokenType() == JSTokenTypes.EQ) {
-      builder.advanceLexer();
+    if (builder.getTokenType() === JSTokenTypes.EQ) {
+      builder.advanceLexer()
 
-      IElementType tokenType = builder.getTokenType();
+      val tokenType = builder.getTokenType()
 
-      if (tokenType == JSTokenTypes.PUBLIC_KEYWORD) {
-        builder.advanceLexer();
+      if (tokenType === JSTokenTypes.PUBLIC_KEYWORD) {
+        builder.advanceLexer()
       }
-      else if (tokenType == JSTokenTypes.STRING_LITERAL || tokenType == JSTokenTypes.IDENTIFIER) {
-        parser.getExpressionParser().parseExpression();
+      else if (tokenType === JSTokenTypes.STRING_LITERAL || tokenType === JSTokenTypes.IDENTIFIER) {
+        parser.expressionParser.parseExpression()
       }
       else {
-        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.string.literal"));
+        builder.error(message("javascript.parser.message.expected.string.literal"))
       }
     }
-    checkForSemicolon();
-    useNSStatement.done(ActionScriptElementTypes.NAMESPACE_DECLARATION);
-    useNSStatement.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
-    return true;
+    checkForSemicolon()
+    useNSStatement.done(ActionScriptElementTypes.NAMESPACE_DECLARATION)
+    useNSStatement.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER)
+    return true
   }
 
-  private void parseDefaultNsStatement() {
-    LOG.assertTrue(builder.getTokenType() == JSTokenTypes.DEFAULT_KEYWORD);
-    final PsiBuilder.Marker statementMarker = builder.mark();
-    final PsiBuilder.Marker marker = builder.mark();
-    builder.advanceLexer();
+  private fun parseDefaultNsStatement() {
+    LOG.assertTrue(builder.getTokenType() === JSTokenTypes.DEFAULT_KEYWORD)
+    val statementMarker = builder.mark()
+    val marker = builder.mark()
+    builder.advanceLexer()
 
-    if (builder.getTokenType() == JSTokenTypes.IDENTIFIER &&
-        "xml".equals(builder.getTokenText())
+    if (builder.getTokenType() === JSTokenTypes.IDENTIFIER &&
+        "xml" == builder.getTokenText()
     ) {
-      builder.advanceLexer();
+      builder.advanceLexer()
 
       if (checkMatches(builder, JSTokenTypes.NAMESPACE_KEYWORD, "javascript.parser.message.expected.namespace")) {
         if (checkMatches(builder, JSTokenTypes.EQ, "javascript.parser.message.expected.equal")) {
-          parser.getExpressionParser().parseExpression();
+          parser.expressionParser.parseExpression()
         }
       }
     }
     else {
-      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.xml"));
+      builder.error(message("javascript.parser.message.expected.xml"))
     }
-    marker.done(JSElementTypes.ASSIGNMENT_EXPRESSION);
-    checkForSemicolon();
-    statementMarker.done(JSElementTypes.EXPRESSION_STATEMENT);
+    marker.done(JSElementTypes.ASSIGNMENT_EXPRESSION)
+    checkForSemicolon()
+    statementMarker.done(JSElementTypes.EXPRESSION_STATEMENT)
   }
 
-  @Override
-  protected PsiBuilder.Marker startAttributeListOwner() {
-    PsiBuilder.Marker marker = builder.mark();
-    if (!isBlockBodyContext()) {
-      PsiBuilder.Marker modifierListMarker = builder.mark();
-      modifierListMarker.done(parser.getFunctionParser().getAttributeListElementType());
+  override fun startAttributeListOwner(): PsiBuilder.Marker {
+    val marker = builder.mark()
+    if (!isBlockBodyContext) {
+      val modifierListMarker = builder.mark()
+      modifierListMarker.done(parser.functionParser.attributeListElementType)
     }
-    return marker;
+    return marker
   }
 
-  @Override
-  public IElementType getVariableElementType() {
-    return isBlockBodyContext() ? ActionScriptSpecificStubElementTypes.LOCAL_VARIABLE : ActionScriptElementTypes.ACTIONSCRIPT_VARIABLE;
-  }
+  override val variableElementType: IElementType
+    get() = if (isBlockBodyContext) ActionScriptSpecificStubElementTypes.LOCAL_VARIABLE else ActionScriptElementTypes.ACTIONSCRIPT_VARIABLE
 
-  public void parseUseNamespaceDirective() {
-    final PsiBuilder.Marker useNSStatement = builder.mark();
-    builder.advanceLexer();
+  fun parseUseNamespaceDirective() {
+    val useNSStatement = builder.mark()
+    builder.advanceLexer()
 
-    if (builder.getTokenType() != JSTokenTypes.NAMESPACE_KEYWORD) {
-      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.namespace"));
+    if (builder.getTokenType() !== JSTokenTypes.NAMESPACE_KEYWORD) {
+      builder.error(message("javascript.parser.message.expected.namespace"))
     }
     else {
-      builder.advanceLexer();
+      builder.advanceLexer()
 
-      if (!parser.getTypeParser().parseQualifiedTypeName()) {
-        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
+      if (!parser.typeParser.parseQualifiedTypeName()) {
+        builder.error(message("javascript.parser.message.expected.typename.or.*"))
       }
 
-      while (builder.getTokenType() == JSTokenTypes.COMMA) {
-        builder.advanceLexer();
-        if (!parser.getTypeParser().parseQualifiedTypeName()) {
-          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
-          break;
+      while (builder.getTokenType() === JSTokenTypes.COMMA) {
+        builder.advanceLexer()
+        if (!parser.typeParser.parseQualifiedTypeName()) {
+          builder.error(message("javascript.parser.message.expected.typename.or.*"))
+          break
         }
       }
     }
-    checkForSemicolon();
-    useNSStatement.done(ActionScriptElementTypes.USE_NAMESPACE_DIRECTIVE);
+    checkForSemicolon()
+    useNSStatement.done(ActionScriptElementTypes.USE_NAMESPACE_DIRECTIVE)
   }
 
-  private void parsePackage() {
-    final PsiBuilder.Marker _package = builder.mark();
-    builder.advanceLexer();
-    if (builder.getTokenType() == JSTokenTypes.IDENTIFIER) {
-      parser.getTypeParser().parseQualifiedTypeName();
+  private fun parsePackage() {
+    val _package = builder.mark()
+    builder.advanceLexer()
+    if (builder.getTokenType() === JSTokenTypes.IDENTIFIER) {
+      parser.typeParser.parseQualifiedTypeName()
     }
 
-    if (builder.getTokenType() != JSTokenTypes.LBRACE) {
-      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.name.or.lbrace"));
+    if (builder.getTokenType() !== JSTokenTypes.LBRACE) {
+      builder.error(message("javascript.parser.message.expected.name.or.lbrace"))
     }
     else {
-      parseBlockAndAttachStatementsDirectly();
+      parseBlockAndAttachStatementsDirectly()
     }
-    _package.done(JSElementTypes.PACKAGE_STATEMENT);
+    _package.done(JSElementTypes.PACKAGE_STATEMENT)
   }
 
-  private void parseImportStatement() {
-    final PsiBuilder.Marker importStatement = builder.mark();
+  private fun parseImportStatement() {
+    val importStatement = builder.mark()
     try {
-      builder.advanceLexer();
+      builder.advanceLexer()
 
-      final PsiBuilder.Marker nsAssignment = builder.mark();
-      if (!parser.getTypeParser().parseQualifiedTypeName(true)) {
-        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
-        nsAssignment.drop();
-        return;
+      val nsAssignment = builder.mark()
+      if (!parser.typeParser.parseQualifiedTypeName(true)) {
+        builder.error(message("javascript.parser.message.expected.typename.or.*"))
+        nsAssignment.drop()
+        return
       }
 
-      if (builder.getTokenType() == JSTokenTypes.EQ) {
-        builder.advanceLexer();
-        if (!parser.getTypeParser().parseQualifiedTypeName()) {
-          builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
+      if (builder.getTokenType() === JSTokenTypes.EQ) {
+        builder.advanceLexer()
+        if (!parser.typeParser.parseQualifiedTypeName()) {
+          builder.error(message("javascript.parser.message.expected.typename.or.*"))
         }
 
-        nsAssignment.done(JSElementTypes.ASSIGNMENT_EXPRESSION);
+        nsAssignment.done(JSElementTypes.ASSIGNMENT_EXPRESSION)
       }
       else {
-        nsAssignment.drop();
+        nsAssignment.drop()
       }
 
-      checkForSemicolon();
+      checkForSemicolon()
     }
     finally {
-      importStatement.done(JSElementTypes.IMPORT_STATEMENT);
+      importStatement.done(JSElementTypes.IMPORT_STATEMENT)
     }
   }
 
-  @Override
-  protected void parseClassOrInterfaceNoMarker(@NotNull PsiBuilder.Marker clazz) {
-    final FunctionParser.@Nullable MethodEmptiness methodEmptiness = builder.getUserData(FunctionParser.methodsEmptinessKey);
+  override fun parseClassOrInterfaceNoMarker(clazz: PsiBuilder.Marker) {
+    val methodEmptiness = builder.getUserData(FunctionParser.methodsEmptinessKey)
     try {
-      final IElementType tokenType = builder.getTokenType();
-      LOG.assertTrue(JSTokenTypes.CLASS_KEYWORD == tokenType || JSTokenTypes.INTERFACE_KEYWORD == tokenType);
-      if (builder.getTokenType() == JSTokenTypes.INTERFACE_KEYWORD) {
-        builder.putUserData(FunctionParser.methodsEmptinessKey, FunctionParser.MethodEmptiness.ALWAYS);
-        builder.putUserData(withinInterfaceKey, "");
+      val tokenType = builder.getTokenType()
+      LOG.assertTrue(JSTokenTypes.CLASS_KEYWORD === tokenType || JSTokenTypes.INTERFACE_KEYWORD === tokenType)
+      if (builder.getTokenType() === JSTokenTypes.INTERFACE_KEYWORD) {
+        builder.putUserData(
+          FunctionParser.methodsEmptinessKey,
+          FunctionParser.MethodEmptiness.ALWAYS
+        )
+        builder.putUserData(withinInterfaceKey, "")
       }
 
-      builder.advanceLexer();
+      builder.advanceLexer()
 
       if (isIdentifierToken(builder.getTokenType())) {
-        parsePossiblyQualifiedName();
+        parsePossiblyQualifiedName()
       }
       else {
-        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.typename.or.*"));
+        builder.error(message("javascript.parser.message.expected.typename.or.*"))
       }
 
-      if (builder.getTokenType() == JSTokenTypes.EXTENDS_KEYWORD) {
-        parseReferenceList(JSElementTypes.EXTENDS_LIST);
+      if (builder.getTokenType() === JSTokenTypes.EXTENDS_KEYWORD) {
+        parseReferenceList(JSElementTypes.EXTENDS_LIST)
       }
 
-      if (builder.getTokenType() == JSTokenTypes.IMPLEMENTS_KEYWORD) {
-        parseReferenceList(JSElementTypes.IMPLEMENTS_LIST);
+      if (builder.getTokenType() === JSTokenTypes.IMPLEMENTS_KEYWORD) {
+        parseReferenceList(JSElementTypes.IMPLEMENTS_LIST)
       }
 
-      parseBlockAndAttachStatementsDirectly();
-      clazz.done(ActionScriptElementTypes.ACTIONSCRIPT_CLASS);
-      clazz.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
+      parseBlockAndAttachStatementsDirectly()
+      clazz.done(ActionScriptElementTypes.ACTIONSCRIPT_CLASS)
+      clazz.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER)
     }
     finally {
-      builder.putUserData(FunctionParser.methodsEmptinessKey, methodEmptiness);
-      builder.putUserData(withinInterfaceKey, null);
+      builder.putUserData(FunctionParser.methodsEmptinessKey, methodEmptiness)
+      builder.putUserData(withinInterfaceKey, null)
     }
   }
 
-  public void parsePossiblyQualifiedName() {
-    boolean validQualifier = JSKeywordSets.IDENTIFIER_NAMES.contains(builder.getTokenType());
-    PsiBuilder.Marker qualifier = builder.mark();
-    builder.advanceLexer();
+  fun parsePossiblyQualifiedName() {
+    var validQualifier = JSKeywordSets.IDENTIFIER_NAMES.contains(builder.getTokenType())
+    var qualifier = builder.mark()
+    builder.advanceLexer()
 
     // ECMAScriptLevelFourParsingTest.testOldAs2Code
-    while (validQualifier && builder.getTokenType() == JSTokenTypes.DOT) {
-      qualifier.done(JSElementTypes.REFERENCE_EXPRESSION);
-      qualifier = qualifier.precede();
-      builder.advanceLexer();
-      validQualifier = JSKeywordSets.IDENTIFIER_NAMES.contains(builder.getTokenType());
+    while (validQualifier && builder.getTokenType() === JSTokenTypes.DOT) {
+      qualifier.done(JSElementTypes.REFERENCE_EXPRESSION)
+      qualifier = qualifier.precede()
+      builder.advanceLexer()
+      validQualifier = JSKeywordSets.IDENTIFIER_NAMES.contains(builder.getTokenType())
       if (!validQualifier) {
-        builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.identifier"));
+        builder.error(message("javascript.parser.message.expected.identifier"))
       }
-      builder.advanceLexer();
+      builder.advanceLexer()
     }
-    qualifier.drop();
+    qualifier.drop()
   }
 
-  @Override
-  protected IElementType getClassElementType() {
-    return ActionScriptElementTypes.ACTIONSCRIPT_CLASS;
-  }
+  override val classElementType: IElementType
+    get() = ActionScriptElementTypes.ACTIONSCRIPT_CLASS
 
-  @Override
-  protected IElementType getClassExtendListElementType() {
-    return JSElementTypes.EXTENDS_LIST;
-  }
+  override val classExtendListElementType: IElementType
+    get() = JSElementTypes.EXTENDS_LIST
 
-  @Override
-  protected boolean parseDialectSpecificSourceElements(PsiBuilder.Marker marker) {
-    IElementType tokenType = builder.getTokenType();
-    if (tokenType == JSTokenTypes.LBRACE) {
-      parseBlockAndAttachStatementsDirectly();
-      marker.done(ActionScriptInternalElementTypes.CONDITIONAL_COMPILE_BLOCK_STATEMENT);
-      return true;
+  override fun parseDialectSpecificSourceElements(marker: PsiBuilder.Marker): Boolean {
+    val tokenType = builder.getTokenType()
+    if (tokenType === JSTokenTypes.LBRACE) {
+      parseBlockAndAttachStatementsDirectly()
+      marker.done(ActionScriptInternalElementTypes.CONDITIONAL_COMPILE_BLOCK_STATEMENT)
+      return true
     }
-    else if (tokenType == JSTokenTypes.NAMESPACE_KEYWORD && isECMAL4()) {
+    else if (tokenType === JSTokenTypes.NAMESPACE_KEYWORD && isECMAL4) {
       if (!parseNamespaceNoMarker(marker)) {
-        builder.advanceLexer();
+        builder.advanceLexer()
       }
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
-  @Override
-  public boolean parseForLoopHeader() {
-    LOG.assertTrue(builder.getTokenType() == JSTokenTypes.FOR_KEYWORD);
-    builder.advanceLexer();
-    final boolean hasEach = builder.getTokenType() == JSTokenTypes.EACH_KEYWORD;
+  override fun parseForLoopHeader(): Boolean {
+    LOG.assertTrue(builder.getTokenType() === JSTokenTypes.FOR_KEYWORD)
+    builder.advanceLexer()
+    val hasEach = builder.getTokenType() === JSTokenTypes.EACH_KEYWORD
     if (hasEach) {
-      builder.advanceLexer();
+      builder.advanceLexer()
     }
-    return parseForLoopHeaderCondition();
+    return parseForLoopHeaderCondition()
   }
 
-  @Override
-  public boolean parseBlock() {
-    if (builder.getTokenType() != JSTokenTypes.LBRACE) {
-      builder.error(JavaScriptParserBundle.message("javascript.parser.message.expected.lbrace"));
-      return false;
+  override fun parseBlock(): Boolean {
+    if (builder.getTokenType() !== JSTokenTypes.LBRACE) {
+      builder.error(message("javascript.parser.message.expected.lbrace"))
+      return false
     }
-    PsiBuilder.Marker mark = builder.mark();
-    Boolean wasBlockBodyContext = builder.getUserData(IS_BLOCK_BODY_CONTEXT);
-    builder.putUserData(IS_BLOCK_BODY_CONTEXT, Boolean.TRUE);
-    parseBlockAndAttachStatementsDirectly();
-    builder.putUserData(IS_BLOCK_BODY_CONTEXT, wasBlockBodyContext);
-    mark.done(ActionScriptElementTypes.BLOCK_STATEMENT);
-    return true;
+    val mark = builder.mark()
+    val wasBlockBodyContext: Boolean? = builder.getUserData(IS_BLOCK_BODY_CONTEXT)
+    builder.putUserData(IS_BLOCK_BODY_CONTEXT, true)
+    parseBlockAndAttachStatementsDirectly()
+    builder.putUserData(IS_BLOCK_BODY_CONTEXT, wasBlockBodyContext)
+    mark.done(ActionScriptElementTypes.BLOCK_STATEMENT)
+    return true
   }
 }
