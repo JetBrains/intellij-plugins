@@ -52,7 +52,7 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
         PsiElement element = psiFile.findElementAt(offset + 1); // FIXME: This triggers AST loading, which is undesirable.
         final PsiMethodCallExpression methodCallExpression = PsiTreeUtil.getParentOfType(element, PsiMethodCallExpression.class);
         if (methodCallExpression != null) {
-          result.add(Java8StepDefinition.create(methodCallExpression, module));
+          result.add(new Java8StepDefinition(methodCallExpression, module));
         }
       }
       return true;

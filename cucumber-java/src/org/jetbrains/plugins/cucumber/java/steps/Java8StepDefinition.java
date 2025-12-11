@@ -3,8 +3,6 @@ package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.*;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
@@ -18,13 +16,6 @@ public final class Java8StepDefinition extends AbstractJavaStepDefinition {
 
   public Java8StepDefinition(PsiMethodCallExpression element, Module module) {
     super(element, module);
-  }
-
-  public static Java8StepDefinition create(PsiMethodCallExpression element, Module module) {
-    final Java8StepDefinition stepDefinition = CachedValuesManager.getCachedValue(element, () -> {
-      return CachedValueProvider.Result.create(new Java8StepDefinition(element, module), element);
-    });
-    return stepDefinition;
   }
 
   @Override

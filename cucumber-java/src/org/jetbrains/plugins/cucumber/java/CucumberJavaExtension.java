@@ -56,7 +56,7 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
           result.addAll(javaStepDefinitions
                           .allowParallelProcessing()
                           .transforming(stepDefMethod -> CucumberJavaUtil.getCucumberStepAnnotations(stepDefMethod, annotationClassName))
-                          .mapping(annotation -> JavaAnnotatedStepDefinition.create(annotation, module))
+                          .mapping(annotation -> new JavaAnnotatedStepDefinition(annotation, module))
                           .findAll());
         }
       }
