@@ -25,7 +25,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.ThrowableRunnable;
 
@@ -97,9 +96,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return needsJavaModule() ?
-           LightJavaCodeInsightFixtureTestCase.JAVA_1_7 :
-           FlexProjectDescriptor.DESCRIPTOR;
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   public final void testBasic() {

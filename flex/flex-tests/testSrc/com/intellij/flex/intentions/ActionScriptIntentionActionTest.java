@@ -15,19 +15,33 @@ package com.intellij.flex.intentions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.inspections.JSJoinVariableDeclarationAndAssignmentInspection;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle;
 import org.junit.Assert;
 
-public class ActionScriptIntentionActionTest extends LightJavaCodeInsightFixtureTestCase {
+public class ActionScriptIntentionActionTest extends JSDaemonAnalyzerLightTestCase {
+
+  @Override
+  protected String getBasePath() {
+    return "/js2_intentions/";
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath(getBasePath());
+  }
+
+  @Override
+  protected String getExtension() {
+    return "js2";
+  }
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("js2_intentions"));
   }
 
   public void testSplitDeclarationAndInitialization() {

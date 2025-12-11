@@ -1,12 +1,12 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
-import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.ShowImplementationsTestUtil;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.flex.util.JSDaemonAnalyzerTestCase;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexSupportLoader;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FlexGotoImplementationsTest extends JavaCodeInsightTestCase {
+public class FlexGotoImplementationsTest extends JSDaemonAnalyzerTestCase {
 
   private static final String BASE_PATH = "gotoImplementations/";
 
@@ -51,6 +51,16 @@ public class FlexGotoImplementationsTest extends JavaCodeInsightTestCase {
   protected void tearDown() throws Exception {
     myAfterCommitRunnable = null;
     super.tearDown();
+  }
+
+  @Override
+  protected String getBasePath() {
+    return BASE_PATH;
+  }
+
+  @Override
+  protected String getExtension() {
+    return "as";
   }
 
   @NotNull

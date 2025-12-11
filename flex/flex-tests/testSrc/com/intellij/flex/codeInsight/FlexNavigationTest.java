@@ -1,11 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
-import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.flex.util.JSDaemonAnalyzerTestCase;
 import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.index.JSIndexKeys;
@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @SuppressWarnings("ConstantConditions")
-public class FlexNavigationTest extends JavaCodeInsightTestCase {
+public class FlexNavigationTest extends JSDaemonAnalyzerTestCase {
   private static final String BASE_PATH = "/flex_navigation/";
 
   protected Runnable myAfterCommitRunnable = null;
@@ -54,6 +54,16 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
   protected void tearDown() throws Exception {
     myAfterCommitRunnable = null;
     super.tearDown();
+  }
+
+  @Override
+  protected String getBasePath() {
+    return BASE_PATH;
+  }
+
+  @Override
+  protected String getExtension() {
+    return "as";
   }
 
   @Override

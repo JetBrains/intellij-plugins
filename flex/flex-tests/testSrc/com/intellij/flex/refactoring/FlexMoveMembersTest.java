@@ -4,6 +4,7 @@ package com.intellij.flex.refactoring;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.flex.util.MultiFileTestCase;
 import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersProcessor;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -21,7 +22,6 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,10 +41,14 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     super.setUp();
   }
 
-  @NotNull
   @Override
-  protected String getTestRoot() {
+  protected String getBasePath() {
     return "moveMembers/";
+  }
+
+  @Override
+  protected String getExtension() {
+    return "as";
   }
 
   @NotNull

@@ -47,7 +47,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.*;
 
-import static com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase.JAVA_1_7;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class FlexCompletionTest extends BaseJSCompletionTestCase {
@@ -129,9 +128,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return needsJavaModule() ?
-           JAVA_1_7 :
-           FlexProjectDescriptor.DESCRIPTOR;
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   private Runnable createMultiCompletionPerformerWithVariantsCheck() {

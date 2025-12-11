@@ -4,6 +4,8 @@ import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.lang.javascript.JSTestOption;
+import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.tools.ide.metrics.benchmark.Benchmark;
@@ -35,6 +37,7 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
   private static final boolean doProfiling = false;
   
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
+  @JSTestOptions(JSTestOption.AllowAstAccess)
   public void testPerformance() {
     if (doProfiling) YourKitProfilerHandler.startCPUProfiling();
     try {

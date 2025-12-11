@@ -1,10 +1,10 @@
 package com.intellij.flex.resolver;
 
-import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.flex.util.JSDaemonAnalyzerTestCase;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class FlexCssNavigationTest extends JavaCodeInsightTestCase {
+public class FlexCssNavigationTest extends JSDaemonAnalyzerTestCase {
   private static final @NonNls String BASE_PATH = "/flex_css_navigation/";
 
   private PsiElement @NotNull [] findTargetElements(String @NotNull ... filenames) {
@@ -62,6 +62,16 @@ public class FlexCssNavigationTest extends JavaCodeInsightTestCase {
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
     JSTestUtils.initJSIndexes(getProject());
+  }
+
+  @Override
+  protected String getBasePath() {
+    return BASE_PATH;
+  }
+
+  @Override
+  protected String getExtension() {
+    return "as";
   }
 
   @NotNull

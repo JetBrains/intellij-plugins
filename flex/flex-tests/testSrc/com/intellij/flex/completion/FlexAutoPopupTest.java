@@ -8,7 +8,6 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CompletionAutoPopupTestCase;
-import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,11 +18,10 @@ public class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
   @Override
   @NotNull
   protected LightProjectDescriptor getProjectDescriptor() {
-    return new DefaultLightProjectDescriptor() {
+    return new LightProjectDescriptor() {
       @Override
       public @NotNull String getModuleTypeId() {
         return FlexModuleType.getInstance().getId();
-
       }
     };
   }

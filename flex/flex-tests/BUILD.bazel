@@ -15,7 +15,6 @@ jvm_library(
   deps = [
     "//plugins/JavaScriptLanguage:javascript-tests_test_lib",
     "//plugins/JavaScriptLanguage:javascript-testFramework",
-    "//plugins/JavaScriptLanguage:javascript-tests-ex_test_lib",
     "//plugins/uml/impl",
     "//contrib/flex",
     "//plugins/JavaScriptLanguage/javascript-parser",
@@ -55,9 +54,7 @@ jvm_library(
     "@community//plugins/properties/properties-psi-api:psi",
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/platform-util-io:ide-util-io",
-    "@community//java/testFramework",
     "@community//plugins/maven/testFramework",
-    "@community//java/java-impl-refactorings:impl-refactorings",
     "@community//platform/util/jdom",
     "//plugins/yourkit",
     "@community//platform/util/nanoxml",
@@ -72,6 +69,11 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/graph",
     "@community//platform/execution",
+    "@lib//:fastutil-min",
+    "@community//platform/analysis-impl",
+    "@community//platform/lang-impl",
+    "@community//platform/lang-api:lang",
+    "@community//xml/xml-parser:parser",
   ]
 )
 ### auto-generated section `build intellij.flex.tests` end

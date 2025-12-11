@@ -1,7 +1,7 @@
 package com.intellij.flex.highlighting;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
+import com.intellij.flex.util.JSDaemonAnalyzerTestCase;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.refactoring.ui.JSEditorTextField;

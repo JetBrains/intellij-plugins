@@ -1,11 +1,11 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.refactoring;
 
-import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
 import com.intellij.flex.FlexTestOption;
 import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.flex.util.JSDaemonAnalyzerTestCase;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.javascript.flex.refactoring.introduceConstant.FlexIntroduceConstantHandler;
 import com.intellij.javascript.flex.refactoring.introduceConstant.FlexIntroduceConstantSettings;
@@ -25,18 +25,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
-
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("refactoring/introduceConstant/");
-  }
+public class FlexIntroduceConstantTest extends JSDaemonAnalyzerTestCase {
 
   @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return FlexTestUtils.getTestDataPath(getBasePath());
   }
 
   private void doTest(final String varName,
@@ -126,6 +125,16 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "refactoring/introduceConstant/");
     super.setUp();
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+  }
+
+  @Override
+  protected String getBasePath() {
+    return "/refactoring/introduceConstant/";
+  }
+
+  @Override
+  protected String getExtension() {
+    return "as";
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)

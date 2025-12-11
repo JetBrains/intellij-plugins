@@ -12,7 +12,6 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -21,7 +20,6 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSFunctionsSearch;
 import com.intellij.openapi.editor.XmlHighlighterColors;
-import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.psi.PsiElement;
@@ -31,11 +29,6 @@ import com.intellij.testFramework.ExtensionTestUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,11 +39,6 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
   @NonNls static final String BASE_PATH = "flex_highlighting";
 
   protected Runnable myAfterCommitRunnable = null;
-
-  @Retention(RetentionPolicy.RUNTIME)
-  @Target(ElementType.METHOD)
-  public @interface NeedsJavaModule {
-  }
 
   @Override
   protected Collection<HighlightInfo> defaultTest() {
@@ -72,12 +60,6 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
-  }
-
-  private boolean needsJavaModule() {
-    final Method method = JSTestUtils.getTestMethod(getClass(), getTestName(false));
-    assertNotNull(method);
-    return method.getAnnotation(NeedsJavaModule.class) != null;
   }
 
   @Override
@@ -113,17 +95,15 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
   @NotNull
   @Override
   protected ModuleType getModuleType() {
-    return needsJavaModule() ? JavaModuleType.getModuleType() : FlexModuleType.getInstance();
+    return FlexModuleType.getInstance();
   }
 
   @Override
   protected void setUpJdk() {
-    if (!needsJavaModule()) {
-      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
-    }
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.AllowAstAccess})
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverridingMarkers() throws Exception {
     final String testName = getTestName(false);
@@ -131,13 +111,13 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     invokeNamedActionWithExpectedFileCheck(testName, "OverrideMethods", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithInfos, JSTestOption.WithSymbolNames})
+  @JSTestOptions({JSTestOption.WithInfos, JSTestOption.WithSymbolNames, JSTestOption.AllowAstAccess})
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testHighlightStaticInstanceMembers() {
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.AllowAstAccess})
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverridingMarkersXmlBacked() {
     doTestFor(true, getTestName(false) + "_B.mxml", getTestName(false) + "_A.mxml", getTestName(false) + "_C.mxml",
@@ -185,7 +165,7 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     //assertTrue(classNames.contains(getTestName(false) +"_B")); IDEADEV-34319
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.AllowAstAccess})
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverridingMarkersInlineComponents() {
     doTestFor(true, getTestName(false) + ".mxml");
@@ -201,13 +181,13 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     assertEquals(2, implementations.size());
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.AllowAstAccess})
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverriddenMarkersInMxml1() {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.AllowAstAccess})
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverriddenMarkersInMxml2() {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
@@ -219,7 +199,7 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + "Interface.as", getTestName(false) + "Base.mxml", getTestName(false) + ".mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithInfos, JSTestOption.WithSymbolNames})
+  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithInfos, JSTestOption.WithSymbolNames, JSTestOption.AllowAstAccess})
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testFlexWithMockFlexWithLineMarkers() {
     defaultTest();

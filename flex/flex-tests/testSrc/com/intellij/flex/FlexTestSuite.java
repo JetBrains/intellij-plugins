@@ -1,30 +1,28 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex;
 
-import com.intellij.flex.bc.FlexCompilerConfigTest;
-import com.intellij.flex.bc.FlexProjectConfigTest;
 import com.intellij.flex.codeInsight.*;
 import com.intellij.flex.completion.*;
 import com.intellij.flex.editor.FlexEditorTest;
-import com.intellij.flex.editor.FlexSelectWordTest;
 import com.intellij.flex.editor.FlexLiveTemplatesTest;
+import com.intellij.flex.editor.FlexSelectWordTest;
 import com.intellij.flex.flashBuilder.FlashBuilderImportTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitCompletionTest;
-import com.intellij.flex.flexunit.codeInsight.FlexUnitConfigurationTest;
 import com.intellij.flex.flexunit.codeInsight.FlexUnitHighlightingTest;
 import com.intellij.flex.formatter.ActionScriptFormatterTest;
 import com.intellij.flex.generate.ActionScriptGenerateTest;
 import com.intellij.flex.highlighting.*;
 import com.intellij.flex.imports.FlexAutoImportsTest;
 import com.intellij.flex.imports.FlexOptimizeImportsTest;
-import com.intellij.flex.intentions.*;
+import com.intellij.flex.intentions.CreateASFunctionIntentionTest;
+import com.intellij.flex.intentions.CreateASVariableIntentionTest;
+import com.intellij.flex.intentions.FlexConvertToLocalTest;
+import com.intellij.flex.intentions.ImportJSClassIntentionTest;
 import com.intellij.flex.parser.ActionScriptParsingTest;
 import com.intellij.flex.parser.FlexImporterTest;
-import com.intellij.flex.projectView.FlexProjectViewTest;
 import com.intellij.flex.refactoring.*;
 import com.intellij.flex.resolver.ActionScriptResolveTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
-import com.intellij.flex.uml.FlashUmlTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -32,10 +30,6 @@ public final class FlexTestSuite {
 
   public static Test suite() {
     final TestSuite testSuite = new TestSuite(FlexTestSuite.class.getSimpleName());
-
-    // com.intellij.flex.bc.*
-    testSuite.addTestSuite(FlexCompilerConfigTest.class);
-    testSuite.addTestSuite(FlexProjectConfigTest.class);
 
     // com.intellij.flex.codeInsight.*
     testSuite.addTestSuite(ActionScriptRearrangerTest.class);
@@ -64,7 +58,6 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(FlashBuilderImportTest.class);
 
     //com.intellij.flex.flexunit.*
-    testSuite.addTestSuite(FlexUnitConfigurationTest.class);
     testSuite.addTestSuite(FlexUnitHighlightingTest.class);
     testSuite.addTestSuite(FlexUnitCompletionTest.class);
 
@@ -85,7 +78,6 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(FlexHighlightingTest.class);
     testSuite.addTestSuite(FlexLineMarkersTest.class);
     testSuite.addTestSuite(FlexScopeTest.class);
-    testSuite.addTestSuite(GlobalFlexHighlightingTest.class);
     testSuite.addTestSuite(SwfHighlightingTest.class);
 
     //com.intellij.flex.imports.*
@@ -93,7 +85,6 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(FlexOptimizeImportsTest.class);
 
     //com.intellij.flex.intentions.*
-    testSuite.addTestSuite(ActionScriptIntentionActionTest.class);
     testSuite.addTestSuite(CreateASFunctionIntentionTest.class);
     testSuite.addTestSuite(CreateASVariableIntentionTest.class);
     testSuite.addTestSuite(FlexConvertToLocalTest.class);
@@ -109,32 +100,20 @@ public final class FlexTestSuite {
     testSuite.addTestSuite(ActionScriptParsingTest.class);
     testSuite.addTestSuite(FlexImporterTest.class);
 
-    //com.intellij.flex.projectView.*
-    testSuite.addTestSuite(FlexProjectViewTest.class);
-
     //com.intellij.flex.refactoring.*
     testSuite.addTestSuite(ActionScriptIntroduceVariableTest.class);
     testSuite.addTestSuite(ActionScriptInPlaceIntroduceVariableTest.class);
     testSuite.addTestSuite(FlexChangeSignatureTest.class);
     testSuite.addTestSuite(FlexExtractFunctionTest.class);
-    testSuite.addTestSuite(FlexExtractSuperTest.class);
     testSuite.addTestSuite(FlexInlineFunctionTest.class);
     testSuite.addTestSuite(FlexInlineVariableTest.class);
     testSuite.addTestSuite(FlexIntroduceConstantTest.class);
-    testSuite.addTestSuite(FlexIntroduceFieldTest.class);
-    testSuite.addTestSuite(FlexMoveInnerClassTest.class);
     testSuite.addTestSuite(FlexMoveMembersTest.class);
-    testSuite.addTestSuite(FlexMoveTest.class);
-    testSuite.addTestSuite(FlexPullUpTest.class);
-    testSuite.addTestSuite(FlexPushDownTest.class);
     testSuite.addTestSuite(FlexRenameTest.class);
 
     //com.intellij.flex.resolver.*
     testSuite.addTestSuite(ActionScriptResolveTest.class);
     testSuite.addTestSuite(FlexCssNavigationTest.class);
-
-    //com.intellij.flex.uml.*
-    testSuite.addTestSuite(FlashUmlTest.class);
 
     return testSuite;
   }

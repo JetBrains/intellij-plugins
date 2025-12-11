@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.highlighting;
 
-import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
@@ -125,8 +124,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testCreateVariable() {
     doTest(() -> {
       final IntentionAction action =
-        LightQuickFixTestCase
-          .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), JavaScriptBundle
+        findActionWithText(getAvailableActions(myEditor, myFile), JavaScriptBundle
             .message("javascript.create.field.intention.name", "myfield"));
       CommandProcessor.getInstance().executeCommand(getProject(), () -> action.invoke(myProject, myEditor, myFile), "Create field", null);
       checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
