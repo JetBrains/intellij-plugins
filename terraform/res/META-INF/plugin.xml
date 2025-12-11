@@ -566,7 +566,7 @@
     />
 
     <!--Terragrunt support-->
-    <fileType name="Terragrunt" language="HCL" patterns="*root.hcl;*terragrunt.hcl;*terragrunt.stack.hcl;terragrunt.*.hcl"
+    <fileType name="Terragrunt" language="HCL" patterns="root.hcl;*.root.hcl;*terragrunt.hcl;*terragrunt.stack.hcl;*terragrunt.*.hcl"
               implementationClass="org.intellij.terraform.terragrunt.TerragruntFileType" fieldName="INSTANCE"/>
     <localInspection bundle="messages.HCLBundle" language="HCL"
                      applyToDialects="true"
