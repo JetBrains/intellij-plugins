@@ -5,6 +5,7 @@ import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
@@ -47,6 +48,7 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
     final long stepLoadingStart = System.currentTimeMillis();
     final List<AbstractStepDefinition> stepDefinitions = CachedValuesManager.getManager(module.getProject()).getCachedValue(module, () -> {
       final var javaPsiModificationTracker = PsiModificationTracker.getInstance(module.getProject()).forLanguage(JavaLanguage.INSTANCE);
+      final var projectRootModificationTracker = ProjectRootModificationTracker.getInstance(module.getProject());
       final Collection<PsiClass> allStepAnnotationClasses = CucumberJavaUtil.getAllStepAnnotationClasses(module, dependenciesScope);
       final List<AbstractStepDefinition> result = new ArrayList<>();
       for (PsiClass annotationClass : allStepAnnotationClasses) {
@@ -60,7 +62,7 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
                           .findAll());
         }
       }
-      return CachedValueProvider.Result.create(result, javaPsiModificationTracker);
+      return CachedValueProvider.Result.create(result, javaPsiModificationTracker, projectRootModificationTracker);
     });
     final long stepLoadingEnd = System.currentTimeMillis();
     LOG.trace("loaded " + stepDefinitions.size() + " step definitions in " + (stepLoadingEnd - stepLoadingStart) + "ms");
