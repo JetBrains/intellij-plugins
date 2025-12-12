@@ -25,6 +25,7 @@
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.css"/>
     <plugin id="org.intellij.plugins.postcss"/>
+    <module name="intellij.xml.emmet"/>
   </dependencies>
 
   <extensionPoints>

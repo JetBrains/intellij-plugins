@@ -42,6 +42,7 @@ jvm_library(
     "@community//platform/code-style-impl:codeStyle-impl",
     "@community//platform/core-impl",
     "@community//platform/forms_rt:java-guiForms-rt",
+    "@community//xml/emmet",
   ]
 )
 
@@ -82,6 +83,7 @@ jvm_library(
     "@community//xml/testFramework",
     "@community//platform/core-impl",
     "@community//platform/forms_rt:java-guiForms-rt",
+    "@community//xml/emmet",
   ]
 )
 ### auto-generated section `build intellij.handlebars` end

@@ -50,6 +50,7 @@ jvm_library(
     "@community//platform/polySymbols/backend",
     "//plugins/JavaScriptLanguage/javascript-common",
     "@community//libraries/gson",
+    "@community//xml/emmet",
   ]
 )
 ### auto-generated section `build intellij.astro` end
