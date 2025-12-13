@@ -1,0 +1,16 @@
+model SentEmail {
+  id        String   @id @default(cuid())
+  type      String
+  createdAt DateTime @default(now())
+  projectId String?
+
+  @@index([projectId])
+}
+
+model SomeModel {
+  field Int @id
+}
+
+model OneMoreModel {
+  name String @id
+}

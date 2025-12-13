@@ -3,6 +3,7 @@ package org.intellij.prisma.lang.resolve
 
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
@@ -21,6 +22,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import com.intellij.util.text.nullize
+import org.intellij.prisma.ide.config.PrismaConfigManager
 import org.intellij.prisma.ide.indexing.PRISMA_ENTITIES_INDEX_KEY
 import org.intellij.prisma.ide.indexing.PRISMA_KEY_VALUE_DECL_INDEX_KEY
 import org.intellij.prisma.lang.PrismaConstants
@@ -158,6 +160,15 @@ private fun buildSchemaScope(project: Project, file: VirtualFile): GlobalSearchS
 }
 
 private fun findSchemaRoot(project: Project, file: VirtualFile): VirtualFile? {
+  val schemaPath = runBlockingCancellable {
+    PrismaConfigManager.getInstance(project).getConfigForFile(file)?.resolveSchemaPath()
+  }
+
+  if (schemaPath != null) {
+    return if (schemaPath.isDirectory) schemaPath else schemaPath.parent
+  }
+
+  // legacy algorithm as a fallback
   var root: VirtualFile? = null
   var lastDir: VirtualFile? = null
 

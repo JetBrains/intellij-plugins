@@ -1,5 +1,18 @@
 ### auto-generated section `build intellij.prisma` start
+load("@community//build:compiler-options.bzl", "create_kotlinc_options")
 load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+create_kotlinc_options(
+  name = "custom_prisma",
+  opt_in = [
+    "kotlin.uuid.ExperimentalUuidApi",
+    "com.intellij.openapi.util.IntellijInternalApi",
+    "org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction",
+    "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+    "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+  ],
+  x_context_parameters = True
+)
 
 resourcegroup(
   name = "prisma_resources",
@@ -28,8 +41,11 @@ jvm_library(
     ":prisma_resources",
     ":prisma_resources_1",
   ],
+  kotlinc_opts = ":custom_prisma",
   deps = [
     "@lib//:kotlin-stdlib",
+    "@community//libraries/kotlinx/serialization/core",
+    "@community//libraries/kotlinx/serialization/json",
     "@community//libraries/markdown",
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -65,9 +81,12 @@ jvm_library(
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form"], allow_empty = True),
   resources = [":prisma_test_resources"],
+  kotlinc_opts = ":custom_prisma",
   associates = [":prisma"],
   deps = [
     "@lib//:kotlin-stdlib",
+    "@community//libraries/kotlinx/serialization/core",
+    "@community//libraries/kotlinx/serialization/json",
     "@community//libraries/markdown",
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
