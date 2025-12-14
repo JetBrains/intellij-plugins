@@ -12,14 +12,29 @@ import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.lang.typescript.service.VueLspServerActivationRule
 import org.jetbrains.vuejs.options.VueConfigurable
 
-internal class VueLspServerSupportProvider : JSFrameworkLspServerSupportProvider(VueLspServerActivationRule) {
-  override fun createLspServerDescriptor(project: Project): JSFrameworkLspServerDescriptor = VueLspServerDescriptor(project)
+internal class VueLspServerSupportProvider :
+  JSFrameworkLspServerSupportProvider(VueLspServerActivationRule) {
+  override fun createLspServerDescriptor(project: Project): JSFrameworkLspServerDescriptor =
+    VueLspServerDescriptor(project)
 
-  override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
-    JSLspServerWidgetItem(lspServer, currentFile, VuejsIcons.Vue, VuejsIcons.Vue, VueConfigurable::class.java)
+  override fun createLspServerWidgetItem(
+    lspServer: LspServer,
+    currentFile: VirtualFile?,
+  ): LspServerWidgetItem =
+    JSLspServerWidgetItem(
+      lspServer = lspServer,
+      currentFile = currentFile,
+      itemIcon = VuejsIcons.Vue,
+      statusBarIcon = VuejsIcons.Vue,
+      settingsPageClass = VueConfigurable::class.java,
+    )
 }
 
-internal class VueLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(project, VueLspServerActivationRule, "Vue") {
+internal class VueLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(
+  project = project,
+  activationRule = VueLspServerActivationRule,
+  presentableName = "Vue",
+) {
   override fun createInitializationOptionsWithTS(targetPath: String): Any {
     @Suppress("unused")
     return object {
