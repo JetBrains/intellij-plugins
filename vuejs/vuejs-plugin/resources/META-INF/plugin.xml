@@ -34,7 +34,7 @@
     <module name="intellij.vuejs.markdown"/>
 
     <module name="intellij.vuejs.common" loading="required"/>
-    <module name="intellij.vuejs.backend"/>
+    <module name="intellij.vuejs.backend" required-if-available="intellij.platform.backend"/>
   </content>
 
   <extensions defaultExtensionNs="com.intellij">
