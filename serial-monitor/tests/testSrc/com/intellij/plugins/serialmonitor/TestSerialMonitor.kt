@@ -211,11 +211,14 @@ class TestSerialMonitor {
     @Test
     fun `disappearing port results in unavailable disconnected status`() = timeoutRunBlocking {
       // port disappears
-      provider.changePortsAndAwaitScan {
-        clear()
-      }
-
-      assertEquals(PortStatus.UNAVAILABLE_DISCONNECTED, conn.getStatus())
+      provider.changePortsAndAwaitCondition(
+        action = {
+          clear()
+        },
+        condition = {
+          conn.getStatus() == PortStatus.UNAVAILABLE_DISCONNECTED
+        }
+      )
       assertFalse(port.connected)
     }
 
@@ -260,19 +263,33 @@ class TestSerialMonitor {
 
     @Test
     fun `reappearing port restores DISCONNECTED status after unavailable`() = timeoutRunBlocking {
-      // Disappear then rescan
-      provider.changePortsAndAwaitScan {
-        clear()
-      }
+      assertEquals(PortStatus.CONNECTED, conn.getStatus())
 
+      provider.changePortsAndAwaitCondition(
+        // Remove the port
+        action = {
+          clear()
+        },
+        // Should go to UNAVAILABLE_DISCONNECTED
+        condition = {
+          conn.getStatus() == PortStatus.UNAVAILABLE_DISCONNECTED
+        }
+      )
+
+      // Double-check with the assert. The status should not change between here and the await conditions
       assertEquals(PortStatus.UNAVAILABLE_DISCONNECTED, conn.getStatus())
 
-      // Re-appear then rescan
-      provider.changePortsAndAwaitScan {
-        add("/dev/ttyUSB0")
-      }
+      provider.changePortsAndAwaitCondition(
+        // Add the port back
+        action = {
+          add("/dev/ttyUSB0")
+        },
+        // Should go back to DISCONNECTED (not CONNECTED)
+        condition = {
+          conn.getStatus() == PortStatus.DISCONNECTED
+        }
+      )
 
-      // Should go back to DISCONNECTED (not CONNECTED)
       assertEquals(PortStatus.DISCONNECTED, conn.getStatus())
     }
 

@@ -8,9 +8,11 @@ import com.intellij.plugins.serialmonitor.service.SerialPortProvider
 import com.intellij.plugins.serialmonitor.service.SerialPortService
 import com.intellij.testFramework.junit5.fixture.TestFixture
 import com.intellij.testFramework.junit5.fixture.testFixture
-import com.intellij.testFramework.replaceService
 import com.intellij.util.application
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.atomics.AtomicReference
@@ -22,10 +24,6 @@ class MockSerialPortProvider : SerialPortProvider {
   private val created = ConcurrentHashMap<String, MockSerialPort>()
   val failCreateFor: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
-  constructor(vararg portNames: String) {
-    ports.store(listOf(*portNames))
-  }
-
   override suspend fun scanAvailablePorts(): List<String> = ports.load()
 
   override fun createPort(portName: String): MockSerialPort {
@@ -33,28 +31,28 @@ class MockSerialPortProvider : SerialPortProvider {
     return created.getOrPut(portName) { MockSerialPort(portName) }
   }
 
-  /**
-   * Suspends until the ports reported by [SerialPortService] match ports of this provider.
-   */
-  suspend fun awaitScan() {
-    val portNames = ports.load()
-    serviceAsync<SerialPortService>().portNamesFlow.first {
-      it == portNames.toSet()
+  suspend fun changePortsAndAwaitCondition(action: MutableList<String>.() -> Unit, condition: suspend (Collection<String>) -> Boolean) {
+    coroutineScope {
+      // Compute new ports
+      val newPorts = ports.load().toMutableList()
+      newPorts.action()
+
+      // Listen until condition becomes true
+      // Subscribe before we change the state to avoid missing the update
+      // Dispatchers.Unconfined selected to avoid starvation issues with Dispatchers.Default
+      launch(Dispatchers.Unconfined) {
+        serviceAsync<SerialPortService>().portNamesFlow.first(condition)
+      }
+
+      // Store the new state so the scanner finds it
+      ports.store(newPorts)
     }
   }
 
-  suspend fun changePortsAndAwaitScan(action: MutableList<String>.()->Unit) {
-    // Compute new ports
-    val newPorts = ports.load().toMutableList()
-    newPorts.action()
-
-    // Store the new state so the scanner finds it
-    ports.store(newPorts)
-
-    // Listen until the names update to our expected state asynchronously
-    // State flow also emits the current value to new collectors, then it emits changes; so unless a full update to another value which
-    // propagates to the service sneaks in here, we are safe.
-    awaitScan()
+  fun clearState() {
+    ports.store(emptyList())
+    created.clear()
+    failCreateFor.clear()
   }
 }
 
@@ -155,13 +153,17 @@ class MockSerialPort(private val name: String) : SerialPort {
 
 @TestOnly
 fun serialPortProviderFixture(vararg ports: String) = testFixture("Serial Port Provider Fixture") {
-  val provider = MockSerialPortProvider(*ports)
-  val disposable = Disposer.newDisposable("Serial Port Provider Test Fixture")
-  application.replaceService(SerialPortProvider::class.java, provider, disposable)
-  provider.awaitScan()
-
+  val provider = application.serviceAsync<SerialPortProvider>() as MockSerialPortProvider
+  provider.changePortsAndAwaitCondition(
+    action = {
+      addAll(ports)
+    },
+    condition = {
+      it == ports.toSet()
+    }
+  )
   initialized(provider) {
-    Disposer.dispose(disposable)
+    provider.clearState()
   }
 }
 
