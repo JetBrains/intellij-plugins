@@ -4,4 +4,12 @@
     <module name="intellij.platform.testFramework"/>
     <module name="intellij.platform.testFramework.junit5"/>
   </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService
+      serviceInterface="com.intellij.plugins.serialmonitor.service.SerialPortProvider"
+      serviceImplementation="com.intellij.plugins.serialmonitor.MockSerialPortProvider"
+      overrides="true"
+    />
+  </extensions>
 </idea-plugin>

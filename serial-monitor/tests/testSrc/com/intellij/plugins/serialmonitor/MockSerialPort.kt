@@ -1,11 +1,17 @@
 package com.intellij.plugins.serialmonitor
 
 import com.intellij.openapi.components.serviceAsync
+import com.intellij.openapi.util.Disposer
 import com.intellij.plugins.serialmonitor.service.SerialPort
 import com.intellij.plugins.serialmonitor.service.SerialPortException
 import com.intellij.plugins.serialmonitor.service.SerialPortProvider
 import com.intellij.plugins.serialmonitor.service.SerialPortService
+import com.intellij.testFramework.junit5.fixture.TestFixture
+import com.intellij.testFramework.junit5.fixture.testFixture
+import com.intellij.testFramework.replaceService
+import com.intellij.util.application
 import kotlinx.coroutines.flow.first
+import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -144,5 +150,36 @@ class MockSerialPort(private val name: String) : SerialPort {
   fun fireDSR(state: Boolean) {
     dsr = state
     portListener?.onDSRChanged(state)
+  }
+}
+
+@TestOnly
+fun serialPortProviderFixture(vararg ports: String) = testFixture("Serial Port Provider Fixture") {
+  val provider = MockSerialPortProvider(*ports)
+  val disposable = Disposer.newDisposable("Serial Port Provider Test Fixture")
+  application.replaceService(SerialPortProvider::class.java, provider, disposable)
+  provider.awaitScan()
+
+  initialized(provider) {
+    Disposer.dispose(disposable)
+  }
+}
+
+@TestOnly
+fun TestFixture<MockSerialPortProvider>.serialPortFixture(portName: String) = testFixture("Serial Port Fixture") {
+  val provider = init()
+  val port = provider.createPort(portName)
+  initialized(port) { }
+}
+
+@TestOnly
+fun TestFixture<MockSerialPort>.serialConnectionFixture(profile: SerialPortProfile? = null) = testFixture("Serial Connection Fixture") {
+  val port = init()
+  val usedProfile = profile ?: SerialPortProfile(portName = port.getSystemName())
+  val conn = serviceAsync<SerialPortService>().newConnection(port.getSystemName())
+  conn.connect(usedProfile)
+
+  initialized(conn) {
+    Disposer.dispose(conn)
   }
 }
