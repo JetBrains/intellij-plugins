@@ -32,7 +32,7 @@
 
   <!--suppress PluginXmlValidity -->
   <content namespace="jetbrains">
-    <!-- The implicit main module of the plugin depends on internal modules (intellij.libraries.ktor.client, intellij.libraries.kotlinx.io), so it's required to set the namespace for it
+    <!-- The implicit main module of the plugin depends on internal module (intellij.javascript.ultimate), so it's required to set the namespace for it
          todo: extract elements and dependencies to an explicit content module (see IJPL-212351) -->
   </content>
 

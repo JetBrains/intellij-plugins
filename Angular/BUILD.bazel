@@ -232,7 +232,7 @@ jvm_library(
     "//platform/lsp/testFramework",
     "//contrib/Angular:angular",
     "//plugins/css/backend",
-    "//plugins/css/paid/analysis",
+    "//plugins/css/ultimate/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/sass/backend",
     "//plugins/JavaScriptLanguage/javascript-ultimate",

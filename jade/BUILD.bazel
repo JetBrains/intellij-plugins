@@ -113,7 +113,7 @@ jvm_library(
     "@community//xml/testFramework",
     "//plugins/css/common/psi",
     "//plugins/css/backend",
-    "//plugins/css/paid/analysis",
+    "//plugins/css/ultimate/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/JavaScriptLanguage/javascript-ultimate",
   ]
