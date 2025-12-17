@@ -10,7 +10,16 @@ resourcegroup(
 jvm_library(
   name = "tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    "//plugins/css/common",
+    "//plugins/css/plugin",
+    "//plugins/JavaScriptLanguage/javascript-parser",
+    "@community//xml/xml-parser:parser",
+    "@community//spellchecker",
+    "@community//platform/indexing-impl",
+    "//platform/lsp",
+  ]
 )
 
 jvm_library(
@@ -83,7 +92,8 @@ jvm_library(
     "//contrib/vuejs/vuejs-backend:backend",
     "//contrib/vuejs/vuejs-plugin:plugin",
     "@community//platform/lang-api:lang",
-  ]
+  ],
+  runtime_deps = [":tests"]
 )
 ### auto-generated section `build intellij.vuejs.tests` end
 

@@ -97,7 +97,51 @@ resourcegroup(
 jvm_library(
   name = "angular-tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//jps/model-api:model",
+    "@community//platform/refactoring",
+    "@community//platform/usageView-impl",
+    "@community//platform/util/progress",
+    "@community//platform/indexing-api:indexing",
+    "@community//platform/usageView",
+    "@community//xml/xml-parser:parser",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/editor-ui-ex:editor-ex",
+    "//plugins/css/common",
+    "@community//xml/xml-psi-impl:psi-impl",
+    "@community//platform/lang-api:lang",
+    "//plugins/css/psi",
+    "//plugins/JavaScriptLanguage/javascript-parser",
+    "@community//platform/indexing-impl",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "//plugins/JavaScriptLanguage:javascript-backend",
+    "@community//xml/impl",
+    "//plugins/css/plugin",
+    "//plugins/webpack",
+    "@community//libraries/gson",
+    "@community//plugins/htmltools:html-tools",
+    "@community//libraries/jackson/jackson",
+    "@community//libraries/jackson/databind",
+    "//contrib/tslint",
+    "@community//libraries/stream",
+    "@community//platform/core-ui",
+    "@community//libraries/icu4j",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@community//platform/polySymbols",
+    "@community//libraries/fastutil",
+    "@community//images",
+    "//webcore/impl",
+    "@community//platform/xdebugger-api:debugger",
+    "@lib//:opentelemetry",
+    "//plugins/css/common/psi",
+    "//contrib/Angular:angular",
+  ]
 )
 
 jvm_library(
@@ -190,7 +234,8 @@ jvm_library(
     "//plugins/css/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/sass/backend",
-  ]
+  ],
+  runtime_deps = [":angular-tests"]
 )
 ### auto-generated section `build intellij.angular.tests` end
 

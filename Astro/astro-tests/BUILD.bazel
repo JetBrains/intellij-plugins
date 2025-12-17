@@ -4,7 +4,8 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 jvm_library(
   name = "astro-tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = ["//plugins/JavaScriptLanguage/javascript-parser"]
 )
 
 jvm_library(
@@ -49,7 +50,8 @@ jvm_library(
     "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
     "//plugins/css/common",
-  ]
+  ],
+  runtime_deps = [":astro-tests"]
 )
 ### auto-generated section `build intellij.astro.tests` end
 

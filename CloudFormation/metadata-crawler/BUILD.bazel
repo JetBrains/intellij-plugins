@@ -4,7 +4,17 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 jvm_library(
   name = "metadata-crawler",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    "@lib//:kotlin-stdlib",
+    "//contrib/CloudFormation:cloudFormation",
+    "@community//libraries/jsoup",
+    "@community//libraries/gson",
+    "@community//libraries/commons/io",
+    "@community//platform/util",
+    "@community//platform/platform-api:ide",
+    "@community//platform/core-ui",
+  ]
 )
 
 jvm_library(
@@ -23,7 +33,8 @@ jvm_library(
     "@community//platform/platform-api:ide",
     "@community//platform/core-ui",
     "@community//platform/platform-util-io:ide-util-io",
-  ]
+  ],
+  runtime_deps = [":metadata-crawler"]
 )
 ### auto-generated section `build intellij.cloudFormation.metadataCrawler` end
 

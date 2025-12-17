@@ -4,7 +4,22 @@ load("@rules_jvm//:jvm.bzl", "jvm_library")
 jvm_library(
   name = "tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    "//contrib/flex",
+    "//plugins/JavaScriptLanguage/javascript-parser",
+    "//plugins/css/common",
+    "//plugins/JavaScriptLanguage:javascript-backend",
+    "@community//spellchecker",
+    "//plugins/css/plugin",
+    "//plugins/css/psi",
+    "//contrib/flex/flex-shared:shared",
+    "@community//platform/editor-ui-ex:editor-ex",
+    "//plugins/JSIntentionPowerPack:javascript-intentions",
+    "@community//platform/smRunner",
+    "@community//platform/core-ui",
+    "@community//platform/platform-util-io:ide-util-io",
+  ]
 )
 
 jvm_library(
@@ -74,7 +89,8 @@ jvm_library(
     "@community//platform/lang-impl",
     "@community//platform/lang-api:lang",
     "@community//xml/xml-parser:parser",
-  ]
+  ],
+  runtime_deps = [":tests"]
 )
 ### auto-generated section `build intellij.flex.tests` end
 

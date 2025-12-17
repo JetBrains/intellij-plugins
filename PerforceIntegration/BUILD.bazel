@@ -51,7 +51,19 @@ resourcegroup(
 jvm_library(
   name = "vcs-perforce-tests",
   visibility = ["//visibility:public"],
-  srcs = glob([], allow_empty = True)
+  srcs = glob([], allow_empty = True),
+  runtime_deps = [
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-impl",
+    "//contrib/PerforceIntegration:vcs-perforce",
+    "@community//platform/vcs-api:vcs",
+    "//contrib/PerforceIntegration/perforce_util:vcs-perforce-util",
+    "@community//platform/vcs-impl",
+    "@community//platform/diff-api:diff",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@lib//:mockito",
+    "@community//platform/forms_rt:java-guiForms-rt",
+  ]
 )
 
 jvm_library(
@@ -82,7 +94,8 @@ jvm_library(
     "@community//platform/platform-util-io:ide-util-io",
     "@lib//:mockito",
     "@community//platform/forms_rt:java-guiForms-rt",
-  ]
+  ],
+  runtime_deps = [":vcs-perforce-tests"]
 )
 ### auto-generated section `build intellij.vcs.perforce.tests` end
 
