@@ -81,7 +81,7 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
   let {webStormGetElementType, webStormGetTypeProperties, webStormGetTypeProperty, webStormGetSymbolType} = languageService
 
   if (webStormGetElementType === undefined ||
-    webStormGetElementType === undefined ||
+    webStormGetTypeProperties === undefined ||
     webStormGetTypeProperty === undefined ||
     webStormGetSymbolType === undefined)
     return
