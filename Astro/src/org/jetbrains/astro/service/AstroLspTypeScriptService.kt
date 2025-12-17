@@ -7,9 +7,12 @@ import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionMergeStrategy
 import com.intellij.lang.typescript.lsp.JSFrameworkLspTypeScriptService
 import com.intellij.lang.typescript.lsp.LspAnnotationError
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlTokenType
 
 class AstroLspTypeScriptService(project: Project)
   : JSFrameworkLspTypeScriptService(project, AstroLspServerSupportProvider::class.java, AstroLspServerActivationRule) {
@@ -22,5 +25,21 @@ class AstroLspTypeScriptService(project: Project)
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
     return (result as? LspAnnotationError)?.quickFixes ?: emptyList()
+  }
+
+  override fun getNavigationFor(document: Document, sourceElement: PsiElement, offsetInSourceElement: Int): Array<PsiElement> {
+    if (shouldIgnoreNamespacedComponent(sourceElement)) {
+      return emptyArray()
+    }
+    return super.getNavigationFor(document, sourceElement, offsetInSourceElement)
+  }
+
+  private fun shouldIgnoreNamespacedComponent(element: PsiElement): Boolean {
+    val type = element.node?.elementType ?: return false
+    if (element.parent !is XmlTag) return false
+    return (type == XmlTokenType.XML_NAME
+            || type == XmlTokenType.XML_START_TAG_START
+            || type == XmlTokenType.XML_TAG_NAME)
+           && element.text.contains('.')
   }
 }

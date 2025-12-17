@@ -26,4 +26,20 @@ class AstroGotoDeclarationTest : AstroCodeInsightTestCase("codeInsight/navigatio
   fun testVueComponentImport() = doConfiguredTest(AstroTestModule.ASTRO_VUE_5_1_1, dir = true, configureFileName = "index.astro") {
     checkGotoDeclaration("MyCompo<caret>nent", "<caret><template", "MyComponent.vue")
   }
+
+  fun testReactNamespacedAsFieldComponent() = doConfiguredTest(dir = true, configureFileName = "index.astro") {
+    checkGotoDeclaration("Nes<caret>ted", "function <caret>NestedComponent", "MyComponent.tsx")
+  }
+
+  fun testReactNamespacedAsObjectComponent() = doConfiguredTest(dir = true, configureFileName = "index.astro") {
+    checkGotoDeclaration("Nested<caret>Component", "mponents = {\n  <caret>NestedComponent", "MyComponent.tsx")
+  }
+
+  fun testReactMultipleNamespacedComponent() = doConfiguredTest(dir = true, configureFileName = "index.astro") {
+    checkGotoDeclaration("NestedSecond<caret>LevelComponent", "<caret>NestedSecondLevelComponent", "NestedComponent.tsx")
+  }
+
+  fun testReactMultipleNamespacedMiddleComponent() = doConfiguredTest(dir = true, configureFileName = "index.astro") {
+    checkGotoDeclaration("Nested<caret>Component", "mponents = {\n  <caret>NestedComponent", "MyComponent.tsx")
+  }
 }
