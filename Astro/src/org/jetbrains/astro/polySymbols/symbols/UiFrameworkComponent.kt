@@ -6,7 +6,6 @@ import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -25,7 +24,7 @@ class UiFrameworkComponent(
   override val name: String,
   override val source: PsiElement,
   override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH,
-) : PsiSourcedPolySymbol, PolySymbolScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit) {
+) : ComponentPolySymbol, PolySymbolScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit) {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
@@ -34,7 +33,7 @@ class UiFrameworkComponent(
     if (qualifiedName.matches(HTML_ATTRIBUTES) && name.contains(":"))
       emptyList()
     else
-      super<PolySymbolScopeWithCache>.getMatchingSymbols(qualifiedName, params, stack)
+      super.getMatchingSymbols(qualifiedName, params, stack)
 
   override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
     qualifiedKind == UI_FRAMEWORK_COMPONENT_PROPS
@@ -54,6 +53,7 @@ class UiFrameworkComponent(
     when (property) {
       PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.LOCAL)
       else -> null
+      else -> super.get(property)
     }
 
   override fun createPointer(): Pointer<out UiFrameworkComponent> {
@@ -64,5 +64,5 @@ class UiFrameworkComponent(
     }
   }
 
-  override fun getModificationCount(): Long = super<PolySymbolScopeWithCache>.getModificationCount()
+  override fun getModificationCount(): Long = super.getModificationCount()
 }

@@ -3,6 +3,7 @@ package org.jetbrains.astro.codeInsight
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifierAlias
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
@@ -81,10 +82,16 @@ private fun AstroFrontmatterScript.resolveImportedProps(): PsiElement? =
     ?.resolve()
 
 
-fun JSPsiNamedElementBase.resolveIfImportSpecifier(): JSPsiNamedElementBase =
-  (this as? ES6ImportSpecifier)
-    ?.multiResolve(false)
-    ?.asSequence()
-    ?.mapNotNull { it.takeIf { it.isValidResult }?.element as? JSPsiNamedElementBase }
-    ?.firstOrNull()
-  ?: this
+fun JSPsiNamedElementBase.resolveIfImportSpecifier(): JSPsiNamedElementBase {
+  return when (this) {
+    is ES6ImportSpecifier -> {
+      multiResolve(false)
+        .asSequence().firstNotNullOfOrNull { it.takeIf { it.isValidResult }?.element as? JSPsiNamedElementBase } ?: this
+    }
+    is ES6ImportedBinding -> {
+      multiResolve(false)
+        .asSequence().firstNotNullOfOrNull { it.takeIf { it.isValidResult }?.element as? JSPsiNamedElementBase } ?: this
+    }
+    else -> this
+  }
+}

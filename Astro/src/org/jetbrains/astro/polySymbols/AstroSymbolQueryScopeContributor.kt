@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.NAMESPACE_HTML
+import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.PolySymbolQueryScopeContributor
 import com.intellij.polySymbols.query.PolySymbolQueryScopeProviderRegistrar
 import com.intellij.psi.css.CssElement
@@ -13,10 +14,12 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.astro.AstroFramework
+import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.polySymbols.scope.AstroAvailableComponentsScope
 import org.jetbrains.astro.polySymbols.scope.AstroFrontmatterScope
 import org.jetbrains.astro.polySymbols.scope.AstroScriptDefineVarsScope
+import org.jetbrains.astro.polySymbols.scope.AstroNamespacedComponentsScope
 import org.jetbrains.astro.polySymbols.scope.AstroStyleDefineVarsScope
 
 val ASTRO_COMPONENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-components"]
@@ -24,6 +27,7 @@ val ASTRO_COMPONENT_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAM
 
 val UI_FRAMEWORK_COMPONENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ui-framework-components"]
 val UI_FRAMEWORK_COMPONENT_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ui-framework-component-props"]
+val UI_FRAMEWORK_COMPONENT_NAMESPACES: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ui-framework-component-namespaces"]
 
 val ASTRO_COMMON_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-common-directives"]
 val ASTRO_CLIENT_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-client-directives"]
@@ -61,6 +65,18 @@ class AstroSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
               ?.takeIf { StringUtil.equalsIgnoreCase(it.name, HtmlUtil.SCRIPT_TAG_NAME) }
               ?.let { listOf(AstroScriptDefineVarsScope(it)) }
             ?: emptyList()
+          }
+
+        // AstroNamespacedComponentsScope
+        forPsiLocation(XmlTag::class.java)
+          .contributeScopeProvider { element ->
+            if (element.text.contains("."))
+              (element.containingFile as? AstroFileImpl)
+                ?.frontmatterScript()
+                ?.let { listOf(AstroNamespacedComponentsScope(it)) }
+              ?: emptyList()
+            else
+              emptyList()
           }
       }
   }

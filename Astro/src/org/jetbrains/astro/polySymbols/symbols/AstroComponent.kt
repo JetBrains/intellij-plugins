@@ -2,6 +2,7 @@
 package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
@@ -22,6 +23,8 @@ import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class AstroComponent(file: PsiFile)
   : PsiSourcedPolySymbol, PolySymbolScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
+class AstroComponent(file: PsiFile) : ComponentPolySymbol,
+                                      PolySymbolScopeWithCache<PsiFile, Unit>(file.project, file, Unit) {
 
   override val source: PsiElement
     get() = dataHolder
@@ -38,6 +41,7 @@ class AstroComponent(file: PsiFile)
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.OUT_OF_SCOPE)
+      else -> super.get(property)
       else -> null
     }
 
@@ -58,4 +62,6 @@ class AstroComponent(file: PsiFile)
       filePtr.dereference()?.let { AstroComponent(it) }
     }
   }
+
+  override fun computeNavigationElement(project: Project): PsiElement = source
 }
