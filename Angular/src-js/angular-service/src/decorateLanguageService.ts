@@ -1,9 +1,9 @@
-import {type CodeInformation, Language, type SourceScript} from "@volar/language-core"
+import type {CodeInformation, Language, SourceScript} from "@volar/language-core"
 import type * as TS from "./tsserverlibrary.shim"
 import type {GetElementTypeResponse, Range, TypeRequestKind} from "tsc-ide-plugin/protocol"
 import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"
-import {type TypeScriptServiceScript} from "@volar/typescript"
+import type {TypeScriptServiceScript} from "@volar/typescript"
 import {toGeneratedRanges, toSourceRanges} from "@volar/typescript/lib/node/transform"
 import * as console from "node:console"
 
