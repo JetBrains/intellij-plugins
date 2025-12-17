@@ -25,6 +25,10 @@
 
   <dependencies>
     <plugin id="JavaScript"/>
+    <!--Refine when/if IJPL-209914 allows-->
+    <plugin id="com.intellij.css"/>
+    <plugin id="intellij.webpack"/>
+    <plugin id="org.intellij.plugins.postcss"/>
   </dependencies>
 
   <content namespace="jetbrains">
