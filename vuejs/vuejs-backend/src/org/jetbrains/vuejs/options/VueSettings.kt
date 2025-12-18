@@ -16,7 +16,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsSafe
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerLoader
-import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginLoaderFactory
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VueTSPluginLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptPluginServiceWrapper
 
 fun getVueSettings(project: Project): VueSettings = project.service<VueSettings>()
