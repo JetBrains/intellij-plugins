@@ -5,7 +5,6 @@ import com.intellij.lang.typescript.lsp.LspServerPackageDescriptor
 import com.intellij.lang.typescript.lsp.PackageVersion
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginActivationRule
 import org.jetbrains.vuejs.lang.typescript.service.vuePluginPath
 import org.jetbrains.vuejs.options.VueTSPluginVersion
 import java.util.concurrent.ConcurrentHashMap
