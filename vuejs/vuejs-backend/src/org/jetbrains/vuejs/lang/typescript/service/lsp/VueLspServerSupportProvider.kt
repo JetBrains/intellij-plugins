@@ -29,20 +29,3 @@ internal class VueLspServerSupportProvider :
     )
 }
 
-internal class VueLspServerDescriptor(project: Project) : JSFrameworkLspServerDescriptor(
-  project = project,
-  activationRule = VueLspServerActivationRule,
-  presentableName = "Vue",
-) {
-  override fun createInitializationOptionsWithTS(targetPath: String): Any {
-    @Suppress("unused")
-    return object {
-      val typescript = object {
-        val tsdk = targetPath
-      }
-      val vue = object {
-        val hybridMode = false
-      }
-    }
-  }
-}
