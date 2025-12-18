@@ -9,7 +9,7 @@ import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
-import org.jetbrains.vuejs.lang.typescript.service.VuePluginTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File

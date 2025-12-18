@@ -9,7 +9,7 @@ import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.lang.getVueTestDataPath
-import org.jetbrains.vuejs.lang.typescript.service.VuePluginTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 
 abstract class VueTestCase(
   override val testCasePath: String,

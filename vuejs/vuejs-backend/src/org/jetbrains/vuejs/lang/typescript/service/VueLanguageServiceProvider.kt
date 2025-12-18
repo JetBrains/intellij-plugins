@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 
 internal class VueLanguageServiceProvider(project: Project) : TypeScriptServiceProvider() {
   private val lspLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueLspServiceWrapper>() }

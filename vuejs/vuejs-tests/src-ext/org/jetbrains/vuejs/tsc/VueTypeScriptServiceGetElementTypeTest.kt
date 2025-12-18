@@ -12,7 +12,7 @@ import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
-import org.jetbrains.vuejs.lang.typescript.service.VuePluginTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.types.VueUnwrapRefType
 import org.junit.Test
 

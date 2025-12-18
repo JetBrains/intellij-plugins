@@ -1,5 +1,5 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.vuejs.lang.typescript.service
+package org.jetbrains.vuejs.lang.typescript.service.plugin
 
 import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
 import com.intellij.javascript.types.TSType
@@ -23,6 +23,8 @@ import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.isVueFile
+import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginLoaderFactory
+import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceProtocol
 import org.jetbrains.vuejs.options.VueConfigurable
 import org.jetbrains.vuejs.options.VueTSPluginVersion
 import org.jetbrains.vuejs.options.getVueSettings
