@@ -123,13 +123,11 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     })
   }
 
-  languageService.webStormGetTypeProperties = (
-    ts,
-    typeId: number,
-    cancellationToken: TS.CancellationToken,
-    _reverseMapper?: ReverseMapper,
-  ) => {
-    return webStormGetTypeProperties(ts, typeId, cancellationToken, unboundReverseMapper.bind(null, ts))
+  languageService.webStormGetTypeProperties = (options) => {
+    return webStormGetTypeProperties({
+      ...options,
+      reverseMapper: unboundReverseMapper.bind(null, options.ts),
+    })
   }
 
   languageService.webStormGetTypeProperty = (
