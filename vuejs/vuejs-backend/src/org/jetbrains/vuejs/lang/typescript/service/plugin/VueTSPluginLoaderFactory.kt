@@ -24,11 +24,11 @@ object VueTSPluginLoaderFactory {
   }
 
   private fun createLoader(versionString: String): VueTSPluginLoader {
-    val packageVersion = PackageVersion.Companion.bundled<VueTSPluginPackageDescriptor>(
+    val packageVersion = PackageVersion.bundled<VueTSPluginPackageDescriptor>(
       version = versionString,
       pluginPath = vuePluginPath,
       localPath = "vue-language-tools/typescript-plugin/$versionString",
-      isBundledEnabled = { Registry.Companion.`is`("vue.ts.plugin.bundled.enabled") },
+      isBundledEnabled = { Registry.`is`("vue.ts.plugin.bundled.enabled") },
     )
 
     val descriptor = VueTSPluginPackageDescriptor(packageVersion)
@@ -42,5 +42,5 @@ private class VueTSPluginPackageDescriptor(version: PackageVersion) : LspServerP
   defaultPackageRelativePath = "",
 ) {
   override val registryVersion: String
-    get() = Registry.Companion.stringValue("vue.ts.plugin.default.version")
+    get() = Registry.stringValue("vue.ts.plugin.default.version")
 }
