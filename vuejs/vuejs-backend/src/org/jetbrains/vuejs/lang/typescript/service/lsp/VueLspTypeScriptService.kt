@@ -18,7 +18,6 @@ import org.eclipse.lsp4j.MarkupContent
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
-import org.jetbrains.vuejs.lang.typescript.service.VueLspServerActivationRule
 
 class VueLspTypeScriptService(
   project: Project,

@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.javascript.nodejs.util.NodePackageRef
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.lsp.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
@@ -10,41 +9,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerLoader
-import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.VueTSPluginVersion
 import org.jetbrains.vuejs.options.getVueSettings
 import java.util.concurrent.ConcurrentHashMap
 
 internal const val vuePluginPath = "vuejs/vuejs-backend"
 
-private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
+internal fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
   return context.fileType is VueFileType || isVueContext(context, project)
-}
-
-object VueLspServerActivationRule : LspServerActivationRule(VueLspServerLoader, VueLspActivationHelper) {
-  override fun isFileAcceptable(file: VirtualFile): Boolean {
-    if (!TypeScriptLanguageServiceUtil.IS_VALID_FILE_FOR_SERVICE.value(file)) return false
-
-    return file.isVueFile || TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file)
-  }
-}
-
-private object VueLspActivationHelper : ServiceActivationHelper {
-  override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
-    return isVueServiceContext(project, context)
-  }
-
-  override fun isEnabledInSettings(project: Project): Boolean {
-    if (getVueSettings(project).tsPluginPreviewEnabled)
-      return false
-
-    return when (getVueSettings(project).serviceType) {
-      VueServiceSettings.AUTO -> true
-      VueServiceSettings.DISABLED -> false
-    }
-  }
 }
 
 private class VueTSPluginPackageDescriptor(version: PackageVersion) : LspServerPackageDescriptor(

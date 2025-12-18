@@ -9,7 +9,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServer
 import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import org.jetbrains.vuejs.VuejsIcons
-import org.jetbrains.vuejs.lang.typescript.service.VueLspServerActivationRule
 import org.jetbrains.vuejs.options.VueConfigurable
 
 internal class VueLspServerSupportProvider :
