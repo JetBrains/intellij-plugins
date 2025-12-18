@@ -11,34 +11,13 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerLoader
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.VueTSPluginVersion
 import org.jetbrains.vuejs.options.getVueSettings
 import java.util.concurrent.ConcurrentHashMap
 
-private const val vuePluginPath = "vuejs/vuejs-backend"
-
-private val vueLspServerPackageVersion = PackageVersion.bundled<VueLspServerPackageDescriptor>(
-  version = "2.2.10",
-  pluginPath = vuePluginPath,
-  localPath = "vue-language-tools/language-server/2.2.10",
-  isBundledEnabled = { Registry.`is`("vue.language.server.bundled.enabled") },
-)
-
-private object VueLspServerPackageDescriptor : LspServerPackageDescriptor(
-  name = "@vue/language-server",
-  defaultVersion = vueLspServerPackageVersion,
-  defaultPackageRelativePath = "/bin/vue-language-server.js",
-) {
-  override val registryVersion: String get() = Registry.stringValue("vue.language.server.default.version")
-}
-
-@ApiStatus.Experimental
-object VueLspServerLoader : LspServerLoader(VueLspServerPackageDescriptor) {
-  override fun getSelectedPackageRef(project: Project): NodePackageRef {
-    return getVueSettings(project).packageRef
-  }
-}
+internal const val vuePluginPath = "vuejs/vuejs-backend"
 
 private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
   return context.fileType is VueFileType || isVueContext(context, project)

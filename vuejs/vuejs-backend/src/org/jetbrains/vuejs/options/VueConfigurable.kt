@@ -12,7 +12,7 @@ import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import com.intellij.ui.layout.ValueComponentPredicate
 import com.intellij.ui.layout.not
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerLoader
 
 class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.Simple(), Configurable {
   private val settings = getVueSettings(project)

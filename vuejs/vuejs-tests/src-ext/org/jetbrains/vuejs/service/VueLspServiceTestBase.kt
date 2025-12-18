@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.service.BaseLspTypeScriptServiceTest
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.util.text.SemVer
-import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerLoader
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings

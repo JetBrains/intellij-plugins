@@ -15,7 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsSafe
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
+import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspServerLoader
 import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginLoaderFactory
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptPluginServiceWrapper
 
