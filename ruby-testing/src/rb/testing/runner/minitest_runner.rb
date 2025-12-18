@@ -11,3 +11,8 @@ end
 files.split("||").each do |file|
    require file
 end
+
+# Minitest 6.0 makes plugin loading opt-in, which means the reporter file isn't `require`-d anymore, so we have to require it manually
+if ::Rake::TeamCity::RunnerUtils.use_minitest?
+  require 'minitest/rm_reporter_plugin'
+end
