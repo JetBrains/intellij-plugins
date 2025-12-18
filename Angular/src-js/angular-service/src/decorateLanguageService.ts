@@ -1,6 +1,6 @@
 import type {CodeInformation, Language, SourceScript} from "@volar/language-core"
 import type * as TS from "./tsserverlibrary.shim"
-import type {GetElementTypeResponse, Range, TypeRequestKind} from "tsc-ide-plugin/protocol"
+import type {Range} from "tsc-ide-plugin/protocol"
 import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"
 import type {TypeScriptServiceScript} from "@volar/typescript"
@@ -86,16 +86,9 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     webStormGetSymbolType === undefined)
     return
 
-  languageService.webStormGetElementType = (
-    ts: typeof TS,
-    fileName: string,
-    startOffset: number,
-    endOffset: number,
-    typeRequestKind: TypeRequestKind,
-    forceReturnType: boolean,
-    cancellationToken: TS.CancellationToken,
-    reverseMapper?: ReverseMapper,
-  ): GetElementTypeResponse => {
+  languageService.webStormGetElementType = (options) => {
+    const {ts, fileName, startOffset, endOffset} = options
+
     const [serviceScript, targetScript, sourceScript] =
       getServiceScript(language, fileName);
     if (targetScript?.associatedOnly) {
@@ -108,12 +101,18 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     if (serviceScript && sourceFile && generatedFile) {
       const generatedRange = toGeneratedRange(language, serviceScript, sourceScript, startOffset, endOffset, (it) => it.types);
       if (generatedRange !== undefined) {
-        return webStormGetElementType(ts, targetScript.id, generatedRange[0], generatedRange[1], typeRequestKind, forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
+        return webStormGetElementType({
+          ...options,
+          fileName: targetScript.id,
+          startOffset: generatedRange[0],
+          endOffset: generatedRange[1],
+          reverseMapper: unboundReverseMapper.bind(null, ts),
+        })
       }
       return undefined;
     }
     else {
-      return webStormGetElementType(ts, fileName, startOffset, endOffset, typeRequestKind, forceReturnType, cancellationToken, reverseMapper)
+      return webStormGetElementType(options)
     }
   }
 
@@ -150,7 +149,8 @@ export function decorateNgLanguageServiceExtensions(
   language: Language<string>,
   languageService: TS.LanguageService,
   unboundReverseMapper: UnboundReverseMapper,
-  webStormGetElementType: TS.LanguageService["webStormGetElementType"]) {
+  webStormGetElementType: TS.LanguageService["webStormGetElementType"],
+) {
   languageService.webStormNgGetGeneratedElementType = (
     ts, fileName, range, forceReturnType, cancellationToken
   ) => {
@@ -167,7 +167,16 @@ export function decorateNgLanguageServiceExtensions(
     let startOffset = ts.getPositionOfLineAndCharacter(generatedFile, range.start.line, range.start.character)
     let endOffset = ts.getPositionOfLineAndCharacter(generatedFile, range.end.line, range.end.character)
 
-    return webStormGetElementType(ts, fileName, startOffset, endOffset, "Default", forceReturnType, cancellationToken, unboundReverseMapper.bind(null, ts))
+    return webStormGetElementType({
+      ts,
+      fileName,
+      startOffset,
+      endOffset,
+      typeRequestKind: "Default",
+      forceReturnType,
+      cancellationToken,
+      reverseMapper: unboundReverseMapper.bind(null, ts),
+    })
   }
 }
 
