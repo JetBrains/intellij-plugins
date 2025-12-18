@@ -116,13 +116,11 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     }
   }
 
-  languageService.webStormGetSymbolType = (
-    ts,
-    symbolId: number,
-    cancellationToken: TS.CancellationToken,
-    _reverseMapper?: ReverseMapper,
-  ) => {
-    return webStormGetSymbolType(ts, symbolId, cancellationToken, unboundReverseMapper.bind(null, ts))
+  languageService.webStormGetSymbolType = (options) => {
+    return webStormGetSymbolType({
+      ...options,
+      reverseMapper: unboundReverseMapper.bind(null, options.ts),
+    })
   }
 
   languageService.webStormGetTypeProperties = (
