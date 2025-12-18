@@ -3,9 +3,9 @@ package org.angular2.library.forms.impl
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
@@ -26,16 +26,16 @@ object Angular2UnknownFormGroup : PolySymbolWithPattern, PolySymbolScope {
   override val pattern: PolySymbolPattern =
     PolySymbolPatternFactory.createRegExMatch(".*")
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
-    when (qualifiedKind) {
+  override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
+    when (kind) {
       NG_FORM_CONTROL_PROPS -> listOf(Angular2UnknownFormControl)
       NG_FORM_GROUP_FIELDS -> listOf(Angular2UnknownFormArray)
       NG_FORM_GROUP_PROPS -> listOf(this)
       else -> emptyList()
     }
 
-  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind in NG_FORM_ANY_CONTROL_PROPS
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    kind in NG_FORM_ANY_CONTROL_PROPS
 
   override val priority: PolySymbol.Priority?
     get() = PolySymbol.Priority.LOWEST
@@ -50,7 +50,7 @@ object Angular2UnknownFormGroup : PolySymbolWithPattern, PolySymbolScope {
       else -> null
     }
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = NG_FORM_GROUP_PROPS
 
   override val origin: PolySymbolOrigin

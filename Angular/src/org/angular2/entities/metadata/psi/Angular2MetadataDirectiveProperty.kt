@@ -12,7 +12,7 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.NullableLazyValue
 import com.intellij.openapi.util.NullableLazyValue.lazyNullable
 import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceApiStatus
 import com.intellij.polySymbols.utils.coalesceWith
@@ -27,7 +27,7 @@ class Angular2MetadataDirectiveProperty internal constructor(
   private val myOwner: Angular2MetadataClassBase<*>,
   private val myFieldName: String,
   override val name: String,
-  override val qualifiedKind: PolySymbolQualifiedKind,
+  override val kind: PolySymbolKind,
 ) : Angular2ClassBasedDirectiveProperty, PsiSourcedPolySymbol {
 
   private val mySignature: NullableLazyValue<JSRecordType.PropertySignature> =
@@ -70,9 +70,9 @@ class Angular2MetadataDirectiveProperty internal constructor(
     val owner = myOwner.createSmartPointer()
     val name = this.name
     val fieldName = myFieldName
-    val qualifiedKind = this.qualifiedKind
+    val kind = this.kind
     return Pointer {
-      owner.dereference()?.let { Angular2MetadataDirectiveProperty(it, fieldName, name, qualifiedKind) }
+      owner.dereference()?.let { Angular2MetadataDirectiveProperty(it, fieldName, name, kind) }
     }
   }
 
@@ -86,14 +86,14 @@ class Angular2MetadataDirectiveProperty internal constructor(
     val property = other as Angular2MetadataDirectiveProperty?
     return myFieldName == property!!.myFieldName &&
            name == property.name &&
-           qualifiedKind == property.qualifiedKind &&
+           kind == property.kind &&
            myOwner == property.myOwner
   }
 
   override fun hashCode(): Int {
     var result = myFieldName.hashCode()
     result = 31 * result + name.hashCode()
-    result = 31 * result + qualifiedKind.hashCode()
+    result = 31 * result + kind.hashCode()
     result = 31 * result + myOwner.hashCode()
     return result
   }

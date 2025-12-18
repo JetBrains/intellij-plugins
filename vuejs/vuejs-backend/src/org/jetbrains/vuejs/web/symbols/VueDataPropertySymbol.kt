@@ -3,8 +3,8 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueDataProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -16,7 +16,7 @@ class VueDataPropertySymbol(
   origin: PolySymbolOrigin,
 ) : VuePropertySymbol<VueDataProperty>(data, owner, origin) {
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = VUE_COMPONENT_DATA_PROPERTIES
 
   override val type: JSType?

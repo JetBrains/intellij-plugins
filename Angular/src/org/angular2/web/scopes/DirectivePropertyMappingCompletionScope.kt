@@ -2,10 +2,6 @@
 package org.angular2.web.scopes
 
 import com.intellij.codeInsight.completion.CompletionUtil
-import com.intellij.polySymbols.js.symbols.JSPropertySymbol
-import com.intellij.polySymbols.js.symbols.asJSSymbol
-import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSLiteralExpression
@@ -16,6 +12,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
+import com.intellij.polySymbols.js.symbols.JSPropertySymbol
+import com.intellij.polySymbols.js.symbols.asJSSymbol
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
@@ -50,8 +50,8 @@ import org.angular2.web.references.Angular2DirectivePropertyLiteralReferenceProv
  * this scope is handling only code completion of Angular directive properties.
  * Reference resolution is being provided separately by [Angular2DirectivePropertyLiteralReferenceProvider]
  */
-class DirectivePropertyMappingCompletionScope(element: JSElement)
-  : PolySymbolScopeWithCache<JSElement, Unit>(Angular2Framework.ID, element.project, element, Unit) {
+class DirectivePropertyMappingCompletionScope(element: JSElement) :
+  PolySymbolScopeWithCache<JSElement, Unit>(Angular2Framework.ID, element.project, element, Unit) {
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -68,7 +68,8 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
           .filter { entry ->
             entry.value.declaringElement != context
             && (context !is JSLiteralExpression || context.stringValue?.replace(CompletionUtil.DUMMY_IDENTIFIER, "") != entry.key)
-            && (context !is JSReferenceExpression || entry.value.declaringElement != context.siblings().firstOrNull { it is JSLiteralExpression })
+            && (context !is JSReferenceExpression || entry.value.declaringElement != context.siblings()
+              .firstOrNull { it is JSLiteralExpression })
           }
 
         val filterAndConsume = { symbol: PolySymbol ->
@@ -112,14 +113,14 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     /* Do not support reference resolution */
-    if (qualifiedName.qualifiedKind == JS_STRING_LITERALS)
+    if (qualifiedName.kind == JS_STRING_LITERALS)
     // Provide an empty symbol match to avoid unresolved reference on the string literal
       listOf(PolySymbolMatch.create("", JS_STRING_LITERALS, AngularEmptyOrigin, PolySymbolNameSegment.create(0, 0)))
     else
       emptyList()
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
@@ -133,8 +134,8 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     }
   }
 
-  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == JS_STRING_LITERALS && dataHolder
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    kind == JS_STRING_LITERALS && dataHolder
       .takeIf { it is JSReferenceExpression || it is JSLiteralExpression }
       ?.let { jsElement ->
         CachedValuesManager.getCachedValue(jsElement) {
@@ -144,10 +145,10 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
         }
       } == true
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == JS_STRING_LITERALS
-    || qualifiedKind == NG_DIRECTIVE_INPUTS
-    || qualifiedKind == NG_DIRECTIVE_OUTPUTS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == JS_STRING_LITERALS
+    || kind == NG_DIRECTIVE_INPUTS
+    || kind == NG_DIRECTIVE_OUTPUTS
 
   private object AngularEmptyOrigin : PolySymbolOrigin {
     override val framework: FrameworkId =
@@ -165,7 +166,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
   private class Angular2FieldPropertySymbol(
     override val delegate: JSPropertySymbol,
-    override val qualifiedKind: PolySymbolQualifiedKind,
+    override val kind: PolySymbolKind,
     override val project: Project,
     val owner: TypeScriptClass?,
   ) : PolySymbolDelegate<JSPropertySymbol>, Angular2Symbol {
@@ -179,7 +180,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       when (property) {
         PROP_JS_TYPE -> property.tryCast(
-          if (qualifiedKind == NG_DIRECTIVE_OUTPUTS) {
+          if (kind == NG_DIRECTIVE_OUTPUTS) {
             Angular2TypeUtils.extractEventVariableType(super<PolySymbolDelegate>[PROP_JS_TYPE])
           }
           else {
@@ -191,13 +192,13 @@ class DirectivePropertyMappingCompletionScope(element: JSElement)
 
     override fun createPointer(): Pointer<out Angular2FieldPropertySymbol> {
       val delegatePtr = delegate.createPointer()
-      val qualifiedKind = qualifiedKind
+      val kind = kind
       val project = project
       val ownerPtr = owner?.createSmartPointer()
       return Pointer {
         val owner = ownerPtr?.let { it.dereference() ?: return@Pointer null }
         val delegate = delegatePtr.dereference() ?: return@Pointer null
-        Angular2FieldPropertySymbol(delegate, qualifiedKind, project, owner)
+        Angular2FieldPropertySymbol(delegate, kind, project, owner)
       }
     }
   }

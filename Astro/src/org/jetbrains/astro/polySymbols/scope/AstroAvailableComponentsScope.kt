@@ -7,22 +7,23 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndexEx
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.polySymbols.symbols.AstroComponent
 
-internal class AstroAvailableComponentsScope(project: Project) : PolySymbolScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
+internal class AstroAvailableComponentsScope(project: Project) :
+  PolySymbolScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == ASTRO_COMPONENTS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == ASTRO_COMPONENTS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val psiManager = PsiManager.getInstance(project)

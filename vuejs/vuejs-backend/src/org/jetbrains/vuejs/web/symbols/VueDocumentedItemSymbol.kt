@@ -11,6 +11,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiModificationTracker
@@ -21,7 +22,7 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   override val name: String,
   protected val item: T,
-) : VuePolySymbolBase(), PsiSourcedPolySymbol {
+) : PolySymbolScope, PsiSourcedPolySymbol {
 
   open val type: JSType? get() = null
 

@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueSourceDirective
@@ -16,7 +16,7 @@ class VueSourceDirectiveSymbol(
   directive = directive,
 ) {
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = VUE_DIRECTIVES
 
   override fun createPointer(): Pointer<VueSourceDirectiveSymbol> {

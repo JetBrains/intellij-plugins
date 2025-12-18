@@ -1,10 +1,10 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.scopes
 
-import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.*
+import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
@@ -39,11 +39,11 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolScope {
     else emptyList()
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    if (qualifiedKind == NG_I18N_ATTRIBUTES) {
+    if (kind == NG_I18N_ATTRIBUTES) {
       tag.attributes
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)
@@ -101,7 +101,7 @@ class I18NAttributesScope(private val tag: XmlTag) : PolySymbolScope {
     override val project: Project
       get() = attribute.project
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = NG_I18N_ATTRIBUTES
 
     override fun equals(other: Any?): Boolean =

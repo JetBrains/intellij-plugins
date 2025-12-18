@@ -1,12 +1,12 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.polySymbols.symbols
 
-import com.intellij.polySymbols.js.symbols.asJSSymbol
-import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.js.symbols.asJSSymbol
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -41,8 +41,8 @@ class AstroLocalComponent(
     else
       super<PolySymbolScopeWithCache>.getMatchingSymbols(qualifiedName, params, stack)
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == ASTRO_COMPONENT_PROPS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == ASTRO_COMPONENT_PROPS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -65,7 +65,7 @@ class AstroLocalComponent(
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = ASTRO_COMPONENTS
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =

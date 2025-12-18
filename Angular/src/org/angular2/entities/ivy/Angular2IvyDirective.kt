@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackCoreDirectiveRequiredInputStatus
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs
@@ -220,12 +220,12 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
       clazz: TypeScriptClass,
       property: JSRecordType.PropertySignature,
       mappings: MutableMap<String, Angular2PropertyInfo>,
-      qualifiedKind: PolySymbolQualifiedKind,
+      kind: PolySymbolKind,
       result: MutableMap<String, Angular2DirectiveProperty>,
     ) {
       val info = mappings.remove(property.memberName)
       if (info != null) {
-        result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(clazz, property, qualifiedKind, info))
+        result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(clazz, property, kind, info))
       }
     }
   }

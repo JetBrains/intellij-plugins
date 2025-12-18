@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
@@ -20,7 +20,7 @@ class VueDirectiveModifierSymbol(
   override val origin: PolySymbolOrigin
     get() = VueDirectiveModifierSymbolOrigin
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = VUE_DIRECTIVE_MODIFIERS
 
   override val priority: PolySymbol.Priority

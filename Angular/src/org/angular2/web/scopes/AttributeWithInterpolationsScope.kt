@@ -38,7 +38,7 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = HTML_ATTRIBUTES
 
     override val name: String
@@ -65,7 +65,7 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
   }
 
   private object PropertiesResolver : PolySymbolPatternSymbolsResolver {
-    override fun getSymbolKinds(context: PolySymbol?): Set<PolySymbolQualifiedKind> = setOf(
+    override fun getSymbolKinds(context: PolySymbol?): Set<PolySymbolKind> = setOf(
       JS_PROPERTIES, NG_DIRECTIVE_INPUTS
     )
 

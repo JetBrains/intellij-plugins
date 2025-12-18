@@ -4,8 +4,8 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
@@ -36,8 +36,8 @@ abstract class Angular2FormAbstractControlImpl(
   override val renameTarget: PolySymbolRenameTarget?
     get() = PolySymbolRenameTarget.create(this)
 
-  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind in NG_FORM_ANY_CONTROL_PROPS
-    || qualifiedKind == NG_FORM_GROUP_FIELDS
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    kind in NG_FORM_ANY_CONTROL_PROPS
+    || kind == NG_FORM_GROUP_FIELDS
 
 }

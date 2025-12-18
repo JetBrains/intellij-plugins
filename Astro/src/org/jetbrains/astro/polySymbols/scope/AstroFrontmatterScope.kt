@@ -5,10 +5,10 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.model.Pointer
-import com.intellij.psi.createSmartPointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
+import com.intellij.psi.createSmartPointer
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.astroContentRoot
 import org.jetbrains.astro.codeInsight.frontmatterScript
@@ -19,11 +19,11 @@ import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENTS
 import org.jetbrains.astro.polySymbols.symbols.AstroLocalComponent
 import org.jetbrains.astro.polySymbols.symbols.UiFrameworkComponent
 
-class AstroFrontmatterScope(val file: AstroFileImpl)
-  : PolySymbolScopeWithCache<AstroFileImpl, Unit>(AstroFramework.ID, file.project, file, Unit) {
+class AstroFrontmatterScope(val file: AstroFileImpl) :
+  PolySymbolScopeWithCache<AstroFileImpl, Unit>(AstroFramework.ID, file.project, file, Unit) {
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == ASTRO_COMPONENTS || qualifiedKind == UI_FRAMEWORK_COMPONENTS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == ASTRO_COMPONENTS || kind == UI_FRAMEWORK_COMPONENTS
 
   override fun createPointer(): Pointer<AstroFrontmatterScope> {
     val filePtr = file.createSmartPointer()

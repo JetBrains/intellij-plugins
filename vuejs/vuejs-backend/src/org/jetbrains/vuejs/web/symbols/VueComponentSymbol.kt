@@ -36,7 +36,7 @@ class VueComponentSymbol(
   val typeParameters: List<TypeScriptTypeParameter>
     get() = (item as? VueRegularComponent)?.typeParameters ?: emptyList()
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = VUE_COMPONENTS
 
   // The source field is used for refactoring purposes by Poly Symbols framework
@@ -80,11 +80,11 @@ class VueComponentSymbol(
       super.getMatchingSymbols(qualifiedName, params, stack)
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    when (qualifiedKind) {
+    when (kind) {
       VUE_COMPONENT_PROPS -> {
         val props = mutableListOf<VueInputProperty>()
         item.acceptPropertiesAndMethods(object : VueModelVisitor() {

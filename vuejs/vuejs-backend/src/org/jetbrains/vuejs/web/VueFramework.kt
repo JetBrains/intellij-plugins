@@ -36,7 +36,7 @@ class VueFramework : WebFramework() {
   override fun getNames(qualifiedName: PolySymbolQualifiedName, target: PolySymbolNamesProvider.Target): List<String> {
     val name = qualifiedName.name
 
-    return when (qualifiedName.qualifiedKind) {
+    return when (qualifiedName.kind) {
       VUE_COMPONENTS -> when (target) {
         NAMES_QUERY, RENAME_QUERY -> listOf(name, fromAsset(name, true))
         NAMES_MAP_STORAGE -> if (name.contains('-'))

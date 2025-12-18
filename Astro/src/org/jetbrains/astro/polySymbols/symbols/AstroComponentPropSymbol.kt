@@ -1,29 +1,28 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.polySymbols.symbols
 
-import com.intellij.polySymbols.js.jsType
-import com.intellij.polySymbols.js.symbols.JSPropertySymbol
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.js.jsType
+import com.intellij.polySymbols.js.symbols.JSPropertySymbol
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
 
-class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol)
-  : PsiSourcedPolySymbol {
+class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : PsiSourcedPolySymbol {
 
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = ASTRO_COMPONENT_PROPS
 
   override val name: String

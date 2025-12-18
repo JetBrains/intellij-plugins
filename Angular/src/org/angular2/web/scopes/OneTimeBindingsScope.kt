@@ -16,9 +16,9 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.*
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.polySymbols.js.jsType
@@ -48,8 +48,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == NG_DIRECTIVE_ONE_TIME_BINDINGS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val queryExecutor = PolySymbolQueryExecutorFactory.create(dataHolder)
@@ -107,7 +107,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
 
     @JvmStatic
     fun isOneTimeBindingProperty(property: PolySymbol): Boolean {
-      if (ONE_TIME_BINDING_EXCLUDES.contains(property.name) || NG_DIRECTIVE_INPUTS != property.qualifiedKind) {
+      if (ONE_TIME_BINDING_EXCLUDES.contains(property.name) || NG_DIRECTIVE_INPUTS != property.kind) {
         return false
       }
       if ((property as? Angular2DirectiveProperty)?.virtualProperty == true) return true
@@ -139,7 +139,7 @@ internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlT
     override val source: PsiElement?
       get() = (delegate as? PsiSourcedPolySymbol)?.source
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = NG_DIRECTIVE_ONE_TIME_BINDINGS
 
     override val priority: PolySymbol.Priority

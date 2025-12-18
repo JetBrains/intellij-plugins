@@ -55,7 +55,7 @@ class Angular2SymbolDocumentationCustomizer : PolySymbolDocumentationCustomizer 
           .toString()
       )
     }
-    else if (symbol.qualifiedKind == NG_DEFER_ON_TRIGGERS && location != null) {
+    else if (symbol.kind == NG_DEFER_ON_TRIGGERS && location != null) {
       return documentation.withDefinition(
         SyntaxPrinter(location).append(TypeScriptHighlighter.TS_KEYWORD, "trigger")
           .appendRaw(" ")

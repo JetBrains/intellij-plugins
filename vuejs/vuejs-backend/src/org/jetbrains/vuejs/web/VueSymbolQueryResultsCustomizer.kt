@@ -1,19 +1,19 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
-import com.intellij.polySymbols.html.StandardHtmlSymbol
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.html.NAMESPACE_HTML
+import com.intellij.polySymbols.html.StandardHtmlSymbol
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
@@ -80,9 +80,9 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
 
   override fun apply(
     item: PolySymbolCodeCompletionItem,
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
   ): PolySymbolCodeCompletionItem? {
-    when (qualifiedKind) {
+    when (kind) {
       VUE_COMPONENTS -> {
         if (
           !isVueComponentQuery(item.name) &&

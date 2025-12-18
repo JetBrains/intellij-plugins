@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web.scopes
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.*
@@ -32,11 +32,11 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
       .filter { isNotIncorrectlySelfReferred(it) }
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    delegate.getSymbols(qualifiedKind, params, stack)
+    delegate.getSymbols(kind, params, stack)
       .filter { isNotIncorrectlySelfReferred(it) }
 
   override fun getCodeCompletions(

@@ -185,12 +185,12 @@
     <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectivePropertyDeclarationProvider"/>
     <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveAttributeDeclarationProvider"/>
     <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2CustomCssPropertyDeclarationProvider"/>
-    <polySymbols.webTypes.symbolFactory namespace="html" kind="ng-blocks"
-                                       implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol$Factory"/>
-    <polySymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameters"
-                                       implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol$Factory"/>
-    <polySymbols.webTypes.symbolFactory namespace="html" kind="ng-block-parameter-prefixes"
-                                       implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol$Factory"/>
+    <polySymbols.webTypes.symbolFactory namespace="html" kindName="ng-blocks"
+                                        implementation="org.angular2.codeInsight.blocks.Angular2HtmlBlockSymbol$Factory"/>
+    <polySymbols.webTypes.symbolFactory namespace="html" kindName="ng-block-parameters"
+                                        implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterSymbol$Factory"/>
+    <polySymbols.webTypes.symbolFactory namespace="html" kindName="ng-block-parameter-prefixes"
+                                        implementation="org.angular2.codeInsight.blocks.Angular2BlockParameterPrefixSymbol$Factory"/>
     <polySymbols.psiSourcedSymbolProvider implementation="org.angular2.web.findUsages.Angular2PsiSourcedPolySymbolProvider"/>
     <polySymbols.documentationCustomizer implementation="org.angular2.web.Angular2SymbolDocumentationCustomizer"/>
     <polySymbols.highlightingCustomizer id="angular2"

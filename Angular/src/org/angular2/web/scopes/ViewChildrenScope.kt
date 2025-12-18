@@ -1,15 +1,15 @@
 package org.angular2.web.scopes
 
-import com.intellij.polySymbols.js.decorateWithJsKindIcon
-import com.intellij.polySymbols.js.decorateWithSymbolType
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.JS_SYMBOLS
+import com.intellij.polySymbols.js.decorateWithJsKindIcon
+import com.intellij.polySymbols.js.decorateWithSymbolType
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolQueryStack
@@ -29,8 +29,8 @@ class ViewChildrenScope(
   mapOf(JS_STRING_LITERALS to JS_SYMBOLS), Angular2Framework.ID, decorator
 ) {
 
-  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == JS_STRING_LITERALS
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    kind == JS_STRING_LITERALS
 
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
     true
@@ -60,8 +60,8 @@ class ViewChildrenScope(
     }
   }
 
-  private class ReferenceVariablesFlattenedScope(file: PsiFile, private val resolveToMultipleSymbols: Boolean)
-    : PolySymbolScopeWithCache<PsiFile, Boolean>(null, file.project, file, resolveToMultipleSymbols) {
+  private class ReferenceVariablesFlattenedScope(file: PsiFile, private val resolveToMultipleSymbols: Boolean) :
+    PolySymbolScopeWithCache<PsiFile, Boolean>(null, file.project, file, resolveToMultipleSymbols) {
 
     override fun getCodeCompletions(
       qualifiedName: PolySymbolQualifiedName,
@@ -77,8 +77,8 @@ class ViewChildrenScope(
         .forEach(consumer)
     }
 
-    override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-      qualifiedKind == JS_SYMBOLS
+    override fun provides(kind: PolySymbolKind): Boolean =
+      kind == JS_SYMBOLS
 
     override fun createPointer(): Pointer<ReferenceVariablesFlattenedScope> {
       val filePtr = dataHolder.createSmartPointer()

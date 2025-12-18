@@ -7,8 +7,8 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
@@ -52,14 +52,14 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
     qualifiedName: PolySymbolQualifiedName,
   ): List<PolySymbol> =
     when {
-      scopedKinds.contains(qualifiedName.qualifiedKind) ->
+      scopedKinds.contains(qualifiedName.kind) ->
         withTypeEvaluationLocation(context) {
           if (strict)
             matches.filterOutOfScopeOrErrorSymbols(scope)
           else
             matches.wrapWithScopedSymbols(scope)
         }
-      qualifiedName.qualifiedKind == NG_KEY_EVENT_MODIFIERS ->
+      qualifiedName.kind == NG_KEY_EVENT_MODIFIERS ->
         if (!Angular2LangUtil.isAtLeastAngularVersion(context, Angular2LangUtil.AngularVersion.V_14_2))
           matches.filter { !it.name.equals("code", true) }
         else
@@ -75,18 +75,18 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
 
   override fun apply(
     item: PolySymbolCodeCompletionItem,
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
   ): PolySymbolCodeCompletionItem? {
     // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
     // remove everything else from completion
     if (svgContext
-        && qualifiedKind == HTML_ELEMENTS
+        && kind == HTML_ELEMENTS
         && item.name !in svgAllowedElements)
       return null
     val symbol = item.symbol
-    if (qualifiedKind == NG_KEY_EVENT_MODIFIERS && item.name == "code")
+    if (kind == NG_KEY_EVENT_MODIFIERS && item.name == "code")
       return item.takeIf { Angular2LangUtil.isAtLeastAngularVersion(context, Angular2LangUtil.AngularVersion.V_14_2) }
-    if (symbol == null || !scopedKinds.contains(qualifiedKind)) return item
+    if (symbol == null || !scopedKinds.contains(kind)) return item
     val directives = symbol.unwrapMatchedSymbols()
       .mapNotNull { it[PROP_SYMBOL_DIRECTIVE] }
       .toList()
@@ -102,7 +102,7 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
         else {
           wrapWithImportDeclarationModuleHandler(
             Angular2CodeInsightUtils.decorateCodeCompletionItem(item, directives, proximity, scope),
-            when (qualifiedKind) {
+            when (kind) {
               NG_DIRECTIVE_ELEMENT_SELECTORS -> XmlTag::class.java
               NG_STRUCTURAL_DIRECTIVES -> Angular2TemplateBindings::class.java
               else -> XmlAttribute::class.java
@@ -206,7 +206,7 @@ class Angular2SymbolQueryResultsCustomizer private constructor(private val conte
 
   private fun PolySymbol.hasSelectorSymbols() =
     unwrapMatchedSymbols()
-      .any { it.qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS || it.qualifiedKind == NG_DIRECTIVE_ELEMENT_SELECTORS }
+      .any { it.kind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS || it.kind == NG_DIRECTIVE_ELEMENT_SELECTORS }
 
   companion object {
     private val svgAllowedElements = setOf(ELEMENT_NG_CONTAINER, ELEMENT_NG_TEMPLATE)

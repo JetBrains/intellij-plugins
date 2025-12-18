@@ -3,14 +3,14 @@ package org.angular2.web.scopes
 
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.html.HTML_ATTRIBUTES
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
@@ -19,7 +19,7 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.web.*
 
-private val providedKinds: Set<PolySymbolQualifiedKind> = setOf(
+private val providedKinds: Set<PolySymbolKind> = setOf(
   NG_DIRECTIVE_INPUTS,
   NG_DIRECTIVE_OUTPUTS,
   NG_DIRECTIVE_IN_OUTS,
@@ -28,8 +28,8 @@ private val providedKinds: Set<PolySymbolQualifiedKind> = setOf(
   HTML_ATTRIBUTES
 )
 
-abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T)
-  : PolySymbolScopeWithCache<T, Unit>(Angular2Framework.ID, dataHolder.project, dataHolder, Unit) {
+abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T) :
+  PolySymbolScopeWithCache<T, Unit>(Angular2Framework.ID, dataHolder.project, dataHolder, Unit) {
 
   companion object {
     fun createFor(tag: XmlTag): MatchedDirectivesScope<XmlTag> =
@@ -43,8 +43,8 @@ abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T)
 
   abstract fun matchDirectives(): List<Angular2Directive>
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind in providedKinds
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind in providedKinds
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -88,12 +88,15 @@ abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T)
     }
   }
 
-  private class MatchedDirectivesScopeForTagName(location: PsiElement, private val tagName: String) : MatchedDirectivesScope<PsiElement>(location) {
+  private class MatchedDirectivesScopeForTagName(location: PsiElement, private val tagName: String) :
+    MatchedDirectivesScope<PsiElement>(location) {
     override val isTemplateTagContext: Boolean
       get() = isTemplateTag(tagName)
 
     override fun matchDirectives(): List<Angular2Directive> =
-      Angular2ApplicableDirectivesProvider(dataHolder.project, dataHolder.containingFile, tagName, false, Angular2DirectiveSimpleSelector(tagName), null)
+      Angular2ApplicableDirectivesProvider(dataHolder.project, dataHolder.containingFile, tagName,
+                                           false, Angular2DirectiveSimpleSelector(tagName),
+                                           null)
         .matched
 
     override fun createPointer(): Pointer<MatchedDirectivesScopeForTagName> {

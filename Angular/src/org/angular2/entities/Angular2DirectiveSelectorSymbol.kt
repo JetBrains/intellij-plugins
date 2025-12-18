@@ -1,10 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.polySymbols.html.HtmlDescriptorUtils.getHtmlNSDescriptor
-import com.intellij.polySymbols.html.StandardHtmlSymbol
-import com.intellij.polySymbols.html.attributes.asHtmlSymbol
-import com.intellij.polySymbols.html.elements.asHtmlSymbol
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
@@ -15,8 +11,12 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.declarations.PolySymbolDeclaration
+import com.intellij.polySymbols.html.HtmlDescriptorUtils.getHtmlNSDescriptor
+import com.intellij.polySymbols.html.StandardHtmlSymbol
+import com.intellij.polySymbols.html.attributes.asHtmlSymbol
+import com.intellij.polySymbols.html.elements.asHtmlSymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
@@ -52,7 +52,7 @@ class Angular2DirectiveSelectorSymbol(
   override val project: Project
     get() = sourceElement.project
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = if (isElementSelector) NG_DIRECTIVE_ELEMENT_SELECTORS else NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
   override val declaration: PolySymbolDeclaration?

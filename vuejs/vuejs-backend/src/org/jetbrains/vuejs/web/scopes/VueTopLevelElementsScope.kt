@@ -3,8 +3,8 @@ package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
@@ -22,11 +22,11 @@ object VueTopLevelElementsScope : PolySymbolScope {
   )
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    if (qualifiedKind == HTML_ELEMENTS)
+    if (kind == HTML_ELEMENTS)
       listOf(referencingSymbol)
     else
       emptyList()

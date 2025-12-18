@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
@@ -14,7 +14,7 @@ import com.intellij.polySymbols.query.PolySymbolWithPattern
 
 class VueAnySymbol(
   override val origin: PolySymbolOrigin,
-  override val qualifiedKind: PolySymbolQualifiedKind,
+  override val kind: PolySymbolKind,
   override val name: String,
   val type: JSType? = null,
 ) : PolySymbolWithPattern {

@@ -3,8 +3,6 @@ package org.angular2.web.scopes
 
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
-import com.intellij.polySymbols.html.StandardHtmlSymbol
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.psi.JSFile
@@ -15,8 +13,10 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_ELEMENTS
+import com.intellij.polySymbols.html.StandardHtmlSymbol
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
@@ -67,9 +67,9 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
   ) : PolySymbolScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
                                                               templateFile, Pair(tagNamespace, tagName)), PolySymbol {
 
-    override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-      qualifiedKind == JS_PROPERTIES
-      || qualifiedKind == JS_EVENTS
+    override fun provides(kind: PolySymbolKind): Boolean =
+      kind == JS_PROPERTIES
+      || kind == JS_EVENTS
 
     override val name: String
       get() = key.second
@@ -80,7 +80,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = HTML_ELEMENTS
 
     override fun getModificationCount(): Long =
@@ -196,7 +196,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
         else -> super.get(property)
       }
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = JS_PROPERTIES
 
     override fun equals(other: Any?): Boolean =
@@ -261,7 +261,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
     override val priority: PolySymbol.Priority
       get() = PolySymbol.Priority.NORMAL
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = JS_EVENTS
 
     override fun equals(other: Any?): Boolean =

@@ -13,7 +13,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.Stack
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.codeInsight.Angular2LibrariesHacks
@@ -129,12 +129,12 @@ abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>
 
   private fun collectProperties(
     mappings: Map<String, String>,
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
   ): List<Angular2DirectiveProperty> {
     val result = ArrayList<Angular2DirectiveProperty>()
     mappings.forEach { (fieldName: String, bindingName: String) ->
       result.add(Angular2MetadataDirectiveProperty(
-        this, fieldName, bindingName, qualifiedKind))
+        this, fieldName, bindingName, kind))
     }
     return result
   }

@@ -14,7 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.js.apiStatus
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
@@ -34,7 +34,7 @@ import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 abstract class Angular2SourceDirectiveProperty(
   override val owner: TypeScriptClass,
   protected val signature: JSRecordType.PropertySignature,
-  override val qualifiedKind: PolySymbolQualifiedKind,
+  override val kind: PolySymbolKind,
   override val name: String,
   override val required: Boolean,
   override val isSignalProperty: Boolean,
@@ -45,17 +45,17 @@ abstract class Angular2SourceDirectiveProperty(
     fun create(
       owner: TypeScriptClass,
       signature: JSRecordType.PropertySignature,
-      qualifiedKind: PolySymbolQualifiedKind,
+      kind: PolySymbolKind,
       info: Angular2PropertyInfo,
     ): Angular2SourceDirectiveProperty =
       if (info.declarationRange == null || info.declaringElement == null)
         Angular2SourceFieldDirectiveProperty(
-          owner, signature, qualifiedKind, info.name, info.required, info.isSignalProperty,
+          owner, signature, kind, info.name, info.required, info.isSignalProperty,
           info.declarationSource?.takeIf { isStubBased(it) }
         )
       else
         Angular2SourceMappedDirectiveProperty(
-          owner, signature, qualifiedKind, info.name, info.required, info.isSignalProperty,
+          owner, signature, kind, info.name, info.required, info.isSignalProperty,
           info.declarationSource?.takeIf { isStubBased(it) },
           info.declaringElement, info.declarationRange
         )
@@ -65,7 +65,7 @@ abstract class Angular2SourceDirectiveProperty(
     get() = signature.memberName
 
   override val type: JSType?
-    get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS)
+    get() = if (kind == NG_DIRECTIVE_OUTPUTS)
       typeFromSignal ?: super.type
     else
       super.type
@@ -107,7 +107,7 @@ abstract class Angular2SourceDirectiveProperty(
     return (owner == property!!.owner
             && signature.memberName == property.signature.memberName
             && name == property.name
-            && qualifiedKind == property.qualifiedKind
+            && kind == property.kind
             && required == property.required
            )
   }
@@ -116,7 +116,7 @@ abstract class Angular2SourceDirectiveProperty(
     var result = owner.hashCode()
     result = 31 * result + signature.memberName.hashCode()
     result = 31 * result + name.hashCode()
-    result = 31 * result + qualifiedKind.hashCode()
+    result = 31 * result + kind.hashCode()
     result = 31 * result + required.hashCode()
     return result
   }
@@ -150,12 +150,12 @@ abstract class Angular2SourceDirectiveProperty(
   private class Angular2SourceFieldDirectiveProperty(
     owner: TypeScriptClass,
     signature: JSRecordType.PropertySignature,
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     name: String,
     required: Boolean,
     isSignalProperty: Boolean,
     declarationSource: PsiElement?,
-  ) : Angular2SourceDirectiveProperty(owner, signature, qualifiedKind, name, required, isSignalProperty, declarationSource),
+  ) : Angular2SourceDirectiveProperty(owner, signature, kind, name, required, isSignalProperty, declarationSource),
       PsiSourcedPolySymbol {
     override val sourceElement: PsiElement
       get() = sources[0]
@@ -172,7 +172,7 @@ abstract class Angular2SourceDirectiveProperty(
       val sourcePtr = owner.createSmartPointer()
       val propertyName = signature.memberName
       val name = this.name
-      val qualifiedKind = this.qualifiedKind
+      val kind = this.kind
       val required = this.required
       val isSignalProperty = this.isSignalProperty
       val declarationSourcePtr = declarationSource?.createSmartPointer()
@@ -184,7 +184,7 @@ abstract class Angular2SourceDirectiveProperty(
                                   .buildTypeFromClass(source)
                                   .findPropertySignature(propertyName)
                                 ?: return@Pointer null
-        Angular2SourceFieldDirectiveProperty(source, propertySignature, qualifiedKind, name, required, isSignalProperty, declarationSource)
+        Angular2SourceFieldDirectiveProperty(source, propertySignature, kind, name, required, isSignalProperty, declarationSource)
       }
     }
 
@@ -198,14 +198,14 @@ abstract class Angular2SourceDirectiveProperty(
   private class Angular2SourceMappedDirectiveProperty(
     owner: TypeScriptClass,
     signature: JSRecordType.PropertySignature,
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     name: String,
     required: Boolean,
     isSignalProperty: Boolean,
     declarationSource: PsiElement?,
     override val sourceElement: PsiElement,
     override val textRangeInSourceElement: TextRange,
-  ) : Angular2SourceDirectiveProperty(owner, signature, qualifiedKind, name, required, isSignalProperty, declarationSource),
+  ) : Angular2SourceDirectiveProperty(owner, signature, kind, name, required, isSignalProperty, declarationSource),
       PolySymbolDeclaredInPsi {
 
     override fun createPointer(): Pointer<Angular2SourceMappedDirectiveProperty> {
@@ -213,7 +213,7 @@ abstract class Angular2SourceDirectiveProperty(
       val sourceElementPtr = sourceElement.createSmartPointer()
       val propertyName = signature.memberName
       val name = name
-      val qualifiedKind = qualifiedKind
+      val kind = this@Angular2SourceMappedDirectiveProperty.kind
       val required = required
       val isSignalProperty = isSignalProperty
       val declarationSourcePtr = declarationSource?.createSmartPointer()
@@ -228,7 +228,7 @@ abstract class Angular2SourceDirectiveProperty(
                                   .buildTypeFromClass(owner)
                                   .findPropertySignature(propertyName)
                                 ?: return@Pointer null
-        Angular2SourceMappedDirectiveProperty(owner, propertySignature, qualifiedKind, name, required, isSignalProperty,
+        Angular2SourceMappedDirectiveProperty(owner, propertySignature, kind, name, required, isSignalProperty,
                                               declarationSource, sourceElement, textRangeInSourceElement)
       }
     }

@@ -65,7 +65,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
       .builder(name + (rawJsType?.getTypeText(JSType.TypeTextFormat.PRESENTABLE)?.let { ": $it" } ?: ""))
       .icon(AngularIcons.Angular2)
       .containerText(
-        when (qualifiedKind) {
+        when (kind) {
           NG_DIRECTIVE_INPUTS -> Angular2Bundle.message("angular.entity.directive.input")
           NG_DIRECTIVE_OUTPUTS -> Angular2Bundle.message("angular.entity.directive.output")
           NG_DIRECTIVE_IN_OUTS -> Angular2Bundle.message("angular.entity.directive.inout")
@@ -85,7 +85,7 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
     get() = PolySymbol.Priority.LOW
 
   val type: JSType?
-    get() = if (qualifiedKind == NG_DIRECTIVE_OUTPUTS)
+    get() = if (kind == NG_DIRECTIVE_OUTPUTS)
       Angular2TypeUtils.extractEventVariableType(rawJsType)
     else
       rawJsType

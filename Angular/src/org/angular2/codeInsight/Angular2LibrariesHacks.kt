@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
@@ -23,7 +24,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.angular2.entities.Angular2ClassBasedEntity
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
@@ -112,8 +112,10 @@ object Angular2LibrariesHacks {
 
   // We need to hack required property of input, as Angular team hasn't added `required` in Angular 16 to keep backward compatibility
   @JvmStatic
-  fun hackCoreDirectiveRequiredInputStatus(directive: Angular2IvyDirective,
-                                           inputMap: LinkedHashMap<String, Angular2PropertyInfo>) {
+  fun hackCoreDirectiveRequiredInputStatus(
+    directive: Angular2IvyDirective,
+    inputMap: LinkedHashMap<String, Angular2PropertyInfo>,
+  ) {
     val requiredInput = coreDirectiveRequiredInput[directive.className]
                         ?: return
     if (!isFromPackage(directive, ANGULAR_COMMON_PACKAGE, ANGULAR_FORMS_PACKAGE, ANGULAR_ROUTER_PACKAGE))
@@ -142,8 +144,10 @@ object Angular2LibrariesHacks {
    * Hack for WEB-38825. Make ngForOf accept QueryList in addition to NgIterable
    */
   @JvmStatic
-  fun hackQueryListTypeInNgForOf(type: JSType?,
-                                 property: Angular2MetadataDirectiveProperty): JSType? {
+  fun hackQueryListTypeInNgForOf(
+    type: JSType?,
+    property: Angular2MetadataDirectiveProperty,
+  ): JSType? {
     if (type is JSGenericTypeImpl && property.name == NG_FOR_OF) {
       val clazz: TypeScriptClass = PsiTreeUtil.getContextOfType(property.sourceElement, TypeScriptClass::class.java)
                                    ?: return type
@@ -177,12 +181,11 @@ object Angular2LibrariesHacks {
       ?.let { pkg -> packages.any { pkg == it } }
     ?: false
 
-  private class IonicComponentAttribute(input: Angular2DirectiveProperty)
-    : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
+  private class IonicComponentAttribute(input: Angular2DirectiveProperty) : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
 
     override val name: String = input.name.replace("([A-Z])".toRegex(), "-$1").lowercase(Locale.ENGLISH)
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = HTML_ATTRIBUTES
 
     override fun createPointer(): Pointer<IonicComponentAttribute> {

@@ -458,7 +458,7 @@ fun PolySymbol.extractComponentSymbol(): PolySymbol? =
     ?.toList()
     ?.takeIf { it.size == 2 && it[0] is PolySymbolWithPattern }
     ?.get(1)
-    ?.takeIf { it.qualifiedKind == VUE_COMPONENTS }
+    ?.takeIf { it.kind == VUE_COMPONENTS }
 
 inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this

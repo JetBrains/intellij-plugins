@@ -24,7 +24,7 @@ interface Angular2ClassBasedDirectiveProperty : Angular2DirectiveProperty {
             || objectInitializer?.findProperty(Angular2DecoratorUtil.TRANSFORM_PROP) != null
 
   override val type: JSType?
-    get() = if (qualifiedKind == NG_DIRECTIVE_INPUTS)
+    get() = if (kind == NG_DIRECTIVE_INPUTS)
       fieldName?.let { Angular2EntityUtils.jsTypeFromAcceptInputType(owner, it) } ?: super.type
     else
       super.type

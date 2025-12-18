@@ -3,7 +3,6 @@ package org.angular2.codeInsight.documentation
 
 import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
-import com.intellij.polySymbols.js.jsType
 import com.intellij.lang.Language
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.documentation.DocumentationMarkup.*
@@ -26,6 +25,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.backend.documentation.DocumentationResult
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.js.jsType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.ui.ColorUtil
@@ -34,7 +35,6 @@ import com.intellij.util.asSafely
 import com.intellij.util.containers.toMultiMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.intellij.polySymbols.PolySymbol
 import org.angular2.codeInsight.Angular2HighlightingUtils
 import org.angular2.entities.*
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
@@ -151,7 +151,7 @@ internal class Angular2ElementDocumentationTarget private constructor(
     private fun buildDefinition(): @Nls String {
       val kindName = when (element) {
         is Angular2DirectiveAttribute -> "directive attribute"
-        is Angular2DirectiveProperty -> when (element.qualifiedKind) {
+        is Angular2DirectiveProperty -> when (element.kind) {
           NG_DIRECTIVE_INPUTS -> "directive input"
           NG_DIRECTIVE_OUTPUTS -> "directive output"
           NG_DIRECTIVE_IN_OUTS -> "directive inout"
@@ -296,8 +296,8 @@ internal class Angular2ElementDocumentationTarget private constructor(
     }
   }
 
-  class Angular2ElementDocumentationBuilder(element: PsiElement, contextElement: PsiElement?, provider: JSDocumentationProvider)
-    : JSDocumentationBuilder(element, contextElement, provider) {
+  class Angular2ElementDocumentationBuilder(element: PsiElement, contextElement: PsiElement?, provider: JSDocumentationProvider) :
+    JSDocumentationBuilder(element, contextElement, provider) {
 
     init {
       (provider as Angular2ElementDocProvider).additionalSections.forEach {
@@ -326,8 +326,7 @@ internal class Angular2ElementDocumentationTarget private constructor(
 
   class Angular2SymbolInfoPrinter<T : JSDocSymbolInfoBuilder>(
     builder: T, element: PsiElement, contextElement: PsiElement?, canBeNamed: Boolean,
-  )
-    : JSDocSymbolInfoPrinter<T>(builder, element, contextElement, canBeNamed) {
+  ) : JSDocSymbolInfoPrinter<T>(builder, element, contextElement, canBeNamed) {
 
     override fun appendInnerSections(result: java.lang.StringBuilder, provider: JSDocumentationProvider, hasDefinition: Boolean) {
       super.appendInnerSections(result, provider, false)

@@ -36,8 +36,8 @@ class UiFrameworkComponent(
     else
       super<PolySymbolScopeWithCache>.getMatchingSymbols(qualifiedName, params, stack)
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == UI_FRAMEWORK_COMPONENT_PROPS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == UI_FRAMEWORK_COMPONENT_PROPS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -47,7 +47,7 @@ class UiFrameworkComponent(
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = UI_FRAMEWORK_COMPONENTS
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =

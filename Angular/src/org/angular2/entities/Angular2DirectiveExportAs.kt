@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
@@ -9,8 +8,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -34,7 +34,7 @@ class Angular2DirectiveExportAs(
   override val project: Project
     get() = sourceElement.project
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = NG_DIRECTIVE_EXPORTS_AS
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =

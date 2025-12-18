@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
 import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -17,7 +17,7 @@ import org.angular2.entities.Angular2EntityUtils
 
 class Angular2SourceDirectiveVirtualProperty(
   override val owner: TypeScriptClass?,
-  override val qualifiedKind: PolySymbolQualifiedKind,
+  override val kind: PolySymbolKind,
   override val name: String,
   override val required: Boolean,
   override val sourceElement: PsiElement,
@@ -25,8 +25,8 @@ class Angular2SourceDirectiveVirtualProperty(
   override val objectInitializer: JSObjectLiteralExpression?,
 ) : Angular2ClassBasedDirectiveProperty, PolySymbolDeclaredInPsi {
 
-  constructor(owner: TypeScriptClass, qualifiedKind: PolySymbolQualifiedKind, info: Angular2PropertyInfo)
-    : this(owner, qualifiedKind, info.name, info.required, info.declaringElement ?: info.nameElement ?: owner,
+  constructor(owner: TypeScriptClass, kind: PolySymbolKind, info: Angular2PropertyInfo)
+    : this(owner, kind, info.name, info.required, info.declaringElement ?: info.nameElement ?: owner,
            when {
              info.declarationRange != null -> info.declarationRange
              info.declaringElement != null -> TextRange(1, 1 + info.name.length)
@@ -60,7 +60,7 @@ class Angular2SourceDirectiveVirtualProperty(
     val property = other as Angular2SourceDirectiveVirtualProperty?
     return owner == property!!.owner
            && name == property.name
-           && qualifiedKind == property.qualifiedKind
+           && kind == property.kind
            && required == property.required
   }
 
@@ -68,14 +68,14 @@ class Angular2SourceDirectiveVirtualProperty(
   override fun hashCode(): Int {
     var result = owner.hashCode()
     result = 31 * result + name.hashCode()
-    result = 31 * result + qualifiedKind.hashCode()
+    result = 31 * result + kind.hashCode()
     result = 31 * result + required.hashCode()
     return result
   }
 
   override fun createPointer(): Pointer<Angular2SourceDirectiveVirtualProperty> {
     val name = this.name
-    val qualifiedKind = this.qualifiedKind
+    val kind = this.kind
     val ownerPtr = owner?.createSmartPointer()
     val required = this.required
     val sourceElementPtr = sourceElement.createSmartPointer()
@@ -85,7 +85,7 @@ class Angular2SourceDirectiveVirtualProperty(
       val owner = ownerPtr?.let { it.dereference() ?: return@Pointer null }
       val sourceElement = sourceElementPtr.dereference() ?: return@Pointer null
       val objectInitializer = objectInitializerPtr?.let { it.dereference() ?: return@Pointer null }
-      Angular2SourceDirectiveVirtualProperty(owner, qualifiedKind, name, required, sourceElement, textRangeInSourceElement, objectInitializer)
+      Angular2SourceDirectiveVirtualProperty(owner, kind, name, required, sourceElement, textRangeInSourceElement, objectInitializer)
     }
   }
 }

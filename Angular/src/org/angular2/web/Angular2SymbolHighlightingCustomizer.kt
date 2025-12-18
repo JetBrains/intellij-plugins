@@ -6,7 +6,7 @@ import com.intellij.model.psi.PsiExternalReferenceHost
 import com.intellij.openapi.editor.XmlHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.highlighting.PolySymbolHighlightingCustomizer
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.js.JS_SYMBOLS
@@ -25,8 +25,8 @@ import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 
 class Angular2SymbolHighlightingCustomizer : PolySymbolHighlightingCustomizer {
 
-  override fun getSymbolKindTextAttributes(qualifiedKind: PolySymbolQualifiedKind): TextAttributesKey? =
-    when (qualifiedKind) {
+  override fun getSymbolKindTextAttributes(kind: PolySymbolKind): TextAttributesKey? =
+    when (kind) {
       NG_DIRECTIVE_INPUTS -> Angular2HtmlHighlighterColors.NG_PROPERTY_BINDING_ATTR_NAME
       NG_DIRECTIVE_OUTPUTS -> Angular2HtmlHighlighterColors.NG_EVENT_BINDING_ATTR_NAME
       NG_DIRECTIVE_IN_OUTS -> Angular2HtmlHighlighterColors.NG_BANANA_BINDING_ATTR_NAME
@@ -43,7 +43,7 @@ class Angular2SymbolHighlightingCustomizer : PolySymbolHighlightingCustomizer {
     )
 
   override fun getSymbolTextAttributes(host: PsiExternalReferenceHost, symbol: PolySymbol, level: Int): TextAttributesKey? {
-    when (symbol.qualifiedKind) {
+    when (symbol.kind) {
       JS_SYMBOLS ->
         if (symbol.jsKind == JsSymbolSymbolKind.Variable
             && symbol is PsiSourcedPolySymbol

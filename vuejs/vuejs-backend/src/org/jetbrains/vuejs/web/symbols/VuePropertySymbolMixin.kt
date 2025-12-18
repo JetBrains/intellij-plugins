@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
@@ -18,8 +18,8 @@ interface VuePropertySymbolMixin : VueDocumentedItemSymbolMixin, VueProperty, Po
 
   abstract override fun createPointer(): Pointer<out VuePropertySymbolMixin>
 
-  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == JS_PROPERTIES
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    kind == JS_PROPERTIES
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
@@ -29,10 +29,10 @@ interface VuePropertySymbolMixin : VueDocumentedItemSymbolMixin, VueProperty, Po
     getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    getJSPropertySymbols(qualifiedKind)
+    getJSPropertySymbols(kind)
 
 }

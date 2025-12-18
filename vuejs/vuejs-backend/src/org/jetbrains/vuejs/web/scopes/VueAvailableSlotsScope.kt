@@ -43,15 +43,15 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
     }
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     when {
       !params.queryExecutor.allowResolve -> emptyList()
-      qualifiedKind == HTML_ATTRIBUTES ->
+      kind == HTML_ATTRIBUTES ->
         listOf(DefaultSlotSymbol)
-      qualifiedKind == VUE_AVAILABLE_SLOTS ->
+      kind == VUE_AVAILABLE_SLOTS ->
         getAvailableSlots(tag, params.expandPatterns, true)
       else -> emptyList()
     }
@@ -73,7 +73,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
   }
 
   object DefaultSlotSymbol : PolySymbolWithPattern {
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = HTML_ATTRIBUTES
 
     override val name: String

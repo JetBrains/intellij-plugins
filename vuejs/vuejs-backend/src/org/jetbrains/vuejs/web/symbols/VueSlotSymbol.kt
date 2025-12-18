@@ -1,15 +1,15 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
-import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_SLOTS
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
+import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
@@ -36,18 +36,18 @@ open class VueSlotSymbol private constructor(
       ?: VueSlotSymbol(slot, owner, origin)
   }
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = HTML_SLOTS
 
   override val type: JSType?
     get() = item.scope
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> {
-    return getJSPropertySymbols(qualifiedKind)
+    return getJSPropertySymbols(kind)
   }
 
   override fun getMatchingSymbols(

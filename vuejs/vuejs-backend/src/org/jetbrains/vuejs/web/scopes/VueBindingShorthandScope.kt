@@ -1,7 +1,6 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.scopes
 
-import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -12,6 +11,7 @@ import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -28,11 +28,11 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.web.VUE_BINDING_SHORTHANDS
 
-class VueBindingShorthandScope(attribute: XmlAttribute)
-  : PolySymbolScopeWithCache<XmlAttribute, Unit>(null, attribute.project, attribute, Unit) {
+class VueBindingShorthandScope(attribute: XmlAttribute) :
+  PolySymbolScopeWithCache<XmlAttribute, Unit>(null, attribute.project, attribute, Unit) {
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == VUE_BINDING_SHORTHANDS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == VUE_BINDING_SHORTHANDS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -84,7 +84,7 @@ class VueBindingShorthandSymbol(
   override val nameSegments: List<PolySymbolNameSegment>
     get() = listOf(PolySymbolNameSegment.create(0, delegate.name.length, delegate, attrSymbol))
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = VUE_BINDING_SHORTHANDS
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =

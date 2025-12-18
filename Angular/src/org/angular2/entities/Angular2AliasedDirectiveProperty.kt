@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
 import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -51,8 +51,8 @@ class Angular2AliasedDirectiveProperty(
   override val apiStatus: PolySymbolApiStatus
     get() = delegate.apiStatus
 
-  override val qualifiedKind: PolySymbolQualifiedKind
-    get() = delegate.qualifiedKind
+  override val kind: PolySymbolKind
+    get() = delegate.kind
 
   val originalName: String
     get() = delegate.name

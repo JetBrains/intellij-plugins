@@ -3,8 +3,8 @@ package org.angular2.library.forms
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
@@ -25,13 +25,13 @@ object Angular2FormsPolySymbolQueryResultsCustomizer : PolySymbolQueryResultsCus
     Pointer.hardPointer(this)
 
   override fun apply(matches: List<PolySymbol>, strict: Boolean, qualifiedName: PolySymbolQualifiedName): List<PolySymbol> =
-    if (qualifiedName.qualifiedKind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+    if (qualifiedName.kind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS
         && (qualifiedName.name in FORM_ANY_CONTROL_NAME_ATTRIBUTES))
       matches.map { it.remapFormControlNameSymbol() }
     else
       matches
 
-  override fun apply(item: PolySymbolCodeCompletionItem, qualifiedKind: PolySymbolQualifiedKind): PolySymbolCodeCompletionItem? =
+  override fun apply(item: PolySymbolCodeCompletionItem, kind: PolySymbolKind): PolySymbolCodeCompletionItem? =
     item
 
   override fun getModificationCount(): Long = 0

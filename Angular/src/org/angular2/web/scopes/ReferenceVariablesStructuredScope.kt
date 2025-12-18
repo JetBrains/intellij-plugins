@@ -1,19 +1,19 @@
 package org.angular2.web.scopes
 
-import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.js.JS_SYMBOLS
+import com.intellij.polySymbols.js.symbols.asJSSymbol
+import com.intellij.polySymbols.utils.PolySymbolStructuredScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.js.JS_SYMBOLS
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolStructuredScope
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType.REFERENCE
@@ -29,7 +29,7 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : PolySymbolStruct
   override val scopesBuilderProvider: (PsiFile, PolySymbolPsiScopesHolder) -> PsiElementVisitor?
     get() = { _, holder -> ReferenceVariablesStructuredScopeVisitor(holder) }
 
-  override val providedSymbolKinds: Set<PolySymbolQualifiedKind> = PROVIDED_SYMBOL_KINDS
+  override val providedSymbolKinds: Set<PolySymbolKind> = PROVIDED_SYMBOL_KINDS
 
   fun flattenSymbols(resolveToMultipleSymbols: Boolean): List<PolySymbol> {
     val rootScope = getRootScope() ?: return emptyList()
@@ -68,7 +68,8 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : PolySymbolStruct
     }
   }
 
-  private class ReferenceVariablesStructuredScopeVisitor(private val holder: PolySymbolPsiScopesHolder) : Angular2HtmlRecursiveElementVisitor() {
+  private class ReferenceVariablesStructuredScopeVisitor(private val holder: PolySymbolPsiScopesHolder) :
+    Angular2HtmlRecursiveElementVisitor() {
 
     override fun visitXmlTag(tag: XmlTag) {
       val isTemplateTag = tag.children.any { it is XmlAttribute && it.name.startsWith("*") }
@@ -138,7 +139,7 @@ class ReferenceVariablesStructuredScope(location: PsiElement) : PolySymbolStruct
 
 
   companion object {
-    private val PROVIDED_SYMBOL_KINDS: Set<PolySymbolQualifiedKind> = setOf(JS_SYMBOLS)
+    private val PROVIDED_SYMBOL_KINDS: Set<PolySymbolKind> = setOf(JS_SYMBOLS)
   }
 
 }

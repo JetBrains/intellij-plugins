@@ -1,8 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.polySymbols.js.jsType
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.backend.documentation.DocumentationTarget
@@ -13,6 +11,8 @@ import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
+import com.intellij.polySymbols.js.jsType
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
@@ -95,14 +95,14 @@ class VueWebTypesMergedSymbol(
       }
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     symbols
       .asSequence()
       .flatMap { it.queryScope }
-      .flatMap { it.getSymbols(qualifiedKind, params, stack) }
+      .flatMap { it.getSymbols(kind, params, stack) }
       .toList()
       .takeIf { it.isNotEmpty() }
       ?.groupBy { it.name }

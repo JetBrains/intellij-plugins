@@ -35,7 +35,7 @@ class Angular2DescriptorSymbolsProvider(symbol: PolySymbol) {
             directiveSymbols.add(s)
             directives.add(directive)
           }
-          else if (s.qualifiedKind != NG_PROPERTY_BINDINGS) {
+          else if (s.kind != NG_PROPERTY_BINDINGS) {
             nonDirectiveSymbols.add(s)
           }
         }

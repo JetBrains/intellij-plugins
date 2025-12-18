@@ -3,8 +3,8 @@ package org.jetbrains.astro.polySymbols
 
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.query.PolySymbolQueryScopeContributor
 import com.intellij.polySymbols.query.PolySymbolQueryScopeProviderRegistrar
@@ -19,16 +19,16 @@ import org.jetbrains.astro.polySymbols.scope.AstroFrontmatterScope
 import org.jetbrains.astro.polySymbols.scope.AstroScriptDefineVarsScope
 import org.jetbrains.astro.polySymbols.scope.AstroStyleDefineVarsScope
 
-val ASTRO_COMPONENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-components"]
-val ASTRO_COMPONENT_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "props"]
+val ASTRO_COMPONENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "astro-components"]
+val ASTRO_COMPONENT_PROPS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "props"]
 
-val UI_FRAMEWORK_COMPONENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ui-framework-components"]
-val UI_FRAMEWORK_COMPONENT_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ui-framework-component-props"]
+val UI_FRAMEWORK_COMPONENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "ui-framework-components"]
+val UI_FRAMEWORK_COMPONENT_PROPS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "ui-framework-component-props"]
 
-val ASTRO_COMMON_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-common-directives"]
-val ASTRO_CLIENT_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-client-directives"]
-val ASTRO_STYLE_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-style-directives"]
-val ASTRO_SCRIPT_STYLE_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-script-style-directives"]
+val ASTRO_COMMON_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "astro-common-directives"]
+val ASTRO_CLIENT_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "astro-client-directives"]
+val ASTRO_STYLE_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "astro-style-directives"]
+val ASTRO_SCRIPT_STYLE_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "astro-script-style-directives"]
 
 val PROP_ASTRO_PROXIMITY: PolySymbolProperty<AstroProximity> = PolySymbolProperty["x-astro-proximity"]
 

@@ -3,7 +3,7 @@ package org.angular2.web
 
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
@@ -33,17 +33,17 @@ class Angular2CodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomi
   override fun customize(
     item: PolySymbolCodeCompletionItem,
     framework: FrameworkId?,
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     location: PsiElement,
   ): PolySymbolCodeCompletionItem =
     if (framework != Angular2Framework.ID)
       item
     else
-      when (qualifiedKind) {
+      when (kind) {
         HTML_ATTRIBUTES, HTML_ATTRIBUTE_VALUES ->
           item.symbol
             ?.let { symbol ->
-              val symbolKind = symbol.qualifiedKind
+              val symbolKind = symbol.kind
               when {
                 typedKinds.contains(symbolKind) -> item.decorateWithSymbolType(location, symbol)
                 selectorKinds.contains(symbolKind) -> item.withPriority(PolySymbol.Priority.HIGH)
@@ -60,13 +60,14 @@ class Angular2CodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomi
 
                 symbolKind == NG_DIRECTIVE_EXPORTS_AS ->
                   item.decorateWithJsType(location,
-                                          location.parentOfType<XmlTag>()?.let { BindingsTypeResolver.get(it).resolveDirectiveExportAsType(item.name) })
+                                          location.parentOfType<XmlTag>()
+                                            ?.let { BindingsTypeResolver.get(it).resolveDirectiveExportAsType(item.name) })
                 else -> item
               }
             }
           ?: item
-        else -> if (qualifiedKind.namespace == NAMESPACE_JS
-                    && typedKinds.contains(item.symbol?.qualifiedKind))
+        else -> if (kind.namespace == NAMESPACE_JS
+                    && typedKinds.contains(item.symbol?.kind))
           item.decorateWithSymbolType(location, item.symbol)
         else
           item

@@ -130,7 +130,7 @@ class AngularInaccessibleSymbolInspection : JSInspection() {
 fun getInputSourceElements(element: Angular2HtmlPropertyBinding): List<JSAttributeListOwner> =
   element.descriptor?.asSafely<Angular2AttributeDescriptor>()?.symbol
     ?.unwrapMatchedSymbols()
-    ?.filter { it.qualifiedKind == NG_DIRECTIVE_INPUTS }
+    ?.filter { it.kind == NG_DIRECTIVE_INPUTS }
     ?.filterIsInstance<PsiSourcedPolySymbol>()
     ?.mapNotNull { it.source }
     ?.filterIsInstance<JSAttributeListOwner>()

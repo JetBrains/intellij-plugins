@@ -3,7 +3,7 @@ package org.angular2.library.forms.scopes
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.utils.PolySymbolStructuredScope
@@ -25,7 +25,8 @@ import org.angular2.library.forms.impl.Angular2UnknownFormArray
 import org.angular2.library.forms.impl.Angular2UnknownFormControl
 import org.angular2.library.forms.impl.Angular2UnknownFormGroup
 
-class Angular2FormSymbolScopeInAttributeValue(attributeValue: XmlAttribute) : PolySymbolStructuredScope<XmlAttribute, PsiFile>(attributeValue) {
+class Angular2FormSymbolScopeInAttributeValue(attributeValue: XmlAttribute) :
+  PolySymbolStructuredScope<XmlAttribute, PsiFile>(attributeValue) {
 
   companion object {
     private const val PROP_SOURCE_SYMBOL = "source-symbol"
@@ -39,7 +40,7 @@ class Angular2FormSymbolScopeInAttributeValue(attributeValue: XmlAttribute) : Po
   override val rootPsiElement: PsiFile
     get() = location.containingFile
 
-  override val providedSymbolKinds: Set<PolySymbolQualifiedKind>
+  override val providedSymbolKinds: Set<PolySymbolKind>
     get() = NG_FORM_ANY_CONTROL_PROPS
 
   override val scopesBuilderProvider: (PsiFile, PolySymbolPsiScopesHolder) -> PsiElementVisitor?

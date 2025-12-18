@@ -7,9 +7,9 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.patterns.StandardPatterns.instanceOf
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.*
 import com.intellij.psi.createSmartPointer
@@ -54,11 +54,11 @@ class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
     override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
     override fun getSymbols(
-      qualifiedKind: PolySymbolQualifiedKind,
+      kind: PolySymbolKind,
       params: PolySymbolListSymbolsQueryParams,
       stack: PolySymbolQueryStack,
     ): List<PolySymbol> {
-      if (qualifiedKind == VUE_TOP_LEVEL_ELEMENTS) {
+      if (kind == VUE_TOP_LEVEL_ELEMENTS) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }
                        ?: if (PsiTreeUtil.getChildOfType(tag, XmlTextImpl::class.java)
@@ -80,7 +80,7 @@ class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
     override val origin: PolySymbolOrigin =
       PolySymbolOrigin.create(VueFramework.ID, "vue-i18n")
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = HTML_ELEMENTS
 
     override val extension: Boolean

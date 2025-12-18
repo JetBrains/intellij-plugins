@@ -43,12 +43,11 @@ import org.jetbrains.vuejs.web.asPolySymbol
 
 private const val SLOT_LOCAL_COMPONENT = "\$local"
 
-class VueSlotElementScope(tag: XmlTag)
-  : PolySymbolScopeWithCache<XmlTag, Unit>(VueFramework.ID, tag.project, tag, Unit) {
+class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(VueFramework.ID, tag.project, tag, Unit) {
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == HTML_ATTRIBUTES
-    || qualifiedKind == VUE_COMPONENTS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == HTML_ATTRIBUTES
+    || kind == VUE_COMPONENTS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     VueModelManager.findEnclosingContainer(dataHolder)
@@ -89,7 +88,7 @@ class VueSlotElementScope(tag: XmlTag)
 
   private class VueSlotPropertiesSymbol(slotName: String?) : PolySymbolWithPattern {
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = HTML_ATTRIBUTES
 
     override val name: String
@@ -110,7 +109,7 @@ class VueSlotElementScope(tag: XmlTag)
                 VUE_COMPONENTS.withName(SLOT_LOCAL_COMPONENT),
                 HTML_SLOTS.withName(slotName),
               ),
-              qualifiedKind = JS_PROPERTIES,
+              kind = JS_PROPERTIES,
               nameConversionRules = listOf(
                 PolySymbolNameConversionRules.create(JS_PROPERTIES) {
                   listOf(fromAsset(it), toAsset(it))
@@ -118,7 +117,7 @@ class VueSlotElementScope(tag: XmlTag)
               )
             )
           else
-            Reference(qualifiedKind = VUE_SPECIAL_PROPERTIES)
+            Reference(kind = VUE_SPECIAL_PROPERTIES)
         )), false,
         createSymbolReferencePlaceholder()
       )

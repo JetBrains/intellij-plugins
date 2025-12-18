@@ -76,7 +76,7 @@ class Angular2Framework : WebFramework() {
     target: PolySymbolNamesProvider.Target,
   ): List<String> {
     if ((target == NAMES_QUERY || target == RENAME_QUERY)
-        && qualifiedName.qualifiedKind == NG_DIRECTIVE_IN_OUTS) {
+        && qualifiedName.kind == NG_DIRECTIVE_IN_OUTS) {
       // Required to find usages and rename for model signal
       return listOf(
         qualifiedName.name,

@@ -18,10 +18,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
-import com.intellij.polySymbols.utils.kind
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -81,11 +79,11 @@ private constructor(
     PsiModificationTracker.getInstance(project).modificationCount +
     VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS.modificationCount
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == VUE_COMPONENTS
-    || qualifiedKind == VUE_GLOBAL_DIRECTIVES
-    || qualifiedKind == VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
-    || qualifiedKind == VUE_DIRECTIVES
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == VUE_COMPONENTS
+    || kind == VUE_GLOBAL_DIRECTIVES
+    || kind == VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
+    || kind == VUE_DIRECTIVES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val webTypesContributions = calculateWebTypesContributions()
@@ -203,7 +201,7 @@ private constructor(
       listOf(this)
   }
 
-  private fun symbolLocationsFromSpecifier(specifier: ES6ImportSpecifier?, symbolKind: String): List<WebTypesSymbolLocation> {
+  private fun symbolLocationsFromSpecifier(specifier: ES6ImportSpecifier?, symbolKind: PolySymbolKind): List<WebTypesSymbolLocation> {
     if (specifier?.specifierKind == ES6ImportExportSpecifier.ImportExportSpecifierKind.IMPORT) {
       val symbolName = if (specifier.isDefault) "default" else specifier.referenceName
       val moduleName = specifier.declaration?.fromClause?.referenceText
@@ -216,7 +214,7 @@ private constructor(
     context: PsiElement,
     moduleName: String?,
     symbolName: String?,
-    symbolKind: String,
+    symbolKind: PolySymbolKind,
   ): List<WebTypesSymbolLocation> =
     if (symbolName != null && moduleName != null) {
       val result = mutableListOf<WebTypesSymbolLocation>()
@@ -251,7 +249,10 @@ private constructor(
     }
     else emptyList()
 
-  private fun symbolLocationFromPropertySignature(property: TypeScriptPropertySignature, kind: PolySymbolKind): WebTypesSymbolLocation? {
+  private fun symbolLocationFromPropertySignature(
+    property: TypeScriptPropertySignature,
+    kind: PolySymbolKind,
+  ): WebTypesSymbolLocation? {
     if (!property.isValid) return null
 
     // TypeScript GlobalComponents definition
@@ -270,7 +271,7 @@ private constructor(
   private data class WebTypesSymbolLocation(
     val moduleName: String,
     val symbolName: String,
-    val symbolKind: String,
+    val symbolKind: PolySymbolKind,
   )
 
 }

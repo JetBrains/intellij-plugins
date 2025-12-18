@@ -19,13 +19,13 @@ import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
-class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent)
-  : PolySymbolScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
+class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
+  PolySymbolScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == VUE_PROVIDES
-    || qualifiedKind == JS_STRING_LITERALS
-    || qualifiedKind == JS_PROPERTIES
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == VUE_PROVIDES
+    || kind == JS_STRING_LITERALS
+    || kind == JS_PROPERTIES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val origin = VueScopeElementOrigin(enclosingComponent)

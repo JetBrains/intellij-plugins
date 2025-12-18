@@ -8,11 +8,7 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolApiStatus
-import com.intellij.polySymbols.PolySymbolModifier
-import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.*
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.coalesceWith
@@ -70,10 +66,9 @@ class Angular2DirectiveProperties(
     result + rawInOuts
   }
 
-  private class InputDirectiveProperty(inOut: Angular2DirectiveProperty)
-    : AbstractFromInOutDirectiveProperty(inOut) {
+  private class InputDirectiveProperty(inOut: Angular2DirectiveProperty) : AbstractFromInOutDirectiveProperty(inOut) {
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = NG_DIRECTIVE_INPUTS
 
     override val required: Boolean
@@ -88,13 +83,12 @@ class Angular2DirectiveProperties(
   }
 
 
-  private class OutputDirectiveProperty(inOut: Angular2DirectiveProperty)
-    : AbstractFromInOutDirectiveProperty(inOut) {
+  private class OutputDirectiveProperty(inOut: Angular2DirectiveProperty) : AbstractFromInOutDirectiveProperty(inOut) {
 
     override val name: String =
       inOut.name + OUTPUT_CHANGE_SUFFIX
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = NG_DIRECTIVE_OUTPUTS
 
     override val required: Boolean
@@ -113,9 +107,9 @@ class Angular2DirectiveProperties(
 
   }
 
-  private abstract class AbstractFromInOutDirectiveProperty(inOut: Angular2DirectiveProperty)
-    : Angular2SymbolDelegate<Angular2DirectiveProperty>(inOut),
-      Angular2DirectiveProperty, PsiSourcedPolySymbol {
+  private abstract class AbstractFromInOutDirectiveProperty(inOut: Angular2DirectiveProperty) :
+    Angular2SymbolDelegate<Angular2DirectiveProperty>(inOut),
+    Angular2DirectiveProperty, PsiSourcedPolySymbol {
 
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       super<Angular2DirectiveProperty>.get(property)
@@ -178,7 +172,7 @@ class Angular2DirectiveProperties(
       delegate.hashCode()
 
     final override fun toString(): String =
-      "$delegate as " + qualifiedKind.kind
+      "$delegate as " + kind.kindName
 
     override fun isEquivalentTo(symbol: Symbol): Boolean {
       return symbol == this || delegate.isEquivalentTo(symbol)
@@ -196,7 +190,7 @@ class Angular2DirectiveProperties(
     private val myOutput: Angular2DirectiveProperty,
   ) : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = NG_DIRECTIVE_IN_OUTS
 
 

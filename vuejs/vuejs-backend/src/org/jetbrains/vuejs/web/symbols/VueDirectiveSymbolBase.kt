@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiSymbolService
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import org.jetbrains.vuejs.model.VueDirective
@@ -34,20 +34,20 @@ abstract class VueDirectiveSymbolBase<T : VueDirective>(
   }
 
   final override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    when (qualifiedKind) {
+    when (kind) {
       VUE_DIRECTIVE_ARGUMENT if (!params.expandPatterns) -> {
-        listOf(VueAnySymbol(origin, qualifiedKind, "Vue directive argument"))
+        listOf(VueAnySymbol(origin, kind, "Vue directive argument"))
       }
 
       VUE_DIRECTIVE_MODIFIERS -> {
         item.modifiers.map { modifier ->
           VueDirectiveModifierSymbol(modifier, vueProximity)
         }.ifEmpty {
-          listOf(VueAnySymbol(origin, qualifiedKind, "Vue directive modifier"))
+          listOf(VueAnySymbol(origin, kind, "Vue directive modifier"))
         }
       }
 

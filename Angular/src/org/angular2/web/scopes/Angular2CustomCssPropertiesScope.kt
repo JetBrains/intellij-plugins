@@ -13,8 +13,8 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.css.CSS_PROPERTIES
 import com.intellij.polySymbols.css.properties.AbstractCssCustomPropertySymbolDeclaredInPsi
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -70,8 +70,8 @@ class Angular2CustomCssPropertiesScope(file: PsiFile) :
     }
   }
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == CSS_PROPERTIES
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == CSS_PROPERTIES
 
   override fun createPointer(): Pointer<Angular2CustomCssPropertiesScope> {
     val filePtr = dataHolder.createSmartPointer()

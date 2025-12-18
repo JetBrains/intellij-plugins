@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
 import org.jetbrains.vuejs.web.VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
@@ -15,7 +15,7 @@ class VueScriptSetupLocalDirectiveSymbol(
   directive = directive,
 ) {
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
 
   override fun createPointer(): Pointer<VueScriptSetupLocalDirectiveSymbol> {

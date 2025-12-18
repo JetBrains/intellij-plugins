@@ -3,7 +3,7 @@ package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -17,8 +17,8 @@ import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 internal class Angular2TemplateScope(context: PsiElement) :
   PolySymbolScopeWithCache<PsiElement, Unit>(Angular2Framework.ID, context.project, context, Unit) {
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == JS_SYMBOLS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == JS_SYMBOLS
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)

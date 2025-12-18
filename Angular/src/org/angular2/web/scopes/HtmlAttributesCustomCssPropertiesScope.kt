@@ -2,15 +2,15 @@ package org.angular2.web.scopes
 
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.css.CSS_PROPERTIES
+import com.intellij.polySymbols.utils.PolySymbolStructuredScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.polySymbols.css.CSS_PROPERTIES
-import com.intellij.polySymbols.PolySymbolQualifiedKind
-import com.intellij.polySymbols.utils.PolySymbolStructuredScope
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementVisitor
 import org.angular2.web.scopes.Angular2CustomCssPropertiesScope.Companion.createCustomCssProperty
 
@@ -24,7 +24,7 @@ class HtmlAttributesCustomCssPropertiesScope(location: PsiElement) : PolySymbolS
       CustomCssPropertyTemplateScopeBuilder(holder)
     }
 
-  override val providedSymbolKinds: Set<PolySymbolQualifiedKind>
+  override val providedSymbolKinds: Set<PolySymbolKind>
     get() = setOf(CSS_PROPERTIES)
 
   override fun createPointer(): Pointer<HtmlAttributesCustomCssPropertiesScope> {

@@ -7,8 +7,8 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.css.CSS_CLASS_LIST
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
@@ -240,7 +240,11 @@ class Angular2SymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
 
 class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
 
-  override fun getNameConversionRulesProviders(project: Project, element: PsiElement?, context: PolyContext): List<PolySymbolNameConversionRulesProvider> {
+  override fun getNameConversionRulesProviders(
+    project: Project,
+    element: PsiElement?,
+    context: PolyContext,
+  ): List<PolySymbolNameConversionRulesProvider> {
     if (context.framework == Angular2Framework.ID && element != null) {
       // possibly the input definition
       if (element is JSLiteralExpression || element is TypeScriptField) {
@@ -252,7 +256,9 @@ class Angular2SymbolQueryConfigurator : PolySymbolQueryConfigurator {
             else
               it
           }
-        if (parent == null || parent is TypeScriptClass && Angular2DecoratorUtil.findDecorator(parent, false, COMPONENT_DEC, DIRECTIVE_DEC) == null)
+        if (parent == null || parent is TypeScriptClass
+            && Angular2DecoratorUtil.findDecorator(parent, false,
+                                                   COMPONENT_DEC, DIRECTIVE_DEC) == null)
           return emptyList()
         val attrSelectors by lazy(LazyThreadSafetyMode.PUBLICATION) {
           Angular2EntitiesProvider.getDirective(parent)?.selector
@@ -339,26 +345,26 @@ const val ELEMENT_NG_CONTAINER: String = "ng-container"
 const val ELEMENT_NG_CONTENT: String = "ng-content"
 const val ELEMENT_NG_TEMPLATE: String = "ng-template"
 
-val NG_PROPERTY_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ng-property-bindings"]
-val NG_EVENT_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ng-event-bindings"]
-val NG_STRUCTURAL_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-structural-directives"]
-val NG_DIRECTIVE_ONE_TIME_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-one-time-bindings"]
-val NG_DIRECTIVE_INPUTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-directive-inputs"]
-val NG_DIRECTIVE_OUTPUTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-directive-outputs"]
-val NG_DIRECTIVE_IN_OUTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-directive-in-outs"]
-val NG_DIRECTIVE_ATTRIBUTES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-directive-attributes"]
-val NG_DIRECTIVE_EXPORTS_AS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-directive-exports-as"]
-val NG_DIRECTIVE_ELEMENT_SELECTORS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-directive-element-selectors"]
-val NG_DIRECTIVE_ATTRIBUTE_SELECTORS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-directive-attribute-selectors"]
-val NG_I18N_ATTRIBUTES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ng-i18n-attributes"]
-val NG_BLOCKS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ng-blocks"]
-val NG_BLOCK_PARAMETERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ng-block-parameters"]
-val NG_BLOCK_PARAMETER_PREFIXES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "ng-block-parameter-prefixes"]
-val NG_DEFER_ON_TRIGGERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-defer-on-triggers"]
-val NG_TEMPLATE_BINDING_KEYWORDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-template-binding-keywords"]
-val NG_TEMPLATE_BINDINGS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-template-bindings"]
-val NG_KEY_EVENT_MODIFIERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "key-event-modifiers"]
-val NG_CUSTOM_PROPERTY: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-custom-property"]
+val NG_PROPERTY_BINDINGS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "ng-property-bindings"]
+val NG_EVENT_BINDINGS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "ng-event-bindings"]
+val NG_STRUCTURAL_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-structural-directives"]
+val NG_DIRECTIVE_ONE_TIME_BINDINGS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-one-time-bindings"]
+val NG_DIRECTIVE_INPUTS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-directive-inputs"]
+val NG_DIRECTIVE_OUTPUTS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-directive-outputs"]
+val NG_DIRECTIVE_IN_OUTS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-directive-in-outs"]
+val NG_DIRECTIVE_ATTRIBUTES: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-directive-attributes"]
+val NG_DIRECTIVE_EXPORTS_AS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-directive-exports-as"]
+val NG_DIRECTIVE_ELEMENT_SELECTORS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-directive-element-selectors"]
+val NG_DIRECTIVE_ATTRIBUTE_SELECTORS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-directive-attribute-selectors"]
+val NG_I18N_ATTRIBUTES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "ng-i18n-attributes"]
+val NG_BLOCKS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "ng-blocks"]
+val NG_BLOCK_PARAMETERS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "ng-block-parameters"]
+val NG_BLOCK_PARAMETER_PREFIXES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "ng-block-parameter-prefixes"]
+val NG_DEFER_ON_TRIGGERS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-defer-on-triggers"]
+val NG_TEMPLATE_BINDING_KEYWORDS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-template-binding-keywords"]
+val NG_TEMPLATE_BINDINGS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-template-bindings"]
+val NG_KEY_EVENT_MODIFIERS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "key-event-modifiers"]
+val NG_CUSTOM_PROPERTY: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-custom-property"]
 
 fun isNgClassOrAnimateLiteralContext(literal: PsiElement): Boolean =
   isJSLiteralContextFromEmbeddedContent(literal, Angular2Binding::class.java, ::isNgClassOrAnimateAttribute)

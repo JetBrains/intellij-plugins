@@ -19,11 +19,7 @@ import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.source.DEFINE_EMITS_FUN
-import org.jetbrains.vuejs.model.source.DEFINE_PROPS_FUN
-import org.jetbrains.vuejs.model.source.EMITS_PROP
-import org.jetbrains.vuejs.model.source.PROPS_PROP
-import org.jetbrains.vuejs.model.source.VueCompositionContainer
+import org.jetbrains.vuejs.model.source.*
 
 class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
 
@@ -39,7 +35,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
           ?.asPolySymbol(name, VueModelVisitor.Proximity.APP)
       }
       is JSArrayLiteralExpression -> {
-        val (qualifiedKind, element) =
+        val (kind, element) =
           when (val grandparent = parent.parent) {
             // "emits", "props" property
             is JSProperty ->
@@ -66,7 +62,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
         VueModelManager.findEnclosingComponent(element)
           ?.asPolySymbol("", VueModelVisitor.Proximity.LOCAL)
           ?.asSafely<PolySymbolScope>()
-          ?.getMatchingSymbols(qualifiedKind.withName(name),
+          ?.getMatchingSymbols(kind.withName(name),
                                PolySymbolNameMatchQueryParams.create(PolySymbolQueryExecutorFactory.create(parent, false)),
                                PolySymbolQueryStack())
           ?.getOrNull(0)

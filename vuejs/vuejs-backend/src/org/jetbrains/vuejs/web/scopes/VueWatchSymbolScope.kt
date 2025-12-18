@@ -34,13 +34,13 @@ import org.jetbrains.vuejs.web.symbols.VueComputedPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueDataPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
-class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent)
-  : PolySymbolScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
+class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
+  PolySymbolScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == JS_PROPERTIES
-    || qualifiedKind == VUE_COMPONENT_DATA_PROPERTIES
-    || qualifiedKind == VUE_COMPONENT_COMPUTED_PROPERTIES
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == JS_PROPERTIES
+    || kind == VUE_COMPONENT_DATA_PROPERTIES
+    || kind == VUE_COMPONENT_COMPUTED_PROPERTIES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     val origin = VueScopeElementOrigin(enclosingComponent)
@@ -99,7 +99,7 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent)
 
   object VueWatchablePropertySymbol : PolySymbolWithPattern {
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = JS_PROPERTIES
 
     override val name: String get() = "Vue Watchable Property"
@@ -107,14 +107,14 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent)
     override val pattern: PolySymbolPattern =
       createComplexPattern(
         ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
-          Reference(qualifiedKind = VUE_COMPONENT_DATA_PROPERTIES),
-          Reference(qualifiedKind = VUE_COMPONENT_COMPUTED_PROPERTIES))
+          Reference(kind = VUE_COMPONENT_DATA_PROPERTIES),
+          Reference(kind = VUE_COMPONENT_COMPUTED_PROPERTIES))
         ), false,
         createPatternSequence(
           createSymbolReferencePlaceholder(),
           createComplexPattern(
             ComplexPatternOptions(repeats = true, isRequired = false, symbolsResolver = PolySymbolPatternReferenceResolver(
-              Reference(qualifiedKind = JS_PROPERTIES)
+              Reference(kind = JS_PROPERTIES)
             )), false,
             createPatternSequence(
               createStringMatch("."),

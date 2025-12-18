@@ -1,15 +1,15 @@
 package org.angular2.web.scopes
 
-import com.intellij.polySymbols.html.HtmlSymbolQueryHelper
-import com.intellij.polySymbols.html.HtmlSymbolQueryHelper.getStandardHtmlElementSymbolsScope
-import com.intellij.polySymbols.html.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.css.getPolySymbolsCssScopeForTagClasses
 import com.intellij.polySymbols.html.HTML_ELEMENTS
+import com.intellij.polySymbols.html.HtmlSymbolQueryHelper
+import com.intellij.polySymbols.html.HtmlSymbolQueryHelper.getStandardHtmlElementSymbolsScope
+import com.intellij.polySymbols.html.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolIsolatedMappingScope
@@ -20,8 +20,8 @@ import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.PROP_HOST_BINDING
 
-class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifiedKind>, decorator: ES6Decorator)
-  : PolySymbolIsolatedMappingScope<ES6Decorator>(mappings, Angular2Framework.ID, decorator) {
+class HostBindingsScope(mappings: Map<PolySymbolKind, PolySymbolKind>, decorator: ES6Decorator) :
+  PolySymbolIsolatedMappingScope<ES6Decorator>(mappings, Angular2Framework.ID, decorator) {
 
   override fun createPointer(): Pointer<HostBindingsScope> {
     val decoratorPtr = location.createSmartPointer()
@@ -31,8 +31,8 @@ class HostBindingsScope(mappings: Map<PolySymbolQualifiedKind, PolySymbolQualifi
     }
   }
 
-  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    mappings.containsKey(qualifiedKind)
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    mappings.containsKey(kind)
 
   override fun acceptSymbol(symbol: PolySymbol): Boolean =
     (symbol[PROP_HOST_BINDING] != false && (!symbol.name.startsWith("on") || !symbol.hasOnlyStandardHtmlSymbolsOrExtensions()))

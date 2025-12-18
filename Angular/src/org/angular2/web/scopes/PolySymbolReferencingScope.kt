@@ -3,30 +3,30 @@ package org.angular2.web.scopes
 import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 
 class PolySymbolReferencingScope(
-  qualifiedKind: PolySymbolQualifiedKind,
+  kind: PolySymbolKind,
   name: String,
   private val isExclusive: Boolean,
   origin: PolySymbolOrigin,
-  vararg qualifiedKinds: PolySymbolQualifiedKind,
+  vararg kinds: PolySymbolKind,
 ) : PolySymbolScope {
 
   private val symbol = ReferencingPolySymbol.create(
-    qualifiedKind, name, origin, *qualifiedKinds
+    kind, name, origin, *kinds
   )
 
-  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    isExclusive && qualifiedKind == symbol.qualifiedKind
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    isExclusive && kind == symbol.kind
 
-  override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
-    if (qualifiedKind == symbol.qualifiedKind)
+  override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
+    if (kind == symbol.kind)
       listOf(symbol)
     else
       emptyList()

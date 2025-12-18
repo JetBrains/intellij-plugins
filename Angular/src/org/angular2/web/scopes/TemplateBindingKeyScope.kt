@@ -3,8 +3,6 @@
 package org.angular2.web.scopes
 
 import com.intellij.codeInsight.completion.CompletionUtil
-import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.NlsSafe
@@ -14,6 +12,8 @@ import com.intellij.polySymbols.PolySymbol.Priority
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -34,8 +34,8 @@ import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_TEMPLATE_BINDINGS
 
-class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
-  : PolySymbolScopeWithCache<Angular2TemplateBindingKey, Unit>(Angular2Framework.ID, binding.project, binding, Unit) {
+class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey) :
+  PolySymbolScopeWithCache<Angular2TemplateBindingKey, Unit>(Angular2Framework.ID, binding.project, binding, Unit) {
 
   @OptIn(IntellijInternalApi::class)
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
@@ -71,10 +71,10 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
       it.withPriority(Priority.HIGHEST)
     }
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == NG_TEMPLATE_BINDINGS
-    || qualifiedKind == NG_DIRECTIVE_INPUTS
-    || qualifiedKind == JS_PROPERTIES
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == NG_TEMPLATE_BINDINGS
+    || kind == NG_DIRECTIVE_INPUTS
+    || kind == JS_PROPERTIES
 
   override fun createPointer(): Pointer<TemplateBindingKeyScope> {
     val bindingPtr = dataHolder.createSmartPointer()
@@ -89,7 +89,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey)
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
-    override val qualifiedKind: PolySymbolQualifiedKind
+    override val kind: PolySymbolKind
       get() = JS_SYMBOLS
 
     override val name: @NlsSafe String

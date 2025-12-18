@@ -1,15 +1,15 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types
 
-import com.intellij.polySymbols.js.jsType
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.psi.PsiSymbolReferenceService
-import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.js.JS_EVENTS
+import com.intellij.polySymbols.js.jsType
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
 class Angular2HostEventType : Angular2BaseType<JSProperty> {
@@ -29,7 +29,7 @@ class Angular2HostEventType : Angular2BaseType<JSProperty> {
     val eventType = references.asSequence()
       .flatMap { it.resolveReference() }
       .filterIsInstance<PolySymbol>()
-      .find { it.qualifiedKind == JS_EVENTS || it.qualifiedKind == NG_DIRECTIVE_OUTPUTS }
+      .find { it.kind == JS_EVENTS || it.kind == NG_DIRECTIVE_OUTPUTS }
       ?.jsType
     return eventType ?: JSAnyType.get(property)
   }

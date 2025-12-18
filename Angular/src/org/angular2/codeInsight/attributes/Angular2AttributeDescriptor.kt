@@ -1,13 +1,13 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes
 
+import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
 import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolInfo
-import com.intellij.model.Pointer
-import com.intellij.polySymbols.html.HTML_ATTRIBUTES
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
@@ -17,8 +17,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 import org.angular2.web.Angular2DescriptorSymbolsProvider
 import org.angular2.web.Angular2SymbolOrigin
 
-class Angular2AttributeDescriptor(info: HtmlAttributeSymbolInfo, tag: XmlTag?)
-  : HtmlAttributeSymbolDescriptor(info, tag) {
+class Angular2AttributeDescriptor(info: HtmlAttributeSymbolInfo, tag: XmlTag?) : HtmlAttributeSymbolDescriptor(info, tag) {
 
   /**
    * Represents most of the matched directives, even these out-of-scopes. Some directives
@@ -57,7 +56,7 @@ class Angular2AttributeDescriptor(info: HtmlAttributeSymbolInfo, tag: XmlTag?)
         override val origin: PolySymbolOrigin
           get() = Angular2SymbolOrigin.empty
 
-        override val qualifiedKind: PolySymbolQualifiedKind
+        override val kind: PolySymbolKind
           get() = HTML_ATTRIBUTES
 
         override val name: String

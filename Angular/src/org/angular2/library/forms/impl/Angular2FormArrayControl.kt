@@ -3,9 +3,9 @@ package org.angular2.library.forms.impl
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
@@ -20,7 +20,7 @@ object Angular2FormArrayControl : PolySymbolWithPattern {
   override val pattern: PolySymbolPattern =
     PolySymbolPatternFactory.createRegExMatch("[0-9]+")
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = NG_FORM_CONTROL_PROPS
 
   override val origin: PolySymbolOrigin

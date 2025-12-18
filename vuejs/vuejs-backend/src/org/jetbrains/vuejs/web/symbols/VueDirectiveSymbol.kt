@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
@@ -22,7 +22,7 @@ open class VueDirectiveSymbol(
   private val vueProximity: VueModelVisitor.Proximity,
 ) : VueScopeElementSymbol<VueDirective>(fromAsset(name), directive) {
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = VUE_DIRECTIVES
 
   override val priority: PolySymbol.Priority
@@ -34,17 +34,17 @@ open class VueDirectiveSymbol(
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
-      listOf(VueAnySymbol(this.origin, qualifiedName.qualifiedKind, qualifiedName.name))
+      listOf(VueAnySymbol(this.origin, qualifiedName.kind, qualifiedName.name))
     }
     else emptyList()
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    if (qualifiedKind == VUE_DIRECTIVE_ARGUMENT) {
-      listOf(VueAnySymbol(this.origin, qualifiedKind, "Vue directive argument"))
+    if (kind == VUE_DIRECTIVE_ARGUMENT) {
+      listOf(VueAnySymbol(this.origin, kind, "Vue directive argument"))
     }
     else emptyList()
 

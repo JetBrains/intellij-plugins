@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.psi.PsiElement
@@ -26,13 +26,13 @@ class Angular2FormGroupImpl(
   }
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    members.filter { it.qualifiedKind == qualifiedKind }
+    members.filter { it.kind == kind }
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = if (source is TypeScriptField) NG_FORM_GROUP_FIELDS else NG_FORM_GROUP_PROPS
 
   override fun createPointer(): Pointer<Angular2FormGroupImpl> {

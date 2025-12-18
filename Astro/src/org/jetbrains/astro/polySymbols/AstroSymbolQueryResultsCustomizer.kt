@@ -3,7 +3,7 @@ package org.jetbrains.astro.polySymbols
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
@@ -26,7 +26,7 @@ class AstroSymbolQueryResultsCustomizer(private val context: PsiElement) : PolyS
     strict: Boolean,
     qualifiedName: PolySymbolQualifiedName,
   ): List<PolySymbol> =
-    if (qualifiedName.qualifiedKind != ASTRO_COMPONENTS)
+    if (qualifiedName.kind != ASTRO_COMPONENTS)
       matches
     else if (isHtmlTagName(qualifiedName.name))
       emptyList()
@@ -38,8 +38,8 @@ class AstroSymbolQueryResultsCustomizer(private val context: PsiElement) : PolyS
         })
       }
 
-  override fun apply(item: PolySymbolCodeCompletionItem, qualifiedKind: PolySymbolQualifiedKind): PolySymbolCodeCompletionItem? {
-    if (qualifiedKind == ASTRO_COMPONENTS) {
+  override fun apply(item: PolySymbolCodeCompletionItem, kind: PolySymbolKind): PolySymbolCodeCompletionItem? {
+    if (kind == ASTRO_COMPONENTS) {
       if (isHtmlTagName(item.name)) return null
       val proximity = item.symbol?.get(PROP_ASTRO_PROXIMITY)
       val element = (item.symbol as? PsiSourcedPolySymbol)?.source

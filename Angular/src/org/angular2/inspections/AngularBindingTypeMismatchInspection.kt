@@ -48,7 +48,7 @@ class AngularBindingTypeMismatchInspection : AngularHtmlLikeTemplateLocalInspect
   private fun checkOneTimeBindingType(holder: ProblemsHolder, attribute: XmlAttribute, descriptor: Angular2AttributeDescriptor) {
     val value = attribute.valueElement
     val isOneTimeBinding = descriptor.symbol.unwrapMatchedSymbols()
-      .any { it.qualifiedKind == NG_DIRECTIVE_ONE_TIME_BINDINGS }
+      .any { it.kind == NG_DIRECTIVE_ONE_TIME_BINDINGS }
     if (isOneTimeBinding && isStrictTemplates(attribute)) {
       checkTypes(holder, attribute, descriptor, value?.value ?: "", BindingsTypeResolver.get(attribute.parent), true)
     }

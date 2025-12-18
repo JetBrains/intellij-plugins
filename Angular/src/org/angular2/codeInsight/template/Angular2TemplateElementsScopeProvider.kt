@@ -47,8 +47,8 @@ private class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProv
     return listOfNotNull(templateRootScope.findBestMatchingTemplateScope(hostElement ?: element))
   }
 
-  private class Angular2TemplateElementScope(private val root: PsiElement, parent: Angular2TemplateElementScope?)
-    : Angular2TemplateScope(parent) {
+  private class Angular2TemplateElementScope(private val root: PsiElement, parent: Angular2TemplateElementScope?) :
+    Angular2TemplateScope(parent) {
 
     private val elements = ArrayList<JSPsiElementBase>()
     private val myRange = root.textRange
@@ -73,7 +73,7 @@ private class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProv
     }
 
     fun add(symbol: PolySymbol) {
-      assert(symbol.qualifiedKind == JS_SYMBOLS)
+      assert(symbol.kind == JS_SYMBOLS)
       symbols.add(symbol)
     }
 

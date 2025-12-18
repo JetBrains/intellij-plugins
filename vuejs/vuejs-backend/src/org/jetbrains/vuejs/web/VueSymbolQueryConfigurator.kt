@@ -9,8 +9,8 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.context.PolyContext
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.js.NAMESPACE_JS
@@ -31,22 +31,22 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.scopes.*
 
-val VUE_TOP_LEVEL_ELEMENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-file-top-elements"]
-val VUE_COMPONENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-components"]
-val VUE_COMPONENT_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "props"]
-val VUE_COMPONENT_COMPUTED_PROPERTIES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "computed-properties"]
-val VUE_COMPONENT_DATA_PROPERTIES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "data-properties"]
-val VUE_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-directives"]
-val VUE_GLOBAL_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-global-directives"]
-val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-script-setup-local-directives"]
-val VUE_AVAILABLE_SLOTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-available-slots"]
-val VUE_MODEL: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-model"]
-val VUE_DIRECTIVE_ARGUMENT: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "argument"]
-val VUE_DIRECTIVE_MODIFIERS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "modifiers"]
-val VUE_COMPONENT_NAMESPACES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "vue-component-namespaces"]
-val VUE_PROVIDES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "vue-provides"]
-val VUE_SPECIAL_PROPERTIES: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-special-properties"]
-val VUE_BINDING_SHORTHANDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "vue-binding-shorthands"]
+val VUE_TOP_LEVEL_ELEMENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-file-top-elements"]
+val VUE_COMPONENTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-components"]
+val VUE_COMPONENT_PROPS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "props"]
+val VUE_COMPONENT_COMPUTED_PROPERTIES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "computed-properties"]
+val VUE_COMPONENT_DATA_PROPERTIES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "data-properties"]
+val VUE_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-directives"]
+val VUE_GLOBAL_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-global-directives"]
+val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-script-setup-local-directives"]
+val VUE_AVAILABLE_SLOTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-available-slots"]
+val VUE_MODEL: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-model"]
+val VUE_DIRECTIVE_ARGUMENT: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "argument"]
+val VUE_DIRECTIVE_MODIFIERS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "modifiers"]
+val VUE_COMPONENT_NAMESPACES: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "vue-component-namespaces"]
+val VUE_PROVIDES: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "vue-provides"]
+val VUE_SPECIAL_PROPERTIES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-special-properties"]
+val VUE_BINDING_SHORTHANDS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-binding-shorthands"]
 
 val PROP_VUE_MODEL_PROP: PolySymbolProperty<String> = PolySymbolProperty["prop"]
 val PROP_VUE_MODEL_EVENT: PolySymbolProperty<String> = PolySymbolProperty["event"]
@@ -73,7 +73,7 @@ class VueSymbolQueryConfigurator : PolySymbolQueryConfigurator {
 private object VueGlobalDirectiveNameConversionRulesProvider :
   VueDirectiveNameConversionRulesProviderBase {
 
-  override val canonicalNames: Map<PolySymbolQualifiedKind, PolySymbolNameConverter> =
+  override val canonicalNames: Map<PolySymbolKind, PolySymbolNameConverter> =
     mapOf(
       VUE_GLOBAL_DIRECTIVES to
         PolySymbolNameConverter {
@@ -90,7 +90,7 @@ private object VueGlobalDirectiveNameConversionRulesProvider :
 private object VueScriptSetupLocalDirectiveNameConversionRulesProvider :
   VueDirectiveNameConversionRulesProviderBase {
 
-  override val canonicalNames: Map<PolySymbolQualifiedKind, PolySymbolNameConverter> =
+  override val canonicalNames: Map<PolySymbolKind, PolySymbolNameConverter> =
     mapOf(
       VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES to
         PolySymbolNameConverter {
@@ -115,13 +115,13 @@ private interface VueDirectiveNameConversionRulesProviderBase :
 
   override fun getModificationCount(): Long = 0
 
-  override val renames: Map<PolySymbolQualifiedKind, PolySymbolNameConverter>
+  override val renames: Map<PolySymbolKind, PolySymbolNameConverter>
     get() = canonicalNames
 
-  override val matchNames: Map<PolySymbolQualifiedKind, PolySymbolNameConverter>
+  override val matchNames: Map<PolySymbolKind, PolySymbolNameConverter>
     get() = canonicalNames
 
-  override val completionVariants: Map<PolySymbolQualifiedKind, PolySymbolNameConverter>
+  override val completionVariants: Map<PolySymbolKind, PolySymbolNameConverter>
     get() = canonicalNames
 }
 

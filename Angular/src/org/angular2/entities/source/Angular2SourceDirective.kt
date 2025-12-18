@@ -17,13 +17,13 @@ import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Ref
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.SmartList
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
@@ -31,11 +31,7 @@ import org.angular2.Angular2DecoratorUtil.HOST_ATTRIBUTE_TOKEN_CLASS
 import org.angular2.Angular2DecoratorUtil.HOST_DIRECTIVES_PROP
 import org.angular2.Angular2DecoratorUtil.INJECT_FUN
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
-import org.angular2.signals.Angular2SignalUtils.INPUT_FUN
-import org.angular2.signals.Angular2SignalUtils.MODEL_FUN
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
-import org.angular2.signals.Angular2SignalUtils.OUTPUT_FROM_OBSERVABLE_FUN
-import org.angular2.signals.Angular2SignalUtils.OUTPUT_FUN
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
@@ -53,14 +49,18 @@ import org.angular2.entities.source.Angular2SourceUtil.readDirectivePropertyMapp
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.index.isStringArgStubbed
 import org.angular2.lang.types.Angular2TypeUtils
+import org.angular2.signals.Angular2SignalUtils.INPUT_FUN
+import org.angular2.signals.Angular2SignalUtils.MODEL_FUN
+import org.angular2.signals.Angular2SignalUtils.OUTPUT_FROM_OBSERVABLE_FUN
+import org.angular2.signals.Angular2SignalUtils.OUTPUT_FUN
 import org.angular2.web.ELEMENT_NG_TEMPLATE
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 
-open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSImplicitElement)
-  : Angular2SourceDeclaration(decorator, implicitElement), Angular2ClassBasedDirective,
-    Angular2HostDirectivesResolver.Angular2DirectiveWithHostDirectives {
+open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSImplicitElement) :
+  Angular2SourceDeclaration(decorator, implicitElement), Angular2ClassBasedDirective,
+  Angular2HostDirectivesResolver.Angular2DirectiveWithHostDirectives {
 
   @Suppress("LeakingThis")
   private val hostDirectivesResolver = Angular2HostDirectivesResolver(this)
@@ -68,7 +68,8 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
   override val selector: Angular2DirectiveSelector
     get() = getCachedValue {
       Result.create(
-        Angular2SourceUtil.getComponentSelector(decorator, Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.SELECTOR_PROP)),
+        Angular2SourceUtil.getComponentSelector(decorator,
+                                                Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.SELECTOR_PROP)),
         decorator.containingFile)
     }
 
@@ -116,7 +117,8 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
             .asSafely<Angular2Directive>()?.hostDirectives
             ?.let { result.addAll(it) }
           return@processClassesInHierarchy false
-        } else {
+        }
+        else {
           val decorator = Angular2DecoratorUtil.findDecorator(aClass, COMPONENT_DEC, DIRECTIVE_DEC)
           if (decorator != null) {
             HostDirectivesCollector(decorator)
@@ -249,7 +251,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       mappings: MutableMap<String, Angular2PropertyInfo>?,
       decorator: String?,
       functionNames: List<String>,
-      qualifiedKind: PolySymbolQualifiedKind,
+      kind: PolySymbolKind,
       result: MutableMap<String, Angular2DirectiveProperty>,
     ) {
       val info: Angular2PropertyInfo? =
@@ -263,7 +265,7 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
           ?.asSafely<JSCallExpression>()
           ?.let { Angular2SourceUtil.createPropertyInfo(it, functionNames, property.memberName) }
       if (info != null) {
-        result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(sourceClass, property, qualifiedKind, info))
+        result.putIfAbsent(info.name, Angular2SourceDirectiveProperty.create(sourceClass, property, kind, info))
       }
     }
 

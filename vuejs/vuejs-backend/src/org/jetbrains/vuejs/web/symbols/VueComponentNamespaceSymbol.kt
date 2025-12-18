@@ -1,10 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.polySymbols.js.symbols.JSPropertySymbol
-import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
-import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
@@ -12,6 +8,10 @@ import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.js.symbols.JSPropertySymbol
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
+import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
@@ -64,29 +64,29 @@ class VueComponentNamespaceSymbol(
         get() = VueFramework.ID
     }
 
-  override val qualifiedKind: PolySymbolQualifiedKind
+  override val kind: PolySymbolKind
     get() = VUE_COMPONENT_NAMESPACES
 
-  override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    isNamespacedKind(qualifiedKind)
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    isNamespacedKind(kind)
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    if (isNamespacedKind(qualifiedName.qualifiedKind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false)
+    if (isNamespacedKind(qualifiedName.kind) && qualifiedName.name.getOrNull(0)?.isUpperCase() != false)
       getMatchingJSPropertySymbols(qualifiedName.name, params.queryExecutor.namesProvider).adaptToNamespaceComponents(qualifiedName.kind)
     else
       emptyList()
 
   override fun getSymbols(
-    qualifiedKind: PolySymbolQualifiedKind,
+    kind: PolySymbolKind,
     params: PolySymbolListSymbolsQueryParams,
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
-    if (isNamespacedKind(qualifiedKind))
-      getJSPropertySymbols().adaptToNamespaceComponents(qualifiedKind.kind)
+    if (isNamespacedKind(kind))
+      getJSPropertySymbols().adaptToNamespaceComponents(kind)
     else
       emptyList()
 
@@ -94,11 +94,11 @@ class VueComponentNamespaceSymbol(
     mapNotNull { symbol ->
       val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
       val component = VueModelManager.getComponent(source) as? VueRegularComponent
-      if (component != null && kind == VUE_COMPONENTS.kind) {
+      if (component != null && kind == VUE_COMPONENTS) {
         VueNamespacedComponent(
           VueComponentSymbol(symbol.name, VueLocallyDefinedRegularComponent(component, source), VueModelVisitor.Proximity.LOCAL))
       }
-      else if (component == null && kind == VUE_COMPONENT_NAMESPACES.kind) {
+      else if (component == null && kind == VUE_COMPONENT_NAMESPACES) {
         VueComponentNamespaceSymbol(symbol.name, source)
       }
       else null
@@ -112,13 +112,12 @@ class VueComponentNamespaceSymbol(
   override fun hashCode(): Int =
     31 * name.hashCode() + source.hashCode()
 
-  private class VueNamespacedComponent(override val delegate: VueComponentSymbol)
-    : PsiSourcedPolySymbolDelegate<VueComponentSymbol> {
+  private class VueNamespacedComponent(override val delegate: VueComponentSymbol) : PsiSourcedPolySymbolDelegate<VueComponentSymbol> {
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
 
-    override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-      isNamespacedKind(qualifiedKind) || super.isExclusiveFor(qualifiedKind)
+    override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+      isNamespacedKind(kind) || super.isExclusiveFor(kind)
 
     override fun createPointer(): Pointer<out VueNamespacedComponent> {
       val delegatePtr = delegate.createPointer()
@@ -139,12 +138,12 @@ class VueComponentNamespaceSymbol(
       super.getMatchingSymbols(qualifiedName, params, stack)
 
     override fun getSymbols(
-      qualifiedKind: PolySymbolQualifiedKind,
+      kind: PolySymbolKind,
       params: PolySymbolListSymbolsQueryParams,
       stack: PolySymbolQueryStack,
     ): List<PolySymbol> =
-      namespaceSymbol.getSymbols(qualifiedKind, params, stack) +
-      super.getSymbols(qualifiedKind, params, stack)
+      namespaceSymbol.getSymbols(kind, params, stack) +
+      super.getSymbols(kind, params, stack)
 
     override fun getCodeCompletions(
       qualifiedName: PolySymbolQualifiedName,
@@ -163,8 +162,8 @@ class VueComponentNamespaceSymbol(
   }
 
   companion object {
-    private fun isNamespacedKind(qualifiedKind: PolySymbolQualifiedKind) =
-      qualifiedKind == VUE_COMPONENT_NAMESPACES || qualifiedKind == VUE_COMPONENTS
+    private fun isNamespacedKind(kind: PolySymbolKind) =
+      kind == VUE_COMPONENT_NAMESPACES || kind == VUE_COMPONENTS
   }
 
 }

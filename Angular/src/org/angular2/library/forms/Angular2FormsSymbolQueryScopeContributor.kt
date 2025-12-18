@@ -5,8 +5,8 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.model.Pointer
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
 import com.intellij.polySymbols.js.JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS
 import com.intellij.polySymbols.js.NAMESPACE_JS
@@ -82,14 +82,14 @@ class Angular2FormsSymbolQueryScopeContributor : PolySymbolQueryScopeContributor
 
   private class SingleSymbolExclusiveScope(private val symbol: PolySymbol) : PolySymbolScope {
 
-    override fun getSymbols(qualifiedKind: PolySymbolQualifiedKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
-      if (symbol.qualifiedKind == qualifiedKind)
+    override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
+      if (symbol.kind == kind)
         listOf(symbol)
       else
         emptyList()
 
-    override fun isExclusiveFor(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-      symbol.qualifiedKind == qualifiedKind
+    override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+      symbol.kind == kind
 
     override fun createPointer(): Pointer<out PolySymbolScope> {
       val symbolPtr = symbol.createPointer()
@@ -122,13 +122,13 @@ fun findFormGroupForGetCallParameterArray(element: JSExpression): Angular2FormGr
     .parent.asSafely<JSArrayLiteralExpression>()
     ?.let { findFormGroupForGetCallParameter(it) }
 
-val NG_FORM_GROUP_FIELDS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-form-group-fields"]
+val NG_FORM_GROUP_FIELDS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-form-group-fields"]
 
-val NG_FORM_CONTROL_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-form-control-props"]
-val NG_FORM_GROUP_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-form-group-props"]
-val NG_FORM_ARRAY_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_JS, "ng-form-array-props"]
+val NG_FORM_CONTROL_PROPS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-form-control-props"]
+val NG_FORM_GROUP_PROPS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-form-group-props"]
+val NG_FORM_ARRAY_PROPS: PolySymbolKind = PolySymbolKind[NAMESPACE_JS, "ng-form-array-props"]
 
-val NG_FORM_ANY_CONTROL_PROPS: Set<PolySymbolQualifiedKind> = setOf(
+val NG_FORM_ANY_CONTROL_PROPS: Set<PolySymbolKind> = setOf(
   NG_FORM_CONTROL_PROPS,
   NG_FORM_ARRAY_PROPS,
   NG_FORM_GROUP_PROPS,

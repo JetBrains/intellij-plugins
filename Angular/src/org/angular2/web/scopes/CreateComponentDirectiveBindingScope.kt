@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -31,8 +31,8 @@ const val TWO_WAY_BINDING_FUN: String = "twoWayBinding"
 const val BINDINGS_PROP: String = "bindings"
 const val TYPE_PROP: String = "type"
 
-class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpression)
-  : PolySymbolScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
+class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpression) :
+  PolySymbolScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
 
   companion object {
     val INPUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive input",
@@ -69,10 +69,10 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
     directive.inOuts.forEach(consumer)
   }
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == NG_DIRECTIVE_INPUTS
-    || qualifiedKind == NG_DIRECTIVE_OUTPUTS
-    || qualifiedKind == NG_DIRECTIVE_IN_OUTS
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == NG_DIRECTIVE_INPUTS
+    || kind == NG_DIRECTIVE_OUTPUTS
+    || kind == NG_DIRECTIVE_IN_OUTS
 
   override fun createPointer(): Pointer<CreateComponentDirectiveBindingScope> {
     val objectLiteralPtr = dataHolder.createSmartPointer()

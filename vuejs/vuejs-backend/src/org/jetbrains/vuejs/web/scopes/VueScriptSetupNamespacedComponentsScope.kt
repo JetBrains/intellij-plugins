@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolQualifiedKind
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
@@ -19,8 +19,8 @@ import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueComponentNamespaceSymbol
 
-class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
-  : PolySymbolScopeWithCache<JSExecutionScope, Unit>(VueFramework.ID, module.project, module, Unit) {
+class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope) :
+  PolySymbolScopeWithCache<JSExecutionScope, Unit>(VueFramework.ID, module.project, module, Unit) {
   override fun createPointer(): Pointer<out PolySymbolScopeWithCache<JSExecutionScope, Unit>> {
     val modulePtr = dataHolder.createSmartPointer()
     return Pointer {
@@ -28,8 +28,8 @@ class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope)
     }
   }
 
-  override fun provides(qualifiedKind: PolySymbolQualifiedKind): Boolean =
-    qualifiedKind == VUE_COMPONENT_NAMESPACES
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == VUE_COMPONENT_NAMESPACES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     JSStubBasedPsiTreeUtil.processDeclarationsInScope(
