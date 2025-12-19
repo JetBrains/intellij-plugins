@@ -6,9 +6,9 @@ import com.intellij.platform.workspace.storage.ConnectionId
 import com.intellij.platform.workspace.storage.EntitySource
 import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
 import com.intellij.platform.workspace.storage.GeneratedCodeImplVersion
-import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
 import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntity
+import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
 import com.intellij.platform.workspace.storage.WorkspaceEntityInternalApi
 import com.intellij.platform.workspace.storage.impl.ModifiableWorkspaceEntityBase
 import com.intellij.platform.workspace.storage.impl.WorkspaceEntityBase
@@ -25,9 +25,7 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
 
   private companion object {
 
-
-    private val connections = listOf<ConnectionId>(
-    )
+    private val connections = listOf<ConnectionId>()
 
   }
 
@@ -36,7 +34,6 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
       readField("depsFile")
       return dataSource.depsFile
     }
-
   override val denoTypes: VirtualFileUrl?
     get() {
       readField("denoTypes")
@@ -67,17 +64,15 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
           error("Entity DenoEntity is already created in a different builder")
         }
       }
-
       this.diff = builder
       addToBuilder()
       this.id = getEntityData().createEntityId()
-      // After adding entity data to the builder, we need to unbind it and move the control over entity data to builder
-      // Builder may switch to snapshot at any moment and lock entity data to modification
+// After adding entity data to the builder, we need to unbind it and move the control over entity data to builder
+// Builder may switch to snapshot at any moment and lock entity data to modification
       this.currentEntityData = null
-
       index(this, "depsFile", this.depsFile)
       index(this, "denoTypes", this.denoTypes)
-      // Process linked entities that are connected without a builder
+// Process linked entities that are connected without a builder
       processLinkedEntities(builder)
       checkInitialization() // TODO uncomment and check failed tests
     }
@@ -111,7 +106,6 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
         changedProperty.add("entitySource")
 
       }
-
     override var depsFile: VirtualFileUrl?
       get() = getEntityData().depsFile
       set(value) {
@@ -121,7 +115,6 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
         val _diff = diff
         if (_diff != null) index(this, "depsFile", value)
       }
-
     override var denoTypes: VirtualFileUrl?
       get() = getEntityData().denoTypes
       set(value) {
@@ -134,6 +127,7 @@ internal class DenoEntityImpl(private val dataSource: DenoEntityData) : DenoEnti
 
     override fun getEntityClass(): Class<DenoEntity> = DenoEntity::class.java
   }
+
 }
 
 @OptIn(WorkspaceEntityInternalApi::class)
@@ -183,9 +177,7 @@ internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   override fun equals(other: Any?): Boolean {
     if (other == null) return false
     if (this.javaClass != other.javaClass) return false
-
     other as DenoEntityData
-
     if (this.entitySource != other.entitySource) return false
     if (this.depsFile != other.depsFile) return false
     if (this.denoTypes != other.denoTypes) return false
@@ -195,9 +187,7 @@ internal class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   override fun equalsIgnoringEntitySource(other: Any?): Boolean {
     if (other == null) return false
     if (this.javaClass != other.javaClass) return false
-
     other as DenoEntityData
-
     if (this.depsFile != other.depsFile) return false
     if (this.denoTypes != other.denoTypes) return false
     return true

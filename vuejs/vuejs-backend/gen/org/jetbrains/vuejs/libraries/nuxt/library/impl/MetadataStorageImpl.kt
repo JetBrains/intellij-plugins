@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt.library.impl
 
 import com.intellij.platform.workspace.storage.WorkspaceEntityInternalApi
@@ -17,45 +17,57 @@ internal object MetadataStorageImpl : MetadataStorageBase() {
     var typeMetadata: StorageTypeMetadata
 
     typeMetadata = FinalClassMetadata.ObjectMetadata(fqName = "org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity\$MyEntitySource",
-                                                     properties = listOf(
-                                                       OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false,
-                                                                           name = "virtualFileUrl",
-                                                                           valueType = ValueTypeMetadata.SimpleType.CustomType(
-                                                                             isNullable = true,
-                                                                             typeMetadata = FinalClassMetadata.KnownClass(
-                                                                               fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")),
-                                                                           withDefault = false)),
+                                                     properties = listOf(OwnPropertyMetadata(isComputable = false,
+                                                                                             isKey = false,
+                                                                                             isOpen = false,
+                                                                                             name = "virtualFileUrl",
+                                                                                             valueType = ValueTypeMetadata.SimpleType.CustomType(
+                                                                                               isNullable = true,
+                                                                                               typeMetadata = FinalClassMetadata.KnownClass(
+                                                                                                 fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")),
+                                                                                             withDefault = false)),
                                                      supertypes = listOf("com.intellij.platform.workspace.storage.EntitySource"))
 
     addMetadata(typeMetadata)
 
     typeMetadata = EntityMetadata(fqName = "org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity",
                                   entityDataFqName = "org.jetbrains.vuejs.libraries.nuxt.library.impl.NuxtFolderEntityData",
-                                  supertypes = listOf("com.intellij.platform.workspace.storage.WorkspaceEntity"), properties = listOf(
-        OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "entitySource",
-                            valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false,
-                                                                                typeMetadata = FinalClassMetadata.KnownClass(
-                                                                                  fqName = "com.intellij.platform.workspace.storage.EntitySource")),
-                            withDefault = false),
-        OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "nuxtFolderUrl",
-                            valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false,
-                                                                                typeMetadata = FinalClassMetadata.KnownClass(
-                                                                                  fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")),
-                            withDefault = false),
-        OwnPropertyMetadata(isComputable = false, isKey = false, isOpen = false, name = "libraryFileUrls",
-                            valueType = ValueTypeMetadata.ParameterizedType(generics = listOf(
-                              ValueTypeMetadata.SimpleType.CustomType(isNullable = false, typeMetadata = FinalClassMetadata.KnownClass(
-                                fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl"))),
-                                                                            primitive = primitiveTypeListNotNullable),
-                            withDefault = false)), extProperties = listOf(), isAbstract = false)
+                                  supertypes = listOf("com.intellij.platform.workspace.storage.WorkspaceEntity"),
+                                  properties = listOf(OwnPropertyMetadata(isComputable = false,
+                                                                          isKey = false,
+                                                                          isOpen = false,
+                                                                          name = "entitySource",
+                                                                          valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false,
+                                                                                                                              typeMetadata = FinalClassMetadata.KnownClass(
+                                                                                                                                fqName = "com.intellij.platform.workspace.storage.EntitySource")),
+                                                                          withDefault = false),
+                                                      OwnPropertyMetadata(isComputable = false,
+                                                                          isKey = false,
+                                                                          isOpen = false,
+                                                                          name = "nuxtFolderUrl",
+                                                                          valueType = ValueTypeMetadata.SimpleType.CustomType(isNullable = false,
+                                                                                                                              typeMetadata = FinalClassMetadata.KnownClass(
+                                                                                                                                fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl")),
+                                                                          withDefault = false),
+                                                      OwnPropertyMetadata(isComputable = false,
+                                                                          isKey = false,
+                                                                          isOpen = false,
+                                                                          name = "libraryFileUrls",
+                                                                          valueType = ValueTypeMetadata.ParameterizedType(generics = listOf(
+                                                                            ValueTypeMetadata.SimpleType.CustomType(isNullable = false,
+                                                                                                                    typeMetadata = FinalClassMetadata.KnownClass(
+                                                                                                                      fqName = "com.intellij.platform.workspace.storage.url.VirtualFileUrl"))),
+                                                                                                                          primitive = primitiveTypeListNotNullable),
+                                                                          withDefault = false)),
+                                  extProperties = listOf(),
+                                  isAbstract = false)
 
     addMetadata(typeMetadata)
   }
 
   override fun initializeMetadataHash() {
-    addMetadataHash(typeFqn = "org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity", metadataHash = 2072087004)
+    addMetadataHash(typeFqn = "org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity", metadataHash = -1370557162)
     addMetadataHash(typeFqn = "com.intellij.platform.workspace.storage.EntitySource", metadataHash = 1489809438)
     addMetadataHash(typeFqn = "org.jetbrains.vuejs.libraries.nuxt.library.NuxtFolderEntity\$MyEntitySource", metadataHash = 1571223598)
   }
-
 }

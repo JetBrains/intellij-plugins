@@ -5,9 +5,9 @@ import com.intellij.platform.workspace.storage.ConnectionId
 import com.intellij.platform.workspace.storage.EntitySource
 import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
 import com.intellij.platform.workspace.storage.GeneratedCodeImplVersion
-import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
 import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntity
+import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
 import com.intellij.platform.workspace.storage.WorkspaceEntityInternalApi
 import com.intellij.platform.workspace.storage.impl.ModifiableWorkspaceEntityBase
 import com.intellij.platform.workspace.storage.impl.WorkspaceEntityBase
@@ -28,9 +28,7 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
 
   private companion object {
 
-
-    private val connections = listOf<ConnectionId>(
-    )
+    private val connections = listOf<ConnectionId>()
 
   }
 
@@ -39,7 +37,6 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
       readField("nuxtFolderUrl")
       return dataSource.nuxtFolderUrl
     }
-
   override val libraryFileUrls: List<VirtualFileUrl>
     get() {
       readField("libraryFileUrls")
@@ -57,8 +54,8 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
   }
 
 
-  internal class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(
-    result), NuxtFolderEntityBuilder {
+  internal class Builder(result: NuxtFolderEntityData?) : ModifiableWorkspaceEntityBase<NuxtFolderEntity, NuxtFolderEntityData>(result),
+                                                          NuxtFolderEntityBuilder {
     internal constructor() : this(NuxtFolderEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
@@ -71,17 +68,15 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
           error("Entity NuxtFolderEntity is already created in a different builder")
         }
       }
-
       this.diff = builder
       addToBuilder()
       this.id = getEntityData().createEntityId()
-      // After adding entity data to the builder, we need to unbind it and move the control over entity data to builder
-      // Builder may switch to snapshot at any moment and lock entity data to modification
+// After adding entity data to the builder, we need to unbind it and move the control over entity data to builder
+// Builder may switch to snapshot at any moment and lock entity data to modification
       this.currentEntityData = null
-
       index(this, "nuxtFolderUrl", this.nuxtFolderUrl)
       index(this, "libraryFileUrls", this.libraryFileUrls)
-      // Process linked entities that are connected without a builder
+// Process linked entities that are connected without a builder
       processLinkedEntities(builder)
       checkInitialization() // TODO uncomment and check failed tests
     }
@@ -128,7 +123,6 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
         changedProperty.add("entitySource")
 
       }
-
     override var nuxtFolderUrl: VirtualFileUrl
       get() = getEntityData().nuxtFolderUrl
       set(value) {
@@ -138,7 +132,6 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
         val _diff = diff
         if (_diff != null) index(this, "nuxtFolderUrl", value)
       }
-
     private val libraryFileUrlsUpdater: (value: List<VirtualFileUrl>) -> Unit = { value ->
       val _diff = diff
       if (_diff != null) index(this, "libraryFileUrls", value)
@@ -164,6 +157,7 @@ internal class NuxtFolderEntityImpl(private val dataSource: NuxtFolderEntityData
 
     override fun getEntityClass(): Class<NuxtFolderEntity> = NuxtFolderEntity::class.java
   }
+
 }
 
 @OptIn(WorkspaceEntityInternalApi::class)
@@ -208,8 +202,7 @@ internal class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
   }
 
   override fun createDetachedEntity(parents: List<WorkspaceEntityBuilder<*>>): WorkspaceEntityBuilder<*> {
-    return NuxtFolderEntity(nuxtFolderUrl, libraryFileUrls, entitySource) {
-    }
+    return NuxtFolderEntity(nuxtFolderUrl, libraryFileUrls, entitySource)
   }
 
   override fun getRequiredParents(): List<Class<out WorkspaceEntity>> {
@@ -220,9 +213,7 @@ internal class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
   override fun equals(other: Any?): Boolean {
     if (other == null) return false
     if (this.javaClass != other.javaClass) return false
-
     other as NuxtFolderEntityData
-
     if (this.entitySource != other.entitySource) return false
     if (this.nuxtFolderUrl != other.nuxtFolderUrl) return false
     if (this.libraryFileUrls != other.libraryFileUrls) return false
@@ -232,9 +223,7 @@ internal class NuxtFolderEntityData : WorkspaceEntityData<NuxtFolderEntity>() {
   override fun equalsIgnoringEntitySource(other: Any?): Boolean {
     if (other == null) return false
     if (this.javaClass != other.javaClass) return false
-
     other as NuxtFolderEntityData
-
     if (this.nuxtFolderUrl != other.nuxtFolderUrl) return false
     if (this.libraryFileUrls != other.libraryFileUrls) return false
     return true

@@ -5,9 +5,9 @@ import com.intellij.platform.workspace.storage.ConnectionId
 import com.intellij.platform.workspace.storage.EntitySource
 import com.intellij.platform.workspace.storage.GeneratedCodeApiVersion
 import com.intellij.platform.workspace.storage.GeneratedCodeImplVersion
-import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
 import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntity
+import com.intellij.platform.workspace.storage.WorkspaceEntityBuilder
 import com.intellij.platform.workspace.storage.WorkspaceEntityInternalApi
 import com.intellij.platform.workspace.storage.impl.ModifiableWorkspaceEntityBase
 import com.intellij.platform.workspace.storage.impl.WorkspaceEntityBase
@@ -26,9 +26,7 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
 
   private companion object {
 
-
-    private val connections = listOf<ConnectionId>(
-    )
+    private val connections = listOf<ConnectionId>()
 
   }
 
@@ -47,7 +45,6 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
       readField("jsonPath")
       return dataSource.jsonPath
     }
-
   override val lockFile: VirtualFileUrl
     get() {
       readField("lockFile")
@@ -65,8 +62,8 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
   }
 
 
-  internal class Builder(result: TfLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TfLocalMetaEntity, TfLocalMetaEntityData>(
-    result), TfLocalMetaEntityBuilder {
+  internal class Builder(result: TfLocalMetaEntityData?) : ModifiableWorkspaceEntityBase<TfLocalMetaEntity, TfLocalMetaEntityData>(result),
+                                                           TfLocalMetaEntityBuilder {
     internal constructor() : this(TfLocalMetaEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
@@ -79,16 +76,14 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
           error("Entity TfLocalMetaEntity is already created in a different builder")
         }
       }
-
       this.diff = builder
       addToBuilder()
       this.id = getEntityData().createEntityId()
-      // After adding entity data to the builder, we need to unbind it and move the control over entity data to builder
-      // Builder may switch to snapshot at any moment and lock entity data to modification
+// After adding entity data to the builder, we need to unbind it and move the control over entity data to builder
+// Builder may switch to snapshot at any moment and lock entity data to modification
       this.currentEntityData = null
-
       index(this, "lockFile", this.lockFile)
-      // Process linked entities that are connected without a builder
+// Process linked entities that are connected without a builder
       processLinkedEntities(builder)
       checkInitialization() // TODO uncomment and check failed tests
     }
@@ -130,7 +125,6 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
         changedProperty.add("entitySource")
 
       }
-
     override var timeStampLow: Int
       get() = getEntityData().timeStampLow
       set(value) {
@@ -138,7 +132,6 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
         getEntityData(true).timeStampLow = value
         changedProperty.add("timeStampLow")
       }
-
     override var timeStampHigh: Int
       get() = getEntityData().timeStampHigh
       set(value) {
@@ -146,7 +139,6 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
         getEntityData(true).timeStampHigh = value
         changedProperty.add("timeStampHigh")
       }
-
     override var jsonPath: String
       get() = getEntityData().jsonPath
       set(value) {
@@ -154,7 +146,6 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
         getEntityData(true).jsonPath = value
         changedProperty.add("jsonPath")
       }
-
     override var lockFile: VirtualFileUrl
       get() = getEntityData().lockFile
       set(value) {
@@ -167,6 +158,7 @@ internal class TfLocalMetaEntityImpl(private val dataSource: TfLocalMetaEntityDa
 
     override fun getEntityClass(): Class<TfLocalMetaEntity> = TfLocalMetaEntity::class.java
   }
+
 }
 
 @OptIn(WorkspaceEntityInternalApi::class)
@@ -207,8 +199,7 @@ internal class TfLocalMetaEntityData : WorkspaceEntityData<TfLocalMetaEntity>() 
   }
 
   override fun createDetachedEntity(parents: List<WorkspaceEntityBuilder<*>>): WorkspaceEntityBuilder<*> {
-    return TfLocalMetaEntity(timeStampLow, timeStampHigh, jsonPath, lockFile, entitySource) {
-    }
+    return TfLocalMetaEntity(timeStampLow, timeStampHigh, jsonPath, lockFile, entitySource)
   }
 
   override fun getRequiredParents(): List<Class<out WorkspaceEntity>> {
@@ -219,9 +210,7 @@ internal class TfLocalMetaEntityData : WorkspaceEntityData<TfLocalMetaEntity>() 
   override fun equals(other: Any?): Boolean {
     if (other == null) return false
     if (this.javaClass != other.javaClass) return false
-
     other as TfLocalMetaEntityData
-
     if (this.entitySource != other.entitySource) return false
     if (this.timeStampLow != other.timeStampLow) return false
     if (this.timeStampHigh != other.timeStampHigh) return false
@@ -233,9 +222,7 @@ internal class TfLocalMetaEntityData : WorkspaceEntityData<TfLocalMetaEntity>() 
   override fun equalsIgnoringEntitySource(other: Any?): Boolean {
     if (other == null) return false
     if (this.javaClass != other.javaClass) return false
-
     other as TfLocalMetaEntityData
-
     if (this.timeStampLow != other.timeStampLow) return false
     if (this.timeStampHigh != other.timeStampHigh) return false
     if (this.jsonPath != other.jsonPath) return false
