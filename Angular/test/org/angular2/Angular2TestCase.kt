@@ -6,7 +6,6 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestCase
 import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.javascript.waitEmptyServiceQueueForService
 import com.intellij.lang.typescript.compiler.TypeScriptService
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -41,7 +40,7 @@ abstract class Angular2TestCase(
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
     if (useTsc) {
       configureAngularSettingsService(project, testRootDisposable, AngularServiceSettings.AUTO)
-      val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
+      val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
         it::class == expectedServerClass
       }
       (service as TypeScriptServerServiceImpl).assertProcessStarted()

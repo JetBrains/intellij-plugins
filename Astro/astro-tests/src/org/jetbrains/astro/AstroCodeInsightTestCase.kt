@@ -5,7 +5,6 @@ import com.intellij.javascript.testFramework.web.WebFrameworkTestConfigurator
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
 import com.intellij.lang.javascript.HybridTestMode
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil.TypeScriptUseServiceState
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.Disposable
@@ -89,7 +88,7 @@ private class AstroLspConfigurator : WebFrameworkTestConfigurator {
     serviceSettings.serviceMode = AstroServiceMode.ENABLED
     RegistryManager.getInstance().get("astro.language.server.bundled.enabled").setValue(true, contextDisposable)
     TypeScriptExternalDefinitionsRegistry.testTypingsRootPath = TypeScriptDefinitionFilesDirectory.getGlobalAutoDownloadTypesDirectoryPath()
-    TypeScriptServiceTestMixin.setUpTypeScriptService(fixture, TypeScriptUseServiceState.USE_FOR_EVERYTHING) {
+    TypeScriptServiceTestMixin.setUpTypeScriptService(fixture) {
       it::class == AstroLspTypeScriptService::class
     }
   }
