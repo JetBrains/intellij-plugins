@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class DartCharFilter extends CharFilter {
   @Override
-  public @Nullable Result acceptChar(final char c, final int prefixLength, final @NotNull Lookup lookup) {
+  public @Nullable Result acceptChar(char c, int prefixLength, @NotNull Lookup lookup) {
     if (!lookup.isCompletion()) return null;
 
     final PsiElement element = lookup.getPsiElement();
