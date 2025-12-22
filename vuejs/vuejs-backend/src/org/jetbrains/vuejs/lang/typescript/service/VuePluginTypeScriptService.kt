@@ -1,16 +1,22 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service
 
+import com.intellij.javascript.typeEngine.JSServicePoweredTypeEngineUsageContext
+import com.intellij.javascript.types.TSType
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
+import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.frameworks.DownloadableTypeScriptServicePlugin
 import com.intellij.lang.typescript.compiler.languageService.frameworks.PluggableTypeScriptService
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigurePluginRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigurePluginRequestArguments
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptTypeRequestKind
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lang.lsWidget.LanguageServiceWidgetItem
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -80,4 +86,41 @@ class VuePluginTypeScriptService(
 
   override fun isTypeEvaluationEnabled(): Boolean =
     false
+
+  override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport =
+    VueCompilerServiceEvaluationSupport(project)
+
+  override fun supportsTypeEvaluation(
+    virtualFile: VirtualFile,
+    element: PsiElement,
+  ): Boolean =
+    virtualFile.isVueFile
+    || super.supportsTypeEvaluation(virtualFile, element)
+
+  private inner class VueCompilerServiceEvaluationSupport(
+    project: Project,
+  ) : TypeScriptCompilerServiceEvaluationSupport(project) {
+
+    override fun getElementType(
+      element: PsiElement,
+      typeRequestKind: TypeScriptTypeRequestKind,
+      virtualFile: VirtualFile,
+      projectFile: VirtualFile?,
+    ): TSType? {
+      // copied from `Angular2CompilerServiceEvaluationSupport`
+      if (element !is JSElement && element.parent !is JSElement) {
+        return null
+      }
+
+      return super.getElementType(element, typeRequestKind, virtualFile, projectFile)
+    }
+
+    override fun isEnabledInUsageContext(
+      usageContext: JSServicePoweredTypeEngineUsageContext,
+    ): Boolean =
+      true
+
+    override val supportsTypeScriptInInjections: Boolean =
+      true
+  }
 }
