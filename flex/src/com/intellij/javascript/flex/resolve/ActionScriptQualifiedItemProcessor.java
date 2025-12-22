@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor.TypeResolveState;
@@ -73,7 +72,7 @@ public class ActionScriptQualifiedItemProcessor<T extends ResultSink> extends Ac
 
   private boolean isActionScriptDummyResolve() {
     if (place instanceof JSReferenceExpressionImpl) {
-      JSExpression originalQualifier = BaseJSSymbolProcessor.getOriginalQualifier(((JSReferenceExpressionImpl)place).getQualifier());
+      JSExpression originalQualifier = ActionScriptBaseJSSymbolProcessor.getOriginalQualifier(((JSReferenceExpressionImpl)place).getQualifier());
       if (originalQualifier instanceof JSCallExpression) originalQualifier = ((JSCallExpression)originalQualifier).getMethodExpression();
       if (originalQualifier instanceof JSReferenceExpression &&
           ((JSReferenceExpression)originalQualifier).multiResolve(false).length == 0) {

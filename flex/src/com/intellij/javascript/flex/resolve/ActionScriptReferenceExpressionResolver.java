@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.*;
@@ -18,9 +19,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * @author Konstantin.Ulitin
@@ -162,7 +168,7 @@ public class ActionScriptReferenceExpressionResolver
       }
     }
 
-    ResolveResult[] results = resolveFromIndices(localProcessor, resultSink);
+    ResolveResult[] results = resolveFromIndices(localProcessor);
 
     if (results.length == 0 && localProcessor.isEncounteredXmlLiteral()) {
       return dummyResult(myRef);
@@ -171,7 +177,7 @@ public class ActionScriptReferenceExpressionResolver
     return results;
   }
 
-  protected boolean prepareProcessor(WalkUpResolveProcessor processor, @NotNull JSSinkResolveProcessor localProcessor) {
+  protected boolean prepareProcessor(ActionScriptWalkUpResolveProcessor processor, @NotNull JSSinkResolveProcessor localProcessor) {
     boolean allowOnlyCompleteMatches = false;
 
     PsiElement context = processor.getContext();
@@ -218,15 +224,11 @@ public class ActionScriptReferenceExpressionResolver
     return new ResolveResult[] { new JSResolveResult(myParent) };
   }
 
-  protected ResolveResult[] resolveFromIndices(@NotNull JSSinkResolveProcessor localProcessor,
-                                               @NotNull ResolveResultSink sink) {
+  protected ResolveResult[] resolveFromIndices(@NotNull JSSinkResolveProcessor localProcessor) {
     assert myReferencedName != null;
-    final WalkUpResolveProcessor processor = new WalkUpResolveProcessor(myReferencedName, myContainingFile, myRef);
-
-    processor.addLocalResults(sink);
+    final ActionScriptWalkUpResolveProcessor processor = new ActionScriptWalkUpResolveProcessor(myReferencedName, myContainingFile, myRef);
 
     if (prepareProcessor(processor, localProcessor)) {
-      JSResolveUtil.tryProcessXmlFileImplicitElements(myRef, processor);
       JSResolveUtil.tryProcessAllElementsInInjectedContext(myContainingFile, element -> {
         if (myReferencedName.equals(element.getName())) {
           processor.doQualifiedCheck(element);
@@ -234,7 +236,7 @@ public class ActionScriptReferenceExpressionResolver
         return true;
       });
 
-      JSIndexBasedResolveUtil.processAllSymbols(processor, myIgnorePerformanceLimits);
+      processAllSymbols(processor, myIgnorePerformanceLimits);
     }
 
     ResolveResult[] results = getResultsFromProcessor(processor);
@@ -245,7 +247,37 @@ public class ActionScriptReferenceExpressionResolver
     return myIgnorePerformanceLimits || results.length <= JSReferenceExpressionResolver.MAX_RESULTS_COUNT_TO_KEEP ? results : JSResolveResult.tooManyCandidatesResult();
   }
 
-  protected ResolveResult[] getResultsFromProcessor(WalkUpResolveProcessor processor) {
+  private static void processAllSymbols(@NotNull ActionScriptWalkUpResolveProcessor processor, boolean ignorePerformanceLimit) {
+    final String name = processor.getRequiredName();
+    GlobalSearchScope scope = JSResolveUtil.getResolveScope(processor.getContext());
+    CommonProcessors.CollectProcessor<JSPsiElementBase> collector = new CommonProcessors.CollectProcessor<>();
+    for (ActionScriptContextLevel level : processor.getTypeInfo().myContextLevels) {
+      JSNamespace namespace = level.myNamespace;
+      String qName = JSIndexBasedResolveUtil.getQualifiedNameToIndex(name, namespace, true);
+      JSClassResolver.IncludeLocalMembersOptions includeLocalMembers =
+        JSClassResolver.IncludeLocalMembersOptions.NONE;
+      JSClassResolver.getInstance().processElementsByQNameIncludingImplicit(qName, scope, includeLocalMembers, collector);
+    }
+
+    List<ActionScriptTaggedResolveResult> resultsWithCompleteMatches = processor.getTaggedResolveResults();
+    boolean hasValidResult = false;
+    for (ActionScriptTaggedResolveResult completeMatchResult : resultsWithCompleteMatches) {
+      if (completeMatchResult.result.isValidResult() && !completeMatchResult.hasTag(ActionScriptTaggedResolveResult.ResolveResultTag.PARTIAL)) {
+        hasValidResult = true;
+        break;
+      }
+    }
+
+    if (!hasValidResult && !processor.addOnlyCompleteMatches()) {
+      final StubIndexKey<String, JSElement> indexKey = JSIndexKeys.JS_SYMBOL_INDEX_2_KEY;
+      JSClassResolver.processElementsByNameIncludingImplicit(processor.getRequiredName(), scope, false, indexKey, collector);
+    }
+    for (JSPsiElementBase result : collector.getResults()) {
+      processor.doQualifiedCheck(result);
+    }
+  }
+
+  protected ResolveResult[] getResultsFromProcessor(ActionScriptWalkUpResolveProcessor processor) {
     return processor.getResults();
   }
 
