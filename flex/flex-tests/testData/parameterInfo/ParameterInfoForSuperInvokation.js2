@@ -1,0 +1,9 @@
+class A extends B {
+  function A(b:String) {
+    super(<caret>b);
+  }
+}
+
+class B {
+  function B(a:String) {}
+}

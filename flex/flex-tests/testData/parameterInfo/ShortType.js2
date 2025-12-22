@@ -1,0 +1,9 @@
+package foo.bar {
+  public class ShortType {}
+}
+
+import foo.bar.TTT;
+
+function xxx(x:foo.bar.TTT):TTT {
+    xxx(<caret>);
+}
