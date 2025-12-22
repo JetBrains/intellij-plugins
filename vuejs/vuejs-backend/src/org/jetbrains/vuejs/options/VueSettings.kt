@@ -124,7 +124,7 @@ enum class VueTSPluginVersion(
   @param:NlsSafe val versionString: String,
 ) {
   V3_0_1("3.0.1"),
-  V3_1_8("3.1.8"),
+  V3_2_1("3.2.1"),
   ;
 }
 
