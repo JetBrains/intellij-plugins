@@ -14,23 +14,35 @@ import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Konstantin.Ulitin
  */
 public class ActionScriptReferenceExpressionResolver
-  extends JSReferenceExpressionResolver
   implements ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> {
 
+  protected final @NotNull JSReferenceExpressionImpl myRef;
+  protected final PsiElement myParent;
+  protected final @NotNull PsiFile myContainingFile;
+  protected final @Nullable String myReferencedName;
+  protected final JSExpression myQualifier;
+  protected final boolean myIgnorePerformanceLimits;
   private final boolean myUnqualifiedOrLocalResolve;
 
   public ActionScriptReferenceExpressionResolver(JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits) {
-    super(expression, ignorePerformanceLimits);
+    myRef = expression;
+    myContainingFile = expression.getContainingFile();
+    myReferencedName = adjustReferencedName(this.myRef);
+    myParent = this.myRef.getParent();
+    myQualifier = this.myRef.getQualifier();
+    myIgnorePerformanceLimits = ignorePerformanceLimits;
     myUnqualifiedOrLocalResolve =
       myQualifier == null || myQualifier instanceof JSThisExpression || myQualifier instanceof JSSuperExpression;
   }
@@ -150,7 +162,7 @@ public class ActionScriptReferenceExpressionResolver
       }
     }
 
-    ResolveResult[] results = resolveFromIndices(localProcessor, resultSink, false, true);
+    ResolveResult[] results = resolveFromIndices(localProcessor, resultSink);
 
     if (results.length == 0 && localProcessor.isEncounteredXmlLiteral()) {
       return dummyResult(myRef);
@@ -159,7 +171,6 @@ public class ActionScriptReferenceExpressionResolver
     return results;
   }
 
-  @Override
   protected boolean prepareProcessor(WalkUpResolveProcessor processor, @NotNull JSSinkResolveProcessor localProcessor) {
     boolean allowOnlyCompleteMatches = false;
 
@@ -203,9 +214,56 @@ public class ActionScriptReferenceExpressionResolver
     return true;
   }
 
-  @Override
   protected ResolveResult[] getResultsForDefinition() {
     return new ResolveResult[] { new JSResolveResult(myParent) };
+  }
+
+  protected ResolveResult[] resolveFromIndices(@NotNull JSSinkResolveProcessor localProcessor,
+                                               @NotNull ResolveResultSink sink) {
+    assert myReferencedName != null;
+    final WalkUpResolveProcessor processor = new WalkUpResolveProcessor(myReferencedName, myContainingFile, myRef);
+
+    processor.addLocalResults(sink);
+
+    if (prepareProcessor(processor, localProcessor)) {
+      JSResolveUtil.tryProcessXmlFileImplicitElements(myRef, processor);
+      JSResolveUtil.tryProcessAllElementsInInjectedContext(myContainingFile, element -> {
+        if (myReferencedName.equals(element.getName())) {
+          processor.doQualifiedCheck(element);
+        }
+        return true;
+      });
+
+      JSIndexBasedResolveUtil.processAllSymbols(processor, myIgnorePerformanceLimits);
+    }
+
+    ResolveResult[] results = getResultsFromProcessor(processor);
+    if (results.length == 0 && myParent instanceof JSDefinitionExpression) {
+      return getResultsForDefinition();
+    }
+
+    return myIgnorePerformanceLimits || results.length <= JSReferenceExpressionResolver.MAX_RESULTS_COUNT_TO_KEEP ? results : JSResolveResult.tooManyCandidatesResult();
+  }
+
+  protected ResolveResult[] getResultsFromProcessor(WalkUpResolveProcessor processor) {
+    return processor.getResults();
+  }
+
+  protected @Nullable String adjustReferencedName(@NotNull JSReferenceExpression ref) {
+    return ref.getReferenceName();
+  }
+
+  protected ResolveResult[] dummyResult(JSReferenceExpression expression) {
+    return new ResolveResult[]{new JSResolveResult(expression)};
+  }
+
+  @Override
+  public String toString() {
+    String simpleName = this.getClass().getSimpleName();
+    return simpleName + "{" +
+           "myQualifier=" + myQualifier +
+           ", myRef=" + myRef +
+           '}';
   }
 
   private static boolean isConditionalVariableReference(PsiElement currentParent, JSReferenceExpressionImpl thisElement) {
