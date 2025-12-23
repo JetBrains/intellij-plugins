@@ -95,7 +95,7 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@lib//:jet_check",
-    "@lib//:kotlin-test",
+    "@community//libraries/kotlin/test:libraries-kotlinTest",
     "@community//platform/core-ui",
     "@community//platform/editor-ui-ex:editor-ex",
     "@community//platform/code-style-impl:codeStyle-impl",
