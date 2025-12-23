@@ -10,6 +10,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/css/common",
     "//plugins/JavaScriptLanguage:javascript-backend",
+    "//plugins/JavaScriptLanguage/javascript-ultimate",
     "@community//spellchecker",
     "//plugins/css/plugin",
     "//plugins/css/psi",
