@@ -46,38 +46,7 @@ object VueLspServerLoader : LspServerLoader(VueLspServerPackageDescriptor) {
   override fun getSelectedPackageRef(project: Project): NodePackageRef {
     return getVueSettings(project).packageRef
   }
-
-  override fun getAbsolutePathForDefaultKey(project: Project): String? {
-    if (project.service<VueSettings>().useTypesFromServer) {
-      return getNewEvalPath()
-    }
-
-    return super.getAbsolutePathForDefaultKey(project)
-  }
-
-  private fun getNewEvalPath(): String {
-    // work in progress
-    val registryValue = Registry.stringValue("vue.language.server.default.version")
-    val version =
-      if (registryValue.startsWith("1")) "tsc-vue1" // explicit Registry value is needed for old Vue LS 1 New Eval
-      else "tsc-vue"
-    val packagePathSegments = packageDescriptor.defaultPackageRelativePath.split("/")
-    val packagePath = Path.of(
-      if (packagePathSegments.isEmpty()) "" else packagePathSegments[0],
-      *packagePathSegments.drop(1).toTypedArray()
-    )
-    val path = TypeScriptUtil.getTypeScriptCompilerFolderFile().toPath()
-      .resolve("typescript")
-      .resolve("node_modules")
-      .resolve(version)
-      .resolve(packagePath)
-      .absolute()
-
-    return path.toString()
-  }
 }
-
-internal val vueLspNewEvalVersion = SemVer.parseFromText("2.0.26-eval")
 
 private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
   return context.fileType is VueFileType || isVueContext(context, project)
