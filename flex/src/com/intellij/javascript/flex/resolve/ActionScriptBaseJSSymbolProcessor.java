@@ -74,7 +74,7 @@ public abstract class ActionScriptBaseJSSymbolProcessor {
 
     boolean withinWithStatement = !JSPsiImplUtils.getWithStatementContexts((JSReferenceExpression)context).isEmpty();
     if (!withinWithStatement &&
-        JSResolveUtil.getRealRefExprQualifier((JSReferenceExpression)context) == null) {
+        ActionScriptResolveUtil.getRealRefExprQualifier((JSReferenceExpression)context) == null) {
       return ActionScriptTypeInfo.GlobalStatusHint.GLOBAL;
     }
 

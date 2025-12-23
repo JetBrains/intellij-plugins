@@ -46,7 +46,7 @@ public class ActionScriptWalkUpResolveProcessor extends ActionScriptBaseJSSymbol
 
     if (context instanceof JSReferenceExpression refExpr) {
       final JSExpression originalQualifier = refExpr.getQualifier();
-      final JSExpression qualifier = JSResolveUtil.getRealRefExprQualifier(refExpr);
+      final JSExpression qualifier = ActionScriptResolveUtil.getRealRefExprQualifier(refExpr);
 
       if (qualifier == null || originalQualifier == null) {
         if (qualifier == null) {
@@ -54,7 +54,7 @@ public class ActionScriptWalkUpResolveProcessor extends ActionScriptBaseJSSymbol
 
           if (expression != null) {
             final JSQualifiedName qName =
-              JSResolveUtil.buildNamespaceForQualifier(JSResolveUtil.getRealRefExprQualifierFromResult(refExpr, expression))
+              JSResolveUtil.buildNamespaceForQualifier(ActionScriptResolveUtil.getRealRefExprQualifierFromResult(refExpr, expression))
                 .getQualifiedName();
             myTypeInfo.buildIndexListFromQNameAndCorrectQName(qName != null ? qName.getQualifiedName() : "");
           }

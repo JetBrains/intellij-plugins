@@ -185,7 +185,7 @@ public class ActionScriptReferenceExpressionResolver
     if (context instanceof JSReferenceExpression refExpr) {
       boolean haveEncounteredDynamics = false;
       final JSExpression originalQualifier = refExpr.getQualifier();
-      final JSExpression qualifier = JSResolveUtil.getRealRefExprQualifier(refExpr);
+      final JSExpression qualifier = ActionScriptResolveUtil.getRealRefExprQualifier(refExpr);
       if (originalQualifier == null && qualifier != null && refExpr.isAttributeReference()) {
         haveEncounteredDynamics = true;
       }
