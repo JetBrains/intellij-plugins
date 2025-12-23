@@ -112,9 +112,11 @@ class VueSettings(val project: Project) : SimplePersistentStateComponent<VueSett
 }
 
 class VueSettingsState : BaseState() {
-  var innerServiceType by enum(VueServiceSettings.AUTO)
-  var packageName by string(defaultPackageKey)
-  var useTypesFromServer by property(false)
+  var innerServiceType: VueServiceSettings by enum(VueServiceSettings.AUTO)
+  var packageName: String? by string(defaultPackageKey)
+  // TODO: Restore in WEB-74847
+  // var useTypesFromServer: Boolean by property(false)
+  var useTypesFromServer: Boolean; get() = false; set(_) {}
   var tsPluginPackageName: String? by string(defaultPackageKey)
   var tsPluginPreviewEnabled: Boolean by property(true)
   var tsPluginVersion: VueTSPluginVersion by enum(VueTSPluginVersion.V3_0_1)

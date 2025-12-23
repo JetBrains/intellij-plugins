@@ -3,17 +3,13 @@
 
 package org.jetbrains.vuejs.options
 
-import com.intellij.icons.AllIcons
-import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.lsp.bind
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.SimpleListCellRenderer
-import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.layout.ValueComponentPredicate
-import com.intellij.ui.layout.and
 import com.intellij.ui.layout.not
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
@@ -30,12 +26,10 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           .align(AlignX.FILL)
           .bind(settings::packageRef)
       }.enabledIf(tsPluginPreviewDisabled)
-      lateinit var radioButtonDisabled: Cell<JBRadioButton>
       buttonsGroup {
         row {
           radioButton(VueBundle.message("vue.configurable.service.disabled"), VueServiceSettings.DISABLED)
             .comment(VueBundle.message("vue.configurable.service.disabled.help"))
-            .also { radioButtonDisabled = it }
         }
         row {
           radioButton(VueBundle.message("vue.configurable.service.auto"), VueServiceSettings.AUTO)
@@ -50,16 +44,6 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
         .enabledIf(tsPluginPreviewDisabled)
 
       separator()
-
-      row {
-        checkBox(JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine"))
-          .applyToComponent {
-            toolTipText = JavaScriptBundle.message("typescript.compiler.configurable.options.use.servicePoweredTypeEngine.comment")
-          }
-          .bindSelected(settings::useTypesFromServer)
-          .gap(RightGap.SMALL)
-        icon(AllIcons.General.Alpha)
-      }.enabledIf(radioButtonDisabled.selected.not() and tsPluginPreviewDisabled)
 
       row {
         checkBox(VueBundle.message("vue.configurable.service.alpha.preview.label"))

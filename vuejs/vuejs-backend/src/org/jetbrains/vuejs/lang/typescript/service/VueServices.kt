@@ -3,24 +3,19 @@ package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.util.NodePackageRef
-import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
 import com.intellij.lang.typescript.lsp.*
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.text.SemVer
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.options.VueServiceSettings
-import org.jetbrains.vuejs.options.VueSettings
 import org.jetbrains.vuejs.options.VueTSPluginVersion
 import org.jetbrains.vuejs.options.getVueSettings
-import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 private const val vuePluginPath = "vuejs/vuejs-backend"
@@ -45,29 +40,7 @@ object VueLspServerLoader : LspServerLoader(VueLspServerPackageDescriptor) {
   override fun getSelectedPackageRef(project: Project): NodePackageRef {
     return getVueSettings(project).packageRef
   }
-
-  override fun getAbsolutePathForDefaultKey(project: Project): String? {
-    if (project.service<VueSettings>().useTypesFromServer) {
-      return getNewEvalPath()
-    }
-
-    return super.getAbsolutePathForDefaultKey(project)
-  }
-
-  private fun getNewEvalPath(): String {
-    // work in progress
-    val registryValue = Registry.stringValue("vue.language.server.default.version")
-    val version =
-      if (registryValue.startsWith("1")) "tsc-vue1" // explicit Registry value is needed for old Vue LS 1 New Eval
-      else "tsc-vue"
-    val file = File(TypeScriptUtil.getTypeScriptCompilerFolderFile(),
-                    "typescript/node_modules/$version/${packageDescriptor.defaultPackageRelativePath}")
-    val path = file.absolutePath
-    return path
-  }
 }
-
-internal val vueLspNewEvalVersion = SemVer.parseFromText("2.0.26-eval")
 
 private fun isVueServiceContext(project: Project, context: VirtualFile): Boolean {
   return context.fileType is VueFileType || isVueContext(context, project)
@@ -165,7 +138,7 @@ object VueTSPluginLoaderFactory {
 //<editor-fold desc="VueClassicTypeScriptService">
 
 /**
- * Refers to the classic service that predates official Vue LSP.
+ * Refers to the classic service that predates the official Vue LSP.
  */
 fun isVueClassicTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
   if (!isVueServiceContext(project, context) || getVueSettings(project).tsPluginPreviewEnabled)
