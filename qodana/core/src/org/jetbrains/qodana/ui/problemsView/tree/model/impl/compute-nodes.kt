@@ -85,7 +85,7 @@ fun <T : QodanaTreeNode<T, *, *>> computeNewQodanaChildrenNodesExcludeEvent(
   return if (anyUpdated) newNodes.toList() else currentNodes.toList()
 }
 
-fun <NodeT : QodanaTreeNode<NodeT, *, PrimaryDataT>, PrimaryDataT> List<NodeT>.nodesToEvents(
+fun <NodeT : QodanaTreeNode<NodeT, *, PrimaryDataT>, PrimaryDataT : QodanaTreeNode.PrimaryData> List<NodeT>.nodesToEvents(
   primaryDataToEvents: Map<PrimaryDataT, QodanaTreeProblemEvent>,
   pathBuilder: QodanaTreePath.Builder,
   newNodeProvider: (PrimaryDataT, QodanaTreeProblemEvent) -> NodeT?

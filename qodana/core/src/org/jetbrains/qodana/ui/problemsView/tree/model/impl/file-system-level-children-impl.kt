@@ -60,8 +60,8 @@ private class FileSystemModuleNodesImpl(
           nodesWithoutModule
         }
 
-        val moduleNodesToEvents = moduleNodes.nodesToEvents(modulePrimaryDataToEvents.filterKeys { it != null }, pathBuilder) { primaryData, _ ->
-          createNewModuleNode(primaryData!!.moduleData, moduleDataProvider)
+        val moduleNodesToEvents = moduleNodes.nodesToEvents(modulePrimaryDataToEvents.filterKeys { it != null }.mapKeys { it.key!! }, pathBuilder) { primaryData, _ ->
+          createNewModuleNode(primaryData.moduleData, moduleDataProvider)
         }
         val newModuleNodes = computeNewQodanaChildrenNodesProblemEvent(pathBuilder, moduleNodesToEvents, moduleNodes) ?: moduleNodes
 
