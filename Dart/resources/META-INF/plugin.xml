@@ -221,7 +221,7 @@
     <applicationService serviceImplementation="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"/>
     <applicationService serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
 
-    <codeFoldingOptionsProvider instance="com.jetbrains.lang.dart.folding.DartCodeFoldingOptionsProvider"/>
+    <codeFoldingOptionsProvider instance="com.jetbrains.lang.dart.folding.DartCodeFoldingOptionsProvider" id="Dart" order="after Android,after C++,after General,after Go,after ObjectiveC"/>
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
     <console.folding implementation="com.jetbrains.lang.dart.ide.runner.server.DartConsoleFolding"/>
