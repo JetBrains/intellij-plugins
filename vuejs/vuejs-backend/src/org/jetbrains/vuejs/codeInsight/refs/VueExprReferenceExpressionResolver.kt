@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
-import com.intellij.lang.javascript.psi.resolve.JSSinkResolveProcessor
 import com.intellij.lang.javascript.psi.resolve.ResolveResultSink
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
@@ -68,7 +67,6 @@ class VueExprReferenceExpressionResolver(
   }
 
   override fun resolveFromIndices(
-    localProcessor: JSSinkResolveProcessor,
     resultSink: ResolveResultSink,
     excludeGlobalTypeScript: Boolean,
     includeTypeOnlyContextSymbols: Boolean,
@@ -78,7 +76,7 @@ class VueExprReferenceExpressionResolver(
       processor.addLocalResults(resultSink)
       getResultsFromProcessor(processor)
     }
-    else super.resolveFromIndices(localProcessor, resultSink, excludeGlobalTypeScript, includeTypeOnlyContextSymbols)
+    else super.resolveFromIndices(resultSink, excludeGlobalTypeScript, includeTypeOnlyContextSymbols)
 
   private fun resolveFilterNameReference(expression: VueJSFilterReferenceExpression, incompleteCode: Boolean): Array<ResolveResult> {
     if (!incompleteCode) {
