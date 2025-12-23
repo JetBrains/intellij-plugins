@@ -1,10 +1,10 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.resolve;
 
-import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl;
 import com.intellij.lang.javascript.index.JSIndexKeys;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
@@ -353,10 +354,10 @@ public class ActionScriptReferenceExpressionResolver
     }
 
     final Module moduleForPsiElement = ModuleUtilCore.findModuleForPsiElement(jsReferenceExpression);
-    for (JSConditionalCompilationDefinitionsProvider provider : JSConditionalCompilationDefinitionsProvider.EP_NAME.getExtensions()) {
-      if (provider.containsConstant(moduleForPsiElement, namespace, constantName)) {
-        return new ResolveResult[]{new JSResolveResult(jsReferenceExpression)};
-      }
+    JSConditionalCompilationDefinitionsProviderImpl provider =
+      ApplicationManager.getApplication().getService(JSConditionalCompilationDefinitionsProviderImpl.class);
+    if (provider.containsConstant(moduleForPsiElement, namespace, constantName)) {
+      return new ResolveResult[]{new JSResolveResult(jsReferenceExpression)};
     }
 
     return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, JSResolveResult.ProblemKind.UNRESOLVED_SYMBOL)};

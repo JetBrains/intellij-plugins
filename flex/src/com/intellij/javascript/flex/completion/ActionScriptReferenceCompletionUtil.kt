@@ -8,9 +8,9 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.javascript.flex.resolve.ActionScriptQualifiedItemProcessor
 import com.intellij.javascript.flex.resolve.ActionScriptSinkResolveProcessor
 import com.intellij.javascript.flex.resolve.ActionScriptVariantsProcessor
-import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider
 import com.intellij.lang.javascript.completion.JSCompletionUtil
 import com.intellij.lang.javascript.completion.JSLookupPriority
+import com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl
 import com.intellij.lang.javascript.psi.JSElvisOwner
 import com.intellij.lang.javascript.psi.JSIndexedPropertyAccessExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
@@ -19,9 +19,12 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor
 import com.intellij.lang.javascript.psi.resolve.CompletionResultSink
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.openapi.components.service
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.util.application
+
 
 object ActionScriptReferenceCompletionUtil {
   /** populates returned variants itself  */
@@ -31,7 +34,7 @@ object ActionScriptReferenceCompletionUtil {
     containingFile: PsiFile,
     pushedSmartVariants: Set<String>,
     parameters: CompletionParameters,
-    resultSet: CompletionResultSet
+    resultSet: CompletionResultSet,
   ): Collection<LookupElement> {
 
     assert(expression is JSReferenceExpression || expression is JSIndexedPropertyAccessExpression)
@@ -123,7 +126,7 @@ object ActionScriptReferenceCompletionUtil {
 
   private fun finishCompletion(
     resultSet: CompletionResultSet,
-    processor: ActionScriptVariantsProcessor
+    processor: ActionScriptVariantsProcessor,
   ): Collection<LookupElement> {
     val results = processor.finalResults
     processor.populateCompletionList(results, resultSet)
@@ -144,23 +147,20 @@ object ActionScriptReferenceCompletionUtil {
     val names: MutableList<LookupElement> = mutableListOf()
     val nameStrings: MutableSet<String> = mutableSetOf()
     val moduleForPsiElement = ModuleUtilCore.findModuleForPsiElement(context)
-    for (provider in JSConditionalCompilationDefinitionsProvider.EP_NAME.extensionList) {
-      for (conditional in provider.getAllConstants(moduleForPsiElement)) {
-        if (!nameStrings.add(conditional)) continue
-        val lookupElement: LookupElement = LookupElementBuilder.create(conditional, conditional)
-        names.add(JSCompletionUtil.withJSLookupPriority(lookupElement, JSLookupPriority.CONDITIONAL_COMPILATION_CONSTANTS_PRIORITY))
-      }
+    val provider = application.service<JSConditionalCompilationDefinitionsProviderImpl>()
+
+    for (conditional in provider.getAllConstants(moduleForPsiElement)) {
+      if (!nameStrings.add(conditional)) continue
+      val lookupElement: LookupElement = LookupElementBuilder.create(conditional, conditional)
+      names.add(JSCompletionUtil.withJSLookupPriority(lookupElement, JSLookupPriority.CONDITIONAL_COMPILATION_CONSTANTS_PRIORITY))
     }
     return names
   }
 
   private fun getConditionalCompilationConstantNamesForNamespace(context: PsiElement, namespace: String?): List<LookupElement> {
     val moduleForPsiElement = ModuleUtilCore.findModuleForPsiElement(context)
-    return JSConditionalCompilationDefinitionsProvider.EP_NAME
-      .extensionList
-      .flatMap {
-        it.getConstantNamesForNamespace(moduleForPsiElement, namespace)
-      }
+    val provider = application.service<JSConditionalCompilationDefinitionsProviderImpl>()
+    return provider.getConstantNamesForNamespace(moduleForPsiElement, namespace)
       .map { name -> LookupElementBuilder.create(name) }
       .toList()
   }

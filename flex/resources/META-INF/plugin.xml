@@ -311,8 +311,6 @@
     <completionPlaceFilter order="before asCommon" implementation="com.intellij.javascript.flex.completion.ActionScriptReferenceListFilterProvider" />
     <completionPlaceFilter id="asCommon" implementation="com.intellij.javascript.flex.completion.ActionScriptCompletionPlaceFilterProvider" />
     <classInheritorsProvider implementation="com.intellij.javascript.flex.mxml.XmlBackedClassInheritorsProvider"/>
-    <conditionalCompilationDefinitionsProvider
-        implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
     <elementScopeProvider implementation="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
     <xmlBackedClassProvider implementation="com.intellij.javascript.flex.mxml.MxmlJSClassProvider"/>
     <smartCompletionContributor language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptSmartCompletionContributor"/>

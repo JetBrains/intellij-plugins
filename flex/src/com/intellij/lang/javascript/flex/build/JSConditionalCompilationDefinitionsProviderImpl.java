@@ -1,17 +1,17 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
-import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
@@ -31,13 +31,13 @@ import java.util.*;
 
 import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.*;
 
-public final class JSConditionalCompilationDefinitionsProviderImpl implements JSConditionalCompilationDefinitionsProvider {
+@Service
+public final class JSConditionalCompilationDefinitionsProviderImpl {
   private static final String[] CONDITIONAL_COMPILATION_DEFINITION_OPTION_ALIASES = {"define", "compiler.define"};
 
   private final Map<VirtualFile, Long> configFileToTimestamp = new HashMap<>();
   private final Map<VirtualFile, Collection<Pair<String, String>>> configFileToConditionalCompilerDefinitions = new HashMap<>();
 
-  @Override
   public boolean containsConstant(final Module module, final String namespace, final String constantName) {
     if (module != null && ModuleType.get(module) instanceof FlexModuleType
         && !StringUtil.isEmpty(namespace) && !StringUtil.isEmpty(constantName)) {
@@ -59,7 +59,6 @@ public final class JSConditionalCompilationDefinitionsProviderImpl implements JS
     return false;
   }
 
-  @Override
   public Collection<String> getConstantNamesForNamespace(final Module module, final String namespace) {
     final Collection<String> result = new ArrayList<>();
 
@@ -77,7 +76,6 @@ public final class JSConditionalCompilationDefinitionsProviderImpl implements JS
     return result;
   }
 
-  @Override
   public Collection<String> getAllConstants(final Module module) {
     final Collection<String> result = new ArrayList<>();
 
