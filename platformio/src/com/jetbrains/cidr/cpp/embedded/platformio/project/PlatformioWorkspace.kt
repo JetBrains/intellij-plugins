@@ -18,6 +18,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.Compan
 import com.jetbrains.cidr.cpp.external.system.linkExternalProject
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
+import com.jetbrains.cidr.cpp.toolchains.TrivialNativeToolchain
 import com.jetbrains.cidr.external.system.workspace.ExternalWorkspace
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.project.workspace.CidrWorkspaceProvider
@@ -48,8 +49,10 @@ class PlatformioWorkspace(project: Project) : ExternalWorkspace(project), Worksp
                                  problems: EnvironmentProblems,
                                  checkIfFunctional: Boolean,
                                  onMissingToolchain: Runnable?): CPPEnvironment? {
-    return CPPToolchains.createCPPEnvironment(project, projectPath.toFile(), toolchainNameOrNullForDefault, problems, checkIfFunctional,
-                                              onMissingToolchain)
+    if (toolchainNameOrNullForDefault != null) throw IllegalStateException("Internal error: Named toolchains are not supported under PlatformIO")
+    val toolchain = TrivialNativeToolchain.createInstance()
+    return CPPToolchains.createCPPEnvironment(project, toolchain, problems, checkIfFunctional)
+
   }
 
   val environment: CPPEnvironment
