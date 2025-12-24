@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.options.configureVueService
 class VueTypeScriptWithTslintTest : TypeScriptServiceWithTslintTestBase() {
   override fun setUp() {
     super.setUp()
-    configureVueService(project, testRootDisposable, VueServiceSettings.TS_SERVICE)
+    configureVueService(project, testRootDisposable, VueServiceSettings.AUTO)
   }
 
   override fun getBasePath(): String {

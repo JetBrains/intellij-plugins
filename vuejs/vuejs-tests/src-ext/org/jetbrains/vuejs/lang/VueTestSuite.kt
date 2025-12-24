@@ -13,7 +13,6 @@ import org.jetbrains.vuejs.pug.PugTemplateTest
 import org.jetbrains.vuejs.pug.VuePugFoldingTest
 import org.jetbrains.vuejs.service.VolarServiceDocumentationTest
 import org.jetbrains.vuejs.service.VolarServiceTest
-import org.jetbrains.vuejs.service.VueClassicTypeScriptServiceTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
@@ -64,7 +63,6 @@ import org.junit.runners.Suite
   VueIntroduceVariableTest::class,
   VueTypeScriptLineMarkersTest::class,
   VueESLintHighlightingTest::class,
-  VueClassicTypeScriptServiceTest::class,
   VolarServiceTest::class,
   VolarServiceDocumentationTest::class,
   VueMoveTest::class,

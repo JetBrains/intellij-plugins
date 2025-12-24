@@ -11,17 +11,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.html.isVueFile
-import org.jetbrains.vuejs.lang.typescript.service.classic.VueClassicTypeScriptService
 import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
 
 internal class VueLanguageServiceProvider(project: Project) : TypeScriptServiceProvider() {
-  private val classicLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueClassicServiceWrapper>() }
   private val lspLanguageService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueLspServiceWrapper>() }
   private val tsPluginService by lazy(LazyThreadSafetyMode.PUBLICATION) { project.service<VueTypeScriptPluginServiceWrapper>() }
 
   override val allServices: List<TypeScriptService>
     get() {
-      return listOf(classicLanguageService.service, lspLanguageService.service, tsPluginService.service)
+      return listOf(lspLanguageService.service, tsPluginService.service)
     }
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean {
@@ -39,15 +37,6 @@ internal class VueTypeScriptPluginServiceWrapper(project: Project) : Disposable 
     Disposer.dispose(service)
     service = VuePluginTypeScriptService(project)
   }
-
-  override fun dispose() {
-    Disposer.dispose(service)
-  }
-}
-
-@Service(Service.Level.PROJECT)
-private class VueClassicServiceWrapper(project: Project) : Disposable {
-  val service = VueClassicTypeScriptService(project)
 
   override fun dispose() {
     Disposer.dispose(service)

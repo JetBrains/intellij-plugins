@@ -35,10 +35,6 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
           radioButton(VueBundle.message("vue.configurable.service.auto"), VueServiceSettings.AUTO)
             .comment(VueBundle.message("vue.configurable.service.auto.help"))
         }
-        row {
-          radioButton(VueBundle.message("vue.configurable.service.ts"), VueServiceSettings.TS_SERVICE)
-            .comment(VueBundle.message("vue.configurable.service.ts.help"))
-        }
       }
         .bind(settings::serviceType)
         .enabledIf(tsPluginPreviewDisabled)

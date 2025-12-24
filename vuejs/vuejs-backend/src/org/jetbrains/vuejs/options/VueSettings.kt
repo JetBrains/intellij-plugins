@@ -11,11 +11,9 @@ import com.intellij.lang.typescript.lsp.extractRefText
 import com.intellij.lang.typescript.lsp.restartTypeScriptServicesAsync
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsSafe
-import org.jetbrains.annotations.ApiStatus.Obsolete
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.vuejs.lang.typescript.service.VueLspServerLoader
 import org.jetbrains.vuejs.lang.typescript.service.VueTSPluginLoaderFactory
@@ -133,14 +131,9 @@ enum class VueTSPluginVersion(
 
 enum class VueServiceSettings {
   AUTO,
+  DISABLED,
 
-  /**
-   * Must work exactly the same as AUTO, kept for settings deserialization compatibility, aka Vue LSP
-   */
-  @Obsolete
-  VOLAR,
-  TS_SERVICE,
-  DISABLED;
+  ;
 
   fun isEnabled(): Boolean = this != DISABLED
 }

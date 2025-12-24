@@ -70,8 +70,7 @@ private object VueLspActivationHelper : ServiceActivationHelper {
       return false
 
     return when (getVueSettings(project).serviceType) {
-      VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> true
-      VueServiceSettings.TS_SERVICE -> false
+      VueServiceSettings.AUTO -> true
       VueServiceSettings.DISABLED -> false
     }
   }
@@ -140,30 +139,3 @@ object VueTSPluginLoaderFactory {
     return VueTSPluginLoader(descriptor)
   }
 }
-
-//<editor-fold desc="VueClassicTypeScriptService">
-
-/**
- * Refers to the classic service that predates the official Vue LSP.
- */
-fun isVueClassicTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
-  if (!isVueServiceContext(project, context) || getVueSettings(project).tsPluginPreviewEnabled)
-    return false
-
-  return when (getVueSettings(project).serviceType) {
-    VueServiceSettings.AUTO, VueServiceSettings.VOLAR -> false
-    VueServiceSettings.TS_SERVICE -> isTypeScriptServiceBefore5Context(project) // with TS 5+ project, nothing will be enabled
-    VueServiceSettings.DISABLED -> false
-  }
-}
-
-private fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
-  val path = getTypeScriptServiceDirectory(project)
-
-  val packageJson = TypeScriptServerState.getPackageJsonFromServicePath(path)
-  if (packageJson == null) return false // Nuxt doesn't have correct TS detection. Let's assume TS 5+
-  val version = PackageJsonData.getOrCreate(packageJson).version ?: return true
-  return version.major < 5
-}
-
-//</editor-fold>
