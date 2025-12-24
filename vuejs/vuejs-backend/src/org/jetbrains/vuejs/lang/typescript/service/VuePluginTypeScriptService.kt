@@ -9,6 +9,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptServiceEvaluationSupport
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceWidgetItem
 import com.intellij.lang.typescript.compiler.languageService.frameworks.DownloadableTypeScriptServicePlugin
 import com.intellij.lang.typescript.compiler.languageService.frameworks.PluggableTypeScriptService
+import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptServiceStandardOutputProtocol
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigurePluginRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigurePluginRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptTypeRequestKind
@@ -40,6 +41,19 @@ class VuePluginTypeScriptService(
   project = project,
   servicePlugin = getVueTypeScriptPlugin(getVueSettings(project).tsPluginVersion)
 ) {
+  override fun createProtocol(
+    tsServicePath: String,
+  ): TypeScriptServiceStandardOutputProtocol {
+    return VueTypeScriptServiceProtocol(
+      project = project,
+      settings = mySettings,
+      eventConsumer = createEventConsumer(),
+      serviceName = serviceName,
+      tsServicePath = tsServicePath,
+      servicePlugin = servicePlugin,
+    )
+  }
+
   override fun getInitialOpenCommands(): List<JSLanguageServiceSimpleCommand> {
     return listOf(createConfigureCommand()) + super.getInitialOpenCommands()
   }
