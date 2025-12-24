@@ -31,6 +31,28 @@
     ]]></description>
 
   <change-notes><![CDATA[
+  2025.3
+  <ul>
+    <li>
+      Add ephemeral block completion for OpenTofu.
+    </li>
+    <li>
+      “Test” in settings now suggests installing OpenTofu if it’s missing from PATH.
+    </li>
+    <li>
+      Terragrunt syntax support in the Terraform plugin.
+    </li>
+    <li>
+      Merged HCL and Terraform code style settings into a single configuration.
+    </li>
+    <li>
+      Terraform executable invalid path fix.
+    </li>
+    <li>
+      Fixed quick doc scrolling to the wrong position when hovering on an argument.
+    </li>
+  </ul>
+
   2025.2
   <ul>
     <li>
