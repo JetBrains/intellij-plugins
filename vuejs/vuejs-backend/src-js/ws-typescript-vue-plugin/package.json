@@ -1,0 +1,20 @@
+{
+  "name": "ws-typescript-vue-plugin",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "tsc-ide-plugin": "file:/../../../../../plugins/JavaScriptLanguage/resources/tscplugin",
+    "typescript": "^5.9.3",
+    "@vue/typescript-plugin": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.3",
+    "@vercel/ncc": "^0.38.4"
+  },
+  "scripts": {
+    "build:clean": "npm run clean && npm run build",
+    "clean": "rm -rf ../../gen-resources/vue-service",
+    "build": "ncc build src/index.ts -o ../../gen-resources/vue-service/node_modules/ws-typescript-vue-plugin -m --no-cache && cp -r ./package.json ../../gen-resources/vue-service/node_modules/ws-typescript-vue-plugin"
+  }
+}
