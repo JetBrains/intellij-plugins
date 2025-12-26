@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.coroutines
+package org.jetbrains.qodana.util
 
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.BulkAwareDocumentListener

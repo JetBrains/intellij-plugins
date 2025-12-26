@@ -32,6 +32,7 @@ jvm_library(
   resources = [":qodana_resources"],
   kotlinc_opts = ":custom_qodana",
   deps = [
+    "//contrib/qodana/util",
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-impl",
     "@community//platform/code-style-api:codeStyle",
@@ -127,6 +128,7 @@ jvm_library(
   kotlinc_opts = ":custom_qodana",
   associates = [":qodana"],
   deps = [
+    "//contrib/qodana/util",
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-impl",
     "@community//platform/code-style-api:codeStyle",

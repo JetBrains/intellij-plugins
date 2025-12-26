@@ -29,6 +29,10 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.ui.createEditor
 import org.jetbrains.qodana.ui.createInMemoryDocument
+import org.jetbrains.qodana.util.appearedFilePath
+import org.jetbrains.qodana.util.disappearedFilePath
+import org.jetbrains.qodana.util.documentChangesFlow
+import org.jetbrains.qodana.util.vfsChangesFilterFlow
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
@@ -100,10 +104,10 @@ class QodanaYamlViewModelImpl(override val project: Project, private val scope: 
 
   private fun physicalQodanaYamlFileChangesFlow(): Flow<Unit> {
     return vfsChangesFilterFlow {
-      val appearedFile = it.appearedFilePath
-      val disappearedFile = it.disappearedFilePath
+        val appearedFile = it.appearedFilePath
+        val disappearedFile = it.disappearedFilePath
 
-      (appearedFile?.isQodanaYaml(project) == true || disappearedFile?.isQodanaYaml(project) == true)
+        (appearedFile?.isQodanaYaml(project) == true || disappearedFile?.isQodanaYaml(project) == true)
     }
   }
 

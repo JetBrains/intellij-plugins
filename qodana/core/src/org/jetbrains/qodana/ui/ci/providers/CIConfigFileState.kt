@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import org.jetbrains.qodana.coroutines.appearedFilePath
-import org.jetbrains.qodana.coroutines.disappearedFilePath
-import org.jetbrains.qodana.coroutines.documentChangesFlow
-import org.jetbrains.qodana.coroutines.vfsChangesFilterFlow
+import org.jetbrains.qodana.util.appearedFilePath
+import org.jetbrains.qodana.util.disappearedFilePath
+import org.jetbrains.qodana.util.documentChangesFlow
+import org.jetbrains.qodana.util.vfsChangesFilterFlow
 import org.jetbrains.qodana.refreshVcsFileStatus
 import java.nio.file.Path
 import kotlin.io.path.relativeTo

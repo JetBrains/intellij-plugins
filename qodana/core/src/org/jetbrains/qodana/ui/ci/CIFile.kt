@@ -3,9 +3,9 @@ package org.jetbrains.qodana.ui.ci
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
 import kotlinx.coroutines.flow.*
-import org.jetbrains.qodana.coroutines.appearedFilePath
-import org.jetbrains.qodana.coroutines.disappearedFilePath
-import org.jetbrains.qodana.coroutines.vfsChangesFilterFlow
+import org.jetbrains.qodana.util.appearedFilePath
+import org.jetbrains.qodana.util.disappearedFilePath
+import org.jetbrains.qodana.util.vfsChangesFilterFlow
 import org.jetbrains.qodana.ui.ci.providers.CIFileChecker
 import org.jetbrains.qodana.ui.ci.providers.toNioPathSafe
 import java.nio.file.Path

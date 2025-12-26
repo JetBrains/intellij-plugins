@@ -18,10 +18,10 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.annotations.ApiStatus.Internal
-import org.jetbrains.qodana.coroutines.appearedFilePath
-import org.jetbrains.qodana.coroutines.disappearedFilePath
-import org.jetbrains.qodana.coroutines.documentChangesFlow
-import org.jetbrains.qodana.coroutines.vfsChangesMapFlow
+import org.jetbrains.qodana.util.appearedFilePath
+import org.jetbrains.qodana.util.disappearedFilePath
+import org.jetbrains.qodana.util.documentChangesFlow
+import org.jetbrains.qodana.util.vfsChangesMapFlow
 import org.jetbrains.qodana.license.QodanaLicenseChecker
 import org.jetbrains.qodana.license.QodanaLicenseType
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers

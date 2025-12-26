@@ -23,7 +23,7 @@ import org.jetbrains.qodana.QodanaBundle
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.run.QodanaRunInIdeService
 import org.jetbrains.qodana.run.QodanaRunState
-import org.jetbrains.qodana.coroutines.isInDumbModeFlow
+import org.jetbrains.qodana.util.isInDumbModeFlow
 import org.jetbrains.qodana.ui.wizard.QodanaWizardStep
 import org.jetbrains.qodana.ui.wizard.QodanaWizardStepViewModel
 import org.jetbrains.qodana.ui.wizard.QodanaWizardStepViewProvider

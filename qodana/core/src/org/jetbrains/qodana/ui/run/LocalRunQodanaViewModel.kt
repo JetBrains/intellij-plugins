@@ -18,7 +18,7 @@ import org.jetbrains.qodana.cloud.openBrowserWithCurrentQodanaCloudFrontend
 import org.jetbrains.qodana.cloudclient.QDCloudResponse
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.coroutines.isInDumbModeFlow
+import org.jetbrains.qodana.util.isInDumbModeFlow
 import org.jetbrains.qodana.coroutines.qodanaProjectScope
 import org.jetbrains.qodana.notifications.QodanaNotifications
 import org.jetbrains.qodana.publisher.PublishResult
