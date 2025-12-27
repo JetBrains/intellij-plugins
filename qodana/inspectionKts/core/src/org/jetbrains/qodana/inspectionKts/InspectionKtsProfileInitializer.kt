@@ -3,13 +3,12 @@ package org.jetbrains.qodana.inspectionKts
 import com.intellij.codeInspection.ex.ProjectInspectionToolRegistrar
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
-import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector
+import org.jetbrains.qodana.inspectionKts.stat.InspectionKtsEventsCollector
 
 private val LOG = Logger.getInstance("org.jetbrains.qodana.inspectionKts.linter")
 
 class InspectionKtsProfileInitializer: DynamicInspectionInitializer {
-  override suspend fun initialize(project: Project, messageReporter: QodanaMessageReporter) {
+  override suspend fun initialize(project: Project, messageReporter: InspectionKtsMessageReporter) {
     fun reportFlexInspectError(message: String) {
       messageReporter.reportError("FlexInspect| $message")
     }
@@ -44,7 +43,7 @@ class InspectionKtsProfileInitializer: DynamicInspectionInitializer {
     val failedToCompileInspectionKtsFilesCount = compiledInspectionFiles.filterIsInstance<InspectionKtsFileStatus.Error>().count()
     val inspectionKtsInspectionsCount = compiledInspectionFiles.flatMap { it.inspections.inspections }.count()
 
-    InspectionEventsCollector.logInspectionKtsCompiled(
+    InspectionKtsEventsCollector.logInspectionKtsCompiled(
       inspectionKtsFilesCount,
       compiledInspectionKtsFilesCount,
       failedToCompileInspectionKtsFilesCount,

@@ -29,7 +29,6 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.profile.GroupState
-import org.jetbrains.qodana.staticAnalysis.profile.NamedInspectionGroup
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.projectDescription.QodanaProjectDescriber

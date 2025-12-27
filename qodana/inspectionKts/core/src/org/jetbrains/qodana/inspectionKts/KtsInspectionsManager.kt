@@ -9,9 +9,9 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import com.intellij.util.PlatformUtils
 import com.intellij.util.application
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
@@ -22,50 +22,14 @@ import org.jetbrains.qodana.util.appearedFilePath
 import org.jetbrains.qodana.util.disappearedFilePath
 import org.jetbrains.qodana.util.documentChangesFlow
 import org.jetbrains.qodana.util.vfsChangesMapFlow
-import org.jetbrains.qodana.license.QodanaLicenseChecker
-import org.jetbrains.qodana.license.QodanaLicenseType
-import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 
-internal const val FORCE_DISABLE_INSPECTION_KTS = "inspection.kts.disabled"
+const val FORCE_DISABLE_INSPECTION_KTS: String = "inspection.kts.disabled"
 
-private val QODANA_FLEXINSPECT_SUPPORTED_PLANS = setOf(
-  QodanaLicenseType.ULTIMATE,
-  QodanaLicenseType.ULTIMATE_PLUS,
-  QodanaLicenseType.PREMIUM,
-)
-
-fun isInspectionKtsEnabled(): Boolean {
-  val forceDisabled = java.lang.Boolean.getBoolean(FORCE_DISABLE_INSPECTION_KTS)
-  val isUnitTests = application.isUnitTestMode
-  val isHeadless = application.isHeadlessEnvironment
-  return when {
-    forceDisabled -> {
-      false
-    }
-    isUnitTests -> {
-      true
-    }
-    isHeadless ->  {
-      try {
-        val qodanaLicenseType = QodanaLicenseChecker.getLicenseType().type
-        qodanaLicenseType in QODANA_FLEXINSPECT_SUPPORTED_PLANS
-      }
-      catch (_ : QodanaException) {
-        false
-      }
-    }
-    else -> {
-      !PlatformUtils.isCommunityEdition()
-    }
-  }
-}
-
-const val INSPECTIONS_KTS_DIRECTORY = "inspections"
-const val INSPECTIONS_KTS_EXTENSION = "inspection.kts"
+const val INSPECTIONS_KTS_DIRECTORY: String = "inspections"
+const val INSPECTIONS_KTS_EXTENSION: String = "inspection.kts"
 
 private class KtsDynamicInspectionsProvider : DynamicInspectionsProvider {
   override fun inspections(project: Project): Flow<Set<DynamicInspectionDescriptor>> {
@@ -83,6 +47,9 @@ private class KtsDynamicInspectionsProvider : DynamicInspectionsProvider {
       }
   }
 }
+
+internal val Project.projectScope: CoroutineScope get() = this.service<KtsInspectionsManager>().scope
+
 
 @Internal
 @Service(Service.Level.PROJECT)
@@ -105,7 +72,7 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
   val ktsInspectionsFlow: StateFlow<Set<InspectionKtsFileStatus>?> by lazy {
     inspectionKtsFlow()
       .onEmpty { emit(emptySet()) }
-      .flowOn(StaticAnalysisDispatchers.Default)
+      .flowOn(Dispatchers.Default)
       .stateIn(scope, SharingStarted.Lazily, null)
   }
 
@@ -114,10 +81,6 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
   }
 
   private fun inspectionKtsFlow(): Flow<Set<InspectionKtsFileStatus>> {
-    if (!isInspectionKtsEnabled()) {
-      return emptyFlow()
-    }
-
     val projectDirectory = project.basePath?.let { Path.of(it) } ?: project.guessProjectDir()?.toNioPath() ?: return flowOf(emptySet())
 
     val inspectionFiles = inspectionFilesFlow(scriptDirectory = projectDirectory.resolve(INSPECTIONS_KTS_DIRECTORY))
@@ -263,7 +226,7 @@ private fun Path.isInspectionKtsFile(): Boolean {
 }
 
 private suspend fun Path.collectAllInspectionKtsFiles(): List<Path> {
-  return runInterruptible(StaticAnalysisDispatchers.IO) {
+  return runInterruptible(Dispatchers.IO) {
     try {
       Files.walk(this@collectAllInspectionKtsFiles)
         .filter { it.isInspectionKtsFile() }

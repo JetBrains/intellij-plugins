@@ -1,8 +1,8 @@
 package org.jetbrains.qodana.inspectionKts.tests
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.project.Project
 import com.intellij.profile.codeInspection.InspectionProfileManager
+import org.jetbrains.annotations.VisibleForTesting
 
 @Suppress("unused")
 @VisibleForTesting

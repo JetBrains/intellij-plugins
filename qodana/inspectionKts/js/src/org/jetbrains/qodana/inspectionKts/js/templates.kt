@@ -2,7 +2,7 @@ package org.jetbrains.qodana.inspectionKts.js
 
 import com.intellij.icons.AllIcons
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate
 import org.jetbrains.qodana.inspectionKts.templates.standardLocalInspectionKtsTemplateContent
 import org.jetbrains.qodana.inspectionKts.templates.templateInspectionKtsFilenameToInspectionName
@@ -15,7 +15,7 @@ internal class JsInspectionKtsTemplateProvider : InspectionKtsTemplate.Provider 
   override fun template(): InspectionKtsTemplate {
     return InspectionKtsTemplate(
       uiDescriptor = InspectionKtsTemplate.UiDescriptor(
-        name = QodanaBundle.message("inspectionkts.template.js.local.inspection"),
+        name = InspectionKtsBundle.message("inspectionkts.template.js.local.inspection"),
         icon = AllIcons.FileTypes.JavaScript,
         id = ID
       ),

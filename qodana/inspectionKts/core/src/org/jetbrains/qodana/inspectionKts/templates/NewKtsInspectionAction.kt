@@ -4,6 +4,7 @@ import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.application.UI
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -13,13 +14,13 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.parents
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.coroutines.qodanaProjectScope
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_DIRECTORY
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
+import org.jetbrains.qodana.inspectionKts.projectScope
 
 class NewKtsInspectionAction : CreateFileFromTemplateAction(), DumbAware {
   override fun isAvailable(dataContext: DataContext): Boolean {
@@ -72,25 +73,25 @@ class NewKtsInspectionAction : CreateFileFromTemplateAction(), DumbAware {
         psiFile
       }
 
-    project.qodanaProjectScope.launch(QodanaDispatchers.Default) {
+    project.projectScope.launch(Dispatchers.Default) {
       openFileInEditor(dir, fullFilename)
     }
 
     return psiFile
   }
 
-  override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String  {
-    return QodanaBundle.message("action.Qodana.NewInspectionKts.text")
+  override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String {
+    return InspectionKtsBundle.message("action.Qodana.NewInspectionKts.text")
   }
 
   private suspend fun openFileInEditor(psiDirectory: PsiDirectory, filename: String) {
     val project = psiDirectory.project
 
-    withContext(QodanaDispatchers.Default) {
+    withContext(Dispatchers.Default) {
       psiDirectory.virtualFile.refresh(false, false)
       val virtualFile = psiDirectory.virtualFile.findChild(filename)
       if (virtualFile != null) {
-        withContext(QodanaDispatchers.Ui) {
+        withContext(Dispatchers.UI) {
           FileEditorManager.getInstance(project).openFile(virtualFile, true)
         }
       }

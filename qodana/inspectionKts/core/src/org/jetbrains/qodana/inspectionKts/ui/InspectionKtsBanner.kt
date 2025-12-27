@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
+import com.intellij.openapi.application.UI
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.observable.util.whenDisposed
@@ -39,12 +40,10 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import org.jetbrains.annotations.Nls
-import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.coroutines.qodanaProjectScope
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
 import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
-import org.jetbrains.qodana.inspectionKts.isInspectionKtsEnabled
+import org.jetbrains.qodana.inspectionKts.projectScope
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.nio.file.InvalidPathException
@@ -63,9 +62,7 @@ internal class InspectionKtsBannerProvider : EditorNotificationProvider, DumbAwa
     if (!file.name.endsWith(INSPECTIONS_KTS_EXTENSION)) {
       return null
     }
-    if (!isInspectionKtsEnabled()) {
-      return null
-    }
+
     return Function { fileEditor ->
       if (fileEditor !is UserDataHolderEx) return@Function null
       val filePath = try {
@@ -98,7 +95,7 @@ internal class InspectionKtsBanner(
     if (!isDisposableRegistered) {
       Disposer.dispose(disposable)
     } else {
-      val scope = project.qodanaProjectScope.childScope("InspectionKtsBanner")
+      val scope = project.projectScope.childScope("InspectionKtsBanner")
       disposable.whenDisposed {
         scope.cancel()
       }
@@ -153,7 +150,7 @@ internal class InspectionKtsBanner(
     val examplesButton = examplesButton(project, viewModel)
     eastComponent.add(examplesButton, BorderLayout.EAST)
 
-    scope.launch(QodanaDispatchers.Ui) {
+    scope.launch(Dispatchers.UI) {
       launch {
         viewModel.compilationStatus
           .filterNotNull()
@@ -184,24 +181,24 @@ internal class InspectionKtsBanner(
 private fun compilationStatusText(compilationStatus: InspectionKtsBannerViewModel.CompilationStatus): String {
   return when(compilationStatus) {
     is InspectionKtsBannerViewModel.CompilationStatus.Cancelled -> {
-      QodanaBundle.message("inspectionkts.compilation.cancelled")
+      InspectionKtsBundle.message("inspectionkts.compilation.cancelled")
     }
     is InspectionKtsBannerViewModel.CompilationStatus.Compiling -> {
-      QodanaBundle.message("inspectionkts.compiling")
+      InspectionKtsBundle.message("inspectionkts.compiling")
     }
     is InspectionKtsBannerViewModel.CompilationStatus.Compiled -> {
       if (compilationStatus.isOutdated) {
-        QodanaBundle.message("inspectionkts.compiled.no.match")
+        InspectionKtsBundle.message("inspectionkts.compiled.no.match")
       }
       else {
-        QodanaBundle.message("inspectionkts.compiled")
+        InspectionKtsBundle.message("inspectionkts.compiled")
       }
     }
     is InspectionKtsBannerViewModel.CompilationStatus.Failed -> {
       if (compilationStatus.isOutdated) {
-        QodanaBundle.message("inspectionkts.compilation.failed.no.match")
+        InspectionKtsBundle.message("inspectionkts.compilation.failed.no.match")
       } else {
-        QodanaBundle.message("inspectionkts.compilation.failed")
+        InspectionKtsBundle.message("inspectionkts.compilation.failed")
       }
     }
   }
@@ -210,9 +207,9 @@ private fun compilationStatusText(compilationStatus: InspectionKtsBannerViewMode
 @Nls
 private fun executionErrorText(executionError: InspectionKtsBannerViewModel.ExecutionError?): String {
   return if (executionError != null) {
-    QodanaBundle.message("inspectionkts.analysis.error")
+    InspectionKtsBundle.message("inspectionkts.analysis.error")
   } else {
-    QodanaBundle.message("inspectionkts.analysis.no.error")
+    InspectionKtsBundle.message("inspectionkts.analysis.no.error")
   }
 }
 
@@ -272,7 +269,7 @@ private fun openPsiViewerComponent(viewModel: InspectionKtsBannerViewModel): Wra
 
 private fun openPsiViewerLink(viewModel: InspectionKtsBannerViewModel): ActionLink? {
   val psiViewerOpener = viewModel.psiViewerOpener ?: return null
-  return ActionLink(QodanaBundle.message("inspectionkts.open.psi.viewer")) {
+  return ActionLink(InspectionKtsBundle.message("inspectionkts.open.psi.viewer")) {
     psiViewerOpener.openAction.invoke()
   }
 }
@@ -282,9 +279,9 @@ private fun psiViewerTooltip(): JBLabel {
     border = JBUI.Borders.empty(0, 6, 0, 12)
   }
   HelpTooltip()
-    .setDescription(QodanaBundle.message("inspectionkts.open.psi.viewer.tooltip.description"))
+    .setDescription(InspectionKtsBundle.message("inspectionkts.open.psi.viewer.tooltip.description"))
     .setLink(
-      QodanaBundle.message("inspectionkts.open.psi.viewer.tooltip.link"),
+      InspectionKtsBundle.message("inspectionkts.open.psi.viewer.tooltip.link"),
       { BrowserUtil.browse("https://plugins.jetbrains.com/docs/intellij/psi-files.html") },
       true
     )
@@ -317,8 +314,8 @@ private fun examplesButton(project: Project, viewModel: InspectionKtsBannerViewM
 }
 
 private fun showPopupAnAction(project: Project, viewModel: InspectionKtsBannerViewModel, mainComponent: JPanel): DumbAwareAction {
-  return object : DumbAwareAction(QodanaBundle.message("inspectionkts.banner.examples")) {
-    val title = QodanaBundle.message("inspectionkts.banner.examples.title")
+  return object : DumbAwareAction(InspectionKtsBundle.message("inspectionkts.banner.examples")) {
+    val title = InspectionKtsBundle.message("inspectionkts.banner.examples.title")
     override fun actionPerformed(e: AnActionEvent) {
       val popupStep = object : BaseListPopupStep<InspectionKtsBannerViewModel.Example>(title, viewModel.examples) {
         override fun onChosen(selectedValue: InspectionKtsBannerViewModel.Example, finalChoice: Boolean): PopupStep<*>? {

@@ -1,0 +1,45 @@
+### auto-generated section `build intellij.qodana.inspectionKts` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "qodana-inspectionKts_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "qodana-inspectionKts",
+  module_name = "intellij.qodana.inspectionKts",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":qodana-inspectionKts_resources"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "//contrib/qodana/util",
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/analysis-impl",
+    "@community//platform/core-api:core",
+    "@community//platform/core-ui",
+    "@community//platform/platform-api:ide",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/lang-api:lang",
+    "@community//platform/lang-impl",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/util",
+    "@community//platform/util:util-ui",
+    "@community//platform/core-impl",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//libraries/kotlinx/coroutines/core",
+    "@community//json/backend",
+    "@community//plugins/yaml/backend",
+    "@community//platform/statistics",
+    "@community//platform/ide-core-impl",
+    "@community//platform/util/coroutines",
+    "@community//platform/lang-core",
+    "@community//libraries/jackson/jackson",
+    "@community//libraries/jackson/databind",
+    "@community//libraries/jackson/module-kotlin:libraries-jackson-module-kotlin",
+    "@community//libraries/jackson/dataformat-yaml:libraries-jackson-dataformat-yaml",
+  ]
+)
+### auto-generated section `build intellij.qodana.inspectionKts` end

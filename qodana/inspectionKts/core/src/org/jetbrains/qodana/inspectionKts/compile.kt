@@ -16,11 +16,9 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.jetbrains.qodana.QodanaBundle
-import org.jetbrains.qodana.coroutines.qodanaProjectScope
 import org.jetbrains.qodana.inspectionKts.api.InspectionKts
-import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import java.nio.file.Path
 import kotlin.io.path.name
 import kotlin.io.path.readText
@@ -53,7 +51,7 @@ internal suspend fun compileInspectionKtsFile(
     return emptyCompiled
   }
 
-  val scriptText = getDocumentByNioPath(file)?.text ?: runInterruptible(StaticAnalysisDispatchers.IO) {
+  val scriptText = getDocumentByNioPath(file)?.text ?: runInterruptible(IO) {
     file.readText()
   }
   val scriptContentHash = scriptText.hashCode()
@@ -61,8 +59,8 @@ internal suspend fun compileInspectionKtsFile(
 
   val dynamicInspectionData: InspectionKtsResultData = try {
     val result = coroutineScope {
-      val resultDeferred = async(StaticAnalysisDispatchers.IO) {
-        withBackgroundProgress(project, QodanaBundle.message("compiling.kts.file", file.name), true) {
+      val resultDeferred = async(IO) {
+        withBackgroundProgress(project, InspectionKtsBundle.message("compiling.kts.file", file.name), true) {
           val res = engine.eval(scriptTextWithDefaultImports)
           yield()
           res
@@ -97,7 +95,7 @@ internal suspend fun compileInspectionKtsFile(
       }
       val dynamicInspectionsDescriptor = inspectionsKts.map {
         val inspectionTool = it.__asTool__(exceptionReporter = { exception ->
-          project.qodanaProjectScope.launch(StaticAnalysisDispatchers.Default) {
+          project.projectScope.launch {
             errorLogger.logException(exception)
             exceptionDuringAnalysisFlow.value = exception
           }
@@ -167,10 +165,10 @@ private class KeepAliveKotlinCompileService(scope: CoroutineScope) {
     fun getInstance(): KeepAliveKotlinCompileService = service()
   }
 
-  val keepCompilerAliveJob = scope.launch(StaticAnalysisDispatchers.Default, start = CoroutineStart.LAZY) {
+  val keepCompilerAliveJob = scope.launch(start = CoroutineStart.LAZY) {
     while (true) {
       delay(1.hours)
-      withContext(StaticAnalysisDispatchers.IO) {
+      withContext(IO) {
         getKotlinScriptingEngine(classLoader = null)?.eval("true")
       }
     }

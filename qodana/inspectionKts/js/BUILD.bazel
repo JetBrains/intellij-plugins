@@ -17,7 +17,7 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "//contrib/qodana",
+    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
     "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
     "@community//platform/platform-api:ide",
     "@community//platform/core-ui",
@@ -34,8 +34,7 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "@community//platform/core-api:core",
     "//plugins/JavaScriptLanguage/javascript-psi-impl",
-    "//contrib/qodana",
-    "//contrib/qodana:qodana_test_lib",
+    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
     "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
     "@community//platform/platform-api:ide",
     "@community//platform/core-ui",
@@ -46,6 +45,8 @@ jvm_library(
     "//idea-tests:ultimate-tests_test_lib",
     "@community//plugins/dev/intellij.dev:dev",
     "@community//platform/util:util-ui",
+    "//contrib/qodana",
+    "//contrib/qodana:qodana_test_lib",
   ]
 )
 ### auto-generated section `build intellij.qodana.inspectionKts.js` end

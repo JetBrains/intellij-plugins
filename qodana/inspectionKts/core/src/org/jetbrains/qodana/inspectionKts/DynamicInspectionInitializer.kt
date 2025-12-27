@@ -4,7 +4,6 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
 
 /**
  * Implementations of this EP responsible of initialization of so called "dynamic" inspections,
@@ -15,11 +14,11 @@ interface DynamicInspectionInitializer {
   companion object {
     val EP_NAME: ExtensionPointName<DynamicInspectionInitializer> = ExtensionPointName("org.intellij.qodana.dynamicInspectionsInitializer")
 
-    internal suspend fun waitForDynamicInspectionsInitialization(project: Project, messageReporter: QodanaMessageReporter) {
+    suspend fun waitForDynamicInspectionsInitialization(project: Project, messageReporter: InspectionKtsMessageReporter) {
       invokeAllInitializers(project, messageReporter)
     }
 
-    private suspend fun invokeAllInitializers(project: Project, messageReporter: QodanaMessageReporter) {
+    private suspend fun invokeAllInitializers(project: Project, messageReporter: InspectionKtsMessageReporter) {
       coroutineScope {
         EP_NAME.extensionList.forEach {
           launch { it.initialize(project, messageReporter) }
@@ -28,5 +27,5 @@ interface DynamicInspectionInitializer {
     }
   }
 
-  suspend fun initialize(project: Project, messageReporter: QodanaMessageReporter)
+  suspend fun initialize(project: Project, messageReporter: InspectionKtsMessageReporter)
 }

@@ -22,17 +22,16 @@ import com.intellij.util.application
 import com.intellij.util.io.URLUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.kotlin.idea.base.plugin.artifacts.KotlinArtifacts
-import org.jetbrains.qodana.QodanaIntelliJYamlService
-import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.inspectionKts.CustomPluginsForKtsClasspathProvider
-import org.jetbrains.qodana.inspectionKts.isInspectionKtsEnabled
-import org.jetbrains.qodana.registry.QodanaRegistry
+import org.jetbrains.qodana.inspectionKts.InspectionKtsRegistry
+import org.jetbrains.qodana.inspectionKts.InspectionKtsSettings
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -41,8 +40,7 @@ import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 private fun isInspectionKtsResolveDisabled(project: Project): Boolean {
   return application.isHeadlessEnvironment ||
-         !isInspectionKtsEnabled() ||
-         QodanaIntelliJYamlService.getInstance(project).disableInspectionKtsResolve
+         InspectionKtsSettings.getInstance(project).disableInspectionKtsResolve
 }
 
 internal fun inspectionKtsClasspathProvider(project: Project, doInitialize: Boolean): InspectionKtsClasspathProvider {
@@ -83,7 +81,7 @@ private class InspectionKtsClasspathProviderServiceImpl(private val project: Pro
     get() = appLevelClasspathHolder.provider
 
   init {
-    scope.launch(QodanaDispatchers.Default) {
+    scope.launch(Dispatchers.Default) {
       appLevelClasspathHolder.dependenciesScopeWasUpdated.collect {
         getInstanceEx(project).dropResolveCaches()
         DaemonCodeAnalyzer.getInstance(project).restart("InspectionKtsClasspathProviderServiceImpl.dependenciesScopeWasUpdated")
@@ -102,7 +100,7 @@ private class InspectionKtsClasspathHolder(scope: CoroutineScope) {
   private val _dependenciesScope = MutableStateFlow<InspectionKtsDependenciesScope?>(null)
   val dependenciesScopeWasUpdated = _dependenciesScope.drop(1).map { }
 
-  private val initializeDependenciesTask = scope.launch(context = QodanaDispatchers.Default, start = CoroutineStart.LAZY) {
+  private val initializeDependenciesTask = scope.launch(context = Dispatchers.Default, start = CoroutineStart.LAZY) {
     val dependenciesRoots = collectDependenciesRoots()
     val dependenciesScope = collectDependenciesScope()
     _dependenciesScope.value = InspectionKtsDependenciesScope(dependenciesRoots, dependenciesScope)
@@ -118,12 +116,12 @@ private class InspectionKtsClasspathHolder(scope: CoroutineScope) {
   }
 
   private val classPath: List<File> by lazy {
-    val useAllDistributionForDependencies = QodanaRegistry.useAllDistributionForInspectionKtsDependencies ||
+    val useAllDistributionForDependencies = InspectionKtsRegistry.useAllDistributionForInspectionKtsDependencies ||
                                             PluginManagerCore.isRunningFromSources()
     val classPath = mutableSetOf<File>()
 
     val platformClassLoader: ClassLoader = application::class.java.classLoader
-    val qodanaPluginClassLoader: ClassLoader = QodanaRegistry::class.java.classLoader
+    val qodanaPluginClassLoader: ClassLoader = InspectionKtsRegistry::class.java.classLoader
     val pluginsWithLanguageParserClassLoaders = LanguageParserDefinitions.INSTANCE.point?.extensionList?.mapNotNull { it.instance.javaClass.classLoader }
     val distributionPluginsClassLoaders = PluginManager.getPlugins()
       .filter { useAllDistributionForDependencies || !it.isJetBrainsOrBundledPlugin }.map { it.classLoader }
@@ -156,11 +154,11 @@ private class InspectionKtsClasspathHolder(scope: CoroutineScope) {
       null
     }
     checkCanceled()
-    val homePath = runInterruptible(QodanaDispatchers.IO) {
+    val homePath = runInterruptible(Dispatchers.IO) {
       StandardFileSystems.local().findFileByPath(PathManager.getHomePath())
     }
     checkCanceled()
-    val configPath = runInterruptible(QodanaDispatchers.IO) {
+    val configPath = runInterruptible(Dispatchers.IO) {
       StandardFileSystems.local().findFileByPath(PathManager.getConfigPath())
     }
     return setOfNotNull(homePath, configPath, compiledFromSourcesRoot)
@@ -265,7 +263,7 @@ private suspend fun commonRoot(dependenciesJars: List<File>): VirtualFile? {
   if (commonRoot.isEmpty()) return null
 
   val rootFile = File(File.separator + commonRoot.joinToString(File.separator))
-  val root = runInterruptible(QodanaDispatchers.IO) {
+  val root = runInterruptible(Dispatchers.IO) {
     StandardFileSystems.local().findFileByPath(rootFile.path) ?: return@runInterruptible null
   }
   return root

@@ -13,8 +13,6 @@ class QodanaIntelliJYamlState : BaseState() {
   val defaultCloudOrganizationId by string()
   val disableApplyDefaultCloudProjectNotification by property(false)
   val disableOpenInIdeLinkNotification by property(false)
-
-  val disableInspectionKtsResolve by property(false)
 }
 
 @Suppress("LightServiceMigrationCode")
@@ -28,9 +26,6 @@ class QodanaIntelliJYamlService : SimplePersistentStateComponent<QodanaIntelliJY
 
   val disableApplyDefaultCloudProjectNotification: Boolean
     get() = state.disableApplyDefaultCloudProjectNotification
-
-  val disableInspectionKtsResolve: Boolean
-    get() = state.disableInspectionKtsResolve
 
   val cloudProjectPrimaryData: CloudProjectPrimaryData?
     get() {

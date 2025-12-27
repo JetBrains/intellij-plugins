@@ -10,13 +10,13 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.ui.AnimatedIcon
-import icons.QodanaIcons
-import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.inspectionKts.icons.InspectionKtsIcons
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import javax.swing.Icon
 
 internal class RecompileAction(
   private val viewModel: InspectionKtsBannerViewModel,
-): AnAction(QodanaBundle.message("inspectionKts.action.compile.inspection.file.text"), "", AllIcons.Actions.Refresh), DumbAware {
+): AnAction(InspectionKtsBundle.message("inspectionKts.action.compile.inspection.file.text"), "", AllIcons.Actions.Refresh), DumbAware {
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
@@ -49,7 +49,7 @@ internal class CompilationStatusAction(
     e.presentation.isEnabled = false
     if (compilationStatus is InspectionKtsBannerViewModel.CompilationStatus.Failed) {
       e.presentation.isEnabled = true
-      e.presentation.text = QodanaBundle.message("inspectionKts.open.log")
+      e.presentation.text = InspectionKtsBundle.message("inspectionKts.open.log")
     }
   }
 
@@ -67,10 +67,10 @@ internal class CompilationStatusAction(
         AnimatedIcon.Default.INSTANCE
       }
       is InspectionKtsBannerViewModel.CompilationStatus.Failed -> {
-        if (compilationStatus.isOutdated) QodanaIcons.Icons.InspectionKts.ErrorOutdated else QodanaIcons.Icons.InspectionKts.Error
+        if (compilationStatus.isOutdated) InspectionKtsIcons.ErrorOutdated else InspectionKtsIcons.Error
       }
       is InspectionKtsBannerViewModel.CompilationStatus.Compiled -> {
-        if (compilationStatus.isOutdated) QodanaIcons.Icons.InspectionKts.OkOutdated else QodanaIcons.Icons.InspectionKts.OK
+        if (compilationStatus.isOutdated) InspectionKtsIcons.OkOutdated else InspectionKtsIcons.OK
       }
     }
   }
@@ -100,12 +100,12 @@ internal class ExecutionErrorAction(
     val compiled = viewModel.compilationStatus.value as? InspectionKtsBannerViewModel.CompilationStatus.Compiled
     val executionError = compiled?.executionErrorDuringAnalysis?.value ?: return emptyArray()
 
-    val openLogAction = object : AnAction(QodanaBundle.message("inspectionKts.open.log")), DumbAware {
+    val openLogAction = object : AnAction(InspectionKtsBundle.message("inspectionKts.open.log")), DumbAware {
       override fun actionPerformed(e: AnActionEvent) {
         executionError.openExceptionInLogAction.invoke()
       }
     }
-    val ignoreAction = object : AnAction(QodanaBundle.message("inspectionKts.ignore.error")), DumbAware {
+    val ignoreAction = object : AnAction(InspectionKtsBundle.message("inspectionKts.ignore.error")), DumbAware {
       override fun actionPerformed(e: AnActionEvent) {
         executionError.ignoreExceptionAction.invoke()
       }

@@ -1,9 +1,18 @@
 package org.jetbrains.qodana.inspectionKts.ui
 
+import com.intellij.openapi.application.UI
+import com.intellij.openapi.application.writeIntentReadAction
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.EditorKind
+import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -12,12 +21,10 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
-import org.jetbrains.qodana.coroutines.QodanaDispatchers
 import org.jetbrains.qodana.inspectionKts.InspectionKtsErrorLogManager
 import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
 import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
 import org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample
-import org.jetbrains.qodana.ui.createEditor
 import java.net.URL
 import java.nio.file.Path
 
@@ -31,7 +38,7 @@ class InspectionKtsBannerViewModelImpl(
 ) : InspectionKtsBannerViewModel {
 
   override val compilationStatus: StateFlow<InspectionKtsBannerViewModel.CompilationStatus?> = compilationStatusFlow()
-    .stateIn(scope + QodanaDispatchers.Default, SharingStarted.Eagerly, null)
+    .stateIn(scope + Dispatchers.Default, SharingStarted.Eagerly, null)
 
   override val psiViewerOpener: InspectionKtsBannerViewModel.PsiViewerOpener? = psiViewerOpener()
 
@@ -85,11 +92,11 @@ class InspectionKtsBannerViewModelImpl(
   }
 
   private fun openExceptionLogInEditorAsync(errorInLogProvider: InspectionKtsErrorLogManager.ErrorInLogProvider, exception: Exception) {
-    scope.launch(QodanaDispatchers.Default) {
+    scope.launch(Dispatchers.Default) {
       val exceptionLocationInLogFile = errorInLogProvider.loggedExceptionLocation(exception) ?: return@launch
       val logFileVirtualFile = LocalFileSystem.getInstance().findFileByNioFile(exceptionLocationInLogFile.file) ?: return@launch
 
-      withContext(QodanaDispatchers.Ui) {
+      withContext(Dispatchers.UI) {
         OpenFileDescriptor(project, logFileVirtualFile, exceptionLocationInLogFile.line, 0).navigate(true)
       }
     }
@@ -122,7 +129,7 @@ class InspectionKtsBannerViewModelImpl(
   }
 
   private fun chooseFileAndOpenPsiViewer(psiViewerSupport: PsiViewerSupport) {
-    scope.launch(QodanaDispatchers.Ui) {
+    scope.launch(Dispatchers.UI) {
       val projectDir = project.guessProjectDir()
       val chooserDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor().let {
         if (projectDir == null) it else it.withRoots(projectDir)
@@ -133,7 +140,7 @@ class InspectionKtsBannerViewModelImpl(
         null
       ).choose(project).firstOrNull() ?: return@launch
       val document = FileDocumentManager.getInstance().getDocument(file) ?: return@launch
-      val editor = createEditor(project, document, file.fileType)
+      val editor = createEditor(document, file.fileType)
       psiViewerSupport.openPsiViewerDialog(project, editor)
     }
   }
@@ -149,12 +156,23 @@ class InspectionKtsBannerViewModelImpl(
   }
 
   private fun openExampleInEditor(url: URL) {
-    scope.launch(QodanaDispatchers.Default) {
+    scope.launch(Dispatchers.Default) {
       val vfsUrl = VfsUtilCore.convertFromUrl(url)
       val file = VirtualFileManager.getInstance().refreshAndFindFileByUrl(vfsUrl) ?: return@launch
-      withContext(QodanaDispatchers.Ui) {
+      withContext(Dispatchers.UI) {
         OpenFileDescriptor(project, file, 0).navigate(true)
       }
     }
   }
+
+  suspend fun createEditor(document: Document, fileType: FileType): Editor {
+    return withContext(Dispatchers.UI) {
+      writeIntentReadAction {
+        val editor = EditorFactory.getInstance().createEditor(document, project, EditorKind.MAIN_EDITOR)
+        (editor as? EditorEx)?.highlighter = EditorHighlighterFactory.getInstance().createEditorHighlighter(project, fileType)
+        editor
+      }
+    }
+  }
+
 }

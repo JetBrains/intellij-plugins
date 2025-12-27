@@ -2,7 +2,7 @@ package org.jetbrains.qodana.inspectionKts.examples
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.diagnostic.thisLogger
-import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 
 class JsonYamlInspectionKtsExampleProvider : InspectionKtsExample.Provider {
   override fun example(): InspectionKtsExample? {
@@ -14,7 +14,7 @@ class JsonYamlInspectionKtsExampleProvider : InspectionKtsExample.Provider {
     }
     return InspectionKtsExample(
       icon = AllIcons.FileTypes.Json,
-      text = QodanaBundle.message("inspectionkts.example.json"),
+      text = InspectionKtsBundle.message("inspectionkts.example.json"),
       weight = 32,
       resourceUrl
     )

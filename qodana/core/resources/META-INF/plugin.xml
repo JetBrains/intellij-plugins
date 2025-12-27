@@ -23,6 +23,7 @@
     <module name="intellij.qodana.coverage"/>
     <module name="intellij.qodana.go"/>
     <module name="intellij.qodana.cpp"/>
+    <module name="intellij.qodana.inspectionKts"/>
     <module name="intellij.qodana.inspectionKts.js"/>
     <module name="intellij.qodana.inspectionKts.kotlin"/>
     <module name="intellij.qodana.js"/>
@@ -99,7 +100,6 @@
       key="configurable.name"
       provider="org.jetbrains.qodana.ui.settings.FactorySettingsPanel"/>
 
-    <editorNotificationProvider implementation="org.jetbrains.qodana.inspectionKts.ui.InspectionKtsBannerProvider"/>
 
     <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector"/>
     <statistics.projectUsagesCollector implementation="org.jetbrains.qodana.stats.QodanaPluginStatsStateCollector"/>
@@ -139,7 +139,6 @@
                      enabledByDefault="false" level="ERROR" isInternal="true"
                      bundle="messages.QodanaBundle" key="inspection.qodana.sanity.display.name"
                      implementationClass="org.jetbrains.qodana.staticAnalysis.inspections.sanity.QodanaSanity"/>
-    <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.KtsDynamicInspectionsProvider"/>
 
     <localInspection language=""
                      shortName="CyclomaticComplexityInspection"
@@ -206,10 +205,6 @@
       <add-to-group group-id="Internal" anchor="last"/>
     </action>
 
-    <action id="Qodana.NewInspectionKts" class="org.jetbrains.qodana.inspectionKts.templates.NewKtsInspectionAction"
-            icon="icons.QodanaIcons.Icons.Qodana">
-      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
-    </action>
   </actions>
 
   <projectListeners>
@@ -310,18 +305,6 @@
     <extensionPoint name="contextMarginProvider"
                     interface="org.jetbrains.qodana.staticAnalysis.sarif.ContextMarginProvider"
                     dynamic="true"/>
-    <extensionPoint name="inspectionKtsDefaultImportProvider"
-                    interface="org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider"
-                    dynamic="true"/>
-    <extensionPoint name="inspectionKtsTemplateProvider"
-                    interface="org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate$Provider"
-                    dynamic="true"/>
-    <extensionPoint name="psiViewerSupport"
-                    interface="org.jetbrains.qodana.inspectionKts.ui.PsiViewerSupport"
-                    dynamic="true"/>
-    <extensionPoint name="inspectionKtsExampleProvider"
-                    interface="org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample$Provider"
-                    dynamic="true"/>
     <extensionPoint name="quickFixesStrategyProvider"
                     interface="org.jetbrains.qodana.staticAnalysis.sarif.QuickFixesStrategyProvider"
                     dynamic="true"/>
@@ -335,15 +318,6 @@
 
     <extensionPoint name="cyclomaticComplexityFileVisitor"
                     interface="org.jetbrains.qodana.staticAnalysis.inspections.metrics.inspections.cyclomaticComplexity.CyclomaticComplexityMetricFileVisitor"
-                    dynamic="true"/>
-    <extensionPoint name="dynamicInspectionsInitializer"
-                    interface="org.jetbrains.qodana.inspectionKts.DynamicInspectionInitializer"
-                    dynamic="true"/>
-    <extensionPoint name="compiledInspectionKtsPostProcessorFactory"
-                    interface="org.jetbrains.qodana.inspectionKts.CompiledInspectionKtsPostProcessorFactory"
-                    dynamic="true"/>
-    <extensionPoint name="customPluginsForKtsClasspathProvider"
-                    interface="org.jetbrains.qodana.inspectionKts.CustomPluginsForKtsClasspathProvider"
                     dynamic="true"/>
     <extensionPoint name="globalFlowFingerprintCalculator"
                     interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.CustomGlobalFlowFingerprintCalculator"
@@ -375,7 +349,6 @@
     <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.scoped.ReverseScopedScriptFactory"/>
     <qodanaScriptFactory implementation="org.jetbrains.qodana.staticAnalysis.script.TeamCityChangesScriptFactory"/>
     <globalOutputConsumer implementation="org.jetbrains.qodana.staticAnalysis.inspections.runner.globalOutput.DuplicateCodeConsumer"/>
-    <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.api.MainInspectionKtsDefaultImportProvider"/>
 
     <workflowExtension
       implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector$NotificationWorkflowExtension"/>
@@ -404,10 +377,6 @@
       implementation="org.jetbrains.qodana.staticAnalysis.sarif.notifications.RuntimeNotificationCollector$NotificationReportContributor"/>
     <qodanaHighlightingSupportInfoProvider implementation="org.jetbrains.qodana.extensions.DefaultQodanaHighlightingSupportInfoProvider"/>
     <qodanaHighlightInfoComparator implementation="org.jetbrains.qodana.extensions.DuplicatedCodeQodanaHighlightInfoComparator"/>
-    <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageInspectionKtsTemplateProvider"/>
-    <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageGlobalInspectionKtsTemplateProvider"/>
-    <inspectionKtsExampleProvider implementation="org.jetbrains.qodana.inspectionKts.examples.JsonYamlInspectionKtsExampleProvider"/>
-    <dynamicInspectionsInitializer implementation="org.jetbrains.qodana.inspectionKts.InspectionKtsProfileInitializer" />
 
     <metricsAggregator implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.LinesOfCodeMetricAggregator"/>
     <metricsAggregator implementation="org.jetbrains.qodana.staticAnalysis.inspections.metrics.aggregators.CyclomaticComplexityMetricAggregator"/>

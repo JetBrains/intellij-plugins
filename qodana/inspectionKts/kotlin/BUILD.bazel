@@ -26,7 +26,7 @@ jvm_library(
     "@ultimate_lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
     "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
     "@community//platform/projectModel-api:projectModel",
-    "//contrib/qodana",
+    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
     "@community//platform/platform-api:ide",
     "@community//platform/util:util-ui",
     "@community//platform/core-ui",

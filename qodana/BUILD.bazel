@@ -33,6 +33,7 @@ jvm_library(
   kotlinc_opts = ":custom_qodana",
   deps = [
     "//contrib/qodana/util",
+    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-impl",
     "@community//platform/code-style-api:codeStyle",
@@ -129,6 +130,7 @@ jvm_library(
   associates = [":qodana"],
   deps = [
     "//contrib/qodana/util",
+    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
     "@community//platform/analysis-api:analysis",
     "@community//platform/analysis-impl",
     "@community//platform/code-style-api:codeStyle",

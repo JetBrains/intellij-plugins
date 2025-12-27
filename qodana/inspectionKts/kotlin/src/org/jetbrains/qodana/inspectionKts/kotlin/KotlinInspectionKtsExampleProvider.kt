@@ -2,7 +2,7 @@ package org.jetbrains.qodana.inspectionKts.kotlin
 
 import com.intellij.openapi.diagnostic.thisLogger
 import icons.KotlinBaseResourcesIcons
-import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample
 
 private class KotlinInspectionKtsExampleProvider : InspectionKtsExample.Provider {
@@ -15,7 +15,7 @@ private class KotlinInspectionKtsExampleProvider : InspectionKtsExample.Provider
     }
     return InspectionKtsExample(
       icon = KotlinBaseResourcesIcons.Kotlin,
-      text = QodanaBundle.message("inspectionkts.example.kotlin"),
+      text = InspectionKtsBundle.message("inspectionkts.example.kotlin"),
       weight = 8,
       resourceUrl
     )

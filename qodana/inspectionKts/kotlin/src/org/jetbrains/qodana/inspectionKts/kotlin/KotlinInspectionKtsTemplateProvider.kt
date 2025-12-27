@@ -2,7 +2,7 @@ package org.jetbrains.qodana.inspectionKts.kotlin
 
 import icons.KotlinBaseResourcesIcons
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import org.jetbrains.qodana.inspectionKts.templates.InspectionKtsTemplate
 import org.jetbrains.qodana.inspectionKts.templates.standardLocalInspectionKtsTemplateContent
 import org.jetbrains.qodana.inspectionKts.templates.templateInspectionKtsFilenameToInspectionName
@@ -15,7 +15,7 @@ private class KotlinInspectionKtsTemplateProvider : InspectionKtsTemplate.Provid
   override fun template(): InspectionKtsTemplate {
     return InspectionKtsTemplate(
       uiDescriptor = InspectionKtsTemplate.UiDescriptor(
-        name = QodanaBundle.message("inspectionkts.template.kotlin.local.inspection"),
+        name = InspectionKtsBundle.message ("inspectionkts.template.kotlin.local.inspection"),
         icon = KotlinBaseResourcesIcons.Kotlin,
         id = ID
       ),

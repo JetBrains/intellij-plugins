@@ -14,6 +14,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfi
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
+import org.jetbrains.qodana.staticAnalysis.inspections.runner.asInspectionKtsMessageReporter
 import org.jetbrains.qodana.staticAnalysis.profile.QODANA_BASE_PROFILE_NAME
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
@@ -25,7 +26,7 @@ data class LoadedProfile(
 ) {
   companion object {
     suspend fun load(config: QodanaConfig, project: Project, messageReporter: QodanaMessageReporter): LoadedProfile {
-      waitForDynamicInspectionsInitialization(project, messageReporter)
+      waitForDynamicInspectionsInitialization(project, messageReporter.asInspectionKtsMessageReporter())
 
       val baseProfile = loadBaseProfile(config, project, messageReporter)
       val profileWithFullProfileSection = loadProfileSectionAsYamlProfile(baseProfile.profile, config.profile)

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 
 private class KotlinAnalyzeEntrypointNodeAppender : PsiViewerPropertyNodeAppender {
   override suspend fun appendChildren(
@@ -59,7 +59,7 @@ private class KotlinAnalyzeEntrypointNode(
     @Suppress("HardCodedStringLiteral")
     it.append("analyze(ktElement) { ... }")
     it.append(" ")
-    it.append(QodanaBundle.message("psi.viewer.kotlin.api.in.analyze.block"), SimpleTextAttributes.GRAYED_ATTRIBUTES)
+    it.append(InspectionKtsBundle.message("psi.viewer.kotlin.api.in.analyze.block"), SimpleTextAttributes.GRAYED_ATTRIBUTES)
   }
 
   override val weight: Int

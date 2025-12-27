@@ -4,7 +4,7 @@
     <plugin id="com.intellij.dev"/>
     <module name="intellij.dev.psiViewer"/>
   </dependencies>
-  <extensions defaultExtensionNs="org.intellij.qodana">
+  <extensions defaultExtensionNs="com.intellij">
     <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsDefaultImportsProvider"/>
     <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsTemplateProvider"/>
     <inspectionKtsExampleProvider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsExampleProvider"/>

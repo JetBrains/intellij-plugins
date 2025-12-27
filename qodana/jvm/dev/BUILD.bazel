@@ -27,6 +27,7 @@ jvm_library(
     "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
     "@community//platform/core-ui",
     "//contrib/qodana",
+    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
   ]
 )
 ### auto-generated section `build intellij.qodana.jvm.dev` end

@@ -5,7 +5,6 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.objectTree.ThrowableInterner
 import kotlinx.coroutines.*
-import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import java.io.FileWriter
 import java.io.PrintWriter
 import java.lang.Exception
@@ -15,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.*
 
 class InspectionKtsErrorLogManager(scope: CoroutineScope) {
-  private val logFile: Deferred<Path> = scope.async(StaticAnalysisDispatchers.IO, start = CoroutineStart.LAZY) {
+  private val logFile: Deferred<Path> = scope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
     runInterruptible {
       val logDir = PathManager.getLogDir()
       FileUtil.createTempFile(logDir.toFile(), "inspection-kts-", ".log", true).toPath()
@@ -43,7 +42,7 @@ class InspectionKtsErrorLogManager(scope: CoroutineScope) {
       }
 
       val logFile = logFile.await()
-      runInterruptible(StaticAnalysisDispatchers.IO) {
+      runInterruptible(Dispatchers.IO) {
         logFile.appendLines(
           listOfNotNull(
             exceptionHeader,
@@ -65,7 +64,7 @@ class InspectionKtsErrorLogManager(scope: CoroutineScope) {
       thisLogger().info("Searching for exception $exceptionId")
       var line = 0
       val file = logFile.await()
-      return runInterruptible(StaticAnalysisDispatchers.IO) {
+      return runInterruptible(Dispatchers.IO) {
         file.forEachLine { lineContent ->
           if (lineContent.endsWith(exceptionId)) {
             return@runInterruptible LogFileLocation(file, line)

@@ -2,12 +2,12 @@ package org.jetbrains.qodana.inspectionKts.templates
 
 import com.intellij.icons.AllIcons
 import org.intellij.lang.annotations.Language
-import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 
 private class AnyLanguageInspectionKtsTemplateProvider : InspectionKtsTemplate.Provider {
   override fun template() = InspectionKtsTemplate(
     InspectionKtsTemplate.UiDescriptor(
-      name = QodanaBundle.message("inspectionkts.template.any.language.local.inspection"),
+      name = InspectionKtsBundle.message("inspectionkts.template.any.language.local.inspection"),
       icon = AllIcons.FileTypes.Unknown,
       id = "ANY_LANGUAGE",
       weight = -10
@@ -19,7 +19,7 @@ private class AnyLanguageInspectionKtsTemplateProvider : InspectionKtsTemplate.P
 private class AnyLanguageGlobalInspectionKtsTemplateProvider : InspectionKtsTemplate.Provider {
   override fun template() = InspectionKtsTemplate(
     InspectionKtsTemplate.UiDescriptor(
-      name = QodanaBundle.message("inspectionkts.template.any.language.global.inspection"),
+      name = InspectionKtsBundle.message("inspectionkts.template.any.language.global.inspection"),
       icon = AllIcons.FileTypes.Unknown,
       id = "ANY_LANGUAGE_GLOBAL",
       weight = -5

@@ -1,6 +1,7 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.ide.CommandLineInspectionProgressReporter
+import org.jetbrains.qodana.inspectionKts.InspectionKtsMessageReporter
 
 interface QodanaMessageReporter : CommandLineInspectionProgressReporter {
   fun reportError(e: Throwable)
@@ -38,6 +39,19 @@ interface QodanaMessageReporter : CommandLineInspectionProgressReporter {
 
     override fun reportMessageNoLineBreak(minVerboseLevel: Int, message: String?) {
       if (VERBOSITY >= minVerboseLevel) print(message)
+    }
+  }
+}
+
+fun QodanaMessageReporter.asInspectionKtsMessageReporter(): InspectionKtsMessageReporter {
+  val delegate = this
+  return object : InspectionKtsMessageReporter {
+    override fun reportError(message: String) {
+      delegate.reportError(message)
+    }
+
+    override fun reportError(e: Throwable) {
+      delegate.reportError(e)
     }
   }
 }
