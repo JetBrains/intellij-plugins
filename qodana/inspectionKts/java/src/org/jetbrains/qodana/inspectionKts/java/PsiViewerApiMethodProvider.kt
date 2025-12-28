@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.jvm.dev.inspectionKts
+package org.jetbrains.qodana.inspectionKts.java
 
 import com.intellij.dev.psiViewer.properties.tree.nodes.apiMethods.PsiViewerApiMethod
 import com.intellij.psi.PsiClass

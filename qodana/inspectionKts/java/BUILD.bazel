@@ -1,0 +1,45 @@
+### auto-generated section `build intellij.qodana.inspectionKts.java` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "java_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "java",
+  module_name = "intellij.qodana.inspectionKts.java",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":java_resources"],
+  deps = [
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/core-api:core",
+    "@community//platform/core-impl",
+    "@community//platform/analysis-impl",
+    "@community//java/java-psi-api:psi",
+    "@ultimate_lib//:kotlinc-analysis-api-provided",
+    "@ultimate_lib//:kotlinc-kotlin-compiler-common-provided",
+    "@ultimate_lib//:kotlinc-kotlin-scripting-common-provided",
+    "@ultimate_lib//:kotlinc-kotlin-scripting-jvm-provided",
+    "@ultimate_lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
+    "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
+    "@community//platform/projectModel-api:projectModel",
+    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
+    "@community//platform/platform-api:ide",
+    "@community//platform/util:util-ui",
+    "@community//platform/core-ui",
+    "@community//plugins/kotlin/base/resources:kotlin-base-resources",
+    "@community//plugins/kotlin/base/plugin",
+    "@community//plugins/kotlin/base/util",
+    "@community//plugins/kotlin/base/project-structure",
+    "@community//plugins/kotlin/scripting",
+    "@community//platform/util-class-loader:util-classLoader",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/backend/workspace",
+    "@community//plugins/kotlin/base/scripting/scripting.shared",
+  ],
+  runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"]
+)
+### auto-generated section `build intellij.qodana.inspectionKts.java` end

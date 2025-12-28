@@ -1,0 +1,15 @@
+<idea-plugin package="org.jetbrains.qodana.inspectionKts.java">
+  <dependencies>
+    <module name="intellij.java.dev"/>
+  </dependencies>
+  <extensions defaultExtensionNs="com.intellij.dev">
+    <psiViewer.apiMethodsProvider implementation="org.jetbrains.qodana.inspectionKts.java.PsiViewerApiMethodProvider"/>
+    <psiViewer.psiViewerActionEnabler implementation="org.jetbrains.qodana.inspectionKts.java.InspectionKtsPsiViewerActionEnabler"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <psiViewerSupport implementation="org.jetbrains.qodana.inspectionKts.java.PsiViewerSupportImpl"/>
+    <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.java.JavaInspectionKtsDefaultImportsProvider"/>
+    <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.java.JavaInspectionKtsTemplateProvider"/>
+    <inspectionKtsExampleProvider implementation="org.jetbrains.qodana.inspectionKts.java.JavaInspectionKtsExampleProvider"/>
+  </extensions>
+</idea-plugin>

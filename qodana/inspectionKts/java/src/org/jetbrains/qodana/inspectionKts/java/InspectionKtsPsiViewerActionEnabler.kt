@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.jvm.dev.inspectionKts
+package org.jetbrains.qodana.inspectionKts.java
 
 import com.intellij.dev.psiViewer.PsiViewerActionEnabler
 import com.intellij.openapi.project.Project

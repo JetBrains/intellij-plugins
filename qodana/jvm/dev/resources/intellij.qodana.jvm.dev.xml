@@ -8,13 +8,5 @@
                      bundle="messages.QodanaBundle" key="inspection.java.annotator"
                      enabledByDefault="false" level="ERROR"
                      implementationClass="org.jetbrains.qodana.jvm.dev.JavaAnnotatorInspection"/>
-    <psiViewerSupport implementation="org.jetbrains.qodana.jvm.dev.inspectionKts.PsiViewerSupportImpl"/>
-    <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.jvm.dev.inspectionKts.JavaInspectionKtsDefaultImportsProvider"/>
-    <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.jvm.dev.inspectionKts.JavaInspectionKtsTemplateProvider"/>
-    <inspectionKtsExampleProvider implementation="org.jetbrains.qodana.jvm.dev.inspectionKts.JavaInspectionKtsExampleProvider"/>
-  </extensions>
-  <extensions defaultExtensionNs="com.intellij.dev">
-    <psiViewer.apiMethodsProvider implementation="org.jetbrains.qodana.jvm.dev.inspectionKts.PsiViewerApiMethodProvider"/>
-    <psiViewer.psiViewerActionEnabler implementation="org.jetbrains.qodana.jvm.dev.inspectionKts.InspectionKtsPsiViewerActionEnabler"/>
   </extensions>
 </idea-plugin>

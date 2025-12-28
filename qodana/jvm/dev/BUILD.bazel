@@ -15,19 +15,12 @@ jvm_library(
   resources = [":dev_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
-    "@community//platform/core-api:core",
-    "@community//platform/editor-ui-api:editor-ui",
-    "@community//platform/platform-api:ide",
-    "@community//platform/platform-impl:ide-impl",
-    "@community//java/java-psi-api:psi",
-    "@community//java/java-analysis-api:analysis",
-    "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
+    "@community//java/openapi:java",
     "@community//plugins/dev/intellij.java.dev:java-dev",
+    "@community//platform/core-api:core",
     "@community//platform/analysis-api:analysis",
-    "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
-    "@community//platform/core-ui",
-    "//contrib/qodana",
-    "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
+    "@community//plugins/dev/intellij.dev.codeInsight:codeInsight",
+    "@community//java/java-frontback-psi-api:frontback-psi",
   ]
 )
 ### auto-generated section `build intellij.qodana.jvm.dev` end

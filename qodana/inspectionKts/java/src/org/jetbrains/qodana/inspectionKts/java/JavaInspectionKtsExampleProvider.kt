@@ -1,8 +1,8 @@
-package org.jetbrains.qodana.jvm.dev.inspectionKts
+package org.jetbrains.qodana.inspectionKts.java
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.diagnostic.thisLogger
-import org.jetbrains.qodana.QodanaBundle
+import org.jetbrains.qodana.inspectionKts.InspectionKtsBundle
 import org.jetbrains.qodana.inspectionKts.examples.InspectionKtsExample
 
 private class JavaInspectionKtsExampleProvider : InspectionKtsExample.Provider {
@@ -15,7 +15,7 @@ private class JavaInspectionKtsExampleProvider : InspectionKtsExample.Provider {
     }
     return InspectionKtsExample(
       icon = AllIcons.FileTypes.Java,
-      text = QodanaBundle.message("inspectionkts.example.java"),
+      text = InspectionKtsBundle.message("inspectionkts.example.java"),
       weight = 2,
       resourceUrl
     )

@@ -26,6 +26,7 @@
     <module name="intellij.qodana.inspectionKts"/>
     <module name="intellij.qodana.inspectionKts.js"/>
     <module name="intellij.qodana.inspectionKts.kotlin"/>
+    <module name="intellij.qodana.inspectionKts.java"/>
     <module name="intellij.qodana.js"/>
     <module name="intellij.qodana.php"/>
     <module name="intellij.qodana.python.community"/>
