@@ -42,7 +42,7 @@ class CompiledInspectionKtsInspections(
 
 interface CompiledInspectionKtsPostProcessorFactory {
   companion object {
-    private val EP_NAME: ExtensionPointName<CompiledInspectionKtsPostProcessorFactory> = ExtensionPointName.create("org.intellij.qodana.compiledInspectionKtsPostProcessorFactory")
+    private val EP_NAME: ExtensionPointName<CompiledInspectionKtsPostProcessorFactory> = ExtensionPointName.create("com.intellij.compiledInspectionKtsPostProcessorFactory")
     
     fun getProcessor(result: Any): CompiledInspectionKtsPostProcessor? =
       EP_NAME.extensionList.firstNotNullOfOrNull { it.createProcessorIfApplicable(result) }

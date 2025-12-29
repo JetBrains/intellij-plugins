@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
  */
 interface DynamicInspectionInitializer {
   companion object {
-    val EP_NAME: ExtensionPointName<DynamicInspectionInitializer> = ExtensionPointName("org.intellij.qodana.dynamicInspectionsInitializer")
+    val EP_NAME: ExtensionPointName<DynamicInspectionInitializer> = ExtensionPointName("com.intellij.dynamicInspectionsInitializer")
 
     suspend fun waitForDynamicInspectionsInitialization(project: Project, messageReporter: InspectionKtsMessageReporter) {
       invokeAllInitializers(project, messageReporter)

@@ -21,7 +21,7 @@ class InspectionKtsTemplate(
 
   interface Provider {
     companion object {
-      private val EP_NAME = ExtensionPointName<Provider>("org.intellij.qodana.inspectionKtsTemplateProvider")
+      private val EP_NAME = ExtensionPointName<Provider>("com.intellij.inspectionKtsTemplateProvider")
 
       fun templates(): List<InspectionKtsTemplate> {
         return EP_NAME.extensionList.map { it.template() }
