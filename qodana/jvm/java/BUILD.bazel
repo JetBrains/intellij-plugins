@@ -16,6 +16,7 @@ jvm_library(
   deps = [
     "@lib//:kotlin-stdlib",
     "@community//java/openapi:java",
+    "@community//java/structuralsearch-java:structuralSearch",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/platform-api:ide",
@@ -52,6 +53,8 @@ jvm_library(
     "@lib//:kotlin-stdlib",
     "@lib//:assert_j",
     "@community//java/openapi:java",
+    "@community//java/structuralsearch-java:structuralSearch",
+    "@community//java/structuralsearch-java:structuralSearch_test_lib",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
     "@community//platform/core-ui",
