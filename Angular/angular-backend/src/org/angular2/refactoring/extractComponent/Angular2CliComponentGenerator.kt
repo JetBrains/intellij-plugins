@@ -88,7 +88,7 @@ class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliCompo
     val utilityDirectory = JSPluginPathManager.getPluginResource(
       Angular2Language::class.java,
       "ngCli",
-      if (AppMode.isRunningFromDevBuild()) "angular" else "Angular/gen-resources"
+      if (AppMode.isRunningFromDevBuild()) "angular" else "Angular/angular-backend/gen-resources"
     )
     val binPath = utilityDirectory.resolve("generate.js")
 

@@ -26,12 +26,12 @@ public final class Angular2TestUtil {
 
   public static String getBaseTestDataPath(Class<?> clazz) {
     String contribPath = getContribPath();
-    return contribPath + "/Angular/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
+    return contribPath + "/Angular/angular-tests/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
   }
 
   public static String getBaseTestDataPath() {
     String contribPath = getContribPath();
-    return contribPath + "/Angular/testData/";
+    return contribPath + "/Angular/angular-tests/testData/";
   }
 
   public static String getLexerTestDirPath() {

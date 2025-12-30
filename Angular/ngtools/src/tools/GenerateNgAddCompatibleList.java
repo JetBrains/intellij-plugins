@@ -95,7 +95,7 @@ public final class GenerateNgAddCompatibleList {
     System.out.println("Current directory: " + new File(".").getCanonicalPath());
     System.out.println("Reading existing list of packages");
 
-    try (Reader reader = Files.newBufferedReader(Path.of("contrib/Angular/resources/org/angular2/cli/ng-packages.json"),
+    try (Reader reader = Files.newBufferedReader(Path.of("contrib/Angular/angular-backend/resources/org/angular2/cli/ng-packages.json"),
                                                  StandardCharsets.UTF_8)) {
       JsonObject root = (JsonObject)JsonParser.parseReader(reader);
       if (root.get("ng-add") != null) {

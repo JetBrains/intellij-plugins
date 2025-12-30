@@ -3,6 +3,12 @@ load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
 
 resourcegroup(
   name = "angular-tests_test_resources",
+  srcs = glob(["testData/**/*"]),
+  strip_prefix = "testData"
+)
+
+resourcegroup(
+  name = "angular-tests_test_resources_1",
   srcs = glob(["testResources/**/*"]),
   strip_prefix = "testResources"
 )
@@ -53,6 +59,7 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@lib//:opentelemetry",
     "//plugins/css/common/psi",
+    "//contrib/Angular/angular-backend",
   ]
 )
 
@@ -61,7 +68,10 @@ jvm_library(
   module_name = "intellij.angular.tests",
   visibility = ["//visibility:public"],
   srcs = glob(["test/**/*.kt", "test/**/*.java", "test/**/*.form", "test-ex/**/*.kt", "test-ex/**/*.java", "test-ex/**/*.form"], allow_empty = True),
-  resources = [":angular-tests_test_resources"],
+  resources = [
+    ":angular-tests_test_resources",
+    ":angular-tests_test_resources_1",
+  ],
   deps = [
     "@community//platform/analysis-api:analysis",
     "@community//platform/code-style-api:codeStyle",
@@ -138,7 +148,10 @@ jvm_library(
     "//plugins/tailwindcss",
     "//plugins/tailwindcss:tailwindcss_test_lib",
     "//platform/lsp/testFramework",
+    "//contrib/Angular/angular-plugin",
     "//contrib/Angular/angular-backend",
+    "//contrib/Angular/angular-tslint",
+    "//contrib/Angular/angular-css",
     "//plugins/css/backend",
     "//plugins/css/ultimate/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",

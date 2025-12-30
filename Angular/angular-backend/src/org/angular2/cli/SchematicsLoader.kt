@@ -73,7 +73,7 @@ private fun loadSchematicsInfoJson(configurator: NodeCommandLineConfigurator,
   val directory = JSPluginPathManager.getPluginResource(
     Angular2Language::class.java,
     "ngCli",
-    if (AppMode.isRunningFromDevBuild()) "angular" else "Angular/gen-resources"
+    if (AppMode.isRunningFromDevBuild()) "angular" else "Angular/angular-backend/gen-resources"
   )
   val utilityExe = directory.resolve("runner.js")
   val commandLine = GeneralCommandLine("", utilityExe.absolutePathString(), cli.path, "./schematicsInfoProvider.js")
