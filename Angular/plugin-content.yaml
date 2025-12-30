@@ -1,3 +1,0 @@
-- name: lib/angular.jar
-  modules:
-  - name: intellij.angular

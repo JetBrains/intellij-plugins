@@ -1,0 +1,32 @@
+### auto-generated section `build intellij.angular.css` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "angular-css_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "angular-css",
+  module_name = "intellij.angular.css",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":angular-css_resources"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/core-api:core",
+    "//plugins/css/common/psi",
+    "@community//xml/xml-psi-api:psi",
+    "@community//xml/xml-parser:parser",
+    "//plugins/css/psi",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "@community//platform/analysis-impl",
+    "//plugins/css",
+    "//plugins/JavaScriptLanguage:javascript-backend",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "//plugins/css/common",
+    "//contrib/Angular/angular-backend",
+  ]
+)
+### auto-generated section `build intellij.angular.css` end

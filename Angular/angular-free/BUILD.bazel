@@ -1,0 +1,17 @@
+### auto-generated section `build intellij.angular.free` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "angular-free_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "angular-free",
+  module_name = "intellij.angular.free",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":angular-free_resources"]
+)
+### auto-generated section `build intellij.angular.free` end

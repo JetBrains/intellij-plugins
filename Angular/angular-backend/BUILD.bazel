@@ -1,0 +1,83 @@
+### auto-generated section `build intellij.angular.backend` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "angular-backend_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+resourcegroup(
+  name = "angular-backend_resources_1",
+  srcs = glob(["gen-resources/**/*"]),
+  strip_prefix = "gen-resources"
+)
+
+jvm_library(
+  name = "angular-backend",
+  module_name = "intellij.angular.backend",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form", "gen/**/*.kt", "gen/**/*.java"], allow_empty = True),
+  resources = [
+    ":angular-backend_resources",
+    ":angular-backend_resources_1",
+  ],
+  deps = [
+    "@community//platform/analysis-api:analysis",
+    "@community//platform/code-style-api:codeStyle",
+    "@community//platform/core-api:core",
+    "@community//platform/editor-ui-api:editor-ui",
+    "@community//jps/model-api:model",
+    "@community//platform/lang-core",
+    "@community//platform/projectModel-api:projectModel",
+    "@community//platform/refactoring",
+    "@community//platform/usageView-impl",
+    "@community//platform/util/progress",
+    "@community//platform/indexing-api:indexing",
+    "@community//platform/usageView",
+    "@community//xml/xml-parser:parser",
+    "@community//platform/platform-impl:ide-impl",
+    "@community//platform/editor-ui-ex:editor-ex",
+    "//plugins/css/common",
+    "@community//xml/xml-psi-api:psi",
+    "@community//xml/xml-psi-impl:psi-impl",
+    "@community//platform/lang-api:lang",
+    "//plugins/css/psi",
+    "//plugins/JavaScriptLanguage/javascript-parser",
+    "@community//platform/indexing-impl",
+    "@community//platform/lang-impl",
+    "@community//platform/execution-impl",
+    "@community//platform/execution",
+    "//plugins/JavaScriptLanguage:javascript-backend",
+    "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "@community//xml/impl",
+    "//plugins/css/plugin",
+    "//plugins/webpack",
+    "@community//libraries/gson",
+    "@community//plugins/htmltools:html-tools",
+    "@community//libraries/jackson/jackson",
+    "@community//libraries/jackson/databind",
+    "//contrib/tslint",
+    "@community//libraries/stream",
+    "@community//platform/core-ui",
+    "@community//libraries/icu4j",
+    "@community//platform/code-style-impl:codeStyle-impl",
+    "//plugins/JavaScriptLanguage/web-platform:javascript-web",
+    "@community//platform/platform-util-io:ide-util-io",
+    "@community//platform/util/jdom",
+    "@community//platform/polySymbols",
+    "@community//libraries/fastutil",
+    "@community//images",
+    "//plugins/JavaScriptLanguage/javascript-common",
+    "@community//platform/xdebugger-api:debugger",
+    "@lib//:opentelemetry",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//plugins/css/common/psi",
+    "@community//platform/polySymbols/backend",
+    "//plugins/css/backend",
+    "@community//platform/backend/workspace",
+    "@community//platform/workspace/storage",
+    "@community//xml/xml-analysis-api:analysis",
+  ]
+)
+### auto-generated section `build intellij.angular.backend` end

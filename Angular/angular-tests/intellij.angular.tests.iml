@@ -2,16 +2,9 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/test">
+    <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
-    </content>
-    <content url="file://$MODULE_DIR$/test-ex">
       <sourceFolder url="file://$MODULE_DIR$/test-ex" isTestSource="true" />
-    </content>
-    <content url="file://$MODULE_DIR$/testData">
-      <sourceFolder url="file://$MODULE_DIR$/testData" type="java-test-resource" />
-    </content>
-    <content url="file://$MODULE_DIR$/testResources">
       <sourceFolder url="file://$MODULE_DIR$/testResources" type="java-test-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -115,7 +108,7 @@
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.tailwindcss" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.lsp.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.angular" />
+    <orderEntry type="module" module-name="intellij.angular.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />

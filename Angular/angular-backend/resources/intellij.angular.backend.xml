@@ -1,42 +1,13 @@
-<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/Angular">
-  <!--
-     The plugin id is kept as-is for historical reasons.
-     It should actually be com.intellij.angular
-     and hopefully at some point we will be able to do that rename.
-  -->
-  <id>AngularJS</id>
-  <name>Angular</name>
-  <category>JavaScript Frameworks and Tools</category>
-  <description><![CDATA[
-    <p>Provides support for <a href="https://angular.io/">Angular</a>
-      to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.</p>
-    <h2>Features</h2>
-    <ul>
-      <li>Code completion for Angular APIs in TypeScript files
-      <li>Code completion for components, built-in and custom directives, and methods in templates
-      <li>Navigation from the component, custom directives, and event handlers to their definition
-      <li>Collection of code snippets for Angular
-      <li>Option in the Welcome screen to create new Angular projects
-      <li>Generation of new app elements using Angular CLI
-    </ul>
-    <h2>Getting started</h2>
-    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
-      For WebStorm, you can check out these sections: <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a>.
-    <h2>Notes</h2>
-    <p>This plugin is bundled in WebStorm and some other IntelliJ-based IDEs.
-    ]]></description>
-  <vendor>JetBrains</vendor>
-
+<idea-plugin visibility="internal">
   <dependencies>
     <module name="intellij.xml.impl"/>
-    <plugin id="com.intellij.modules.ultimate"/>
-    <plugin id="JavaScript"/>
+    <module name="intellij.javascript.ultimate"/>
     <plugin id="HtmlTools"/>
     <plugin id="intellij.webpack"/>
-  </dependencies>
 
-  <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
-  <depends optional="true" config-file="tslint-support.xml">tslint</depends>
+    <!-- TODO remove this dependency (see org.angular2.cli.config.AngularLintConfiguration ) -->
+    <plugin id="tslint"/>
+  </dependencies>
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.angular2.templateScopesProvider"
@@ -65,8 +36,6 @@
     <additionalTextAttributes scheme="High contrast" file="colorSchemes/Angular2HighContrast.xml"/>
     <additionalTextAttributes scheme="Light" file="colorSchemes/Angular2Light.xml"/>
     <additionalTextAttributes scheme="Dark" file="colorSchemes/Angular2Dark.xml"/>
-
-    <dependencySupport kind="javascript" coordinate="npm:@angular/core" displayName="Angular"/>
 
     <!-- Angular 2 contributions -->
     <polySymbols.framework id="angular" implementation="org.angular2.Angular2Framework"/>
@@ -170,17 +139,17 @@
     <psi.referenceContributor language="TypeScript" implementation="org.angular2.codeInsight.refs.Angular2TSReferencesContributor"/>
     <psi.referenceContributor language="HtmlCompatible" implementation="org.angular2.codeInsight.refs.Angular2HtmlReferencesContributor"/>
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
-                                     hostLanguage="Angular2Html"
-                                     implementationClass="org.angular2.web.references.Angular2SelectorReferenceProvider$NgContentSelectorProvider"/>
+                                      hostLanguage="Angular2Html"
+                                      implementationClass="org.angular2.web.references.Angular2SelectorReferenceProvider$NgContentSelectorProvider"/>
     <polySymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
-                                     hostLanguage="TypeScript"
-                                     implementationClass="org.angular2.web.references.Angular2SelectorReferenceProvider$NgDecoratorSelectorProvider"/>
+                                      hostLanguage="TypeScript"
+                                      implementationClass="org.angular2.web.references.Angular2SelectorReferenceProvider$NgDecoratorSelectorProvider"/>
     <polySymbols.psiReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
-                                     hostLanguage="TypeScript"
-                                     implementationClass="org.angular2.web.references.Angular2DirectivePropertyLiteralReferenceProvider"/>
+                                      hostLanguage="TypeScript"
+                                      implementationClass="org.angular2.web.references.Angular2DirectivePropertyLiteralReferenceProvider"/>
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlBlock"
-                                     hostLanguage="Angular2Html"
-                                     implementationClass="org.angular2.codeInsight.blocks.Angular2BlockReferenceProvider"/>
+                                      hostLanguage="Angular2Html"
+                                      implementationClass="org.angular2.codeInsight.blocks.Angular2BlockReferenceProvider"/>
     <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2SelectorDeclarationProvider"/>
     <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectiveExportAsDeclarationProvider"/>
     <polySymbols.declarationProvider implementation="org.angular2.web.declarations.Angular2DirectivePropertyDeclarationProvider"/>
@@ -195,8 +164,8 @@
     <polySymbols.psiSourcedSymbolProvider implementation="org.angular2.web.findUsages.Angular2PsiSourcedPolySymbolProvider"/>
     <polySymbols.documentationCustomizer implementation="org.angular2.web.Angular2SymbolDocumentationCustomizer"/>
     <polySymbols.highlightingCustomizer id="angular2"
-                                       implementation="org.angular2.web.Angular2SymbolHighlightingCustomizer"
-                                       order="before js, before html"/>
+                                        implementation="org.angular2.web.Angular2SymbolHighlightingCustomizer"
+                                        order="before js, before html"/>
     <elementDescriptionProvider
       order="first"
       implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
@@ -416,11 +385,11 @@
                                     implementationClass="org.angular2.editor.Angular2InlayParameterHintsProvider"/>
     <highlightVisitor implementation="org.angular2.lang.expr.highlighting.Angular2RainbowVisitor"/>
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2BlockParameter"
-                                     hostLanguage="Angular2"
-                                     implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterReferenceProvider"/>
+                                      hostLanguage="Angular2"
+                                      implementationClass="org.angular2.codeInsight.blocks.Angular2BlockParameterReferenceProvider"/>
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2TemplateBindingKey"
-                                     hostLanguage="Angular2"
-                                     implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"/>
+                                      hostLanguage="Angular2"
+                                      implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"/>
 
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="NG-META:"/>

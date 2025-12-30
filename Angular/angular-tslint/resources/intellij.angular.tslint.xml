@@ -1,0 +1,10 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="tslint"/>
+    <module name="intellij.angular.backend"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <tslint.configDetector implementation="com.intellij.angular.tslint.TsLintConfigAngularDetector" order="first" id="angular"/>
+  </extensions>
+</idea-plugin>

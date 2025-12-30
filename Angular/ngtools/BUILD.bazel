@@ -12,7 +12,6 @@ jvm_library(
     "@community//platform/core-ui",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/projectModel-impl",
-    "//contrib/Angular:angular",
     "@community//platform/testFramework",
     "//WebStorm:webstorm",
     "//ultimate/platform-ultimate:commercial",
@@ -21,6 +20,7 @@ jvm_library(
     "@community//libraries/gson",
     "@community//platform/service-container",
     "@community//platform/platform-util-io:ide-util-io",
+    "//contrib/Angular/angular-backend",
   ]
 )
 ### auto-generated section `build intellij.angular.ngtools` end

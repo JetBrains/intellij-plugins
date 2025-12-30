@@ -1,5 +1,8 @@
 <idea-plugin>
-  <depends>com.intellij.modules.css.backend</depends>
+  <dependencies>
+    <module name="intellij.css.backend"/>
+    <module name="intellij.angular.backend"/>
+  </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">
     <css.inclusionContext implementation="org.angular2.css.Angular2CssInclusionContext"/>

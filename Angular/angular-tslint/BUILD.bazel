@@ -1,0 +1,25 @@
+### auto-generated section `build intellij.angular.tslint` start
+load("@rules_jvm//:jvm.bzl", "jvm_library", "resourcegroup")
+
+resourcegroup(
+  name = "angular-tslint_resources",
+  srcs = glob(["resources/**/*"]),
+  strip_prefix = "resources"
+)
+
+jvm_library(
+  name = "angular-tslint",
+  module_name = "intellij.angular.tslint",
+  visibility = ["//visibility:public"],
+  srcs = glob(["src/**/*.kt", "src/**/*.java", "src/**/*.form"], allow_empty = True),
+  resources = [":angular-tslint_resources"],
+  deps = [
+    "@lib//:kotlin-stdlib",
+    "@community//platform/util",
+    "//plugins/JavaScriptLanguage/javascript-psi-impl",
+    "//contrib/tslint",
+    "@community//platform/core-api:core",
+    "//contrib/Angular/angular-backend",
+  ]
+)
+### auto-generated section `build intellij.angular.tslint` end

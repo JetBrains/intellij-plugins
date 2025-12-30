@@ -1,0 +1,46 @@
+<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/Angular">
+  <!--
+     The plugin id is kept as-is for historical reasons.
+     It should actually be com.intellij.angular
+     and hopefully at some point we will be able to do that rename.
+  -->
+  <id>AngularJS</id>
+  <name>Angular</name>
+  <category>JavaScript Frameworks and Tools</category>
+  <description><![CDATA[
+    <p>Provides support for <a href="https://angular.io/">Angular</a>
+      to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.</p>
+    <h2>Features</h2>
+    <ul>
+      <li>Code completion for Angular APIs in TypeScript files
+      <li>Code completion for components, built-in and custom directives, and methods in templates
+      <li>Navigation from the component, custom directives, and event handlers to their definition
+      <li>Collection of code snippets for Angular
+      <li>Option in the Welcome screen to create new Angular projects
+      <li>Generation of new app elements using Angular CLI
+    </ul>
+    <h2>Getting started</h2>
+    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+      For WebStorm, you can check out these sections: <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a>.
+    <h2>Notes</h2>
+    <p>This plugin is bundled in WebStorm and some other IntelliJ-based IDEs.
+    ]]></description>
+  <vendor>JetBrains</vendor>
+
+  <dependencies>
+    <plugin id="com.intellij.modules.jetbrains"/>
+    <plugin id="JavaScript"/>
+  </dependencies>
+
+  <content namespace="jetbrains">
+    <module name="intellij.angular.backend"/>
+    <module name="intellij.angular.free"/>
+
+    <module name="intellij.angular.css"/>
+    <module name="intellij.angular.tslint"/>
+  </content>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="javascript" coordinate="npm:@angular/core" displayName="Angular"/>
+  </extensions>
+</idea-plugin>
