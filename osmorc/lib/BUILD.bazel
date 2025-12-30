@@ -17,4 +17,12 @@ java_import(
   jars = ["bundlor-all.jar"],
   visibility = ["//visibility:public"]
 )
+
+exports_files([
+  "bundlor-all.jar",
+  "org.osgi.namespace.contract-1.0.0.jar",
+  "org.osgi.namespace.extender-1.0.1.jar",
+  "org.osgi.namespace.implementation-1.0.0.jar",
+  "org.osgi.namespace.service-1.0.0.jar",
+], visibility = ["//visibility:public"])
 ### auto-generated section `local-libs` end
