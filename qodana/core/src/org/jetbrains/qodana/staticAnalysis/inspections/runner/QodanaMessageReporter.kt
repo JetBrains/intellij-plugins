@@ -1,7 +1,6 @@
 package org.jetbrains.qodana.staticAnalysis.inspections.runner
 
 import com.intellij.ide.CommandLineInspectionProgressReporter
-import org.jetbrains.qodana.inspectionKts.InspectionKtsMessageReporter
 
 interface QodanaMessageReporter : CommandLineInspectionProgressReporter {
   fun reportError(e: Throwable)

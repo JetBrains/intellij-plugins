@@ -100,7 +100,7 @@ internal suspend fun compileInspectionKtsFile(
             exceptionDuringAnalysisFlow.value = exception
           }
         })
-        DynamicInspectionDescriptor.fromTool(inspectionTool)
+        DynamicInspectionDescriptor.fromTool(inspectionTool, FLEX_INSPECT_PROVIDER_NAME)
       }
       val descriptors = dynamicInspectionsDescriptor.toSet()
       InspectionKtsResultData(descriptors, emptySet())

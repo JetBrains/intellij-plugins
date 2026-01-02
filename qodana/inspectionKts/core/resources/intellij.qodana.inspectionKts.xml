@@ -1,4 +1,4 @@
-<idea-plugin package="org.jetbrains.qodana.inspectionKts">
+<idea-plugin visibility="public" package="org.jetbrains.qodana.inspectionKts">
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
   </dependencies>
@@ -42,7 +42,7 @@
                     dynamic="true"/>
   </extensionPoints>
 
-  <extensions defaultExtensionNs="com.intellij">
+  <extensions defaultExtensionNs="org.intellij.qodana">
     <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.api.MainInspectionKtsDefaultImportProvider"/>
     <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.templates.AnyLanguageInspectionKtsTemplateProvider"/>
     <inspectionKtsTemplateProvider

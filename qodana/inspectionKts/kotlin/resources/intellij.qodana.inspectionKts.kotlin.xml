@@ -3,6 +3,7 @@
     <plugin id="org.jetbrains.kotlin"/>
     <module name="intellij.kotlin.base.scripting.shared"/>
     <module name="intellij.dev.psiViewer"/>
+    <module name="intellij.qodana.inspectionKts"/>
   </dependencies>
   <extensions defaultExtensionNs="com.intellij.dev">
     <psiViewer.propertyNodeAppender implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinAnalyzeEntrypointNodeAppender"/>

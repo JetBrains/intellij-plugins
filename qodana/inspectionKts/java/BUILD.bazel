@@ -19,11 +19,6 @@ jvm_library(
     "@community//platform/core-impl",
     "@community//platform/analysis-impl",
     "@community//java/java-psi-api:psi",
-    "@ultimate_lib//:kotlinc-analysis-api-provided",
-    "@ultimate_lib//:kotlinc-kotlin-compiler-common-provided",
-    "@ultimate_lib//:kotlinc-kotlin-scripting-common-provided",
-    "@ultimate_lib//:kotlinc-kotlin-scripting-jvm-provided",
-    "@ultimate_lib//:kotlinc-kotlin-scripting-compiler-impl-provided",
     "@community//plugins/dev/intellij.dev.psiViewer:psiViewer",
     "@community//platform/projectModel-api:projectModel",
     "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
@@ -38,7 +33,6 @@ jvm_library(
     "@community//platform/util-class-loader:util-classLoader",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/backend/workspace",
-    "@community//plugins/kotlin/base/scripting/scripting.shared",
   ],
   runtime_deps = ["@community//plugins/kotlin:kotlin-plugin-community-main"]
 )

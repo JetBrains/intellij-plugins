@@ -31,6 +31,8 @@ const val FORCE_DISABLE_INSPECTION_KTS: String = "inspection.kts.disabled"
 const val INSPECTIONS_KTS_DIRECTORY: String = "inspections"
 const val INSPECTIONS_KTS_EXTENSION: String = "inspection.kts"
 
+internal const val FLEX_INSPECT_PROVIDER_NAME = "FlexInspect"
+
 private class KtsDynamicInspectionsProvider : DynamicInspectionsProvider {
   override fun inspections(project: Project): Flow<Set<DynamicInspectionDescriptor>> {
     return KtsInspectionsManager.getInstance(project).ktsInspectionsFlow
@@ -46,6 +48,8 @@ private class KtsDynamicInspectionsProvider : DynamicInspectionsProvider {
           .toSet()
       }
   }
+
+  override fun name(): String = FLEX_INSPECT_PROVIDER_NAME
 }
 
 internal val Project.projectScope: CoroutineScope get() = this.service<KtsInspectionsManager>().scope

@@ -3,14 +3,13 @@ package org.jetbrains.qodana.staticAnalysis.stat
 
 import com.intellij.codeInspection.ex.InspectListener.InspectionKind
 import com.intellij.codeInspection.ex.InspectionToolWrapper
+import com.intellij.codeInspection.ex.ProjectInspectionToolRegistrar
 import com.intellij.internal.statistic.collectors.fus.fileTypes.FileTypeUsagesCollector
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.utils.PluginInfo
 import com.intellij.internal.statistic.utils.getPluginInfoByDescriptor
 import com.intellij.openapi.project.Project
-import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
-import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
 
 internal const val FLEXINSPECT_STATS_INSPECTION_ID = "flexinspect"
 
@@ -236,29 +235,16 @@ internal object InspectionEventsCollector : CounterUsagesCollector() {
 
   private fun getInspectionIdToReport(project: Project, pluginInfo: PluginInfo?, toolId: String): String {
     return when {
-      pluginInfo == null && isFlexinspectInspection(project, toolId) -> {
-        FLEXINSPECT_STATS_INSPECTION_ID
+      pluginInfo == null -> {
+        val descriptor = ProjectInspectionToolRegistrar.getInstance(project).getDynamicInspectionDescriptor(toolId)
+        descriptor?.providerName ?: "third.party"
       }
-      pluginInfo != null && pluginInfo.isSafeToReport() -> {
+      pluginInfo.isSafeToReport() -> {
         toolId
       }
       else -> {
         "third.party"
       }
     }
-  }
-
-  private fun isFlexinspectInspection(project: Project, toolId: String): Boolean {
-    val flexInsectInspectionsStatuses = KtsInspectionsManager.getInstance(project).ktsInspectionsFlow.value ?: return false
-    if (flexInsectInspectionsStatuses.isEmpty()) {
-      return false
-    }
-
-    return flexInsectInspectionsStatuses
-      .asSequence()
-      .filterIsInstance<InspectionKtsFileStatus.Compiled>()
-      .any { compiled ->
-        compiled.inspections.inspections.any { it.toolWrapper.id == toolId }
-      }
   }
 }

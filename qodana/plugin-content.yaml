@@ -90,6 +90,10 @@
   files:
   - name: $MAVEN_REPOSITORY$/org/jline/jline/3/jline-3.jar
   reason: <- intellij.qodana
+- name: lib/qodana-frontend.jar
+  modules:
+  - name: intellij.qodana.util
+    reason: <- intellij.qodana
 - name: lib/qodana-sarif.jar
   library: qodana-sarif
   files:
@@ -103,8 +107,10 @@
   - name: intellij.qodana.coverage
   - name: intellij.qodana.go
   - name: intellij.qodana.cpp
+  - name: intellij.qodana.inspectionKts
   - name: intellij.qodana.inspectionKts.js
   - name: intellij.qodana.inspectionKts.kotlin
+  - name: intellij.qodana.inspectionKts.java
   - name: intellij.qodana.js
   - name: intellij.qodana.php
   - name: intellij.qodana.python.community
