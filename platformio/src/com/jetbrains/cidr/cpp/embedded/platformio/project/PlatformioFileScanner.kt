@@ -1,7 +1,9 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project
 
 import com.google.gson.Gson
+import com.intellij.build.eventBuilders.MessageEventBuilder
 import com.intellij.build.events.BuildEventsNls
+import com.intellij.build.events.MessageEvent
 import com.intellij.build.events.MessageEvent.Kind
 import com.intellij.build.events.impl.MessageEventImpl
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
@@ -38,7 +40,10 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
                              kind: Kind = Kind.SIMPLE,
                              @BuildEventsNls.Message details: String? = null,
                              parentEventId: Any = id): Any {
-    val messageEvent = MessageEventImpl(parentEventId, kind, null, message, details)
+    val messageEvent = MessageEvent.builder(message, kind)
+      .withParentId(parentEventId)
+      .withDescription(details)
+      .build()
     listener.onStatusChange(ExternalSystemBuildEvent(id, messageEvent))
     return messageEvent.id
   }
@@ -91,8 +96,9 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     val commandConverter = CPPCompilationCommandConverter(environment, workspace.project)
 
     compDbJson.mapNotNull {
-      val command = it.command
       val file = it.file
+      if(!OCFileTypeHelpers.isKnownFileType(file)) return@mapNotNull null
+      val command = it.command
       val directory = it.directory
 
       fileList.add(file)
@@ -117,8 +123,8 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
           val fallback = languageConfigurations.find { conf ->
             conf.languageKind == OCFileTypeHelpers.getLanguageKind(file)
           }
-          val dir = File(directory)
           if (fallback == null) { return@mapNotNull null }
+          val dir = File(directory)
           CPPCommandObject(
             dir,
             dir.resolve(File(file)),
