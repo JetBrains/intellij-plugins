@@ -86,8 +86,9 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
     val commandConverter = CPPCompilationCommandConverter(environment, workspace.project)
 
     compDbJson.mapNotNull {
-      val command = it.command
       val file = it.file
+      if(!OCFileTypeHelpers.isKnownFileType(file)) return@mapNotNull null
+      val command = it.command
       val directory = it.directory
 
       fileList.add(file)
@@ -112,8 +113,8 @@ internal class PlatformioFileScanner(private val projectDir: VirtualFile,
           val fallback = languageConfigurations.find { conf ->
             conf.languageKind == OCFileTypeHelpers.getLanguageKind(file)
           }
-          val dir = File(directory)
           if (fallback == null) { return@mapNotNull null }
+          val dir = File(directory)
           CPPCommandObject(
             dir,
             dir.resolve(File(file)),
