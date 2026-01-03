@@ -2,13 +2,13 @@
 load("@rules_java//java:defs.bzl", "java_import")
 
 java_import(
-  name = "json",
+  name = "dart-json",
   jars = ["json.jar"],
   visibility = ["//visibility:public"]
 )
 
 java_import(
-  name = "weberknecht-0-1-5",
+  name = "dart-weberknecht-0-1-5",
   jars = ["weberknecht-0.1.5.jar"],
   visibility = ["//visibility:public"]
 )

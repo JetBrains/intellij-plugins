@@ -2,19 +2,19 @@
 load("@rules_java//java:defs.bzl", "java_import")
 
 java_import(
-  name = "bundlor-all",
-  jars = ["bundlor-all.jar"],
-  visibility = ["//visibility:public"]
-)
-
-java_import(
-  name = "org-osgi-namespace-contract-1-0-0",
+  name = "osgi-_o_s_ginamespaces",
   jars = [
     "org.osgi.namespace.contract-1.0.0.jar",
     "org.osgi.namespace.implementation-1.0.0.jar",
     "org.osgi.namespace.extender-1.0.1.jar",
     "org.osgi.namespace.service-1.0.0.jar",
   ],
+  visibility = ["//visibility:public"]
+)
+
+java_import(
+  name = "osgi-jps-bundlor",
+  jars = ["bundlor-all.jar"],
   visibility = ["//visibility:public"]
 )
 ### auto-generated section `local-libs` end

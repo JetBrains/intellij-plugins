@@ -25,7 +25,7 @@ jvm_library(
     "@ultimate_lib//:osgi-jps-bndlib-resolve",
     "@community//libraries/plexus-utils",
     "@community//platform/util/jdom",
-    "//contrib/osmorc/lib:bundlor-all",
+    "//contrib/osmorc/lib:osgi-jps-bundlor",
     "@community//libraries/hash4j",
   ],
   exports = [
@@ -53,7 +53,7 @@ jvm_library(
     "@ultimate_lib//:osgi-jps-bndlib-resolve",
     "@community//libraries/plexus-utils",
     "@community//platform/util/jdom",
-    "//contrib/osmorc/lib:bundlor-all",
+    "//contrib/osmorc/lib:osgi-jps-bundlor",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "@lib//:kotlin-stdlib",
