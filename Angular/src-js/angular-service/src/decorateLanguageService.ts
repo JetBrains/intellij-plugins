@@ -40,8 +40,7 @@ export type UnboundReverseMapper = (
 
 export function createUnboundReverseMapper(language: Language<string>, languageService: TS.LanguageService): UnboundReverseMapper {
   return function (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range): ReverseMapping {
-    const [serviceScript, targetScript, sourceScript] =
-      getServiceScript(language, sourceFile.fileName);
+    const [serviceScript, targetScript] = getServiceScript(language, sourceFile.fileName);
     if (targetScript?.associatedOnly) {
       return undefined;
     }
