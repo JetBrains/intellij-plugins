@@ -90,7 +90,7 @@
   files:
   - name: $MAVEN_REPOSITORY$/org/jline/jline/3/jline-3.jar
   reason: <- intellij.qodana
-- name: lib/modules/intellij.qodana.util.jar
+- name: lib/qodana-frontend.jar
   contentModules:
   - name: intellij.qodana.util
 - name: lib/qodana-sarif.jar
