@@ -2,6 +2,7 @@
   <dependencies>
     <module name="intellij.java.dev"/>
     <module name="intellij.qodana.inspectionKts"/>
+    <plugin id="org.jetbrains.kotlin"/>
   </dependencies>
   <extensions defaultExtensionNs="com.intellij.dev">
     <psiViewer.apiMethodsProvider implementation="org.jetbrains.qodana.inspectionKts.java.PsiViewerApiMethodProvider"/>

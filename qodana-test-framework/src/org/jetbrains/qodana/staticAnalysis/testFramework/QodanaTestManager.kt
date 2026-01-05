@@ -28,7 +28,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.coverageStat
 import org.jetbrains.qodana.staticAnalysis.inspections.metrics.codeQualityMetrics
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QDCloudLinterProjectApi
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionApplication
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProfile
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.PreconfiguredRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileProvider

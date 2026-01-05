@@ -39,6 +39,7 @@ jvm_library(
     "@community//platform/util/coroutines",
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
+    "//contrib/qodana/util",
   ]
 )
 
@@ -83,6 +84,7 @@ jvm_library(
     "@community//platform/util/coroutines",
     "@community//platform/backend/workspace",
     "@community//platform/workspace/storage",
+    "//contrib/qodana/util",
   ]
 )
 ### auto-generated section `build intellij.qodana.jvm.java` end

@@ -39,6 +39,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunC
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionEventsCollector.QodanaActivityKind
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path

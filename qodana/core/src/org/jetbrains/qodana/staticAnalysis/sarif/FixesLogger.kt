@@ -10,11 +10,10 @@ import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.projectDescription.QodanaProjectDescriber
 import java.io.IOException
 import java.nio.charset.StandardCharsets

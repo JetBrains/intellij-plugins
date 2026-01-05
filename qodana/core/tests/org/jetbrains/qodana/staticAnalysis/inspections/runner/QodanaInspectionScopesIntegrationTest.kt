@@ -22,6 +22,7 @@ import org.jetbrains.qodana.staticAnalysis.newProfileWithInspections
 import org.jetbrains.qodana.staticAnalysis.profile.MainInspectionGroup
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Test
 import java.nio.file.Path
 

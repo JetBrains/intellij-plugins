@@ -3,7 +3,7 @@ package org.jetbrains.qodana.staticAnalysis.script
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaScriptConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlConfig
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import kotlin.io.path.Path
 
 fun buildScript(scriptName: String, vararg scriptParameters: Pair<String, String>): QodanaScript {

@@ -26,7 +26,6 @@ import org.jetbrains.qodana.cloud.api.mockQDCloudHttpClient
 import org.jetbrains.qodana.cloud.api.respond
 import org.jetbrains.qodana.cloudclient.asSuccess
 import org.jetbrains.qodana.cloudclient.qodanaCloudResponse
-import org.jetbrains.qodana.inspectionKts.FORCE_DISABLE_INSPECTION_KTS
 import org.jetbrains.qodana.respond200PublishReport
 import org.jetbrains.qodana.staticAnalysis.QodanaEnvEmpty
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase.Companion.runTest
@@ -53,6 +52,7 @@ import org.jetbrains.qodana.staticAnalysis.stat.InspectionDurationsAggregatorSer
 import org.jetbrains.qodana.staticAnalysis.stat.InspectionProblemsFoundAggregatorService
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.withSystemProperty
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -1436,14 +1436,6 @@ class QodanaRunnerTest : QodanaRunnerTestCase() {
     runAnalysis()
 
     assertSarifResults()
-  }
-
-  // community linters
-  @Test
-  fun `testDisabled flexInspect doesnt hang`(): Unit = runBlocking {
-    withSystemProperty(FORCE_DISABLE_INSPECTION_KTS, "true") {
-      runAnalysis()
-    }
   }
 
   @Test

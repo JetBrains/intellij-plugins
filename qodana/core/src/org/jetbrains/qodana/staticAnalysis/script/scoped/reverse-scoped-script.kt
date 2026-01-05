@@ -19,6 +19,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.createInvocation
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.*
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -55,10 +56,10 @@ internal class ReverseScopedScriptFactory : QodanaScriptFactory {
     }
 
   override fun createScript(
-    config: QodanaConfig,
-    messageReporter: QodanaMessageReporter,
-    contextFactory: QodanaRunContextFactory,
-    parameters: UnvalidatedParameters,
+      config: QodanaConfig,
+      messageReporter: QodanaMessageReporter,
+      contextFactory: QodanaRunContextFactory,
+      parameters: UnvalidatedParameters,
   ): QodanaScript {
     val path = run {
       val p = Path(parameters.require<String>(SCOPE_ARG))

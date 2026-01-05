@@ -31,6 +31,7 @@ jvm_library(
     "@community//java/testFramework",
     "@community//platform/core-ui",
     "//contrib/qodana/inspectionKts/core:qodana-inspectionKts",
+    "//contrib/qodana/util",
   ]
 )
 ### auto-generated section `build intellij.qodana.testFramework` end

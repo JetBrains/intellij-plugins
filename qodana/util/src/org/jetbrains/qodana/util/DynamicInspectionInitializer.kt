@@ -1,4 +1,4 @@
-package org.jetbrains.qodana.inspectionKts
+package org.jetbrains.qodana.util
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
@@ -14,18 +14,18 @@ interface DynamicInspectionInitializer {
   companion object {
     val EP_NAME: ExtensionPointName<DynamicInspectionInitializer> = ExtensionPointName("org.intellij.qodana.dynamicInspectionsInitializer")
 
-    suspend fun waitForDynamicInspectionsInitialization(project: Project, messageReporter: InspectionKtsMessageReporter) {
+    suspend fun waitForDynamicInspectionsInitialization(project: Project, messageReporter: QodanaMessageReporter) {
       invokeAllInitializers(project, messageReporter)
     }
 
-    private suspend fun invokeAllInitializers(project: Project, messageReporter: InspectionKtsMessageReporter) {
-      coroutineScope {
-        EP_NAME.extensionList.forEach {
-          launch { it.initialize(project, messageReporter) }
+    private suspend fun invokeAllInitializers(project: Project, messageReporter: QodanaMessageReporter) {
+        coroutineScope {
+            EP_NAME.extensionList.forEach {
+                launch { it.initialize(project, messageReporter) }
+            }
         }
-      }
     }
   }
 
-  suspend fun initialize(project: Project, messageReporter: InspectionKtsMessageReporter)
+  suspend fun initialize(project: Project, messageReporter: QodanaMessageReporter)
 }

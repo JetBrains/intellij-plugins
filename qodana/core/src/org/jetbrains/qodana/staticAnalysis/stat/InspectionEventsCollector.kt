@@ -14,7 +14,7 @@ import com.intellij.openapi.project.Project
 internal const val FLEXINSPECT_STATS_INSPECTION_ID = "flexinspect"
 
 internal object InspectionEventsCollector : CounterUsagesCollector() {
-  private val GROUP = QodanaEventLogGroup("qodana.inspections", 16)
+  private val GROUP = QodanaEventLogGroup("qodana.inspections", 17)
 
   override fun getGroup() = GROUP.eventLogGroup
 
@@ -84,19 +84,6 @@ internal object InspectionEventsCollector : CounterUsagesCollector() {
     qodanaActivityKindField
   )
 
-  private val flexInspectTotalFilesField = EventFields.RoundedInt("files_total")
-  private val flexInspectCompiledFilesField = EventFields.RoundedInt("files_compiled")
-  private val flexInspectFailedFiles = EventFields.RoundedInt("files_failed")
-  private val flexInspectCompiledInspections = EventFields.RoundedInt("inspections_compiled")
-
-  private val flexInspectCompiled = GROUP.registerVarargEvent(
-    "flexinspect.compiled",
-    flexInspectTotalFilesField,
-    flexInspectCompiledFilesField,
-    flexInspectFailedFiles,
-    flexInspectCompiledInspections
-  )
-
   enum class QodanaActivityKind {
     LINTER_EXECUTION,
     PROJECT_OPENING,
@@ -115,20 +102,6 @@ internal object InspectionEventsCollector : CounterUsagesCollector() {
         qodanaActivityKindField.with(activityKind)
       )
     }
-  }
-
-  fun logInspectionKtsCompiled(
-    inspectionKtsFilesCount: Int,
-    compiledInspectionKtsFilesCount: Int,
-    failedToCompileInspectionKtsFilesCount: Int,
-    inspectionKtsInspectionsCount: Int,
-  ) {
-    flexInspectCompiled.log(
-      flexInspectTotalFilesField.with(inspectionKtsFilesCount),
-      flexInspectCompiledFilesField.with(compiledInspectionKtsFilesCount),
-      flexInspectFailedFiles.with(failedToCompileInspectionKtsFilesCount),
-      flexInspectCompiledInspections.with(inspectionKtsInspectionsCount)
-    )
   }
 
   @JvmStatic

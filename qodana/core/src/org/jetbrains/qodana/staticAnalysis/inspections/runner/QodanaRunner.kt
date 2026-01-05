@@ -33,6 +33,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.writeReport
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptResult
 import org.jetbrains.qodana.staticAnalysis.stat.QodanaEventsService
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.IOException
 import kotlin.io.path.exists
 

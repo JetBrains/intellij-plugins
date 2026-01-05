@@ -39,6 +39,7 @@
     <module name="intellij.qodana.jvm.maven"/>
     <module name="intellij.qodana.jvm.swagger"/>
     <module name="intellij.qodana.jvm.coverage"/>
+    <module name="intellij.qodana.util" loading="embedded"/>
   </content>
 
   <dependencies>
@@ -334,6 +335,9 @@
                     dynamic="true"/>
     <extensionPoint name="projectLoaderExtension"
                     interface="org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaProjectLoaderExtension"
+                    dynamic="true"/>
+    <extensionPoint name="dynamicInspectionsInitializer"
+                    interface="org.jetbrains.qodana.util.DynamicInspectionInitializer"
                     dynamic="true"/>
   </extensionPoints>
 

@@ -7,17 +7,16 @@ import com.intellij.codeInspection.inspectionProfile.YamlInspectionProfileRaw
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.coroutines.QodanaDispatchers
-import org.jetbrains.qodana.inspectionKts.DynamicInspectionInitializer.Companion.waitForDynamicInspectionsInitialization
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaInspectionProfileLoader
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.asInspectionKtsMessageReporter
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.profile.QODANA_BASE_PROFILE_NAME
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfile
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaInspectionProfileManager
+import org.jetbrains.qodana.util.DynamicInspectionInitializer.Companion.waitForDynamicInspectionsInitialization
 
 data class LoadedProfile(
   val profile: QodanaInspectionProfile,
@@ -26,7 +25,7 @@ data class LoadedProfile(
 ) {
   companion object {
     suspend fun load(config: QodanaConfig, project: Project, messageReporter: QodanaMessageReporter): LoadedProfile {
-      waitForDynamicInspectionsInitialization(project, messageReporter.asInspectionKtsMessageReporter())
+      waitForDynamicInspectionsInitialization(project, messageReporter)
 
       val baseProfile = loadBaseProfile(config, project, messageReporter)
       val profileWithFullProfileSection = loadProfileSectionAsYamlProfile(baseProfile.profile, config.profile)
@@ -38,7 +37,7 @@ data class LoadedProfile(
 private suspend fun loadBaseProfile(
   config: QodanaConfig,
   project: Project,
-  messageReporter: QodanaMessageReporter
+  messageReporter: QodanaMessageReporter,
 ): LoadedProfile {
   return runInterruptible(StaticAnalysisDispatchers.IO) {
     val profileLoader = QodanaInspectionProfileLoader(project)
@@ -65,7 +64,7 @@ private suspend fun loadBaseProfile(
 
 private suspend fun loadProfileSectionAsYamlProfile(
   baseProfile: QodanaInspectionProfile,
-  profile: QodanaProfileConfig
+  profile: QodanaProfileConfig,
 ): QodanaInspectionProfile {
   val yamlInspectionProfileGroups = profile.groups.map {
     YamlInspectionGroupRaw(

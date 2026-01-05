@@ -9,7 +9,7 @@ import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
-import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaMessageReporter
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaToolResultDatabase
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.BaselineEqualityV1
 import org.junit.Test

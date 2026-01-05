@@ -27,6 +27,7 @@ jvm_library(
     "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     "@community//platform/statistics",
     "//contrib/qodana",
+    "//contrib/qodana/util",
   ]
 )
 
@@ -57,6 +58,7 @@ jvm_library(
     "//contrib/qodana-test-framework:qodana-testFramework",
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
+    "//contrib/qodana/util",
   ]
 )
 ### auto-generated section `build intellij.qodana.coverage` end

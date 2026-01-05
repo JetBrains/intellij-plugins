@@ -8,6 +8,7 @@
     <editorNotificationProvider implementation="org.jetbrains.qodana.inspectionKts.ui.InspectionKtsBannerProvider"/>
     <dynamicInspectionsProvider implementation="org.jetbrains.qodana.inspectionKts.KtsDynamicInspectionsProvider"/>
     <statistics.counterUsagesCollector implementationClass="org.jetbrains.qodana.inspectionKts.stat.InspectionKtsEventsCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.qodana.inspectionKts.stat.InspectionKtsMetricsCollector"/>
     <projectService serviceImplementation="org.jetbrains.qodana.inspectionKts.InspectionKtsSettings"
                     configurationSchemaKey="inspectionKts"/>
   </extensions>
@@ -19,9 +20,6 @@
     </action>
   </actions>
   <extensionPoints>
-    <extensionPoint name="dynamicInspectionsInitializer"
-                    interface="org.jetbrains.qodana.inspectionKts.DynamicInspectionInitializer"
-                    dynamic="true"/>
     <extensionPoint name="inspectionKtsDefaultImportProvider"
                     interface="org.jetbrains.qodana.inspectionKts.InspectionKtsDefaultImportProvider"
                     dynamic="true"/>

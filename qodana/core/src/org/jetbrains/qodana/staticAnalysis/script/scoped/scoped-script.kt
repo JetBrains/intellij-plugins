@@ -13,6 +13,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunIncrement
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.script.*
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.notExists
@@ -35,10 +36,10 @@ internal class ScopedScriptFactory : QodanaScriptFactory {
     }
 
   override fun createScript(
-    config: QodanaConfig,
-    messageReporter: QodanaMessageReporter,
-    contextFactory: QodanaRunContextFactory,
-    parameters: UnvalidatedParameters,
+      config: QodanaConfig,
+      messageReporter: QodanaMessageReporter,
+      contextFactory: QodanaRunContextFactory,
+      parameters: UnvalidatedParameters,
   ): QodanaScript {
     val path = run {
       val p = Path(parameters.require<String>(SCOPE_ARG))

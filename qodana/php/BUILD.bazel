@@ -33,6 +33,7 @@ jvm_library(
     "//contrib/qodana/sarif",
     "@community//libraries/kotlinx/coroutines/core",
     "@community//platform/backend/observation",
+    "//contrib/qodana/util",
   ]
 )
 
@@ -76,6 +77,7 @@ jvm_library(
     "@community//libraries/kotlinx/coroutines/core",
     "@community//platform/backend/observation",
     "@community//platform/backend/observation:observation_test_lib",
+    "//contrib/qodana/util",
   ]
 )
 ### auto-generated section `build intellij.qodana.php` end

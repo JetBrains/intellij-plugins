@@ -15,6 +15,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.TEAMCITY_CHANGES_SCRIPT_NAME
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths

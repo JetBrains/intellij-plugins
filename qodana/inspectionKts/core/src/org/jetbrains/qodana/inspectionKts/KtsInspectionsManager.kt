@@ -26,8 +26,6 @@ import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 
-const val FORCE_DISABLE_INSPECTION_KTS: String = "inspection.kts.disabled"
-
 const val INSPECTIONS_KTS_DIRECTORY: String = "inspections"
 const val INSPECTIONS_KTS_EXTENSION: String = "inspection.kts"
 

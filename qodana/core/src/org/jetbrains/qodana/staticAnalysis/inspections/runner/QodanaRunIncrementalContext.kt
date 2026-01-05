@@ -15,6 +15,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProf
 import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.staticAnalysis.script.LocalChangesService
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Path
 
 /**

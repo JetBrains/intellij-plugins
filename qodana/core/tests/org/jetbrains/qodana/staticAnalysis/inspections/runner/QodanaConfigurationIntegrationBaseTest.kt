@@ -9,6 +9,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.LoadedProf
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.PreconfiguredRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScript
 import org.jetbrains.qodana.staticAnalysis.script.QodanaSingleRunScript
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 

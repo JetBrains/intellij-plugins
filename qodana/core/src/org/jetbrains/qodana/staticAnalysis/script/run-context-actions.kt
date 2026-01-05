@@ -22,7 +22,6 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.jdom.Element
-import org.jetbrains.qodana.inspectionKts.INSPECTIONS_KTS_EXTENSION
 import org.jetbrains.qodana.runActivityWithTiming
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaException
@@ -71,7 +70,7 @@ suspend fun QodanaRunContext.runAnalysis(
   scope: QodanaAnalysisScope = this.scope,
   context: QodanaGlobalInspectionContext,
   progressIndicator: ProgressIndicatorEx = QodanaProgressIndicator(messageReporter),
-  isOffline: Boolean = true
+  isOffline: Boolean = true,
 ) {
   scope.patchToNotAnalyzeGeneratedCode(project)
   if (!GlobalInspectionContextUtil.canRunInspections(project, false) {}) {
@@ -98,7 +97,7 @@ suspend fun QodanaRunContext.runAnalysis(
 
 suspend fun QodanaRunContext.getResultsForInspectionGroup(
   context: QodanaGlobalInspectionContext,
-  inspectionGroupState: GroupState = context.profileState.mainState
+  inspectionGroupState: GroupState = context.profileState.mainState,
 ): List<Result> {
   val consumer = context.consumer
   consumer.close()
@@ -155,7 +154,7 @@ private val isFlexInspectIgnoredInQodana = !java.lang.Boolean.getBoolean("qodana
 private fun QodanaAnalysisScope.patchToNotAnalyzeGeneratedCode(project: Project) {
   setFilter(object : GlobalSearchScope() {
     override fun contains(file: VirtualFile): Boolean {
-      if (file.name.endsWith(INSPECTIONS_KTS_EXTENSION) && isFlexInspectIgnoredInQodana) {
+      if (file.name.endsWith("inspection.kts") && isFlexInspectIgnoredInQodana) {
         return false
       }
       return !GeneratedSourcesFilter.isGeneratedSourceByAnyFilter(file, project)

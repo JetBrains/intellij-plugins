@@ -19,6 +19,7 @@ import org.jetbrains.qodana.staticAnalysis.sarif.*
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.staticAnalysis.stat.CoverageFeatureEventsCollector
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.nio.file.Paths
 
 /**
@@ -26,10 +27,10 @@ import java.nio.file.Paths
  * Reports only the problems that differ between the two runs.
  */
 abstract class ComparingScript(
-  private val config: QodanaConfig,
-  private val messageReporter: QodanaMessageReporter,
-  private val contextFactory: QodanaRunContextFactory,
-  override val analysisKind: AnalysisKind,
+    private val config: QodanaConfig,
+    private val messageReporter: QodanaMessageReporter,
+    private val contextFactory: QodanaRunContextFactory,
+    override val analysisKind: AnalysisKind,
 ) : QodanaScript {
   protected val progressIndicator = QodanaProgressIndicator(messageReporter)
 

@@ -13,6 +13,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaYamlReader.d
 import org.jetbrains.qodana.staticAnalysis.script.CHANGES_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.DEFAULT_SCRIPT_NAME
 import org.jetbrains.qodana.staticAnalysis.script.QodanaScriptFactory
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Path

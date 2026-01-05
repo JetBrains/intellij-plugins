@@ -16,6 +16,7 @@ import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.*
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.startup.QodanaRunContextFactory
 import org.jetbrains.qodana.staticAnalysis.script.*
+import org.jetbrains.qodana.util.QodanaMessageReporter
 
 internal class MigrateClassesScriptFactory : QodanaScriptFactory {
   companion object {

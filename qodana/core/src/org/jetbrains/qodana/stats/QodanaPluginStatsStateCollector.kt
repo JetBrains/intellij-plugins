@@ -10,8 +10,6 @@ import org.jetbrains.qodana.cloud.project.QodanaCloudProjectLinkService
 import org.jetbrains.qodana.coverage.CoverageLanguage
 import org.jetbrains.qodana.coverage.CoverageMetaDataArtifact
 import org.jetbrains.qodana.highlight.*
-import org.jetbrains.qodana.inspectionKts.InspectionKtsFileStatus
-import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector.FIELD_USER_STATE
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector.IS_LINK
 import org.jetbrains.qodana.stats.QodanaPluginStatsCounterCollector.REPORT_TYPE
@@ -44,24 +42,7 @@ internal class QodanaPluginStatsStateCollector : ProjectUsagesCollector() {
       emptyList()
     }
 
-    val inspectionKtsFileStatuses = KtsInspectionsManager.getInstance(project).ktsInspectionsFlow.value ?: emptySet()
-
-    val compiledInspectionFiles = inspectionKtsFileStatuses.filterIsInstance<InspectionKtsFileStatus.Compiled>()
-
-    val inspectionKtsFilesCount = inspectionKtsFileStatuses.count()
-    val compiledInspectionKtsFilesCount = compiledInspectionFiles.count()
-    val failedToCompileInspectionKtsFilesCount = compiledInspectionFiles.filterIsInstance<InspectionKtsFileStatus.Error>().count()
-    val inspectionKtsInspectionsCount = compiledInspectionFiles.flatMap { it.inspections.inspections }.count()
-
-    val inspectionKtsMetric = FLEXINSPECT_COMPILED.metric(
-      FLEXINSPECT_TOTAL_FILES_FIELD.with(inspectionKtsFilesCount),
-      FLEXINSPECT_COMPILED_FILES_FIELD.with(compiledInspectionKtsFilesCount),
-      FLEXINSPECT_FAILED_FILES_FIELD.with(failedToCompileInspectionKtsFilesCount),
-      FLEXINSPECT_COMPILED_INSPECTIONS_FIELD.with(inspectionKtsInspectionsCount)
-    )
-
     return mutableSetOf(
-      inspectionKtsMetric,
       REPORT_PROBLEMS_DATA.metric(problemsTypesCount.total, problemsTypesCount.missing, problemsTypesCount.fixed),
       HIGHLIGHTED_REPORT_STATE.metric(reportStateStats, highlightedReportType),
       COVERAGE_IN_REPORT.metric(coverageLanguages),
@@ -154,22 +135,5 @@ internal class QodanaPluginStatsStateCollector : ProjectUsagesCollector() {
   private val COVERAGE_IN_REPORT = GROUP.registerEvent(
     "coverage.in.report.shown",
     EventFields.StringList("language", CoverageLanguage.values().map { it.name })
-  )
-
-  // --------------------
-  // FlexInspect status
-  // --------------------
-
-  private val FLEXINSPECT_TOTAL_FILES_FIELD = EventFields.RoundedInt("files_total")
-  private val FLEXINSPECT_COMPILED_FILES_FIELD = EventFields.RoundedInt("files_compiled")
-  private val FLEXINSPECT_FAILED_FILES_FIELD = EventFields.RoundedInt("files_failed")
-  private val FLEXINSPECT_COMPILED_INSPECTIONS_FIELD = EventFields.RoundedInt("inspections_compiled")
-
-  private val FLEXINSPECT_COMPILED = GROUP.registerVarargEvent(
-    "flexinspect.compiled.ide",
-    FLEXINSPECT_TOTAL_FILES_FIELD,
-    FLEXINSPECT_COMPILED_FILES_FIELD,
-    FLEXINSPECT_FAILED_FILES_FIELD,
-    FLEXINSPECT_COMPILED_INSPECTIONS_FIELD
   )
 }

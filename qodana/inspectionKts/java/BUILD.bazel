@@ -28,7 +28,6 @@ jvm_library(
     "@community//plugins/kotlin/base/resources:kotlin-base-resources",
     "@community//plugins/kotlin/base/plugin",
     "@community//plugins/kotlin/base/util",
-    "@community//plugins/kotlin/base/project-structure",
     "@community//plugins/kotlin/scripting",
     "@community//platform/util-class-loader:util-classLoader",
     "@community//platform/platform-impl:ide-impl",

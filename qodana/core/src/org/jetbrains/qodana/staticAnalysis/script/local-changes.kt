@@ -33,6 +33,7 @@ import org.jetbrains.qodana.staticAnalysis.profile.QodanaProfile
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.staticAnalysis.vcs.git.getStatus
 import org.jetbrains.qodana.staticAnalysis.vcs.git.restoreTrackedFiles
+import org.jetbrains.qodana.util.QodanaMessageReporter
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 import kotlin.time.Duration.Companion.seconds
