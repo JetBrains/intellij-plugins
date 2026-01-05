@@ -1,7 +1,7 @@
 import type {CodeInformation, Language, SourceScript} from "@volar/language-core"
 import type * as TS from "./tsserverlibrary.shim"
 import type {Range} from "tsc-ide-plugin/protocol"
-import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
+import type {ReverseMapping} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"
 import type {TypeScriptServiceScript} from "@volar/typescript"
 import {toGeneratedRanges, toSourceRanges} from "@volar/typescript/lib/node/transform"
@@ -32,16 +32,14 @@ function toGeneratedRange(language: Language, serviceScript: TypeScriptServiceSc
   return undefined
 }
 
-export type UnboundReverseMapper = (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range) => {
-  sourceRange: Range,
-  fileName: string
-} | undefined;
+export type UnboundReverseMapper = (
+  ts: typeof TS,
+  sourceFile: TS.SourceFile,
+  generatedRange: Range,
+) => ReverseMapping;
 
 export function createUnboundReverseMapper(language: Language<string>, languageService: TS.LanguageService): UnboundReverseMapper {
-  return function (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range): {
-    sourceRange: Range,
-    fileName: string
-  } | undefined {
+  return function (ts: typeof TS, sourceFile: TS.SourceFile, generatedRange: Range): ReverseMapping {
     const [serviceScript, targetScript, sourceScript] =
       getServiceScript(language, sourceFile.fileName);
     if (targetScript?.associatedOnly) {
