@@ -74,15 +74,24 @@ export function createUnboundReverseMapper(language: Language<string>, languageS
   }
 }
 
-export function decorateIdeLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService, unboundReverseMapper: UnboundReverseMapper) {
+export function decorateIdeLanguageServiceExtensions(
+  language: Language<string>,
+  languageService: TS.LanguageService,
+  unboundReverseMapper: UnboundReverseMapper,
+) {
+  const {
+    webStormGetElementType,
+    webStormGetTypeProperties,
+    webStormGetTypeProperty,
+    webStormGetSymbolType,
+  } = languageService
 
-  let {webStormGetElementType, webStormGetTypeProperties, webStormGetTypeProperty, webStormGetSymbolType} = languageService
-
-  if (webStormGetElementType === undefined ||
-    webStormGetTypeProperties === undefined ||
-    webStormGetTypeProperty === undefined ||
-    webStormGetSymbolType === undefined)
-    return
+  if (
+    webStormGetElementType === undefined
+    || webStormGetTypeProperties === undefined
+    || webStormGetTypeProperty === undefined
+    || webStormGetSymbolType === undefined
+  ) return
 
   languageService.webStormGetElementType = (options) => {
     const {ts, fileName, startOffset, endOffset} = options
