@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionParameters
@@ -21,7 +21,6 @@ import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.Constants
 import org.intellij.terraform.config.codeinsight.QuoteInsertHandler
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.createPropertyOrBlockType
-import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getIncomplete
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.getOriginalObject
 import org.intellij.terraform.config.codeinsight.TfModelHelper
 import org.intellij.terraform.config.documentation.psi.HclFakeElementPsiFactory
@@ -138,22 +137,19 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
 
     if (properties.isEmpty()) return
 
-    val incomplete = getIncomplete(parameters)
     val fakeFactory = parent.project.service<HclFakeElementPsiFactory>()
-
     val candidates = properties.values
       .asSequence()
-      .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES }
-      .filter { matches(context, it) }
-      .filter { passesExistenceFilter(parent, it, incomplete) }
-      .filter { it.configurable }
+      .filter { it.name != Constants.HAS_DYNAMIC_ATTRIBUTES && it.configurable }
+      .filter { isApplicableInContext(context, it) }
+      .filter { shouldSuggestCandidate(parent, it) }
       .map { toLookupElement(it, parent, fakeFactory) }
-      .toList()
+      .asIterable()
 
     addResultsWithCustomSorter(result, candidates)
   }
 
-  private fun matches(context: HclPositionContext, candidate: PropertyOrBlockType): Boolean = when {
+  private fun isApplicableInContext(context: HclPositionContext, candidate: PropertyOrBlockType): Boolean = when {
     context.isProperty -> isCompatiblePropertyType(candidate, context.rightType)
     context.isBlock -> candidate is BlockType
     else -> true
@@ -164,16 +160,10 @@ internal object HclBlockPropertiesCompletionProvider : CompletionProvider<Comple
            (rightType == Types.StringWithInjection || element.type == rightType)
   }
 
-  private fun passesExistenceFilter(parent: HCLObject, candidate: PropertyOrBlockType, incomplete: String?): Boolean {
-    return when (candidate) {
-      is PropertyType -> {
-        val alreadyExists = parent.findProperty(candidate.name) != null
-        val matchesIncomplete = incomplete != null && candidate.name.contains(incomplete)
-        !alreadyExists || matchesIncomplete
-      }
-      is BlockType -> true
-      else -> false
-    }
+  private fun shouldSuggestCandidate(parent: HCLObject, candidate: PropertyOrBlockType): Boolean = when (candidate) {
+    is PropertyType -> parent.findProperty(candidate.name) == null
+    is BlockType -> true
+    else -> false
   }
 
   private fun toLookupElement(property: PropertyOrBlockType, parent: HCLObject, fakeFactory: HclFakeElementPsiFactory): LookupElement {
@@ -219,24 +209,24 @@ private data class HclPositionContext(
   val rightType: HclType? = null,
 )
 
-internal object HclElementsPriorityWeigher : LookupElementWeigher("hcl.required.property") {
-  override fun weigh(element: LookupElement): Comparable<Nothing> {
-    val obj = element.`object`
-    if (obj !is PropertyOrBlockType) return 100
+private val HclElementsSorter = CompletionSorter.emptySorter().weigh(
+  object : LookupElementWeigher("hcl.required.property") {
+    override fun weigh(element: LookupElement): Comparable<Nothing> {
+      val obj = element.`object`
+      if (obj !is PropertyOrBlockType) return 100
 
-    val requiredWeight = if (obj.required) 0 else 1
-    val typeWeight = when (obj) {
-      is BlockType -> 0
-      is PropertyType -> 1
-      else -> 2
+      val requiredWeight = if (obj.required) 0 else 1
+      val typeWeight = when (obj) {
+        is BlockType -> 0
+        is PropertyType -> 1
+        else -> 2
+      }
+
+      return requiredWeight * 10 + typeWeight
     }
-
-    return requiredWeight * 10 + typeWeight
   }
-}
+)
 
-internal fun addResultsWithCustomSorter(result: CompletionResultSet, toAdd: Collection<LookupElement>) {
-  if (toAdd.isEmpty()) return
-  result.withRelevanceSorter(CompletionSorter.emptySorter().weigh(HclElementsPriorityWeigher))
-    .addAllElements(toAdd)
+internal fun addResultsWithCustomSorter(result: CompletionResultSet, toAdd: Iterable<LookupElement>) {
+  result.withRelevanceSorter(HclElementsSorter).addAllElements(toAdd)
 }

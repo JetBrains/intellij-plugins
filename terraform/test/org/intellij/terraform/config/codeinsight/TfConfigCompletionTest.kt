@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionType
@@ -116,8 +116,6 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
     doBasicCompletionTest("resource \"x\" {\nid='a'\n<caret>\n}", propertiesWithoutId)
     doBasicCompletionTest("resource abc {\n<caret> = true\n}", emptyList())
     doBasicCompletionTest("resource abc {\n<caret> {}\n}", listOf("lifecycle", "connection", "provisioner", "dynamic"))
-    doBasicCompletionTest("resource abc {\n<caret>count = 2\n}", 1, "count")
-    doBasicCompletionTest("resource abc {\n\"<caret>count\" = 2\n}", 1, "count")
 
     doBasicCompletionTest(
       "resource abc {\n<caret>lifecycle {}\n}",
@@ -243,12 +241,12 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
         resource azurerm_linux_virtual_machine x {
           admin_username = ""
           <caret>location = ""
-        }""".trimIndent(), Matcher.and(Matcher.not("admin_username"), Matcher.all("location")))
+        }""".trimIndent(), Matcher.not("admin_username", "location"))
     doBasicCompletionTest("""
       resource azurerm_linux_virtual_machine x {
         <caret>admin_username = ""
         location = ""
-      }""".trimIndent(), Matcher.and(Matcher.not("location"), Matcher.all("admin_username")))
+      }""".trimIndent(), Matcher.not("location", "admin_username"))
   }
 
   fun testResourceProviderCompletionFromModel() {
