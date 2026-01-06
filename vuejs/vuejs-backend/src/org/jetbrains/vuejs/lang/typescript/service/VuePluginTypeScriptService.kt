@@ -99,7 +99,7 @@ class VuePluginTypeScriptService(
     "Vue + TypeScript"
 
   override fun isTypeEvaluationEnabled(): Boolean =
-    false
+    getVueSettings(project).useTypesFromServer
 
   override val typeEvaluationSupport: TypeScriptServiceEvaluationSupport =
     VueCompilerServiceEvaluationSupport(project)
