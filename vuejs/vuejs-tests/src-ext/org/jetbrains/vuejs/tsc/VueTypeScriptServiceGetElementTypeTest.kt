@@ -13,7 +13,6 @@ import com.intellij.lang.typescript.tsc.TypeScriptServiceGetElementTypeTest
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
-import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VuePluginTypeScriptService
@@ -83,7 +82,7 @@ class VueTypeScriptServiceGetElementTypeTest :
     myFixture.configureByText("a.vue", vueCode)
     val element = JSTestUtils.findElementByText(myFixture, "a:number = 42", JSVariable::class.java)
     val jsType = calculateType(element)
-    TestCase.assertNotNull(jsType)
+    assertNotNull(jsType)
     JSTypeEvaluationLocationProvider.withTypeEvaluationLocation(element) {
       val unwrapRefType = VueUnwrapRefType(jsType!!, element).substitute()
       assertEquals("number", unwrapRefType.getTypeText(JSType.TypeTextFormat.PRESENTABLE))
