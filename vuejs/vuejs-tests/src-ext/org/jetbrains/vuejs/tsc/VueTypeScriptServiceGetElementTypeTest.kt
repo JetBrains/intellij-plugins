@@ -26,8 +26,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 
-// todo rename to VueLspTypeScriptServiceGetElementTypeTest
-class VolarTypeScriptServiceGetElementTypeTest : TypeScriptServiceGetElementTypeTest() {
+class VueTypeScriptServiceGetElementTypeTest :
+  TypeScriptServiceGetElementTypeTest() {
 
   @JvmField
   @Rule
