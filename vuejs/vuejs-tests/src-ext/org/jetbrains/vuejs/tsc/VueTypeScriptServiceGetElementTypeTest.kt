@@ -14,7 +14,6 @@ import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
-import org.intellij.lang.annotations.Language
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VuePluginTypeScriptService
@@ -35,6 +34,7 @@ class VueTypeScriptServiceGetElementTypeTest :
   )
 
   override fun setUpTypeScriptService() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
       it is VuePluginTypeScriptService
     }
@@ -60,9 +60,8 @@ class VueTypeScriptServiceGetElementTypeTest :
    */
   @Test
   fun testInstantiateMappedTypeVue() {
-    //myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
-
-    @Language("TypeScript") val code = """
+    // language=typescript 
+    val code = """
       type UnwrapRef<T> = T extends object ? { [P in keyof T]: UnwrapRef<T[P]>; } : T;
       declare function unwrap<T>(value: T): UnwrapRef<T>;
       const unwrapped = unwrap({foo: 123, bar: 456})
@@ -73,10 +72,9 @@ class VueTypeScriptServiceGetElementTypeTest :
     doTestInstantiateMappedType()
   }
 
+  // WEB-68084
   @Test
   fun testUnwrapRefType() {
-    // WEB-68084
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0)
     val vueCode = """
       <script setup lang='ts'>
       const a:number = 42
