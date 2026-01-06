@@ -6,7 +6,7 @@
   "dependencies": {
     "tsc-ide-plugin": "file:/../../../../../plugins/JavaScriptLanguage/resources/tscplugin",
     "typescript": "^5.9.3",
-    "@vue/typescript-plugin": "^3.2.1"
+    "@vue/typescript-plugin": "^3.2.2"
   },
   "devDependencies": {
     "@types/node": "^22.19.3",
