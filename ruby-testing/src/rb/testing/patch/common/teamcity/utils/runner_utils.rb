@@ -46,7 +46,7 @@ module Rake
       end
 
       def self.use_minitest?
-        defined? ::MiniTest::Unit::TestCase
+        defined? ::MiniTest::Unit::TestCase || defined? ::Minitest::Test
       end
 
       ###########################################################################
