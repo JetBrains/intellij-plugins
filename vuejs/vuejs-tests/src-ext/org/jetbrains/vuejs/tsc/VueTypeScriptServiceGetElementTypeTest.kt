@@ -6,20 +6,18 @@ import com.intellij.lang.javascript.TrackFailedTestRule
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
-import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject.Companion.NULL_SERVICE_OBJECT
 import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptTypeRequestKind
 import com.intellij.lang.typescript.tsc.TypeScriptServiceGetElementTypeTest
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
-import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
-import org.jetbrains.vuejs.lang.typescript.service.VueLspServerActivationRule
-import org.jetbrains.vuejs.lang.typescript.service.lsp.VueLspTypeScriptService
+import org.jetbrains.vuejs.lang.typescript.service.VuePluginTypeScriptService
 import org.jetbrains.vuejs.types.VueUnwrapRefType
 import org.junit.Assume
 import org.junit.Rule
@@ -37,15 +35,14 @@ class VueTypeScriptServiceGetElementTypeTest :
   )
 
   override fun setUpTypeScriptService() {
-    VueLspServerActivationRule.markForceEnabled(true)
     TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
-      it is VueLspTypeScriptService
+      it is VuePluginTypeScriptService
     }
   }
 
   override fun calculateType(element: PsiElement, typeRequestKind: TypeScriptTypeRequestKind): JSType? {
     return super.calculateType(element, typeRequestKind).also {
-      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VueLspTypeScriptService::class.java)
+      assertInstanceOf(TypeScriptServiceHolder.getForFile(project, file.virtualFile), VuePluginTypeScriptService::class.java)
     }
   }
 
@@ -95,14 +92,7 @@ class VueTypeScriptServiceGetElementTypeTest :
     }
   }
 
-  override fun waitForServiceInitialized() {
-    waitUntilFileOpenedByLspServer(project, file.virtualFile)
-  }
-
   override suspend fun sendTestCancellationCommand(service: TypeScriptService) {
-    (service as VueLspTypeScriptService)
-      .handleCustomTsServerCommand("ideTestCancellation", NULL_SERVICE_OBJECT, false)
-      // should never reach this code due to cancellation
-      .let { assertNotNull(it) }
+    Disposer.dispose(service as VuePluginTypeScriptService)
   }
 }
