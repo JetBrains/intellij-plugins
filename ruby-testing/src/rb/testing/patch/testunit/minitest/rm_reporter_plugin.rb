@@ -110,6 +110,8 @@ module Minitest
 
   class RubyMineReporter < Reporter
 
+    Minitest.load_plugins
+
     def initialize(options = {})
       Minitest.assert_no_minitest_reporters
       super(options[:io] || $stdout, options)
