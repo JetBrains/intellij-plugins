@@ -6,8 +6,7 @@ import com.intellij.openapi.project.Project
 
 interface PsiViewerSupport {
   companion object {
-    @Suppress("UnresolvedPluginConfigReference")
-    val EP_NAME: ExtensionPointName<PsiViewerSupport> = ExtensionPointName("org.intellij.qodana.psiViewerSupport")
+    val EP_NAME: ExtensionPointName<PsiViewerSupport> = ExtensionPointName("org.jetbrains.qodana.inspectionKts.psiViewerSupport")
   }
 
   suspend fun openPsiViewerDialog(project: Project, editor: Editor)

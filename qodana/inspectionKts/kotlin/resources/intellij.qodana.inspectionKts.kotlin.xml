@@ -15,8 +15,10 @@
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <resolveScopeProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.script.InspectionKtsResolveScopeProvider"/>
-    <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinInspectionKtsDefaultImportsProvider"/>
-    <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinInspectionKtsTemplateProvider"/>
-    <inspectionKtsExampleProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinInspectionKtsExampleProvider"/>
+  </extensions>
+  <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
+    <defaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinInspectionKtsDefaultImportsProvider"/>
+    <templates.provider implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinInspectionKtsTemplateProvider"/>
+    <examples.provider implementation="org.jetbrains.qodana.inspectionKts.kotlin.KotlinInspectionKtsExampleProvider"/>
   </extensions>
 </idea-plugin>

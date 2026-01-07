@@ -13,8 +13,7 @@ class InspectionKtsExample(
 ) {
   interface Provider {
     companion object {
-      @Suppress("UnresolvedPluginConfigReference")
-      private val EP_NAME: ExtensionPointName<Provider> = ExtensionPointName("org.intellij.qodana.inspectionKtsExampleProvider")
+      private val EP_NAME: ExtensionPointName<Provider> = ExtensionPointName("org.jetbrains.qodana.inspectionKts.examples.provider")
 
       fun examples(): List<InspectionKtsExample> {
         return EP_NAME.extensionList.mapNotNull { it.example() }.sortedBy { it.weight }

@@ -86,7 +86,7 @@ internal class QodanaPluginStatsStateCollector : ProjectUsagesCollector() {
     }
   }
 
-  private val GROUP = EventLogGroup("qodana.plugin.state", 5)
+  private val GROUP = EventLogGroup("qodana.plugin.state", 6)
 
   // --------------------
   // Status of Qodana problems in report

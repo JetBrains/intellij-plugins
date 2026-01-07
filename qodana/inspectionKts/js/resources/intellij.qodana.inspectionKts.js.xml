@@ -5,10 +5,10 @@
     <module name="intellij.dev.psiViewer"/>
     <module name="intellij.qodana.inspectionKts"/>
   </dependencies>
-  <extensions defaultExtensionNs="com.intellij">
-    <inspectionKtsDefaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsDefaultImportsProvider"/>
-    <inspectionKtsTemplateProvider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsTemplateProvider"/>
-    <inspectionKtsExampleProvider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsExampleProvider"/>
+  <extensions defaultExtensionNs="org.jetbrains.qodana.inspectionKts">
+    <defaultImportProvider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsDefaultImportsProvider"/>
+    <templates.provider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsTemplateProvider"/>
+    <examples.provider implementation="org.jetbrains.qodana.inspectionKts.js.JsInspectionKtsExampleProvider"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij.dev">
     <psiViewer.apiMethodsProvider implementation="org.jetbrains.qodana.inspectionKts.js.JsPsiViewerApiMethodProvider"/>

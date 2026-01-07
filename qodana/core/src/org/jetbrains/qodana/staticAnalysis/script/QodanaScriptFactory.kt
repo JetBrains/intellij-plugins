@@ -68,7 +68,7 @@ interface QodanaScriptFactory {
           if (afterName.startsWith(":")) {
             val parameters = afterName.substring(1)
             if (parameters.isEmpty()) {
-              throw QodanaException("Script parameters in '--script=$argument' must not be empty")
+              throw QodanaException("Script parameters in '--script $argument' must not be empty")
             }
             return QodanaScriptConfig(scriptName, factory.parseParameters(parameters))
           }

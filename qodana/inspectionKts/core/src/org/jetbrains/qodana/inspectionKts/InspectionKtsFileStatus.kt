@@ -42,8 +42,8 @@ class CompiledInspectionKtsInspections(
 
 interface CompiledInspectionKtsPostProcessorFactory {
   companion object {
-    @Suppress("UnresolvedPluginConfigReference")
-    private val EP_NAME: ExtensionPointName<CompiledInspectionKtsPostProcessorFactory> = ExtensionPointName.create("org.intellij.qodana.compiledInspectionKtsPostProcessorFactory")
+    private val EP_NAME: ExtensionPointName<CompiledInspectionKtsPostProcessorFactory> =
+      ExtensionPointName.create("org.jetbrains.qodana.inspectionKts.postProcessorFactory")
     
     fun getProcessor(result: Any): CompiledInspectionKtsPostProcessor? =
       EP_NAME.extensionList.firstNotNullOfOrNull { it.createProcessorIfApplicable(result) }

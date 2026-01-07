@@ -26,6 +26,13 @@ import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 
+const val FORCE_DISABLE_INSPECTION_KTS: String = "inspection.kts.disabled"
+
+fun isInspectionKtsEnabled(): Boolean {
+  val forceDisabled = java.lang.Boolean.getBoolean(FORCE_DISABLE_INSPECTION_KTS)
+  return !forceDisabled
+}
+
 const val INSPECTIONS_KTS_DIRECTORY: String = "inspections"
 const val INSPECTIONS_KTS_EXTENSION: String = "inspection.kts"
 
@@ -83,6 +90,10 @@ class KtsInspectionsManager(val project: Project, val scope: CoroutineScope) {
   }
 
   private fun inspectionKtsFlow(): Flow<Set<InspectionKtsFileStatus>> {
+    if (!isInspectionKtsEnabled()) {
+      return emptyFlow()
+    }
+
     val projectDirectory = project.basePath?.let { Path.of(it) } ?: project.guessProjectDir()?.toNioPath() ?: return flowOf(emptySet())
 
     val inspectionFiles = inspectionFilesFlow(scriptDirectory = projectDirectory.resolve(INSPECTIONS_KTS_DIRECTORY))
