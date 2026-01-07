@@ -1,5 +1,6 @@
 import type {CodeInformation, Language, SourceScript} from "@volar/language-core"
 import type * as TS from "./tsserverlibrary.shim"
+import {WebStormGetOptions} from "./tsserverlibrary.shim"
 import type {Range} from "tsc-ide-plugin/protocol"
 import type {ReverseMapping} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"
@@ -92,6 +93,17 @@ export function decorateIdeLanguageServiceExtensions(
     || webStormGetSymbolType === undefined
   ) return
 
+  function withReverseMapper<
+    O extends WebStormGetOptions,
+    R extends Record<never, never> | undefined,
+  >(source: (options: O) => R): (options: O) => R {
+    return (options) =>
+      source({
+        ...options,
+        reverseMapper: unboundReverseMapper.bind(null, options.ts),
+      })
+  }
+
   languageService.webStormGetElementType = (options) => {
     const {ts, fileName, startOffset, endOffset} = options
 
@@ -122,26 +134,9 @@ export function decorateIdeLanguageServiceExtensions(
     }
   }
 
-  languageService.webStormGetSymbolType = (options) => {
-    return webStormGetSymbolType({
-      ...options,
-      reverseMapper: unboundReverseMapper.bind(null, options.ts),
-    })
-  }
-
-  languageService.webStormGetTypeProperties = (options) => {
-    return webStormGetTypeProperties({
-      ...options,
-      reverseMapper: unboundReverseMapper.bind(null, options.ts),
-    })
-  }
-
-  languageService.webStormGetTypeProperty = (options) => {
-    return webStormGetTypeProperty({
-      ...options,
-      reverseMapper: unboundReverseMapper.bind(null, options.ts),
-    })
-  }
+  languageService.webStormGetSymbolType = withReverseMapper(webStormGetSymbolType)
+  languageService.webStormGetTypeProperties = withReverseMapper(webStormGetTypeProperties)
+  languageService.webStormGetTypeProperty = withReverseMapper(webStormGetTypeProperty)
 }
 
 export function decorateNgLanguageServiceExtensions(
