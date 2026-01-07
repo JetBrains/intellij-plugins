@@ -89,9 +89,16 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
     return result
   }
 
-  private class VueRefDeclarationImpl(name: String, jsType: JSType?, provider: PsiElement, kind: JSImplicitElement.Type)
-    : JSLocalImplicitElementImpl(name, jsType, provider, kind), VueRefAttribute.VueRefDeclaration,
-      PomRenameableTarget<PsiElement>, PomTargetPsiElement, PsiDeclaredTarget {
+  private class VueRefDeclarationImpl(
+    name: String,
+    jsType: JSType?,
+    provider: PsiElement,
+    kind: JSImplicitElement.Type,
+  ) : JSLocalImplicitElementImpl(name, jsType, provider, kind),
+      VueRefAttribute.VueRefDeclaration,
+      PomRenameableTarget<PsiElement>,
+      PomTargetPsiElement,
+      PsiDeclaredTarget {
 
     override fun setName(name: String): PsiElement {
       val vueRefAttribute = myProvider as VueRefAttribute
