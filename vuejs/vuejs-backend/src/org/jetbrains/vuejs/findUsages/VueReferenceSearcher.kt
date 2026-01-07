@@ -87,19 +87,23 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
             // references to `ref` attributes qualified on `$refs` in script setup
             queryParameters.optimizer.searchWord(elementName, LocalSearchScope(element.containingFile),
                                                  UsageSearchContext.ANY, true, element, object : RequestResultProcessor() {
-              override fun processTextOccurrence(occurence: PsiElement, offsetInElement: Int, consumer: Processor<in PsiReference>): Boolean {
-                val implicitElement = (occurence as? XmlAttributeValue)
-                  ?.parent?.asSafely<VueRefAttribute>()
-                  ?.implicitElement
-                if (implicitElement != null && implicitElement.context == element) {
-                  val collector = queryParameters.optimizer
-                  collector.searchWord(elementName, LocalSearchScope(element.containingFile),
-                                       UsageSearchContext.ANY, true, implicitElement)
-                  return PsiSearchHelper.getInstance(element.getProject()).processRequests(collector, consumer)
+                override fun processTextOccurrence(
+                  occurence: PsiElement,
+                  offsetInElement: Int,
+                  consumer: Processor<in PsiReference>,
+                ): Boolean {
+                  val implicitElement = (occurence as? XmlAttributeValue)
+                    ?.parent?.asSafely<VueRefAttribute>()
+                    ?.implicitElement
+                  if (implicitElement != null && implicitElement.context == element) {
+                    val collector = queryParameters.optimizer
+                    collector.searchWord(elementName, LocalSearchScope(element.containingFile),
+                                         UsageSearchContext.ANY, true, implicitElement)
+                    return PsiSearchHelper.getInstance(element.getProject()).processRequests(collector, consumer)
+                  }
+                  return true
                 }
-                return true
-              }
-            })
+              })
           }
           return
         }
@@ -143,16 +147,16 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
             optimizer.searchQuery(
               QuerySearchRequest(ReferencesSearch.search(defaultExport, queryParameters.effectiveSearchScope), collector,
                                  false, PairProcessor { reference, _ ->
-                if (reference is JSReferenceExpression && reference.parent.let { it is JSProperty && it.isShorthanded }) {
-                  val innerCollector = SearchRequestCollector(optimizer.searchSession)
-                  optimizer.searchQuery(
-                    QuerySearchRequest(ReferencesSearch.search(reference.parent, LocalSearchScope(reference.containingFile)),
-                                       innerCollector, false,
-                                       PairProcessor { propRef, _ -> consumer.process(propRef) }))
-                  if (!PsiSearchHelper.getInstance(element.getProject()).processRequests(optimizer, consumer)) return@PairProcessor false
-                }
-                consumer.process(reference)
-              }))
+                  if (reference is JSReferenceExpression && reference.parent.let { it is JSProperty && it.isShorthanded }) {
+                    val innerCollector = SearchRequestCollector(optimizer.searchSession)
+                    optimizer.searchQuery(
+                      QuerySearchRequest(ReferencesSearch.search(reference.parent, LocalSearchScope(reference.containingFile)),
+                                         innerCollector, false,
+                                         PairProcessor { propRef, _ -> consumer.process(propRef) }))
+                    if (!PsiSearchHelper.getInstance(element.getProject()).processRequests(optimizer, consumer)) return@PairProcessor false
+                  }
+                  consumer.process(reference)
+                }))
           }
         }
 
@@ -206,8 +210,10 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
   }
 }
 
-private class ScriptSetupImportProcessor(target: PsiElement?, queryParameters: ReferencesSearch.SearchParameters?)
-  : JSFindReferencesResultProcessor(target, queryParameters) {
+private class ScriptSetupImportProcessor(
+  target: PsiElement?,
+  queryParameters: ReferencesSearch.SearchParameters?,
+) : JSFindReferencesResultProcessor(target, queryParameters) {
   override fun proceedWithReference(element: PsiElement, collector: SearchRequestCollector): Boolean {
     if (element !is ES6ImportSpecifier) return false
 
