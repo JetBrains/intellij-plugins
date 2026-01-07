@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.tsc
 
 import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.TrackFailedTestRule
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
@@ -15,19 +14,10 @@ import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VuePluginTypeScriptService
 import org.jetbrains.vuejs.types.VueUnwrapRefType
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestRule
 
 class VueTypeScriptServiceGetElementTypeTest :
   TypeScriptServiceGetElementTypeTest() {
-
-  @JvmField
-  @Rule
-  val rule: TestRule = TrackFailedTestRule(
-    "testObjectLiteralWithSymbol",
-    "testAnonymousThread"
-  )
 
   override fun setUpTypeScriptService() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
