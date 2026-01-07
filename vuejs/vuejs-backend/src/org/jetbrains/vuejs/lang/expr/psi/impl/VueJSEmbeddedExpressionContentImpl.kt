@@ -1,9 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
-import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
-import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
-import com.intellij.polySymbols.js.jsType
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -17,6 +14,10 @@ import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.generic.JSTypeSubstitutorImpl
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
+import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
+import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
+import com.intellij.polySymbols.js.jsType
+import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.tree.IElementType
@@ -27,7 +28,6 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.CachedValuesManagerImpl
 import com.intellij.util.asSafely
-import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.isScriptSetupTag
