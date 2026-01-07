@@ -274,7 +274,11 @@ class VueExtractComponentDataBuilder(
 
     findStyles(file)
       .filter { it.isValid }
-      .filter { styleTag -> PsiTreeUtil.processElements(styleTag) { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) } }
+      .filter { styleTag ->
+        PsiTreeUtil.processElements(styleTag) {
+          !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it))
+        }
+      }
       .forEach { it.delete() }
   }
 
