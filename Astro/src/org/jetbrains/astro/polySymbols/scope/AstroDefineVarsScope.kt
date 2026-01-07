@@ -25,7 +25,7 @@ import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.astro.codeInsight.ASTRO_DEFINE_VARS_DIRECTIVE
 
-abstract class AstroDefineVarsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(null, tag.project, tag, Unit) {
+abstract class AstroDefineVarsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(tag.project, tag, Unit) {
 
   protected abstract val providedSymbol: PolySymbol
 

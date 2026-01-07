@@ -7,13 +7,12 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
-import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.NG_DIRECTIVE_ELEMENT_SELECTORS
 
 internal class DirectiveElementSelectorsScope(file: PsiFile) :
-  PolySymbolScopeWithCache<PsiFile, Unit>(Angular2Framework.ID, file.project, file, Unit) {
+  PolySymbolScopeWithCache<PsiFile, Unit>(file.project, file, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == NG_DIRECTIVE_ELEMENT_SELECTORS

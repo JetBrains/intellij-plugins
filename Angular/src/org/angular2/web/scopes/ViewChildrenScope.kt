@@ -61,7 +61,7 @@ class ViewChildrenScope(
   }
 
   private class ReferenceVariablesFlattenedScope(file: PsiFile, private val resolveToMultipleSymbols: Boolean) :
-    PolySymbolScopeWithCache<PsiFile, Boolean>(null, file.project, file, resolveToMultipleSymbols) {
+    PolySymbolScopeWithCache<PsiFile, Boolean>(file.project, file, resolveToMultipleSymbols) {
 
     override fun getCodeCompletions(
       qualifiedName: PolySymbolQualifiedName,

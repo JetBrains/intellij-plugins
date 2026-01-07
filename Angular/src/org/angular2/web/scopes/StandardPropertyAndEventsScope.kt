@@ -25,7 +25,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.types.Angular2TypeUtils
@@ -64,8 +63,8 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
   private class HtmlElementStandardPropertyAndEventsExtension(
     templateFile: PsiFile, tagNamespace: String, tagName: String,
-  ) : PolySymbolScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
-                                                              templateFile, Pair(tagNamespace, tagName)), PolySymbol {
+  ) : PolySymbolScopeWithCache<PsiFile, Pair<String, String>>(templateFile.project, templateFile,
+                                                              Pair(tagNamespace, tagName)), PolySymbol {
 
     override fun provides(kind: PolySymbolKind): Boolean =
       kind == JS_PROPERTIES

@@ -22,7 +22,6 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
-import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.isTemplateBindingDirectiveInput
@@ -35,7 +34,7 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_TEMPLATE_BINDINGS
 
 class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey) :
-  PolySymbolScopeWithCache<Angular2TemplateBindingKey, Unit>(Angular2Framework.ID, binding.project, binding, Unit) {
+  PolySymbolScopeWithCache<Angular2TemplateBindingKey, Unit>(binding.project, binding, Unit) {
 
   @OptIn(IntellijInternalApi::class)
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

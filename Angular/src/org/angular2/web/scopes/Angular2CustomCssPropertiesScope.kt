@@ -30,7 +30,6 @@ import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil.HOST_BINDING_DEC
 import org.angular2.Angular2DecoratorUtil.getDecoratorForLiteralParameter
 import org.angular2.Angular2DecoratorUtil.isHostBinding
-import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2HighlightingUtils.withColor
 import org.angular2.index.Angular2CustomCssPropertyInHtmlAttributeIndexKey
 import org.angular2.index.Angular2CustomCssPropertyInJsIndexKey
@@ -41,7 +40,7 @@ import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 import org.jetbrains.annotations.Nls
 
 class Angular2CustomCssPropertiesScope(file: PsiFile) :
-  PolySymbolScopeWithCache<PsiFile, Unit>(Angular2Framework.ID, file.project, file, Unit) {
+  PolySymbolScopeWithCache<PsiFile, Unit>(file.project, file, Unit) {
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(StubIndex.getInstance().getStubIndexModificationTracker(project))

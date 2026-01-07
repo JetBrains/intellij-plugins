@@ -14,14 +14,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.polySymbols.AstroProximity
 import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class AstroComponent(file: PsiFile) : PsiSourcedPolySymbol,
-                                      PolySymbolScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
+                                      PolySymbolScopeWithCache<PsiFile, Unit>(file.project, file, Unit) {
 
   override val source: PsiElement
     get() = dataHolder

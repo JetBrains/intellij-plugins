@@ -11,7 +11,6 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.polySymbols.AstroProximity
 import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENTS
@@ -25,7 +24,7 @@ class UiFrameworkComponent(
   override val name: String,
   override val source: PsiElement,
   override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH,
-) : PsiSourcedPolySymbol, PolySymbolScopeWithCache<PsiElement, Unit>(AstroFramework.ID, source.project, source, Unit) {
+) : PsiSourcedPolySymbol, PolySymbolScopeWithCache<PsiElement, Unit>(source.project, source, Unit) {
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,

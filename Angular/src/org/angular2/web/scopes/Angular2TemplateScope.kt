@@ -10,12 +10,11 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateScope
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 
 internal class Angular2TemplateScope(context: PsiElement) :
-  PolySymbolScopeWithCache<PsiElement, Unit>(Angular2Framework.ID, context.project, context, Unit) {
+  PolySymbolScopeWithCache<PsiElement, Unit>(context.project, context, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == JS_SYMBOLS

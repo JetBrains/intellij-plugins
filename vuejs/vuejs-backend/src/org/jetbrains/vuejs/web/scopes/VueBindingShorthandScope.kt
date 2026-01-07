@@ -29,7 +29,7 @@ import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.web.VUE_BINDING_SHORTHANDS
 
 class VueBindingShorthandScope(attribute: XmlAttribute) :
-  PolySymbolScopeWithCache<XmlAttribute, Unit>(null, attribute.project, attribute, Unit) {
+  PolySymbolScopeWithCache<XmlAttribute, Unit>(attribute.project, attribute, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == VUE_BINDING_SHORTHANDS

@@ -16,11 +16,10 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
-import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueComponentNamespaceSymbol
 
 class VueScriptSetupNamespacedComponentsScope(module: JSExecutionScope) :
-  PolySymbolScopeWithCache<JSExecutionScope, Unit>(VueFramework.ID, module.project, module, Unit) {
+  PolySymbolScopeWithCache<JSExecutionScope, Unit>(module.project, module, Unit) {
   override fun createPointer(): Pointer<out PolySymbolScopeWithCache<JSExecutionScope, Unit>> {
     val modulePtr = dataHolder.createSmartPointer()
     return Pointer {

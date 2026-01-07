@@ -24,7 +24,7 @@ import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
 class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
-  PolySymbolScopeWithCache<VueSourceComponent, Unit>(VueFramework.ID, enclosingComponent.source.project, enclosingComponent, Unit) {
+  PolySymbolScopeWithCache<VueSourceComponent, Unit>(enclosingComponent.source.project, enclosingComponent, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == VUE_PROVIDES

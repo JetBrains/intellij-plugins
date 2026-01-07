@@ -52,7 +52,7 @@ import org.angular2.web.references.Angular2DirectivePropertyLiteralReferenceProv
  * Reference resolution is being provided separately by [Angular2DirectivePropertyLiteralReferenceProvider]
  */
 class DirectivePropertyMappingCompletionScope(element: JSElement) :
-  PolySymbolScopeWithCache<JSElement, Unit>(Angular2Framework.ID, element.project, element, Unit) {
+  PolySymbolScopeWithCache<JSElement, Unit>(element.project, element, Unit) {
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)

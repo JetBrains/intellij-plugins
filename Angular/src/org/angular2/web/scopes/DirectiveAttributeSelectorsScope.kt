@@ -20,7 +20,6 @@ import com.intellij.polySymbols.utils.qualifiedName
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
-import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
@@ -55,7 +54,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
   class HtmlAttributeDirectiveAttributeSelectorsExtension(
     file: PsiFile,
     tagName: String,
-  ) : PolySymbolScopeWithCache<PsiFile, String>(Angular2Framework.ID, file.project, file, tagName), PolySymbol {
+  ) : PolySymbolScopeWithCache<PsiFile, String>(file.project, file, tagName), PolySymbol {
 
     override fun provides(kind: PolySymbolKind): Boolean =
       kind in providedKinds

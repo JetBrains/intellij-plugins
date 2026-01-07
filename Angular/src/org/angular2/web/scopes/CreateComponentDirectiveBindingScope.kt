@@ -16,7 +16,6 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
-import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.index.getFunctionNameFromIndex
 import org.angular2.web.Angular2SymbolOrigin
@@ -32,7 +31,7 @@ const val BINDINGS_PROP: String = "bindings"
 const val TYPE_PROP: String = "type"
 
 class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpression) :
-  PolySymbolScopeWithCache<JSObjectLiteralExpression, Unit>(Angular2Framework.ID, objectLiteral.project, objectLiteral, Unit) {
+  PolySymbolScopeWithCache<JSObjectLiteralExpression, Unit>(objectLiteral.project, objectLiteral, Unit) {
 
   companion object {
     val INPUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive input",

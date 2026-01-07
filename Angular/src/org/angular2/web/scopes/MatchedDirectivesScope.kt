@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
-import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.template.isTemplateTag
@@ -29,7 +28,7 @@ private val providedKinds: Set<PolySymbolKind> = setOf(
 )
 
 abstract class MatchedDirectivesScope<T : PsiElement>(dataHolder: T) :
-  PolySymbolScopeWithCache<T, Unit>(Angular2Framework.ID, dataHolder.project, dataHolder, Unit) {
+  PolySymbolScopeWithCache<T, Unit>(dataHolder.project, dataHolder, Unit) {
 
   companion object {
     fun createFor(tag: XmlTag): MatchedDirectivesScope<XmlTag> =

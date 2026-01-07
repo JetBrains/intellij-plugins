@@ -18,7 +18,7 @@ import org.angular2.lang.expr.psi.Angular2BlockParameter
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
 
 class DeferOnTriggerParameterScope(parameter: Angular2BlockParameter) :
-  PolySymbolScopeWithCache<Angular2BlockParameter, Unit>(null, parameter.project, parameter, Unit) {
+  PolySymbolScopeWithCache<Angular2BlockParameter, Unit>(parameter.project, parameter, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == JS_SYMBOLS

@@ -9,7 +9,6 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
-import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.astroContentRoot
 import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.codeInsight.resolveIfImportSpecifier
@@ -20,7 +19,7 @@ import org.jetbrains.astro.polySymbols.symbols.AstroLocalComponent
 import org.jetbrains.astro.polySymbols.symbols.UiFrameworkComponent
 
 class AstroFrontmatterScope(val file: AstroFileImpl) :
-  PolySymbolScopeWithCache<AstroFileImpl, Unit>(AstroFramework.ID, file.project, file, Unit) {
+  PolySymbolScopeWithCache<AstroFileImpl, Unit>(file.project, file, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == ASTRO_COMPONENTS || kind == UI_FRAMEWORK_COMPONENTS

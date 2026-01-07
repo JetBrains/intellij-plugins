@@ -14,13 +14,12 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndexEx
-import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileType
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.polySymbols.symbols.AstroComponent
 
 internal class AstroAvailableComponentsScope(project: Project) :
-  PolySymbolScopeWithCache<Project, Unit>(AstroFramework.ID, project, project, Unit) {
+  PolySymbolScopeWithCache<Project, Unit>(project, project, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == ASTRO_COMPONENTS

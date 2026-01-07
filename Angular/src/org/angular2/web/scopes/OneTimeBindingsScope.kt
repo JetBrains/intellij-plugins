@@ -37,7 +37,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ThreeState
 import com.intellij.util.asSafely
 import com.intellij.util.containers.mapSmartSet
-import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
 import org.angular2.codeInsight.config.Angular2Compiler.isStrictTemplates
 import org.angular2.entities.Angular2DirectiveProperty
@@ -46,7 +45,7 @@ import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_ONE_TIME_BINDINGS
 import java.util.concurrent.ConcurrentHashMap
 
-internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
+internal class OneTimeBindingsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(tag.project, tag, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == NG_DIRECTIVE_ONE_TIME_BINDINGS

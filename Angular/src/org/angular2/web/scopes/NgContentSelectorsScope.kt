@@ -8,12 +8,11 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
-import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.web.NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
-class NgContentSelectorsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
+class NgContentSelectorsScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(tag.project, tag, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == NG_DIRECTIVE_ATTRIBUTE_SELECTORS

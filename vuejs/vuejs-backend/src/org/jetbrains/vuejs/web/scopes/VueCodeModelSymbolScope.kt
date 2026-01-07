@@ -42,7 +42,7 @@ private constructor(
   dataHolder: UserDataHolder,
   private val proximity: VueModelVisitor.Proximity,
   key: K,
-) : PolySymbolScopeWithCache<UserDataHolder, K>(VueFramework.ID, project, dataHolder, key) {
+) : PolySymbolScopeWithCache<UserDataHolder, K>(project, dataHolder, key) {
 
   companion object {
 
