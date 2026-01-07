@@ -8,10 +8,9 @@ import javax.swing.Icon
 
 
 internal class AstroLspCompletionSupport : BaseLspTypeScriptServiceCompletionSupport() {
-  override fun getIcon(item: CompletionItem): Icon {
+  override fun getIcon(item: CompletionItem): Icon?{
     if (isAstroComponent(item)) return AstroIcons.Astro
-
-    return super.getIcon(item) ?: AstroIcons.Astro
+    return super.getIcon(item)
   }
 
   private fun isAstroComponent(item: CompletionItem): Boolean {
