@@ -7,8 +7,10 @@ import com.intellij.lang.javascript.types.JSEmbeddedContentElementType
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
 
-class VueScriptSetupEmbeddedContentElementType(forcedLanguage: JSLanguageDialect, debugName: String)
-  : JSEmbeddedContentElementType(forcedLanguage, debugName) {
+class VueScriptSetupEmbeddedContentElementType(
+  forcedLanguage: JSLanguageDialect,
+  debugName: String,
+) : JSEmbeddedContentElementType(forcedLanguage, debugName) {
 
   override fun toString(): String =
     "VUE:$debugName"

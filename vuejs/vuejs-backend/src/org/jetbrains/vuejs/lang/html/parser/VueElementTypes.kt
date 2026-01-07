@@ -33,9 +33,11 @@ object VueElementTypes {
 
   val REF_ATTRIBUTE: XmlStubBasedElementType<VueRefAttributeImpl> = VueRefAttributeElementType()
 
-  val SCRIPT_SETUP_TS_EMBEDDED_CONTENT: VueScriptSetupEmbeddedContentElementType = VueScriptSetupEmbeddedContentElementType(JavaScriptSupportLoader.TYPESCRIPT, "SCRIPT_SETUP_TS_")
+  val SCRIPT_SETUP_TS_EMBEDDED_CONTENT: VueScriptSetupEmbeddedContentElementType =
+    VueScriptSetupEmbeddedContentElementType(JavaScriptSupportLoader.TYPESCRIPT, "SCRIPT_SETUP_TS_")
 
-  val SCRIPT_SETUP_JS_EMBEDDED_CONTENT: VueScriptSetupEmbeddedContentElementType = VueScriptSetupEmbeddedContentElementType(JavaScriptSupportLoader.ECMA_SCRIPT_6, "SCRIPT_SETUP_JS_")
+  val SCRIPT_SETUP_JS_EMBEDDED_CONTENT: VueScriptSetupEmbeddedContentElementType =
+    VueScriptSetupEmbeddedContentElementType(JavaScriptSupportLoader.ECMA_SCRIPT_6, "SCRIPT_SETUP_JS_")
 
   val VUE_EMBEDDED_CONTENT: IElementType = EmbeddedVueContentElementType()
 

@@ -137,7 +137,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         SCRIPT_VAPOR,
         SCRIPT_GENERIC,
         STYLE_MODULE,
-           -> attr.done(VueElementTypes.ATTRIBUTE)
+          -> attr.done(VueElementTypes.ATTRIBUTE)
         REF -> attr.done(VueElementTypes.REF_ATTRIBUTE)
         else -> attr.done(XmlElementType.XML_ATTRIBUTE)
       }
