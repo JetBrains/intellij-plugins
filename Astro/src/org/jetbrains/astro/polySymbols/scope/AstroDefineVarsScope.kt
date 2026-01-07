@@ -4,11 +4,11 @@ package org.jetbrains.astro.polySymbols.scope
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.css.CSS_PROPERTIES
+import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
 import com.intellij.polySymbols.js.symbols.asJSSymbol

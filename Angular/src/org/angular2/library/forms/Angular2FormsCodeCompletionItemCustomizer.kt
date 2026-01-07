@@ -1,10 +1,10 @@
 package org.angular2.library.forms
 
 import com.intellij.icons.AllIcons
-import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
+import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.psi.PsiElement
 
 class Angular2FormsCodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomizer {

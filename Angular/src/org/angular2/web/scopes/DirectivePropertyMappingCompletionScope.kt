@@ -11,6 +11,7 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.*
+import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.symbols.asJSSymbol

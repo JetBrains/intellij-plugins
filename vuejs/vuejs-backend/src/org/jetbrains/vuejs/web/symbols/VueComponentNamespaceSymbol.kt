@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
