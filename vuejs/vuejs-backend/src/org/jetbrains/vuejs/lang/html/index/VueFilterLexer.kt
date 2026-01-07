@@ -28,8 +28,10 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory
 import kotlin.experimental.or
 
-class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexer)
-  : BaseFilterLexer(originalLexer, occurrenceConsumer) {
+class VueFilterLexer(
+  occurrenceConsumer: OccurrenceConsumer,
+  originalLexer: Lexer,
+) : BaseFilterLexer(originalLexer, occurrenceConsumer) {
 
   constructor(occurrenceConsumer: OccurrenceConsumer, project: Project?, file: VirtualFile?) :
     this(occurrenceConsumer, getHighlightingLexer(project, file))
