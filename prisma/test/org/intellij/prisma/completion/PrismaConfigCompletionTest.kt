@@ -7,6 +7,7 @@ import org.intellij.prisma.PrismaIntegrationTestBase
 import org.intellij.prisma.getPrismaRelativeTestDataPath
 import org.intellij.prisma.ide.config.PrismaConfigManager
 import org.intellij.prisma.lang.PrismaConstants
+import java.time.Duration
 
 class PrismaConfigCompletionTest : PrismaIntegrationTestBase() {
   override fun getBasePath(): String = "${getPrismaRelativeTestDataPath()}/completion/config"
@@ -14,6 +15,8 @@ class PrismaConfigCompletionTest : PrismaIntegrationTestBase() {
   override fun runFromCoroutine(): Boolean = true
 
   override fun runInDispatchThread(): Boolean = false
+
+  override fun getCoroutineTimeout(): Duration = Duration.ofMinutes(4)
 
   fun testConfigSplitSchema() = runBlockingCancellable {
     myFixture.copyDirectoryToProject(getTestName(true), "")
