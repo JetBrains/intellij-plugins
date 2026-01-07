@@ -183,9 +183,8 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
         // just in case there is some `unknown` out there.
 
         return if (result is JSRecordType) {
-          result.transformTypeHierarchy {
+          result.transformTypeHierarchy { t ->
             // JSLookupUtilImpl.isTypeAcceptableForLookupElement
-            t ->
             if (t is JSGenericTypeImpl || t is JSRecordType && t != result)
               JSNamedTypeFactory.createType(StringUtil.ELLIPSIS, t.source, JSContext.STATIC)
             else t
