@@ -2,7 +2,10 @@
 package org.jetbrains.vuejs.lang.html.psi.impl
 
 import com.intellij.psi.impl.source.xml.stub.XmlAttributeStub
-import com.intellij.psi.stubs.*
+import com.intellij.psi.stubs.StubBase
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 
