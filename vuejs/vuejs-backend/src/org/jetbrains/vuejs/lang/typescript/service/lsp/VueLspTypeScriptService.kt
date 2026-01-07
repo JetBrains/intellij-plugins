@@ -20,14 +20,23 @@ import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.typescript.service.VueLspServerActivationRule
 
-class VueLspTypeScriptService(project: Project)
-  : JSFrameworkLspTypeScriptService(project, VueLspServerSupportProvider::class.java, VueLspServerActivationRule) {
+class VueLspTypeScriptService(
+  project: Project,
+) : JSFrameworkLspTypeScriptService(
+  project = project,
+  providerClass = VueLspServerSupportProvider::class.java,
+  activationRule = VueLspServerActivationRule,
+) {
+
   override val name: String
     get() = VueBundle.message("vue.service.name")
+
   override val prefix: String
     get() = VueBundle.message("vue.service.prefix")
 
-  override fun createQuickInfoResponse(markupContent: MarkupContent): TypeScriptQuickInfoResponse {
+  override fun createQuickInfoResponse(
+    markupContent: MarkupContent,
+  ): TypeScriptQuickInfoResponse {
     // Feel free to replace with the longer version
     // ```typescript
     // let __VLS_ctx: CreateComponentPublicInstance<Readonly<ExtractPropTypes<__VLS_TypePropsToOption<{
@@ -49,7 +58,11 @@ class VueLspTypeScriptService(project: Project)
     return super.createQuickInfoResponse(markupContent)
   }
 
-  override suspend fun handleCustomTsServerCommand(commandName: String, args: JSLanguageServiceObject, requiresNewEval: Boolean): JsonElement? {
+  override suspend fun handleCustomTsServerCommand(
+    commandName: String,
+    args: JSLanguageServiceObject,
+    requiresNewEval: Boolean,
+  ): JsonElement? {
     if (requiresNewEval) return null
     val server = getServer() ?: return null
     awaitServerRunningState(server)
@@ -58,12 +71,17 @@ class VueLspTypeScriptService(project: Project)
     }
   }
 
-  override fun supportsTypeEvaluation(virtualFile: VirtualFile, element: PsiElement): Boolean {
-    return virtualFile.extension == "vue" || super.supportsTypeEvaluation(virtualFile, element)
+  override fun supportsTypeEvaluation(
+    virtualFile: VirtualFile,
+    element: PsiElement,
+  ): Boolean {
+    return virtualFile.extension == "vue"
+           || super.supportsTypeEvaluation(virtualFile, element)
   }
 
   override fun supportsInjectedFile(file: PsiFile): Boolean {
-    return file.language is VueJSLanguage || file.language is VueTSLanguage
+    return file.language is VueJSLanguage
+           || file.language is VueTSLanguage
   }
 
   private suspend fun awaitServerRunningState(server: LspServerImpl) {
