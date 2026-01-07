@@ -57,7 +57,8 @@ fun getContextForExtractComponentIntention(
 
   return if (validParents) {
     selectedTags
-  } else null
+  }
+  else null
 }
 
 private fun getSelectedTags(
