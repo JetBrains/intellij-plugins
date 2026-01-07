@@ -11,8 +11,11 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSElementVisitor
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterArgumentsList
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 
-class VueJSFilterExpressionImpl(elementType: IElementType)
-  : JSExpressionImpl(elementType), VueJSFilterExpression, JSCallLikeExpressionCommon {
+class VueJSFilterExpressionImpl(
+  elementType: IElementType,
+) : JSExpressionImpl(elementType),
+    VueJSFilterExpression,
+    JSCallLikeExpressionCommon {
 
   private val leftSideArgument: VueJSFilterLeftSideArgumentImpl
     get() {

@@ -8,8 +8,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl
 
-class VueJSEmbeddedExpressionContentElementType(debugName: String, private val language: Language)
-  : JSElementType<VueJSEmbeddedExpressionContent>(debugName) {
+class VueJSEmbeddedExpressionContentElementType(
+  debugName: String,
+  private val language: Language,
+) : JSElementType<VueJSEmbeddedExpressionContent>(debugName) {
 
   override fun getLanguage(): Language = language
 
@@ -17,5 +19,6 @@ class VueJSEmbeddedExpressionContentElementType(debugName: String, private val l
     return VueJSEmbeddedExpressionContentImpl(node)
   }
 
-  override fun toString(): String = VueJSElementTypes.EXTERNAL_ID_PREFIX + debugName
+  override fun toString(): String =
+    VueJSElementTypes.EXTERNAL_ID_PREFIX + debugName
 }
