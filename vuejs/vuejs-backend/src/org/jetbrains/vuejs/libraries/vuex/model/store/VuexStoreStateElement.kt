@@ -20,7 +20,7 @@ class VuexStoreStateElement(
 ) : JSLocalImplicitElementImpl(name, jsType, location, JSImplicitElement.Type.Property) {
 
   override fun getTextRange(): TextRange? {
-    return myProvider!!.textRange
+    return myProvider.textRange
   }
 
   override fun equals(other: Any?): Boolean {
@@ -54,7 +54,7 @@ class VuexStoreStateElement(
   private fun getResolveCandidates(): Collection<PsiElement> = CachedValuesManager.getCachedValue(this) {
     val result = mutableSetOf<PsiElement>()
 
-    VuexModelManager.getVuexStoreContext(myProvider!!)?.let { context ->
+    VuexModelManager.getVuexStoreContext(myProvider)?.let { context ->
       context.visitSymbols(VuexContainer::state) { qualifiedName: String, symbol: VuexNamedSymbol ->
         if (qualifiedName == this.qualifiedStoreName) {
           result.add(symbol.source)
