@@ -47,27 +47,29 @@ class VueTypeScriptServiceGetElementTypeTest :
    */
   @Test
   fun testInstantiateMappedTypeVue() {
-    // language=typescript 
+    // language=vue
     val code = """
-      type UnwrapRef<T> = T extends object ? { [P in keyof T]: UnwrapRef<T[P]>; } : T;
-      declare function unwrap<T>(value: T): UnwrapRef<T>;
-      const unwrapped = unwrap({foo: 123, bar: 456})
-      unwrapp<caret>ed
+    <script setup lang="ts">
+    type UnwrapRef<T> = T extends object ? { [P in keyof T]: UnwrapRef<T[P]>; } : T;
+    declare function unwrap<T>(value: T): UnwrapRef<T>;
+    const unwrapped = unwrap({foo: 123, bar: 456})
+    unwrapp<caret>ed
+    </script>
     """.trimIndent()
-    val vueCode = "<script setup lang='ts'>\n" + code + "\n</script>"
-    myFixture.configureByText("a.vue", vueCode)
+    myFixture.configureByText("App.vue", code)
     doTestInstantiateMappedType()
   }
 
   // WEB-68084
   @Test
   fun testUnwrapRefType() {
-    val vueCode = """
-      <script setup lang='ts'>
-      const a:number = 42
-      </script>
+    // language=vue
+    val code = """
+    <script setup lang="ts">
+    const a:number = 42
+    </script>
     """.trimIndent()
-    myFixture.configureByText("a.vue", vueCode)
+    myFixture.configureByText("App.vue", code)
     val element = JSTestUtils.findElementByText(myFixture, "a:number = 42", JSVariable::class.java)
     val jsType = calculateType(element)
     assertNotNull(jsType)
