@@ -12,8 +12,12 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
 import java.util.*
 
-class VuexStoreStateElement(name: String, private val qualifiedStoreName: String, location: PsiElement, jsType: JSType?)
-  : JSLocalImplicitElementImpl(name, jsType, location, JSImplicitElement.Type.Property) {
+class VuexStoreStateElement(
+  name: String,
+  private val qualifiedStoreName: String,
+  location: PsiElement,
+  jsType: JSType?,
+) : JSLocalImplicitElementImpl(name, jsType, location, JSImplicitElement.Type.Property) {
 
   override fun getTextRange(): TextRange? {
     return myProvider!!.textRange
