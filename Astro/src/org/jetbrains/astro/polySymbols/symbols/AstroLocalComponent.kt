@@ -28,7 +28,7 @@ class AstroLocalComponent(
   override val name: String,
   override val source: PsiElement,
   override val priority: PolySymbol.Priority = PolySymbol.Priority.HIGH,
-) : PsiSourcedPolySymbol, PolySymbolScopeWithCache<PsiElement, Unit>(source.project, source, Unit) {
+) : PsiSourcedPolySymbol, PolySymbolScopeWithCache<PsiElement, Unit>(source.project, source, Unit), AstroSymbol {
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
@@ -70,7 +70,7 @@ class AstroLocalComponent(
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.LOCAL)
-      else -> null
+      else -> super<AstroSymbol>.get(property)
     }
 
   override fun createPointer(): Pointer<out AstroLocalComponent> {

@@ -5,11 +5,9 @@ import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueLibrary
 import org.jetbrains.vuejs.model.VueScopeElement
-import org.jetbrains.vuejs.web.VueFramework
 
 class VueScopeElementOrigin(private val item: VueScopeElement) : PolySymbolOrigin {
 
@@ -27,9 +25,6 @@ class VueScopeElementOrigin(private val item: VueScopeElement) : PolySymbolOrigi
       ?.let { PackageJsonData.getOrCreate(it) }
       ?.let { Pair(it.name, it.version?.rawVersion) }
   }
-
-  override val framework: FrameworkId
-    get() = VueFramework.ID
 
   override val library: String?
     get() = info?.first

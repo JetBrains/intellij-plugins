@@ -4,15 +4,17 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
@@ -24,12 +26,11 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
-import org.jetbrains.vuejs.web.VueFramework
 
 class VueComponentNamespaceSymbol(
   override val name: String,
   override val source: JSPsiNamedElementBase,
-) : PsiSourcedPolySymbol, PolySymbolScope {
+) : PsiSourcedPolySymbol, PolySymbolScope, VueSymbol {
   override fun createPointer(): Pointer<out VueComponentNamespaceSymbol> {
     val name = name
     val sourcePtr = source.createSmartPointer()
@@ -41,13 +42,7 @@ class VueComponentNamespaceSymbol(
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(source.project).modificationCount
 
-  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-    when (property) {
-      PROP_JS_TYPE -> property.tryCast(type)
-      else -> super.get(property)
-    }
-
-  private val type: Any
+  override val type: JSType
     get() = JSPsiBasedTypeOfType(
       when (val source = source) {
         is ES6ImportedBinding -> source.multiResolve(false)
@@ -55,15 +50,11 @@ class VueComponentNamespaceSymbol(
         else -> null
       }
         ?.asSequence()
-        ?.mapNotNull { it.takeIf { it.isValidResult }?.element }
-        ?.firstOrNull()
+        ?.firstNotNullOfOrNull { it.takeIf { it.isValidResult }?.element }
       ?: source, false)
 
   override val origin: PolySymbolOrigin
-    get() = object : PolySymbolOrigin {
-      override val framework: FrameworkId
-        get() = VueFramework.ID
-    }
+    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_NAMESPACES

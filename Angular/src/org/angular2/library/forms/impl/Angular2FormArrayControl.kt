@@ -10,9 +10,10 @@ import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolOrigin
 
-object Angular2FormArrayControl : PolySymbolWithPattern {
+object Angular2FormArrayControl : PolySymbolWithPattern, Angular2Symbol {
 
   override val name: @NlsSafe String
     get() = "Form array control"
@@ -26,7 +27,7 @@ object Angular2FormArrayControl : PolySymbolWithPattern {
   override val origin: PolySymbolOrigin
     get() = Angular2SymbolOrigin.empty
 
-  override val priority: PolySymbol.Priority?
+  override val priority: PolySymbol.Priority
     get() = PolySymbol.Priority.LOWEST
 
   @Suppress("UNCHECKED_CAST")
@@ -34,9 +35,9 @@ object Angular2FormArrayControl : PolySymbolWithPattern {
     when (property) {
       PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as T
       PolySymbol.PROP_DOC_HIDE_PATTERN -> true as T
-      else -> null
+      else -> super<Angular2Symbol>.get(property)
     }
 
-  override fun createPointer(): Pointer<out PolySymbol> =
+  override fun createPointer(): Pointer<Angular2FormArrayControl> =
     Pointer.hardPointer(this)
 }

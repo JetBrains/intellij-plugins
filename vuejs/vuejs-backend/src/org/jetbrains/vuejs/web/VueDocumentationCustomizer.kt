@@ -7,6 +7,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationCustomizer
 import com.intellij.polySymbols.html.HTML_SLOTS
+import com.intellij.polySymbols.html.framework
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.renderJsTypeForDocs
 import com.intellij.psi.PsiElement
@@ -19,7 +20,7 @@ import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionContentImpl
 class VueDocumentationCustomizer : PolySymbolDocumentationCustomizer {
   override fun customize(symbol: PolySymbol, location: PsiElement?, documentation: PolySymbolDocumentation): PolySymbolDocumentation {
     if (symbol.kind == HTML_SLOTS
-        && (symbol.origin.framework == VueFramework.ID
+        && (symbol.framework == VueFramework.ID
             || symbol.psiContext.let { it != null && isVueContext(it) })) {
       symbol.renderJsTypeForDocs(null, location)
         ?.replace(",", ",<br>")
@@ -32,7 +33,7 @@ class VueDocumentationCustomizer : PolySymbolDocumentationCustomizer {
         }
     }
     else if (symbol.kind == JS_EVENTS
-             && (symbol.origin.framework == VueFramework.ID
+             && (symbol.framework == VueFramework.ID
                  || symbol.psiContext.let { it != null && isVueContext(it) })) {
       symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), location, getTypeSubstitutorFor(location))?.let {
         return documentation.withDefinition(it)

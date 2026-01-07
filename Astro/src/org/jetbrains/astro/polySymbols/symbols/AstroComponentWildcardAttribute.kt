@@ -13,7 +13,7 @@ import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
-object AstroComponentWildcardAttribute : PolySymbolWithPattern {
+object AstroComponentWildcardAttribute : PolySymbolWithPattern, AstroSymbol {
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin
 
@@ -33,7 +33,7 @@ object AstroComponentWildcardAttribute : PolySymbolWithPattern {
     when (property) {
       PROP_DOC_HIDE_PATTERN -> property.tryCast(true)
       PROP_HIDE_FROM_COMPLETION -> property.tryCast(true)
-      else -> null
+      else -> super<AstroSymbol>.get(property)
     }
 
   override fun createPointer(): Pointer<out PolySymbol> =

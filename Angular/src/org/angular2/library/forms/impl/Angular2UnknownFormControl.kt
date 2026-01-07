@@ -10,9 +10,10 @@ import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolOrigin
 
-object Angular2UnknownFormControl : PolySymbolWithPattern {
+object Angular2UnknownFormControl : PolySymbolWithPattern, Angular2Symbol {
 
   override val name: @NlsSafe String
     get() = "Unknown form control"
@@ -34,9 +35,9 @@ object Angular2UnknownFormControl : PolySymbolWithPattern {
     when (property) {
       PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as T
       PolySymbol.PROP_DOC_HIDE_PATTERN -> true as T
-      else -> null
+      else -> super<Angular2Symbol>.get(property)
     }
 
-  override fun createPointer(): Pointer<out PolySymbol> =
+  override fun createPointer(): Pointer<Angular2UnknownFormControl> =
     Pointer.hardPointer(this)
 }

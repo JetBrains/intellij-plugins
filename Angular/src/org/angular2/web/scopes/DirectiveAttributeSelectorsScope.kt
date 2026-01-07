@@ -54,7 +54,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
   class HtmlAttributeDirectiveAttributeSelectorsExtension(
     file: PsiFile,
     tagName: String,
-  ) : PolySymbolScopeWithCache<PsiFile, String>(file.project, file, tagName), PolySymbol {
+  ) : PolySymbolScopeWithCache<PsiFile, String>(file.project, file, tagName), Angular2Symbol {
 
     override fun provides(kind: PolySymbolKind): Boolean =
       kind in providedKinds

@@ -40,7 +40,6 @@ fun VueModelVisitor.Proximity.asPolySymbolPriority(): PolySymbol.Priority =
   }
 
 val vueEmptyOrigin: PolySymbolOrigin = PolySymbolOrigin.create(
-  VueFramework.ID,
   library = "vue",
   defaultIcon = VuejsIcons.Vue,
   typeSupport = TypeScriptSymbolTypeSupport())

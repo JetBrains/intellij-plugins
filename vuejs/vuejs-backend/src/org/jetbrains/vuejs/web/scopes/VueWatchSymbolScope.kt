@@ -10,7 +10,6 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.patterns.ComplexPatternOptions
 import com.intellij.polySymbols.patterns.PolySymbolPattern
@@ -33,10 +32,7 @@ import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.symbols.VueAnySymbol
-import org.jetbrains.vuejs.web.symbols.VueComputedPropertySymbol
-import org.jetbrains.vuejs.web.symbols.VueDataPropertySymbol
-import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
+import org.jetbrains.vuejs.web.symbols.*
 
 class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
   PolySymbolScopeWithCache<VueSourceComponent, Unit>(enclosingComponent.source.project, enclosingComponent, Unit) {
@@ -101,7 +97,7 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
 
   }
 
-  object VueWatchablePropertySymbol : PolySymbolWithPattern {
+  object VueWatchablePropertySymbol : PolySymbolWithPattern, VueSymbol {
 
     override val kind: PolySymbolKind
       get() = JS_PROPERTIES
@@ -129,10 +125,7 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
         )
       )
 
-    override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
-      override val framework: FrameworkId
-        get() = VueFramework.ID
-    }
+    override val origin: PolySymbolOrigin = PolySymbolOrigin.empty()
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

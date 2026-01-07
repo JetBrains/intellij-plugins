@@ -14,9 +14,10 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.angular2.library.forms.NG_FORM_ARRAY_PROPS
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolOrigin
 
-object Angular2UnknownFormArray : PolySymbolWithPattern, PolySymbolScope {
+object Angular2UnknownFormArray : PolySymbolWithPattern, PolySymbolScope, Angular2Symbol {
 
   override val name: @NlsSafe String
     get() = "Unknown form array"
@@ -46,7 +47,7 @@ object Angular2UnknownFormArray : PolySymbolWithPattern, PolySymbolScope {
     when (property) {
       PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as T
       PolySymbol.PROP_DOC_HIDE_PATTERN -> true as T
-      else -> null
+      else -> super<Angular2Symbol>.get(property)
     }
 
   override fun createPointer(): Pointer<out Angular2UnknownFormArray> =

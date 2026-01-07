@@ -16,9 +16,10 @@ import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_FIELDS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolOrigin
 
-object Angular2UnknownFormGroup : PolySymbolWithPattern, PolySymbolScope {
+object Angular2UnknownFormGroup : PolySymbolWithPattern, PolySymbolScope, Angular2Symbol {
 
   override val name: @NlsSafe String
     get() = "Unknown form group"
@@ -47,7 +48,7 @@ object Angular2UnknownFormGroup : PolySymbolWithPattern, PolySymbolScope {
     when (property) {
       PolySymbol.PROP_HIDE_FROM_COMPLETION -> true as T
       PolySymbol.PROP_DOC_HIDE_PATTERN -> true as T
-      else -> null
+      else -> super<Angular2Symbol>.get(property)
     }
 
   override val kind: PolySymbolKind

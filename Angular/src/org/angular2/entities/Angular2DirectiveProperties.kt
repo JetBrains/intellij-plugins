@@ -147,9 +147,6 @@ class Angular2DirectiveProperties(
     override val fieldName: String?
       get() = delegate.fieldName
 
-    override val project: Project
-      get() = delegate.project
-
     override val priority: PolySymbol.Priority?
       get() = delegate.priority
 

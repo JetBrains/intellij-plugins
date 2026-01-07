@@ -5,11 +5,9 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.framework.FrameworkId
 import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
-import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
 class VueDirectiveModifierSymbol(
@@ -18,7 +16,7 @@ class VueDirectiveModifierSymbol(
 ) : VueDocumentedItemSymbol<VueDirectiveModifier>(modifier.name, modifier) {
 
   override val origin: PolySymbolOrigin
-    get() = VueDirectiveModifierSymbolOrigin
+    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = VUE_DIRECTIVE_MODIFIERS
@@ -34,9 +32,4 @@ class VueDirectiveModifierSymbol(
         ?.let { VueDirectiveModifierSymbol(it, vueProximity) }
     }
   }
-}
-
-private object VueDirectiveModifierSymbolOrigin : PolySymbolOrigin {
-  override val framework: FrameworkId
-    get() = VueFramework.ID
 }

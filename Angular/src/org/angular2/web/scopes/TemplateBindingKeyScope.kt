@@ -29,6 +29,7 @@ import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindingKey
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.types.BindingsTypeResolver
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_TEMPLATE_BINDINGS
@@ -84,7 +85,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey) :
 
   override fun getModificationCount(): Long = 0
 
-  private class TemplateBindingsSymbol(private val bindings: Angular2TemplateBindings) : PolySymbol {
+  private class TemplateBindingsSymbol(private val bindings: Angular2TemplateBindings) : Angular2Symbol {
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
 
@@ -100,7 +101,7 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey) :
         else -> super.get(property)
       }
 
-    override fun createPointer(): Pointer<out PolySymbol> {
+    override fun createPointer(): Pointer<TemplateBindingsSymbol> {
       val bindingsPtr = bindings.createSmartPointer()
       return Pointer {
         bindingsPtr.dereference()?.let { TemplateBindingsSymbol(it) }

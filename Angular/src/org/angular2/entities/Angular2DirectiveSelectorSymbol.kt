@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
@@ -48,9 +47,6 @@ class Angular2DirectiveSelectorSymbol(
 
   override val sourceElement: PsiElement
     get() = myParent.psiParent
-
-  override val project: Project
-    get() = sourceElement.project
 
   override val kind: PolySymbolKind
     get() = if (isElementSelector) NG_DIRECTIVE_ELEMENT_SELECTORS else NG_DIRECTIVE_ATTRIBUTE_SELECTORS

@@ -2,7 +2,6 @@
 package org.angular2.entities
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
@@ -30,9 +29,6 @@ class Angular2DirectiveExportAs(
 
   override val priority: PolySymbol.Priority
     get() = PolySymbol.Priority.NORMAL
-
-  override val project: Project
-    get() = sourceElement.project
 
   override val kind: PolySymbolKind
     get() = NG_DIRECTIVE_EXPORTS_AS

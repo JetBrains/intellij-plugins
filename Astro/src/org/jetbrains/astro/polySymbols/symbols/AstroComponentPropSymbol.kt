@@ -17,7 +17,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
 
-class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : PsiSourcedPolySymbol {
+class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : PsiSourcedPolySymbol, AstroSymbol {
 
   override val origin: PolySymbolOrigin
     get() = AstroProjectSymbolOrigin

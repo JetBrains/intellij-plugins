@@ -8,10 +8,8 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.symbols.asJSSymbol
@@ -35,7 +33,6 @@ import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
-import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2ClassBasedDirective
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective
@@ -101,7 +98,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
                   source.attributeList?.decorators?.any { dec -> dec.decoratorName == INPUT_DEC || dec.decoratorName == OUTPUT_DEC } == true
                 }
               }
-              ?.map { Angular2FieldPropertySymbol(it, symbolKind, directive.sourceElement.project, typeScriptClass) }
+              ?.map { Angular2FieldPropertySymbol(it, symbolKind, typeScriptClass) }
               ?.forEach(filterAndConsume)
           }
         }
@@ -116,7 +113,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
     /* Do not support reference resolution */
     if (qualifiedName.kind == JS_STRING_LITERALS)
     // Provide an empty symbol match to avoid unresolved reference on the string literal
-      listOf(PolySymbolMatch.create("", JS_STRING_LITERALS, AngularEmptyOrigin, PolySymbolNameSegment.create(0, 0)))
+      listOf(PolySymbolMatch.create("", JS_STRING_LITERALS, PolySymbolOrigin.empty(), PolySymbolNameSegment.create(0, 0)))
     else
       emptyList()
 
@@ -151,15 +148,10 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
     || kind == NG_DIRECTIVE_INPUTS
     || kind == NG_DIRECTIVE_OUTPUTS
 
-  private object AngularEmptyOrigin : PolySymbolOrigin {
-    override val framework: FrameworkId =
-      Angular2Framework.ID
-  }
-
   private val inputOutputReference = ReferencingPolySymbol.create(
     JS_STRING_LITERALS,
     "Angular directive property",
-    AngularEmptyOrigin,
+    PolySymbolOrigin.empty(),
     NG_DIRECTIVE_INPUTS,
     NG_DIRECTIVE_OUTPUTS,
     priority = PolySymbol.Priority.HIGHEST
@@ -168,7 +160,6 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
   private class Angular2FieldPropertySymbol(
     override val delegate: JSPropertySymbol,
     override val kind: PolySymbolKind,
-    override val project: Project,
     val owner: TypeScriptClass?,
   ) : PolySymbolDelegate<JSPropertySymbol>, Angular2Symbol {
 
@@ -189,17 +180,17 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
           }
         )
         else -> super<PolySymbolDelegate>.get(property)
+                ?: super<Angular2Symbol>.get(property)
       }
 
     override fun createPointer(): Pointer<out Angular2FieldPropertySymbol> {
       val delegatePtr = delegate.createPointer()
       val kind = kind
-      val project = project
       val ownerPtr = owner?.createSmartPointer()
       return Pointer {
         val owner = ownerPtr?.let { it.dereference() ?: return@Pointer null }
         val delegate = delegatePtr.dereference() ?: return@Pointer null
-        Angular2FieldPropertySymbol(delegate, kind, project, owner)
+        Angular2FieldPropertySymbol(delegate, kind, owner)
       }
     }
   }

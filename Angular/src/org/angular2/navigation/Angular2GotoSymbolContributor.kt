@@ -4,13 +4,13 @@ package org.angular2.navigation
 import com.intellij.lang.javascript.navigation.DumbAwareChooseByNameContributor
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.navigation.NavigationItem
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi.PsiNavigatablePolySymbolNavigationTarget
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.indexing.FindSymbolParameters
 import com.intellij.util.indexing.IdFilter
-import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi.PsiNavigatablePolySymbolNavigationTarget
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.getDirective
@@ -66,9 +66,11 @@ class Angular2GotoSymbolContributor : DumbAwareChooseByNameContributor() {
     Angular2IndexUtil.multiResolve(parameters.project, parameters.searchScope, Angular2SymbolIndex.KEY, name, processor)
   }
 
-  private fun processSelectors(name: String,
-                               selectors: List<SimpleSelectorWithPsi>,
-                               processor: Processor<in NavigationItem>): Boolean {
+  private fun processSelectors(
+    name: String,
+    selectors: List<SimpleSelectorWithPsi>,
+    processor: Processor<in NavigationItem>,
+  ): Boolean {
     for (selector in selectors) {
       if (!processSelectorElement(name, selector.element, processor)) {
         return false
@@ -91,7 +93,7 @@ class Angular2GotoSymbolContributor : DumbAwareChooseByNameContributor() {
     processor: Processor<in NavigationItem>,
   ): Boolean {
     if (element == null || name != element.name) return true
-    for (target in element.getNavigationTargets(element.project)) {
+    for (target in element.getNavigationTargets(element.sourceElement.project)) {
       val navigationItem = (target as? PsiNavigatablePolySymbolNavigationTarget)?.getNavigationItem()
       if (navigationItem != null && processor.process(navigationItem)) {
         return true

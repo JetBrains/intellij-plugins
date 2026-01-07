@@ -2,14 +2,13 @@
 package org.angular2.web
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.util.Pair
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolTypeSupport
 import icons.AngularIcons
-import org.angular2.Angular2Framework
 import javax.swing.Icon
 
 class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : PolySymbolOrigin {
@@ -28,9 +27,6 @@ class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : PolySymbolOri
     else
       Pair.create(null, null)
   }
-
-  override val framework: String
-    get() = Angular2Framework.ID
 
   override val library: String?
     get() = versionAndName.first
@@ -53,8 +49,7 @@ class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : PolySymbolOri
     versionAndName.hashCode()
 
   companion object {
-    val empty: PolySymbolOrigin = PolySymbolOrigin.create(Angular2Framework.ID,
-                                                          library = "@angular/core",
+    val empty: PolySymbolOrigin = PolySymbolOrigin.create(library = "@angular/core",
                                                           defaultIcon = AngularIcons.Angular2,
                                                           typeSupport = TypeScriptSymbolTypeSupport())
   }

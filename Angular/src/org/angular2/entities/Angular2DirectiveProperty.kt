@@ -78,9 +78,6 @@ interface Angular2DirectiveProperty : Angular2Symbol, Angular2Element, JSSymbolW
   override val searchTarget: PolySymbolSearchTarget?
     get() = PolySymbolSearchTarget.create(this)
 
-  override val project: Project
-    get() = sourceElement.project
-
   override val priority: PolySymbol.Priority?
     get() = PolySymbol.Priority.LOW
 

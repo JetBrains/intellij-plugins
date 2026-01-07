@@ -7,7 +7,6 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
@@ -20,7 +19,7 @@ import org.jetbrains.vuejs.model.getAvailableSlots
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
 import org.jetbrains.vuejs.model.getMatchingAvailableSlots
 import org.jetbrains.vuejs.web.VUE_AVAILABLE_SLOTS
-import org.jetbrains.vuejs.web.VueFramework
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
 
@@ -76,17 +75,14 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
     }
   }
 
-  object DefaultSlotSymbol : PolySymbolWithPattern {
+  object DefaultSlotSymbol : PolySymbolWithPattern, VueSymbol {
     override val kind: PolySymbolKind
       get() = HTML_ATTRIBUTES
 
     override val name: String
       get() = "v-slot"
 
-    override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
-      override val framework: FrameworkId
-        get() = VueFramework.ID
-    }
+    override val origin: PolySymbolOrigin = PolySymbolOrigin.empty()
 
     override val pattern: PolySymbolPattern =
       PolySymbolPatternFactory.createSingleSymbolReferencePattern(

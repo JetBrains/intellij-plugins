@@ -12,6 +12,7 @@ import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.patterns.PolySymbolPatternSymbolsResolver
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.match
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.PROP_BINDING_PATTERN
@@ -33,7 +34,7 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
     }
     else emptyList()
 
-  private object AttributeWithInterpolationsSymbol : PolySymbolWithPattern {
+  private object AttributeWithInterpolationsSymbol : PolySymbolWithPattern, Angular2Symbol {
 
     override val origin: PolySymbolOrigin
       get() = Angular2SymbolOrigin.empty
@@ -48,10 +49,10 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       when (property) {
         PROP_BINDING_PATTERN -> property.tryCast(true)
-        else -> super.get(property)
+        else -> super<Angular2Symbol>.get(property)
       }
 
-    override fun createPointer(): Pointer<out PolySymbol> =
+    override fun createPointer(): Pointer<AttributeWithInterpolationsSymbol> =
       Pointer.hardPointer(this)
 
     override val pattern: PolySymbolPattern = PolySymbolPatternFactory.createComplexPattern(

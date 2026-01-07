@@ -33,9 +33,6 @@ interface Angular2DirectiveAttribute : Angular2Symbol, Angular2Element {
       else -> super.get(property)
     }
 
-  override val project: Project
-    get() = sourceElement.project
-
   override val kind: PolySymbolKind
     get() = NG_DIRECTIVE_ATTRIBUTES
 

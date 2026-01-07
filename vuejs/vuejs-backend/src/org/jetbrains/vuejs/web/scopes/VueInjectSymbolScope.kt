@@ -7,7 +7,6 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
-import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolCodeCompletionQueryParams
@@ -19,7 +18,6 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_PROVIDES
-import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
@@ -65,22 +63,17 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
   override fun getModificationCount(): Long =
     PsiModificationTracker.getInstance(enclosingComponent.source.project).modificationCount
 
-  private object VueInjectSymbolOrigin : PolySymbolOrigin {
-    override val framework: FrameworkId
-      get() = VueFramework.ID
-  }
-
   private val vueInjectStringSymbol = ReferencingPolySymbol.create(
     JS_STRING_LITERALS,
     "Vue Inject String",
-    VueInjectSymbolOrigin,
+    PolySymbolOrigin.empty(),
     VUE_PROVIDES
   )
 
   private val vueInjectPropertySymbol = ReferencingPolySymbol.create(
     JS_PROPERTIES,
     "Vue Inject Property",
-    VueInjectSymbolOrigin,
+    PolySymbolOrigin.empty(),
     VUE_PROVIDES
   )
 

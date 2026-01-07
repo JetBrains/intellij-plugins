@@ -9,11 +9,8 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolOrigin
-import com.intellij.polySymbols.PolySymbolProperty
-import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_SLOTS
-import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Kind.EXPRESSION
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue.Type.OF_MATCH
@@ -42,8 +39,8 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_SPECIAL_PROPERTIES
-import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.asPolySymbol
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 private const val SLOT_LOCAL_COMPONENT = "\$local"
 
@@ -90,7 +87,7 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
     }
   }
 
-  private class VueSlotPropertiesSymbol(slotName: String?) : PolySymbolWithPattern {
+  private class VueSlotPropertiesSymbol(slotName: String?) : PolySymbolWithPattern, VueSymbol {
 
     override val kind: PolySymbolKind
       get() = HTML_ATTRIBUTES
@@ -98,11 +95,8 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
     override val name: String
       get() = "Vue Slot Properties"
 
-    override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
-      when (property) {
-        PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(PolySymbolHtmlAttributeValue.create(kind = EXPRESSION, type = OF_MATCH))
-        else -> super<PolySymbolWithPattern>.get(property)
-      }
+    override val attributeValue: PolySymbolHtmlAttributeValue =
+      PolySymbolHtmlAttributeValue.create(kind = EXPRESSION, type = OF_MATCH)
 
     override val pattern: PolySymbolPattern =
       createComplexPattern(
@@ -126,10 +120,7 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
         createSymbolReferencePlaceholder()
       )
 
-    override val origin: PolySymbolOrigin = object : PolySymbolOrigin {
-      override val framework: FrameworkId
-        get() = VueFramework.ID
-    }
+    override val origin: PolySymbolOrigin = PolySymbolOrigin.empty()
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

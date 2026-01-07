@@ -22,6 +22,7 @@ import com.intellij.util.containers.map2Array
 import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolOrigin
 
 class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGroup) : PolySymbolScope {
@@ -75,7 +76,7 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
   override fun getModificationCount(): Long = 0
 
   companion object {
-    object FormGroupGetPathSymbol : PolySymbolWithPattern, PolySymbolScope {
+    object FormGroupGetPathSymbol : PolySymbolWithPattern, PolySymbolScope, Angular2Symbol {
 
       override val name: @NlsSafe String
         get() = "FormGroup.get() path"

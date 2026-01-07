@@ -20,6 +20,7 @@ import org.jetbrains.astro.polySymbols.PROP_ASTRO_PROXIMITY
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 class AstroComponent(file: PsiFile) : PsiSourcedPolySymbol,
+                                      AstroSymbol,
                                       PolySymbolScopeWithCache<PsiFile, Unit>(file.project, file, Unit) {
 
   override val source: PsiElement
@@ -37,7 +38,7 @@ class AstroComponent(file: PsiFile) : PsiSourcedPolySymbol,
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_ASTRO_PROXIMITY -> property.tryCast(AstroProximity.OUT_OF_SCOPE)
-      else -> null
+      else -> super<AstroSymbol>.get(property)
     }
 
   override fun provides(kind: PolySymbolKind): Boolean =

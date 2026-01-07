@@ -29,6 +29,7 @@ import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2PsiSourcedSymbol
+import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.EVENT_ATTR_PREFIX
 
@@ -64,7 +65,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
   private class HtmlElementStandardPropertyAndEventsExtension(
     templateFile: PsiFile, tagNamespace: String, tagName: String,
   ) : PolySymbolScopeWithCache<PsiFile, Pair<String, String>>(templateFile.project, templateFile,
-                                                              Pair(tagNamespace, tagName)), PolySymbol {
+                                                              Pair(tagNamespace, tagName)), Angular2Symbol {
 
     override fun provides(kind: PolySymbolKind): Boolean =
       kind == JS_PROPERTIES
@@ -255,6 +256,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
           ?: mapSource?.getJSType(templateFile)
         )
         else -> super<StandardHtmlSymbol>.get(property)
+                ?: super<Angular2PsiSourcedSymbol>.get(property)
       }
 
     override val priority: PolySymbol.Priority
