@@ -15,8 +15,13 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
 import org.jetbrains.vuejs.model.VueImplicitElement
 
-class VueSourceSlotScopeType private constructor(typeSource: JSTypeSource, private val tag: XmlTag, private val slotName: String)
-  : JSTypeBaseImpl(typeSource), JSCodeBasedType {
+class VueSourceSlotScopeType
+private constructor(
+  typeSource: JSTypeSource,
+  private val tag: XmlTag,
+  private val slotName: String,
+) : JSTypeBaseImpl(typeSource),
+    JSCodeBasedType {
 
   constructor(tag: XmlTag, slotName: String) : this(JSTypeSourceFactory.createTypeSource(tag, true), tag, slotName)
 

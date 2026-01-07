@@ -15,8 +15,12 @@ import org.jetbrains.vuejs.codeInsight.getPropTypeFromDocComment
 import org.jetbrains.vuejs.codeInsight.getPropTypeFromGenericType
 import org.jetbrains.vuejs.codeInsight.getPropTypeFromPropOptions
 
-class VueSourcePropType private constructor(typeSource: JSTypeSource, private val element: PsiNamedElement)
-  : JSTypeBaseImpl(typeSource), JSCodeBasedType {
+class VueSourcePropType
+private constructor(
+  typeSource: JSTypeSource,
+  private val element: PsiNamedElement,
+) : JSTypeBaseImpl(typeSource),
+    JSCodeBasedType {
 
   constructor(element: PsiNamedElement) : this(JSTypeSourceFactory.createTypeSource(element, true), element)
 
