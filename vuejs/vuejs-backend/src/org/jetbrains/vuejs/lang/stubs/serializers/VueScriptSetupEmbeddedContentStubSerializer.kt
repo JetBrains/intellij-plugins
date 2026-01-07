@@ -12,10 +12,12 @@ import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.parser.VueScriptSetupEmbeddedContentElementType
 import org.jetbrains.vuejs.lang.html.stub.impl.VueScriptSetupEmbeddedContentStubImpl
 
-internal class VueScriptSetupEmbeddedContentStubSerializer(elementTypeSupplier: () -> VueScriptSetupEmbeddedContentElementType)
-  : JSStubSerializer<JSEmbeddedContentStub, JSEmbeddedContent>(elementTypeSupplier) {
-  
+internal class VueScriptSetupEmbeddedContentStubSerializer(
+  elementTypeSupplier: () -> VueScriptSetupEmbeddedContentElementType,
+) : JSStubSerializer<JSEmbeddedContentStub, JSEmbeddedContent>(elementTypeSupplier) {
+
   private val typedElementType: VueScriptSetupEmbeddedContentElementType by lazy { elementTypeSupplier() }
+
   override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): JSEmbeddedContentStub =
     VueScriptSetupEmbeddedContentStubImpl(dataStream, parentStub, elementType)
 
