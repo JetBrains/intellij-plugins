@@ -10,8 +10,10 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueCodeStyleMainPanel(currentSettings: CodeStyleSettings?, settings: CodeStyleSettings)
-  : TabbedLanguageCodeStylePanel(VueLanguage, currentSettings, settings) {
+class VueCodeStyleMainPanel(
+  currentSettings: CodeStyleSettings?,
+  settings: CodeStyleSettings,
+) : TabbedLanguageCodeStylePanel(VueLanguage, currentSettings, settings) {
 
   override fun initTabs(settings: CodeStyleSettings) {
     addIndentOptionsTab(settings)
