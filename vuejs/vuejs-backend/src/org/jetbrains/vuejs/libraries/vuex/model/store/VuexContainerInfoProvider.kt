@@ -39,8 +39,10 @@ class VuexContainerInfoProvider : InitializedContainerInfoProvider<VuexContainer
     private val IS_NAMESPACED = BooleanValueAccessor(VuexUtils.PROP_NAMESPACED)
   }
 
-  private class VuexContainerInfoImpl(declaration: JSElement)
-    : InitializedContainerInfo(declaration), VuexContainerInfo {
+  private class VuexContainerInfoImpl(
+    declaration: JSElement,
+  ) : InitializedContainerInfo(declaration),
+      VuexContainerInfo {
 
     override val state: Map<String, VuexStateProperty> get() = get(STATE)
     override val actions: Map<String, VuexAction> get() = get(ACTIONS)
