@@ -22,7 +22,7 @@ class VueHtmlTagBlock(
   preserveSpace: Boolean,
 ) : XmlTagBlock(node, wrap, alignment, policy, indent, preserveSpace), BlockEx {
 
-  override fun getLanguage(): Language? {
+  override fun getLanguage(): Language {
     return HTMLLanguage.INSTANCE
   }
 

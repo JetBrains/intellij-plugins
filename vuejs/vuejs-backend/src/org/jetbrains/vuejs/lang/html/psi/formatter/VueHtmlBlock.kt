@@ -25,7 +25,7 @@ class VueHtmlBlock(
   preserveSpace: Boolean,
 ) : XmlBlock(node, wrap, alignment, policy, indent, textRange, preserveSpace), BlockEx {
 
-  override fun getLanguage(): Language? {
+  override fun getLanguage(): Language {
     return HTMLLanguage.INSTANCE
   }
 
