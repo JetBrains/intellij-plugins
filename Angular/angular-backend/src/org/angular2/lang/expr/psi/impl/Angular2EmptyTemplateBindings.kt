@@ -11,6 +11,7 @@ import org.angular2.lang.expr.psi.Angular2TemplateBindings
 class Angular2EmptyTemplateBindings(private val myParent: PsiElement?,
                                     override val templateName: String) : FakePsiElement(), Angular2TemplateBindings {
 
+  @Suppress("InstanceIElementTypeField") // Angular2TemplateBindingsType is not registered in the storage.
   private val type = Angular2ElementTypes.Angular2TemplateBindingsType(templateName)
 
   override val bindings: Array<Angular2TemplateBinding>
