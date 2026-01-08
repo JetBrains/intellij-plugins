@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
@@ -17,8 +17,6 @@ import org.intellij.terraform.hil.psi.ILPsiFile
 import org.jetbrains.annotations.NotNull
 
 class HILParserDefinition : ParserDefinition {
-  private val FILE = IFileElementType(HILLanguage)
-
   override fun createLexer(project: Project): Lexer = HILLexer()
 
   override fun createParser(project: Project): PsiParser = HILParser()
@@ -48,3 +46,5 @@ class HILParserDefinition : ParserDefinition {
 
   override fun spaceExistenceTypeBetweenTokens(left: ASTNode?, right: ASTNode?): SpaceRequirements = SpaceRequirements.MAY
 }
+
+private val FILE = IFileElementType(HILLanguage)
