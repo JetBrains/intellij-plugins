@@ -1,3 +1,3 @@
-mt-field (typeText='mint-ui'; priority=10.0; typeGreyed)
-mt-swipe (typeText='mint-ui'; priority=10.0; typeGreyed)
-mt-swipe-item (typeText='mint-ui'; priority=10.0; typeGreyed)
+mt-field (typeText='mint-field'; priority=10.0; typeGreyed)
+mt-swipe (typeText='mint-swipe'; priority=10.0; typeGreyed)
+mt-swipe-item (typeText='mint-swipe'; priority=10.0; typeGreyed)
