@@ -45,7 +45,7 @@
                     serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
 
-    <projectService serviceInterface="org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator"
+    <projectService serviceInterface="org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator" open="true"
                     serviceImplementation="org.angular2.refactoring.extractComponent.Angular2CliComponentGeneratorImpl"
                     testServiceImplementation="org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl"
     />
