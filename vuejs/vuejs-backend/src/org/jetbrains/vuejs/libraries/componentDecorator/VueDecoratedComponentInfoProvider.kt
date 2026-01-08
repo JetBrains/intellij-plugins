@@ -138,7 +138,8 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       override val name: String,
       protected val member: T,
     ) : VueNamedSymbol {
-      override val source: PsiElement? get() = member.memberSource.singleElement
+      override val source: PsiElement?
+        get() = member.memberSource.singleElement
     }
 
     private abstract class VueDecoratedProperty(
@@ -146,7 +147,8 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       member: PropertySignature,
     ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
         VueProperty {
-      override val jsType: JSType? get() = member.jsType
+      override val jsType: JSType?
+        get() = member.jsType
     }
 
     private class VueDecoratedInputProperty(
@@ -160,8 +162,9 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       override val required: Boolean =
         getRequiredFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex))
 
-      override val jsType: JSType = VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
-        .optionalIf(!required)
+      override val jsType: JSType =
+        VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
+          .optionalIf(!required)
     }
 
     private class VueDecoratedComputedProperty(
@@ -172,10 +175,17 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     ) : VueDecoratedProperty(name, member),
         VueComputedProperty {
 
-      override val jsType: JSType = VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
-      override val source: PsiElement = VueImplicitElement(name, jsType,
-                                                           member.memberSource.singleElement!!,
-                                                           JSImplicitElement.Type.Property, false)
+      override val jsType: JSType =
+        VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
+
+      override val source: PsiElement =
+        VueImplicitElement(
+          name = name,
+          jsType = jsType,
+          provider = member.memberSource.singleElement!!,
+          kind = JSImplicitElement.Type.Property,
+          equivalentToProvider = false,
+        )
     }
 
     private class VueDecoratedDataProperty(
