@@ -16,13 +16,11 @@ internal object TfDeployFileType : LanguageFileType(HCLLanguage) {
 
   override fun getName(): @NonNls String = "Terraform Deployment"
 
-  override fun getDescription(): @NlsContexts.Label String = HCLBundle.message("terraform.deploy.filetype.description")
+  override fun getDescription(): @NlsContexts.Label String = HCLBundle.message("terraform.deploy.name")
 
   override fun getDefaultExtension(): @NlsSafe String = HCL_DEFAULT_EXTENSION
 
   override fun getIcon(): Icon = TerraformIcons.Terraform
-
-  override fun toString(): String = name
 
   override fun getDisplayName(): @Nls String = HCLBundle.message("terraform.deploy.name")
 }

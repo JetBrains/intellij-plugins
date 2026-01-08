@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
 import com.intellij.openapi.fileTypes.LanguageFileType
@@ -15,8 +15,6 @@ object TerraformFileType : LanguageFileType(TerraformLanguage) {
   override fun getDescription(): String = HCLBundle.message("TerraformFileType.description")
 
   override fun getName(): String = "Terraform"
-
-  override fun toString(): String = name
 }
 
 private const val DEFAULT_EXTENSION: String = "tf"

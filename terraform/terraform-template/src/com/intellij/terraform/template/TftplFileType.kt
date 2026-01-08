@@ -10,7 +10,7 @@ object TftplFileType : LanguageFileType(TftplLanguage) {
 
   override fun getName(): String = "Terraform Template"
 
-  override fun getDescription(): String = TftplBundle.message("terraform.template.file.type")
+  override fun getDescription(): String = TftplBundle.message("terraform.template.display.name")
 
   override fun getDefaultExtension(): String = "tftpl"
 

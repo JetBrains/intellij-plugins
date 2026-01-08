@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.opentofu
 
 import com.intellij.openapi.fileTypes.LanguageFileType
@@ -14,11 +14,9 @@ object OpenTofuFileType: LanguageFileType(TerraformLanguage) {
 
   override fun getDefaultExtension(): String = DEFAULT_EXTENSION
 
-  override fun getDescription(): String = HCLBundle.message("opentofu.filetype.description")
+  override fun getDescription(): String = HCLBundle.message("opentofu.display.name")
 
   override fun getName(): String = "OpenTofu"
-
-  override fun toString(): String = OpenTofuFileType.name
 
   override fun getDisplayName(): @Nls String {
     return HCLBundle.message("opentofu.display.name")

@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.stack.component
 
 import com.intellij.openapi.fileTypes.LanguageFileType
@@ -16,13 +16,11 @@ internal object TfComponentFileType : LanguageFileType(HCLLanguage) {
 
   override fun getName(): @NonNls String = "Terraform Component"
 
-  override fun getDescription(): @NlsContexts.Label String = HCLBundle.message("terraform.component.filetype.description")
+  override fun getDescription(): @NlsContexts.Label String = HCLBundle.message("terraform.component.name")
 
   override fun getDefaultExtension(): @NlsSafe String = HCL_DEFAULT_EXTENSION
 
   override fun getIcon(): Icon = TerraformIcons.Terraform
-
-  override fun toString(): String = name
 
   override fun getDisplayName(): @Nls String = HCLBundle.message("terraform.component.name")
 }
