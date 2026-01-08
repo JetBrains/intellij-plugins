@@ -1,7 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
@@ -11,6 +10,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
@@ -29,7 +29,7 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   open val attributeValue: PolySymbolHtmlAttributeValue? get() = null
 
   override fun getModificationCount(): Long =
-    source?.project?.let { PsiModificationTracker.getInstance(it).modificationCount} ?: 0
+    source?.project?.let { PsiModificationTracker.getInstance(it).modificationCount } ?: 0
 
   override val source: PsiElement?
     get() = item.source
@@ -38,7 +38,7 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
     get() = item.rawSource
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
-    PolySymbolDocumentationTarget.create(this, location) {symbol, location ->
+    PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
       description = symbol.item.description
     }
 
