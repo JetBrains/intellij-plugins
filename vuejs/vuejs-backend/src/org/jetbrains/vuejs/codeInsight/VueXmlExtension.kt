@@ -1,11 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
-import com.intellij.polySymbols.html.HtmlSymbolsXmlExtension
-import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.polySymbols.html.HtmlSymbolsXmlExtension
+import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
