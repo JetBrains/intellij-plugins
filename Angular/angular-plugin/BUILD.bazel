@@ -15,7 +15,6 @@ jvm_library(
   runtime_deps = [
     "//contrib/Angular/angular-backend",
     "//contrib/Angular/angular-free",
-    "//contrib/Angular/angular-css",
     "//contrib/Angular/angular-tslint",
     "//plugins/JavaScriptLanguage:javascript-plugin",
   ]

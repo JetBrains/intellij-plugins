@@ -1,6 +1,7 @@
 <idea-plugin visibility="internal">
   <dependencies>
     <module name="intellij.xml.impl"/>
+    <module name="intellij.css.backend"/>
     <module name="intellij.javascript.ultimate"/>
     <plugin id="HtmlTools"/>
     <plugin id="intellij.webpack"/>
@@ -390,6 +391,12 @@
     <polySymbols.psiReferenceProvider hostElementClass="org.angular2.lang.expr.psi.Angular2TemplateBindingKey"
                                       hostLanguage="Angular2"
                                       implementationClass="org.angular2.codeInsight.attributes.Angular2TemplateBindingKeyReferenceProvider"/>
+
+    <!-- CSS support -->
+    <css.inclusionContext implementation="org.angular2.css.Angular2CssInclusionContext"/>
+    <css.embeddedCssProvider implementation="org.angular2.codeInsight.Angular2EmbeddedCssProvider"/>
+    <css.classOrIdUsagesProvider implementation="org.angular2.css.findUsages.Angular2CssClassOrIdUsagesProvider"/>
+    <psi.fileReferenceHelper order="before JsCss" implementation="org.angular2.css.refs.Angular2CssFileReferenceHelper" />
 
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="NG-META:"/>

@@ -112,7 +112,6 @@
     <orderEntry type="module" module-name="intellij.angular.plugin" scope="TEST" />
     <orderEntry type="module" module-name="intellij.angular.backend" />
     <orderEntry type="module" module-name="intellij.angular.tslint" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.angular.css" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.backend" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />

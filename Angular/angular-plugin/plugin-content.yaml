@@ -4,9 +4,6 @@
 - name: lib/modules/intellij.angular.backend.jar
   contentModules:
   - name: intellij.angular.backend
-- name: lib/modules/intellij.angular.css.jar
-  contentModules:
-  - name: intellij.angular.css
 - name: lib/modules/intellij.angular.free.jar
   contentModules:
   - name: intellij.angular.free

@@ -151,7 +151,6 @@ jvm_library(
     "//contrib/Angular/angular-plugin",
     "//contrib/Angular/angular-backend",
     "//contrib/Angular/angular-tslint",
-    "//contrib/Angular/angular-css",
     "//plugins/css/backend",
     "//plugins/css/ultimate/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
