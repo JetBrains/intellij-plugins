@@ -93,8 +93,10 @@ private val PATH_VALUE_PATTERN = creatPathAttributeValuePattern()
 
 private val PATH_REFERENCE_PROVIDER = createPathReferenceProvider()
 
-private class VueRefReference(element: PsiElement, private val target: PsiElement)
-  : PsiReferenceBase<PsiElement>(element, ElementManipulators.getValueTextRange(element), false) {
+private class VueRefReference(
+  element: PsiElement,
+  private val target: PsiElement,
+) : PsiReferenceBase<PsiElement>(element, ElementManipulators.getValueTextRange(element), false) {
 
   override fun resolve(): PsiElement = target
 
@@ -103,7 +105,7 @@ private class VueRefReference(element: PsiElement, private val target: PsiElemen
 private fun createSrcAttrValuePattern(tagName: String): XmlAttributeValuePattern =
   XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).withAncestor(2, XmlPatterns.xmlTag().withLocalName(tagName))
 
-private class VuePathAttributeFilter: ElementFilter {
+private class VuePathAttributeFilter : ElementFilter {
   override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
     if (element !is XmlAttributeValue) return false
     if (element.childrenOfType<ASTWrapperPsiElement>().isNotEmpty()) return false

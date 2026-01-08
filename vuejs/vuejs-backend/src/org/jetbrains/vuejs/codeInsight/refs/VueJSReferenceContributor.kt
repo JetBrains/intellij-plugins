@@ -92,6 +92,7 @@ private fun creatPathAttributeValuePattern() = JSPatterns.stringTemplate()
       val text = element.text
       return text.startsWith("/") || element.text.startsWith("`/")
     }
+
     override fun isClassAcceptable(hintClass: Class<*>?): Boolean = true
   }))
 
@@ -158,8 +159,10 @@ private class VueComponentNameReference(
   }
 }
 
-private class VueTemplateIdReference(element: JSLiteralExpression, rangeInElement: TextRange?)
-  : CachingPolyReferenceBase<JSLiteralExpression>(element, rangeInElement) {
+private class VueTemplateIdReference(
+  element: JSLiteralExpression,
+  rangeInElement: TextRange?,
+) : CachingPolyReferenceBase<JSLiteralExpression>(element, rangeInElement) {
   override fun resolveInner(): Array<ResolveResult> {
     val result = mutableListOf<ResolveResult>()
     StubIndex.getInstance().processElements(VUE_ID_INDEX_KEY, value, element.project,
