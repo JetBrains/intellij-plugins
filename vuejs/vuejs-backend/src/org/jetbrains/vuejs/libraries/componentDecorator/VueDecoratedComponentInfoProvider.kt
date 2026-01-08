@@ -134,18 +134,28 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       this.model = model
     }
 
-    private abstract class VueDecoratedNamedSymbol<T : TypeMember>(override val name: String, protected val member: T)
-      : VueNamedSymbol {
+    private abstract class VueDecoratedNamedSymbol<T : TypeMember>(
+      override val name: String,
+      protected val member: T,
+    ) : VueNamedSymbol {
       override val source: PsiElement? get() = member.memberSource.singleElement
     }
 
-    private abstract class VueDecoratedProperty(name: String, member: PropertySignature)
-      : VueDecoratedNamedSymbol<PropertySignature>(name, member), VueProperty {
+    private abstract class VueDecoratedProperty(
+      name: String,
+      member: PropertySignature,
+    ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
+        VueProperty {
       override val jsType: JSType? get() = member.jsType
     }
 
-    private class VueDecoratedInputProperty(name: String, member: PropertySignature, decorator: ES6Decorator?, decoratorArgumentIndex: Int)
-      : VueDecoratedProperty(name, member), VueInputProperty {
+    private class VueDecoratedInputProperty(
+      name: String,
+      member: PropertySignature,
+      decorator: ES6Decorator?,
+      decoratorArgumentIndex: Int,
+    ) : VueDecoratedProperty(name, member),
+        VueInputProperty {
 
       override val required: Boolean =
         getRequiredFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex))
@@ -168,11 +178,16 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
                                                            JSImplicitElement.Type.Property, false)
     }
 
-    private class VueDecoratedDataProperty(member: PropertySignature)
-      : VueDecoratedProperty(member.memberName, member), VueDataProperty
+    private class VueDecoratedDataProperty(
+      member: PropertySignature,
+    ) : VueDecoratedProperty(member.memberName, member),
+        VueDataProperty
 
-    private class VueDecoratedPropertyEmitCall(name: String, member: PropertySignature)
-      : VueDecoratedNamedSymbol<PropertySignature>(name, member), VueEmitCall {
+    private class VueDecoratedPropertyEmitCall(
+      name: String,
+      member: PropertySignature,
+    ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
+        VueEmitCall {
 
       override val params: List<JSParameterTypeDecorator> = run {
         val functionType = member.jsType?.asSafely<JSFunctionType>() ?: return@run super.params
@@ -191,8 +206,12 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       override val hasStrictSignature: Boolean = member.jsType is JSFunctionType
     }
 
-    private class VueDecoratedPropSyncEmitCall(name: String, decorator: ES6Decorator, member: PropertySignature)
-      : VueDecoratedNamedSymbol<PropertySignature>(name, member), VueEmitCall {
+    private class VueDecoratedPropSyncEmitCall(
+      name: String,
+      decorator: ES6Decorator,
+      member: PropertySignature,
+    ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
+        VueEmitCall {
 
       override val params: List<JSParameterTypeDecorator> = listOf(
         JSParameterTypeDecoratorImpl("arg", member.jsType ?: VueDecoratedComponentPropType(member, decorator, 1), false, false, true)
@@ -201,10 +220,10 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       override val hasStrictSignature: Boolean = true
     }
 
-    private class VueDecoratedPropertyMethod(name: String, member: PropertySignature)
-      : VueDecoratedProperty(name, member), VueMethod
-
+    private class VueDecoratedPropertyMethod(
+      name: String,
+      member: PropertySignature,
+    ) : VueDecoratedProperty(name, member),
+        VueMethod
   }
-
-
 }
