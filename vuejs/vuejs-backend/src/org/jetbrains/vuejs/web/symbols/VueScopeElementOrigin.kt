@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
-import com.intellij.util.asSafely
 import com.intellij.polySymbols.FrameworkId
 import com.intellij.polySymbols.PolySymbolOrigin
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueLibrary
 import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.web.VueFramework
