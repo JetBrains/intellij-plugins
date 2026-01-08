@@ -8,14 +8,11 @@ import com.intellij.openapi.application.asContextElement
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.observable.util.whenDisposed
 import com.intellij.openapi.options.BoundConfigurable
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.*
 import com.intellij.openapi.ui.ComponentWithBrowseButton.BrowseFolderActionListener
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.vcs.ProjectLevelVcsManager
-import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -32,10 +29,10 @@ import com.intellij.ui.layout.or
 import com.intellij.ui.layout.selected
 import kotlinx.coroutines.*
 import org.jetbrains.idea.perforce.PerforceBundle
-import org.jetbrains.idea.perforce.application.*
+import org.jetbrains.idea.perforce.application.P4ConfigConnectionDiagnoseDialog
+import org.jetbrains.idea.perforce.application.PerforceManager
+import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.connections.*
-import org.jetbrains.idea.perforce.perforce.login.LoginPerformerImpl
-import org.jetbrains.idea.perforce.perforce.login.LoginSupport
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager
 import java.io.File
 import javax.swing.JEditorPane
@@ -53,7 +50,7 @@ private const val CHARSET_utf8: @NlsSafe String = "utf8"
 private val charsetValues = listOf(CHARSET_NONE, CHARSET_ISO8859_1, CHARSET_ISO8859_15, CHARSET_eucjp,
                                    CHARSET_eucjp, CHARSET_shiftjis, CHARSET_winansi, CHARSET_macosroman, CHARSET_utf8)
 
-private class PerforceConfigPanel(private val myProject: Project, private val myDisposable: Disposable, private val cs: CoroutineScope) {
+internal class PerforceConfigPanel(private val myProject: Project, private val myDisposable: Disposable, private val cs: CoroutineScope) {
   private val myP4EnvHelper = P4EnvHelper.getConfigHelper(myProject)
   private val mySettings = PerforceSettings.getSettings(myProject)
 
@@ -255,38 +252,29 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
     val isEmpty = PerforceLoginManager.getInstance(myProject).notifier.isEmpty
 
     val settings = createTestConnectionSettings()
-    val connectionManager = TestPerforceConnectionManager(myProject, !settings.useP4CONFIG)
-    val testLoginManager = TestLoginManager(myProject, settings, connectionManager)
-    val runner = PerforceRunner(connectionManager, settings, testLoginManager)
+    val tester = PerforceConnectionTester(myProject, settings)
+
     val isSuccess: Boolean
 
     if (settings.useP4CONFIG) {
-      val connectionTestDataProvider = ConnectionTestDataProvider(myProject, connectionManager, runner)
-      isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
-        { connectionTestDataProvider.refresh() }, PerforceBundle.message("connection.test"), true, myProject)
-      if (!isSuccess) {
+      val result = tester.testConnection()
+      val refresher = result.refresher
+      isSuccess = !result.isCancelled
+      if (result.isCancelled) {
         showCancelledConnectionDialog()
       }
-      else {
-        val dialog = P4ConfigConnectionDiagnoseDialog(myProject, connectionTestDataProvider)
-        dialog.show()
+      else if (refresher != null) {
+        P4ConfigConnectionDiagnoseDialog(myProject, refresher).show()
       }
     }
     else {
-      connectionManager.setSingletonConnection(SingletonConnection(myProject, settings))
-      var checker : PerforceClientRootsChecker? = null
-      isSuccess = ProgressManager.getInstance()
-        .runProcessWithProgressSynchronously({
-                                               val allConnections = connectionManager.getAllConnections()
-                                               val cache = ClientRootsCache.getClientRootsCache(myProject)
-                                               val info = PerforceInfoAndClient.calculateInfos(allConnections.values, runner, cache)
-                                               checker = PerforceClientRootsChecker(info, allConnections)
-                                             }, PerforceBundle.message("connection.test"), true, myProject)
-      if (!isSuccess) {
+      val result = tester.testConnection(SingletonConnection(myProject, settings))
+      isSuccess = !result.isCancelled
+      if (result.isCancelled) {
         showCancelledConnectionDialog()
       }
-      else {
-        PerforceConnectionProblemsNotifier.showSingleConnectionState(myProject, checker)
+      else if (result.info != null) {
+        PerforceConnectionProblemsNotifier.showSingleConnectionState(myProject, result.info)
       }
     }
 
@@ -385,113 +373,6 @@ private class PerforceConfigPanel(private val myProject: Project, private val my
     override fun invoke(): Boolean = hasIgnoreFileFromEnv()
   }
 
-  private class ConnectionTestDataProvider(private val myProject: Project,
-                                           private val myConnectionManager: TestPerforceConnectionManager,
-                                           private val myRunner: PerforceRunner) : ConnectionDiagnoseRefresher {
-    private var myChecker = PerforceClientRootsChecker()
-    private var myInfo = emptyMap<P4Connection, ConnectionInfo>()
-    private var myMc: PerforceMultipleConnections? = null
-
-    override fun refresh() {
-      val calculator = P4ConnectionCalculator(myProject)
-      calculator.execute()
-      // !! check connectivity & authorization separately
-      myMc = calculator.multipleConnections
-      val map = myMc!!.allConnections
-      myConnectionManager.multipleConnectionObject = myMc
-      myInfo = PerforceInfoAndClient.recalculateInfos(myInfo, map.values, myRunner, ClientRootsCache.getClientRootsCache(myProject)).newInfo
-      myChecker = PerforceClientRootsChecker(myInfo, map)
-    }
-
-    override fun getMultipleConnections(): PerforceMultipleConnections = myMc!!
-
-    override fun getP4RootsInformation(): P4RootsInformation = myChecker
-  }
-
-  private class TestLoginManager(private val myProject: Project,
-                                 private val mySettings: PerforceSettings,
-                                 private val myConnectionManagerI: PerforceConnectionManagerI) : LoginSupport {
-    @Throws(VcsException::class)
-    override fun silentLogin(connection: P4Connection): Boolean {
-      var password = if (connection is P4ParametersConnection)
-        connection.parameters.password
-      else
-        mySettings.passwd
-      val loginPerformer = LoginPerformerImpl(myProject, connection, myConnectionManagerI)
-      if (password != null && loginPerformer.login(password).isSuccess) {
-        return true
-      }
-
-      while (true) {
-        password = mySettings.requestForPassword(if (mySettings.useP4CONFIG) connection else null)
-        if (password == null) return false
-        val login = loginPerformer.login(password)
-        if (login.isSuccess) {
-          PerforceConnectionManager.getInstance(myProject).updateConnections()
-          return true
-        }
-      }
-    }
-
-    override fun notLogged(connection: P4Connection) {}
-  }
-
-
-  private class TestPerforceConnectionManager(private val myProject: Project,
-                                              private val mySingleton: Boolean) : PerforceConnectionManagerI {
-    private var mySingletonConnection: SingletonConnection? = null
-    private var myMc: PerforceMultipleConnections? = null
-    fun setSingletonConnection(singletonConnection: SingletonConnection?) {
-      mySingletonConnection = singletonConnection
-    }
-
-    fun setMultipleConnectionObject(mc: PerforceMultipleConnections?) {
-      myMc = mc
-    }
-
-    override fun getMultipleConnectionObject(): PerforceMultipleConnections? = myMc
-
-    override fun getAllConnections(): Map<VirtualFile, P4Connection> {
-      if (mySingleton) {
-        val result: MutableMap<VirtualFile, P4Connection> = LinkedHashMap()
-        for (root in ProjectLevelVcsManager.getInstance(myProject).getRootsUnderVcs(PerforceVcs.getInstance(myProject))) {
-          result[root] = mySingletonConnection!!
-        }
-        return result
-      }
-      return myMc!!.allConnections
-    }
-
-    override fun getConnectionForFile(file: File): P4Connection? {
-      return if (mySingleton) {
-        mySingletonConnection
-      }
-      else {
-        val vf = PerforceConnectionManager.findNearestLiveParentFor(file) ?: return null
-        myMc!!.getConnection(vf)
-      }
-    }
-
-    override fun getConnectionForFile(file: P4File): P4Connection? = if (mySingleton) {
-      mySingletonConnection
-    }
-    else {
-      getConnectionForFile(file.localFile)
-    }
-
-    override fun getConnectionForFile(file: VirtualFile): P4Connection? = if (mySingleton) {
-      mySingletonConnection
-    }
-    else {
-      myMc!!.getConnection(file)
-    }
-
-    override fun isSingletonConnectionUsed() = mySingleton
-
-    override fun updateConnections() {}
-    override fun isUnderProjectConnections(file: File) = true
-    override fun isInitialized() = true
-  }
 }
 
 internal class PerforceConfigurable(val myProject: Project, private val cs: CoroutineScope) :

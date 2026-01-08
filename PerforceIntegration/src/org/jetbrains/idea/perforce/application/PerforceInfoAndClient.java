@@ -14,12 +14,13 @@ import java.util.*;
 public final class PerforceInfoAndClient {
   private static final Logger LOG = Logger.getInstance(PerforceInfoAndClient.class);
 
-  static @NotNull ConnectionInfo calcInfo(final @NotNull P4Connection connection,
+  static @NotNull ConnectionInfo calcInfo(@NotNull P4Connection connection,
                                           @NotNull PerforceRunner runner,
                                           @NotNull ClientRootsCache clientRootsCache) {
     try {
       final Map<String, List<String>> infoMap = calcInfoMap(connection, runner);
-      return new ConnectionInfo(infoMap, new ClientData(calcClientMap(connection, runner, extractClient(infoMap), clientRootsCache)));
+      return new ConnectionInfo(infoMap,
+                                new ClientData(calcClientMap(connection, runner, extractClient(infoMap), clientRootsCache)));
     }
     catch (PerforceAuthenticationException e) {
       return new ConnectionInfo(e);
@@ -39,11 +40,11 @@ public final class PerforceInfoAndClient {
     return clientValue.get(0);
   }
 
-  private static @NotNull Map<String, List<String>> calcClientMap(P4Connection connection,
-                                                                  PerforceRunner runner,
-                                                                  final String client,
-                                                                  final ClientRootsCache clientRootsCache) throws VcsException {
-    final Map<String, List<String>> clientMap = runner.loadClient(client, connection);
+  private static @NotNull Map<String, List<String>> calcClientMap(@NotNull P4Connection connection,
+                                                                  @NotNull PerforceRunner runner,
+                                                                  @NotNull String client,
+                                                                  @NotNull ClientRootsCache clientRootsCache) throws VcsException {
+    Map<String, List<String>> clientMap = runner.loadClient(client, connection);
     convertRoots(clientMap, PerforceRunner.CLIENTSPEC_ROOT, clientRootsCache);
     convertRoots(clientMap, PerforceRunner.CLIENTSPEC_ALTROOTS, clientRootsCache);
     return clientMap;

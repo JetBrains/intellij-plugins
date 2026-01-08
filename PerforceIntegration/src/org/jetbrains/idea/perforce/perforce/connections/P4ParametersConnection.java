@@ -13,7 +13,7 @@ import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParameters
 import java.io.File;
 
 public class P4ParametersConnection extends AbstractP4Connection {
-  private final P4ConnectionParameters myParameters;
+  protected final P4ConnectionParameters myParameters;
   private final ConnectionId myConnectionId;
   private final File myCwd;
 

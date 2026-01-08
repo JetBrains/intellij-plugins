@@ -8,6 +8,7 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.perforce.PerforceAuthenticationException;
@@ -26,16 +27,28 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
 
   public PerforceClientRootsChecker() {}
 
-  public PerforceClientRootsChecker(Map<P4Connection, ConnectionInfo> infoAndClient, final Map<VirtualFile, P4Connection> map) {
+  public PerforceClientRootsChecker(@NotNull Map<P4Connection, ConnectionInfo> infoAndClient,
+                                    @NotNull Map<VirtualFile, P4Connection> map) {
+    this(infoAndClient, map, null);
+  }
+
+  /**
+   * @param clientRoot if specified, additionally check that this root is under client spec roots.
+   *                   Used when testing connection from clone dialog where project roots may not be set yet.
+   */
+  public PerforceClientRootsChecker(@NotNull Map<P4Connection, ConnectionInfo> infoAndClient,
+                                    @NotNull Map<VirtualFile, P4Connection> map,
+                                    @Nullable VirtualFile clientRoot) {
     if (map.containsKey(null)) {
       LOG.info("Null root: " + new LinkedHashMap<>(map));
     }
 
     myHasNoConnections = map.isEmpty();
-    final MultiMap<P4Connection, VirtualFile> inverse = invertConnectionMap(map);
-    for (P4Connection connection : inverse.keySet()) {
-      final Collection<VirtualFile> roots = inverse.get(connection);
-      final List<String> clientRoots;
+    MultiMap<P4Connection, VirtualFile> inverse = invertConnectionMap(map);
+    Set<P4Connection> connectionsToCheck = new LinkedHashSet<>(inverse.keySet());
+
+    for (P4Connection connection : connectionsToCheck) {
+      List<String> clientRoots;
       try {
         clientRoots = getClientRoots(connection, infoAndClient);
       } catch (PerforceAuthenticationException e) {
@@ -46,7 +59,12 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
         continue;
       }
 
-      ContainerUtil.putIfNotNull(connection, checkRoots(roots, clientRoots), myMap);
+      Collection<VirtualFile> rootsToCheck = new ArrayList<>(inverse.get(connection));
+      if (clientRoot != null && !rootsToCheck.contains(clientRoot)) {
+        rootsToCheck.add(clientRoot);
+      }
+
+      ContainerUtil.putIfNotNull(connection, checkRoots(rootsToCheck, clientRoots), myMap);
     }
   }
 

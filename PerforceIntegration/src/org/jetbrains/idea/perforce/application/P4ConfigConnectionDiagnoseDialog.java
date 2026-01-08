@@ -39,10 +39,10 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
   private BaseNode myRoot;
   private final Project myProject;
   private final P4EnvHelper myP4EnvHelper;
-  private final ConnectionDiagnoseRefresher myRefresher;
+  private final @NotNull ConnectionDiagnoseRefresher myRefresher;
   private DialogWrapper.DialogWrapperAction myRefreshAction;
 
-  public P4ConfigConnectionDiagnoseDialog(Project project, ConnectionDiagnoseRefresher refresher) {
+  public P4ConfigConnectionDiagnoseDialog(@NotNull Project project, @NotNull ConnectionDiagnoseRefresher refresher) {
     super(project, true);
     myProject = project;
     myP4EnvHelper = P4EnvHelper.getConfigHelper(project);
