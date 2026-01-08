@@ -43,7 +43,9 @@ class VuexCompletionContributor : CompletionContributor() {
            VuexCallReferenceCompletionProvider(VUEX_DISPATCH_COMMIT_OBJECT_ARG_REF_PROVIDER))
   }
 
-  private class VuexCallReferenceCompletionProvider(private val provider: VuexJSLiteralReferenceProvider) : CompletionProvider<CompletionParameters>() {
+  private class VuexCallReferenceCompletionProvider(
+    private val provider: VuexJSLiteralReferenceProvider,
+  ) : CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val ref = parameters.position.containingFile.findReferenceAt(parameters.offset)
       if (ref is JSReferenceExpression && isVuexContext(ref)) {
