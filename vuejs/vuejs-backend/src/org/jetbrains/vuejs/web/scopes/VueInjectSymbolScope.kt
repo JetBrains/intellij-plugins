@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.web.scopes
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
@@ -64,14 +63,12 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
   private val vueInjectStringSymbol = ReferencingPolySymbol.create(
     JS_STRING_LITERALS,
     "Vue Inject String",
-    PolySymbolOrigin.empty(),
     VUE_PROVIDES
   )
 
   private val vueInjectPropertySymbol = ReferencingPolySymbol.create(
     JS_PROPERTIES,
     "Vue Inject Property",
-    PolySymbolOrigin.empty(),
     VUE_PROVIDES
   )
 

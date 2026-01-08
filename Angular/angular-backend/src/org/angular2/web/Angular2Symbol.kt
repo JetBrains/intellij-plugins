@@ -3,7 +3,6 @@ package org.angular2.web
 
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_ICON
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HtmlFrameworkSymbol
@@ -17,9 +16,6 @@ interface Angular2Symbol : HtmlFrameworkSymbol {
 
   override val framework: FrameworkId
     get() = Angular2Framework.ID
-
-  override val origin: PolySymbolOrigin
-    get() = PolySymbolOrigin.empty()
 
   override val icon: Icon?
     get() = AngularIcons.Angular2

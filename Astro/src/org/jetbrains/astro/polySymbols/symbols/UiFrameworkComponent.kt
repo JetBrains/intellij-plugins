@@ -2,7 +2,10 @@
 package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
@@ -42,9 +45,6 @@ class UiFrameworkComponent(
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     consumer(AstroComponentWildcardAttribute)
   }
-
-  override val origin: PolySymbolOrigin
-    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = UI_FRAMEWORK_COMPONENTS

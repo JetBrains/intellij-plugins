@@ -4,7 +4,6 @@ import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
@@ -14,12 +13,11 @@ class PolySymbolReferencingScope(
   kind: PolySymbolKind,
   name: String,
   private val isExclusive: Boolean,
-  origin: PolySymbolOrigin,
   vararg kinds: PolySymbolKind,
 ) : PolySymbolScope {
 
   private val symbol = ReferencingPolySymbol.create(
-    kind, name, origin, *kinds
+    kind, name, *kinds
   )
 
   override fun isExclusiveFor(kind: PolySymbolKind): Boolean =

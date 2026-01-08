@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.PolySymbolOrigin
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueNamedSymbol
 

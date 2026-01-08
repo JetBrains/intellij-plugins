@@ -74,8 +74,7 @@ class VueComponentSymbol(
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(HTML_SLOTS) && item is VueUnresolvedComponent)
-      listOf(PolySymbolMatch.create(qualifiedName.name, HTML_SLOTS, this.origin,
-                                    PolySymbolNameSegment.create(0, qualifiedName.name.length)))
+      listOf(PolySymbolMatch.create(qualifiedName.name, HTML_SLOTS, PolySymbolNameSegment.create(0, qualifiedName.name.length)))
     else
       super.getMatchingSymbols(qualifiedName, params, stack)
 

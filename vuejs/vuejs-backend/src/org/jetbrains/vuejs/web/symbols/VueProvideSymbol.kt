@@ -4,12 +4,10 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.psi.PsiNamedElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueProvide
-import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.web.VUE_PROVIDES
 
 class VueProvideSymbol(

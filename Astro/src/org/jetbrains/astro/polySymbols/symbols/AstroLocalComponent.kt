@@ -3,7 +3,10 @@ package org.jetbrains.astro.polySymbols.symbols
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
@@ -60,9 +63,6 @@ class AstroLocalComponent(
       ?.map(::AstroComponentPropSymbol)
       ?.forEach(consumer)
   }
-
-  override val origin: PolySymbolOrigin
-    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = ASTRO_COMPONENTS

@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.css.CSS_PROPERTIES
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
@@ -73,8 +72,6 @@ class AstroScriptDefineVarsScope(scriptTag: XmlTag) : AstroDefineVarsScope(scrip
         PolySymbolPatternFactory.createPatternSequence(PolySymbolPatternFactory.createSymbolReferencePlaceholder())
       )
 
-    override val origin: PolySymbolOrigin = PolySymbolOrigin.empty()
-
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
   }
@@ -105,8 +102,6 @@ class AstroStyleDefineVarsScope(styleTag: XmlTag) : AstroDefineVarsScope(styleTa
           PolySymbolPatternFactory.createSymbolReferencePlaceholder()
         )
       )
-
-    override val origin: PolySymbolOrigin = PolySymbolOrigin.empty()
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

@@ -4,7 +4,6 @@ package org.angular2.codeInsight.attributes
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolDescriptor
 import com.intellij.polySymbols.html.attributes.HtmlAttributeSymbolInfo
@@ -52,8 +51,6 @@ class Angular2AttributeDescriptor(info: HtmlAttributeSymbolInfo, tag: XmlTag?) :
       element: PsiElement,
     ): Angular2AttributeDescriptor {
       val symbol = object : PolySymbol {
-        override val origin: PolySymbolOrigin
-          get() = PolySymbolOrigin.empty()
 
         override val kind: PolySymbolKind
           get() = HTML_ATTRIBUTES

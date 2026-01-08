@@ -4,7 +4,6 @@ import com.intellij.model.Pointer
 import com.intellij.model.Pointer.hardPointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
@@ -19,13 +18,16 @@ import org.angular2.web.NG_TEMPLATE_BINDING_KEYWORDS
 object TemplateBindingKeywordsScope : PolySymbolScope {
 
   private val KEYWORDS_REF_FOR_JS_SYMBOLS = ReferencingPolySymbol.create(
-    JS_SYMBOLS, "Angular template binding keyword", PolySymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
+    JS_SYMBOLS, "Angular template binding keyword", NG_TEMPLATE_BINDING_KEYWORDS
+  )
 
   private val KEYWORDS_REF_FOR_JS_PROPERTIES = ReferencingPolySymbol.create(
-    JS_PROPERTIES, "Angular template binding keyword", PolySymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
+    JS_PROPERTIES, "Angular template binding keyword", NG_TEMPLATE_BINDING_KEYWORDS
+  )
 
   private val KEYWORDS_REF_FOR_NG_TEMPLATE_BINDINGS = ReferencingPolySymbol.create(
-    NG_TEMPLATE_BINDINGS, "Angular template binding keyword", PolySymbolOrigin.empty(), NG_TEMPLATE_BINDING_KEYWORDS)
+    NG_TEMPLATE_BINDINGS, "Angular template binding keyword", NG_TEMPLATE_BINDING_KEYWORDS
+  )
 
   override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
     when (kind) {

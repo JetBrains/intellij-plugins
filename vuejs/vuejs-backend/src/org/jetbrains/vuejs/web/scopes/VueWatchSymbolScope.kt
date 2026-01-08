@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
@@ -31,7 +30,10 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
-import org.jetbrains.vuejs.web.symbols.*
+import org.jetbrains.vuejs.web.symbols.VueAnySymbol
+import org.jetbrains.vuejs.web.symbols.VueComputedPropertySymbol
+import org.jetbrains.vuejs.web.symbols.VueDataPropertySymbol
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
   PolySymbolScopeWithCache<VueSourceComponent, Unit>(enclosingComponent.source.project, enclosingComponent, Unit) {

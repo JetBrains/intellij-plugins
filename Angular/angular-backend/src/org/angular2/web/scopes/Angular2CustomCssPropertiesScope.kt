@@ -14,7 +14,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.css.CSS_PROPERTIES
 import com.intellij.polySymbols.css.properties.AbstractCssCustomPropertySymbolDeclaredInPsi
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -124,9 +123,6 @@ class Angular2CustomCssPropertiesScope(file: PsiFile) :
 
     final override val textRangeInSourceElement: TextRange? =
       getInitialOffset().let { TextRange(info.nameOffset + it, info.nameOffset + it + info.name.length) }
-
-    final override val origin: PolySymbolOrigin
-      get() = PolySymbolOrigin.empty()
 
     final override val name: @NlsSafe String = info.name
 

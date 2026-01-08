@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -35,11 +34,11 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
 
   companion object {
     val INPUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive input",
-                                                                   true, PolySymbolOrigin.empty(), NG_DIRECTIVE_INPUTS)
+                                                                   true, NG_DIRECTIVE_INPUTS)
     val OUTPUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive output",
-                                                                    true, PolySymbolOrigin.empty(), NG_DIRECTIVE_OUTPUTS)
+                                                                    true, NG_DIRECTIVE_OUTPUTS)
     val IN_OUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive two-way binding",
-                                                                    true, PolySymbolOrigin.empty(), NG_DIRECTIVE_IN_OUTS)
+                                                                    true, NG_DIRECTIVE_IN_OUTS)
   }
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

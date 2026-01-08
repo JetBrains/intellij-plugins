@@ -114,7 +114,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
     /* Do not support reference resolution */
     if (qualifiedName.kind == JS_STRING_LITERALS)
     // Provide an empty symbol match to avoid unresolved reference on the string literal
-      listOf(PolySymbolMatch.create("", JS_STRING_LITERALS, PolySymbolOrigin.empty(), PolySymbolNameSegment.create(0, 0)))
+      listOf(PolySymbolMatch.create("", JS_STRING_LITERALS, PolySymbolNameSegment.create(0, 0)))
     else
       emptyList()
 
@@ -152,7 +152,6 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
   private val inputOutputReference = ReferencingPolySymbol.create(
     JS_STRING_LITERALS,
     "Angular directive property",
-    PolySymbolOrigin.empty(),
     NG_DIRECTIVE_INPUTS,
     NG_DIRECTIVE_OUTPUTS,
     priority = PolySymbol.Priority.HIGHEST
@@ -166,9 +165,6 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
 
     override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
       delegate.getDocumentationTarget(location)
-
-    override val origin: PolySymbolOrigin
-      get() = super<Angular2Symbol>.origin
 
     override val icon: Icon?
       get() = super<Angular2Symbol>.icon

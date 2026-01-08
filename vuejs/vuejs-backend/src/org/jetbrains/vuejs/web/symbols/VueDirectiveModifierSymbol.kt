@@ -4,10 +4,8 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 

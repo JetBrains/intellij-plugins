@@ -6,7 +6,6 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_PATTERN
 import com.intellij.polySymbols.PolySymbol.Companion.PROP_HIDE_FROM_COMPLETION
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
@@ -14,8 +13,6 @@ import com.intellij.polySymbols.query.PolySymbolWithPattern
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_PROPS
 
 object AstroComponentWildcardAttribute : PolySymbolWithPattern, AstroSymbol {
-  override val origin: PolySymbolOrigin
-    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = UI_FRAMEWORK_COMPONENT_PROPS

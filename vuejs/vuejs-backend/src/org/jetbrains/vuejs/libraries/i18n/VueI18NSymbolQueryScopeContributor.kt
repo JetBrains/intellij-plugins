@@ -8,7 +8,6 @@ import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.patterns.StandardPatterns.instanceOf
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.query.*

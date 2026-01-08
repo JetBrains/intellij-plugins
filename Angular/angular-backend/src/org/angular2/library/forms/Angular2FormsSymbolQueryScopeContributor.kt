@@ -6,7 +6,6 @@ import com.intellij.model.Pointer
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
 import com.intellij.polySymbols.js.JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS
 import com.intellij.polySymbols.js.NAMESPACE_JS
@@ -66,18 +65,15 @@ class Angular2FormsSymbolQueryScopeContributor : PolySymbolQueryScopeContributor
   }
 
   private val ATTRIBUTE_VALUE_TO_FORM_CONTROL_SYMBOL = ReferencingPolySymbol.create(
-    HTML_ATTRIBUTE_VALUES, "Angular Form control name", PolySymbolOrigin.empty(),
-    NG_FORM_CONTROL_PROPS,
+    HTML_ATTRIBUTE_VALUES, "Angular Form control name", NG_FORM_CONTROL_PROPS,
   )
 
   private val ATTRIBUTE_VALUE_TO_FORM_ARRAY_SYMBOL = ReferencingPolySymbol.create(
-    HTML_ATTRIBUTE_VALUES, "Angular Form array name", PolySymbolOrigin.empty(),
-    NG_FORM_ARRAY_PROPS,
+    HTML_ATTRIBUTE_VALUES, "Angular Form array name", NG_FORM_ARRAY_PROPS,
   )
 
   private val ATTRIBUTE_VALUE_TO_FORM_GROUP_SYMBOL = ReferencingPolySymbol.create(
-    HTML_ATTRIBUTE_VALUES, "Angular Form group name", PolySymbolOrigin.empty(),
-    NG_FORM_GROUP_PROPS,
+    HTML_ATTRIBUTE_VALUES, "Angular Form group name", NG_FORM_GROUP_PROPS,
   )
 
   private class SingleSymbolExclusiveScope(private val symbol: PolySymbol) : PolySymbolScope {

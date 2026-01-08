@@ -7,8 +7,11 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbol.Priority
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.JS_SYMBOLS
@@ -54,7 +57,6 @@ class TemplateBindingKeyScope(binding: Angular2TemplateBindingKey) :
             .forEach(consumer)
         }
         consumer(ReferencingPolySymbol.create(NG_TEMPLATE_BINDINGS, "Angular template binding mapping",
-                                              PolySymbolOrigin.empty(),
                                               NG_DIRECTIVE_INPUTS))
       }
       else -> {}

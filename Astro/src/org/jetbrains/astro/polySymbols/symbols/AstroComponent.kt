@@ -6,7 +6,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -25,9 +24,6 @@ class AstroComponent(file: PsiFile) : PsiSourcedPolySymbol,
 
   override val source: PsiElement
     get() = dataHolder
-
-  override val origin: PolySymbolOrigin
-    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = ASTRO_COMPONENTS

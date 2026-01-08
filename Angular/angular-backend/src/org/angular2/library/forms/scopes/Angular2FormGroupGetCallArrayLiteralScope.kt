@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
@@ -79,8 +78,7 @@ class Angular2FormGroupGetCallArrayLiteralScope(private val formGroup: Angular2F
 
   companion object {
     private val formGroupGetPathRefSymbol = ReferencingPolySymbol.create(
-      JS_STRING_LITERALS, "Angular Form control, array or group name", PolySymbolOrigin.empty(),
-      *NG_FORM_ANY_CONTROL_PROPS.toTypedArray()
+      JS_STRING_LITERALS, "Angular Form control, array or group name", *NG_FORM_ANY_CONTROL_PROPS.toTypedArray()
     )
   }
 

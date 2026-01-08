@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
@@ -18,9 +17,6 @@ import com.intellij.util.asSafely
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
 
 class AstroComponentPropSymbol(private val propertySymbol: JSPropertySymbol) : PsiSourcedPolySymbol, AstroSymbol {
-
-  override val origin: PolySymbolOrigin
-    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = ASTRO_COMPONENT_PROPS

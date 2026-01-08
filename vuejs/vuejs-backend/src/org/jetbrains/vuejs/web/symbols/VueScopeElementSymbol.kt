@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import org.jetbrains.vuejs.model.VueScopeElement

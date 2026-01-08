@@ -149,7 +149,7 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
                 consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr, dataHolder))
                 if (kind.isStructural && isTemplateTag && !inputs.containsKey(attrName)) {
                   // Add fake input
-                  consumer(MappedPolySymbol.create(NG_DIRECTIVE_INPUTS, attrName, attr.origin, attr.qualifiedName))
+                  consumer(MappedPolySymbol.create(NG_DIRECTIVE_INPUTS, attrName, attr.qualifiedName))
                 }
               }
             }

@@ -8,17 +8,14 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
-import org.jetbrains.vuejs.model.VueScopeElement
 
 abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   override val name: String,

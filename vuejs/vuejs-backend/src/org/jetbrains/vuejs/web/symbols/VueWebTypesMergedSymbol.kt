@@ -37,9 +37,6 @@ class VueWebTypesMergedSymbol(
       ?.name
       ?.takeIf { toAsset(it) != toAsset(name) }
 
-  override val origin: PolySymbolOrigin
-    get() = symbols.getOrNull(1)?.origin ?: super.origin
-
   override fun getModificationCount(): Long =
     symbols.sumOf { (it as? PolySymbolScope)?.modificationCount ?: 0 }
 

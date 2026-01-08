@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
