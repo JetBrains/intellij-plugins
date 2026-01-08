@@ -19,11 +19,9 @@ import com.intellij.webassembly.lang.psi.WebAssemblyTypes
 
 val WHITE_SPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
 val COMMENTS: TokenSet = TokenSet.create(WebAssemblyTypes.LINE_COMMENT, WebAssemblyTypes.BLOCK_COMMENT)
+private val FILE: IFileElementType = IFileElementType(WebAssemblyLanguage)
 
 internal class WebAssemblyParserDefinition : ParserDefinition {
-
-  private val FILE: IFileElementType = IFileElementType(WebAssemblyLanguage)
-
   override fun createLexer(project: Project?): Lexer = WebAssemblyLexer()
 
   override fun getWhitespaceTokens(): TokenSet = WHITE_SPACES
