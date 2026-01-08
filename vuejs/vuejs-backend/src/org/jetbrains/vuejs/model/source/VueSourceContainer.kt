@@ -92,7 +92,10 @@ abstract class VueSourceContainer(
     }
   }
 
-  private abstract class MemberAccessor<T>(val extInfoAccessor: (VueContainerInfo) -> T?, val takeFirst: Boolean = false) {
+  private abstract class MemberAccessor<T>(
+    val extInfoAccessor: (VueContainerInfo) -> T?,
+    val takeFirst: Boolean = false,
+  ) {
 
     fun get(descriptor: VueSourceEntityDescriptor): T {
       return getContainerInfoProviders()
@@ -119,8 +122,9 @@ abstract class VueSourceContainer(
 
   }
 
-  private open class ListAccessor<T>(extInfoAccessor: (VueContainerInfo) -> List<T>)
-    : MemberAccessor<List<T>>(extInfoAccessor) {
+  private open class ListAccessor<T>(
+    extInfoAccessor: (VueContainerInfo) -> List<T>,
+  ) : MemberAccessor<List<T>>(extInfoAccessor) {
     override fun empty(): List<T> {
       return emptyList()
     }
@@ -137,8 +141,9 @@ abstract class VueSourceContainer(
 
   }
 
-  private class MapAccessor<T>(extInfoAccessor: (VueContainerInfo) -> Map<String, T>)
-    : MemberAccessor<Map<String, T>>(extInfoAccessor) {
+  private class MapAccessor<T>(
+    extInfoAccessor: (VueContainerInfo) -> Map<String, T>,
+  ) : MemberAccessor<Map<String, T>>(extInfoAccessor) {
 
     override fun empty(): Map<String, T> {
       return emptyMap()
@@ -153,16 +158,18 @@ abstract class VueSourceContainer(
     }
   }
 
-  private class NamedListAccessor<T : VueNamedSymbol>(extInfoAccessor: (VueContainerInfo) -> List<T>)
-    : ListAccessor<T>(extInfoAccessor) {
+  private class NamedListAccessor<T : VueNamedSymbol>(
+    extInfoAccessor: (VueContainerInfo) -> List<T>,
+  ) : ListAccessor<T>(extInfoAccessor) {
 
     override fun keyExtractor(obj: T): Any {
       return obj.name
     }
   }
 
-  private class ModelAccessor(extInfoAccessor: (VueContainerInfo) -> VueModelDirectiveProperties?)
-    : MemberAccessor<VueModelDirectiveProperties>(extInfoAccessor) {
+  private class ModelAccessor(
+    extInfoAccessor: (VueContainerInfo) -> VueModelDirectiveProperties?,
+  ) : MemberAccessor<VueModelDirectiveProperties>(extInfoAccessor) {
 
     override fun empty(): VueModelDirectiveProperties {
       return VueModelDirectiveProperties()
@@ -172,16 +179,18 @@ abstract class VueSourceContainer(
       VueModelDirectiveProperties(arg1.prop ?: arg2.prop, arg1.event ?: arg2.event)
   }
 
-  private class TemplateAccessor(extInfoAccessor: (VueContainerInfo) -> VueTemplate<*>?)
-    : MemberAccessor<VueTemplate<*>?>(extInfoAccessor, true) {
+  private class TemplateAccessor(
+    extInfoAccessor: (VueContainerInfo) -> VueTemplate<*>?,
+  ) : MemberAccessor<VueTemplate<*>?>(extInfoAccessor, true) {
 
     override fun empty(): VueTemplate<*>? {
       return null
     }
   }
 
-  private class DelimitersAccessor(extInfoAccessor: (VueContainerInfo) -> Pair<String, String>?)
-    : MemberAccessor<Pair<String, String>?>(extInfoAccessor, true) {
+  private class DelimitersAccessor(
+    extInfoAccessor: (VueContainerInfo) -> Pair<String, String>?,
+  ) : MemberAccessor<Pair<String, String>?>(extInfoAccessor, true) {
 
     // Delimiters accessor is called on UI thread. We should limit info providers
     // to the ones, which actually can provide any value. Turns out it's just the default info provider.
