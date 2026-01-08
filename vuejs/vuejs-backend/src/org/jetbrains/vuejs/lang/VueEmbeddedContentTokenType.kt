@@ -13,9 +13,16 @@ import com.intellij.util.CharTable
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.annotations.NonNls
 
-abstract class VueEmbeddedContentTokenType protected constructor(@NonNls debugName: String, language: Language?, register: Boolean)
-  : IElementType(debugName, language, register), EmbeddingElementType, ICustomParsingType,
-    ILazyParseableElementTypeBase, ILightLazyParseableElementType {
+abstract class VueEmbeddedContentTokenType
+protected constructor(
+  @NonNls debugName: String,
+  language: Language?,
+  register: Boolean,
+) : IElementType(debugName, language, register),
+    EmbeddingElementType,
+    ICustomParsingType,
+    ILazyParseableElementTypeBase,
+    ILightLazyParseableElementType {
 
   override fun parse(text: CharSequence, table: CharTable): ASTNode {
     return LazyParseableElement(this, text)
