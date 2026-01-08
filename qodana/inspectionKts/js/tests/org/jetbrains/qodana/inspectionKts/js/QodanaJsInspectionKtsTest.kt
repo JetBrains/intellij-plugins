@@ -8,7 +8,6 @@ import org.jetbrains.qodana.staticAnalysis.QodanaTestCase
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaProfileConfig
 import org.jetbrains.qodana.staticAnalysis.testFramework.QodanaRunnerTestCase
 import org.jetbrains.qodana.staticAnalysis.testFramework.reinstantiateInspectionRelatedServices
-import org.jetbrains.qodana.staticAnalysis.testFramework.withInspectionKtsFile
 import org.jetbrains.qodana.staticAnalysis.withSystemProperty
 import org.junit.Test
 import java.nio.file.Path
@@ -31,6 +30,7 @@ class QodanaJsInspectionKtsTest : QodanaRunnerTestCase() {
         )
       }
       reinstantiateInspectionRelatedServices(project, testRootDisposable)
+      reinstantiateKtsServices(project, testRootDisposable)
 
       runAnalysis()
 
@@ -51,6 +51,7 @@ class QodanaJsInspectionKtsTest : QodanaRunnerTestCase() {
         )
       }
       reinstantiateInspectionRelatedServices(project, testRootDisposable)
+      reinstantiateKtsServices(project, testRootDisposable)
 
       runAnalysis()
 

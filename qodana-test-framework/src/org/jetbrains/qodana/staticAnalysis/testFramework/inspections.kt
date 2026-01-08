@@ -16,7 +16,6 @@ import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.testFramework.replaceService
 import kotlinx.coroutines.cancel
-import org.jetbrains.qodana.inspectionKts.KtsInspectionsManager
 import org.jetbrains.qodana.staticAnalysis.profile.*
 
 fun reinstantiateInspectionRelatedServices(project: Project, testRootDisposable: Disposable) {
@@ -40,9 +39,6 @@ fun reinstantiateInspectionRelatedServices(project: Project, testRootDisposable:
   app.replaceService(QodanaApplicationInspectionProfileManager::class.java, QodanaApplicationInspectionProfileManager(), testRootDisposable)
 
   // project
-  val ktsInspectionManager = KtsInspectionsManager(project, scope.childScope("KtsInspectionsManager"))
-  project.replaceService(KtsInspectionsManager::class.java, ktsInspectionManager, testRootDisposable)
-
   val platformProjectToolRegistrar = ProjectInspectionToolRegistrar(project, scope.childScope("ProjectInspectionToolRegistrar"))
   Disposer.register(testRootDisposable, platformProjectToolRegistrar)
   project.replaceService(ProjectInspectionToolRegistrar::class.java, platformProjectToolRegistrar, testRootDisposable)
