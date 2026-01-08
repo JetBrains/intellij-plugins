@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.web
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.Condition
-import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.declarations.PolySymbolDeclarationProvider
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.context.isVueContext
 
 class VueRenameHandlerVeto : Condition<PsiElement> {
