@@ -50,18 +50,22 @@ class VuexDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecorated
       this.methods = methods
     }
 
-    private abstract class VuexMappedProperty(protected val member: JSRecordType.PropertySignature)
-      : VueProperty {
+    private abstract class VuexMappedProperty(
+      protected val member: JSRecordType.PropertySignature,
+    ) : VueProperty {
       override val source: PsiElement? get() = member.memberSource.singleElement
       override val jsType: JSType? get() = member.jsType
       override val name: String = member.memberName
     }
 
-    private class VuexMappedComputedProperty(member: JSRecordType.PropertySignature)
-      : VuexMappedProperty(member), VueComputedProperty
+    private class VuexMappedComputedProperty(
+      member: JSRecordType.PropertySignature,
+    ) : VuexMappedProperty(member),
+        VueComputedProperty
 
-    private class VuexMappedMethod(member: JSRecordType.PropertySignature)
-      : VuexMappedProperty(member), VueMethod
-
+    private class VuexMappedMethod(
+      member: JSRecordType.PropertySignature,
+    ) : VuexMappedProperty(member),
+        VueMethod
   }
 }
