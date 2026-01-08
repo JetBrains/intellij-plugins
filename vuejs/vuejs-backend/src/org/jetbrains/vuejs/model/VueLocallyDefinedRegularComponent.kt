@@ -11,8 +11,11 @@ import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 
 class VueLocallyDefinedRegularComponent
-private constructor(override val delegate: VueRegularComponent, source: PsiElement)
-  : VueDelegatedContainer<VueRegularComponent>(), VueRegularComponent {
+private constructor(
+  override val delegate: VueRegularComponent,
+  source: PsiElement,
+) : VueDelegatedContainer<VueRegularComponent>(),
+    VueRegularComponent {
 
   constructor(delegate: VueRegularComponent, source: JSLiteralExpression)
     : this(delegate, source as PsiElement)
