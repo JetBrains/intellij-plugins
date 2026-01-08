@@ -34,7 +34,7 @@ internal class VueTypeScriptServiceProtocol(
 
   override fun getProbeLocations(): Array<LocalFilePath> {
     val probeLocations = super.getProbeLocations()
-    val pluginProbe = getVueServicePluginLocation().parent?.parent 
+    val pluginProbe = getVueServicePluginLocation().parent?.parent
                       ?: return probeLocations
 
     val element = LocalFilePath.create(pluginProbe.toString())
