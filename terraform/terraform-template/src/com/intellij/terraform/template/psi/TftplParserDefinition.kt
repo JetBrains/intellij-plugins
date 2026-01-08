@@ -12,16 +12,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
+import com.intellij.terraform.template.lexer.TerraformTemplateLexer
 import org.intellij.terraform.hil.HILElementType
 import org.intellij.terraform.hil.HILElementTypes
 import org.intellij.terraform.hil.HILTokenType
 import org.intellij.terraform.hil.psi.template.TftplLanguage
-import com.intellij.terraform.template.lexer.TerraformTemplateLexer
 import org.intellij.terraform.hil.psi.template.TftplTokenTypes.DATA_LANGUAGE_TOKEN_UNPARSED
 
 internal class TftplParserDefinition : ParserDefinition {
-  private val TFTPL_FILE: IFileElementType = IFileElementType("TFTPL_FILE", TftplLanguage)
-
   override fun createLexer(project: Project?): Lexer = TerraformTemplateLexer()
 
   override fun createParser(project: Project?): PsiParser = TftplHilBasedParser()
@@ -43,3 +41,5 @@ internal class TftplParserDefinition : ParserDefinition {
     }
   }
 }
+
+private val TFTPL_FILE: IFileElementType = IFileElementType("TFTPL_FILE", TftplLanguage)
