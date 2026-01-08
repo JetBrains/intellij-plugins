@@ -7,11 +7,14 @@ import com.intellij.model.Pointer
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.VueApp
 import org.jetbrains.vuejs.model.VueEntitiesContainer
-import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueLibrary
+import org.jetbrains.vuejs.model.VueModelVisitor
 
-class VueSourceApp(source: JSImplicitElement, declaration: JSObjectLiteralExpression)
-  : VueSourceContainer(source, VueSourceEntityDescriptor(declaration)), VueApp {
+class VueSourceApp(
+  source: JSImplicitElement,
+  declaration: JSObjectLiteralExpression,
+) : VueSourceContainer(source, VueSourceEntityDescriptor(declaration)),
+    VueApp {
 
   override fun getProximity(library: VueLibrary): VueModelVisitor.Proximity =
     library.defaultProximity

@@ -7,8 +7,11 @@ import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueMixin
 
-class VueSourceMixin(source: JSImplicitElement, descriptor: VueSourceEntityDescriptor)
-  : VueSourceContainer(source, descriptor), VueMixin {
+class VueSourceMixin(
+  source: JSImplicitElement,
+  descriptor: VueSourceEntityDescriptor,
+) : VueSourceContainer(source, descriptor),
+    VueMixin {
 
   override fun createPointer(): Pointer<out VueEntitiesContainer> {
     val sourcePtr = (source as JSImplicitElement).createSmartPointer()
