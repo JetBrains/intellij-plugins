@@ -172,7 +172,7 @@ class VueWebTypesMergedSymbol(
 
   object VueMergedSymbolDocumentationProvider : PolySymbolDocumentationProvider<VueWebTypesMergedSymbol> {
 
-    override fun computePresentation(symbol: VueWebTypesMergedSymbol): TargetPresentation? =
+    override fun computePresentation(symbol: VueWebTypesMergedSymbol): TargetPresentation =
       TargetPresentation.builder(symbol.originalName ?: symbol.name)
         .icon(symbol.icon)
         .presentation()
