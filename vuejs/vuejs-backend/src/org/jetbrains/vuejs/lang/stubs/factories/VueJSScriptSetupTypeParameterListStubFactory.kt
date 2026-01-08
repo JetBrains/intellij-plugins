@@ -9,7 +9,11 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST
 import org.jetbrains.vuejs.lang.expr.stub.impl.VueJSScriptSetupTypeParameterListStubImpl
 
-internal class VueJSScriptSetupTypeParameterListStubFactory : JSStubFactory<TypeScriptTypeParameterListStub, TypeScriptTypeParameterList>({ SCRIPT_SETUP_TYPE_PARAMETER_LIST }) {
-  override fun createStub(psi: TypeScriptTypeParameterList, parentStub: StubElement<out PsiElement>?): TypeScriptTypeParameterListStub =
+internal class VueJSScriptSetupTypeParameterListStubFactory :
+  JSStubFactory<TypeScriptTypeParameterListStub, TypeScriptTypeParameterList>({ SCRIPT_SETUP_TYPE_PARAMETER_LIST }) {
+  override fun createStub(
+    psi: TypeScriptTypeParameterList,
+    parentStub: StubElement<out PsiElement>?,
+  ): TypeScriptTypeParameterListStub =
     VueJSScriptSetupTypeParameterListStubImpl(psi, parentStub, elementType)
 }

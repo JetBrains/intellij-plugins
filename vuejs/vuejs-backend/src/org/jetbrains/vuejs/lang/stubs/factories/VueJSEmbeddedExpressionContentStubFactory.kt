@@ -13,8 +13,13 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.expr.stub.VueJSEmbeddedExpressionContentStub
 import org.jetbrains.vuejs.lang.expr.stub.impl.VueJSEmbeddedExpressionContentStubImpl
 
-internal class VueJSEmbeddedExpressionContentStubFactory(elementTypeSupplier: () -> VueJSEmbeddedExpressionContentElementType) : JSStubFactory<VueJSEmbeddedExpressionContentStub, VueJSEmbeddedExpressionContent>(elementTypeSupplier) {
-  override fun createStub(psi: VueJSEmbeddedExpressionContent, parentStub: StubElement<out PsiElement>?): VueJSEmbeddedExpressionContentStub =
+internal class VueJSEmbeddedExpressionContentStubFactory(
+  elementTypeSupplier: () -> VueJSEmbeddedExpressionContentElementType,
+) : JSStubFactory<VueJSEmbeddedExpressionContentStub, VueJSEmbeddedExpressionContent>(elementTypeSupplier) {
+  override fun createStub(
+    psi: VueJSEmbeddedExpressionContent,
+    parentStub: StubElement<out PsiElement>?,
+  ): VueJSEmbeddedExpressionContentStub =
     VueJSEmbeddedExpressionContentStubImpl(parentStub, elementType)
 
   override fun shouldCreateStub(node: ASTNode): Boolean =

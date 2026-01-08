@@ -9,7 +9,12 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.vuejs.lang.html.parser.VueScriptSetupEmbeddedContentElementType
 import org.jetbrains.vuejs.lang.html.stub.impl.VueScriptSetupEmbeddedContentStubImpl
 
-internal class VueScriptSetupEmbeddedContentStubFactory(elementType: VueScriptSetupEmbeddedContentElementType) : JSStubFactory<JSEmbeddedContentStub, JSEmbeddedContent>({ elementType }) {
-  override fun createStub(psi: JSEmbeddedContent, parentStub: StubElement<out PsiElement>?): JSEmbeddedContentStub =
+internal class VueScriptSetupEmbeddedContentStubFactory(
+  elementType: VueScriptSetupEmbeddedContentElementType,
+) : JSStubFactory<JSEmbeddedContentStub, JSEmbeddedContent>({ elementType }) {
+  override fun createStub(
+    psi: JSEmbeddedContent,
+    parentStub: StubElement<out PsiElement>?,
+  ): JSEmbeddedContentStub =
     VueScriptSetupEmbeddedContentStubImpl(psi, parentStub, elementType)
 }
