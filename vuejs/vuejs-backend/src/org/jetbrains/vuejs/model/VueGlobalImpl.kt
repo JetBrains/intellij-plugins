@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.polySymbols.js.nodejs.PackageJsonPolySymbolsRegistryManager
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES
@@ -12,18 +11,22 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.polySymbols.js.nodejs.PackageJsonPolySymbolsRegistryManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.vuejs.model.source.VueSourceGlobal
 import org.jetbrains.vuejs.model.source.VueLibraryImpl
+import org.jetbrains.vuejs.model.source.VueSourceGlobal
 import java.util.concurrent.ConcurrentHashMap
 
-internal class VueGlobalImpl(override val project: Project, override val packageJsonUrl: String)
-  : VueDelegatedEntitiesContainer<VueGlobal>(), VueGlobal {
+internal class VueGlobalImpl(
+  override val project: Project,
+  override val packageJsonUrl: String,
+) : VueDelegatedEntitiesContainer<VueGlobal>(),
+    VueGlobal {
 
   override val source: PsiElement? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
