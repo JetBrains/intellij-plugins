@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.astro.context.isAstroFrameworkContext
+import org.jetbrains.astro.context.isAstroProject
 import org.jetbrains.astro.lang.AstroFileType
 import org.jetbrains.astro.service.settings.AstroServiceMode
 import org.jetbrains.astro.service.settings.getAstroServiceSettings
@@ -72,7 +72,7 @@ object AstroTSPluginActivationRule : TSPluginActivationRule(AstroTSPluginLoader,
 
 object AstroActivationHelper : ServiceActivationHelper {
   override fun isProjectContext(project: Project, context: VirtualFile): Boolean {
-    return context.fileType is AstroFileType || isAstroFrameworkContext(context, project)
+    return context.fileType is AstroFileType || isAstroProject(context, project)
   }
 
   override fun isEnabledInSettings(project: Project): Boolean {
