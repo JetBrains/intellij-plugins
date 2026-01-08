@@ -44,7 +44,7 @@ class UiFrameworkComponent(
   }
 
   override val origin: PolySymbolOrigin
-    get() = AstroProjectSymbolOrigin
+    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = UI_FRAMEWORK_COMPONENTS

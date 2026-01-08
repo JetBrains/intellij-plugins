@@ -5,7 +5,6 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
-import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
@@ -41,7 +40,6 @@ fun VueModelVisitor.Proximity.asPolySymbolPriority(): PolySymbol.Priority =
 
 val vueEmptyOrigin: PolySymbolOrigin = PolySymbolOrigin.create(
   library = "vue",
-  defaultIcon = VuejsIcons.Vue,
   typeSupport = TypeScriptSymbolTypeSupport())
 
 internal fun isVueComponentQuery(name: String): Boolean {

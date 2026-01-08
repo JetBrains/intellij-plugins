@@ -42,6 +42,7 @@ import org.angular2.web.Angular2Symbol
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
 import org.angular2.web.references.Angular2DirectivePropertyLiteralReferenceProvider
+import javax.swing.Icon
 
 /**
  * Due to complicated nature of the Angular mapping syntax,
@@ -168,6 +169,9 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
 
     override val origin: PolySymbolOrigin
       get() = super<Angular2Symbol>.origin
+
+    override val icon: Icon?
+      get() = super<Angular2Symbol>.icon
 
     override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
       when (property) {

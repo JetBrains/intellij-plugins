@@ -2,13 +2,16 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_ICON
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HtmlFrameworkSymbol
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.web.VueFramework
+import javax.swing.Icon
 
 interface VueSymbol : HtmlFrameworkSymbol {
 
@@ -18,8 +21,12 @@ interface VueSymbol : HtmlFrameworkSymbol {
   override val framework: FrameworkId
     get() = VueFramework.ID
 
+  override val icon: Icon?
+    get() = VuejsIcons.Vue
+
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
+      PROP_DOC_HIDE_ICON -> property.tryCast(true)
       PROP_JS_TYPE -> property.tryCast(type)
       PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
       else -> super.get(property)

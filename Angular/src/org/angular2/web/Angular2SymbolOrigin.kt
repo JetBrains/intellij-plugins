@@ -34,9 +34,6 @@ class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : PolySymbolOri
   override val version: String?
     get() = versionAndName.second
 
-  override val defaultIcon: Icon
-    get() = AngularIcons.Angular2
-
   override val typeSupport: PolySymbolTypeSupport?
     get() = TypeScriptSymbolTypeSupport()
 
@@ -50,7 +47,6 @@ class Angular2SymbolOrigin(private val mySymbol: Angular2Symbol) : PolySymbolOri
 
   companion object {
     val empty: PolySymbolOrigin = PolySymbolOrigin.create(library = "@angular/core",
-                                                          defaultIcon = AngularIcons.Angular2,
                                                           typeSupport = TypeScriptSymbolTypeSupport())
   }
 }

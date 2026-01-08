@@ -5,6 +5,7 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.utils.PolySymbolDelegate
+import javax.swing.Icon
 
 abstract class Angular2SymbolDelegate<T : Angular2Symbol>(override val delegate: T) : PolySymbolDelegate<T>, Angular2Symbol {
 
@@ -12,6 +13,9 @@ abstract class Angular2SymbolDelegate<T : Angular2Symbol>(override val delegate:
 
   override val origin: PolySymbolOrigin
     get() = delegate.origin
+
+  override val icon: Icon?
+    get() = delegate.icon
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     super<PolySymbolDelegate>.get(property)

@@ -27,7 +27,7 @@ class AstroComponent(file: PsiFile) : PsiSourcedPolySymbol,
     get() = dataHolder
 
   override val origin: PolySymbolOrigin
-    get() = AstroProjectSymbolOrigin
+    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = ASTRO_COMPONENTS

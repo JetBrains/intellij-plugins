@@ -62,7 +62,7 @@ class AstroLocalComponent(
   }
 
   override val origin: PolySymbolOrigin
-    get() = AstroProjectSymbolOrigin
+    get() = PolySymbolOrigin.empty()
 
   override val kind: PolySymbolKind
     get() = ASTRO_COMPONENTS
