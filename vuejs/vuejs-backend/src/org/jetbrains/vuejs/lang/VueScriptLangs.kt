@@ -3,8 +3,8 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.lang.PsiBuilder
-import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
