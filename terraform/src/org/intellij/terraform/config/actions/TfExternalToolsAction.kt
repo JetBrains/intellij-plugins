@@ -33,7 +33,7 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.TfConstants
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HCLFileType
+import org.intellij.terraform.hcl.HclFileType
 import org.intellij.terraform.runtime.TfToolPathDetector
 import org.intellij.terraform.runtime.showIncorrectPathNotification
 import org.jetbrains.annotations.Nls
@@ -56,7 +56,7 @@ internal abstract class TfExternalToolsAction : DumbAwareAction() {
 
     return FileTypeRegistry.getInstance().run {
       if (onlyTerraformFileType) isFileOfType(file, TerraformFileType)
-      else isFileOfType(file, HCLFileType) || isFileOfType(file, TerraformFileType)
+      else isFileOfType(file, HclFileType) || isFileOfType(file, TerraformFileType)
     }
   }
 

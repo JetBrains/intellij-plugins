@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config;
 
 import com.intellij.application.options.CodeStyle;
@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
-import org.intellij.terraform.hcl.HCLFileType;
+import org.intellij.terraform.hcl.HclFileType;
 import org.intellij.terraform.hcl.formatter.HclCodeStyleSettings;
 import org.intellij.terraform.hcl.formatter.PropertyAlignment;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +26,7 @@ public class HCLFormatterTest extends BasePlatformTestCase {
   @Parameterized.Parameters(name = "{0}")
   public static Collection<Object[]> data() {
     return Arrays.asList(new Object[][]{
-        {HCLFileType.INSTANCE}, {TerraformFileType.INSTANCE}
+      {HclFileType.INSTANCE}, {TerraformFileType.INSTANCE}
     });
   }
 

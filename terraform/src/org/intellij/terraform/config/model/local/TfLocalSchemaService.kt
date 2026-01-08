@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model.local
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -62,7 +62,7 @@ import org.intellij.terraform.config.util.TfExecutor
 import org.intellij.terraform.config.util.executeSuspendable
 import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
-import org.intellij.terraform.hcl.HCLFileType
+import org.intellij.terraform.hcl.HclFileType
 import org.intellij.terraform.opentofu.OpenTofuFileType
 import java.nio.file.Files
 import java.nio.file.Path
@@ -160,7 +160,7 @@ class TfLocalSchemaService(val project: Project, val scope: CoroutineScope) {
 
   private fun getOpenTerraformFiles(): Set<PsiFile> {
     val fileTypeManager = FileTypeManager.getInstance()
-    val fileTypes = setOf(TerraformFileType, OpenTofuFileType, HCLFileType)
+    val fileTypes = setOf(TerraformFileType, OpenTofuFileType, HclFileType)
     return ProjectManager.getInstance().openProjects.asSequence().flatMap { project ->
       FileEditorManager.getInstance(project).openFiles.asSequence()
         .filter { virtualFile -> fileTypes.any { fileTypeManager.isFileOfType(virtualFile, it) } }

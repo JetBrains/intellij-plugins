@@ -4,7 +4,7 @@ package org.intellij.terraform.hcl
 import com.intellij.openapi.fileTypes.LanguageFileType
 import javax.swing.Icon
 
-object HCLFileType : LanguageFileType(HCLLanguage) {
+object HclFileType : LanguageFileType(HCLLanguage) {
   override fun getIcon(): Icon = Icons.FileTypes.HCL
 
   override fun getDefaultExtension(): String = HCL_DEFAULT_EXTENSION

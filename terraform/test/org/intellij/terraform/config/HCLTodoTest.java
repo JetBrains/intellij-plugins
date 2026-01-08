@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config;
 
 import com.intellij.ide.todo.TodoConfiguration;
@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.PsiTodoSearchHelper;
 import com.intellij.psi.search.TodoItem;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
-import org.intellij.terraform.hcl.HCLFileType;
+import org.intellij.terraform.hcl.HclFileType;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -15,7 +15,7 @@ public class HCLTodoTest extends BasePlatformTestCase {
   public void testDetectedInSingleLineComments() {
     assertTrue(TodoConfiguration.getInstance().isMultiLine());
 
-    PsiFile file = createLightFile(HCLFileType.INSTANCE, """
+    PsiFile file = createLightFile(HclFileType.INSTANCE, """
 
       // todo: single line
 
@@ -39,7 +39,7 @@ public class HCLTodoTest extends BasePlatformTestCase {
   public void testDetectedInMultiLineComments() {
     assertTrue(TodoConfiguration.getInstance().isMultiLine());
 
-    PsiFile file = createLightFile(HCLFileType.INSTANCE, """
+    PsiFile file = createLightFile(HclFileType.INSTANCE, """
 
       /* todo: single line */
 

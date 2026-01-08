@@ -218,7 +218,7 @@
   <resource-bundle>messages.HCLBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileType name="HCL" language="HCL" extensions="hcl;nomad" implementationClass="org.intellij.terraform.hcl.HCLFileType"
+    <fileType name="HCL" language="HCL" extensions="hcl;nomad" implementationClass="org.intellij.terraform.hcl.HclFileType"
               fieldName="INSTANCE"/>
     <lang.parserDefinition language="HCL" implementationClass="org.intellij.terraform.hcl.HCLParserDefinition"/>
 

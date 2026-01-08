@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl
 
 import com.intellij.openapi.progress.ProgressIndicatorProvider
@@ -29,7 +29,7 @@ class HCLSymbolIndex : ScalarIndexExtension<String>() {
   override fun dependsOnFileContent(): Boolean = true
 
   override fun getInputFilter(): FileBasedIndex.InputFilter {
-    return object : DefaultFileTypeSpecificInputFilter(HCLFileType, TerraformFileType, OpenTofuFileType) {
+    return object : DefaultFileTypeSpecificInputFilter(HclFileType, TerraformFileType, OpenTofuFileType) {
       override fun acceptInput(file: VirtualFile): Boolean {
         return file.isInLocalFileSystem
       }
@@ -43,7 +43,7 @@ class HCLSymbolIndex : ScalarIndexExtension<String>() {
   override fun getIndexer(): DataIndexer<String, Void, FileContent> {
     return DataIndexer { inputData ->
       val map = HashMap<String, Void?>()
-      if (inputData.fileType === HCLFileType || inputData.fileType === TerraformFileType || inputData.fileType === OpenTofuFileType) {
+      if (inputData.fileType === HclFileType || inputData.fileType === TerraformFileType || inputData.fileType === OpenTofuFileType) {
         val file = inputData.psiFile
         if (file is HCLFile) {
           file.acceptChildren(object : HCLElementVisitor(),PsiRecursiveVisitor {
@@ -61,7 +61,7 @@ class HCLSymbolIndex : ScalarIndexExtension<String>() {
 
             override fun visitBlock(o: HCLBlock) {
               o.fullName.let { map.put(it, null) }
-              o.nameElements.forEach { el -> el?.name?.let { map.put(it, null) } }
+              o.nameElements.forEach { el -> el?.name?.let { map[it] = null } }
               ProgressIndicatorProvider.checkCanceled()
               o.`object`?.acceptChildren(this)
             }

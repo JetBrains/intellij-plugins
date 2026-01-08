@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.psi
 
 import com.intellij.openapi.project.Project
@@ -7,7 +7,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.PsiTreeUtil
-import org.intellij.terraform.hcl.HCLFileType
+import org.intellij.terraform.hcl.HclFileType
 
 /**
  * @author Mikhail Golubev
@@ -24,7 +24,7 @@ open class HCLElementGenerator(private val project: Project) {
    */
   open fun createDummyFile(content: String): PsiFile {
     val psiFileFactory = PsiFileFactory.getInstance(project)
-    val psiFile = psiFileFactory.createFileFromText("dummy.${HCLFileType.defaultExtension}", HCLFileType, content)
+    val psiFile = psiFileFactory.createFileFromText("dummy.${HclFileType.defaultExtension}", HclFileType, content)
     if (PsiTreeUtil.hasErrorElements(psiFile)) {
       throw IllegalStateException("PsiFile contains PsiErrorElement: ${DebugUtil.psiToString(psiFile, true, true)}\n---\nError content: ${content}")
     }
@@ -73,7 +73,7 @@ open class HCLElementGenerator(private val project: Project) {
       if (quoteSymbol == null) {
         if (unescapedContent.length < 2) throw IllegalArgumentException()
         append(unescapedContent.first())
-        append(StringUtil.escapeStringCharacters(unescapedContent.substring(1..unescapedContent.lastIndex - 1)))
+        append(StringUtil.escapeStringCharacters(unescapedContent.substring(1..<unescapedContent.lastIndex)))
         append(unescapedContent.last())
       }
       else {
