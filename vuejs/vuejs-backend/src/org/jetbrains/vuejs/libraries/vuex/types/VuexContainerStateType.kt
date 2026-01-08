@@ -10,8 +10,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
 import org.jetbrains.vuejs.libraries.vuex.model.store.*
 
-class VuexContainerStateType private constructor(source: JSTypeSource, element: PsiElement, baseNamespace: VuexStoreNamespace)
-  : VuexContainerPropertyTypeBase(source, element, baseNamespace) {
+class VuexContainerStateType
+private constructor(
+  source: JSTypeSource,
+  element: PsiElement,
+  baseNamespace: VuexStoreNamespace,
+) : VuexContainerPropertyTypeBase(source, element, baseNamespace) {
 
   constructor(element: PsiElement, baseNamespace: VuexStoreNamespace)
     : this(JSTypeSource(element, JSTypeSource.SourceLanguage.TS, true), element, baseNamespace)
