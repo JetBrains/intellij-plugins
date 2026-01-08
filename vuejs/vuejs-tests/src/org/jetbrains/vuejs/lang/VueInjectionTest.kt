@@ -15,9 +15,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.context.PolyContext.Companion.KIND_FRAMEWORK
 import com.intellij.polySymbols.context.PolyContextProvider
 import com.intellij.polySymbols.context.impl.PolyContextProviderExtensionPoint
+import com.intellij.polySymbols.framework.PolySymbolFramework.Companion.KIND_FRAMEWORK
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.DebugUtil
@@ -327,7 +327,10 @@ Vue.options.delimiters = ['<%', '%>']
   }
 
   class InjectedYamlCompletionContributor : CompletionContributor() {
-    override fun fillCompletionVariants(parameters: com.intellij.codeInsight.completion.CompletionParameters, result: com.intellij.codeInsight.completion.CompletionResultSet) {
+    override fun fillCompletionVariants(
+      parameters: com.intellij.codeInsight.completion.CompletionParameters,
+      result: com.intellij.codeInsight.completion.CompletionResultSet,
+    ) {
       if (parameters.originalFile.language == Language.findLanguageByID("yaml")) {
         result.consume(LookupElementBuilder.create("keep-alive"))
       }

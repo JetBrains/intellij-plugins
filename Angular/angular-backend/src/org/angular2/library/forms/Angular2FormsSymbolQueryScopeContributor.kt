@@ -6,6 +6,7 @@ import com.intellij.model.Pointer
 import com.intellij.patterns.PlatformPatterns.psiFile
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
 import com.intellij.polySymbols.js.JS_STRING_LITERALS_SYMBOL_QUERY_PATTERNS
 import com.intellij.polySymbols.js.NAMESPACE_JS

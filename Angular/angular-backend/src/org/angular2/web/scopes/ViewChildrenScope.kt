@@ -19,14 +19,13 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 
 class ViewChildrenScope(
   decorator: ES6Decorator,
   private val resolveToMultipleSymbols: Boolean,
 ) : PolySymbolIsolatedMappingScope<ES6Decorator>(
-  mapOf(JS_STRING_LITERALS to JS_SYMBOLS), Angular2Framework.ID, decorator
+  mapOf(JS_STRING_LITERALS to JS_SYMBOLS), decorator
 ) {
 
   override fun isExclusiveFor(kind: PolySymbolKind): Boolean =

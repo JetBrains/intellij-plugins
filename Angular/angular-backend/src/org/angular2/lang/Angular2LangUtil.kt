@@ -5,9 +5,9 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
 import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.context.PolyContext.Companion.KIND_FRAMEWORK
+import com.intellij.polySymbols.framework.PolySymbolFramework.Companion.KIND_FRAMEWORK
+import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubBuildCachedValuesManager
 import org.angular2.Angular2Framework
 import org.angular2.angular2Framework

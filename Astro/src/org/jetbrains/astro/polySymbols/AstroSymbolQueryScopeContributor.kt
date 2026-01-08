@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.query.PolySymbolQueryScopeContributor
 import com.intellij.polySymbols.query.PolySymbolQueryScopeProviderRegistrar

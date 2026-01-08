@@ -8,7 +8,8 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
-import com.intellij.polySymbols.framework.FrameworkId
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.js.JS_EVENTS
@@ -26,11 +27,11 @@ class VueCodeCompletionItemCustomizer :
 
   override fun customize(
     item: PolySymbolCodeCompletionItem,
-    framework: FrameworkId?,
+    context: PolyContext,
     kind: PolySymbolKind,
     location: PsiElement,
   ): PolySymbolCodeCompletionItem? =
-    if (framework == VueFramework.ID)
+    if (context.framework == VueFramework.ID)
       when (kind) {
         HTML_ATTRIBUTES ->
           item.symbol

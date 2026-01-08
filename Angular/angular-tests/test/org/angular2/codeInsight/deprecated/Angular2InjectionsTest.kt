@@ -20,16 +20,17 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.context.PolyContextProvider
+import com.intellij.polySymbols.context.impl.PolyContextProviderExtensionPoint
+import com.intellij.polySymbols.framework.PolySymbolFramework.Companion.KIND_FRAMEWORK
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
-import com.intellij.polySymbols.context.PolyContext
-import com.intellij.polySymbols.context.PolyContextProvider
-import com.intellij.polySymbols.context.impl.PolyContextProviderExtensionPoint
-import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
-import com.intellij.polySymbols.testFramework.resolveReference
 import junit.framework.TestCase
 import org.angular2.Angular2CodeInsightFixtureTestCase
 import org.angular2.Angular2TestModule
@@ -237,7 +238,7 @@ class Angular2InjectionsTest : Angular2CodeInsightFixtureTestCase() {
     PolyContext.POLY_SYMBOLS_CONTEXT_EP
       .point!!
       .registerExtension(
-        PolyContextProviderExtensionPoint(PolyContext.KIND_FRAMEWORK, "angular", object : PolyContextProvider {
+        PolyContextProviderExtensionPoint(KIND_FRAMEWORK, "angular", object : PolyContextProvider {
           override fun isEnabled(project: Project, directory: VirtualFile): CachedValueProvider.Result<Int?> {
             return CachedValueProvider.Result.create(1, ModificationTracker.EVER_CHANGED)
           }

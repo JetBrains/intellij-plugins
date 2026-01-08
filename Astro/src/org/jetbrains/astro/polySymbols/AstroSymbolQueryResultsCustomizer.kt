@@ -7,6 +7,7 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol

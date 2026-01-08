@@ -12,6 +12,7 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.js.NAMESPACE_JS
 import com.intellij.polySymbols.query.*

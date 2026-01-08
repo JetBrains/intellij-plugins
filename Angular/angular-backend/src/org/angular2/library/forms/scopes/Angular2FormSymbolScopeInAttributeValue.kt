@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.framework.PolySymbolFramework.Companion.KIND_FRAMEWORK
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.utils.PolySymbolStructuredScope
@@ -48,7 +49,7 @@ class Angular2FormSymbolScopeInAttributeValue(attributeValue: XmlAttribute) :
       val formsComponent = Angular2FormsComponent.getFor(file)
                            ?: return@provider null
       val queryExecutor = PolySymbolQueryExecutorFactory.createCustom {
-        setFramework(Angular2Framework.ID)
+        addPolyContext(KIND_FRAMEWORK, Angular2Framework.ID)
       }
       return@provider Angular2FormSymbolsScopesBuilder(
         queryExecutor, formsComponent, holder

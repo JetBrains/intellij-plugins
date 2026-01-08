@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.psi.PsiDirectory
@@ -79,7 +80,7 @@ private fun supportsScriptAttribute(
 ): Boolean =
   context
     ?.let { PolySymbolQueryExecutorFactory.create(it, false) }
-    ?.takeIf { it.framework == VueFramework.ID }
+    ?.takeIf { it.context.framework == VueFramework.ID }
     ?.nameMatchQuery(listOf(
       VUE_TOP_LEVEL_ELEMENTS.withName(HtmlUtil.SCRIPT_TAG_NAME),
       HTML_ATTRIBUTES.withName(attributeName),

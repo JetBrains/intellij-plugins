@@ -5,7 +5,8 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItemCustomizer
-import com.intellij.polySymbols.framework.FrameworkId
+import com.intellij.polySymbols.context.PolyContext
+import com.intellij.polySymbols.framework.framework
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.html.HTML_ATTRIBUTE_VALUES
 import com.intellij.polySymbols.js.*
@@ -32,11 +33,11 @@ class Angular2CodeCompletionItemCustomizer : PolySymbolCodeCompletionItemCustomi
 
   override fun customize(
     item: PolySymbolCodeCompletionItem,
-    framework: FrameworkId?,
+    context: PolyContext,
     kind: PolySymbolKind,
     location: PsiElement,
   ): PolySymbolCodeCompletionItem =
-    if (framework != Angular2Framework.ID)
+    if (context.framework != Angular2Framework.ID)
       item
     else
       when (kind) {
