@@ -39,7 +39,7 @@ private fun getNameFromDecorator(decorator: ES6Decorator): String? {
     ?.let { getTextIfLiteral(it) }
 }
 
-fun isVueComponentDecoratorName(name: String) =
+fun isVueComponentDecoratorName(name: String): Boolean =
   name in DECS
 
 class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedContainerInfoProvider(::VueDecoratedComponentInfo) {
