@@ -22,8 +22,12 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
   ): Collection<PropertySignature> =
     emptyList()
 
-  data class ComponentsInfo(val local: MultiMap<String, VueComponent>, val global: MultiMap<String, VueComponent>) {
-    fun get(local: Boolean): MultiMap<String, VueComponent> = if (local) this.local else global
+  data class ComponentsInfo(
+    val local: MultiMap<String, VueComponent>,
+    val global: MultiMap<String, VueComponent>,
+  ) {
+    fun get(local: Boolean): MultiMap<String, VueComponent> =
+      if (local) this.local else global
   }
 
   @JvmDefaultWithCompatibility
@@ -55,14 +59,20 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
   }
 
 
-  abstract class VueDecoratedContainerInfoProvider(createInfo: (clazz: JSClass) -> VueContainerInfo)
-    : DecoratedContainerInfoProvider<VueContainerInfo>(createInfo), VueContainerInfoProvider
+  abstract class VueDecoratedContainerInfoProvider(
+    createInfo: (clazz: JSClass) -> VueContainerInfo,
+  ) : DecoratedContainerInfoProvider<VueContainerInfo>(createInfo),
+      VueContainerInfoProvider
 
-  abstract class VueInitializedContainerInfoProvider(createInfo: (initializer: JSElement) -> VueContainerInfo)
-    : InitializedContainerInfoProvider<VueContainerInfo>(createInfo), VueContainerInfoProvider {
+  abstract class VueInitializedContainerInfoProvider(
+    createInfo: (initializer: JSElement) -> VueContainerInfo,
+  ) : InitializedContainerInfoProvider<VueContainerInfo>(createInfo),
+      VueContainerInfoProvider {
 
-    protected abstract class VueInitializedContainerInfo(declaration: JSElement)
-      : InitializedContainerInfo(declaration), VueContainerInfo
+    protected abstract class VueInitializedContainerInfo(
+      declaration: JSElement,
+    ) : InitializedContainerInfo(declaration),
+        VueContainerInfo
 
   }
 }
