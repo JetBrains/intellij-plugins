@@ -13,12 +13,12 @@ import org.jetbrains.vuejs.lang.expr.parser.VUETS_FILE
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.EMBEDDED_EXPR_CONTENT_JS
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.EMBEDDED_EXPR_CONTENT_TS
 import org.jetbrains.vuejs.lang.html.VueFileElementType
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.REF_ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_ID_ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_SETUP_JS_EMBEDDED_CONTENT
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SCRIPT_SETUP_TS_EMBEDDED_CONTENT
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.SRC_ATTRIBUTE
-import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.ATTRIBUTE
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.TAG
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes.TEMPLATE_TAG
 import org.jetbrains.vuejs.lang.stubs.factories.*
