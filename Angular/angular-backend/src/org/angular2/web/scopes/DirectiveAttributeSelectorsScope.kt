@@ -6,7 +6,6 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ELEMENTS
@@ -64,9 +63,6 @@ class DirectiveAttributeSelectorsScope(val file: PsiFile) : PolySymbolScope {
 
     override val extension: Boolean
       get() = true
-
-    override val origin: PolySymbolOrigin
-      get() = Angular2SymbolOrigin.empty
 
     override val kind: PolySymbolKind
       get() = HTML_ELEMENTS

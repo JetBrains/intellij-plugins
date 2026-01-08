@@ -11,7 +11,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.HTML_ELEMENTS
 import com.intellij.polySymbols.html.StandardHtmlSymbol
 import com.intellij.polySymbols.js.JS_EVENTS
@@ -30,7 +33,6 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.EVENT_ATTR_PREFIX
 
 class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySymbolScope {
@@ -76,9 +78,6 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : PolySy
 
     override val extension: Boolean
       get() = true
-
-    override val origin: PolySymbolOrigin
-      get() = Angular2SymbolOrigin.empty
 
     override val kind: PolySymbolKind
       get() = HTML_ELEMENTS

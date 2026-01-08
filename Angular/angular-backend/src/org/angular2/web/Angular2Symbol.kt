@@ -7,6 +7,8 @@ import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HtmlFrameworkSymbol
+import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
+import com.intellij.polySymbols.utils.PolySymbolTypeSupport.Companion.PROP_TYPE_SUPPORT
 import icons.AngularIcons
 import org.angular2.Angular2Framework
 import javax.swing.Icon
@@ -17,7 +19,7 @@ interface Angular2Symbol : HtmlFrameworkSymbol {
     get() = Angular2Framework.ID
 
   override val origin: PolySymbolOrigin
-    get() = Angular2SymbolOrigin()
+    get() = PolySymbolOrigin.empty()
 
   override val icon: Icon?
     get() = AngularIcons.Angular2
@@ -25,6 +27,7 @@ interface Angular2Symbol : HtmlFrameworkSymbol {
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
       PROP_DOC_HIDE_ICON -> property.tryCast(true)
+      PROP_TYPE_SUPPORT -> property.tryCast(TypeScriptSymbolTypeSupport.default)
       else -> super.get(property)
     }
 

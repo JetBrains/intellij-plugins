@@ -2,7 +2,10 @@
 package org.angular2.web.scopes
 
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
 import com.intellij.polySymbols.js.JS_PROPERTIES
@@ -13,7 +16,6 @@ import com.intellij.polySymbols.patterns.PolySymbolPatternSymbolsResolver
 import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.match
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.PROP_BINDING_PATTERN
 
@@ -35,9 +37,6 @@ object AttributeWithInterpolationsScope : PolySymbolScope {
     else emptyList()
 
   private object AttributeWithInterpolationsSymbol : PolySymbolWithPattern, Angular2Symbol {
-
-    override val origin: PolySymbolOrigin
-      get() = Angular2SymbolOrigin.empty
 
     override val kind: PolySymbolKind
       get() = HTML_ATTRIBUTES

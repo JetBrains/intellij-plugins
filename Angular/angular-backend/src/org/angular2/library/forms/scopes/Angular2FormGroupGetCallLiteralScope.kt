@@ -4,7 +4,6 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
@@ -23,7 +22,6 @@ import org.angular2.library.forms.Angular2FormGroup
 import org.angular2.library.forms.NG_FORM_ANY_CONTROL_PROPS
 import org.angular2.library.forms.NG_FORM_GROUP_PROPS
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2SymbolOrigin
 
 class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGroup) : PolySymbolScope {
 
@@ -80,9 +78,6 @@ class Angular2FormGroupGetCallLiteralScope(private val formGroup: Angular2FormGr
 
       override val name: @NlsSafe String
         get() = "FormGroup.get() path"
-
-      override val origin: PolySymbolOrigin
-        get() = Angular2SymbolOrigin.empty
 
       override val kind: PolySymbolKind
         get() = JS_STRING_LITERALS

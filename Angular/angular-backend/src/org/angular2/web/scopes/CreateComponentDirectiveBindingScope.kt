@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
@@ -18,7 +19,6 @@ import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.index.getFunctionNameFromIndex
-import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.NG_DIRECTIVE_INPUTS
 import org.angular2.web.NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.NG_DIRECTIVE_OUTPUTS
@@ -35,11 +35,11 @@ class CreateComponentDirectiveBindingScope(objectLiteral: JSObjectLiteralExpress
 
   companion object {
     val INPUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive input",
-                                                                   true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_INPUTS)
+                                                                   true, PolySymbolOrigin.empty(), NG_DIRECTIVE_INPUTS)
     val OUTPUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive output",
-                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_OUTPUTS)
+                                                                    true, PolySymbolOrigin.empty(), NG_DIRECTIVE_OUTPUTS)
     val IN_OUTS_SCOPE: PolySymbolScope = PolySymbolReferencingScope(JS_STRING_LITERALS, "Angular directive two-way binding",
-                                                                    true, Angular2SymbolOrigin.empty, NG_DIRECTIVE_IN_OUTS)
+                                                                    true, PolySymbolOrigin.empty(), NG_DIRECTIVE_IN_OUTS)
   }
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

@@ -15,7 +15,6 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute
 import org.angular2.web.Angular2DescriptorSymbolsProvider
-import org.angular2.web.Angular2SymbolOrigin
 
 class Angular2AttributeDescriptor(info: HtmlAttributeSymbolInfo, tag: XmlTag?) : HtmlAttributeSymbolDescriptor(info, tag) {
 
@@ -54,7 +53,7 @@ class Angular2AttributeDescriptor(info: HtmlAttributeSymbolInfo, tag: XmlTag?) :
     ): Angular2AttributeDescriptor {
       val symbol = object : PolySymbol {
         override val origin: PolySymbolOrigin
-          get() = Angular2SymbolOrigin.empty
+          get() = PolySymbolOrigin.empty()
 
         override val kind: PolySymbolKind
           get() = HTML_ATTRIBUTES
