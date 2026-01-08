@@ -93,7 +93,7 @@ class VueComponentSymbol(
             return true
           }
         })
-        props.map { it as? PolySymbol ?: VueInputPropSymbol(it, item, this.origin) }
+        props.map { it as? PolySymbol ?: VueInputPropSymbol(it, item) }
       }
       VUE_COMPONENT_DATA_PROPERTIES -> {
         val props = mutableListOf<VueDataProperty>()
@@ -103,7 +103,7 @@ class VueComponentSymbol(
             return true
           }
         }, onlyPublic = false)
-        props.map { VueDataPropertySymbol(it, item, this.origin) }
+        props.map { VueDataPropertySymbol(it, item) }
       }
       VUE_COMPONENT_COMPUTED_PROPERTIES -> {
         val props = mutableListOf<VueComputedProperty>()
@@ -113,25 +113,25 @@ class VueComponentSymbol(
             return true
           }
         }, onlyPublic = false)
-        props.map { VueComputedPropertySymbol(it, item, this.origin) }
+        props.map { VueComputedPropertySymbol(it, item) }
       }
       HTML_SLOTS -> {
         (item as? VueContainer)
           ?.slots
-          ?.map { VueSlotSymbol.create(it, item, this.origin) }
+          ?.map { VueSlotSymbol.create(it, item) }
         ?: emptyList()
       }
       VUE_MODEL -> {
         (item as? VueContainer)
           ?.collectModelDirectiveProperties()
           ?.takeIf { it.prop != null || it.event != null }
-          ?.let { listOf(VueModelSymbol(this.origin, it)) }
+          ?.let { listOf(VueModelSymbol(it)) }
         ?: emptyList()
       }
       JS_EVENTS -> {
         (item as? VueContainer)
           ?.emits
-          ?.map { VueEmitCallSymbol(it, item, this.origin) }
+          ?.map { VueEmitCallSymbol(it, item) }
         ?: emptyList()
       }
       else -> emptyList()

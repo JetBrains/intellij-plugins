@@ -194,6 +194,7 @@ class VueWebTypesMergedSymbol(
         .also { builder ->
           symbol.originalName?.let { builder.definition(StringUtil.escapeXmlEntities(it) + " as " + builder.definition) }
         }
+        .library(symbolsDocs.firstNotNullOfOrNull { it.library })
         .build()
     }
   }

@@ -20,6 +20,7 @@ import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 import org.jetbrains.vuejs.web.VueFramework
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
 
@@ -72,13 +73,10 @@ class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
     }
   }
 
-  private class I18nTagExtension(private val lang: String) : PolySymbol {
+  private class I18nTagExtension(private val lang: String) : PolySymbol, VueSymbol {
 
     override val name: String
       get() = "i18n"
-
-    override val origin: PolySymbolOrigin =
-      PolySymbolOrigin.create(VueFramework.ID, "vue-i18n")
 
     override val kind: PolySymbolKind
       get() = HTML_ELEMENTS

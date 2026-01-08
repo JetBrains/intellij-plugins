@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
@@ -20,10 +19,8 @@ private const val UPDATE_PREFIX = "update:"
 class VueEmitCallSymbol(
   emitCall: VueEmitCall,
   owner: VueComponent,
-  origin: PolySymbolOrigin,
 ) : VueNamedPolySymbol<VueEmitCall>(
   item = emitCall,
-  origin = origin,
   owner = owner,
 ) {
 
@@ -56,7 +53,7 @@ class VueEmitCallSymbol(
         (owner as? VueContainer)?.emits?.find { it.name == name }
 
       override fun createWrapper(owner: VueComponent, symbol: VueEmitCall): VueEmitCallSymbol =
-        VueEmitCallSymbol(symbol, owner, origin)
+        VueEmitCallSymbol(symbol, owner)
 
     }
 }

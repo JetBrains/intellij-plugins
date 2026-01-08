@@ -40,14 +40,14 @@ abstract class VueDirectiveSymbolBase<T : VueDirective>(
   ): List<PolySymbol> =
     when (kind) {
       VUE_DIRECTIVE_ARGUMENT if (!params.expandPatterns) -> {
-        listOf(VueAnySymbol(origin, kind, "Vue directive argument"))
+        listOf(VueAnySymbol(kind, "Vue directive argument"))
       }
 
       VUE_DIRECTIVE_MODIFIERS -> {
         item.modifiers.map { modifier ->
           VueDirectiveModifierSymbol(modifier, vueProximity)
         }.ifEmpty {
-          listOf(VueAnySymbol(origin, kind, "Vue directive modifier"))
+          listOf(VueAnySymbol(kind, "Vue directive modifier"))
         }
       }
 

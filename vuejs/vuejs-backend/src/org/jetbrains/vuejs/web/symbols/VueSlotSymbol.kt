@@ -23,17 +23,15 @@ import org.jetbrains.vuejs.model.VueSlot
 open class VueSlotSymbol private constructor(
   slot: VueSlot,
   owner: VueComponent,
-  origin: PolySymbolOrigin,
 ) : VueNamedPolySymbol<VueSlot>(
   item = slot,
-  origin = origin,
   owner = owner,
 ) {
 
   companion object {
-    fun create(slot: VueSlot, owner: VueComponent, origin: PolySymbolOrigin): VueSlotSymbol =
-      slot.pattern?.let { VueSlotSymbolWithPattern(slot, owner, origin, PolySymbolPatternFactory.createRegExMatch(it, true)) }
-      ?: VueSlotSymbol(slot, owner, origin)
+    fun create(slot: VueSlot, owner: VueComponent): VueSlotSymbol =
+      slot.pattern?.let { VueSlotSymbolWithPattern(slot, owner, PolySymbolPatternFactory.createRegExMatch(it, true)) }
+      ?: VueSlotSymbol(slot, owner)
   }
 
   override val kind: PolySymbolKind
@@ -65,15 +63,14 @@ open class VueSlotSymbol private constructor(
         (owner as? VueContainer)?.slots?.find { it.name == name }
 
       override fun createWrapper(owner: VueComponent, symbol: VueSlot): VueSlotSymbol =
-        create(symbol, owner, origin)
+        create(symbol, owner)
 
     }
 
   private class VueSlotSymbolWithPattern(
     slot: VueSlot,
     owner: VueComponent,
-    origin: PolySymbolOrigin,
     override val pattern: PolySymbolPattern,
-  ) : VueSlotSymbol(slot, owner, origin), PolySymbolWithPattern
+  ) : VueSlotSymbol(slot, owner), PolySymbolWithPattern
 
 }

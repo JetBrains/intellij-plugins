@@ -9,12 +9,12 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueProvide
+import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.web.VUE_PROVIDES
 
 class VueProvideSymbol(
   private val provide: VueProvide,
   private val owner: VueContainer,
-  override val origin: PolySymbolOrigin,
 ) : VueDocumentedItemSymbol<VueProvide>(provide.name, provide) {
 
   override val kind: PolySymbolKind
@@ -28,13 +28,12 @@ class VueProvideSymbol(
 
   override fun createPointer(): Pointer<VueProvideSymbol> = object : Pointer<VueProvideSymbol> {
     private val name = this@VueProvideSymbol.name
-    private val origin = this@VueProvideSymbol.origin
     private val pointer = this@VueProvideSymbol.owner.createPointer()
 
     override fun dereference(): VueProvideSymbol? =
       pointer.dereference()?.asSafely<VueContainer>()?.let { container ->
         container.provides.find { it.name == name }?.let { provide ->
-          VueProvideSymbol(provide, container, origin)
+          VueProvideSymbol(provide, container)
         }
       }
   }

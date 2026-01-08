@@ -13,8 +13,7 @@ import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
 class VueDataPropertySymbol(
   data: VueDataProperty,
   owner: VueComponent,
-  origin: PolySymbolOrigin,
-) : VuePropertySymbol<VueDataProperty>(data, owner, origin) {
+) : VuePropertySymbol<VueDataProperty>(data, owner) {
 
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_DATA_PROPERTIES
@@ -40,7 +39,7 @@ class VueDataPropertySymbol(
       }
 
       override fun createWrapper(owner: VueComponent, symbol: VueDataProperty): VueDataPropertySymbol =
-        VueDataPropertySymbol(symbol, owner, origin)
+        VueDataPropertySymbol(symbol, owner)
 
     }
 }

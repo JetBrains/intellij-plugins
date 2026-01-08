@@ -18,8 +18,7 @@ import org.jetbrains.vuejs.model.VueProperty
 abstract class VuePropertySymbol<T : VueProperty>(
   item: T,
   owner: VueComponent,
-  origin: PolySymbolOrigin,
-) : VueNamedPolySymbol<T>(item, owner, origin) {
+) : VueNamedPolySymbol<T>(item, owner) {
 
   abstract override fun createPointer(): Pointer<out VuePropertySymbol<T>>
 

@@ -12,9 +12,8 @@ import org.jetbrains.vuejs.web.PROP_VUE_MODEL_PROP
 import org.jetbrains.vuejs.web.VUE_MODEL
 
 class VueModelSymbol(
-  override val origin: PolySymbolOrigin,
   private val vueModel: VueModelDirectiveProperties,
-) : PolySymbol {
+) : VueSymbol {
 
   override val name: String
     get() = "Vue Model"

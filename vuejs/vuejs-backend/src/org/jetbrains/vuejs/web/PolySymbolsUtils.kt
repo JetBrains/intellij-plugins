@@ -39,7 +39,6 @@ fun VueModelVisitor.Proximity.asPolySymbolPriority(): PolySymbol.Priority =
   }
 
 val vueEmptyOrigin: PolySymbolOrigin = PolySymbolOrigin.create(
-  library = "vue",
   typeSupport = TypeScriptSymbolTypeSupport())
 
 internal fun isVueComponentQuery(name: String): Boolean {

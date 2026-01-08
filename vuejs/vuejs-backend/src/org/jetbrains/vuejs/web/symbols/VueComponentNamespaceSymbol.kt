@@ -53,9 +53,6 @@ class VueComponentNamespaceSymbol(
         ?.firstNotNullOfOrNull { it.takeIf { it.isValidResult }?.element }
       ?: source, false)
 
-  override val origin: PolySymbolOrigin
-    get() = PolySymbolOrigin.empty()
-
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_NAMESPACES
 

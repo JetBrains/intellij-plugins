@@ -120,8 +120,6 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
         createSymbolReferencePlaceholder()
       )
 
-    override val origin: PolySymbolOrigin = PolySymbolOrigin.empty()
-
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)
   }

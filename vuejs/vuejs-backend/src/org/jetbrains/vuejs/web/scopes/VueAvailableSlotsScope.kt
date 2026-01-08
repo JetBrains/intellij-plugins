@@ -82,8 +82,6 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
     override val name: String
       get() = "v-slot"
 
-    override val origin: PolySymbolOrigin = PolySymbolOrigin.empty()
-
     override val pattern: PolySymbolPattern =
       PolySymbolPatternFactory.createSingleSymbolReferencePattern(
         listOf(VUE_AVAILABLE_SLOTS.withName(DEFAULT_SLOT_NAME))

@@ -31,7 +31,6 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
-import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.symbols.*
 
 class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
@@ -43,15 +42,14 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
     || kind == VUE_COMPONENT_COMPUTED_PROPERTIES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    val origin = VueScopeElementOrigin(enclosingComponent)
     enclosingComponent.acceptPropertiesAndMethods(object : VueModelVisitor() {
       override fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
-        consumer(VueDataPropertySymbol(dataProperty, enclosingComponent, origin))
+        consumer(VueDataPropertySymbol(dataProperty, enclosingComponent))
         return true
       }
 
       override fun visitComputedProperty(computedProperty: VueComputedProperty, proximity: Proximity): Boolean {
-        consumer(VueComputedPropertySymbol(computedProperty, enclosingComponent, origin))
+        consumer(VueComputedPropertySymbol(computedProperty, enclosingComponent))
         return true
       }
     }, onlyPublic = false)
@@ -89,7 +87,6 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
   companion object {
 
     private val anyJsDataSymbol = VueAnySymbol(
-      PolySymbolOrigin.create(VueFramework.ID),
       VUE_COMPONENT_DATA_PROPERTIES,
       "Unknown data property",
       JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.JS)
@@ -124,8 +121,6 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
           )
         )
       )
-
-    override val origin: PolySymbolOrigin = PolySymbolOrigin.empty()
 
     override fun createPointer(): Pointer<out PolySymbol> =
       Pointer.hardPointer(this)

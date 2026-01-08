@@ -20,6 +20,7 @@ interface VueDocumentedItemSymbolMixin : VueSymbol, VueDocumentedItem {
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     PolySymbolDocumentationTarget.create(this, location) { symbol, location ->
       description = symbol.description
+      library = "vue"
     }
 
   override val presentation: TargetPresentation

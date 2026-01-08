@@ -13,9 +13,6 @@ abstract class VueScopeElementSymbol<T : VueScopeElement>(name: String, item: T)
 
   abstract override fun createPointer(): Pointer<out VueScopeElementSymbol<T>>
 
-  override val origin: PolySymbolOrigin =
-    VueScopeElementOrigin(item)
-
   override val searchTarget: PolySymbolSearchTarget?
     get() = PolySymbolSearchTarget.create(this)
 

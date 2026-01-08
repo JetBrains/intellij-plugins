@@ -44,7 +44,10 @@ class Angular2DirectivePropertyLiteralReferenceProvider : PsiPolySymbolReference
     return if (hostDirective) {
       val properties = (if (kind == INPUTS_PROP) directive.inputs else directive.outputs)
       val symbol = properties.find { it.name == name }
-                   ?: PsiPolySymbolReferenceProvider.unresolvedSymbol(if (kind == INPUTS_PROP) NG_DIRECTIVE_INPUTS else NG_DIRECTIVE_OUTPUTS, name)
+                   ?: PsiPolySymbolReferenceProvider.unresolvedSymbol(
+                       if (kind == INPUTS_PROP) NG_DIRECTIVE_INPUTS else NG_DIRECTIVE_OUTPUTS,
+                       name
+                   )
       mapOf(startOffset + 1 to symbol)
     }
     else {

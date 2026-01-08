@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolOrigin
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -13,8 +12,7 @@ import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 class VueComputedPropertySymbol(
   data: VueComputedProperty,
   owner: VueComponent,
-  origin: PolySymbolOrigin,
-) : VuePropertySymbol<VueComputedProperty>(data, owner, origin) {
+) : VuePropertySymbol<VueComputedProperty>(data, owner) {
 
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_COMPUTED_PROPERTIES
@@ -40,7 +38,7 @@ class VueComputedPropertySymbol(
       }
 
       override fun createWrapper(owner: VueComponent, symbol: VueComputedProperty): VueComputedPropertySymbol =
-        VueComputedPropertySymbol(symbol, owner, origin)
+        VueComputedPropertySymbol(symbol, owner)
 
     }
 }

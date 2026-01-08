@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
-import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueInputProperty
@@ -15,8 +14,7 @@ import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
 class VueInputPropSymbol(
   property: VueInputProperty,
   owner: VueComponent,
-  origin: PolySymbolOrigin,
-) : VuePropertySymbol<VueInputProperty>(property, owner, origin) {
+) : VuePropertySymbol<VueInputProperty>(property, owner) {
 
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_PROPS
@@ -54,7 +52,7 @@ class VueInputPropSymbol(
       }
 
       override fun createWrapper(owner: VueComponent, symbol: VueInputProperty): VueInputPropSymbol =
-        VueInputPropSymbol(symbol, owner, origin)
+        VueInputPropSymbol(symbol, owner)
 
     }
 }

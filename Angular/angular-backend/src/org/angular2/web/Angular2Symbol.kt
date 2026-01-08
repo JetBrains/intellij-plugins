@@ -17,7 +17,7 @@ interface Angular2Symbol : HtmlFrameworkSymbol {
     get() = Angular2Framework.ID
 
   override val origin: PolySymbolOrigin
-    get() = Angular2SymbolOrigin(this)
+    get() = Angular2SymbolOrigin()
 
   override val icon: Icon?
     get() = AngularIcons.Angular2

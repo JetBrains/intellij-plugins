@@ -19,7 +19,6 @@ import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_PROVIDES
 import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
-import org.jetbrains.vuejs.web.symbols.VueScopeElementOrigin
 
 class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
   PolySymbolScopeWithCache<VueSourceComponent, Unit>(enclosingComponent.source.project, enclosingComponent, Unit) {
@@ -30,11 +29,10 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
     || kind == JS_PROPERTIES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    val origin = VueScopeElementOrigin(enclosingComponent)
     val provides = enclosingComponent.global.provides
 
     provides.forEach { (provide, container) ->
-      consumer(VueProvideSymbol(provide, container, origin))
+      consumer(VueProvideSymbol(provide, container))
     }
 
     consumer(vueInjectStringSymbol)

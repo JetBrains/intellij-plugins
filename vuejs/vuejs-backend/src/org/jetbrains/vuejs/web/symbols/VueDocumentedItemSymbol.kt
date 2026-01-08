@@ -1,18 +1,24 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
+import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.polySymbols.PolySymbolOrigin
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
+import org.jetbrains.vuejs.model.VueScopeElement
 
 abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   override val name: String,
@@ -31,6 +37,17 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
       description = symbol.item.description
+
+      symbol.item.source
+        ?.containingFile
+        ?.virtualFile
+        ?.let { PackageJsonUtil.findUpPackageJson(it) }
+        ?.takeIf { NodeModuleUtil.hasNodeModulesDirInPath(it, null) }
+        ?.let { PackageJsonData.getOrCreate(it) }
+        ?.takeIf { it.name != null }
+        ?.let { data ->
+          library = data.name + (data.version?.toString()?.let { "@$it" } ?: "")
+        }
     }
 
   override val presentation: TargetPresentation

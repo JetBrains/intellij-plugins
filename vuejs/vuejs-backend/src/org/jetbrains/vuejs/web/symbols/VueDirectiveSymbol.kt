@@ -34,7 +34,7 @@ open class VueDirectiveSymbol(
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (qualifiedName.matches(VUE_DIRECTIVE_ARGUMENT, VUE_DIRECTIVE_MODIFIERS)) {
-      listOf(VueAnySymbol(this.origin, qualifiedName.kind, qualifiedName.name))
+      listOf(VueAnySymbol(qualifiedName.kind, qualifiedName.name))
     }
     else emptyList()
 
@@ -44,7 +44,7 @@ open class VueDirectiveSymbol(
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     if (kind == VUE_DIRECTIVE_ARGUMENT) {
-      listOf(VueAnySymbol(this.origin, kind, "Vue directive argument"))
+      listOf(VueAnySymbol(kind, "Vue directive argument"))
     }
     else emptyList()
 
