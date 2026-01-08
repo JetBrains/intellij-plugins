@@ -41,7 +41,7 @@ object VueExprParsing {
                   ""
               }
               .let {
-                VueAttributeNameParser.Companion.parse(it)
+                VueAttributeNameParser.parse(it)
               }
             createExprParser(builder).parseEmbeddedExpression(root, info)
           }
