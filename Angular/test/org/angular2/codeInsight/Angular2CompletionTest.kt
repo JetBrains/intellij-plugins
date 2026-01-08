@@ -264,18 +264,9 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
   fun testHostListenerDecorator() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts")
 
-  fun testObjectInitializerProperties() {
-    // This test fails with service-powered code completion in object properties
-    // because the service compiles Angular templates into real code.
-    // As a result, the response contains generated declarations that aren't present
-    // in the source code, and we get an `IndexOutOfBoundsException` in `TypeScriptCompilerTypeConverter#findPsiElement`.
-    // We should filter such declarations, but for the first iteration of the feature,
-    // we agreed with Konstantin.Ulitin to disable it in this particular test.
-    Registry.get("typescript.service.powered.property.name.completion").withValue(false) {
-      doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
-                   locations = listOf("[product]=\"{<caret>}\"", "[product]=\"{title,<caret>}\""))
-    }
-  }
+  fun testObjectInitializerProperties() =
+    doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",
+                 locations = listOf("[product]=\"{<caret>}\"", "[product]=\"{title,<caret>}\""))
 
   fun testViewChildrenDecorator() =
     doLookupTest(Angular2TestModule.ANGULAR_CORE_17_3_0, extension = "ts",

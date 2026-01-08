@@ -76,15 +76,26 @@ export function createUnboundReverseMapper(language: Language<string>, languageS
   }
 }
 
-export function decorateIdeLanguageServiceExtensions(language: Language<string>, languageService: TS.LanguageService, unboundReverseMapper: UnboundReverseMapper) {
+export function decorateIdeLanguageServiceExtensions(
+  language: Language<string>,
+  languageService: TS.LanguageService,
+  unboundReverseMapper: UnboundReverseMapper,
+) {
+  const {
+    webStormGetElementType,
+    webStormGetTypeProperties,
+    webStormGetTypeProperty,
+    webStormGetSymbolType,
+    webStormGetCompletionSymbols,
+  } = languageService
 
-  let {webStormGetElementType, webStormGetTypeProperties, webStormGetTypeProperty, webStormGetSymbolType} = languageService
-
-  if (webStormGetElementType === undefined ||
-    webStormGetElementType === undefined ||
-    webStormGetTypeProperty === undefined ||
-    webStormGetSymbolType === undefined)
-    return
+  if (
+    webStormGetElementType === undefined
+    || webStormGetTypeProperties === undefined
+    || webStormGetTypeProperty === undefined
+    || webStormGetSymbolType === undefined
+    || webStormGetCompletionSymbols === undefined
+  ) return
 
   languageService.webStormGetElementType = (
     ts: typeof TS,
@@ -143,6 +154,17 @@ export function decorateIdeLanguageServiceExtensions(language: Language<string>,
     _reverseMapper?: ReverseMapper,
   ) => {
     return webStormGetTypeProperty(ts, typeId, propertyName, cancellationToken, unboundReverseMapper.bind(null, ts))
+  }
+
+  languageService.webStormGetCompletionSymbols = (
+    ts,
+    ls,
+    fileName: string,
+    position: number,
+    cancellationToken: ts.HostCancellationToken,
+    _reverseMapper?: ReverseMapper,
+  ) => {
+    return webStormGetCompletionSymbols(ts, ls, fileName, position, cancellationToken, unboundReverseMapper.bind(null, ts))
   }
 }
 

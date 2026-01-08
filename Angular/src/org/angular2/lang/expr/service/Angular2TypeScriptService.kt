@@ -106,6 +106,10 @@ class Angular2TypeScriptService(project: Project) : TypeScriptServerServiceImpl(
     else
       super.isAcceptableForHighlighting(file)
 
+  override fun supportsCompletionSymbols(virtualFile: VirtualFile): Boolean {
+    return super.supportsCompletionSymbols(virtualFile) || isAcceptableHtmlFile(virtualFile)
+  }
+
   override fun getQuickInfoAt(usageElement: PsiElement, originalFile: VirtualFile): Future<TypeScriptQuickInfoResponse?>? =
     if (usageElement.containingFile.language.let { it is Angular2HtmlDialect || it is Angular2ExprDialect })
       null // For now do not use TS server for quick info
