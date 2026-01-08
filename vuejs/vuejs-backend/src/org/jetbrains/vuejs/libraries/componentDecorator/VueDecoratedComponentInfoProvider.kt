@@ -27,7 +27,12 @@ private const val PROP_SYNC_DEC = "PropSync"
 private const val MODEL_DEC = "Model"
 private const val EMIT_DEC = "Emit"
 
-private val DECS = setOf(PROP_DEC, PROP_SYNC_DEC, MODEL_DEC, EMIT_DEC)
+private val DECS = setOf(
+  PROP_DEC,
+  PROP_SYNC_DEC,
+  MODEL_DEC,
+  EMIT_DEC,
+)
 
 private fun getNameFromDecorator(decorator: ES6Decorator): String? {
   return getDecoratorArgument(decorator, 0)
