@@ -603,6 +603,10 @@
     <fileType name="Terraform Component" language="HCL" patterns="*.tfcomponent.hcl"
               implementationClass="org.intellij.terraform.stack.component.TfComponentFileType" fieldName="INSTANCE"/>
     <completion.contributor language="HCL" implementationClass="org.intellij.terraform.stack.component.TfComponentCompletionContributor"/>
+
+    <fileType name="Terraform Deployment" language="HCL" patterns="*.tfdeploy.hcl"
+              implementationClass="org.intellij.terraform.stack.deployment.TfDeployFileType" fieldName="INSTANCE"/>
+    <completion.contributor language="HCL" implementationClass="org.intellij.terraform.stack.deployment.TfDeployCompletionContributor"/>
   </extensions>
 
   <projectListeners>

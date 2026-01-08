@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionContributor
@@ -24,6 +24,8 @@ import org.intellij.terraform.hcl.psi.afterSiblingSkipping2
 import org.intellij.terraform.isTfOrTofuPsiFile
 import org.intellij.terraform.stack.component.TfComponentRootBlocks
 import org.intellij.terraform.stack.component.isTfComponentPsiFile
+import org.intellij.terraform.stack.deployment.TfDeployRootBlocks
+import org.intellij.terraform.stack.deployment.isTfDeployPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntStack
 import org.intellij.terraform.terragrunt.model.StackRootBlocks
@@ -38,6 +40,7 @@ internal object HclRootBlockCompletionProvider : CompletionProvider<CompletionPa
     val rootBlocks = when {
       isTfOrTofuPsiFile(psiFile) -> RootBlockSorted
       isTfComponentPsiFile(psiFile) -> TfComponentRootBlocks
+      isTfDeployPsiFile(psiFile) -> TfDeployRootBlocks
       isTerragruntPsiFile(psiFile) -> if (isTerragruntStack(psiFile)) StackRootBlocks else TerragruntBlocksAndAttributes
       else -> return
     }
