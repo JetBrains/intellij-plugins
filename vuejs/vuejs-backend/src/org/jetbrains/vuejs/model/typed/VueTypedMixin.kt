@@ -23,7 +23,10 @@ import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueMixin
 import java.util.*
 
-class VueTypedMixin(source: JSExpression) : VueTypedContainer(source), VueMixin {
+class VueTypedMixin(
+  source: JSExpression,
+) : VueTypedContainer(source),
+    VueMixin {
 
   override val thisType: JSType
     get() = CachedValuesManager.getCachedValue(source) {
@@ -52,17 +55,26 @@ class VueTypedMixin(source: JSExpression) : VueTypedContainer(source), VueMixin 
     Objects.hash(source)
 }
 
-private fun JSRecordType.remapJSProperties(): JSType? =
+private fun JSRecordType.remapJSProperties(): JSType =
   JSRecordTypeImpl(
     source,
     typeMembers.map {
       // When we have a mixin coming from source definition, we need to remap JSProperties to VueImplicitElement
       // to not lose the calculated JSType.
       if (it is JSRecordType.PropertySignature && it.memberSource.singleElement is JSProperty) {
-        PropertySignatureImpl(it.memberName, it.isPrivateName, it.privateNameDepth, it.isConst, it.jsType,
-                              it.keyType, it.setterJSType, it.isOptional, it.isNumericKey,
-                              JSRecordMemberSourceFactory.createSource(VueImplicitElement(it.memberName, it.jsType, it.memberSource.singleElement!!,
-                                                                                          JSImplicitElement.Type.Property, true)))
+        PropertySignatureImpl(
+          it.memberName, it.isPrivateName, it.privateNameDepth, it.isConst, it.jsType,
+          it.keyType, it.setterJSType, it.isOptional, it.isNumericKey,
+          JSRecordMemberSourceFactory.createSource(
+            VueImplicitElement(
+              it.memberName,
+              it.jsType,
+              it.memberSource.singleElement!!,
+              JSImplicitElement.Type.Property,
+              true,
+            )
+          )
+        )
       }
       else it
     }
