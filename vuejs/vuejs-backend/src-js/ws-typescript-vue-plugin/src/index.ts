@@ -2,21 +2,15 @@
 import type * as ts from "tsc-ide-plugin/tsserverlibrary.shim";
 import {decorateIdeLanguageServiceExtensions} from "./decorateLanguageService"
 
-import type {Language} from "@volar/language-core"
-import {createLanguageServicePlugin} from "@volar/typescript/lib/quickstart/createLanguageServicePlugin"
-import type {createPluginCallbackReturnValue} from "@volar/typescript/lib/quickstart/languageServicePluginCommon"
+const init: ts.server.PluginModuleFactory = () => ({
+  create: (info) => {
+    decorateIdeLanguageServiceExtensions(
+      info.project.__vue__.language,
+      info.languageService,
+    )
 
-function loadLanguagePlugins(
-  _: unknown,
-  info: ts.server.PluginCreateInfo,
-): createPluginCallbackReturnValue {
-  return {
-    languagePlugins: [],
-    setup(language: Language<string>) {
-      decorateIdeLanguageServiceExtensions(language, info.languageService)
-    }
+    return info.languageService
   }
-}
+})
 
-const init = createLanguageServicePlugin(loadLanguagePlugins as any)
 export = init
