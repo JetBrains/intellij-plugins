@@ -109,15 +109,21 @@ abstract class VuexNamedSymbolImpl(
   override val source: PsiElement,
 ) : VuexNamedSymbol
 
-class VuexStatePropertyImpl(name: String, source: PsiElement)
-  : VuexNamedSymbolImpl(name, source), VuexStateProperty {
+class VuexStatePropertyImpl(
+  name: String,
+  source: PsiElement,
+) : VuexNamedSymbolImpl(name, source),
+    VuexStateProperty {
   override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl {
     return VuexStoreStateElement(qualifiedName.substring(namespace.length), qualifiedName, source, (source as? JSTypeOwner)?.jsType)
   }
 }
 
-class VuexActionImpl(name: String, source: PsiElement)
-  : VuexNamedSymbolImpl(name, source), VuexAction {
+class VuexActionImpl(
+  name: String,
+  source: PsiElement,
+) : VuexNamedSymbolImpl(name, source),
+    VuexAction {
 
   override val isRoot: Boolean get() = initializer?.let { IS_ROOT.build(it) } == true
 
@@ -135,8 +141,11 @@ class VuexActionImpl(name: String, source: PsiElement)
   }
 }
 
-class VuexGetterImpl(name: String, source: PsiElement)
-  : VuexNamedSymbolImpl(name, source), VuexGetter {
+class VuexGetterImpl(
+  name: String,
+  source: PsiElement,
+) : VuexNamedSymbolImpl(name, source),
+    VuexGetter {
 
   private val jsType: JSType?
     get() = (source as? JSTypeOwner)?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(source, false), it) }
@@ -146,5 +155,8 @@ class VuexGetterImpl(name: String, source: PsiElement)
 
 }
 
-class VuexMutationImpl(name: String, source: PsiElement)
-  : VuexNamedSymbolImpl(name, source), VuexMutation
+class VuexMutationImpl(
+  name: String,
+  source: PsiElement,
+) : VuexNamedSymbolImpl(name, source),
+    VuexMutation
