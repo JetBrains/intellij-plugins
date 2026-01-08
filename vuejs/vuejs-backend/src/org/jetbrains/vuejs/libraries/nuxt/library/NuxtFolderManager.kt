@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger
 @State(name = "DotNuxtFolderManager", storages = [Storage(StoragePathMacros.CACHE_FILE)])
 internal class NuxtFolderManager(
   private val project: Project,
-  internal val coroutineScope: CoroutineScope
+  internal val coroutineScope: CoroutineScope,
 ) : PersistentStateComponent<NuxtFolderManagerState>, Disposable {
   private val folders = ConcurrentHashMap.newKeySet<VirtualFile>()
   val nuxtFolders: List<VirtualFile>

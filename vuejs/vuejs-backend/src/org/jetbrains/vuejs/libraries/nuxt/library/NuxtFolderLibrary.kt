@@ -24,7 +24,7 @@ internal class NuxtFolderNotReadyLibrary(override val nuxtFolder: VirtualFile) :
 internal class NuxtFolderReadyLibrary private constructor(
   override val nuxtFolder: VirtualFile,
   override val libraryFiles: List<VirtualFile>,
-): NuxtFolderLibrary {
+) : NuxtFolderLibrary {
 
   companion object {
     suspend fun create(nuxtFolder: VirtualFile): NuxtFolderReadyLibrary {
