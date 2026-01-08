@@ -1,5 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import type * as ts from "tsc-ide-plugin/tsserverlibrary.shim"
+import {WebStormGetOptions} from "tsc-ide-plugin/tsserverlibrary.shim"
 
 import type {Language} from "@volar/language-core"
 import {toGeneratedRange} from "./ranges"
@@ -23,6 +24,17 @@ export function decorateIdeLanguageServiceExtensions(
     || webStormGetSymbolType === undefined
   ) return
 
+  function withReverseMapper<
+    O extends WebStormGetOptions,
+    R extends Record<never, never> | undefined,
+  >(source: (options: O) => R): (options: O) => R {
+    return (options) =>
+      source({
+        ...options,
+        // reverseMapper: ...,
+      })
+  }
+
   languageService.webStormGetElementType = (options) => {
     const {fileName} = options
     if (!fileName.endsWith(".vue"))
@@ -41,21 +53,7 @@ export function decorateIdeLanguageServiceExtensions(
     })
   }
 
-  languageService.webStormGetSymbolType = (options) => {
-    return webStormGetSymbolType({
-      ...options,
-    })
-  }
-
-  languageService.webStormGetTypeProperties = (options) => {
-    return webStormGetTypeProperties({
-      ...options,
-    })
-  }
-
-  languageService.webStormGetTypeProperty = (options) => {
-    return webStormGetTypeProperty({
-      ...options,
-    })
-  }
+  languageService.webStormGetSymbolType = withReverseMapper(webStormGetSymbolType)
+  languageService.webStormGetTypeProperties = withReverseMapper(webStormGetTypeProperties)
+  languageService.webStormGetTypeProperty = withReverseMapper(webStormGetTypeProperty)
 }
