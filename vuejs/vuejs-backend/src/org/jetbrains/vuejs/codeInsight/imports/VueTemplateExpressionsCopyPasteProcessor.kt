@@ -186,7 +186,9 @@ private class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBa
     ES6CreateImportUtil.addRequiredImports(destinationModule, VueJSLanguage, imports)
   }
 
-  class VueTemplateExpressionsImportsTransferableData(importedElementsDeferred: Deferred<List<ImportedElement>>) : ES6ImportsTransferableDataBase(importedElementsDeferred) {
+  class VueTemplateExpressionsImportsTransferableData(
+    importedElementsDeferred: Deferred<List<ImportedElement>>,
+  ) : ES6ImportsTransferableDataBase(importedElementsDeferred) {
     override fun getFlavor(): DataFlavor {
       return VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR
     }

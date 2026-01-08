@@ -88,7 +88,10 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
       VueComponentSourceEdit.getOrCreateScriptScope(VueModelManager.findEnclosingContainer(file))
     }
 
-  override fun collectTransferableData(rangesWithParents: List<Pair<PsiElement, TextRange>>, project: Project): VueComponentImportsTransferableData? {
+  override fun collectTransferableData(
+    rangesWithParents: List<Pair<PsiElement, TextRange>>,
+    project: Project,
+  ): VueComponentImportsTransferableData? {
     val scriptSetup = findModule(rangesWithParents[0].first, true)
     if (scriptSetup != null) {
       val elements = mutableListOf<OpenApiPair<String, ES6ImportExportDeclarationPart>>()
