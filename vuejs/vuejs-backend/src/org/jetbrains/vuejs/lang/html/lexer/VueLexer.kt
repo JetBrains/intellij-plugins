@@ -131,7 +131,7 @@ class VueLexer(
       }
 
       fun getBaseLexerState(state: Int): Int {
-        return state and BaseHtmlLexer.BASE_STATE_MASK
+        return state and BASE_STATE_MASK
       }
     }
   }
