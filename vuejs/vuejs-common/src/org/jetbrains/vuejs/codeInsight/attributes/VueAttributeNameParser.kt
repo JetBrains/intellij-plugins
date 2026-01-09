@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.codeInsight.attributes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.MultiMap
 import com.intellij.xml.util.BasicHtmlUtil.*
-import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
@@ -122,13 +121,18 @@ class VueAttributeNameParser private constructor() {
 
     private val attributeKindMap: MultiMap<String, VueAttributeKind> = MultiMap()
 
-    private val directiveKindMap = StreamEx.of(*VueDirectiveKind.values())
-      .mapToEntry({ it.directiveName }, { it })
-      .nonNullKeys()
-      .toMap()
+    private val directiveKindMap: Map<String, VueDirectiveKind> =
+      buildMap {
+        for (directive in VueDirectiveKind.entries) {
+          val name = directive.directiveName
+                     ?: continue
+
+          put(name, directive)
+        }
+      }
 
     init {
-      VueAttributeKind.values().asSequence()
+      VueAttributeKind.entries.asSequence()
         .filter { it.attributeName != null }
         .forEach {
           attributeKindMap.putValue(it.attributeName, it)
