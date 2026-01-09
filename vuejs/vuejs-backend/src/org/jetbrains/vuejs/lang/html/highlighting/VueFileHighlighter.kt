@@ -40,11 +40,10 @@ internal class VueFileHighlighter(
     private val VUE_INTERPOLATION_DELIMITER = TextAttributesKey.createTextAttributesKey(
       "VUE.SCRIPT_DELIMITERS", DefaultLanguageHighlighterColors.SEMICOLON)
 
-    private val keys = mutableMapOf<IElementType, Array<TextAttributesKey>>()
+    private val keys = mutableMapOf<IElementType, Array<out TextAttributesKey>>()
 
     private fun put(token: IElementType, vararg keysArr: TextAttributesKey) {
-      @Suppress("UNCHECKED_CAST")
-      keys[token] = keysArr as Array<TextAttributesKey>
+      keys[token] = keysArr
     }
 
     init {
