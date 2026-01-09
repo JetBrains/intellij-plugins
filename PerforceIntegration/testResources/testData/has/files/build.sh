@@ -61,6 +61,7 @@ p4 protect -i < protects.txt
 # Unzip test project, create workspace 'john_ws' for user 'john', add and submit all files to Perforce
 #
 WS_ROOT=/perforce/ws
+WS_ALT_ROOT='C:\perforce\ws'
 ZIP_FILE=/perforce/ConsoleApp1.zip
 JOHN_USER=john
 JOHN_PASS=18873fa3-1918-43ca-a518-c706def5e07f
@@ -69,7 +70,7 @@ JOHN_CLIENT=john_ws
 mkdir -p "${WS_ROOT}"
 unzip -q "${ZIP_FILE}" -d "${WS_ROOT}"
 echo "${JOHN_PASS}" | p4 -p "${P4PORT}" -u "${JOHN_USER}" login
-printf "Client: %s\nOwner: %s\nHost: \nRoot: %s\nOptions: noallwrite noclobber nocompress unlocked nomodtime normdir\nLineEnd: local\nView:\n\t//depot/... //%s/...\n" "${JOHN_CLIENT}" "${JOHN_USER}" "${WS_ROOT}" "${JOHN_CLIENT}" | p4 -p "${P4PORT}" -u "${JOHN_USER}" client -i
+printf "Client: %s\nOwner: %s\nHost: \nRoot: %s\nAltRoots:\n\t%s\nOptions: noallwrite noclobber nocompress unlocked nomodtime normdir\nLineEnd: local\nView:\n\t//depot/... //%s/...\n" "${JOHN_CLIENT}" "${JOHN_USER}" "${WS_ROOT}" "${WS_ALT_ROOT}" "${JOHN_CLIENT}" | p4 -p "${P4PORT}" -u "${JOHN_USER}" client -i
 cd "${WS_ROOT}"
 p4 -p "${P4PORT}" -u "${JOHN_USER}" -c "${JOHN_CLIENT}" add -f ...
 p4 -p "${P4PORT}" -u "${JOHN_USER}" -c "${JOHN_CLIENT}" submit -d "Initial import of ConsoleApp1 test data"
