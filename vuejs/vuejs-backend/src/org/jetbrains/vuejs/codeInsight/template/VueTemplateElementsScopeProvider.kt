@@ -14,7 +14,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.ObjectUtils.notNull
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
@@ -33,7 +32,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
         VueTemplateScopeBuilder(hostFile).topLevelScope,
         PsiModificationTracker.MODIFICATION_COUNT)
     }
-    return listOf(templateRootScope.findBestMatchingTemplateScope(notNull(hostElement, element))!!)
+    return listOf(templateRootScope.findBestMatchingTemplateScope(hostElement ?: element)!!)
   }
 
   private class VueTemplateElementScope(
