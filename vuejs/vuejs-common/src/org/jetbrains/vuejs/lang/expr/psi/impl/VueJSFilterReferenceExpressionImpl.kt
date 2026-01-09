@@ -8,8 +8,10 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 
-class VueJSFilterReferenceExpressionImpl(elementType: IElementType)
-  : JSReferenceExpressionImpl(elementType), VueJSFilterReferenceExpression {
+class VueJSFilterReferenceExpressionImpl(
+  elementType: IElementType,
+) : JSReferenceExpressionImpl(elementType),
+    VueJSFilterReferenceExpression {
 
   override fun isReferenceTo(element: PsiElement): Boolean {
     return if (element is JSFunction) {
