@@ -279,8 +279,14 @@ class VueAttributeNameParser private constructor() {
     PRE(injectJS = false, requiresValue = false),
     SHOW,
     SLOT(requiresValue = false),
-    TEXT;
+    TEXT,
 
-    val directiveName get() = if (hasName) name.lowercase(Locale.US).replace('_', '-') else null
+    ;
+
+    val directiveName: String?
+      get() = if (hasName) {
+        name.lowercase(Locale.US).replace('_', '-')
+      }
+      else null
   }
 }
