@@ -22,7 +22,7 @@ class VueParsingLexer(
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
     additionalState = initialState and 0b11
-    delegateLexer.lexedLangMode = parentLangMode ?: LangMode.values()[initialState shr SHIFT_1 and 0b11]
+    delegateLexer.lexedLangMode = parentLangMode ?: LangMode.entries[initialState shr SHIFT_1 and 0b11]
     super.start(buffer, startOffset, endOffset, initialState shr SHIFT_2)
 
     if (additionalState != BASE_LEXING) return
