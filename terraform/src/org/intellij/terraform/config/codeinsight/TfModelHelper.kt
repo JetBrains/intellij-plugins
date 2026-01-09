@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.openapi.diagnostic.Logger
@@ -37,6 +37,8 @@ import org.intellij.terraform.opentofu.model.getEncryptionMethodProperties
 import org.intellij.terraform.opentofu.patterns.OpenTofuPatterns
 import org.intellij.terraform.stack.component.TfComponentFileType
 import org.intellij.terraform.stack.component.TfComponentHelper
+import org.intellij.terraform.stack.deployment.TfDeployFileType
+import org.intellij.terraform.stack.deployment.TfDeployHelper
 import org.intellij.terraform.terragrunt.TerragruntFileType
 import org.intellij.terraform.terragrunt.codeinsight.TerragruntUnitHelper
 import java.util.Locale
@@ -47,8 +49,9 @@ internal object TfModelHelper {
   fun getBlockProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val fileType = block.containingFile.originalFile.fileType
     val blockProperties = when (fileType) {
-      TerragruntFileType -> TerragruntUnitHelper.getBlockProperties(block)
       TfComponentFileType -> TfComponentHelper.getBlockProperties(block)
+      TfDeployFileType -> TfDeployHelper.getBlockProperties(block)
+      TerragruntFileType -> TerragruntUnitHelper.getBlockProperties(block)
       else -> getBlockPropertiesInternal(block)
     }
     return blockProperties.filter { it.value.canBeUsedIn(fileType) }

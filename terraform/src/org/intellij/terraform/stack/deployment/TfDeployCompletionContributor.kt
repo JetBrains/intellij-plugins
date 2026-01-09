@@ -7,12 +7,14 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiFilePattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiFile
+import org.intellij.terraform.hcl.codeinsight.HclBlockPropertiesCompletionProvider
 import org.intellij.terraform.hcl.codeinsight.HclRootBlockCompletionProvider
 import org.intellij.terraform.hcl.psi.HCLFile
 
 internal class TfDeployCompletionContributor : CompletionContributor(), DumbAware {
   init {
     HclRootBlockCompletionProvider.registerTo(this, TfDeployFile)
+    HclBlockPropertiesCompletionProvider.registerTo(this, TfDeployFile)
   }
 }
 

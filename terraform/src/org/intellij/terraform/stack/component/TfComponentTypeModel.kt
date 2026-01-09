@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.stack.component
 
 import org.intellij.terraform.config.Constants.HCL_CONFIG_IDENTIFIER
@@ -31,12 +31,14 @@ private val ProvidersProperty: PropertyType = PropertyType("providers", Types.Ob
 private val ForEachProperty: PropertyType = PropertyType(HCL_FOR_EACH_IDENTIFIER, Types.Any)
 private val TypeProperty: PropertyType = PropertyType(HCL_TYPE_IDENTIFIER, Types.Any, required = true)
 
+internal val InputsProperty = PropertyType(HCL_INPUTS_IDENTIFIER, Types.Object, required = true)
+
 internal val ComponentBlockType: BlockType = BlockType(
   "component", 1,
   properties = listOf(
     SourceProperty,
     PropertyType(HCL_VERSION_IDENTIFIER, Types.String),
-    PropertyType(HCL_INPUTS_IDENTIFIER, Types.Object, required = true),
+    InputsProperty,
     ProvidersProperty,
     PropertyType(HCL_DEPENDS_ON_IDENTIFIER, Types.Array),
     ForEachProperty

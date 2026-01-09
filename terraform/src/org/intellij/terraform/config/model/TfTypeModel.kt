@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.intellij.psi.PsiDirectory
@@ -12,6 +12,7 @@ import org.intellij.terraform.config.Constants.HCL_ATLAS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CHECK_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CLOUD_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_CONDITION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONNECTION_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_COUNT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DATASOURCE_IDENTIFIER
@@ -21,6 +22,7 @@ import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_CONTENT_IDENTIF
 import org.intellij.terraform.config.Constants.HCL_DYNAMIC_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_EPHEMERAL_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_FOR_EACH_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_ID_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_IMPORT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LIFECYCLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LOCALS_IDENTIFIER
@@ -128,7 +130,7 @@ class TfTypeModel(
     ).toMap())
 
     val ErrorMessageProperty: PropertyType = PropertyType("error_message", Types.String)
-    val ConditionProperty: PropertyType = PropertyType("condition", Types.Boolean, injectionAllowed = false)
+    val ConditionProperty: PropertyType = PropertyType(HCL_CONDITION_IDENTIFIER, Types.Boolean, injectionAllowed = false)
     val VariableType: PropertyType = PropertyType(HCL_TYPE_IDENTIFIER, Types.Any, injectionAllowed = false)
     val VariableDefault: PropertyType = PropertyType(HCL_DEFAULT_IDENTIFIER, Types.Any)
     val VariableValidation: BlockType = BlockType(HCL_VALIDATION_IDENTIFIER, 0, properties = listOf(
@@ -214,8 +216,8 @@ class TfTypeModel(
 
     @JvmField
     val AbstractResource: BlockType = BlockType(HCL_RESOURCE_IDENTIFIER, 2, properties = listOf<PropertyOrBlockType>(
-      PropertyType("id", Types.String, injectionAllowed = false, description = "A unique ID for this resource", optional = false,
-                   required = false, computed = true),
+      PropertyType(HCL_ID_IDENTIFIER, Types.String, injectionAllowed = false, description = "A unique ID for this resource",
+                   optional = false, required = false, computed = true),
       CountProperty,
       ForEachProperty,
       DependsOnProperty,
@@ -237,8 +239,8 @@ class TfTypeModel(
 
     @JvmField
     val AbstractDataSource: BlockType = BlockType(HCL_DATASOURCE_IDENTIFIER, 2, properties = listOf(
-      PropertyType("id", Types.String, injectionAllowed = false, description = "A unique ID for this data source", optional = false,
-                   required = false, computed = true),
+      PropertyType(HCL_ID_IDENTIFIER, Types.String, injectionAllowed = false, description = "A unique ID for this data source",
+                   optional = false, required = false, computed = true),
       CountProperty,
       ForEachProperty,
       DependsOnProperty,
@@ -275,8 +277,8 @@ class TfTypeModel(
     val Locals: BlockType = BlockType(HCL_LOCALS_IDENTIFIER)
     val Import: BlockType = BlockType(HCL_IMPORT_IDENTIFIER, properties = listOf(
       ToProperty,
-      PropertyType("id", Types.String, required = true, conflictsWith = listOf("identity")),
-      BlockType("identity", conflictsWith = listOf("id")),
+      PropertyType(HCL_ID_IDENTIFIER, Types.String, required = true, conflictsWith = listOf("identity")),
+      BlockType("identity", conflictsWith = listOf(HCL_ID_IDENTIFIER)),
       PropertyType("provider", Types.String, required = false),
       ForEachProperty
     ).toMap())

@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config
 
 import com.intellij.openapi.util.NlsSafe
@@ -47,6 +47,8 @@ internal object Constants {
   const val HCL_INPUTS_IDENTIFIER: String = "inputs"
   const val HCL_TYPE_IDENTIFIER: String = "type"
   const val HCL_CONFIG_IDENTIFIER: String = "config"
+  const val HCL_CONDITION_IDENTIFIER: String = "condition"
+  const val HCL_ID_IDENTIFIER: String = "id"
 
   const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   const val LATEST_VERSION: String = "latest"

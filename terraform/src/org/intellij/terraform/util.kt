@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform
 
 import com.intellij.openapi.fileTypes.FileType
@@ -12,6 +12,7 @@ import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.hcl.HCLLanguage
 import org.intellij.terraform.opentofu.OpenTofuFileType
 import org.intellij.terraform.stack.component.isTfComponentPsiFile
+import org.intellij.terraform.stack.deployment.isTfDeployPsiFile
 import org.intellij.terraform.terragrunt.isTerragruntPsiFile
 
 internal fun isTerraformFileExtension(extension: String?): Boolean {
@@ -29,6 +30,7 @@ internal fun isTfOrTofuPsiFile(file: PsiFile?): Boolean {
 internal fun isHclCompatiblePsiFile(file: PsiFile?): Boolean {
   return isTfOrTofuPsiFile(file) ||
          isTfComponentPsiFile(file) ||
+         isTfDeployPsiFile(file) ||
          isTerragruntPsiFile(file)
 }
 
