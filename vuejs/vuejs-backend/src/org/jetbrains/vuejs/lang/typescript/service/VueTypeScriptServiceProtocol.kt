@@ -46,7 +46,8 @@ internal class VueTypeScriptServiceProtocol(
       getPluginResource(
         this::class.java,
         "vue-service/node_modules/ws-typescript-vue-plugin",
-        if (AppMode.isRunningFromDevBuild()) "vuejs" else "vuejs/gen-resources")
+        if (AppMode.isRunningFromDevBuild()) "vuejs" else "vuejs/vuejs-backend/gen-resources",
+      )
     }
     catch (e: IOException) {
       throw RuntimeException(e)
