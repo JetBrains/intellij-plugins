@@ -38,5 +38,8 @@
     <orderEntry type="module" module-name="intellij.xml.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.common" />
     <orderEntry type="module" module-name="intellij.javascript.ultimate" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.plugin" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.react.ultimate" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.react.plugin" scope="TEST" />
   </component>
 </module>

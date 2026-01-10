@@ -74,6 +74,9 @@ jvm_library(
     "@community//xml/xml-analysis-api:analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage:javascript-plugin",
+    "//plugins/js/react/core:ultimate",
+    "//plugins/js/react/plugin",
   ]
 )
 ### auto-generated section `build intellij.mdx` end
