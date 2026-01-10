@@ -13,6 +13,8 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.lang.javascript.psi.stubs.JSVariableStubBase
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory.createNumberPrimitiveType
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory.createStringPrimitiveType
 import com.intellij.lang.javascript.psi.types.primitives.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -63,9 +65,10 @@ class VueJSVForVariableImpl(node: ASTNode) :
       0 -> {
         val destructuringParents = JSTypeEvaluator.findDestructuringParents(this)
         val expression = evaluateContext.processedExpression
-        val type = when (val collectionType = removeNullAndUndefinedFromUnion(JSResolveUtil.getElementJSType(collectionExpr)?.substitute())) {
-          is JSStringType -> getVForVarType(collectionExpr, JSNamedTypeFactory::createStringPrimitiveType)
-          is JSNumberType -> getVForVarType(collectionExpr, JSNamedTypeFactory::createNumberPrimitiveType)
+        val collectionType = removeNullAndUndefinedFromUnion(JSResolveUtil.getElementJSType(collectionExpr)?.substitute())
+        val type = when (collectionType) {
+          is JSStringType -> getVForVarType(collectionExpr, ::createStringPrimitiveType)
+          is JSNumberType -> getVForVarType(collectionExpr, ::createNumberPrimitiveType)
           is JSType -> {
             val type = JSTypeUtils.getIterableComponentType(collectionType)
             when {
@@ -88,18 +91,18 @@ class VueJSVForVariableImpl(node: ASTNode) :
       1 -> {
         val collectionType = removeNullAndUndefinedFromUnion(JSResolveUtil.getElementJSType(collectionExpr)?.substitute())
         val type: JSType? = if (collectionType == null || JSTypeUtils.isAnyType(collectionType)) {
-          getVForVarType(collectionExpr, JSNamedTypeFactory::createStringPrimitiveType, JSNamedTypeFactory::createNumberPrimitiveType)
+          getVForVarType(collectionExpr, ::createStringPrimitiveType, ::createNumberPrimitiveType)
         }
         else if (JSTypeUtils.isArrayLikeType(collectionType) ||
                  collectionType is JSPrimitiveType ||
                  (collectionType is JSUnionType &&
                   collectionType.types.all { JSTypeUtils.isArrayLikeType(it) || it is JSPrimitiveType })) {
-          getVForVarType(collectionExpr, JSNamedTypeFactory::createNumberPrimitiveType)
+          getVForVarType(collectionExpr, ::createNumberPrimitiveType)
         }
         else {
           val recordType = collectionType.asRecordType()
           if (recordType.findPropertySignature(JSCommonTypeNames.ITERATOR_SYMBOL) != null) {
-            getVForVarType(collectionExpr, JSNamedTypeFactory::createNumberPrimitiveType)
+            getVForVarType(collectionExpr, ::createNumberPrimitiveType)
           }
           else {
             val indexerTypes = recordType.indexSignatures.map { it.memberParameterType }
@@ -107,14 +110,14 @@ class VueJSVForVariableImpl(node: ASTNode) :
             when {
               indexerTypes.isNotEmpty() -> getVForVarType(collectionExpr, *indexerTypes.toTypedArray())
               useKeyOfForIndexParam(collectionType) -> JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
-              else -> getVForVarType(collectionExpr, JSNamedTypeFactory::createStringPrimitiveType, JSNamedTypeFactory::createNumberPrimitiveType)
+              else -> getVForVarType(collectionExpr, ::createStringPrimitiveType, ::createNumberPrimitiveType)
             }
           }
         }
         if (type != null) typeProcessor.process(type, evaluateContext)
       }
       2 -> {
-        val type = getVForVarType(collectionExpr, JSNamedTypeFactory::createNumberPrimitiveType)
+        val type = getVForVarType(collectionExpr, ::createNumberPrimitiveType)
         if (type != null) typeProcessor.process(type, evaluateContext)
       }
     }
