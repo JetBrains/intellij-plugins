@@ -5,7 +5,11 @@ import com.jetbrains.qodana.sarif.model.*
 import org.jetbrains.qodana.report.ReportDescriptorBuilder
 import org.jetbrains.qodana.report.ReportResult
 import org.jetbrains.qodana.report.ReportValidator
+import org.jetbrains.qodana.staticAnalysis.sarif.PROJECTROOT_DESCRIPTION
+import org.jetbrains.qodana.staticAnalysis.sarif.PROJECTROOT_URI_BASE
 import org.jetbrains.qodana.staticAnalysis.sarif.QODANA_SEVERITY_KEY
+import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_DESCRIPTION
+import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_URI_BASE
 import java.net.URI
 import java.util.*
 
@@ -38,7 +42,7 @@ class SingleMarkerReportDescriptorBuilder(
         .withPhysicalLocation(
           PhysicalLocation()
             .withArtifactLocation(
-              ArtifactLocation().withUri(parameters.path).withUriBaseId("SRCROOT")
+              ArtifactLocation().withUri(parameters.path).withUriBaseId(SRCROOT_URI_BASE)
             )
             .withRegion(
               Region().withStartColumn(parameters.column).withStartLine(parameters.line).withCharLength(parameters.markerLength.toInt())
@@ -55,11 +59,28 @@ class SingleMarkerReportDescriptorBuilder(
 
     val tool = Tool(driver)
       .withExtensions(setOf(ToolComponent("").withRules(listOf(rule))))
+    
+    val originalUriBaseIds = parameters.projectDirBaseURI?.let { projectDirBaseURI ->
+      OriginalUriBaseIds().apply {
+        put(
+          SRCROOT_URI_BASE,
+          ArtifactLocation()
+            .withUri(projectDirBaseURI)
+            .withUriBaseId(PROJECTROOT_URI_BASE)
+            .withDescription(Message().withText(SRCROOT_DESCRIPTION))
+        )
+        put(
+          PROJECTROOT_URI_BASE,
+          ArtifactLocation().withDescription(Message().withText(PROJECTROOT_DESCRIPTION))
+        )
+      }
+    } ?: OriginalUriBaseIds().apply { put(SRCROOT_URI_BASE, ArtifactLocation().withDescription(Message().withText(SRCROOT_DESCRIPTION))) }
 
     val run = Run(tool)
       .withAutomationDetails(automationDetails)
       .withVersionControlProvenance(setOf(vcsDetails))
       .withResults(listOf(result))
+      .withOriginalUriBaseIds(originalUriBaseIds)
 
     return SarifReport(SarifReport.Version._2_1_0, listOf(run))
   }

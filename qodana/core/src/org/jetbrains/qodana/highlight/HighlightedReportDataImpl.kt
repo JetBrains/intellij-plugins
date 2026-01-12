@@ -43,7 +43,7 @@ class HighlightedReportDataImpl private constructor(
     suspend fun create(project: Project, sourceReportDescriptor: ReportDescriptor, loadedReport: LoadedReport.Sarif): HighlightedReportDataImpl {
       val validatedSarif = loadedReport.validatedSarif
       return withContext(QodanaDispatchers.Default) {
-        val problems: List<SarifProblem> = SarifProblem.fromReport(project, loadedReport.validatedSarif, project.guessProjectDir()?.path)
+        val problems: List<SarifProblem> = SarifProblem.fromReport(project, loadedReport.validatedSarif)
         val isMatchingForProject = async {
           problems.isEmpty() || isAnySarifProblemMatchingProject(project, problems)
         }

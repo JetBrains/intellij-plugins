@@ -14,6 +14,7 @@ import kotlinx.serialization.json.encodeToStream
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunContext
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaRunIncrementalContext
+import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_URI_BASE
 import org.jetbrains.qodana.staticAnalysis.sarif.getOrCreateRun
 import java.nio.file.Files
 import java.nio.file.Path
@@ -71,7 +72,7 @@ internal suspend fun computeNextScope(runContext: QodanaRunContext, report: Sari
 }
 
 private fun ArtifactLocation.toVirtualFile(projectPath: Path, macroManager: PathMacroManager): VirtualFile? {
-  val path = if (uriBaseId == "SRCROOT") {
+  val path = if (uriBaseId == SRCROOT_URI_BASE) {
     projectPath.resolve(uri)
   } else {
     macroManager.expandPath(uri)?.let { Paths.get(it) } ?: return null

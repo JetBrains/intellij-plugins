@@ -10,7 +10,8 @@ import org.jetbrains.qodana.QodanaPluginLightTestBase
 import org.jetbrains.qodana.report.ValidatedSarif
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.io.path.pathString
+
+private const val PROJECT_PATH = "SarifProblemTest/vcsRoot/monorepo/project"
 
 class SarifProblemTest: QodanaPluginLightTestBase() {
 
@@ -25,12 +26,21 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
   private val problemsMultipleRuns by lazy { getReport(sarifProblemTestDir.resolve("reportMultipleRuns.sarif.json")) }
 
   private val problemsWithOriginalUriBaseIds by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIds.sarif.json")) }
+  private val problemsWithOriginalUriBaseIdsNoSlash by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIdsNoSlash.sarif.json")) }
 
   private val problemsBadWithOriginalUriBaseIds by lazy { getReport(sarifProblemTestDir.resolve("reportBadWithOriginalUriBaseIds.sarif.json")) }
 
+  private val problemsWithParentBaseUri by lazy { getReport(sarifProblemTestDir.resolve("reportWithParentBaseUri.sarif.json")) }
 
-  private fun projectPath() = Path(myFixture.testDataPath, "SarifProblemTest/project")
+  private val problemsWithMixedPaths by lazy { getReport(sarifProblemTestDir.resolve("reportWithMixedPaths.sarif.json")) }
+  
+  private fun projectPath() = Path(myFixture.testDataPath, PROJECT_PATH)
 
+  override fun setUp() {
+    super.setUp()
+    myFixture.copyDirectoryToProject(PROJECT_PATH, ".")
+  }
+  
   fun `test default sarif initialization` () {
     assertThat(problems1.size).isEqualTo(3)
     val problem = problems1[0]
@@ -188,6 +198,16 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
   }
 
+  fun `test originUriIds resolved correctly if directory URI does not end with slash`() {
+    assertThat(problemsWithOriginalUriBaseIdsNoSlash.size).isEqualTo(2)
+
+    val problem1 = problemsWithOriginalUriBaseIdsNoSlash[0]
+    assertThat(problem1.relativePathToFile).isEqualTo("src/Logic.java")
+
+    val problem2 = problemsWithOriginalUriBaseIdsNoSlash[1]
+    assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
+  }
+
   fun `test originUriIds cyclic resolution`() {
     assertThat(problemsBadWithOriginalUriBaseIds.size).isEqualTo(2)
 
@@ -196,6 +216,32 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
 
     val problem2 = problemsBadWithOriginalUriBaseIds[1]
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
+  }
+
+  fun `test originUriIds resolved correctly if opened project not equal repository root`() {
+    assertThat(problemsWithParentBaseUri.size).isEqualTo(2)
+
+    val problem1 = problemsWithParentBaseUri[0]
+    assertThat(problem1.relativePathToFile).isEqualTo("src/Logic.java")
+
+    val problem2 = problemsWithParentBaseUri[1]
+    assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
+  }
+
+  fun `test absolute paths and relative paths in one resolved correctly`() {
+    assertThat(problemsWithMixedPaths.size).isEqualTo(4)
+
+    val problem1 = problemsWithMixedPaths[0]
+    assertThat(problem1.relativePathToFile).isEqualTo("src/Logic.java")
+
+    val problem2 = problemsWithMixedPaths[1]
+    assertThat(problem2.relativePathToFile).isEqualTo("src/Logic.java")
+
+    val problem3 = problemsWithMixedPaths[2]
+    assertThat(problem3.relativePathToFile).isEqualTo("Main.java")
+
+    val problem4 = problemsWithMixedPaths[3]
+    assertThat(problem4.relativePathToFile).isEqualTo("Main.java")
   }
 
   private fun getDocument(documentName: String): Document? {
@@ -209,6 +255,6 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
   private fun getReport(path: Path): List<SarifProblem> {
     val sarif = SarifUtil.readReport(path)
 
-    return SarifProblem.fromReport(project, ValidatedSarif(sarif), projectPath().pathString)
+    return SarifProblem.fromReport(project, ValidatedSarif(sarif))
   }
 }

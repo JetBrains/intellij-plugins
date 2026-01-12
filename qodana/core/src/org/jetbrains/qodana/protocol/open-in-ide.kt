@@ -110,7 +110,13 @@ private fun logStats(reportDescriptor: ReportDescriptor) {
 }
 
 private fun OpenInIdeProblemParameters.matchesSarifProblem(problem: SarifProblem): Boolean {
-  return this.path == problem.relativePathToFile &&
+  val projectDirBaseURI = this.projectDirBaseURI?.let {
+    // normalize uri to end with '/' because in rfc3986 URI of directory can miss the file separator in the end
+    if (it.endsWith('/')) it else "$it/"
+  } ?: ""
+  val fullPossiblePath = projectDirBaseURI + this.path
+  // path check options are needed for two scenarios: the project is opened as a standalone project or as a part of monorepo
+  return (fullPossiblePath == problem.relativePathToFile || this.path == problem.relativePathToFile) &&
          this.column - 1 == problem.startColumn &&
          this.line - 1 == problem.startLine &&
          this.markerLength == problem.charLength &&

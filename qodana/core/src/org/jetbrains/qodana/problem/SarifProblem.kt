@@ -8,10 +8,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.qodana.sarif.model.ArtifactLocation
+import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.qodana.sarif.model.Location
 import com.jetbrains.qodana.sarif.model.OriginalUriBaseIds
 import com.jetbrains.qodana.sarif.model.Result
@@ -23,7 +23,6 @@ import org.jetbrains.qodana.report.isInBaseline
 import org.jetbrains.qodana.staticAnalysis.sarif.QodanaSeverity
 import org.jetbrains.qodana.staticAnalysis.sarif.fingerprints.forEachNotNull
 import org.jetbrains.qodana.staticAnalysis.sarif.qodanaSeverity
-import java.io.File
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -52,9 +51,9 @@ data class SarifProblem(
   val revisionId: String?
 ) {
   companion object {
-    fun fromReport(project: Project, sarif: ValidatedSarif, projectPath: String? = null): List<SarifProblem> {
+    fun fromReport(project: Project, sarif: ValidatedSarif): List<SarifProblem> {
       return sarif.runsToResults.flatMap { (run, reportResults) ->
-        val absoluteSrcDirPrefix = getAbsolutPathsPrefix(project, reportResults, projectPath)
+        val (absolutePrefixToRemove, relativePrefixToRemove) = getPrefixesToRemove(project, reportResults, run.originalUriBaseIds)
         val revisionId = run.revisionId()
 
         val resultsWithRelationshipsTaint = reportResults.associateWith { result ->
@@ -65,13 +64,29 @@ data class SarifProblem(
 
         val problemsForTaintAnalysisSinks = getPossibleTaintAnalysisSinksResultsAndLocations(
           reportResults, resultsWithRelationshipsTaint
-        ).mapNotNull { fromResultWithLocation(run, it.first, it.second, absoluteSrcDirPrefix, revisionId) }
+        ).mapNotNull { 
+          fromResultWithLocation(
+            run, 
+            it.first, 
+            it.second, 
+            absolutePrefixToRemove, 
+            relativePrefixToRemove,
+            revisionId
+          ) 
+        }
 
         val otherProblems = reportResults.flatMap { result ->
           result.locations?.filter { location ->
             location != null && resultsWithRelationshipsTaint.all { it.key != result || !it.value.contains(location) }
           }?.mapNotNull { location ->
-            fromResultWithLocation(run, result, location, absoluteSrcDirPrefix, revisionId)
+            fromResultWithLocation(
+              run,
+              result, 
+              location,
+              absolutePrefixToRemove, 
+              relativePrefixToRemove,
+              revisionId
+            )
           } ?: emptyList()
         }
 
@@ -147,13 +162,14 @@ private fun Result.buildProblemMessage(): String {
 }
 
 internal fun Project.findRelativeVirtualFile(relativePath: String): VirtualFile? =
-  guessProjectDir()?.findFileByRelativePath(relativePath) ?: basePath?.let { VfsUtil.findFileByIoFile(File(it, relativePath), true) }
+  guessProjectDir()?.findFileByRelativePath(relativePath) ?: basePath?.let { VfsUtil.findFile(Path.of(it, relativePath), true) }
 
 private fun fromResultWithLocation(
   run: Run,
   result: Result,
   location: Location,
-  absoluteSrcDirPrefix: String,
+  absolutePrefixToRemove: String,
+  relativePrefixToRemove: String,
   revisionId: String?
 ): SarifProblem? {
   if (result.baselineState == Result.BaselineState.ABSENT ||
@@ -163,7 +179,7 @@ private fun fromResultWithLocation(
     return null
   }
   val originalUriBaseIds = run.originalUriBaseIds ?: OriginalUriBaseIds()
-  val fixedUri = getLocationWithoutPrefix(location, originalUriBaseIds, absoluteSrcDirPrefix) ?: return null
+  val fixedUri = getLocationWithoutPrefix(location, originalUriBaseIds, absolutePrefixToRemove, relativePrefixToRemove) ?: return null
 
   return SarifProblem(
     /** Line and column are zero-based values */
@@ -172,7 +188,7 @@ private fun fromResultWithLocation(
     endLine = location.physicalLocation.region?.endLine?.minus(1),
     endColumn = location.physicalLocation.region?.endColumn?.minus(1),
     charLength = location.physicalLocation.region?.charLength,
-    traces = result.buildTraces(originalUriBaseIds, absoluteSrcDirPrefix),
+    traces = result.buildTraces(originalUriBaseIds, absolutePrefixToRemove, relativePrefixToRemove),
     relativePathToFile = fixedUri,
     message = result.buildProblemMessage(),
     qodanaSeverity = result.qodanaSeverity,
@@ -183,19 +199,25 @@ private fun fromResultWithLocation(
   )
 }
 
-private fun getLocationWithoutPrefix(location: Location, originalUriBaseIds: OriginalUriBaseIds, absoluteSrcDirPrefix: String): String? {
+private fun getLocationWithoutPrefix(
+  location: Location,
+  originalUriBaseIds: OriginalUriBaseIds,
+  absolutePrefixToRemove: String,
+  relativePrefixToRemove: String
+): String? {
   val uriBaseId = location.physicalLocation?.artifactLocation?.uriBaseId
-  return if (uriBaseId == null) {
-    try {
-      Paths.get(location.physicalLocation.artifactLocation.uri).pathString.removePrefix(absoluteSrcDirPrefix)
-    }
-    catch (_: InvalidPathException) {
-      null
+  val uri = location.physicalLocation?.artifactLocation?.uri
+  if (uri == null) return null
+  
+  val resolvedPath = uriBaseId?.let { resolveUriBaseId(originalUriBaseIds, uriBaseId) + uri } ?: uri
+  return try {
+    Paths.get(resolvedPath).run { 
+      if (isAbsolute) pathString.removePrefix(absolutePrefixToRemove) 
+      else pathString.removePrefix(relativePrefixToRemove)
     }
   }
-  else {
-    val pathFromProjectRoot = resolveUriBaseId(originalUriBaseIds, uriBaseId)
-    pathFromProjectRoot + location.physicalLocation.artifactLocation.uri
+  catch (_: InvalidPathException) {
+    null
   }
 }
 
@@ -220,57 +242,64 @@ private fun resolveUriBaseIdImpl(originalUriBaseIds: OriginalUriBaseIds, uriBase
   val uri = artifactLocation.uri ?: ""
   val parentUriBaseId = artifactLocation.uriBaseId
 
-  return if (parentUriBaseId != null) {
+  val resultURI = if (parentUriBaseId != null) {
     val parentUri = resolveUriBaseIdImpl(originalUriBaseIds, parentUriBaseId, visited)
     parentUri + uri
   } else {
     uri
   }
+  // normalize uri to end with '/' because in rfc3986 URI of directory can miss the file separator in the end
+  return if (resultURI == "" || resultURI.endsWith("/")) resultURI else "$resultURI/"
 }
 
-private fun getAbsolutPathsPrefix(project: Project, reportResults: List<Result>, projectPath: String?): String {
-  projectPath ?: return ""
-  val macroManager = PathMacroManager.getInstance(project)
-  val absolutePaths = reportResults.flatMap { result ->
-    result.locations
-      ?.filter {
-        val artifactLocation: ArtifactLocation? = it.physicalLocation?.artifactLocation
-        artifactLocation != null && artifactLocation.uriBaseId == null
-      }
-      ?.mapNotNull { location ->
-        val uriString = location.physicalLocation.artifactLocation?.uri ?: return@mapNotNull null
-        val uri = macroManager.expandPath(uriString)
-        try {
-          Paths.get(uri).pathString
-        } catch (_: IllegalArgumentException) {
-          null
-        }
-      } ?: emptyList()
-  }.distinct()
-
-  val absoluteUrisPrefix = absolutePaths.foldRight(if (absolutePaths.isEmpty()) "" else absolutePaths[0]) { l, r -> l.commonPrefixWith(r) }
-
-  return if (absoluteUrisPrefix == "") absoluteUrisPrefix else tryGuessSrcDir(absoluteUrisPrefix, projectPath)
-}
-
-private fun tryGuessSrcDir(absoluteUrisPrefix: String, projectPathString: String): String {
-  val absoluteUrisPrefixPath = Paths.get(absoluteUrisPrefix)
-  val projectPath = Paths.get(projectPathString)
-
-  var i = absoluteUrisPrefixPath.nameCount - 1
-  var firstExistingIndex = -1
-
-  do {
-    val pathToFind = projectPath.resolve(absoluteUrisPrefixPath.subpath(i, absoluteUrisPrefixPath.nameCount))
-    if (LocalFileSystem.getInstance().findFileByNioFile(pathToFind) != null) {
-      firstExistingIndex = i
+private fun Location.stringPath(macroManager: PathMacroManager, originalUriBaseIds: OriginalUriBaseIds?): String? {
+  val uriString = physicalLocation.artifactLocation?.uri ?: return null
+  val uri = macroManager.expandPath(uriString)
+  val uriBaseId = physicalLocation.artifactLocation?.uriBaseId
+  return try {
+    if (originalUriBaseIds == null || uriBaseId == null) {
+      Paths.get(uri).pathString
+    } else {
+      Paths.get(resolveUriBaseId(originalUriBaseIds, uriBaseId) + uri).pathString
     }
-  } while (--i >= 0)
-
-  return if (firstExistingIndex == -1) absoluteUrisPrefix else {
-    val suffixToRemove = absoluteUrisPrefixPath.subpath(firstExistingIndex, absoluteUrisPrefixPath.nameCount).pathString
-    absoluteUrisPrefixPath.pathString.removeSuffix(suffixToRemove)
+  } catch (_: IllegalArgumentException) {
+    null
   }
+}
+
+private fun getPrefixesToRemove(project: Project, reportResults: List<Result>, originalUriBaseIds: OriginalUriBaseIds?): Pair<String, String> {
+  val projectDir = project.guessProjectDir() ?: return "" to ""
+  val macroManager = PathMacroManager.getInstance(project)
+  val paths = reportResults.flatMap { result ->
+    result.locations?.mapNotNull { it.stringPath(macroManager, originalUriBaseIds) } ?: emptyList()
+  }
+  val absolutePrefixToRemove = findPrefixToRemove(paths.filter { Path.of(it).isAbsolute }.toSet(), projectDir)
+  val relativePrefixToRemove = findPrefixToRemove(paths.filter { !Path.of(it).isAbsolute }.toSet(), projectDir)
+  return absolutePrefixToRemove to relativePrefixToRemove
+}
+
+// Kotlin-style of findPathToRemap from contrib/qodana/coverage/src/org/jetbrains/qodana/staticAnalysis/inspections/coverage/utils.kt
+// with slight modifications
+private fun findPrefixToRemove(files: Set<String>, contentRoot: VirtualFile, checkFilesCount: Int = 3): String {
+  // take the longest paths for robustness
+  val comparator = Comparator.comparingInt { o: String ->
+    StringUtil.countChars(o, '/')
+  }
+  val sortedFiles = ContainerUtil.reverse(ContainerUtil.sorted(files, comparator))
+  
+  val possiblePrefixes = mutableSetOf<String>()
+  sortedFiles.subList(0, checkFilesCount.coerceAtMost(sortedFiles.size)).forEach { filePath ->
+      val pathParts = filePath.split("/".toRegex()).dropLastWhile { part -> part.isEmpty() }.toTypedArray()
+      var possiblePrefix = ""
+      for (part in pathParts) {
+        val relPath = StringUtil.substringAfter(filePath, possiblePrefix)
+        if (relPath != null && contentRoot.findFileByRelativePath(relPath) != null) {
+          possiblePrefixes.add(possiblePrefix)
+        }
+        possiblePrefix += "$part/"
+      }
+    }
+  return if (possiblePrefixes.size == 1) possiblePrefixes.first() else ""
 }
 
 private fun getPossibleTaintAnalysisSinksResultsAndLocations(
@@ -297,14 +326,18 @@ private fun getPossibleTaintAnalysisSinksResultsAndLocations(
     .toList()
 }
 
-private fun Result.buildTraces(originalUriBaseIds: OriginalUriBaseIds, absoluteSrcDirPrefix: String) = buildList {
+private fun Result.buildTraces(
+  originalUriBaseIds: OriginalUriBaseIds,
+  absolutePrefixToRemove: String,
+  relativePrefixToRemove: String
+) = buildList {
   graphs.forEachNotNull { graph ->
     val nodes = graph.nodes.sortedBy { it.id.toIntOrNull() }.mapNotNull { node ->
       SarifTrace.Node(
         startLine = node.location.physicalLocation.region.startLine?.minus(1),
         startColumn = node.location.physicalLocation.region.startColumn?.minus(1),
         charLength = node.location.physicalLocation.region.charLength,
-        relativePathToFile = getLocationWithoutPrefix(node.location, originalUriBaseIds, absoluteSrcDirPrefix)
+        relativePathToFile = getLocationWithoutPrefix(node.location, originalUriBaseIds, absolutePrefixToRemove, relativePrefixToRemove)
       )
     }
     if (nodes.isNotEmpty()) {
