@@ -57,7 +57,8 @@ data class OpenInIdeProblemParameters(
   val inspectionId: String?,
   val inspectionName: String?,
   val inspectionCategory: String?,
-  val severity: QodanaSeverity?
+  val severity: QodanaSeverity?,
+  val projectDirBaseURI: String?
 )
 data class OpenInIdeProjectRegionParameters(
   val filePath: String,
@@ -114,6 +115,7 @@ internal class JBProtocolQodanaCommand : JBProtocolCommand("qodana") {
    * - `cloud_project_id`: id of project from cloud, used in dialog UI only; optional
    * - `cloud_project_name`: name of cloud project, used in dialog UI only; optional
    * - `activate_coverage`: if coverage window should be activated, boolean; optional
+   * - `project_dir_base_uri`: the value of --repository-root CLI parameter if was specified
    *
    * URL example:
    * `jetbrains://idea/qodana/showMarker?origin=https://github.com/mockito/mockito.git
@@ -248,7 +250,8 @@ private fun getOpenInIdeProblemParameters(parameters: Map<String, String>): Open
     inspectionId = parameters["inspection_id"],
     inspectionName = parameters["inspection_name"],
     inspectionCategory = parameters["inspection_category"],
-    severity = parameters["severity"]?.let { QodanaSeverity.entries.firstOrNull { severity -> severity.toString().equals(it, ignoreCase = true) } }
+    severity = parameters["severity"]?.let { QodanaSeverity.entries.firstOrNull { severity -> severity.toString().equals(it, ignoreCase = true) } },
+    projectDirBaseURI = parameters["project_base_uri"]
   )
 }
 

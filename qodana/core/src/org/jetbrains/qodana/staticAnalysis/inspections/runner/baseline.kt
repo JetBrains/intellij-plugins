@@ -11,6 +11,7 @@ import com.jetbrains.qodana.sarif.model.SarifReport
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.qodana.staticAnalysis.StaticAnalysisDispatchers
 import org.jetbrains.qodana.staticAnalysis.inspections.config.QodanaConfig
+import org.jetbrains.qodana.staticAnalysis.sarif.SRCROOT_URI_BASE
 import org.jetbrains.qodana.staticAnalysis.sarif.createSarifReport
 import org.jetbrains.qodana.staticAnalysis.scopes.QodanaAnalysisScope
 import org.jetbrains.qodana.staticAnalysis.script.scoped.SCOPED_SCRIPT_NAME
@@ -83,7 +84,7 @@ private fun getOptions(scope: QodanaAnalysisScope, config: QodanaConfig): Baseli
 }
 
 private fun ArtifactLocation.toVirtualFile(projectPath: Path): VirtualFile? {
-  if (uriBaseId == "SRCROOT") {
+  if (uriBaseId == SRCROOT_URI_BASE) {
     val path = projectPath.resolve(uri)
 
     return LocalFileSystem.getInstance().findFileByNioFile(path)
