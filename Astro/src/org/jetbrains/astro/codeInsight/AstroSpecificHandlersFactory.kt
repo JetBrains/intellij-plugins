@@ -77,4 +77,5 @@ class AstroSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
   override fun getStubBasedScopeHandler(): JSStubBasedScopeHandler =
     AstroStubBasedScopeHandler
 
+  override fun shouldForceCompleteMatchesInCompletion(element: PsiElement): Boolean = true
 }

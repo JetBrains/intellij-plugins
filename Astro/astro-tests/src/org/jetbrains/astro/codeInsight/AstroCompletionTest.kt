@@ -36,6 +36,9 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
   fun testPropsInterface() =
     doLookupTest()
 
+  fun testBaseOnType() =
+    doLookupTest()
+
   fun testTemplateLookupRoot() =
     doLookupTest()
 
