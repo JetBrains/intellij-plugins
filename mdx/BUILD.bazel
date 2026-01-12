@@ -76,6 +76,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-ultimate",
     "//plugins/JavaScriptLanguage:javascript-plugin",
     "//plugins/js/react/core:ultimate",
+    "//plugins/js/react/free",
     "//plugins/js/react/plugin",
   ]
 )
