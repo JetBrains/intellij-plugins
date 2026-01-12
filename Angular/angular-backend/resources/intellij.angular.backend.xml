@@ -47,7 +47,6 @@
 
     <projectService serviceInterface="org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator" open="true"
                     serviceImplementation="org.angular2.refactoring.extractComponent.Angular2CliComponentGeneratorImpl"
-                    testServiceImplementation="org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl"
     />
     <platform.backend.documentation.psiTargetProvider
       implementation="org.angular2.codeInsight.documentation.Angular2ElementDocumentationTargetFactory"/>
