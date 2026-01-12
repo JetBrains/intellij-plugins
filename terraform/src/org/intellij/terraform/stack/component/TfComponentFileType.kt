@@ -25,4 +25,4 @@ internal object TfComponentFileType : LanguageFileType(HCLLanguage) {
   override fun getDisplayName(): @Nls String = HCLBundle.message("terraform.component.name")
 }
 
-internal const val TF_COMPONENT_EXTENSION = ".tfcomponent.hcl"
+internal const val TF_COMPONENT_EXTENSION = "tfcomponent.hcl"

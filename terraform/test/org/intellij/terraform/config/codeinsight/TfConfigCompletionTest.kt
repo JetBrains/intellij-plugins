@@ -3,6 +3,7 @@ package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.registry.Registry
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.config.codeinsight.TfCompletionUtil.RootBlockKeywords
 import org.intellij.terraform.config.model.DataSourceType
 import org.intellij.terraform.config.model.EphemeralType
@@ -10,7 +11,10 @@ import org.intellij.terraform.config.model.ProviderTier
 import org.intellij.terraform.config.model.ResourceOrDataSourceType
 import org.intellij.terraform.config.model.ResourceType
 import org.intellij.terraform.config.model.TypeModelProvider.Companion.globalModel
-import org.intellij.terraform.terragrunt.TerragruntCompletionTest
+import org.intellij.terraform.stack.TfComponentCompletionTest.Companion.assertNoTfComponentBlocks
+import org.intellij.terraform.stack.TfDeployCompletionTest.Companion.assertNoTfDeployBlocks
+import org.intellij.terraform.terragrunt.TerragruntCompletionTest.Companion.assertNoStackBlocks
+import org.intellij.terraform.terragrunt.TerragruntCompletionTest.Companion.assertNoTerragruntBlocks
 
 internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
 
@@ -47,22 +51,15 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
 
   fun testNotAllowedRootBlockInTerraform() {
     val file = myFixture.configureByText("test.tf", "<caret>")
-    val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name)
-      ?.filterNot { it == "terraform" || it == "locals" }
-      .orEmpty()
+    val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
     assertNotEmpty(completionVariants)
 
-    val unexpectedTerragruntBlocks = TerragruntCompletionTest.TerragruntBlockKeywords.filter { it in completionVariants }
-    assertTrue(
-      "These Terragrunt-only root blocks should not appear in a Terraform file: $unexpectedTerragruntBlocks",
-      unexpectedTerragruntBlocks.isEmpty()
-    )
+    val fileExtension = TerraformFileType.defaultExtension
+    assertNoTerragruntBlocks(fileExtension, completionVariants, listOf("terraform", "locals"))
+    assertNoStackBlocks(fileExtension, completionVariants)
 
-    val unexpectedStackBlocks = TerragruntCompletionTest.StackBlockKeywords.filter { it in completionVariants }
-    assertTrue(
-      "These Terragrunt Stack-only root blocks should not appear in a Terraform file: $unexpectedStackBlocks",
-      unexpectedStackBlocks.isEmpty()
-    )
+    assertNoTfComponentBlocks(fileExtension, completionVariants, listOf("provider", "variable", "output", "removed", "locals"))
+    assertNoTfDeployBlocks(fileExtension, completionVariants)
   }
 
   fun testResourceTypeCompletion() {
@@ -1083,6 +1080,19 @@ internal class TfConfigCompletionTest : TfBaseCompletionTestCase() {
       .sorted()
       .take(ENTRIES_LIST_SIZE)
       .toList()
+
+
+    fun assertNoTfRootBlocks(
+      fileExtension: String,
+      completionVariants: List<String>,
+      commonRootBlocks: List<String> = emptyList(),
+    ) {
+      val unexpectedBlocks = RootBlockKeywords.filter { it in completionVariants && it !in commonRootBlocks }
+      assertTrue(
+        "These Terraform-only root blocks should not appear in $fileExtension file: $unexpectedBlocks",
+        unexpectedBlocks.isEmpty()
+      )
+    }
   }
 }
 

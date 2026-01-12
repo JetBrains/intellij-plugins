@@ -1,8 +1,11 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.opentofu
 
 import org.intellij.terraform.config.codeinsight.TfBaseCompletionTestCase
-import org.intellij.terraform.terragrunt.TerragruntCompletionTest
+import org.intellij.terraform.stack.TfComponentCompletionTest.Companion.assertNoTfComponentBlocks
+import org.intellij.terraform.stack.TfDeployCompletionTest.Companion.assertNoTfDeployBlocks
+import org.intellij.terraform.terragrunt.TerragruntCompletionTest.Companion.assertNoStackBlocks
+import org.intellij.terraform.terragrunt.TerragruntCompletionTest.Companion.assertNoTerragruntBlocks
 
 internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
 
@@ -18,22 +21,15 @@ internal class OpenTofuConfigCompletionTest : TfBaseCompletionTestCase() {
 
   fun testNotAllowedRootBlockInTofu() {
     val file = myFixture.configureByText("main.tofu", "<caret>")
-    val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name)
-      ?.filterNot { it == "terraform" || it == "locals" }
-      .orEmpty()
+    val completionVariants = myFixture.getCompletionVariants(file.virtualFile.name).orEmpty()
     assertNotEmpty(completionVariants)
 
-    val unexpectedTerragruntBlocks = TerragruntCompletionTest.TerragruntBlockKeywords.filter { it in completionVariants }
-    assertTrue(
-      "These Terragrunt-only root blocks should not appear in a Tofu file: $unexpectedTerragruntBlocks",
-      unexpectedTerragruntBlocks.isEmpty()
-    )
+    val fileExtension = OpenTofuFileType.defaultExtension
+    assertNoTerragruntBlocks(fileExtension, completionVariants, listOf("terraform", "locals"))
+    assertNoStackBlocks(fileExtension, completionVariants)
 
-    val unexpectedStackBlocks = TerragruntCompletionTest.StackBlockKeywords.filter { it in completionVariants }
-    assertTrue(
-      "These Terragrunt Stack-only root blocks should not appear in a Tofu file: $unexpectedStackBlocks",
-      unexpectedStackBlocks.isEmpty()
-    )
+    assertNoTfComponentBlocks(fileExtension, completionVariants, listOf("provider", "variable", "output", "removed", "locals"))
+    assertNoTfDeployBlocks(fileExtension, completionVariants)
   }
 
   fun testTofuEncryptionBlockPropertiesCompletion() {

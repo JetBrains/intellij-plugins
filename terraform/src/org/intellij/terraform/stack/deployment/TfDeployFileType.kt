@@ -25,4 +25,4 @@ internal object TfDeployFileType : LanguageFileType(HCLLanguage) {
   override fun getDisplayName(): @Nls String = HCLBundle.message("terraform.deploy.name")
 }
 
-internal const val TF_DEPLOY_EXTENSION = ".tfdeploy.hcl"
+internal const val TF_DEPLOY_EXTENSION = "tfdeploy.hcl"
