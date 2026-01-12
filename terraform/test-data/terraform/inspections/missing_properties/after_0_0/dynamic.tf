@@ -10,10 +10,10 @@ resource "azurerm_orchestrated_virtual_machine_scale_set" "vm_set" {
   dynamic "data_disk" {
     for_each = ""
     content {
-      disk_size_gb = 1
-      lun          = 0
+      disk_size_gb         = 1
+      lun                  = 0
       storage_account_type = "dd"
-      caching = ""
+      caching              = ""
     }
   }
   data_disk {
