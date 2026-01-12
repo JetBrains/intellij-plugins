@@ -9,7 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
-import com.intellij.openapi.application.UI
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.observable.util.whenDisposed
@@ -150,7 +150,7 @@ internal class InspectionKtsBanner(
     val examplesButton = examplesButton(project, viewModel)
     eastComponent.add(examplesButton, BorderLayout.EAST)
 
-    scope.launch(Dispatchers.UI) {
+    scope.launch(Dispatchers.EDT) {
       launch {
         viewModel.compilationStatus
           .filterNotNull()

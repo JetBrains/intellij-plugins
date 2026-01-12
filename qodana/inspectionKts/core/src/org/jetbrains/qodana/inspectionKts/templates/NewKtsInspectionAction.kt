@@ -4,6 +4,7 @@ import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.UI
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -91,7 +92,7 @@ class NewKtsInspectionAction : CreateFileFromTemplateAction(), DumbAware {
       psiDirectory.virtualFile.refresh(false, false)
       val virtualFile = psiDirectory.virtualFile.findChild(filename)
       if (virtualFile != null) {
-        withContext(Dispatchers.UI) {
+        withContext(Dispatchers.EDT) {
           FileEditorManager.getInstance(project).openFile(virtualFile, true)
         }
       }
