@@ -16,6 +16,7 @@
 package org.jetbrains.osgi.maven
 
 import com.intellij.openapi.util.JDOMUtil
+import com.intellij.testFramework.PerformanceUnitTest
 import com.intellij.tools.ide.metrics.benchmark.Benchmark
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase
 import org.assertj.core.api.Assertions.assertThat
@@ -37,6 +38,7 @@ class OsgiFacetConfigurationTest : JavaCodeInsightFixtureTestCase() {
     assertThat(text).contains("<property key=\"Include-Resource\" value=\"r1=/p1/r1,r2=@/p2/r2,{ /p3/r3 }\" />")
   }
 
+  @PerformanceUnitTest
   fun testResourceSerializationPerformance() {
     config.setAdditionalProperties("Include-Resource=warm-up")
     serialize()

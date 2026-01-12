@@ -31,6 +31,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.PerformanceUnitTest;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.tools.ide.metrics.benchmark.Benchmark;
 import com.intellij.util.ArrayUtil;
@@ -1328,6 +1329,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertTrue(isStrictMatched(elements[0]));
   }
 
+  @PerformanceUnitTest
   public void testCompletionPerformance() {
     FlexTestUtils.addFlexLibrary(false, getModule(), "playerglobal", false, getTestDataPath(), "playerglobal.swc",
                                  null, null);
