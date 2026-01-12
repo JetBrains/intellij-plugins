@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.actions
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction
@@ -15,7 +15,6 @@ class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware
   override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
     builder.run {
       setTitle(HCLBundle.message("action.create.terraform.file.title"))
-      setDefaultText(DEFAULT_FILE_NAME)
 
       TerraformTemplate.entries.forEach { template ->
         addKind(template.title, template.icon, template.templateName)
@@ -30,17 +29,15 @@ class TfCreateFileFromTemplateAction : CreateFileFromTemplateAction(), DumbAware
     super.createFileFromTemplate(getDefaultFileName(name, template), template, dir)
 
   private fun getDefaultFileName(name: String?, template: FileTemplate?): String? {
-    val isDefaultName = name.isNullOrEmpty() || name == DEFAULT_FILE_NAME
+    if (name.isNullOrBlank() || template == null) return name
 
-    val newName = TerraformTemplate.entries
-      .find { it.templateName == template?.name }
-      ?.defaultFileName
-      ?: name
+    val terraformTemplate = TerraformTemplate.entries.firstOrNull {
+      it.templateName == template.name
+    } ?: return name
 
-    return if (isDefaultName) newName else name
+    val pattern = terraformTemplate.fileNamePattern ?: return name
+    return "$name.$pattern"
   }
 
   override fun getCategory(): String = "Deployment"
 }
-
-private const val DEFAULT_FILE_NAME = "main"

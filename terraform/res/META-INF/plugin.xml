@@ -541,11 +541,11 @@
 
     <dependencySupport kind="executable" coordinate="terraform"/>
 
-    <internalFileTemplate name="Empty File"/>
-    <internalFileTemplate name="Main"/>
-    <internalFileTemplate name="Outputs"/>
-    <internalFileTemplate name="Variables"/>
-    <internalFileTemplate name="Terragrunt File"/>
+    <internalFileTemplate name="Config"/>
+    <internalFileTemplate name="Component"/>
+    <internalFileTemplate name="Deploy"/>
+    <internalFileTemplate name="OpenTofu"/>
+    <internalFileTemplate name="Terragrunt Config"/>
     <internalFileTemplate name="Terragrunt Stack"/>
 
     <!--OpenTofu support-->
