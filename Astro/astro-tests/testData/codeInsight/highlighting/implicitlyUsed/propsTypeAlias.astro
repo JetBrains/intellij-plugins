@@ -1,0 +1,10 @@
+---
+type Props = {
+  title: string;
+  description?: string;
+};
+
+const { title, description } = Astro.props;
+---
+<h1>{title}</h1>
+{description && <p>{description}</p>}

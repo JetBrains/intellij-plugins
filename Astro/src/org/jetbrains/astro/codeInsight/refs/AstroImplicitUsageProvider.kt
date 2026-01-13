@@ -10,20 +10,25 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.astro.codeInsight.ASTRO_PROPS
 import org.jetbrains.astro.codeInsight.astroContentRoot
 import org.jetbrains.astro.codeInsight.frontmatterScript
-import org.jetbrains.astro.codeInsight.propsInterface
+import org.jetbrains.astro.codeInsight.propsInterfaceOrTypeAlias
+import org.jetbrains.astro.lang.AstroFileImpl
 
 class AstroImplicitUsageProvider : ImplicitUsageProvider {
-  override fun isImplicitUsage(element: PsiElement) =
-    isAstroPropsInterface(element) ||
-    isAstroPropsImport(element) ||
-    isAstroImplicitlyUsedFunction(element);
+  override fun isImplicitUsage(element: PsiElement): Boolean {
+    if (element.containingFile !is AstroFileImpl) return false
 
-  override fun isImplicitRead(element: PsiElement) = false
+    return isAstroPropsInterface(element) ||
+           isAstroPropsImport(element) ||
+           isAstroImplicitlyUsedFunction(element) ||
+           isAstroImplicitlyUsedExport(element)
+  }
 
-  override fun isImplicitWrite(element: PsiElement) = false
+  override fun isImplicitRead(element: PsiElement): Boolean = false
+
+  override fun isImplicitWrite(element: PsiElement): Boolean = false
 
   private fun isAstroPropsInterface(element: PsiElement) =
-    element == element.astroContentRoot()?.frontmatterScript()?.propsInterface()
+    element == element.astroContentRoot()?.frontmatterScript()?.propsInterfaceOrTypeAlias()
 
   private fun isAstroPropsImport(element: PsiElement) =
     when (element) {
@@ -38,4 +43,10 @@ class AstroImplicitUsageProvider : ImplicitUsageProvider {
       is TypeScriptVariable -> element.name.equals("getStaticPaths")
       else -> false
     }
+
+  private fun isAstroImplicitlyUsedExport(element: PsiElement): Boolean {
+    if (element !is TypeScriptVariable) return false
+    val name = element.name ?: return false
+    return name == "prerender" || name == "partial"
+  }
 }

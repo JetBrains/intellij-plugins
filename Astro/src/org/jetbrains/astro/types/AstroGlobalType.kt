@@ -12,7 +12,7 @@ import com.intellij.util.ProcessingContext
 import org.jetbrains.astro.codeInsight.ASTRO_GLOBAL_INTERFACE
 import org.jetbrains.astro.codeInsight.ASTRO_PKG
 import org.jetbrains.astro.codeInsight.frontmatterScript
-import org.jetbrains.astro.codeInsight.propsInterface
+import org.jetbrains.astro.codeInsight.propsInterfaceOrTypeAlias
 
 class AstroGlobalType(source: JSTypeSource,
                       private val file: PsiFile)
@@ -41,7 +41,7 @@ class AstroGlobalType(source: JSTypeSource,
                                                                    TypeScriptInterface::class.java)
                       ?: return JSAnyType.get(source)
     val astroType = astroGlobal.jsType
-    val propsType = file.frontmatterScript()?.propsInterface()?.jsType ?: JSAnyType.get(source)
+    val propsType = file.frontmatterScript()?.propsInterfaceOrTypeAlias()?.jsType ?: JSAnyType.get(source)
     return JSGenericTypeImpl(source, astroType, propsType).asRecordType()
   }
 
