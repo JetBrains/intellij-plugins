@@ -1,0 +1,6 @@
+Under path contrib/Angular/resources/org/angular2/cli/ng-packages.json,
+there is an ng-packages.json file kept for backward compatibility.
+This is due to a static link from AngularCliSchematicsRegistryServiceImpl
+pointing to a file on GitHub repository master.
+
+It should have the same contents as the `ng-packages.json` file in this folder.

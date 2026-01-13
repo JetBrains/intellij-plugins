@@ -190,7 +190,7 @@ class AngularCliSchematicsRegistryServiceImpl(private val project: Project) : An
     private val USER_AGENT = "JetBrains IDE"
 
     @NonNls
-    private val NG_PACKAGES_URL = "https://raw.githubusercontent.com/JetBrains/intellij-plugins/master/Angular/resources/org/angular2/cli/ng-packages.json"
+    private val NG_PACKAGES_URL = "https://raw.githubusercontent.com/JetBrains/intellij-plugins/master/Angular/angular-backend/resources/org/angular2/cli/ng-packages.json"
 
     @NonNls
     private val LOG = Logger.getInstance(AngularCliSchematicsRegistryServiceImpl::class.java)
@@ -207,7 +207,7 @@ class AngularCliSchematicsRegistryServiceImpl(private val project: Project) : An
     private val SCHEMATICS_CACHE_TRACKER = SimpleModificationTracker()
 
     @NonNls
-    private val NG_PACKAGES_JSON_PATH = "../../angular/cli/ng-packages.json"
+    private val NG_PACKAGES_JSON_PATH = "./ng-packages.json"
 
     @NonNls
     private val SCHEMATICS_PROP = "schematics"

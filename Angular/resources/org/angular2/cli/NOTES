@@ -1,0 +1,5 @@
+The ng-packages.json file is kept here for backward compatibility.
+This is due to a static link from AngularCliSchematicsRegistryServiceImpl
+pointing to a file on GitHub repository master.
+
+It should have the same contents as contrib/Angular/angular-backend/resources/org/angular2/cli/ng-packages.json
