@@ -10,10 +10,13 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerSer
 import com.intellij.lang.typescript.tsc.TypeScriptServiceTestMixin
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.testFramework.replaceService
 import com.intellij.testFramework.runInEdtAndWait
+import org.angular2.codeInsight.refactoring.Angular2CliComponentGeneratorMockImpl
 import org.angular2.lang.expr.service.Angular2TypeScriptService
 import org.angular2.options.AngularServiceSettings
 import org.angular2.options.configureAngularSettingsService
+import org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator
 import kotlin.reflect.KClass
 
 abstract class Angular2TestCase(
@@ -34,6 +37,11 @@ abstract class Angular2TestCase(
 
   override fun setUp() {
     super.setUp()
+    myFixture.project.replaceService(
+      Angular2CliComponentGenerator::class.java,
+      Angular2CliComponentGeneratorMockImpl(project),
+      testRootDisposable
+    )
     Registry.get("ast.loading.filter").setValue(false, testRootDisposable)
   }
 
