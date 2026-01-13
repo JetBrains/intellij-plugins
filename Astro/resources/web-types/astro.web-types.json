@@ -118,6 +118,24 @@
           "name": "Fragment",
           "doc-url": "https://docs.astro.build/en/core-concepts/astro-syntax/#fragments--multiple-elements",
           "description": "When using an expression to dynamically create multiple elements, you should wrap these elements inside a fragment as you would in JavaScript and JSX. Astro supports using either `<Fragment></Fragment>` or the shorthand `<></>`."
+        },
+        {
+          "name": "slot",
+          "priority": "low",
+          "description": "The `<slot />` element is a placeholder for external HTML content, allowing you to inject (or \"slot\") child elements from other files into your component template.\n\nBy default, all child elements passed to a component will be rendered in its `<slot />`. Unlike props, which are attributes passed to an Astro component, slots render child HTML elements where they are written.\n\n**Named Slots:** Use the `name` attribute to create named slots that allow you to pass only HTML elements with the corresponding slot name into a slot's location. Children without a `slot` attribute, or with `slot=\"default\"`, will go into the default (unnamed) `<slot />`.\n\n**Fallback Content:** Slots can include fallback content that is displayed when no matching children are passed.\n\n**Note:** Named slots must be an immediate child of the component. You cannot pass named slots through nested elements.",
+          "doc-url": "https://docs.astro.build/en/core-concepts/astro-components/#slots",
+          "attributes": [
+            {
+              "name": "name",
+              "description": "Creates a named slot for distributing content to specific locations. Children with a matching `slot=\"name\"` attribute will be injected here. When omitted, creates the default slot that receives all child elements without a `slot` attribute or with `slot=\"default\"`.",
+              "priority": "highest",
+              "value": {
+                "kind": "plain",
+                "type": "string",
+                "required": false
+              }
+            }
+          ]
         }
       ],
       "astro-components": [],
