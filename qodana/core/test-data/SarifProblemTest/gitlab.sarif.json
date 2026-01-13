@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Tool Name",
+          "rules": [
+            {
+              "id": "R01",
+              "properties" : {
+                "id" : "java/unsafe-deserialization",
+                "kind" : "path-problem",
+                "name" : "...",
+                "problem.severity" : "error",
+                "security-severity" : "9.8"
+              }
+            }
+          ]
+        }
+      },
+      "originalUriBaseIds": {
+        "PROJECTROOT": {
+          "description": {
+            "text": "The root directory for all project files."
+          }
+        },
+        "%SRCROOT%": {
+          "uri": "src/",
+          "uriBaseId": "PROJECTROOT",
+          "description": {
+            "text": "The root of the source tree."
+          }
+        }
+      },
+      "results": [
+        {
+          "ruleId": "R01",
+          "message": {
+            "text": "Result text. This result does not have a rule associated."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "fileURI",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 7,
+                  "endColumn": 10
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "39fa2ee980eb94b0:1"
+          }
+        }
+      ]
+    }
+  ]
+}

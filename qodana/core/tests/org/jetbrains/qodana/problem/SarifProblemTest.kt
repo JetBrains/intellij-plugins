@@ -26,13 +26,16 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
   private val problemsMultipleRuns by lazy { getReport(sarifProblemTestDir.resolve("reportMultipleRuns.sarif.json")) }
 
   private val problemsWithOriginalUriBaseIds by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIds.sarif.json")) }
+  // using percentage sign in baseUri names
+  private val problemsWithOriginalUriBaseIds2 by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIds2.sarif.json")) }
+  private val problemsWithOriginalUriBaseIdsAndAbsolutePaths by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIdsAndAbsolutePaths.sarif.json")) }
   private val problemsWithOriginalUriBaseIdsNoSlash by lazy { getReport(sarifProblemTestDir.resolve("reportWithOriginalUriBaseIdsNoSlash.sarif.json")) }
-
   private val problemsBadWithOriginalUriBaseIds by lazy { getReport(sarifProblemTestDir.resolve("reportBadWithOriginalUriBaseIds.sarif.json")) }
-
   private val problemsWithParentBaseUri by lazy { getReport(sarifProblemTestDir.resolve("reportWithParentBaseUri.sarif.json")) }
 
   private val problemsWithMixedPaths by lazy { getReport(sarifProblemTestDir.resolve("reportWithMixedPaths.sarif.json")) }
+
+  private val gitlabReport by lazy { getReport(sarifProblemTestDir.resolve("gitlab.sarif.json")) }
   
   private fun projectPath() = Path(myFixture.testDataPath, PROJECT_PATH)
 
@@ -196,6 +199,33 @@ class SarifProblemTest: QodanaPluginLightTestBase() {
 
     val problem2 = problemsWithOriginalUriBaseIds[1]
     assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
+  }
+
+  fun `test originUriIds resolved correctly if absolute path in project root specified`() {
+    assertThat(problemsWithOriginalUriBaseIdsAndAbsolutePaths.size).isEqualTo(2)
+
+    val problem1 = problemsWithOriginalUriBaseIdsAndAbsolutePaths[0]
+    assertThat(problem1.relativePathToFile).isEqualTo("src/Logic.java")
+
+    val problem2 = problemsWithOriginalUriBaseIdsAndAbsolutePaths[1]
+    assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
+  }
+
+  fun `test originUriIds with percentage sigh resolved correctly`() {
+    assertThat(problemsWithOriginalUriBaseIds2.size).isEqualTo(2)
+
+    val problem1 = problemsWithOriginalUriBaseIds2[0]
+    assertThat(problem1.relativePathToFile).isEqualTo("src/Logic.java")
+
+    val problem2 = problemsWithOriginalUriBaseIds2[1]
+    assertThat(problem2.relativePathToFile).isEqualTo("Main.java")
+  }
+
+  fun `test gitlab resolved correctly`() {
+    assertThat(gitlabReport.size).isEqualTo(1)
+
+    val problem1 = gitlabReport[0]
+    assertThat(problem1.relativePathToFile).isEqualTo("src/fileURI")
   }
 
   fun `test originUriIds resolved correctly if directory URI does not end with slash`() {
