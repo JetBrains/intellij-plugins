@@ -83,7 +83,25 @@ function ngTranspiledTemplateHandler(ts: typeof import('tsc-ide-plugin/tsserverl
   else
     ngTranspiledTemplates.delete(fileName);
 
-  if (projectService.getScriptInfo(fileName)) {
+  let scriptInfo = projectService.getScriptInfo(fileName)
+  if (scriptInfo) {
+    transpiledTemplate?.mappings?.forEach(mapping => {
+      let mappingFileName = ts.server.toNormalizedPath(mapping.fileName)
+      if (mappingFileName.endsWith(".html")) {
+        let mappingScriptInfo = projectService.getOrCreateScriptInfoForNormalizedPath(
+          mappingFileName,
+          true, undefined, ts.ScriptKind.Unknown,
+          false, undefined
+        )
+        if (mappingScriptInfo) {
+          scriptInfo?.containingProjects?.forEach(project => {
+            if (!project.containsFile(mappingFileName)) {
+              project.addRoot(mappingScriptInfo, mappingFileName)
+            }
+          })
+        }
+      }
+    });
     // trigger reload
     (session as any).change(
       {

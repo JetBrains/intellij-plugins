@@ -3,18 +3,23 @@ package org.angular2.codeInsight
 
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.javascript.testFramework.web.WebFrameworkTestModule
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ReadResult
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.registry.withValue
 import com.intellij.platform.lsp.tests.waitUntilFileOpenedByLspServer
 import com.intellij.polySymbols.testFramework.LookupElementInfo
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import org.angular2.Angular2TestCase
 import org.angular2.Angular2TestModule
 import org.angular2.Angular2TestModule.ANGULAR_CORE_13_3_5
 import org.angular2.Angular2TestModule.ANGULAR_CORE_15_1_5
 import org.angular2.Angular2TestModule.ANGULAR_CORE_19_2_0
 import org.angular2.Angular2TsConfigFile
+import org.angular2.lang.Angular2Bundle
 
 class Angular2CompletionTest : Angular2TestCase("completion", true) {
 
@@ -357,6 +362,22 @@ class Angular2CompletionTest : Angular2TestCase("completion", true) {
       completeBasic()
       type("SetFn\n")
     }
+
+  fun testCompleteAfterQuickFixToExternalTemplate() {
+    myFixture.setCaresAboutInjection(false)
+    doCompletionAutoPopupTest(ANGULAR_CORE_19_2_0,  checkResult = true, configurators = listOf(Angular2TsConfigFile())) {
+      ApplicationManager.getApplication().invokeAndWait {
+        ApplicationManager.getApplication().runWriteIntentReadAction<Unit, Throwable> {
+          myFixture.launchAction(Angular2Bundle.message("angular.intention.extract.component.template.name"))
+          myFixture.openFileInEditor(myFixture.tempDirFixture.getFile("completeAfterQuickFixToExternalTemplate.html")!!)
+        }
+      }
+      moveToOffsetBySignature("[product]=\"{ <caret> }\"")
+      completeBasic()
+      assertLookupContains("description")
+      type("des\n")
+    }
+  }
 
   private fun notAnElement(it: LookupElementInfo): Boolean = !it.lookupString.startsWith("<")
 

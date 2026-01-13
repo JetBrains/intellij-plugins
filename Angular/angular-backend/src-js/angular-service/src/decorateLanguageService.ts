@@ -8,10 +8,6 @@ import type {TypeScriptServiceScript} from "@volar/typescript"
 import {toGeneratedRanges, toSourceRanges} from "@volar/typescript/lib/node/transform"
 import * as console from "node:console"
 
-// Patch Volar searchExternalFiles method to search for all HTML files in the project
-let volarDecorateLanguageServiceHost = require("@volar/typescript/lib/node/decorateLanguageServiceHost")
-volarDecorateLanguageServiceHost.searchExternalFiles = searchExternalFilesPatched
-
 declare module "@volar/language-core/lib/types" {
   interface CodeInformation {
     types: boolean
@@ -175,23 +171,4 @@ export function decorateNgLanguageServiceExtensions(
       reverseMapper: unboundReverseMapper.bind(null, ts),
     })
   }
-}
-
-function searchExternalFilesPatched(ts: typeof TS, project: TS.server.Project, exts: string[]): string[] {
-  if (project.projectKind !== ts.server.ProjectKind.Configured
-    || (project.getProjectReferences()?.length ?? 0) > 0) {
-    return [];
-  }
-  const parseHost: TS.ParseConfigHost = {
-    useCaseSensitiveFileNames: project.useCaseSensitiveFileNames(),
-    fileExists: project.fileExists.bind(project),
-    readFile: project.readFile.bind(project),
-    readDirectory: (...args) => {
-      args[1] = exts;
-      return project.readDirectory(...args);
-    },
-  };
-  // We are interested in all HTML files in the project
-  const parsed = ts.parseJsonConfigFileContent({}, parseHost, project.getCurrentDirectory());
-  return parsed.fileNames;
 }
