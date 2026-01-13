@@ -152,7 +152,7 @@ private class InspectionKtsPluginWithSubModulesClassLoader(
       val subModulesClassLoaders = pluginImpl.contentModules.mapNotNull {
         val modulePackage = it.packagePrefix ?: return@mapNotNull null
         SubModuleClassLoader(modulePackage, it.classLoader)
-      }
+      }.sortedBy { -it.modulePackage.length }
       return InspectionKtsPluginWithSubModulesClassLoader(pluginClassLoader, subModulesClassLoaders)
     }
   }

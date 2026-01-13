@@ -41,6 +41,6 @@ jvm_library(
     "@community//libraries/jackson/module-kotlin:libraries-jackson-module-kotlin",
     "@community//libraries/jackson/dataformat-yaml:libraries-jackson-dataformat-yaml",
   ],
-  runtime_deps = ["@community//plugins/kotlin/scripting-plugin"]
+  runtime_deps = ["@community//plugins/kotlin/jsr223"]
 )
 ### auto-generated section `build intellij.qodana.inspectionKts` end

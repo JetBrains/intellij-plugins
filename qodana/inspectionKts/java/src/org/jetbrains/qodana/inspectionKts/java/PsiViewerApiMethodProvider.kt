@@ -5,6 +5,9 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.psi.PsiType
+import org.jetbrains.qodana.jvm.dev.inspectionKts.getAllSuperTypesPsiViewerApiMethod
+import org.jetbrains.qodana.jvm.dev.inspectionKts.psiClassAsPsiClassTypePsiViewerApiMethod
+import org.jetbrains.qodana.jvm.dev.inspectionKts.psiCodeReferenceElementAsPsiClassTypePsiViewerApiMethod
 
 private class PsiViewerApiMethodProvider : PsiViewerApiMethod.Provider {
   override fun apiMethods(instance: Any, clazz: Class<*>): List<PsiViewerApiMethod> {

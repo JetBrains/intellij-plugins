@@ -1,7 +1,6 @@
 <idea-plugin visibility="public" package="org.jetbrains.qodana.inspectionKts">
   <dependencies>
     <plugin id="com.intellij.modules.ultimate"/>
-    <plugin id="org.intellij.kotlinScripting"/>
   </dependencies>
   <resource-bundle>messages.InspectionKtsBundle</resource-bundle>
 
