@@ -116,6 +116,8 @@ class AstroCompletionTest : AstroCodeInsightTestCase("codeInsight/completion", u
 
   fun testEmmetAbbreviation() = doLookupTest()
 
+  fun testSlotNameAttribute() = doLookupTest()
+
   // WEB-59265 only enabled completion at root level and nested in HTML but not as children of components.
   // This needs a fix before it can be enabled again.
   //fun testTemplateLookupNestedComponent() =

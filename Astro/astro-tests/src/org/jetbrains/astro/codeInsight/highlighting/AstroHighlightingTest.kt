@@ -29,4 +29,6 @@ class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlightin
     myFixture.copyDirectoryToProject(dir, "")
     myFixture.testHighlighting(true, false, true, "src/usage/usage.astro")
   }
+
+  fun testSlotElement() = doTest()
 }
