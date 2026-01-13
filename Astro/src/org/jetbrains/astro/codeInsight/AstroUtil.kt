@@ -6,6 +6,8 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifierAlias
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -42,14 +44,33 @@ fun PsiFile.astroContentRoot(): AstroContentRoot? =
 fun AstroContentRoot.frontmatterScript(): AstroFrontmatterScript? =
   children.firstNotNullOfOrNull { it as? AstroFrontmatterScript }
 
+fun AstroFrontmatterScript.propsInterfaceOrTypeAlias(): JSClass? =
+  propsInterface() ?: propsTypeAlias()
+
 fun AstroFrontmatterScript.propsInterface(): TypeScriptInterface? =
-  children.firstNotNullOfOrNull { child -> child.asSafely<TypeScriptInterface>()?.takeIf { it.name == ASTRO_PROPS } }
+  children.firstNotNullOfOrNull { child ->
+    child.asSafely<TypeScriptInterface>()?.takeIf { it.name == ASTRO_PROPS }
+  }
   // Astro allows imported props of the following kinds:
   // ```
   // import type { Props } from '...'
   // import type { Something as Props } from '...'
   // ```
-  ?: JSStubBasedPsiTreeUtil.resolveLocallyWithMergedResults(ASTRO_PROPS, this)
+  ?: resolveImportedProps().asSafely<TypeScriptInterface>()
+
+fun AstroFrontmatterScript.propsTypeAlias(): TypeScriptTypeAlias? =
+  children.firstNotNullOfOrNull { child ->
+    child.asSafely<TypeScriptTypeAlias>()?.takeIf { it.name == ASTRO_PROPS }
+  }
+  // Astro allows imported props of the following kinds:
+  // ```
+  // import type { Props } from '...'
+  // import type { Something as Props } from '...'
+  // ```
+  ?: resolveImportedProps().asSafely<TypeScriptTypeAlias>()
+
+private fun AstroFrontmatterScript.resolveImportedProps(): PsiElement? =
+  JSStubBasedPsiTreeUtil.resolveLocallyWithMergedResults(ASTRO_PROPS, this)
     .firstOrNull()
     ?.let {
       when (it) {
@@ -59,7 +80,6 @@ fun AstroFrontmatterScript.propsInterface(): TypeScriptInterface? =
       }
     }
     ?.resolve()
-    .asSafely<TypeScriptInterface>()
 
 
 fun JSPsiNamedElementBase.resolveIfImportSpecifier(): JSPsiNamedElementBase {

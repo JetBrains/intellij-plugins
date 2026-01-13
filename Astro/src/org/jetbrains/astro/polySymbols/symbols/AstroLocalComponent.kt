@@ -21,7 +21,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.astro.codeInsight.astroContentRoot
 import org.jetbrains.astro.codeInsight.frontmatterScript
-import org.jetbrains.astro.codeInsight.propsInterface
+import org.jetbrains.astro.codeInsight.propsInterfaceOrTypeAlias
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENTS
 import org.jetbrains.astro.polySymbols.ASTRO_COMPONENT_PROPS
@@ -58,7 +58,7 @@ class AstroLocalComponent(
       ?.takeIf { it is AstroFileImpl }
       ?.astroContentRoot()
       ?.frontmatterScript()
-      ?.propsInterface()
+      ?.propsInterfaceOrTypeAlias()
       ?.asJSSymbol()
       ?.getJSPropertySymbols()
       ?.map(::AstroComponentPropSymbol)
