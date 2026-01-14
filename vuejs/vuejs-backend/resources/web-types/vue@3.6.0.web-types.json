@@ -2,7 +2,7 @@
   "$schema": "../../../../community/platform/polySymbols/web-types-gen/resources/web-types.json",
   "framework": "vue",
   "name": "vue",
-  "version": "3.6.0-beta.2",
+  "version": "3.6.0-beta.3",
   "js-types-syntax": "typescript",
   "description-markup": "markdown",
   "default-icon": "icons/vue.svg",
