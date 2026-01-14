@@ -8,8 +8,8 @@ declare module "tsc-ide-plugin/tsserverlibrary.shim" {
       ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
       fileName: string,
       range: {
-        start: ts.LineAndCharacter;
-        end: ts.LineAndCharacter;
+        start: LineAndCharacter;
+        end: LineAndCharacter;
       },
       forceReturnType: boolean,
       cancellationToken: CancellationToken,
