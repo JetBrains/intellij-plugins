@@ -13,6 +13,8 @@ import {
   MAPPING_FLAG_TYPES,
 } from "./mappings"
 
+type TypeScript = typeof import("tsc-ide-plugin/tsserverlibrary.shim")
+
 export class AngularVirtualCode implements VirtualCode {
 
   public snapshot: IScriptSnapshot = createEmptySnapshot();
@@ -35,7 +37,7 @@ export class AngularVirtualCode implements VirtualCode {
   }
 
   sourceFileUpdated(
-    ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
+    ts: TypeScript,
     snapshot: ts.IScriptSnapshot,
     ctx: CodegenContext<string>,
     transpiledTemplate: AngularTranspiledTemplate | undefined,
@@ -139,7 +141,7 @@ export class AngularVirtualCode implements VirtualCode {
   }
 
   private isTemplateInSync(
-    ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
+    ts: TypeScript,
     snapshot: ts.IScriptSnapshot,
     ctx: CodegenContext<string>,
     transpiledTemplate: AngularTranspiledTemplate,
@@ -168,7 +170,7 @@ export class AngularVirtualCode implements VirtualCode {
 }
 
 export function buildAngularTranspiledTemplate(
-  ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
+  ts: TypeScript,
   transpiledCode: string | undefined,
   sourceCode: { [fileName: string]: string },
   mappings: Angular2TcbMappingInfo[]
