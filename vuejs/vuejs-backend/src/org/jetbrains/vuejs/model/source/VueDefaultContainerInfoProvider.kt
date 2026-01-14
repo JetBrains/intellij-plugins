@@ -319,9 +319,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   ) : VueSourceInputProperty<PsiNamedElement>(name, sourceElement, hasOuterDefault),
       PsiSourcedPolySymbol {
 
-    override val source: VueImplicitElement
-      get() = super<VueSourceInputProperty>.source
-
     override fun createPointer(): Pointer<out VuePsiNamedElementInputProperty> {
       val name = name
       val propertyPtr = sourceElement.createSmartPointer()
@@ -349,9 +346,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<PolySymbolDeclaredInPsi>.getNavigationTargets(project)
-
-    override val source: VueImplicitElement
-      get() = super<VueSourceInputProperty>.source
 
     override fun createPointer(): Pointer<VueStringLiteralInputProperty> {
       val name = name
