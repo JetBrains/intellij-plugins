@@ -12,13 +12,18 @@ import com.intellij.lang.javascript.psi.types.JSParameterTypeDecoratorImpl
 import com.intellij.lang.javascript.psi.types.evaluable.JSUnwrapPromiseType
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverType
+import com.intellij.model.Pointer
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
+import com.intellij.psi.util.parentOfType
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 import org.jetbrains.vuejs.types.optionalIf
+import org.jetbrains.vuejs.web.symbols.VuePropertySymbolMixin
 import java.util.*
 
 
@@ -145,6 +150,18 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     ) : VueNamedSymbol {
       override val source: PsiElement?
         get() = member.memberSource.singleElement
+
+      override fun equals(other: Any?): Boolean =
+        other is VueDecoratedNamedSymbol<*>
+        && other.javaClass == javaClass
+        && other.name == name
+        && other.member == member
+
+      override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + member.hashCode()
+        return result
+      }
     }
 
     private abstract class VueDecoratedProperty(
@@ -159,10 +176,10 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     private class VueDecoratedInputProperty(
       name: String,
       member: PropertySignature,
-      decorator: ES6Decorator?,
-      decoratorArgumentIndex: Int,
+      private val decorator: ES6Decorator,
+      private val decoratorArgumentIndex: Int,
     ) : VueDecoratedProperty(name, member),
-        VueInputProperty {
+        VueInputProperty, PsiSourcedPolySymbol{
 
       override val required: Boolean =
         getRequiredFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex))
@@ -170,6 +187,34 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       override val jsType: JSType =
         VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
           .optionalIf(!required)
+
+      override fun equals(other: Any?): Boolean =
+        super.equals(other)
+        && other is VueDecoratedInputProperty
+        && other.decorator == decorator
+        && other.decoratorArgumentIndex == decoratorArgumentIndex
+
+      override fun hashCode(): Int {
+        var result =  super.hashCode()
+        result = 31 * result + decorator.hashCode()
+        result = 31 * result + decoratorArgumentIndex
+        return result
+      }
+
+      override fun createPointer(): Pointer<VueDecoratedInputProperty> {
+        val name = name
+        val decoratorPtr = decorator.createSmartPointer()
+        val decoratorArgumentIndex = decoratorArgumentIndex
+        return Pointer {
+          val decorator = decoratorPtr.dereference() ?: return@Pointer null
+          val clazz = decorator.parentOfType<JSClass>() ?: return@Pointer null
+          clazz.jsType.asRecordType()
+            .findPropertySignature(name)
+            ?.let {
+              VueDecoratedInputProperty(name, it, decorator, decoratorArgumentIndex)
+            }
+        }
+      }
     }
 
     private class VueDecoratedComputedProperty(

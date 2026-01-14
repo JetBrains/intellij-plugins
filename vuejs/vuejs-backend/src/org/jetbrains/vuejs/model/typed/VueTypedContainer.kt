@@ -11,6 +11,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeKeyTypeImpl
+import com.intellij.model.Pointer
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -21,6 +23,8 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
+import org.jetbrains.vuejs.web.symbols.VuePropertySymbolMixin
+import java.util.TreeMap
 
 abstract class VueTypedContainer(override val source: PsiElement) : VueContainer {
 
@@ -30,20 +34,24 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
     get() = CachedValuesManager.getCachedValue(source) {
       val toFilterOut = getFilteredOutProperties(source)
       val thisType = thisType.asRecordType()
-      val props = mutableListOf<PropertySignature>()
+      val props = TreeMap<String, PropertySignature>()
 
       thisType.findPropertySignature(INSTANCE_PROPS_PROP)
         ?.jsType
         ?.asRecordType()
         ?.properties
-        ?.filterTo(props) { !toFilterOut.contains(it.memberName) }
+        ?.asSequence()
+        ?.filter { !toFilterOut.contains(it.memberName) }
+        ?.forEach { props.putIfAbsent(it.memberName, it) }
 
       if (source is TypeScriptClass)
         thisType
           .properties
-          .filterTo(props) { !it.memberName.startsWith("$") && !toFilterOut.contains(it.memberName) }
+          .asSequence()
+          .filter { !it.memberName.startsWith("$") && !toFilterOut.contains(it.memberName) }
+          .forEach { props.putIfAbsent(it.memberName, it) }
 
-      CachedValueProvider.Result(props.map { VueTypedInputProperty(it) }, PsiModificationTracker.MODIFICATION_COUNT)
+      CachedValueProvider.Result(props.values.map { VueTypedInputProperty(this, it) }, PsiModificationTracker.MODIFICATION_COUNT)
     }
 
 
@@ -108,6 +116,8 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
   final override val injects: List<VueInject>
     get() = emptyList()
 
+  abstract override fun createPointer(): Pointer<out VueTypedContainer>
+
   private abstract class VueTypedDocumentedElement : VueNamedSymbol {
 
     override val description: String? by lazy {
@@ -137,9 +147,35 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
       }
   }
 
-  private class VueTypedInputProperty(property: PropertySignature) : VueTypedProperty(property), VueInputProperty {
+  private class VueTypedInputProperty(
+    private val container: VueTypedContainer,
+    property: PropertySignature
+  ) : VueTypedProperty(property), VueInputProperty, PsiSourcedPolySymbol {
+
     override val required: Boolean
       get() = false
+
+    override fun equals(other: Any?): Boolean =
+      other is VueTypedInputProperty
+      && other.property.memberName == property.memberName
+      && other.container == container
+
+    override fun hashCode(): Int {
+      var result = property.memberName.hashCode()
+      result = 31 * result + container.hashCode()
+      return result
+    }
+
+    override fun createPointer(): Pointer<VueTypedInputProperty> {
+      val name = name
+      val containerPtr = container.createPointer()
+      return Pointer {
+        return@Pointer containerPtr
+          .dereference()
+          ?.props
+          ?.firstNotNullOfOrNull { prop -> (prop as? VueTypedInputProperty)?.takeIf { it.name == name } }
+      }
+    }
   }
 
   private class VueTypedEmit(

@@ -69,7 +69,7 @@ class VueTypedComponent(
               ?.typeParameters?.toList()
             ?: emptyList()
 
-  override fun createPointer(): Pointer<out VueRegularComponent> {
+  override fun createPointer(): Pointer<VueTypedComponent> {
     val sourcePtr = source.createSmartPointer()
     val defaultName = this.defaultName
     return Pointer {

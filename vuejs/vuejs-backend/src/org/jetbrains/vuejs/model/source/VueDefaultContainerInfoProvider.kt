@@ -37,7 +37,6 @@ import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
 import org.jetbrains.vuejs.model.typed.VueTypedMixin
 import org.jetbrains.vuejs.types.VueSourcePropType
 import org.jetbrains.vuejs.types.optionalIf
-import org.jetbrains.vuejs.web.symbols.VueInputPropSymbolMixin
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
@@ -253,7 +252,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val name: String,
     val sourceElement: T,
     protected val hasOuterDefault: Boolean = false,
-  ) : VueInputPropSymbolMixin {
+  ) : VueInputProperty {
 
     override val required: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
       isRequired(hasOuterDefault, sourceElement)
@@ -289,9 +288,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override fun hashCode(): Int =
       sourceElement.hashCode()
-
-    override fun getModificationCount(): Long =
-      PsiModificationTracker.getInstance(sourceElement.project).modificationCount
 
     companion object {
       fun create(

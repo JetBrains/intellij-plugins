@@ -12,11 +12,14 @@ import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueProperty
 
 interface VuePropertySymbolMixin : VueDocumentedItemSymbolMixin, VueProperty, PolySymbolScope {
 
   abstract override fun createPointer(): Pointer<out VuePropertySymbolMixin>
+
+  override fun getModificationCount(): Long = -1
 
   override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
     kind == JS_PROPERTIES

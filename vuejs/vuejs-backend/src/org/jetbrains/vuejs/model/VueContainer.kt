@@ -3,11 +3,17 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolModifier
+import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
+import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
+import org.jetbrains.vuejs.web.symbols.VuePropertySymbolMixin
 
 interface VueContainer : VueEntitiesContainer {
   val data: List<VueDataProperty>
@@ -86,9 +92,34 @@ interface VueProperty : VueNamedSymbol {
 /**
  * Base interface for Vue component prop
  */
-interface VueInputProperty : VueProperty {
+interface VueInputProperty : VuePropertySymbolMixin {
   val required: Boolean
+
   val defaultValue: String? get() = null
+
+  override val kind: PolySymbolKind
+    get() = VUE_COMPONENT_PROPS
+
+  override val type: JSType?
+    get() = jsType
+
+  override val modifiers: Set<PolySymbolModifier>
+    get() = when (required) {
+      true -> setOf(PolySymbolModifier.REQUIRED)
+      false -> setOf(PolySymbolModifier.OPTIONAL)
+    }
+
+  override val attributeValue: PolySymbolHtmlAttributeValue
+    get() =
+      object : PolySymbolHtmlAttributeValue {
+        override val default: String?
+          get() = defaultValue
+      }
+
+  override fun equals(other: Any?): Boolean
+
+  override fun hashCode(): Int
+
 }
 
 interface VueDataProperty : VueProperty

@@ -13,10 +13,7 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 interface VueDocumentedItemSymbolMixin : VueSymbol, VueDocumentedItem {
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
-    PolySymbolDocumentationTarget.create(this, location) { symbol, location ->
-      description = symbol.description
-      library = "vue"
-    }
+    PolySymbolDocumentationTarget.create(this, location, VueSymbolDocumentationProvider)
 
   override val presentation: TargetPresentation
     get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(this), name))
