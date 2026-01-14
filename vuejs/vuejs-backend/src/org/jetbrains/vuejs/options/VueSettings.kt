@@ -118,13 +118,13 @@ class VueSettingsState : BaseState() {
   var useTypesFromServer: Boolean; get() = false; set(_) {}
   var tsPluginPackageName: String? by string(defaultPackageKey)
   var tsPluginPreviewEnabled: Boolean by property(true)
-  var tsPluginVersion: VueTSPluginVersion by enum(VueTSPluginVersion.V3_0_1)
+  var tsPluginVersion: VueTSPluginVersion by enum(VueTSPluginVersion.V3_0_10)
 }
 
 enum class VueTSPluginVersion(
   @param:NlsSafe val versionString: String,
 ) {
-  V3_0_1("3.0.1"),
+  V3_0_10("3.0.10"),
   V3_2_2("3.2.2"),
 
   ;
