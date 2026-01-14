@@ -1,6 +1,6 @@
 import type {CodeInformation, Language, SourceScript} from "@volar/language-core"
-import type * as TS from "./tsserverlibrary.shim"
-import {WebStormGetOptions} from "./tsserverlibrary.shim"
+import type TS from "tsc-ide-plugin/tsserverlibrary.shim"
+import type {WebStormGetOptions} from "tsc-ide-plugin/tsserverlibrary.shim"
 import type {Range} from "tsc-ide-plugin/protocol"
 import type {ReverseMapping} from "tsc-ide-plugin/ide-get-element-type"
 import {getServiceScript} from "@volar/typescript/lib/node/utils"

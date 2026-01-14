@@ -1,7 +1,9 @@
-import type ts from "./tsserverlibrary.shim";
+import type ts from "tsc-ide-plugin/tsserverlibrary.shim";
 import type {Range} from "tsc-ide-plugin/protocol"
 import {Angular2TcbMappingInfo} from "./mappings"
 import {AngularTranspiledTemplate, buildAngularTranspiledTemplate} from "./code"
+
+type TypeScript = typeof ts
 
 const customHandlers: {
   [K: string]: (TS: typeof ts,
@@ -15,7 +17,7 @@ const customHandlers: {
 
 export function registerProtocolHandlers(
   session: ts.server.Session,
-  ts: typeof import("./tsserverlibrary.shim"),
+  ts: TypeScript,
   projectService: ts.server.ProjectService,
 ) {
   for (let command in customHandlers) {
