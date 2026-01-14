@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolQueryExecutor
@@ -36,11 +37,16 @@ class VueEmitCallSymbol(
   override val attributeValue: PolySymbolHtmlAttributeValue =
     PolySymbolHtmlAttributeValue.create(PolySymbolHtmlAttributeValue.Kind.EXPRESSION, PolySymbolHtmlAttributeValue.Type.OF_MATCH)
 
-  override fun adjustNameForRefactoring(queryExecutor: PolySymbolQueryExecutor, newName: String, occurence: String): String {
+  override fun adjustNameForRefactoring(
+    queryExecutor: PolySymbolQueryExecutor,
+    oldName: PolySymbolQualifiedName,
+    newName: String,
+    occurence: String
+  ): String {
     if (item is VueModelOwner && occurence.startsWith(UPDATE_PREFIX) && !newName.startsWith(UPDATE_PREFIX)) {
       return "$UPDATE_PREFIX$newName"
     }
-    return super.adjustNameForRefactoring(queryExecutor, newName, occurence)
+    return super.adjustNameForRefactoring(queryExecutor, oldName, newName, occurence)
   }
 
   override val searchTarget: PolySymbolSearchTarget
