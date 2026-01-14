@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.psi
 
 import com.intellij.openapi.util.TextRange
@@ -11,7 +11,6 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.PsiReferenceRegistrar
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.ProcessingContext
 import org.intellij.terraform.config.model.Module
@@ -21,13 +20,11 @@ import org.intellij.terraform.config.patterns.TfPsiPatterns.DependsOnPattern
 import org.intellij.terraform.config.patterns.TfPsiPatterns.ResourceProviderProperty
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformConfigFile
 import org.intellij.terraform.config.patterns.TfPsiPatterns.TerraformVariablesFile
-import org.intellij.terraform.config.patterns.TfPsiPatterns.propertyWithName
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.patterns.HCLPatterns
 import org.intellij.terraform.hcl.psi.HCLArray
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
-import org.intellij.terraform.hcl.psi.HCLExpression
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLIndexSelectExpression
 import org.intellij.terraform.hcl.psi.HCLObject
@@ -39,6 +36,7 @@ import org.intellij.terraform.hcl.psi.common.BaseExpression
 import org.intellij.terraform.hcl.psi.common.Identifier
 import org.intellij.terraform.hcl.psi.common.LiteralExpression
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
+import org.intellij.terraform.hcl.psi.reference.SourcePropertyReferenceProvider
 import org.intellij.terraform.hil.psi.HCLElementLazyReference
 import org.intellij.terraform.hil.psi.HCLElementLazyReferenceBase
 
@@ -80,12 +78,7 @@ class TfReferenceContributor : PsiReferenceContributor() {
         , MapVariableIndexReferenceProvider)
 
     // 'module' source
-    registrar.registerReferenceProvider(
-        psiElement(HCLStringLiteral::class.java)
-            .inFile(TerraformConfigFile)
-            .withParent(propertyWithName("source"))
-            .withSuperParent(3, TfPsiPatterns.ModuleRootBlock)
-        , ModuleSourceReferenceProvider)
+    SourcePropertyReferenceProvider.register(registrar, TfPsiPatterns.ModuleRootBlock)
 
     // 'module' variable setter
     registrar.registerReferenceProvider(
@@ -150,7 +143,6 @@ object ResourceProviderReferenceProvider : PsiReferenceProvider() {
     if (element !is HCLStringLiteral && element !is HCLIdentifier) {
       return PsiReference.EMPTY_ARRAY
     }
-    if (element !is HCLExpression) return PsiReference.EMPTY_ARRAY
     if (!HCLPsiUtil.isPropertyValue(element)) return PsiReference.EMPTY_ARRAY
     return arrayOf(HCLElementLazyReference(element, false) { incomplete, _ ->
       @Suppress("NAME_SHADOWING")
@@ -176,14 +168,6 @@ object ResourceProviderReferenceProvider : PsiReferenceProvider() {
       is Identifier -> expression.name
       else -> null
     }
-  }
-}
-
-object ModuleSourceReferenceProvider : PsiReferenceProvider() {
-  override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
-    if (element !is HCLStringLiteral) return PsiReference.EMPTY_ARRAY
-    if (!HCLPsiUtil.isPropertyValue(element)) return PsiReference.EMPTY_ARRAY
-    return FileReferenceSet.createSet(element, true, false, false).allReferences
   }
 }
 
