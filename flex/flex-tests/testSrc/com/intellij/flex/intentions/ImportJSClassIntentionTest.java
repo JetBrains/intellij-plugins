@@ -7,6 +7,7 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSIntentionTestCase;
 import com.intellij.lang.javascript.flex.ActionScriptAutoImportOptionsProvider;
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +46,7 @@ public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
         myFixture.type("\b");
         myFixture.doHighlighting();
         CodeInsightTestFixtureImpl.waitForLazyQuickFixesUnderCaret(myFixture.getFile(), myFixture.getEditor());
-        UIUtil.dispatchAllInvocationEvents();
+        PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
         myFixture.checkResultByFile(testName + "_after.as");
         return null;
       });
