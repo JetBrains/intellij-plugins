@@ -1,6 +1,6 @@
 :on (typeText='boolean'; priority=100.0; bold; typeGreyed)
 :on-change (typeText='(value: string) => void'; priority=100.0; bold; typeGreyed)
+:onChange (typeText='(value: string) => void'; priority=100.0; bold; typeGreyed)
 :onfoo (typeText='string'; priority=100.0; bold; typeGreyed)
-:onChange (typeText=null; priority=100.0; bold; typeGreyed)
 :aria-orientation (typeText=null; priority=1.0; typeGreyed)
 :aria-owns (typeText=null; priority=1.0; typeGreyed)
