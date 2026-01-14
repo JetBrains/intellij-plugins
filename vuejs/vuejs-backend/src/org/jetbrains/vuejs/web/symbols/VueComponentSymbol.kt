@@ -102,7 +102,7 @@ class VueComponentSymbol(
             return true
           }
         }, onlyPublic = false)
-        props.map { VueDataPropertySymbol(it, item) }
+        props
       }
       VUE_COMPONENT_COMPUTED_PROPERTIES -> {
         val props = mutableListOf<VueComputedProperty>()
@@ -112,7 +112,7 @@ class VueComponentSymbol(
             return true
           }
         }, onlyPublic = false)
-        props.map { VueComputedPropertySymbol(it, item) }
+        props
       }
       HTML_SLOTS -> {
         (item as? VueContainer)

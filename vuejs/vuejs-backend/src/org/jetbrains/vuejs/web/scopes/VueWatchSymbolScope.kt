@@ -31,8 +31,6 @@ import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
-import org.jetbrains.vuejs.web.symbols.VueComputedPropertySymbol
-import org.jetbrains.vuejs.web.symbols.VueDataPropertySymbol
 import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
@@ -46,12 +44,12 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     enclosingComponent.acceptPropertiesAndMethods(object : VueModelVisitor() {
       override fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
-        consumer(VueDataPropertySymbol(dataProperty, enclosingComponent))
+        consumer(dataProperty)
         return true
       }
 
       override fun visitComputedProperty(computedProperty: VueComputedProperty, proximity: Proximity): Boolean {
-        consumer(VueComputedPropertySymbol(computedProperty, enclosingComponent))
+        consumer(computedProperty)
         return true
       }
     }, onlyPublic = false)

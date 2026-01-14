@@ -281,7 +281,7 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "model", sourceElement.model?.takeIf { it.event != null && it.prop != null })
         }
         if (sourceElement is VueProperty) {
-          printProperty(level, "jsType", sourceElement.jsType)
+          printProperty(level, "jsType", sourceElement.type)
         }
         if (sourceElement is VueInputProperty) {
           printProperty(level, "required", sourceElement.required)

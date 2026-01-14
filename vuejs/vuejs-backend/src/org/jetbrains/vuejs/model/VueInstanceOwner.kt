@@ -185,7 +185,7 @@ private fun contributeComponentProperties(
         source: PsiElement? = null,
       ) {
         if ((proximityMap.putIfAbsent(symbol.name, proximity) ?: proximity) >= proximity) {
-          val jsType = type ?: symbol.asSafely<VueProperty>()?.jsType
+          val jsType = type ?: symbol.asSafely<VueProperty>()?.type
           dest.merge(symbol.name,
                      PropertySignatureImpl(symbol.name, jsType, false,
                                            isReadOnly,

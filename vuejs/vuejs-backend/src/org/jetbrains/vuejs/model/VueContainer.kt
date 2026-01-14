@@ -3,17 +3,29 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.model.Pointer
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_PROPERTIES
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
+import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
+import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
+import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
-import org.jetbrains.vuejs.web.symbols.VuePropertySymbolMixin
+import org.jetbrains.vuejs.web.VUE_METHODS
+import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbolMixin
 
 interface VueContainer : VueEntitiesContainer {
   val data: List<VueDataProperty>
@@ -85,23 +97,47 @@ interface VueEmitCall : VueNamedSymbol {
  *
  * @see VueInputProperty
  */
-interface VueProperty : VueNamedSymbol {
-  val jsType: JSType? get() = null
+interface VueProperty : VueNamedSymbol, VueDocumentedItemSymbolMixin, PolySymbolScope {
+
+  override val type: JSType?
+
+  abstract override fun createPointer(): Pointer<out VueProperty>
+
+  override fun getModificationCount(): Long = -1
+
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    kind == JS_PROPERTIES
+
+  override fun getMatchingSymbols(
+    qualifiedName: PolySymbolQualifiedName,
+    params: PolySymbolNameMatchQueryParams,
+    stack: PolySymbolQueryStack,
+  ): List<PolySymbol> =
+    getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
+
+  override fun getSymbols(
+    kind: PolySymbolKind,
+    params: PolySymbolListSymbolsQueryParams,
+    stack: PolySymbolQueryStack,
+  ): List<PolySymbol> =
+    getJSPropertySymbols(kind)
+
+  override fun equals(other: Any?): Boolean
+
+  override fun hashCode(): Int
+
 }
 
 /**
  * Base interface for Vue component prop
  */
-interface VueInputProperty : VuePropertySymbolMixin {
+interface VueInputProperty : VueProperty {
   val required: Boolean
 
   val defaultValue: String? get() = null
 
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_PROPS
-
-  override val type: JSType?
-    get() = jsType
 
   override val modifiers: Set<PolySymbolModifier>
     get() = when (required) {
@@ -116,17 +152,34 @@ interface VueInputProperty : VuePropertySymbolMixin {
           get() = defaultValue
       }
 
-  override fun equals(other: Any?): Boolean
-
-  override fun hashCode(): Int
+  override fun createPointer(): Pointer<out VueInputProperty>
 
 }
 
-interface VueDataProperty : VueProperty
+interface VueDataProperty : VueProperty {
 
-interface VueComputedProperty : VueProperty
+  override val kind: PolySymbolKind
+    get() = VUE_COMPONENT_DATA_PROPERTIES
 
-interface VueMethod : VueProperty
+  override fun createPointer(): Pointer<out VueDataProperty>
+
+}
+
+interface VueComputedProperty : VueProperty {
+
+  override val kind: PolySymbolKind
+    get() = VUE_COMPONENT_COMPUTED_PROPERTIES
+
+  override fun createPointer(): Pointer<out VueComputedProperty>
+}
+
+interface VueMethod : VueProperty {
+
+  override val kind: PolySymbolKind
+    get() = VUE_METHODS
+
+  override fun createPointer(): Pointer<out VueMethod>
+}
 
 interface VueModelOwner {
   val modelDecl: VueModelDecl

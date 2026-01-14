@@ -8,7 +8,10 @@ import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitFunctionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSObjectLiteralExpressionStub
+import com.intellij.model.Pointer
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -132,10 +135,43 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
   }
 }
 
-private class VuexMappedSourceComputedStateProperty(
+private abstract class VuexMappedSourceProperty(
   override val name: String,
-  private val element: JSElement,
-) : VueComputedProperty {
+  protected val element: JSElement,
+) : VueProperty, PsiSourcedPolySymbol {
+
+  override val type: JSType? get() = (source as? JSTypeOwner)?.jsType
+
+  abstract override val source: PsiElement?
+
+  abstract override fun createPointer(): Pointer<out VuexMappedSourceProperty>
+
+  protected fun <T : VuexMappedSourceProperty> createPointer(constructor: (String, JSElement) -> T): Pointer<T> {
+    val name = name
+    val elementPtr = element.createSmartPointer()
+    return Pointer {
+      elementPtr.dereference()?.let { constructor(name, it) }
+    }
+  }
+
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + element.hashCode()
+    return result
+  }
+
+  override fun equals(other: Any?): Boolean =
+    other is VuexMappedSourceProperty
+    && other.javaClass == javaClass
+    && other.name == name
+    && other.element == element
+
+}
+
+private class VuexMappedSourceComputedStateProperty(
+  name: String,
+  element: JSElement,
+) : VuexMappedSourceProperty(name, element), VueComputedProperty {
   override val source: JSElement
     get() = getCachedVuexImplicitElement(element, true, name, JSImplicitElement.Type.Property) { name, resolved ->
       when (resolved) {
@@ -147,13 +183,14 @@ private class VuexMappedSourceComputedStateProperty(
       }
     }
 
-  override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
+  override fun createPointer(): Pointer<VuexMappedSourceComputedStateProperty> =
+    createPointer(::VuexMappedSourceComputedStateProperty)
 }
 
 private class VuexMappedSourceComputedGetterProperty(
-  override val name: String,
-  private val element: JSElement,
-) : VueComputedProperty {
+  name: String,
+  element: JSElement,
+) : VuexMappedSourceProperty(name, element), VueComputedProperty {
   override val source: JSElement
     get() = getCachedVuexImplicitElement(element, false, name, JSImplicitElement.Type.Property) { name, resolved ->
       (resolved as? JSFunctionItem)?.let { function ->
@@ -161,13 +198,14 @@ private class VuexMappedSourceComputedGetterProperty(
       }
     }
 
-  override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
+  override fun createPointer(): Pointer<VuexMappedSourceComputedGetterProperty> =
+    createPointer(::VuexMappedSourceComputedGetterProperty)
 }
 
 private class VuexMappedSourceMethod(
-  override val name: String,
-  private val element: JSElement,
-) : VueMethod {
+  name: String,
+  element: JSElement,
+) : VuexMappedSourceProperty(name, element), VueMethod {
   override val source: JSElement
     get() = getCachedVuexImplicitElement(element, false, name, JSImplicitElement.Type.Function) { name, resolved ->
       (resolved as? JSFunctionItem)?.let { function ->
@@ -180,7 +218,8 @@ private class VuexMappedSourceMethod(
       }
     }
 
-  override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
+  override fun createPointer(): Pointer<VuexMappedSourceMethod> =
+    createPointer(::VuexMappedSourceMethod)
 }
 
 private fun resolveToVuexSymbol(source: JSElement, resolveState: Boolean): JSElement? {

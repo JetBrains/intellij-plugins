@@ -50,7 +50,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
     private val rawBindings: List<VueNamedSymbol>
       get() = CachedValuesManager.getCachedValue(initializer) {
         CachedValueProvider.Result.create(VueCompositionInfoHelper.createRawBindings(
-          initializer, getSetupFunctionType(initializer)
+          initializer, initializer, ::getSetupFunctionType
         ), PsiModificationTracker.MODIFICATION_COUNT)
       }
 
@@ -58,22 +58,6 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
       get() = CachedValuesManager.getCachedValue(initializer) {
         CachedValueProvider.Result.create(getSetupCalls(initializer), PsiModificationTracker.MODIFICATION_COUNT)
       }
-
-    private fun getSetupFunctionType(initializer: JSObjectLiteralExpression): JSType? =
-      resolveElementTo(initializer.findProperty(SETUP_METHOD), JSFunction::class)
-        ?.returnType
-        ?.let { returnType ->
-          (returnType as? JSAsyncReturnType)
-            ?.substitute()
-            ?.asSafely<JSGenericTypeImpl>()
-            ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "Promise" }
-            ?.arguments
-            ?.getOrNull(0)
-          ?: (returnType as? JSReturnedExpressionType)?.findAssociatedExpression()?.let {
-            JSCodeBasedTypeFactory.getPsiBasedType(it, JSEvaluateContext(it.containingFile))
-          }
-          ?: returnType
-        }
 
     private fun getSetupCalls(initializer: JSObjectLiteralExpression): List<VueNamedSymbol> =
       resolveElementTo(initializer.findProperty(SETUP_METHOD), JSFunction::class)
@@ -93,4 +77,20 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
     override fun hashCode(): Int = initializer.hashCode()
   }
 }
+
+private fun getSetupFunctionType(initializer: JSObjectLiteralExpression): JSType? =
+  resolveElementTo(initializer.findProperty(SETUP_METHOD), JSFunction::class)
+    ?.returnType
+    ?.let { returnType ->
+      (returnType as? JSAsyncReturnType)
+        ?.substitute()
+        ?.asSafely<JSGenericTypeImpl>()
+        ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "Promise" }
+        ?.arguments
+        ?.getOrNull(0)
+      ?: (returnType as? JSReturnedExpressionType)?.findAssociatedExpression()?.let {
+        JSCodeBasedTypeFactory.getPsiBasedType(it, JSEvaluateContext(it.containingFile))
+      }
+      ?: returnType
+    }
 

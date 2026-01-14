@@ -173,12 +173,15 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             emits = analyzeDefineEmits(call)
           }
           DEFINE_EXPOSE_FUN -> {
-            rawBindings = call.stubSafeCallArguments
-                            .getOrNull(0)
-                            ?.let { JSCodeBasedTypeFactory.getPsiBasedType(it, JSEvaluateContext(it.containingFile)) }
-                            ?.let { VueCompositionInfoHelper.createRawBindings(call, it) }
-                          ?: emptyList()
-
+            rawBindings =
+              call.stubSafeCallArguments
+                .getOrNull(0)
+                ?.let { argument ->
+                  VueCompositionInfoHelper.createRawBindings(call, argument) {
+                    JSCodeBasedTypeFactory.getPsiBasedType(it, JSEvaluateContext(it.containingFile))
+                  }
+                }
+              ?: emptyList()
           }
           DEFINE_MODEL_FUN -> VueScriptSetupModelDecl.create(call)?.let { modelDecls[it.name] = it }
           DEFINE_SLOTS_FUN -> {
@@ -357,7 +360,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         return !propertySignature.isOptional
       }
 
-    override val jsType: JSType?
+    override val type: JSType?
       get() = propertySignature.jsTypeWithOptionality
 
     private val isOptional: Boolean
@@ -386,7 +389,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     }
 
     override fun toString(): String {
-      return "VueScriptSetupInputProperty(name='$name', required=$required, jsType=$jsType)"
+      return "VueScriptSetupInputProperty(name='$name', required=$required, jsType=$type)"
     }
 
   }
@@ -516,7 +519,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     override val required: Boolean
       get() = modelDecl.required
 
-    override val jsType: JSType
+    override val type: JSType
       get() = modelDecl.jsType
 
     override fun equals(other: Any?): Boolean =

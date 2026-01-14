@@ -23,8 +23,7 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
-import org.jetbrains.vuejs.web.symbols.VuePropertySymbolMixin
-import java.util.TreeMap
+import java.util.*
 
 abstract class VueTypedContainer(override val source: PsiElement) : VueContainer {
 
@@ -135,9 +134,11 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
 
   }
 
-  private abstract class VueTypedProperty(val property: PropertySignature) : VueTypedDocumentedElement(), VueProperty {
+  private abstract class VueTypedProperty(
+    val property: PropertySignature
+  ) : VueTypedDocumentedElement(), VueProperty, PsiSourcedPolySymbol {
     override val name: String get() = property.memberName
-    override val jsType: JSType? get() = property.jsType
+    override val type: JSType? get() = property.jsType
     override val source: PsiElement?
       get() = property.memberSource.singleElement.let {
         if (it is JSProperty)
@@ -145,11 +146,13 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
         else
           it
       }
+
+    abstract override fun createPointer(): Pointer<out VueTypedProperty>
   }
 
   private class VueTypedInputProperty(
     private val container: VueTypedContainer,
-    property: PropertySignature
+    property: PropertySignature,
   ) : VueTypedProperty(property), VueInputProperty, PsiSourcedPolySymbol {
 
     override val required: Boolean

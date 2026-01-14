@@ -25,7 +25,6 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
@@ -262,13 +261,13 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       VueImplicitElement(name, createType(sourceElement, isOptional(sourceElement)),
                          sourceElement, JSImplicitElement.Type.Property, true)
 
-    override val jsType: JSType? = createType(sourceElement, !required)
+    override val type: JSType? = createType(sourceElement, !required)
 
     private fun createType(sourceElement: PsiElement, optional: Boolean) =
       (sourceElement as? PsiNamedElement)?.let { VueSourcePropType(it) }?.optionalIf(optional)
 
     override fun toString(): String {
-      return "VueSourceInputProperty(name='$name', required=$required, jsType=$jsType)"
+      return "VueSourceInputProperty(name='$name', required=$required, jsType=$type)"
     }
 
     private fun isRequired(hasOuterDefault: Boolean, sourceElement: PsiElement?): Boolean {
@@ -355,17 +354,56 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   }
 
-  private class VueSourceDataProperty(
+  private abstract class VueSourceProperty(
     override val name: String,
-    override val source: PsiElement?,
-  ) : VueDataProperty
+    private val originalSource: PsiElement,
+  ) : VueProperty, PsiSourcedPolySymbol {
+
+    override val source: PsiElement = originalSource
+
+    abstract override fun createPointer(): Pointer<out VueSourceProperty>
+
+    protected fun <T : VueSourceProperty> createPointer(constructor: (String, PsiElement) -> T): Pointer<T> {
+      val name = name
+      val elementPtr = originalSource.createSmartPointer()
+      return Pointer {
+        elementPtr.dereference()?.let { constructor(name, originalSource) }
+      }
+    }
+
+    override fun equals(other: Any?): Boolean =
+      other is VueSourceProperty
+      && other.javaClass == javaClass
+      && other.name == name
+      && other.originalSource == originalSource
+
+    override fun hashCode(): Int {
+      var result = name.hashCode()
+      result = 31 * result + originalSource.hashCode()
+      return result
+    }
+
+  }
+
+  private class VueSourceDataProperty(
+    name: String,
+    source: PsiElement,
+  ) : VueSourceProperty(name, source), VueDataProperty {
+
+    override val type: JSType?
+      get() = null
+
+    override fun createPointer(): Pointer<VueSourceDataProperty> =
+      createPointer(::VueSourceDataProperty)
+  }
 
   private class VueSourceComputedProperty(
-    override val name: String,
+    name: String,
     sourceElement: PsiElement,
-  ) : VueComputedProperty {
+  ) : VueSourceProperty(name, sourceElement), VueComputedProperty {
+
     override val source: VueImplicitElement
-    override val jsType: JSType?
+    override val type: JSType?
 
     init {
       var provider = sourceElement
@@ -392,21 +430,28 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         else -> null
       }
       source = VueImplicitElement(name, returnType, provider, JSImplicitElement.Type.Property, true)
-      jsType = source.jsType
+      type = source.jsType
     }
+
+    override fun createPointer(): Pointer<VueSourceComputedProperty> =
+      createPointer(::VueSourceComputedProperty)
 
   }
 
   private class VueSourceMethod(
-    override val name: String,
-    override val source: PsiElement?,
-  ) : VueMethod {
-    override val jsType: JSType? get() = (source as? JSProperty)?.jsType
+    name: String,
+    source: PsiElement,
+  ) : VueSourceProperty(name, source), VueMethod {
+
+    override val type: JSType? get() = (source as? JSProperty)?.jsType
+
+    override fun createPointer(): Pointer<VueSourceMethod> =
+      createPointer(::VueSourceMethod)
   }
 
   private class VueSourceEmitDefinition(
     override val name: String,
-    override val source: PsiElement?,
+    override val source: PsiElement,
   ) : VueEmitCall
 
   private class VueSourceSlot(override val name: String, override val source: PsiElement?) : VueSlot {

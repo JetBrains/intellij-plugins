@@ -5,24 +5,31 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
+import com.intellij.model.Pointer
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueUnwrapRefType
+import kotlin.reflect.KClass
+import kotlin.reflect.safeCast
 
 object VueCompositionInfoHelper {
 
   private const val READ_ONLY_TYPE = "ReadOnly"
 
-  fun createRawBindings(context: PsiElement, setupType: JSType?): List<VueNamedSymbol> {
-    return setupType
-             ?.asRecordType()
-             ?.properties
-             ?.mapNotNull { mapSignatureToRawBinding(it, JSTypeSubstitutionContextImpl(context), context) }
-           ?: emptyList()
-  }
+  fun <T : PsiElement> createRawBindings(context: PsiElement, typeSource: T, setupTypeProvider: (T) -> JSType?): List<VueNamedSymbol> =
+    setupTypeProvider(typeSource)
+      ?.asRecordType()
+      ?.typeMembers
+      ?.mapNotNull {
+        mapSignatureToRawBinding(it as? JSRecordType.PropertySignature ?: return@mapNotNull null,
+                                 context, typeSource, setupTypeProvider)
+      }
+    ?: emptyList()
 
   fun getUnwrappedRefElement(element: PsiElement?, context: PsiElement): VueImplicitElement? {
     val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
@@ -49,12 +56,14 @@ object VueCompositionInfoHelper {
     return result ?: type
   }
 
-  private fun mapSignatureToRawBinding(
+  private fun <T : PsiElement> mapSignatureToRawBinding(
     signature: JSRecordType.PropertySignature,
-    context: JSTypeSubstitutionContextImpl,
     psiContext: PsiElement,
+    setupTypeSource: T,
+    setupTypeProvider: (T) -> JSType?,
   ): VueNamedSymbol {
     val name = signature.memberName
+    val context = JSTypeSubstitutionContextImpl(psiContext)
     var signatureType = signature.jsType?.let { substituteRefType(it, context) }
     var isReadOnly = false
     if (signatureType is JSAliasTypeImpl) {
@@ -67,43 +76,112 @@ object VueCompositionInfoHelper {
         }
       }
       is JSFunctionType -> {
-        return VueComposedMethod(name, signature.memberSource.singleElement, signature.jsType)
+        return VueComposedMethod(name,
+                                 signature.memberSource.singleElement,
+                                 signature.jsType,
+                                 psiContext,
+                                 setupTypeSource,
+                                 setupTypeProvider)
       }
     }
 
-    val typeSource =
+    val unwrapRefTypeSource =
       psiContext.asSafely<JSCallExpression>()
         ?.takeIf { getFunctionNameFromVueIndex(it) == DEFINE_EXPOSE_FUN }
         ?.stubSafeCallArguments?.getOrNull(0)
         ?.asSafely<JSObjectLiteralExpression>()
       ?: psiContext
-    val type = signatureType?.let { VueUnwrapRefType(it, typeSource) }
+    val type = signatureType?.let { VueUnwrapRefType(it, unwrapRefTypeSource) }
     val source = signature.memberSource.singleElement
     val element = source?.let { VueImplicitElement(signature.memberName, type, it, JSImplicitElement.Type.Property, true) }
     return if (isReadOnly) {
-      VueComposedComputedProperty(name, element, type)
+      VueComposedComputedProperty(name, element, type, psiContext, setupTypeSource, setupTypeProvider)
     }
     else {
-      VueComposedDataProperty(name, element, type)
+      VueComposedDataProperty(name, element, type, psiContext, setupTypeSource, setupTypeProvider)
     }
   }
 
-  private class VueComposedDataProperty(
-    override val name: String,
-    override val source: PsiElement?,
-    override val jsType: JSType?,
-  ) : VueDataProperty
 
-  private class VueComposedComputedProperty(
+  private abstract class VueComposedProperty<T : PsiElement>(
     override val name: String,
     override val source: PsiElement?,
-    override val jsType: JSType?,
-  ) : VueComputedProperty
+    override val type: JSType?,
+    override val psiContext: PsiElement,
+    private val setupTypeSource: T,
+    private val setupTypeProvider: (T) -> JSType?,
+  ) : VueProperty, PsiSourcedPolySymbol {
 
-  private class VueComposedMethod(
-    override val name: String,
-    override val source: PsiElement?,
-    override val jsType: JSType?,
-  ) : VueMethod
+    abstract override fun createPointer(): Pointer<out VueComposedProperty<T>>
+
+    override fun equals(other: Any?): Boolean =
+      other is VueComposedProperty<*>
+      && other.javaClass == javaClass
+      && other.name == name
+      && other.psiContext == psiContext
+      && other.setupTypeSource == setupTypeSource
+
+    override fun hashCode(): Int {
+      var result = name.hashCode()
+      result = 31 * result + psiContext.hashCode()
+      result = 31 * result + setupTypeSource.hashCode()
+      return result
+    }
+
+    protected fun <T : PsiElement, Prop : VueComposedProperty<T>, K : KClass<out Prop>> createPointer(cls: K): Pointer<Prop> {
+      val name = name
+      val setupTypeSourcePtr = setupTypeSource.createSmartPointer()
+      val setupTypeProvider = setupTypeProvider
+      val psiContextPtr = psiContext.createSmartPointer()
+      return Pointer<Prop> {
+        val setupTypeSource = setupTypeSourcePtr.dereference() ?: return@Pointer null
+        val psiContext = psiContextPtr.dereference() ?: return@Pointer null
+        return@Pointer setupTypeProvider(setupTypeSource)
+          ?.asRecordType()
+          ?.findPropertySignature(name)
+          ?.let { mapSignatureToRawBinding(it, psiContext, setupTypeSource, setupTypeProvider) }
+          ?.let { cls.safeCast(it) }
+      }
+    }
+  }
+
+  private class VueComposedDataProperty<T : PsiElement>(
+    name: String,
+    source: PsiElement?,
+    type: JSType?,
+    psiContext: PsiElement,
+    setupTypeSource: T,
+    setupTypeProvider: (T) -> JSType?,
+  ) : VueComposedProperty<T>(name, source, type, psiContext, setupTypeSource, setupTypeProvider), VueDataProperty {
+
+    override fun createPointer(): Pointer<VueComposedDataProperty<T>> =
+      createPointer(this::class)
+  }
+
+  private class VueComposedComputedProperty<T : PsiElement>(
+    name: String,
+    source: PsiElement?,
+    type: JSType?,
+    psiContext: PsiElement,
+    setupTypeSource: T,
+    setupTypeProvider: (T) -> JSType?,
+  ) : VueComposedProperty<T>(name, source, type, psiContext, setupTypeSource, setupTypeProvider), VueComputedProperty {
+
+    override fun createPointer(): Pointer<VueComposedComputedProperty<T>> =
+      createPointer(this::class)
+  }
+
+  private class VueComposedMethod<T : PsiElement>(
+    name: String,
+    source: PsiElement?,
+    type: JSType?,
+    psiContext: PsiElement,
+    setupTypeSource: T,
+    setupTypeProvider: (T) -> JSType?,
+  ) : VueComposedProperty<T>(name, source, type, psiContext, setupTypeSource, setupTypeProvider), VueMethod {
+
+    override fun createPointer(): Pointer<VueComposedMethod<T>> =
+      createPointer(this::class)
+  }
 
 }

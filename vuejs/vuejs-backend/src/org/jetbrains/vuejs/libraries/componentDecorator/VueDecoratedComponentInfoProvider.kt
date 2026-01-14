@@ -23,7 +23,6 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 import org.jetbrains.vuejs.types.optionalIf
-import org.jetbrains.vuejs.web.symbols.VuePropertySymbolMixin
 import java.util.*
 
 
@@ -73,45 +72,42 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
         .asRecordType()
         .typeMembers
         .forEach { member ->
+          if (member !is PropertySignature) return@forEach
           val decorator = findDecorator(member, DECS)
           when (decorator?.decoratorName) {
-            PROP_DEC -> if (member is PropertySignature) {
+            PROP_DEC -> {
               props.add(VueDecoratedInputProperty(member.memberName, member, decorator, 0))
             }
-            PROP_SYNC_DEC -> if (member is PropertySignature) {
-              computed.add(VueDecoratedComputedProperty(member.memberName, member, decorator, 1))
+            PROP_SYNC_DEC -> {
+              computed.add(VueDecoratedComputedProperty(clazz, member.memberName, member, decorator, 1))
               getNameFromDecorator(decorator)?.let { name ->
                 props.add(VueDecoratedInputProperty(name, member, decorator, 1))
                 emits.add(VueDecoratedPropSyncEmitCall("update:$name", decorator, member))
               }
             }
-            MODEL_DEC -> if (member is PropertySignature && model === null) {
+            MODEL_DEC -> if (model === null) {
               val name = getNameFromDecorator(decorator)
               model = VueModelDirectiveProperties(member.memberName, name)
               props.add(VueDecoratedInputProperty(member.memberName, member, decorator, 1))
             }
-            EMIT_DEC -> if (member is PropertySignature) {
-              if (member.memberSource.singleElement is JSFunction) {
-                emits.add(VueDecoratedPropertyEmitCall(getNameFromDecorator(decorator)
-                                                       ?: fromAsset(member.memberName),
-                                                       member))
-                methods.add(VueDecoratedPropertyMethod(member.memberName, member))
-              }
+            EMIT_DEC -> if (member.memberSource.singleElement is JSFunction) {
+              emits.add(VueDecoratedPropertyEmitCall(getNameFromDecorator(decorator)
+                                                     ?: fromAsset(member.memberName),
+                                                     member))
+              methods.add(VueDecoratedPropertyMethod(clazz, member.memberName, member))
             }
-            else -> when (member) {
-              is PropertySignature -> {
-                val source = member.memberSource.singleElement
-                if (source is JSFunction) {
-                  if (source.isGetProperty || source.isSetProperty) {
-                    computed.add(VueDecoratedComputedProperty(member.memberName, member, null, 0))
-                  }
-                  else {
-                    methods.add(VueDecoratedPropertyMethod(member.memberName, member))
-                  }
+            else -> {
+              val source = member.memberSource.singleElement
+              if (source is JSFunction) {
+                if (source.isGetProperty || source.isSetProperty) {
+                  computed.add(VueDecoratedComputedProperty(clazz, member.memberName, member, null, 0))
                 }
-                else if (source is JSAttributeListOwner) {
-                  data.add(VueDecoratedDataProperty(member))
+                else {
+                  methods.add(VueDecoratedPropertyMethod(clazz, member.memberName, member))
                 }
+              }
+              else if (source is JSAttributeListOwner) {
+                data.add(VueDecoratedDataProperty(clazz, member))
               }
             }
           }
@@ -155,11 +151,11 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
         other is VueDecoratedNamedSymbol<*>
         && other.javaClass == javaClass
         && other.name == name
-        && other.member == member
+        && other.member.memberSource.singleElement == member.memberSource.singleElement
 
       override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + member.hashCode()
+        result = 31 * result + member.memberSource.singleElement.hashCode()
         return result
       }
     }
@@ -168,9 +164,11 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       name: String,
       member: PropertySignature,
     ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
-        VueProperty {
-      override val jsType: JSType?
+        VueProperty, PsiSourcedPolySymbol {
+      override val type: JSType?
         get() = member.jsType
+
+      abstract override fun createPointer(): Pointer<out VueDecoratedProperty>
     }
 
     private class VueDecoratedInputProperty(
@@ -179,23 +177,23 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       private val decorator: ES6Decorator,
       private val decoratorArgumentIndex: Int,
     ) : VueDecoratedProperty(name, member),
-        VueInputProperty, PsiSourcedPolySymbol{
+        VueInputProperty {
 
       override val required: Boolean =
         getRequiredFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex))
 
-      override val jsType: JSType =
+      override val type: JSType =
         VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
           .optionalIf(!required)
 
       override fun equals(other: Any?): Boolean =
-        super.equals(other)
-        && other is VueDecoratedInputProperty
+        other is VueDecoratedInputProperty
+        && other.name == name
         && other.decorator == decorator
         && other.decoratorArgumentIndex == decoratorArgumentIndex
 
       override fun hashCode(): Int {
-        var result =  super.hashCode()
+        var result = name.hashCode()
         result = 31 * result + decorator.hashCode()
         result = 31 * result + decoratorArgumentIndex
         return result
@@ -203,13 +201,14 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
 
       override fun createPointer(): Pointer<VueDecoratedInputProperty> {
         val name = name
+        val memberName = member.memberName
         val decoratorPtr = decorator.createSmartPointer()
         val decoratorArgumentIndex = decoratorArgumentIndex
         return Pointer {
           val decorator = decoratorPtr.dereference() ?: return@Pointer null
           val clazz = decorator.parentOfType<JSClass>() ?: return@Pointer null
           clazz.jsType.asRecordType()
-            .findPropertySignature(name)
+            .findPropertySignature(memberName)
             ?.let {
               VueDecoratedInputProperty(name, it, decorator, decoratorArgumentIndex)
             }
@@ -218,30 +217,76 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     }
 
     private class VueDecoratedComputedProperty(
+      private val clazz: JSClass,
       name: String,
       member: PropertySignature,
-      decorator: ES6Decorator?,
-      decoratorArgumentIndex: Int,
+      private val decorator: ES6Decorator?,
+      private val decoratorArgumentIndex: Int,
     ) : VueDecoratedProperty(name, member),
         VueComputedProperty {
 
-      override val jsType: JSType =
+      override val type: JSType =
         VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
 
       override val source: PsiElement =
         VueImplicitElement(
           name = name,
-          jsType = jsType,
+          jsType = type,
           provider = member.memberSource.singleElement!!,
           kind = JSImplicitElement.Type.Property,
           equivalentToProvider = false,
         )
+
+      override fun equals(other: Any?): Boolean =
+        other is VueDecoratedComputedProperty
+        && other.clazz == clazz
+        && other.name == name
+        && other.decorator == decorator
+        && other.decoratorArgumentIndex == decoratorArgumentIndex
+
+      override fun hashCode(): Int {
+        var result = clazz.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + (decorator?.hashCode() ?: 0)
+        result = 31 * result + decoratorArgumentIndex
+        return result
+      }
+
+      override fun createPointer(): Pointer<VueDecoratedComputedProperty> {
+        val clazzPtr = clazz.createSmartPointer()
+        val memberName = member.memberName
+        val name = name
+        val decoratorPtr = decorator?.createSmartPointer()
+        val decoratorArgumentIndex = decoratorArgumentIndex
+        return Pointer {
+          val clazz = clazzPtr.dereference() ?: return@Pointer null
+          val decorator = decoratorPtr?.let { it.dereference() ?: return@Pointer null }
+          clazz.jsType.asRecordType()
+            .findPropertySignature(memberName)
+            ?.let { VueDecoratedComputedProperty(clazz, name, it, decorator, decoratorArgumentIndex) }
+        }
+
+      }
     }
 
     private class VueDecoratedDataProperty(
+      private val clazz: JSClass,
       member: PropertySignature,
     ) : VueDecoratedProperty(member.memberName, member),
-        VueDataProperty
+        VueDataProperty {
+
+      override fun createPointer(): Pointer<VueDecoratedDataProperty> {
+        val clazzPtr = clazz.createSmartPointer()
+        val memberName = member.memberName
+        return Pointer {
+          val clazz = clazzPtr.dereference() ?: return@Pointer null
+          clazz.jsType.asRecordType()
+            .findPropertySignature(memberName)
+            ?.let { VueDecoratedDataProperty(clazz, it) }
+        }
+      }
+
+    }
 
     private class VueDecoratedPropertyEmitCall(
       name: String,
@@ -281,9 +326,24 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     }
 
     private class VueDecoratedPropertyMethod(
+      private val clazz: JSClass,
       name: String,
       member: PropertySignature,
     ) : VueDecoratedProperty(name, member),
-        VueMethod
+        VueMethod {
+
+      override fun createPointer(): Pointer<VueDecoratedPropertyMethod> {
+        val clazzPtr = clazz.createSmartPointer()
+        val memberName = member.memberName
+        val name = name
+        return Pointer {
+          val clazz = clazzPtr.dereference() ?: return@Pointer null
+          clazz.jsType.asRecordType()
+            .findPropertySignature(memberName)
+            ?.let { VueDecoratedPropertyMethod(clazz, name, it) }
+        }
+      }
+
+    }
   }
 }
