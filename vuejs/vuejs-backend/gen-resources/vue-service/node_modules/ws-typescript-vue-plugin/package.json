@@ -2,7 +2,6 @@
   "name": "ws-typescript-vue-plugin",
   "version": "0.0.1",
   "private": true,
-  "main": "index.js",
   "dependencies": {
     "tsc-ide-plugin": "file:/../../../../../plugins/JavaScriptLanguage/resources/tscplugin",
     "typescript": "^5.9.3",
