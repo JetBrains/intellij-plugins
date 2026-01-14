@@ -5,9 +5,9 @@ import type {Language} from "@volar/language-core"
 declare module "tsc-ide-plugin/tsserverlibrary.shim" {
   namespace server {
     interface Project {
-      __vue__: {
+      readonly __vue__: Readonly<{
         language: Language<string>
-      }
+      }>
     }
   }
 }
