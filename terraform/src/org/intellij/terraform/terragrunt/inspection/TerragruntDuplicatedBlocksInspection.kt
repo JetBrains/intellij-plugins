@@ -1,10 +1,11 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.terragrunt.inspection
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
+import org.intellij.terraform.config.Constants.HCL_STACK_IDENTIFIER
 import org.intellij.terraform.config.inspection.DeleteBlockQuickFix
 import org.intellij.terraform.config.inspection.RenameBlockQuickFix
 import org.intellij.terraform.config.inspection.TfDuplicatedInspectionBase
@@ -56,7 +57,7 @@ internal class TerragruntDuplicatedBlocksInspection : TfDuplicatedInspectionBase
 
   private fun getDuplicates(block: HCLBlock, name: String): List<HCLBlock>? {
     val blockType = when {
-                      TerragruntPsiPatterns.StackBlockPattern.accepts(block) -> TERRAGRUNT_STACK
+                      TerragruntPsiPatterns.StackBlockPattern.accepts(block) -> HCL_STACK_IDENTIFIER
                       TerragruntPsiPatterns.UnitBlockPattern.accepts(block) -> TERRAGRUNT_UNIT
                       TerragruntPsiPatterns.IncludeBlockPattern.accepts(block) -> TERRAGRUNT_INCLUDE
                       TerragruntPsiPatterns.DependencyBlockPattern.accepts(block) -> TERRAGRUNT_DEPENDENCY

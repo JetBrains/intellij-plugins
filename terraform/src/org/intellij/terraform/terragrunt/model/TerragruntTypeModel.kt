@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.terragrunt.model
 
 import org.intellij.terraform.config.Constants.HCL_BACKEND_IDENTIFIER
@@ -7,6 +7,7 @@ import org.intellij.terraform.config.Constants.HCL_DEFAULT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_LOCALS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PATH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_STACK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TERRAFORM_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
 import org.intellij.terraform.config.model.BlockType
@@ -194,7 +195,7 @@ internal val TerragruntRootBlocksMap: Map<String, BlockType> = TerragruntRootBlo
 internal val TerragruntBlocksAndAttributes: List<PropertyOrBlockType> = TerragruntRootBlocks + TerragruntAttributes
 
 internal val UnitBlockType: BlockType = BlockType(TERRAGRUNT_UNIT, 1, properties = createStacksProperties())
-internal val StackBlockType: BlockType = BlockType(TERRAGRUNT_STACK, 1, properties = createStacksProperties())
+internal val StackBlockType: BlockType = BlockType(HCL_STACK_IDENTIFIER, 1, properties = createStacksProperties())
 
 internal val StackRootBlocks: List<BlockType> = listOf(UnitBlockType, StackBlockType, LocalsBlockType)
 internal val StackRootBlocksMap: Map<String, BlockType> = StackRootBlocks.associateBy { it.literal }

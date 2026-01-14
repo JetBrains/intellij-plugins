@@ -36,7 +36,7 @@ import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLProperty
 import org.intellij.terraform.isTerraformFile
-import org.intellij.terraform.stack.component.TfComponentRequiredProviders
+import org.intellij.terraform.stack.component.TfComponentPsiPatterns
 import org.intellij.terraform.stack.component.isTfComponentPsiFile
 
 internal object HclRequiredProvidersCompletion : CompletionProvider<CompletionParameters>() {
@@ -103,13 +103,13 @@ internal object HclRequiredProvidersCompletion : CompletionProvider<CompletionPa
 
   private fun getRequiredProviderBlock(psiFile: PsiFile): PsiElementPattern.Capture<HCLBlock>? = when {
     isTerraformFile(psiFile) -> TfPsiPatterns.TfRequiredProvidersBlock
-    isTfComponentPsiFile(psiFile) -> TfComponentRequiredProviders
+    isTfComponentPsiFile(psiFile) -> TfComponentPsiPatterns.TfComponentRequiredProviders
     else -> null
   }
 
   private fun getRootBlock(psiFile: PsiFile): PsiElementPattern.Capture<HCLBlock>? = when {
     isTerraformFile(psiFile) -> TfPsiPatterns.TerraformRootBlock
-    isTfComponentPsiFile(psiFile) -> TfComponentRequiredProviders
+    isTfComponentPsiFile(psiFile) -> TfComponentPsiPatterns.TfComponentRequiredProviders
     else -> null
   }
 }

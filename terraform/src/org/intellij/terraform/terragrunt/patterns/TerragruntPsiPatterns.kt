@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.terragrunt.patterns
 
 import com.intellij.patterns.PlatformPatterns
@@ -6,6 +6,7 @@ import com.intellij.patterns.PsiElementPattern.Capture
 import com.intellij.patterns.PsiFilePattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
+import org.intellij.terraform.config.Constants.HCL_STACK_IDENTIFIER
 import org.intellij.terraform.config.patterns.TfPsiPatterns.createBlockPattern
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLElement
@@ -36,7 +37,7 @@ internal object TerragruntPsiPatterns {
   val GenerateBlockPattern: Capture<HCLBlock> = getTerragruntRootBlockPattern(TERRAGRUNT_GENERATE)
   val FeatureBlockPattern: Capture<HCLBlock> = getTerragruntRootBlockPattern(TERRAGRUNT_FEATURE)
 
-  val StackBlockPattern: Capture<HCLBlock> = getStackRootBlockPattern(TERRAGRUNT_STACK)
+  val StackBlockPattern: Capture<HCLBlock> = getStackRootBlockPattern(HCL_STACK_IDENTIFIER)
   val UnitBlockPattern: Capture<HCLBlock> = getStackRootBlockPattern(TERRAGRUNT_UNIT)
 
   fun getTerragruntRootBlockPattern(identifier: String) = PlatformPatterns.psiElement(HCLBlock::class.java)

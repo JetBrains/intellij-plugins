@@ -9,6 +9,7 @@ import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_REMOVED_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_STACK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_TYPE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VARIABLE_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_VERSION_IDENTIFIER
@@ -25,7 +26,6 @@ import org.intellij.terraform.config.model.TfTypeModel.Companion.ValueProperty
 import org.intellij.terraform.config.model.TfTypeModel.Companion.VariableDefault
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.toMap
-import org.intellij.terraform.terragrunt.TERRAGRUNT_STACK
 
 private val SourceProperty: PropertyType = PropertyType(HCL_SOURCE_IDENTIFIER, Types.String, required = true)
 private val ProvidersProperty: PropertyType = PropertyType("providers", Types.Object, required = true)
@@ -35,7 +35,7 @@ private val TypeProperty: PropertyType = PropertyType(HCL_TYPE_IDENTIFIER, Types
 internal val InputsProperty = PropertyType(HCL_INPUTS_IDENTIFIER, Types.Object, required = true)
 
 internal val ComponentBlockType: BlockType = BlockType(
-  "component", 1,
+  COMPONENT_IDENTIFIER, 1,
   properties = listOf(
     SourceProperty,
     createVersionProperty(),
@@ -47,7 +47,7 @@ internal val ComponentBlockType: BlockType = BlockType(
 )
 
 internal val TfStackBlock: BlockType = BlockType(
-  TERRAGRUNT_STACK, 1,
+  HCL_STACK_IDENTIFIER, 1,
   properties = listOf(
     SourceProperty,
     createVersionProperty(isRequired = true),
@@ -110,3 +110,5 @@ internal val TfComponentRootBlocks: List<BlockType> = listOf(
 internal val TfComponentRootBlocksMap: Map<String, BlockType> = TfComponentRootBlocks.associateBy { it.literal }
 
 internal fun createVersionProperty(isRequired: Boolean = false) = PropertyType(HCL_VERSION_IDENTIFIER, Types.String, required = isRequired)
+
+internal const val COMPONENT_IDENTIFIER = "component"

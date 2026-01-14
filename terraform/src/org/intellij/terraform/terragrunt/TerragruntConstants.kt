@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.terragrunt
 
 internal const val TERRAGRUNT_COMMANDS: String = "commands"
@@ -15,4 +15,3 @@ internal const val TERRAGRUNT_EXCLUDE: String = "exclude"
 internal const val TERRAGRUNT_ERRORS: String = "errors"
 
 internal const val TERRAGRUNT_UNIT: String = "unit"
-internal const val TERRAGRUNT_STACK: String = "stack"
