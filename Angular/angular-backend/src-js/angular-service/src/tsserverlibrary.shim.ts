@@ -1,4 +1,4 @@
-import type * as ts from "tsc-ide-plugin/tsserverlibrary.shim"
+import type ts from "tsc-ide-plugin/tsserverlibrary.shim"
 import type {GetElementTypeResponse} from "tsc-ide-plugin/protocol"
 
 declare module "tsc-ide-plugin/tsserverlibrary.shim" {

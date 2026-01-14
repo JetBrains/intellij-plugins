@@ -1,5 +1,5 @@
 import {CodeMapping, VirtualCode} from "@volar/language-core"
-import type * as ts from "typescript";
+import type ts from "typescript";
 import {IScriptSnapshot} from "typescript";
 import {CodegenContext} from "@volar/language-core/lib/types"
 import {
