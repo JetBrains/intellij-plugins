@@ -179,6 +179,7 @@ else
     # Do nothing: 'testunit/autorun' will launch all stuff
   else
     # MiniTest:
-    # Do nothing: 'minitest/autorun' will register and launch all stuff
+    # required for minitest 6.0, which made loading plugins optional, so now they have to be required and loaded manually
+    require 'minitest/rm_reporter_plugin'
   end
 end
