@@ -12,7 +12,7 @@ declare module "tsc-ide-plugin/tsserverlibrary.shim" {
         end: ts.LineAndCharacter;
       },
       forceReturnType: boolean,
-      cancellationToken: import("tsc-ide-plugin/tsserverlibrary.shim").CancellationToken,
+      cancellationToken: CancellationToken,
     ): GetElementTypeResponse | undefined
   }
 }
