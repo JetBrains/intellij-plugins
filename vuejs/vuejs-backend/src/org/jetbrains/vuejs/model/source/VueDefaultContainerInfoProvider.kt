@@ -372,7 +372,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     }
 
     override fun equals(other: Any?): Boolean =
-      other is VueSourceProperty
+      other === this
+      || other is VueSourceProperty
       && other.javaClass == javaClass
       && other.name == name
       && other.originalSource == originalSource
@@ -452,7 +453,29 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   private class VueSourceEmitDefinition(
     override val name: String,
     override val source: PsiElement,
-  ) : VueEmitCall
+  ) : VueEmitCall, PsiSourcedPolySymbol {
+
+    override fun equals(other: Any?): Boolean =
+      other === this
+      || other is VueSourceEmitDefinition
+      && other.name == name
+      && other.source == source
+
+    override fun hashCode(): Int {
+      var result = name.hashCode()
+      result = 31 * result + source.hashCode()
+      return result
+    }
+
+    override fun createPointer(): Pointer<VueSourceEmitDefinition> {
+      val name = name
+      val sourcePtr = source.createSmartPointer()
+      return Pointer {
+        sourcePtr.dereference()?.let { VueSourceEmitDefinition(name, it) }
+      }
+    }
+
+  }
 
   private class VueSourceSlot(override val name: String, override val source: PsiElement?) : VueSlot {
     override val scope: JSType? = source.asSafely<JSTypeOwner>()?.jsType

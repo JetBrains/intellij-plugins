@@ -92,7 +92,8 @@ class VuexDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecorated
       }
 
       override fun equals(other: Any?): Boolean =
-        other is VuexMappedProperty
+        other === this
+        || other is VuexMappedProperty
         && other.javaClass == javaClass
         && other.member.memberName == member.memberName
         && other.member.memberSource.singleElement == member.memberSource.singleElement

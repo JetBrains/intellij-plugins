@@ -335,24 +335,19 @@ private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
 
   if (options is JSArrayLiteralExpression) {
     return options.stubSafeChildren.mapNotNull { literal ->
-      (literal as? JSLiteralExpression)
-        ?.significantValue
-        ?.let { VueScriptSetupLiteralBasedEvent(unquoteWithoutUnescapingStringLiteralValue(it), literal) }
+      VueScriptSetupLiteralBasedEvent.create(literal)
     }
   }
 
   val typeArgument = call.typeArguments
     .firstOrNull()
+  val typeArgumentType = typeArgument
     ?.jsType
     ?.asRecordType()
 
-  if (typeArgument != null && typeArgument.hasProperties()) {
-    return typeArgument.properties.map {
-      VueScriptSetupPropertyContractEvent(
-        name = it.memberName,
-        source = it.memberSource.singleElement,
-        parametersType = it.jsType,
-      )
+  if (typeArgumentType != null && typeArgumentType.hasProperties()) {
+    return typeArgumentType.properties.map {
+      VueScriptSetupPropertyContractEvent(typeArgument, it)
     }
   }
 
@@ -377,7 +372,7 @@ private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
         ?.let {
           val name = unquoteWithoutUnescapingStringLiteralValue(it.valueAsString)
           val source = eventSources[name] ?: it.sourceElement
-          VueScriptSetupCallSignatureEvent(name, source, callSignature.functionType)
+          VueScriptSetupCallSignatureEvent(call, name, source, callSignature.functionType)
         }
     }
 }
@@ -430,7 +425,8 @@ private class VueScriptSetupInputProperty(
     get() = if (hasOuterDefault) false else propertySignature.isOptional
 
   override fun equals(other: Any?): Boolean =
-    other is VueScriptSetupInputProperty
+    other === this
+    || other is VueScriptSetupInputProperty
     && other.sourceType == sourceType
     && other.propertySignature.memberName == propertySignature.memberName
 
@@ -459,27 +455,81 @@ private class VueScriptSetupInputProperty(
 
 private class VueScriptSetupLiteralBasedEvent(
   override val name: String,
-  override val source: PsiElement?,
-) : VueEmitCall
+  override val source: PsiElement,
+) : VueEmitCall, PsiSourcedPolySymbol {
+  companion object {
+    fun create(literal: PsiElement): VueScriptSetupLiteralBasedEvent? =
+      (literal as? JSLiteralExpression)
+        ?.significantValue
+        ?.let { VueScriptSetupLiteralBasedEvent(unquoteWithoutUnescapingStringLiteralValue(it), literal) }
+  }
+
+  override fun createPointer(): Pointer<VueScriptSetupLiteralBasedEvent> {
+    val sourcePtr = source.createSmartPointer()
+    return Pointer { sourcePtr.element?.let { create(it) } }
+  }
+
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is VueScriptSetupLiteralBasedEvent
+    && other.source == source
+
+  override fun hashCode(): Int =
+    source.hashCode()
+}
 
 private class VueScriptSetupCallSignatureEvent(
+  private val call: JSCallExpression,
   override val name: String,
   override val source: PsiElement?,
   private val eventSignature: JSFunctionType,
-) : VueEmitCall {
+) : VueEmitCall, PsiSourcedPolySymbol {
   override val params: List<JSParameterTypeDecorator>
     get() = eventSignature.parameters.drop(1)
 
   override val hasStrictSignature: Boolean
     get() = true
+
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is VueScriptSetupCallSignatureEvent
+    && other.call == call
+    && other.name == name
+
+  override fun hashCode(): Int {
+    var result = call.hashCode()
+    result = 31 * result + name.hashCode()
+    return result
+  }
+
+  override fun createPointer(): Pointer<VueScriptSetupCallSignatureEvent> {
+    val callPtr = call.createSmartPointer()
+    val name = name
+    return Pointer {
+      callPtr.dereference()
+        ?.let { analyzeDefineEmits(it) }
+        ?.firstNotNullOfOrNull { emit ->
+          (emit as? VueScriptSetupCallSignatureEvent)?.takeIf { it.name == name }
+        }
+    }
+  }
 }
 
 private class VueScriptSetupPropertyContractEvent(
-  override val name: String,
-  override val source: PsiElement?,
-  private val parametersType: JSType?,
-) : VueEmitCall {
+  private val typeArgument: JSTypeDeclaration,
+  private val signature: JSRecordType.PropertySignature,
+) : VueEmitCall, PsiSourcedPolySymbol {
+  override val name: String
+    get() = signature.memberName
+
+  override val source: PsiElement?
+    get() = signature.memberSource.singleElement
+
+  private val parametersType: JSType?
+    get() = signature.jsType
+
   override val params: List<JSParameterTypeDecorator> by lazy {
+    val parametersType = parametersType
     if (parametersType !is JSTupleType)
       return@lazy emptyList()
 
@@ -500,6 +550,31 @@ private class VueScriptSetupPropertyContractEvent(
 
   override val hasStrictSignature: Boolean
     get() = true
+
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is VueScriptSetupPropertyContractEvent
+    && other.typeArgument == typeArgument
+    && other.signature.memberName == signature.memberName
+
+  override fun hashCode(): Int {
+    var result = typeArgument.hashCode()
+    result = 31 * result + signature.memberName.hashCode()
+    return result
+  }
+
+  override fun createPointer(): Pointer<VueScriptSetupPropertyContractEvent> {
+    val typeArgumentPtr = typeArgument.createSmartPointer()
+    val name = signature.memberName
+    return Pointer {
+      typeArgumentPtr
+        .dereference()
+        ?.jsType
+        ?.asRecordType()
+        ?.findPropertySignature(name)
+        ?.let { VueScriptSetupPropertyContractEvent(typeArgument, it) }
+    }
+  }
 }
 
 private class VueScriptSetupModelDecl(
@@ -514,7 +589,7 @@ private class VueScriptSetupModelDecl(
 
   override val local: Boolean = getLocalFromPropOptions(options)
 
-  override val jsType: JSType = modelType.optionalIf(!required)
+  override val type: JSType = modelType.optionalIf(!required)
 
   override val referenceType: JSType = modelType.optionalIf(getPropOptionality(options, required))
 
@@ -522,7 +597,7 @@ private class VueScriptSetupModelDecl(
     name, referenceType, sourceElement, JSImplicitElement.Type.Property, true)
 
   override fun toString(): String {
-    return "VueScriptSetupModelDecl(name='$name', required=$required, jsType=$jsType, local=$local)"
+    return "VueScriptSetupModelDecl(name='$name', required=$required, jsType=$type, local=$local)"
   }
 
   override fun equals(other: Any?): Boolean =
@@ -583,10 +658,11 @@ private class VueScriptSetupModelInputProperty(
     get() = modelDecl.required
 
   override val type: JSType
-    get() = modelDecl.jsType
+    get() = modelDecl.type
 
   override fun equals(other: Any?): Boolean =
-    other is VueScriptSetupModelInputProperty
+    other === this
+    || other is VueScriptSetupModelInputProperty
     && other.modelDecl == modelDecl
 
   override fun hashCode(): Int =
@@ -602,9 +678,10 @@ private class VueScriptSetupModelInputProperty(
   }
 }
 
-private class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) : VueEmitCall, VueModelOwner {
+private class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) :
+  VueEmitCall, VueModelOwner, PsiSourcedPolySymbol {
   override val name: String
-    get() = "update:${modelDecl.name}"
+    get() = "$EMIT_CALL_UPDATE_PREFIX${modelDecl.name}"
 
   override val source: PsiElement?
     get() = modelDecl.source
@@ -613,6 +690,21 @@ private class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) : V
     listOf(JSParameterTypeDecoratorImpl("value", modelDecl.referenceType, false, false, true))
 
   override val hasStrictSignature: Boolean = true
+
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is VueScriptSetupModelEvent
+    && other.modelDecl == modelDecl
+
+  override fun hashCode(): Int =
+    modelDecl.hashCode()
+
+  override fun createPointer(): Pointer<VueScriptSetupModelEvent> {
+    val modelDeclPtr = modelDecl.createPointer()
+    return Pointer {
+      modelDeclPtr.dereference()?.let { VueScriptSetupModelEvent(it) }
+    }
+  }
 }
 
 private class VueScriptSetupSlot(

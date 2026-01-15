@@ -7,14 +7,14 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
+import com.intellij.polySymbols.testFramework.DebugOutputPrinter
+import com.intellij.polySymbols.testFramework.checkTextByFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.polySymbols.testFramework.DebugOutputPrinter
-import com.intellij.polySymbols.testFramework.checkTextByFile
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
@@ -292,13 +292,13 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "pattern", sourceElement.pattern)
         }
         if (sourceElement is VueEmitCall) {
-          printProperty(level, "eventJSType", sourceElement.eventJSType)
+          printProperty(level, "eventJSType", sourceElement.type)
           printProperty(level, "params", sourceElement.params)
           printProperty(level, "hasStrictSignature", sourceElement.hasStrictSignature)
           printProperty(level, "callSignature", sourceElement.callSignature)
         }
         if (sourceElement is VueModelDecl) {
-          printProperty(level, "jsType", sourceElement.jsType)
+          printProperty(level, "jsType", sourceElement.type)
           printProperty(level, "required", sourceElement.required)
           printProperty(level, "defaultValue", sourceElement.defaultValue)
           printProperty(level, "local", sourceElement.local)

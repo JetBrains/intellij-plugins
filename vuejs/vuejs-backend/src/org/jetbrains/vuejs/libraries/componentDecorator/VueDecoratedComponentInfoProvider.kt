@@ -23,6 +23,7 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 import org.jetbrains.vuejs.types.optionalIf
+import org.jetbrains.vuejs.web.symbols.VueNamedSymbolMixin
 import java.util.*
 
 
@@ -82,7 +83,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
               computed.add(VueDecoratedComputedProperty(clazz, member.memberName, member, decorator, 1))
               getNameFromDecorator(decorator)?.let { name ->
                 props.add(VueDecoratedInputProperty(name, member, decorator, 1))
-                emits.add(VueDecoratedPropSyncEmitCall("update:$name", decorator, member))
+                emits.add(VueDecoratedPropSyncEmitCall("$EMIT_CALL_UPDATE_PREFIX$name", decorator, member))
               }
             }
             MODEL_DEC -> if (model === null) {
@@ -91,9 +92,9 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
               props.add(VueDecoratedInputProperty(member.memberName, member, decorator, 1))
             }
             EMIT_DEC -> if (member.memberSource.singleElement is JSFunction) {
-              emits.add(VueDecoratedPropertyEmitCall(getNameFromDecorator(decorator)
-                                                     ?: fromAsset(member.memberName),
-                                                     member))
+              emits.add(VueDecoratedPropertyEmitCall(
+                clazz, getNameFromDecorator(decorator) ?: fromAsset(member.memberName), member)
+              )
               methods.add(VueDecoratedPropertyMethod(clazz, member.memberName, member))
             }
             else -> {
@@ -143,12 +144,15 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     private abstract class VueDecoratedNamedSymbol<T : TypeMember>(
       override val name: String,
       protected val member: T,
-    ) : VueNamedSymbol {
+    ) : VueNamedSymbolMixin, PsiSourcedPolySymbol {
       override val source: PsiElement?
         get() = member.memberSource.singleElement
 
+      abstract override fun createPointer(): Pointer<out VueDecoratedNamedSymbol<T>>
+
       override fun equals(other: Any?): Boolean =
-        other is VueDecoratedNamedSymbol<*>
+        other === this
+        || other is VueDecoratedNamedSymbol<*>
         && other.javaClass == javaClass
         && other.name == name
         && other.member.memberSource.singleElement == member.memberSource.singleElement
@@ -187,7 +191,8 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
           .optionalIf(!required)
 
       override fun equals(other: Any?): Boolean =
-        other is VueDecoratedInputProperty
+        other === this
+        || other is VueDecoratedInputProperty
         && other.name == name
         && other.decorator == decorator
         && other.decoratorArgumentIndex == decoratorArgumentIndex
@@ -238,7 +243,8 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
         )
 
       override fun equals(other: Any?): Boolean =
-        other is VueDecoratedComputedProperty
+        other === this
+        || other is VueDecoratedComputedProperty
         && other.clazz == clazz
         && other.name == name
         && other.decorator == decorator
@@ -289,6 +295,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     }
 
     private class VueDecoratedPropertyEmitCall(
+      private val clazz: JSClass,
       name: String,
       member: PropertySignature,
     ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
@@ -309,11 +316,23 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       }
 
       override val hasStrictSignature: Boolean = member.jsType is JSFunctionType
+
+      override fun createPointer(): Pointer<VueDecoratedPropertyEmitCall> {
+        val clazzPtr = clazz.createSmartPointer()
+        val name = name
+        val memberName = member.memberName
+        return Pointer {
+          val clazz = clazzPtr.dereference() ?: return@Pointer null
+          clazz.jsType.asRecordType()
+            .findPropertySignature(memberName)
+            ?.let { VueDecoratedPropertyEmitCall(clazz, name, it) }
+        }
+      }
     }
 
     private class VueDecoratedPropSyncEmitCall(
       name: String,
-      decorator: ES6Decorator,
+      private val decorator: ES6Decorator,
       member: PropertySignature,
     ) : VueDecoratedNamedSymbol<PropertySignature>(name, member),
         VueEmitCall {
@@ -323,6 +342,20 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       )
 
       override val hasStrictSignature: Boolean = true
+
+      override fun createPointer(): Pointer<VueDecoratedPropSyncEmitCall> {
+        val decoratorPtr = decorator.createSmartPointer()
+        val name = name
+        val memberName = member.memberName
+        return Pointer {
+          val decorator = decoratorPtr.dereference() ?: return@Pointer null
+          decorator.parentOfType<JSClass>()
+            ?.jsType
+            ?.asRecordType()
+            ?.findPropertySignature(memberName)
+            ?.let { VueDecoratedPropSyncEmitCall(name, decorator, it) }
+        }
+      }
     }
 
     private class VueDecoratedPropertyMethod(

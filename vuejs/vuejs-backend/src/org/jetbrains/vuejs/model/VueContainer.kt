@@ -9,23 +9,21 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
-import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
-import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
-import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
-import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
-import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
-import org.jetbrains.vuejs.web.VUE_COMPONENT_PROPS
-import org.jetbrains.vuejs.web.VUE_METHODS
-import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbolMixin
+import org.jetbrains.vuejs.web.*
+import org.jetbrains.vuejs.web.symbols.VueNamedSymbolMixin
+
+const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
 
 interface VueContainer : VueEntitiesContainer {
   val data: List<VueDataProperty>
@@ -51,7 +49,7 @@ data class VueModelDirectiveProperties(
   companion object {
 
     private val DEFAULT_V2 = VueModelDirectiveProperties("value", "input")
-    private val DEFAULT_V3 = VueModelDirectiveProperties(MODEL_VALUE_PROP, "update:$MODEL_VALUE_PROP")
+    private val DEFAULT_V3 = VueModelDirectiveProperties(MODEL_VALUE_PROP, "$EMIT_CALL_UPDATE_PREFIX$MODEL_VALUE_PROP")
 
     fun getDefault(context: PsiElement): VueModelDirectiveProperties =
       if (isVue3(context))
@@ -74,12 +72,7 @@ interface VueSlot : VueNamedSymbol {
 }
 
 @JvmDefaultWithCompatibility
-interface VueEmitCall : VueNamedSymbol {
-  /**
-   * A type of event handler.
-   */
-  val eventJSType: JSType? get() = handlerSignature
-
+interface VueEmitCall : VueNamedSymbol, VueNamedSymbolMixin {
   /**
    * Event parameters not including event type itself, e.g.
    * for `{(event: 'add', item: string): void}` contains only `item: string`.
@@ -90,6 +83,36 @@ interface VueEmitCall : VueNamedSymbol {
    * Is needed to distinguish between `['add']` and `{(event: 'add'): void}`.
    */
   val hasStrictSignature: Boolean get() = false
+
+  override val kind: PolySymbolKind
+    get() = JS_EVENTS
+
+  override val type: JSType?
+    get() = handlerSignature
+
+  override val priority: PolySymbol.Priority
+    get() = PolySymbol.Priority.HIGHEST
+
+  override val attributeValue: PolySymbolHtmlAttributeValue
+    get() =
+      PolySymbolHtmlAttributeValue.create(PolySymbolHtmlAttributeValue.Kind.EXPRESSION, PolySymbolHtmlAttributeValue.Type.OF_MATCH)
+
+  override fun adjustNameForRefactoring(
+    queryExecutor: PolySymbolQueryExecutor,
+    oldName: PolySymbolQualifiedName,
+    newName: String,
+    occurence: String,
+  ): String {
+    if (this is VueModelOwner && occurence.startsWith(EMIT_CALL_UPDATE_PREFIX) && !newName.startsWith(EMIT_CALL_UPDATE_PREFIX)) {
+      return "$EMIT_CALL_UPDATE_PREFIX$newName"
+    }
+    return super.adjustNameForRefactoring(queryExecutor, oldName, newName, occurence)
+  }
+
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
+
+  override fun createPointer(): Pointer<out VueEmitCall>
 }
 
 /**
@@ -97,7 +120,7 @@ interface VueEmitCall : VueNamedSymbol {
  *
  * @see VueInputProperty
  */
-interface VueProperty : VueNamedSymbol, VueDocumentedItemSymbolMixin, PolySymbolScope {
+interface VueProperty : VueNamedSymbol, VueNamedSymbolMixin, PolySymbolScope {
 
   override val type: JSType?
 
@@ -121,10 +144,6 @@ interface VueProperty : VueNamedSymbol, VueDocumentedItemSymbolMixin, PolySymbol
     stack: PolySymbolQueryStack,
   ): List<PolySymbol> =
     getJSPropertySymbols(kind)
-
-  override fun equals(other: Any?): Boolean
-
-  override fun hashCode(): Int
 
 }
 
@@ -185,23 +204,29 @@ interface VueModelOwner {
   val modelDecl: VueModelDecl
 }
 
-interface VueModelDecl : VueNamedSymbol {
+interface VueModelDecl : VueNamedSymbolMixin {
+
+  override val kind: PolySymbolKind
+    get() = VUE_MODEL_DECL
+
   /**
    * Type of a property outside of a component, e.g. a component attribute's type.
    */
-  val jsType: JSType? get() = null
+  override val type: JSType? get() = null
 
   /**
-   * This type is typically referenced from within a component when the passed property is used, in contrast to [jsType].
+   * This type is typically referenced from within a component when the passed property is used, in contrast to [type].
    * For example, it could consider default values that eliminate "undefined" from a type declaration.
    */
-  val referenceType: JSType? get() = jsType
+  val referenceType: JSType? get() = type
 
   val required: Boolean
 
   val defaultValue: String? get() = null
 
   val local: Boolean? get() = null
+
+  override fun createPointer(): Pointer<out VueModelDecl>
 }
 
 interface VueProvide : VueNamedSymbol {

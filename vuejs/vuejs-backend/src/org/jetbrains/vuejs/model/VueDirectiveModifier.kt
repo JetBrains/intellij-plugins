@@ -2,8 +2,7 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.model.Pointer
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 
-interface VueDirectiveModifier : VueDocumentedItem, VueNamedSymbol {
+interface VueDirectiveModifier : VueNamedSymbol {
   fun createPointer(): Pointer<out VueDirectiveModifier>
 }

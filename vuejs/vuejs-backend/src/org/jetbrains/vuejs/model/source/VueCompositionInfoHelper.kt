@@ -115,7 +115,8 @@ object VueCompositionInfoHelper {
     abstract override fun createPointer(): Pointer<out VueComposedProperty<T>>
 
     override fun equals(other: Any?): Boolean =
-      other is VueComposedProperty<*>
+      other === this
+      || other is VueComposedProperty<*>
       && other.javaClass == javaClass
       && other.name == name
       && other.psiContext == psiContext

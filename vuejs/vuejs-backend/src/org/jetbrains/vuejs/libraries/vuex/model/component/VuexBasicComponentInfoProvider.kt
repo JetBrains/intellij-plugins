@@ -161,7 +161,8 @@ private abstract class VuexMappedSourceProperty(
   }
 
   override fun equals(other: Any?): Boolean =
-    other is VuexMappedSourceProperty
+    other === this
+    || other is VuexMappedSourceProperty
     && other.javaClass == javaClass
     && other.name == name
     && other.element == element

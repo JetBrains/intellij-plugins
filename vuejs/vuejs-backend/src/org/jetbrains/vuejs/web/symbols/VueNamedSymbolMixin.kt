@@ -5,21 +5,29 @@ import com.intellij.model.Pointer
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
+import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
+import org.jetbrains.vuejs.model.VueNamedSymbol
 
-interface VueDocumentedItemSymbolMixin : VueSymbol, VueDocumentedItem {
+interface VueNamedSymbolMixin : VueSymbol, VueNamedSymbol {
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     PolySymbolDocumentationTarget.create(this, location, VueSymbolDocumentationProvider)
+
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
 
   override val presentation: TargetPresentation
     get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(this), name))
       .icon(icon)
       .presentation()
 
-  abstract override fun createPointer(): Pointer<out VueDocumentedItemSymbolMixin>
+  abstract override fun createPointer(): Pointer<out VueNamedSymbolMixin>
+
+  override fun equals(other: Any?): Boolean
+
+  override fun hashCode(): Int
 
 }

@@ -68,7 +68,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
               ?.asSafely<JSStringLiteralTypeImpl>()
               ?.literal
               ?.let { name ->
-                VueTypedEmit(name, signature)
+                VueTypedEmit(this, name, signature)
               }
           } ?: emptyList(),
         PsiModificationTracker.MODIFICATION_COUNT)
@@ -135,7 +135,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
   }
 
   private abstract class VueTypedProperty(
-    val property: PropertySignature
+    val property: PropertySignature,
   ) : VueTypedDocumentedElement(), VueProperty, PsiSourcedPolySymbol {
     override val name: String get() = property.memberName
     override val type: JSType? get() = property.jsType
@@ -182,9 +182,10 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
   }
 
   private class VueTypedEmit(
+    private val owner: VueTypedContainer,
     override val name: String,
     private val callSignature: JSRecordType.CallSignature,
-  ) : VueTypedDocumentedElement(), VueEmitCall {
+  ) : VueTypedDocumentedElement(), VueEmitCall, PsiSourcedPolySymbol {
     override val params: List<JSParameterTypeDecorator>
       get() = callSignature.functionType.parameters.drop(1)
 
@@ -196,6 +197,28 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
 
     override val hasStrictSignature: Boolean
       get() = true
+
+    override fun createPointer(): Pointer<VueTypedEmit> {
+      val ownerPtr = owner.createPointer()
+      val name = name
+      return Pointer {
+        ownerPtr.dereference()?.emits?.firstNotNullOfOrNull { emit ->
+          (emit as? VueTypedEmit)?.takeIf { it.name == name }
+        }
+      }
+    }
+
+    override fun equals(other: Any?): Boolean =
+      other === this
+      || other is VueTypedEmit
+      && other.owner == owner
+      && other.name == name
+
+    override fun hashCode(): Int {
+      var result = owner.hashCode()
+      result = 31 * result + name.hashCode()
+      return result
+    }
   }
 
   private class VueTypedSlot(

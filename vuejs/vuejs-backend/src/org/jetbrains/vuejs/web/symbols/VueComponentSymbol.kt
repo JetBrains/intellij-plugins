@@ -130,7 +130,6 @@ class VueComponentSymbol(
       JS_EVENTS -> {
         (item as? VueContainer)
           ?.emits
-          ?.map { VueEmitCallSymbol(it, item) }
         ?: emptyList()
       }
       else -> emptyList()
