@@ -206,357 +206,11 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       return VueScriptSetupStructure(components, directives, props, emits, slots, rawBindings)
     }
 
-    private fun getInjectionCalls(module: JSExecutionScope): List<VueNamedSymbol> {
-      val symbols: MutableList<VueNamedSymbol> = mutableListOf()
-
-      module.getStubSafeDefineCalls().forEach { call ->
-        when (getFunctionNameFromVueIndex(call)) {
-          PROVIDE_FUN -> analyzeProvide(call)?.let { symbols.add(it) }
-          INJECT_FUN -> analyzeInject(call)?.let { symbols.add(it) }
-        }
-      }
-
-      return symbols
-    }
-
-    private fun analyzeDefineProps(call: JSCallExpression, defaults: List<@NlsSafe String>): List<VueInputProperty> {
-      val typeArgs = call.typeArguments
-      val arguments = call.stubSafeCallArguments
-      val props: List<VueInputProperty>
-
-      // scriptSetup type declaration
-      if (typeArgs.size == 1) {
-        val typeArg = typeArgs[0]
-        val recordType = typeArg.jsType.asRecordType()
-
-        props = recordType.properties
-          .map { VueScriptSetupInputProperty(typeArg, it, defaults.contains(it.memberName)) }
-          .toList()
-      }
-      // scriptSetup runtime declaration
-      else if (arguments.size == 1) {
-        when (val arg = arguments[0]) {
-          is JSObjectLiteralExpression -> {
-            props = collectMembers(arg)
-              .mapNotNull { (name, property) ->
-                VueDefaultContainerInfoProvider.VueSourceInputProperty.create(name, property, defaults.contains(name))
-              }
-          }
-          is JSArrayLiteralExpression -> {
-            props = getStringLiteralsFromInitializerArray(arg)
-              .mapNotNull { literal ->
-                val name = getTextIfLiteral(literal) ?: ""
-                VueDefaultContainerInfoProvider.VueSourceInputProperty.create(name, literal, defaults.contains(name))
-              }
-          }
-          else -> {
-            props = emptyList()
-          }
-        }
-      }
-      else {
-        props = emptyList()
-      }
-
-      return props
-    }
-
-    private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
-      val options = call.stubSafeCallArguments.getOrNull(0)
-
-      if (options is JSArrayLiteralExpression) {
-        return options.stubSafeChildren.mapNotNull { literal ->
-          (literal as? JSLiteralExpression)
-            ?.significantValue
-            ?.let { VueScriptSetupLiteralBasedEvent(unquoteWithoutUnescapingStringLiteralValue(it), literal) }
-        }
-      }
-
-      val typeArgument = call.typeArguments
-        .firstOrNull()
-        ?.jsType
-        ?.asRecordType()
-
-      if (typeArgument != null && typeArgument.hasProperties()) {
-        return typeArgument.properties.map {
-          VueScriptSetupPropertyContractEvent(
-            name = it.memberName,
-            source = it.memberSource.singleElement,
-            parametersType = it.jsType,
-          )
-        }
-      }
-
-      val emitType = JSResolveUtil.getElementJSType(call)?.asRecordType()
-                     ?: return emptyList()
-
-      val eventSources =
-        options.asSafely<JSObjectLiteralExpression>()
-          ?.let { JSResolveUtil.getElementJSType(it) }
-          ?.asRecordType()
-          ?.properties
-          ?.associate { it.memberName to it.memberSource.singleElement }
-        ?: emptyMap()
-
-      return emitType.callSignatures
-        .mapNotNull { callSignature ->
-          callSignature
-            .functionType
-            .parameters.getOrNull(0)
-            ?.inferredType
-            ?.asSafely<JSStringLiteralTypeImpl>()
-            ?.let {
-              val name = unquoteWithoutUnescapingStringLiteralValue(it.valueAsString)
-              val source = eventSources[name] ?: it.sourceElement
-              VueScriptSetupCallSignatureEvent(name, source, callSignature.functionType)
-            }
-        }
-    }
-
-    private fun analyzeDefineSlots(call: JSCallExpression): List<VueSlot> =
-      call.takeIf { JSStubBasedPsiTreeUtil.isStubBased(it) }
-        ?.typeArguments
-        ?.singleOrNull()
-        ?.jsType?.asRecordType()?.typeMembers
-        ?.asSequence()
-        ?.filterIsInstance<JSRecordType.PropertySignature>()
-        ?.map {
-          val slotType = it.jsType?.asSafely<JSFunctionType>()?.parameters?.firstOrNull()?.inferredType
-          VueScriptSetupSlot(it.memberName, it.memberSource.singleElement, slotType)
-        }
-        ?.toList()
-      ?: emptyList()
-
-    private fun JSCallExpression.getInnerDefineProps(): JSCallExpression? =
-      stubSafeCallArguments
-        .getOrNull(0)
-        .asSafely<JSCallExpression>()
-        ?.takeIf { getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
-
     override fun equals(other: Any?): Boolean =
       (other as? VueScriptSetupInfo)?.module == module
 
     override fun hashCode(): Int = module.hashCode()
   }
-
-  private class VueScriptSetupInputProperty(
-    private val sourceType: JSTypeDeclaration,
-    private val propertySignature: JSRecordType.PropertySignature,
-    private val hasOuterDefault: Boolean,
-  ) : VueInputProperty, PsiSourcedPolySymbol {
-    override val name: String
-      get() = propertySignature.memberName
-
-    override val source: PsiElement? = propertySignature.memberSource.singleElement?.let { sourceElement ->
-      VueImplicitElement(name, propertySignature.jsType?.optionalIf(isOptional),
-                         sourceElement, JSImplicitElement.Type.Property, true)
-    }
-
-    override val required: Boolean
-      get() {
-        // modifying required by hasOuterDefault is controversial, Vue compiler will still raise a warning in the dev mode,
-        // but for editors, it makes more sense to treat such prop as optional.
-        if (hasOuterDefault) return false
-        return !propertySignature.isOptional
-      }
-
-    override val type: JSType?
-      get() = propertySignature.jsTypeWithOptionality
-
-    private val isOptional: Boolean
-      get() = if (hasOuterDefault) false else propertySignature.isOptional
-
-    override fun equals(other: Any?): Boolean =
-      other is VueScriptSetupInputProperty
-      && other.sourceType == sourceType
-      && other.propertySignature.memberName == propertySignature.memberName
-
-    override fun hashCode(): Int {
-      var result = sourceType.hashCode()
-      result = 31 * result + propertySignature.memberName.hashCode()
-      return result
-    }
-
-    override fun createPointer(): Pointer<out VueScriptSetupInputProperty> {
-      val sourcePtr = sourceType.createSmartPointer()
-      val name = propertySignature.memberName
-      val hasOuterDefault = hasOuterDefault
-      return Pointer {
-        val source = sourcePtr.element ?: return@Pointer null
-        source.jsType.asRecordType().findPropertySignature(name)
-          ?.let { VueScriptSetupInputProperty(sourceType, it, hasOuterDefault) }
-      }
-    }
-
-    override fun toString(): String {
-      return "VueScriptSetupInputProperty(name='$name', required=$required, jsType=$type)"
-    }
-
-  }
-
-  private class VueScriptSetupLiteralBasedEvent(
-    override val name: String,
-    override val source: PsiElement?,
-  ) : VueEmitCall
-
-  private class VueScriptSetupCallSignatureEvent(
-    override val name: String,
-    override val source: PsiElement?,
-    private val eventSignature: JSFunctionType,
-  ) : VueEmitCall {
-    override val params: List<JSParameterTypeDecorator>
-      get() = eventSignature.parameters.drop(1)
-
-    override val hasStrictSignature: Boolean
-      get() = true
-  }
-
-  private class VueScriptSetupPropertyContractEvent(
-    override val name: String,
-    override val source: PsiElement?,
-    private val parametersType: JSType?,
-  ) : VueEmitCall {
-    override val params: List<JSParameterTypeDecorator> by lazy {
-      if (parametersType !is JSTupleType)
-        return@lazy emptyList()
-
-      val firstOptional = parametersType.firstOptional
-      fun isOptional(index: Int): Boolean =
-        firstOptional != -1 && index >= firstOptional
-
-      parametersType.types.mapIndexed { index, type ->
-        JSParameterTypeDecoratorImpl(
-          parametersType.getNameByIndex(index),
-          type,
-          isOptional(index),
-          false,
-          type != null,
-        )
-      }
-    }
-
-    override val hasStrictSignature: Boolean
-      get() = true
-  }
-
-  private class VueScriptSetupModelDecl(
-    private val call: JSCallExpression,
-    override val name: String,
-    modelType: JSType,
-    options: JSObjectLiteralExpression?,
-    sourceElement: PsiElement,
-  ) : VueModelDecl, Symbol {
-
-    override val required: Boolean = getRequiredFromPropOptions(options)
-
-    override val local: Boolean = getLocalFromPropOptions(options)
-
-    override val jsType: JSType = modelType.optionalIf(!required)
-
-    override val referenceType: JSType = modelType.optionalIf(getPropOptionality(options, required))
-
-    override val source: PsiElement = VueImplicitElement(
-      name, referenceType, sourceElement, JSImplicitElement.Type.Property, true)
-
-    override fun toString(): String {
-      return "VueScriptSetupModelDecl(name='$name', required=$required, jsType=$jsType, local=$local)"
-    }
-
-    override fun equals(other: Any?): Boolean =
-      other is VueScriptSetupModelDecl
-      && other.call == call
-      && other.name == name
-
-    override fun hashCode(): Int {
-      var result = call.hashCode()
-      result = 31 * result + name.hashCode()
-      return result
-    }
-
-    override fun createPointer(): Pointer<out VueScriptSetupModelDecl> {
-      val call = call.createSmartPointer()
-      return Pointer {
-        call.dereference()?.let { create(it) }
-      }
-    }
-
-    companion object {
-      fun create(call: JSCallExpression): VueScriptSetupModelDecl? {
-        val typeArgs = call.typeArguments
-        val arguments = call.stubSafeCallArguments
-        val nameElement = arguments.getOrNull(0).asSafely<JSLiteralExpression>()
-        val name = if (nameElement != null) {
-          getLiteralValue(nameElement) ?: return null
-        }
-        else {
-          MODEL_VALUE_PROP
-        }
-
-        val options = when (arguments.size) {
-          2 -> arguments[1]
-          1 if arguments[0] is JSObjectLiteralExpression -> arguments[0]
-          else -> null
-        } as? JSObjectLiteralExpression
-
-        val jsType = typeArgs.firstOrNull()?.jsType
-                     ?: options?.let { VueSourceModelPropType(name, it) }
-                     ?: JSAnyType.get(call)
-
-        return VueScriptSetupModelDecl(call, name, jsType, options, nameElement ?: call)
-      }
-    }
-  }
-
-  private class VueScriptSetupModelInputProperty(
-    override val modelDecl: VueScriptSetupModelDecl,
-  ) : VueInputProperty, VueModelOwner, PsiSourcedPolySymbol {
-    override val name: String
-      get() = modelDecl.name
-
-    override val source: PsiElement
-      get() = modelDecl.source
-
-    override val required: Boolean
-      get() = modelDecl.required
-
-    override val type: JSType
-      get() = modelDecl.jsType
-
-    override fun equals(other: Any?): Boolean =
-      other is VueScriptSetupModelInputProperty
-      && other.modelDecl == modelDecl
-
-    override fun hashCode(): Int =
-      modelDecl.hashCode()
-
-    override fun toString(): String {
-      return "VueScriptSetupModelInputProperty(modelDecl=$modelDecl)"
-    }
-
-    override fun createPointer(): Pointer<VueScriptSetupModelInputProperty> {
-      val modelDecl = modelDecl.createPointer()
-      return Pointer { modelDecl.dereference()?.let { VueScriptSetupModelInputProperty(it) } }
-    }
-  }
-
-  private class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) : VueEmitCall, VueModelOwner {
-    override val name: String
-      get() = "update:${modelDecl.name}"
-
-    override val source: PsiElement?
-      get() = modelDecl.source
-
-    override val params: List<JSParameterTypeDecorator> =
-      listOf(JSParameterTypeDecoratorImpl("value", modelDecl.referenceType, false, false, true))
-
-    override val hasStrictSignature: Boolean = true
-  }
-
-  private class VueScriptSetupSlot(
-    override val name: String,
-    override val source: PsiElement?,
-    override val scope: JSType?,
-  ) : VueSlot
 
   private data class VueScriptSetupStructure(
     val components: Map<String, VueComponent>,
@@ -620,3 +274,349 @@ private fun getLiteralValue(literal: JSLiteralExpression): String? =
   literal.significantValue
     ?.let { unquoteWithoutUnescapingStringLiteralValue(it) }
     ?.takeIf { it.isNotBlank() }
+
+private fun getInjectionCalls(module: JSExecutionScope): List<VueNamedSymbol> {
+  val symbols: MutableList<VueNamedSymbol> = mutableListOf()
+
+  module.getStubSafeDefineCalls().forEach { call ->
+    when (getFunctionNameFromVueIndex(call)) {
+      PROVIDE_FUN -> analyzeProvide(call)?.let { symbols.add(it) }
+      INJECT_FUN -> analyzeInject(call)?.let { symbols.add(it) }
+    }
+  }
+
+  return symbols
+}
+
+private fun analyzeDefineProps(call: JSCallExpression, defaults: List<@NlsSafe String>): List<VueInputProperty> {
+  val typeArgs = call.typeArguments
+  val arguments = call.stubSafeCallArguments
+  val props: List<VueInputProperty>
+
+  // scriptSetup type declaration
+  if (typeArgs.size == 1) {
+    val typeArg = typeArgs[0]
+    val recordType = typeArg.jsType.asRecordType()
+
+    props = recordType.properties
+      .map { VueScriptSetupInputProperty(typeArg, it, defaults.contains(it.memberName)) }
+      .toList()
+  }
+  // scriptSetup runtime declaration
+  else if (arguments.size == 1) {
+    when (val arg = arguments[0]) {
+      is JSObjectLiteralExpression -> {
+        props = collectMembers(arg)
+          .mapNotNull { (name, property) ->
+            VueDefaultContainerInfoProvider.VueSourceInputProperty.create(name, property, defaults.contains(name))
+          }
+      }
+      is JSArrayLiteralExpression -> {
+        props = getStringLiteralsFromInitializerArray(arg)
+          .mapNotNull { literal ->
+            val name = getTextIfLiteral(literal) ?: ""
+            VueDefaultContainerInfoProvider.VueSourceInputProperty.create(name, literal, defaults.contains(name))
+          }
+      }
+      else -> {
+        props = emptyList()
+      }
+    }
+  }
+  else {
+    props = emptyList()
+  }
+
+  return props
+}
+
+private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
+  val options = call.stubSafeCallArguments.getOrNull(0)
+
+  if (options is JSArrayLiteralExpression) {
+    return options.stubSafeChildren.mapNotNull { literal ->
+      (literal as? JSLiteralExpression)
+        ?.significantValue
+        ?.let { VueScriptSetupLiteralBasedEvent(unquoteWithoutUnescapingStringLiteralValue(it), literal) }
+    }
+  }
+
+  val typeArgument = call.typeArguments
+    .firstOrNull()
+    ?.jsType
+    ?.asRecordType()
+
+  if (typeArgument != null && typeArgument.hasProperties()) {
+    return typeArgument.properties.map {
+      VueScriptSetupPropertyContractEvent(
+        name = it.memberName,
+        source = it.memberSource.singleElement,
+        parametersType = it.jsType,
+      )
+    }
+  }
+
+  val emitType = JSResolveUtil.getElementJSType(call)?.asRecordType()
+                 ?: return emptyList()
+
+  val eventSources =
+    options.asSafely<JSObjectLiteralExpression>()
+      ?.let { JSResolveUtil.getElementJSType(it) }
+      ?.asRecordType()
+      ?.properties
+      ?.associate { it.memberName to it.memberSource.singleElement }
+    ?: emptyMap()
+
+  return emitType.callSignatures
+    .mapNotNull { callSignature ->
+      callSignature
+        .functionType
+        .parameters.getOrNull(0)
+        ?.inferredType
+        ?.asSafely<JSStringLiteralTypeImpl>()
+        ?.let {
+          val name = unquoteWithoutUnescapingStringLiteralValue(it.valueAsString)
+          val source = eventSources[name] ?: it.sourceElement
+          VueScriptSetupCallSignatureEvent(name, source, callSignature.functionType)
+        }
+    }
+}
+
+private fun analyzeDefineSlots(call: JSCallExpression): List<VueSlot> =
+  call.takeIf { JSStubBasedPsiTreeUtil.isStubBased(it) }
+    ?.typeArguments
+    ?.singleOrNull()
+    ?.jsType?.asRecordType()?.typeMembers
+    ?.asSequence()
+    ?.filterIsInstance<JSRecordType.PropertySignature>()
+    ?.map {
+      val slotType = it.jsType?.asSafely<JSFunctionType>()?.parameters?.firstOrNull()?.inferredType
+      VueScriptSetupSlot(it.memberName, it.memberSource.singleElement, slotType)
+    }
+    ?.toList()
+  ?: emptyList()
+
+private fun JSCallExpression.getInnerDefineProps(): JSCallExpression? =
+  stubSafeCallArguments
+    .getOrNull(0)
+    .asSafely<JSCallExpression>()
+    ?.takeIf { getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
+
+private class VueScriptSetupInputProperty(
+  private val sourceType: JSTypeDeclaration,
+  private val propertySignature: JSRecordType.PropertySignature,
+  private val hasOuterDefault: Boolean,
+) : VueInputProperty, PsiSourcedPolySymbol {
+  override val name: String
+    get() = propertySignature.memberName
+
+  override val source: PsiElement? = propertySignature.memberSource.singleElement?.let { sourceElement ->
+    VueImplicitElement(name, propertySignature.jsType?.optionalIf(isOptional),
+                       sourceElement, JSImplicitElement.Type.Property, true)
+  }
+
+  override val required: Boolean
+    get() {
+      // modifying required by hasOuterDefault is controversial, Vue compiler will still raise a warning in the dev mode,
+      // but for editors, it makes more sense to treat such prop as optional.
+      if (hasOuterDefault) return false
+      return !propertySignature.isOptional
+    }
+
+  override val type: JSType?
+    get() = propertySignature.jsTypeWithOptionality
+
+  private val isOptional: Boolean
+    get() = if (hasOuterDefault) false else propertySignature.isOptional
+
+  override fun equals(other: Any?): Boolean =
+    other is VueScriptSetupInputProperty
+    && other.sourceType == sourceType
+    && other.propertySignature.memberName == propertySignature.memberName
+
+  override fun hashCode(): Int {
+    var result = sourceType.hashCode()
+    result = 31 * result + propertySignature.memberName.hashCode()
+    return result
+  }
+
+  override fun createPointer(): Pointer<out VueScriptSetupInputProperty> {
+    val sourcePtr = sourceType.createSmartPointer()
+    val name = propertySignature.memberName
+    val hasOuterDefault = hasOuterDefault
+    return Pointer {
+      val source = sourcePtr.element ?: return@Pointer null
+      source.jsType.asRecordType().findPropertySignature(name)
+        ?.let { VueScriptSetupInputProperty(sourceType, it, hasOuterDefault) }
+    }
+  }
+
+  override fun toString(): String {
+    return "VueScriptSetupInputProperty(name='$name', required=$required, jsType=$type)"
+  }
+
+}
+
+private class VueScriptSetupLiteralBasedEvent(
+  override val name: String,
+  override val source: PsiElement?,
+) : VueEmitCall
+
+private class VueScriptSetupCallSignatureEvent(
+  override val name: String,
+  override val source: PsiElement?,
+  private val eventSignature: JSFunctionType,
+) : VueEmitCall {
+  override val params: List<JSParameterTypeDecorator>
+    get() = eventSignature.parameters.drop(1)
+
+  override val hasStrictSignature: Boolean
+    get() = true
+}
+
+private class VueScriptSetupPropertyContractEvent(
+  override val name: String,
+  override val source: PsiElement?,
+  private val parametersType: JSType?,
+) : VueEmitCall {
+  override val params: List<JSParameterTypeDecorator> by lazy {
+    if (parametersType !is JSTupleType)
+      return@lazy emptyList()
+
+    val firstOptional = parametersType.firstOptional
+    fun isOptional(index: Int): Boolean =
+      firstOptional != -1 && index >= firstOptional
+
+    parametersType.types.mapIndexed { index, type ->
+      JSParameterTypeDecoratorImpl(
+        parametersType.getNameByIndex(index),
+        type,
+        isOptional(index),
+        false,
+        type != null,
+      )
+    }
+  }
+
+  override val hasStrictSignature: Boolean
+    get() = true
+}
+
+private class VueScriptSetupModelDecl(
+  private val call: JSCallExpression,
+  override val name: String,
+  modelType: JSType,
+  options: JSObjectLiteralExpression?,
+  sourceElement: PsiElement,
+) : VueModelDecl, Symbol {
+
+  override val required: Boolean = getRequiredFromPropOptions(options)
+
+  override val local: Boolean = getLocalFromPropOptions(options)
+
+  override val jsType: JSType = modelType.optionalIf(!required)
+
+  override val referenceType: JSType = modelType.optionalIf(getPropOptionality(options, required))
+
+  override val source: PsiElement = VueImplicitElement(
+    name, referenceType, sourceElement, JSImplicitElement.Type.Property, true)
+
+  override fun toString(): String {
+    return "VueScriptSetupModelDecl(name='$name', required=$required, jsType=$jsType, local=$local)"
+  }
+
+  override fun equals(other: Any?): Boolean =
+    other is VueScriptSetupModelDecl
+    && other.call == call
+    && other.name == name
+
+  override fun hashCode(): Int {
+    var result = call.hashCode()
+    result = 31 * result + name.hashCode()
+    return result
+  }
+
+  override fun createPointer(): Pointer<out VueScriptSetupModelDecl> {
+    val call = call.createSmartPointer()
+    return Pointer {
+      call.dereference()?.let { create(it) }
+    }
+  }
+
+  companion object {
+    fun create(call: JSCallExpression): VueScriptSetupModelDecl? {
+      val typeArgs = call.typeArguments
+      val arguments = call.stubSafeCallArguments
+      val nameElement = arguments.getOrNull(0).asSafely<JSLiteralExpression>()
+      val name = if (nameElement != null) {
+        getLiteralValue(nameElement) ?: return null
+      }
+      else {
+        MODEL_VALUE_PROP
+      }
+
+      val options = when (arguments.size) {
+        2 -> arguments[1]
+        1 if arguments[0] is JSObjectLiteralExpression -> arguments[0]
+        else -> null
+      } as? JSObjectLiteralExpression
+
+      val jsType = typeArgs.firstOrNull()?.jsType
+                   ?: options?.let { VueSourceModelPropType(name, it) }
+                   ?: JSAnyType.get(call)
+
+      return VueScriptSetupModelDecl(call, name, jsType, options, nameElement ?: call)
+    }
+  }
+}
+
+private class VueScriptSetupModelInputProperty(
+  override val modelDecl: VueScriptSetupModelDecl,
+) : VueInputProperty, VueModelOwner, PsiSourcedPolySymbol {
+  override val name: String
+    get() = modelDecl.name
+
+  override val source: PsiElement
+    get() = modelDecl.source
+
+  override val required: Boolean
+    get() = modelDecl.required
+
+  override val type: JSType
+    get() = modelDecl.jsType
+
+  override fun equals(other: Any?): Boolean =
+    other is VueScriptSetupModelInputProperty
+    && other.modelDecl == modelDecl
+
+  override fun hashCode(): Int =
+    modelDecl.hashCode()
+
+  override fun toString(): String {
+    return "VueScriptSetupModelInputProperty(modelDecl=$modelDecl)"
+  }
+
+  override fun createPointer(): Pointer<VueScriptSetupModelInputProperty> {
+    val modelDecl = modelDecl.createPointer()
+    return Pointer { modelDecl.dereference()?.let { VueScriptSetupModelInputProperty(it) } }
+  }
+}
+
+private class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) : VueEmitCall, VueModelOwner {
+  override val name: String
+    get() = "update:${modelDecl.name}"
+
+  override val source: PsiElement?
+    get() = modelDecl.source
+
+  override val params: List<JSParameterTypeDecorator> =
+    listOf(JSParameterTypeDecoratorImpl("value", modelDecl.referenceType, false, false, true))
+
+  override val hasStrictSignature: Boolean = true
+}
+
+private class VueScriptSetupSlot(
+  override val name: String,
+  override val source: PsiElement?,
+  override val scope: JSType?,
+) : VueSlot
