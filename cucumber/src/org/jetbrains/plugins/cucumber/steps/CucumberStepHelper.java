@@ -54,6 +54,8 @@ public final class CucumberStepHelper {
   /// Searches for all step definitions that are available from `featureFile` and returns them.
   ///
   /// @see CucumberJvmExtensionPoint#loadStepsFor(PsiFile, Module)
+  /// @deprecated Use [#loadStepsFor] instead.
+  @Deprecated(forRemoval = true)
   public static Collection<AbstractStepDefinition> findAllStepDefinitions(PsiFile featureFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) {
@@ -154,8 +156,7 @@ public final class CucumberStepHelper {
 
   //region Deprecated and to be removed
 
-  /// @deprecated Use [#findAllStepDefinitions(PsiFile)] instead.
-  @SuppressWarnings("JavaExistingMethodCanBeUsed")
+  /// @deprecated Use [#loadStepsFor(PsiFile, Module)] instead.
   @Deprecated(forRemoval = true)
   public static List<AbstractStepDefinition> getAllStepDefinitions(PsiFile featureFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);

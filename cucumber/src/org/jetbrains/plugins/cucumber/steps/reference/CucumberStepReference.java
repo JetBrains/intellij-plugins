@@ -101,7 +101,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
       return ResolveResult.EMPTY_ARRAY;
     }
 
-    final Collection<AbstractStepDefinition> stepDefinitions = CucumberStepHelper.findAllStepDefinitions(step.getContainingFile());
+    final Collection<AbstractStepDefinition> stepDefinitions = CucumberStepHelper.loadStepsFor(step.getContainingFile(), module);
 
     final List<PsiElement> resolvedElements = new ArrayList<>();
     for (final AbstractStepDefinition stepDefinition : stepDefinitions) {
