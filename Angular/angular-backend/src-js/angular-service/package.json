@@ -2,6 +2,7 @@
   "name": "ws-typescript-angular-plugin",
   "version": "0.0.1",
   "private": true,
+  "main": "index.js",
   "dependencies": {
     "@volar/typescript": "2.4.27",
     "tsc-ide-plugin": "file:/../../../../../plugins/JavaScriptLanguage/resources/tscplugin",
