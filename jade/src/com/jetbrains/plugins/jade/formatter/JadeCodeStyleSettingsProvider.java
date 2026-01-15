@@ -6,14 +6,14 @@ import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
-import com.jetbrains.plugins.jade.JadeBundle;
+import com.jetbrains.plugins.jade.JadeLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class JadeCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
   @Override
   public @NotNull Configurable createSettingsPage(@NotNull CodeStyleSettings settings, final @NotNull CodeStyleSettings originalSettings) {
-    return new CodeStyleAbstractConfigurable(settings, originalSettings, JadeBundle.message("pug.code.style.configurable.name")) {
+    return new CodeStyleAbstractConfigurable(settings, originalSettings, JadeLanguage.INSTANCE.getDisplayName()) {
       @Override
       protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
         return new JadeCodeStyleMainPanel(settings, originalSettings);
@@ -33,7 +33,7 @@ public final class JadeCodeStyleSettingsProvider extends CodeStyleSettingsProvid
 
   @Override
   public @Nullable String getConfigurableDisplayName() {
-    return JadeBundle.message("pug.code.style.configurable.name");
+    return JadeLanguage.INSTANCE.getDisplayName();
   }
 
 }
