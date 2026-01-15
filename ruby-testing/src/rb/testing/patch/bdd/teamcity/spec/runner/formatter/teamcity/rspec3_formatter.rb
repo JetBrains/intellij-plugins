@@ -268,7 +268,9 @@ module Spec
                             else
                               example_notification.formatted_backtrace
                             end
-          backtrace = backtrace_lines.join("\n")
+          backtrace = backtrace_lines.reject do |line|
+            line.to_s.include? ":in '#{ExpectationHelperSingletonPatch.name}#"
+          end.join("\n")
 
           debug_log("Example failing... [#{example_data}], Message:\n#{message} \n\nBackrace:\n#{backtrace}]")
 
