@@ -438,16 +438,23 @@ public final class CucumberUtil {
     return buildRegexpFromCucumberExpression(cucumberExpression, MapParameterTypeManager.DEFAULT);
   }
 
-  /// Builds a regexp from the `cucumberExpression` containing `ParameterType`s.
+  /// Builds a regex from the `cucumberExpression` containing `ParameterType`s.
+  ///
   /// ### Example
+  ///
   /// We can go from Cucumber expression:
+  ///
   /// ```plaintext
   /// provided {int} cucumbers
   /// ```
-  /// to regexp:
+  ///
+  /// to regex:
+  ///
   /// ```
   /// ^provided (-?\d+) cucumbers$
   /// ```
+  ///
+  /// Escaped braces like `\{int}` are preserved as literal text `{int}` in the output regex.
   ///
   /// @param parameterTypeManager provides mapping from `ParameterType`s name to its value
   /// @return regular expression defined by Cucumber Expression and `ParameterType`s value
@@ -455,7 +462,13 @@ public final class CucumberUtil {
   /// @see <a href="https://github.com/cucumber/cucumber-expressions">Cucumber Expressions on GitHub</a>
   public static @NotNull String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
                                                                   @NotNull ParameterTypeManager parameterTypeManager) {
-    String cucumberExpression1 = escapeCucumberExpression(cucumberExpression);
+    // Replace escaped braces with placeholders before any processing.
+    // This ensures \{ and \} are not treated as parameter type delimiters.
+    // When we see \{, we also need to escape the corresponding } for valid regex output.
+    // See IDEA-375195.
+    String withPlaceholders = replaceEscapedBracesWithPlaceholders(cucumberExpression);
+
+    String cucumberExpression1 = escapeCucumberExpression(withPlaceholders);
     String cucumberExpression2 = replaceOptionalTextWithRegex(cucumberExpression1);
     String escapedCucumberExpression = replaceAlternativeTextWithRegex(cucumberExpression2);
 
@@ -472,15 +485,22 @@ public final class CucumberUtil {
     for (Pair<TextRange, String> rangeAndValue : rangesAndParameterTypeValues) {
       String value = rangeAndValue.getSecond();
       if (value == null) {
-        return escapedCucumberExpression;
+        // Restore placeholders when returning early due to unknown parameter type.
+        // We need \\{ and \\} to match literal { and } in the regex.
+        return escapedCucumberExpression.replace("\u0001", "\\{").replace("\u0002", "\\}");
       }
       int startOffset = rangeAndValue.first.getStartOffset();
       int endOffset = rangeAndValue.first.getEndOffset();
       result.replace(startOffset, endOffset, "(" + value + ")");
     }
-    result.insert(0, '^');
-    result.append('$');
-    return result.toString();
+
+    // Restore placeholders to escaped literal braces in the final regex.
+    // We need \\{ and \\} to match literal { and } in the regex.
+    String finalResult = result.toString()
+      .replace("\u0001", "\\{")
+      .replace("\u0002", "\\}");
+
+    return '^' + finalResult + '$';
   }
 
   /**
@@ -665,6 +685,50 @@ public final class CucumberUtil {
       result = matcher.find();
     }
     while (result);
+  }
+
+  /// Replaces escaped braces `\{` and `\}` with placeholder characters.
+  ///
+  /// When `\{` is found, we also need to mark the corresponding `}` for escaping,
+  /// even if it's not explicitly escaped with `\}`. This ensures proper regex generation
+  /// where both braces need to be escaped to match literal `{` and `}`.
+  ///
+  /// Uses `\u0001` as placeholder for escaped `{` and `\u0002` for escaped `}`.
+  private static @NotNull String replaceEscapedBracesWithPlaceholders(@NotNull String cucumberExpression) {
+    // First, handle the explicitly escaped '\}'
+    String temp = cucumberExpression.replace("\\}", "\u0002");
+
+    // Now handle \{ and mark the corresponding } for escaping too
+    StringBuilder result = new StringBuilder();
+    boolean afterEscapedOpenBrace = false;
+
+    int i = 0;
+    while (i < temp.length()) {
+      char c = temp.charAt(i);
+
+      if (c == '\\' && i + 1 < temp.length() && temp.charAt(i + 1) == '{') {
+        // Found '\{' - replace it with placeholder
+        result.append('\u0001');
+        i++; // Skip the '{'
+        afterEscapedOpenBrace = true;
+      }
+      else if (c == '{') {
+        // Unescaped '{' starts a parameter type - reset flag
+        result.append(c);
+        afterEscapedOpenBrace = false;
+      }
+      else if (c == '}' && afterEscapedOpenBrace) {
+        // This '}' corresponds to an escaped '\{' - mark it for escaping too
+        result.append('\u0002');
+        afterEscapedOpenBrace = false;
+      }
+      else {
+        result.append(c);
+      }
+      i++;
+    }
+
+    return result.toString();
   }
 
   /// Escapes a cucumber expression.

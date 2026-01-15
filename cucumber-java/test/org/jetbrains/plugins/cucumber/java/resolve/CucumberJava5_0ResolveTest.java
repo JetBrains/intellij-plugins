@@ -67,6 +67,11 @@ public class CucumberJava5_0ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("second <caret>regex", "my_double_definition");
   }
 
+  // Test for IDEA-375195
+  public void testResolveEscapedBraces() {
+    doTest("escapedBraces", "cucumber in my belly {int}<caret> oops", "I_have_cucumbers_in_my_belly");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber5ProjectDescriptor();

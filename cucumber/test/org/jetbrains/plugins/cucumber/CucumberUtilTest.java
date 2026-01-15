@@ -2,7 +2,6 @@ package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinStepRenameProcessor;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -43,9 +42,9 @@ public class CucumberUtilTest {
     assertEquals(expected3, getCukexHighlightRanges(expression3));
 
     // Should correctly handle a single parameter and optional text.
-     String expression4 = "I have {int} cucumber(s) in my belly!";
-     List<TextRange> expected4 = List.of(new TextRange(7, 12));
-     assertEquals(expected4, getCukexHighlightRanges(expression4));
+    String expression4 = "I have {int} cucumber(s) in my belly!";
+    List<TextRange> expected4 = List.of(new TextRange(7, 12));
+    assertEquals(expected4, getCukexHighlightRanges(expression4));
   }
 
   @Test
@@ -55,7 +54,7 @@ public class CucumberUtilTest {
     List<TextRange> expected0 = List.of();
     assertEquals(expected0, getCukexRanges(expression0));
     assertEquals(List.of("I am happy"), textRangesOutsideToSubstrings(expression0, expected0));
-    
+
     // Should correctly handle a single parameter
     String expression1 = "I have {int} cucumber in my belly!";
     List<TextRange> expected1 = List.of(new TextRange(7, 12));
@@ -145,10 +144,25 @@ public class CucumberUtilTest {
 
     String actual6 = buildRegexpFromCucumberExpression("I have one/few/many cucumber(s) in my be||y");
     assertEquals("^I have (one|few|many) cucumber(s)? in my be\\\\|\\\\|y$", actual6);
+  }
 
-    // FIXME: Does not support escaping parameters for now. See IDEA-375195.
-    // String actual7 = buildRegexpFromCucumberExpression("I have \\{int} {int} feeling(s)");
-    // assertEquals("^I have \\{int} (-?\\d+) feeling(s)$", actual7);
+  @Test
+  public void testBuildRegexpFromCucumberExpression_EscapedBraces() {
+    // Escaped opening brace only
+    String actual1 = buildRegexpFromCucumberExpression("I have \\{int} {int} feeling(s)");
+    assertEquals("^I have \\{int\\} (-?\\d+) feeling(s)?$", actual1);
+
+    // Both braces escaped
+    String actual2 = buildRegexpFromCucumberExpression("I have \\{int\\} cucumbers");
+    assertEquals("^I have \\{int\\} cucumbers$", actual2);
+
+    // From the issue IDEA-375195: escaped brace at the end
+    String actual3 = buildRegexpFromCucumberExpression("I have {int} cucumber(s) in my belly \\{int} oops");
+    assertEquals("^I have (-?\\d+) cucumber(s)? in my belly \\{int\\} oops$", actual3);
+
+    // Escaped brace with alternative text
+    String actual4 = buildRegexpFromCucumberExpression("I have one/few/many \\{items\\}");
+    assertEquals("^I have (one|few|many) \\{items\\}$", actual4);
   }
 
   @Test
@@ -214,21 +228,23 @@ public class CucumberUtilTest {
     assertEquals("I really do have 7 feelings", newName);
   }
 
-  @Ignore("Does not support escaping for now")
   @Test
   public void testGetNewStepName_escaped() {
     String oldStepDef = "I have \\{int} {int} feeling(s)";
-    String oldStepName = "I have 2 feelings";
+    String oldStepName = "I have {int} 2 feelings";
 
     String oldStepDefRegex = GherkinStepRenameProcessor.prepareRegexFromCukex(oldStepDef, MapParameterTypeManager.DEFAULT);
-    assertEquals("I have \\\\{int} (-?\\d+) feeling(s)?", oldStepDefRegex);
+    assertEquals("I have \\{int\\} (-?\\d+) feeling(s)?", oldStepDefRegex);
 
+    // The escaped \{int} becomes part of static text in the step definition,
+    // but in the actual step name (feature file), there's no backslash.
+    // So the static texts should have the escape characters removed.
     String newName = GherkinStepRenameProcessor.getNewStepName(
       oldStepName,
       Pattern.compile(oldStepDefRegex),
-      /*newStaticTexts*/ List.of("I really do have ", " feeling")
+      /*newStaticTexts*/ List.of("I really do have {int} ", " feeling", "")
     );
 
-    assertEquals("I really do have 7 feelings", newName);
+    assertEquals("I really do have {int} 2 feelings", newName);
   }
 }
