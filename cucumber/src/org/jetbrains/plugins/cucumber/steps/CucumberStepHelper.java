@@ -97,15 +97,13 @@ public final class CucumberStepHelper {
     return definitionsByClass.values();
   }
 
-  // ToDo: use binary search here
-  public static List<AbstractStepDefinition> findStepDefinitionsByPattern(String pattern, Module module) {
-    final List<AbstractStepDefinition> allSteps = loadStepsFor(null, module);
-    final List<AbstractStepDefinition> result = new ArrayList<>();
-    for (final AbstractStepDefinition stepDefinition : allSteps) {
-      final String elementText = stepDefinition.getCucumberRegex();
-      if (elementText != null && elementText.equals(pattern)) {
-        result.add(stepDefinition);
-      }
+  /// Returns all step definitions available from `featureFile`.
+  ///
+  /// This is a helper method that calls [AbstractCucumberExtension#loadStepsFor] of all installed language-specific Cucumber plugins.
+  public static List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module) {
+    final ArrayList<AbstractStepDefinition> result = new ArrayList<>();
+    for (final CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
+      result.addAll(ep.loadStepsFor(featureFile, module));
     }
     return result;
   }
@@ -152,17 +150,6 @@ public final class CucumberStepHelper {
       return null;
     }
     return definition.getPattern();
-  }
-
-  /// Returns all step definitions available from `featureFile`.
-  ///
-  /// This is a helper method that calls [AbstractCucumberExtension#loadStepsFor] of all installed language-specific Cucumber plugins.
-  private static List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, Module module) {
-    final ArrayList<AbstractStepDefinition> result = new ArrayList<>();
-    for (final CucumberJvmExtensionPoint ep : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
-      result.addAll(ep.loadStepsFor(featureFile, module));
-    }
-    return result;
   }
 
   //region Deprecated and to be removed
