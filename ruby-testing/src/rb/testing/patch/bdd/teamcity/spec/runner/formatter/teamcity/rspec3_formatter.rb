@@ -27,6 +27,37 @@ module Spec
   module Runner
     module Formatter
 
+      module ExpectationNotMetErrorPatch
+        attr_accessor :expected_str, :actual_str
+      end
+
+      module ExpectationHelperSingletonPatch
+        def rm_inject_failure_details(failure, matcher)
+          if matcher.respond_to?(:diffable?) && matcher.respond_to?(:expected) && matcher.respond_to?(:actual) &&
+             matcher.diffable?
+            if matcher.expected.is_a?(String) && matcher.actual.is_a?(String)
+              failure.expected_str = matcher.expected
+              failure.actual_str = matcher.actual
+            elsif matcher.respond_to?(:expected_formatted) && matcher.respond_to?(:actual_formatted)
+              failure.expected_str = matcher.expected_formatted.to_s
+              failure.actual_str = matcher.actual_formatted.to_s
+            else
+              failure.expected_str = matcher.expected.inspect
+              failure.actual_str = matcher.actual.inspect
+            end
+          end
+        end
+
+        def handle_failure(matcher, message, failure_message_method)
+          begin
+            super matcher, message, failure_message_method
+          rescue ::RSpec::Expectations::ExpectationNotMetError => failure
+            rm_inject_failure_details(failure, matcher)
+            raise
+          end
+        end
+      end
+
       class RunningExampleData
         attr_reader :id, :full_name, :stdout_file_old, :stderr_file_old, :stdout_file_new, :stderr_file_new
 
@@ -127,6 +158,9 @@ module Spec
         def start(count_notification)
           super
 
+          RSpec::Expectations::ExpectationNotMetError.prepend(ExpectationNotMetErrorPatch)
+          RSpec::Expectations::ExpectationHelper.singleton_class.prepend(ExpectationHelperSingletonPatch)
+
           @example_count = count_notification.count
 
           # Log count of examples
@@ -200,6 +234,10 @@ module Spec
           close_test_block(example)
         end
 
+        def strip_rspec_diff(message)
+          message.slice(0, message.index("\n\nDiff:\e[") || message.length)
+        end
+
         def example_failed(example_notification)
           example = example_notification.example
           debug_log("example failed[#{example_description(example)}]  #{example}")
@@ -236,7 +274,12 @@ module Spec
 
           # Expectation failures will be shown as failures and other exceptions as Errors
           if expectation_not_met
-            log(@message_factory.create_test_failed(example_data.full_name, message, backtrace, example_data.id))
+            if failure.respond_to?(:expected_str) && failure.respond_to?(:actual_str)
+              message = strip_rspec_diff message
+              log(@message_factory.create_test_failed(example_data.full_name, message, backtrace, example_data.id, failure.expected_str, failure.actual_str))
+            else
+              log(@message_factory.create_test_failed(example_data.full_name, message, backtrace, example_data.id))
+            end
           else
             log(@message_factory.create_test_error(example_data.full_name, message, backtrace, example_data.id))
           end

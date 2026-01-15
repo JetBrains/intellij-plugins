@@ -104,13 +104,21 @@ module Rake
                        :nodeId => node_id
       end
 
-      def self.create_test_failed(test_name, message, stacktrace, node_id = nil)
+      def self.create_test_failed(test_name, message, stacktrace, node_id = nil, expected = nil, actual = nil)
         stacktrace = format_stacktrace_if_needed(message, stacktrace)
-        create_message :message_name => 'testFailed',
-                       :name => test_name,
-                       :message => message,
-                       :details => stacktrace,
-                       :nodeId => node_id
+        attrs = {
+          :message_name => 'testFailed',
+          :name => test_name,
+          :message => message,
+          :details => stacktrace,
+          :nodeId => node_id
+        }
+        if expected != nil && actual != nil
+          attrs[:type] = 'comparisonFailure'
+          attrs[:expected] = expected.to_s
+          attrs[:actual] = actual.to_s
+        end
+        create_message attrs
       end
 
       def self.create_test_error(test_name, message, stacktrace, node_id = nil)
