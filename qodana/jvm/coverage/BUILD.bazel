@@ -15,7 +15,7 @@ jvm_library(
   resources = [":coverage_resources"],
   deps = [
     "@lib//:kotlin-stdlib",
-    "@ultimate_lib//:kotlinc-kotlin-compiler-common-provided",
+    "@lib//:kotlinc-kotlin-compiler-common-provided",
     "@community//java/openapi:java",
     "@community//platform/analysis-api:analysis",
     "@community//platform/core-api:core",
@@ -43,7 +43,7 @@ jvm_library(
   associates = [":coverage"],
   deps = [
     "@lib//:kotlin-stdlib",
-    "@ultimate_lib//:kotlinc-kotlin-compiler-common-provided",
+    "@lib//:kotlinc-kotlin-compiler-common-provided",
     "@lib//:assert_j",
     "@community//java/openapi:java",
     "@community//platform/analysis-api:analysis",
