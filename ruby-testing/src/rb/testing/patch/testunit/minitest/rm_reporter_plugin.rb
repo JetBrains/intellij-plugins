@@ -341,7 +341,7 @@ module Minitest
 
     # see Minitest::Runnable.run
     def compute_suitable_tests
-      filter = options[:filter] || "/./"
+      filter = options[:filter] || options[:include] || "/./"
       filter = Regexp.new $1 if filter.is_a?(String) && filter =~ %r%/(.*)/%
 
       exclude = options[:exclude]
