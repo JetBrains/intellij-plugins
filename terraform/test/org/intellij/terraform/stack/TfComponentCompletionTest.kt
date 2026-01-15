@@ -56,7 +56,7 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
     assertNoTfDeployBlocks(fileExtension, completionVariants)
 
     assertNoTerragruntBlocks(fileExtension, completionVariants, listOf("provider", "locals"))
-    assertNoStackBlocks(fileExtension, completionVariants)
+    assertNoStackBlocks(fileExtension, completionVariants, listOf("locals", "stack"))
   }
 
   fun testAutoInsertCompletion() {
