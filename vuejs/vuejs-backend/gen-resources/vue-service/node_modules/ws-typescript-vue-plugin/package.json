@@ -3,8 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "main": "index.js",
+  "workspaces": [
+    "../../../../../plugins/JavaScriptLanguage/resources/tscplugin"
+  ],
   "dependencies": {
-    "tsc-ide-plugin": "file:/../../../../../plugins/JavaScriptLanguage/resources/tscplugin",
+    "tsc-ide-plugin": "workspace:*",
     "typescript": "^5.9.3",
     "@vue/typescript-plugin": "^3.2.2"
   },
