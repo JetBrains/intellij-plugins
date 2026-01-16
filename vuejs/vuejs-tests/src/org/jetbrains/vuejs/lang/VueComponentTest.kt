@@ -252,9 +252,9 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "rawSource", sourceElement.rawSource.takeIf { it != sourceElement.source })
         }
         if (sourceElement is VueDirective) {
-          printProperty(level, "jsType", sourceElement.jsType)
-          printProperty(level, "modifiers", sourceElement.modifiers.takeIf { it.isNotEmpty() })
-          printProperty(level, "argument", sourceElement.argument)
+          printProperty(level, "jsType", sourceElement.type)
+          printProperty(level, "modifiers", sourceElement.directiveModifiers.takeIf { it.isNotEmpty() })
+          printProperty(level, "argument", sourceElement.vueArgument)
         }
         if (sourceElement is VueDirectiveArgument) {
           printProperty(level, "pattern", sourceElement.pattern)

@@ -27,6 +27,7 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
 import org.jetbrains.vuejs.web.*
+import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbolMixin
 import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.web.symbols.VueSymbolDocumentationProvider
 
@@ -66,24 +67,9 @@ data class VueModelDirectiveProperties(
   }
 }
 
-interface VueNamedSymbol : VueSymbol, VueDocumentedItem {
-
-  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
-    PolySymbolDocumentationTarget.create(this, location, VueSymbolDocumentationProvider)
-
-  override val searchTarget: PolySymbolSearchTarget?
-    get() = PolySymbolSearchTarget.create(this)
-
-  override val presentation: TargetPresentation
-    get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(this), name))
-      .icon(icon)
-      .presentation()
+interface VueNamedSymbol : VueDocumentedItemSymbolMixin {
 
   abstract override fun createPointer(): Pointer<out VueNamedSymbol>
-
-  override fun equals(other: Any?): Boolean
-
-  override fun hashCode(): Int
 }
 
 interface VueSlot : VueNamedSymbol, PolySymbolScope {

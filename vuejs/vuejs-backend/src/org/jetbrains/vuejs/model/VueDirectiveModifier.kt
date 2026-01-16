@@ -10,7 +10,7 @@ interface VueDirectiveModifier : VueNamedSymbol {
   override val kind: PolySymbolKind
     get() = VUE_DIRECTIVE_MODIFIERS
 
-  fun withProximity(proximity: VueModelVisitor.Proximity): VueDirectiveModifier
+  fun withProximity(proximity: VueModelVisitor.Proximity?): VueDirectiveModifier
 
   abstract override fun createPointer(): Pointer<out VueDirectiveModifier>
 }

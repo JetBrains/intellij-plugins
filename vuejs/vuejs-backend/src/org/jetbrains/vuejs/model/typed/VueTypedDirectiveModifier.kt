@@ -17,7 +17,7 @@ data class VueTypedDirectiveModifier(
   private val vueProximity: VueModelVisitor.Proximity? = null,
 ) : VueDirectiveModifier, PsiSourcedPolySymbol {
 
-  override fun withProximity(proximity: VueModelVisitor.Proximity): VueDirectiveModifier =
+  override fun withProximity(proximity: VueModelVisitor.Proximity?): VueDirectiveModifier =
     VueTypedDirectiveModifier(name, source, proximity)
 
   override val priority: PolySymbol.Priority?
