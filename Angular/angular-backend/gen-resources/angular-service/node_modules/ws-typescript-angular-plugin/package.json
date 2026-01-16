@@ -7,13 +7,13 @@
     "../../../../../plugins/JavaScriptLanguage/resources/tscplugin"
   ],
   "dependencies": {
-    "@volar/typescript": "2.4.27",
+    "typescript": "5.4.5",
     "tsc-ide-plugin": "workspace:*",
-    "esbuild": "^0.20.0"
+    "@volar/typescript": "2.4.27"
   },
   "devDependencies": {
     "@types/node": "^18.13.10",
-    "typescript": "5.4.5"
+    "esbuild": "^0.20.0"
   },
   "scripts": {
     "build:clean": "npm run clean && npm run build",
