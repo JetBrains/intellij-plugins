@@ -6,7 +6,7 @@
     "skipLibCheck": true,
     "strict": true,
     "types": [
-      "tsc-ide-plugin/tsserverlibrary.shim",
+      "tsc-ide-plugin/typescript",
       "node",
     ],
   },
