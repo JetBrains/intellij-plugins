@@ -4,10 +4,14 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.platform.backend.documentation.DocumentationTarget
+import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolQualifiedName
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
+import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.js.JS_PROPERTIES
@@ -17,11 +21,14 @@ import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
+import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueNamedSymbolMixin
+import org.jetbrains.vuejs.web.symbols.VueSymbol
+import org.jetbrains.vuejs.web.symbols.VueSymbolDocumentationProvider
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
 
@@ -59,20 +66,57 @@ data class VueModelDirectiveProperties(
   }
 }
 
-interface VueNamedSymbol : VueDocumentedItem {
-  val name: String
+interface VueNamedSymbol : VueSymbol, VueDocumentedItem {
 
-  override val source: PsiElement?
-    get() = null
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
+    PolySymbolDocumentationTarget.create(this, location, VueSymbolDocumentationProvider)
+
+  override val searchTarget: PolySymbolSearchTarget?
+    get() = PolySymbolSearchTarget.create(this)
+
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(this), name))
+      .icon(icon)
+      .presentation()
+
+  abstract override fun createPointer(): Pointer<out VueNamedSymbol>
+
+  override fun equals(other: Any?): Boolean
+
+  override fun hashCode(): Int
 }
 
-interface VueSlot : VueNamedSymbol {
-  val scope: JSType? get() = null
-  val pattern: String? get() = null
+interface VueSlot : VueNamedSymbol, PolySymbolScope {
+
+  override val kind: PolySymbolKind
+    get() = HTML_SLOTS
+
+  override val searchTarget: PolySymbolSearchTarget?
+    get() = null
+
+  override fun getSymbols(
+    kind: PolySymbolKind,
+    params: PolySymbolListSymbolsQueryParams,
+    stack: PolySymbolQueryStack,
+  ): List<PolySymbol> {
+    return getJSPropertySymbols(kind)
+  }
+
+  override fun getMatchingSymbols(
+    qualifiedName: PolySymbolQualifiedName,
+    params: PolySymbolNameMatchQueryParams,
+    stack: PolySymbolQueryStack,
+  ): List<PolySymbol> {
+    return getMatchingJSPropertySymbols(qualifiedName, params.queryExecutor.namesProvider)
+  }
+
+  override fun createPointer(): Pointer<out VueSlot>
+
+  override fun getModificationCount(): Long = -1
 }
 
 @JvmDefaultWithCompatibility
-interface VueEmitCall : VueNamedSymbol, VueNamedSymbolMixin {
+interface VueEmitCall : VueNamedSymbol {
   /**
    * Event parameters not including event type itself, e.g.
    * for `{(event: 'add', item: string): void}` contains only `item: string`.
@@ -120,7 +164,7 @@ interface VueEmitCall : VueNamedSymbol, VueNamedSymbolMixin {
  *
  * @see VueInputProperty
  */
-interface VueProperty : VueNamedSymbol, VueNamedSymbolMixin, PolySymbolScope {
+interface VueProperty : VueNamedSymbol, PolySymbolScope {
 
   override val type: JSType?
 
@@ -204,7 +248,7 @@ interface VueModelOwner {
   val modelDecl: VueModelDecl
 }
 
-interface VueModelDecl : VueNamedSymbolMixin {
+interface VueModelDecl : VueNamedSymbol {
 
   override val kind: PolySymbolKind
     get() = VUE_MODEL_DECL
@@ -232,7 +276,10 @@ interface VueModelDecl : VueNamedSymbolMixin {
 interface VueProvide : VueNamedSymbol {
   val injectionKey: PsiNamedElement? get() = null
 
-  val jsType: JSType? get() = null
+  override val kind: PolySymbolKind
+    get() = VUE_PROVIDES
+
+  abstract override fun createPointer(): Pointer<out VueProvide>
 }
 
 interface VueInject : VueNamedSymbol {
@@ -241,4 +288,9 @@ interface VueInject : VueNamedSymbol {
   val from: String? get() = null
 
   val defaultValue: JSType? get() = null
+
+  override val kind: PolySymbolKind
+    get() = VUE_INJECTS
+
+  abstract override fun createPointer(): Pointer<out VueInject>
 }

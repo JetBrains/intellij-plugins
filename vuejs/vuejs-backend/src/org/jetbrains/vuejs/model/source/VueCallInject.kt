@@ -3,19 +3,21 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.model.Pointer
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.contextOfType
 import org.jetbrains.vuejs.model.VueInject
 import org.jetbrains.vuejs.model.resolveInjectionSymbol
 import org.jetbrains.vuejs.types.VueSourceProvideType
 
-
 class VueCallInject(
   override val name: String,
   override val source: PsiElement,
   private val symbolSource: PsiNamedElement? = null,
-) : VueInject {
+) : VueInject, PsiSourcedPolySymbol {
 
   override val injectionKey: PsiNamedElement?
     get() = resolveInjectionSymbol(symbolSource)
@@ -23,4 +25,28 @@ class VueCallInject(
   override val defaultValue: JSType?
     get() = source.contextOfType<JSCallExpression>(true)
       ?.let { VueSourceProvideType.inferTypeFromCallExpr(it) }
+
+  override fun createPointer(): Pointer<VueCallInject> {
+    val name = name
+    val sourcePtr = source.createSmartPointer()
+    val symbolSourcePtr = symbolSource?.createSmartPointer()
+    return Pointer {
+      val source = sourcePtr.dereference() ?: return@Pointer null
+      val symbolSource = symbolSourcePtr?.let { it.dereference() ?: return@Pointer null }
+      VueCallInject(name, source, symbolSource)
+    }
+  }
+
+  override fun equals(other: Any?): Boolean =
+    other === this ||
+    other is VueCallInject
+    && other.name == name
+    && other.source == source
+
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + source.hashCode()
+    return result
+  }
+
 }

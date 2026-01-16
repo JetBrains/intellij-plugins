@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -228,7 +229,7 @@ private fun buildSlotsType(
   val slots = (instance as? VueContainer)?.slots ?: return originalType ?: JSAnyType.get(typeSource)
   val slotType = resolveSymbolFromNodeModule(instance.source, VUE_MODULE, "Slot", JSTypedEntity::class.java)?.jsType
   val slotsType = slots.asSequence()
-    .filter { it.pattern == null }
+    .filter { it !is PolySymbolWithPattern }
     .map { PropertySignatureImpl(it.name, slotType, true, true, it.source) }
     .toList()
     .let { JSRecordTypeImpl(typeSource, it) }

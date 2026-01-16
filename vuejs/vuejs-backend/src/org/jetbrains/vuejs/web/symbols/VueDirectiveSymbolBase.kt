@@ -44,11 +44,9 @@ abstract class VueDirectiveSymbolBase<T : VueDirective>(
       }
 
       VUE_DIRECTIVE_MODIFIERS -> {
-        item.modifiers.map { modifier ->
-          VueDirectiveModifierSymbol(modifier, vueProximity)
-        }.ifEmpty {
-          listOf(VueAnySymbol(kind, "Vue directive modifier"))
-        }
+        item.modifiers
+          .map { it.withProximity(vueProximity) }
+          .ifEmpty { listOf(VueAnySymbol(kind, "Vue directive modifier")) }
       }
 
       else -> emptyList()

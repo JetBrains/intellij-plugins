@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.testFramework.DebugOutputPrinter
 import com.intellij.polySymbols.testFramework.checkTextByFile
 import com.intellij.psi.PsiDocumentManager
@@ -288,8 +289,8 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "defaultValue", sourceElement.defaultValue)
         }
         if (sourceElement is VueSlot) {
-          printProperty(level, "scope", sourceElement.scope)
-          printProperty(level, "pattern", sourceElement.pattern)
+          printProperty(level, "scope", sourceElement.type)
+          printProperty(level, "pattern", (sourceElement as? PolySymbolWithPattern)?.pattern)
         }
         if (sourceElement is VueEmitCall) {
           printProperty(level, "eventJSType", sourceElement.type)

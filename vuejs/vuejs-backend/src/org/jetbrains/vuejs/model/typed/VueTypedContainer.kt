@@ -24,6 +24,8 @@ import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
 import java.util.*
+import kotlin.reflect.KClass
+import kotlin.reflect.safeCast
 
 abstract class VueTypedContainer(override val source: PsiElement) : VueContainer {
 
@@ -82,7 +84,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
           ?.asRecordType()
           ?.properties
           ?.mapNotNull { signature ->
-            VueTypedSlot(signature.memberName, signature.memberSource.singleElement, signature.jsType)
+            VueTypedSlot(this, signature.memberName, signature.memberSource.singleElement, signature.jsType)
           }
         ?: emptyList(),
         PsiModificationTracker.MODIFICATION_COUNT)
@@ -117,14 +119,17 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
 
   abstract override fun createPointer(): Pointer<out VueTypedContainer>
 
-  private abstract class VueTypedDocumentedElement : VueNamedSymbol {
+  private abstract class VueTypedDocumentedElement(
+    private val container: VueTypedContainer,
+    override val name: String,
+  ) : VueNamedSymbol, PsiSourcedPolySymbol {
 
     override val description: String? by lazy {
       val doc = JSDocumentationProvider()
                   .generateDoc(source ?: return@lazy null, null) ?: return@lazy null
       val contentStart = doc.indexOf(DocumentationMarkup.CONTENT_START)
       val sectionsStart = doc.indexOf(DocumentationMarkup.SECTIONS_START)
-      if (contentStart < 0 || contentStart > sectionsStart)
+      if (contentStart !in 0..sectionsStart)
         null
       else
         doc.substring(contentStart + DocumentationMarkup.CONTENT_START.length, sectionsStart)
@@ -132,12 +137,38 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
           .removeSuffix(DocumentationMarkup.CONTENT_END)
     }
 
+    abstract override fun createPointer(): Pointer<out VueTypedDocumentedElement>
+
+    fun <S : VueNamedSymbol, T : S> createPointer(clazz: KClass<T>, listProvider: (VueTypedContainer) -> List<S>): Pointer<T> {
+      val name = name
+      val containerPtr = container.createPointer()
+      return Pointer {
+        return@Pointer containerPtr
+          .dereference()
+          ?.let { listProvider(it) }
+          ?.firstNotNullOfOrNull { item -> clazz.safeCast(item)?.takeIf { it.name == name } }
+      }
+    }
+
+    override fun equals(other: Any?): Boolean =
+      other === this
+      || other is VueTypedDocumentedElement
+      && other::class == this::class
+      && other.container == container
+      && other.name == name
+
+    override fun hashCode(): Int {
+      var result = container.hashCode()
+      result = 31 * result + name.hashCode()
+      return result
+    }
+
   }
 
   private abstract class VueTypedProperty(
+    container: VueTypedContainer,
     val property: PropertySignature,
-  ) : VueTypedDocumentedElement(), VueProperty, PsiSourcedPolySymbol {
-    override val name: String get() = property.memberName
+  ) : VueTypedDocumentedElement(container, property.memberName), VueProperty {
     override val type: JSType? get() = property.jsType
     override val source: PsiElement?
       get() = property.memberSource.singleElement.let {
@@ -151,41 +182,24 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
   }
 
   private class VueTypedInputProperty(
-    private val container: VueTypedContainer,
+    container: VueTypedContainer,
     property: PropertySignature,
-  ) : VueTypedProperty(property), VueInputProperty, PsiSourcedPolySymbol {
+  ) : VueTypedProperty(container, property), VueInputProperty {
 
     override val required: Boolean
       get() = false
 
-    override fun equals(other: Any?): Boolean =
-      other is VueTypedInputProperty
-      && other.property.memberName == property.memberName
-      && other.container == container
 
-    override fun hashCode(): Int {
-      var result = property.memberName.hashCode()
-      result = 31 * result + container.hashCode()
-      return result
-    }
+    override fun createPointer(): Pointer<VueTypedInputProperty> =
+      createPointer(VueTypedInputProperty::class, VueTypedContainer::props)
 
-    override fun createPointer(): Pointer<VueTypedInputProperty> {
-      val name = name
-      val containerPtr = container.createPointer()
-      return Pointer {
-        return@Pointer containerPtr
-          .dereference()
-          ?.props
-          ?.firstNotNullOfOrNull { prop -> (prop as? VueTypedInputProperty)?.takeIf { it.name == name } }
-      }
-    }
   }
 
   private class VueTypedEmit(
-    private val owner: VueTypedContainer,
-    override val name: String,
+    container: VueTypedContainer,
+    name: String,
     private val callSignature: JSRecordType.CallSignature,
-  ) : VueTypedDocumentedElement(), VueEmitCall, PsiSourcedPolySymbol {
+  ) : VueTypedDocumentedElement(container, name), VueEmitCall {
     override val params: List<JSParameterTypeDecorator>
       get() = callSignature.functionType.parameters.drop(1)
 
@@ -198,35 +212,20 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
     override val hasStrictSignature: Boolean
       get() = true
 
-    override fun createPointer(): Pointer<VueTypedEmit> {
-      val ownerPtr = owner.createPointer()
-      val name = name
-      return Pointer {
-        ownerPtr.dereference()?.emits?.firstNotNullOfOrNull { emit ->
-          (emit as? VueTypedEmit)?.takeIf { it.name == name }
-        }
-      }
-    }
-
-    override fun equals(other: Any?): Boolean =
-      other === this
-      || other is VueTypedEmit
-      && other.owner == owner
-      && other.name == name
-
-    override fun hashCode(): Int {
-      var result = owner.hashCode()
-      result = 31 * result + name.hashCode()
-      return result
-    }
+    override fun createPointer(): Pointer<VueTypedEmit> =
+      createPointer(VueTypedEmit::class, VueTypedContainer::emits)
   }
 
   private class VueTypedSlot(
-    override val name: String,
+    container: VueTypedContainer,
+    name: String,
     override val source: PsiElement?,
     typeSignature: JSType?,
-  ) : VueTypedDocumentedElement(), VueSlot {
-    override val scope: JSType? = (typeSignature as? JSFunctionType)?.parameters?.getOrNull(0)?.simpleType
+  ) : VueTypedDocumentedElement(container, name), VueSlot {
+    override val type: JSType? = (typeSignature as? JSFunctionType)?.parameters?.getOrNull(0)?.simpleType
+
+    override fun createPointer(): Pointer<VueTypedSlot> =
+      createPointer(VueTypedSlot::class, VueTypedContainer::slots)
   }
 
   companion object {

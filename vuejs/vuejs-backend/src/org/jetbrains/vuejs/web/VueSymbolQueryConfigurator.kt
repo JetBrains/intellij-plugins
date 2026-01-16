@@ -39,6 +39,7 @@ val VUE_COMPONENT_COMPUTED_PROPERTIES: PolySymbolKind = PolySymbolKind[NAMESPACE
 val VUE_COMPONENT_DATA_PROPERTIES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "data-properties"]
 val VUE_METHODS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-methods"]
 val VUE_MODEL_DECL: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-model-decl"]
+val VUE_INJECTS: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-injects"]
 val VUE_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-directives"]
 val VUE_GLOBAL_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-global-directives"]
 val VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES: PolySymbolKind = PolySymbolKind[NAMESPACE_HTML, "vue-script-setup-local-directives"]

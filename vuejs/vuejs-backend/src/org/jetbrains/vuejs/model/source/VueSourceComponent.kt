@@ -9,6 +9,10 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.patterns.PolySymbolPattern
+import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
+import com.intellij.polySymbols.query.PolySymbolWithPattern
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider.Result.create
@@ -140,22 +144,69 @@ class VueSourceComponent(
   }
 
   private class VueSourceRegexSlot(
-    override val pattern: String,
+    private val regex: String,
     override val source: XmlTag,
-  ) : VueSlot {
+  ) : VueSlot, PolySymbolWithPattern, PsiSourcedPolySymbol {
+
     override val name: String
       get() = "Dynamic slot"
 
-    override val scope: JSType
+    override val pattern: PolySymbolPattern =
+      PolySymbolPatternFactory.createRegExMatch(regex, true)
+
+    override val type: JSType
       get() = VueSourceSlotScopeType(source, "$name /$pattern/")
+
+    override fun createPointer(): Pointer<VueSourceRegexSlot> {
+      val regex = regex
+      val sourcePtr = source.createSmartPointer()
+      return Pointer {
+        val source = sourcePtr.dereference() ?: return@Pointer null
+        VueSourceRegexSlot(regex, source)
+      }
+    }
+
+    override fun equals(other: Any?): Boolean =
+      other === this ||
+      other is VueSourceRegexSlot
+      && other.regex == regex
+      && other.source == source
+
+    override fun hashCode(): Int {
+      var result = regex.hashCode()
+      result = 31 * result + source.hashCode()
+      return result
+    }
 
   }
 
   private class VueSourceSlot(
     override val name: String,
     override val source: XmlTag,
-  ) : VueSlot {
-    override val scope: JSType
+  ) : VueSlot, PsiSourcedPolySymbol {
+    override val type: JSType
       get() = VueSourceSlotScopeType(source, name)
+
+    override fun createPointer(): Pointer<VueSourceSlot> {
+      val name = name
+      val sourcePtr = source.createSmartPointer()
+      return Pointer {
+        val source = sourcePtr.dereference() ?: return@Pointer null
+        VueSourceSlot(name, source)
+      }
+    }
+
+    override fun equals(other: Any?): Boolean =
+      other === this ||
+      other is VueSourceSlot
+      && other.name == name
+      && other.source == source
+
+    override fun hashCode(): Int {
+      var result = name.hashCode()
+      result = 31 * result + source.hashCode()
+      return result
+    }
+
   }
 }

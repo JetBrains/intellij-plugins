@@ -477,11 +477,38 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   }
 
-  private class VueSourceSlot(override val name: String, override val source: PsiElement?) : VueSlot {
-    override val scope: JSType? = source.asSafely<JSTypeOwner>()?.jsType
+  private class VueSourceSlot(
+    override val name: String,
+    override val source: PsiElement,
+  ) : VueSlot, PsiSourcedPolySymbol {
+    override val type: JSType? = source.asSafely<JSTypeOwner>()?.jsType
+
+    override fun createPointer(): Pointer<VueSourceSlot> {
+      val name = name
+      val sourcePtr = source.createSmartPointer()
+      return Pointer {
+        val source = sourcePtr.dereference() ?: return@Pointer null
+        VueSourceSlot(name, source)
+      }
+    }
+
+    override fun equals(other: Any?): Boolean =
+      other === this ||
+      other is VueSourceSlot
+      && other.name == name
+      && other.source == source
+
+    override fun hashCode(): Int {
+      var result = name.hashCode()
+      result = 31 * result + source.hashCode()
+      return result
+    }
   }
 
-  private class VueSourceInject(override val name: String, override val source: PsiElement?) : VueInject {
+  private class VueSourceInject(
+    override val name: String,
+    override val source: PsiElement?,
+  ) : VueInject, PsiSourcedPolySymbol {
 
     private val keyType: VueInjectKey? by lazy(LazyThreadSafetyMode.PUBLICATION) {
       getInjectionKeyType(source.asSafely<JSProperty>()?.initializerOrStub)
@@ -495,6 +522,27 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override val defaultValue: JSType?
       get() = getInjectDefaultType(source.asSafely<JSProperty>()?.initializerOrStub)
+
+    override fun createPointer(): Pointer<VueSourceInject> {
+      val name = name
+      val sourcePointer = source?.createSmartPointer()
+      return Pointer {
+        val source = sourcePointer?.let { it.dereference() ?: return@Pointer null }
+        VueSourceInject(name, source)
+      }
+    }
+
+    override fun equals(other: Any?): Boolean =
+      other === this
+      || other is VueSourceInject
+      && other.name == name
+      && other.source == source
+
+    override fun hashCode(): Int {
+      var result = name.hashCode()
+      result = 31 * result + (source?.hashCode() ?: 0)
+      return result
+    }
 
     private data class VueInjectKey(val name: String? = null, val symbol: PsiNamedElement? = null)
 

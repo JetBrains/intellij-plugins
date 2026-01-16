@@ -23,9 +23,7 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 import org.jetbrains.vuejs.types.optionalIf
-import org.jetbrains.vuejs.web.symbols.VueNamedSymbolMixin
 import java.util.*
-
 
 private const val PROP_DEC = "Prop"
 private const val PROP_SYNC_DEC = "PropSync"
@@ -144,7 +142,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     private abstract class VueDecoratedNamedSymbol<T : TypeMember>(
       override val name: String,
       protected val member: T,
-    ) : VueNamedSymbolMixin, PsiSourcedPolySymbol {
+    ) : VueNamedSymbol, PsiSourcedPolySymbol {
       override val source: PsiElement?
         get() = member.memberSource.singleElement
 
