@@ -11,6 +11,7 @@
     ],
   },
   "include": [
-    "src/**.ts",
+    "src/index.ts",
+    "src/typings/*.d.ts",
   ]
 }
