@@ -1,4 +1,4 @@
-// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameElementFix;
@@ -1137,16 +1137,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   @Override
   protected void validateSetter(@NotNull JSFunction setter,
                                 @NotNull JSFunction getter,
-                                JSParameterListElement param,
-                                JSType setterType,
-                                JSType retType) {
-    super.validateSetter(setter, getter, param, setterType, retType);
+                                JSParameterListElement param) {
+    super.validateSetter(setter, getter, param);
     checkAccessorAccessTypeMatch(setter, getter, "actionscript.validation.message.set.method.access.type.is.different.from.getter");
   }
 
-
   @Override
-  protected void validateGetter(@NotNull JSFunction getter, JSFunction setter, JSType type) {
+  protected void validateGetter(@NotNull JSFunction getter, JSFunction setter) {
+    JSType type = getter.getReturnType();
     if (type instanceof JSVoidType) {
       // TODO: fix!
       final String typeString = type.getTypeText(JSType.TypeTextFormat.PRESENTABLE);
