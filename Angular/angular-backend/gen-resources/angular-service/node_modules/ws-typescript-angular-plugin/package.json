@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.13.10",
-    "typescript": "^5.1.0"
+    "typescript": "5.4.5"
   },
   "scripts": {
     "build:clean": "npm run clean && npm run build",
