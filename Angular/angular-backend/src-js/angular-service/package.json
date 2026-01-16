@@ -3,9 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "main": "index.js",
+  "workspaces": [
+    "../../../../../plugins/JavaScriptLanguage/resources/tscplugin"
+  ],
   "dependencies": {
     "@volar/typescript": "2.4.27",
-    "tsc-ide-plugin": "file:/../../../../../plugins/JavaScriptLanguage/resources/tscplugin",
+    "tsc-ide-plugin": "workspace:*",
     "esbuild": "^0.20.0"
   },
   "devDependencies": {
