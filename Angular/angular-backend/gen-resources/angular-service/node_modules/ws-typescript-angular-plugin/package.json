@@ -12,7 +12,7 @@
     "@volar/typescript": "2.4.27"
   },
   "devDependencies": {
-    "@types/node": "^18.13.10",
+    "@types/node": "22.19.7",
     "esbuild": "^0.20.0"
   },
   "scripts": {

@@ -12,7 +12,7 @@
     "@vue/typescript-plugin": "3.2.2"
   },
   "devDependencies": {
-    "@types/node": "^22.19.3",
+    "@types/node": "22.19.7",
     "@vercel/ncc": "^0.38.4"
   },
   "scripts": {
