@@ -7,10 +7,10 @@ import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
-import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
+import org.jetbrains.vuejs.codeInsight.typeOf
+import org.jetbrains.vuejs.model.VueSourceElement
 
-interface VueDocumentedItemSymbolMixin: VueSymbol, VueDocumentedItem {
+interface VueSourceElementSymbolMixin: VueSymbol, VueSourceElement {
 
   override val searchTarget: PolySymbolSearchTarget?
     get() = PolySymbolSearchTarget.create(this)
@@ -19,7 +19,7 @@ interface VueDocumentedItemSymbolMixin: VueSymbol, VueDocumentedItem {
     PolySymbolDocumentationTarget.create(this, location, VueSymbolDocumentationProvider)
 
   override val presentation: TargetPresentation
-    get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(this), name))
+    get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", typeOf(this), name))
       .icon(icon)
       .presentation()
 

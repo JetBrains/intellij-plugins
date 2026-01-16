@@ -323,8 +323,7 @@
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.cssModules.VueCssModulesInfoProvider"
                                  id="css-modules"/>
 
-    <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
-                                language="VueExpr"/>
+    <platform.backend.documentation.psiTargetProvider implementation="org.jetbrains.vuejs.web.VuePsiDocumentationProvider"/>
 
     <codeInsight.codeVisionSettingsPreviewLanguage language="Vue" modelId="component.usage"/>
   </extensions>

@@ -16,7 +16,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
 
@@ -245,8 +244,7 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "name", sourceElement.name)
         if (sourceElement is VueNamedEntity)
           printProperty(level, "defaultName", sourceElement.defaultName)
-        if (sourceElement is VueDocumentedItem)
-          printProperty(level, "description", sourceElement.description)
+        printProperty(level, "description", sourceElement.description)
         if (printSources) {
           printProperty(level, "source", sourceElement.source)
           printProperty(level, "rawSource", sourceElement.rawSource.takeIf { it != sourceElement.source })

@@ -7,15 +7,15 @@ import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
+import org.jetbrains.vuejs.model.VueSourceElement
 
-internal object VueSymbolDocumentationProvider: PolySymbolDocumentationProvider<VueSymbol> {
+internal object VueSymbolDocumentationProvider : PolySymbolDocumentationProvider<VueSymbol> {
   override fun createDocumentation(
     symbol: VueSymbol,
     location: PsiElement?,
-  ): PolySymbolDocumentation = PolySymbolDocumentation.builder(symbol, location).apply{
-    val item = (symbol as? VueDocumentedItem)
-               ?: (symbol as? VueDocumentedItemSymbol<*>)?.item
+  ): PolySymbolDocumentation = PolySymbolDocumentation.builder(symbol, location).apply {
+    val item = (symbol as? VueSourceElement)
+               ?: (symbol as? VueSourceElementSymbol<*>)?.item
                ?: throw IllegalArgumentException("Can't create documentation for $symbol")
     description = item.description
 

@@ -11,4 +11,6 @@ interface VueSourceElement {
   val rawSource: PsiElement?
     get() = source
 
+  val description: String? get() = null
+
 }

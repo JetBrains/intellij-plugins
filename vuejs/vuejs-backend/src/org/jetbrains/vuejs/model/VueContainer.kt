@@ -4,13 +4,10 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.platform.backend.documentation.DocumentationTarget
-import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.PolySymbolQualifiedName
-import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_EVENTS
@@ -21,15 +18,10 @@ import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
-import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbolMixin
-import org.jetbrains.vuejs.web.symbols.VueSymbol
-import org.jetbrains.vuejs.web.symbols.VueSymbolDocumentationProvider
+import org.jetbrains.vuejs.web.symbols.VueSourceElementSymbolMixin
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
 
@@ -67,7 +59,7 @@ data class VueModelDirectiveProperties(
   }
 }
 
-interface VueNamedSymbol : VueDocumentedItemSymbolMixin {
+interface VueNamedSymbol : VueSourceElementSymbolMixin {
 
   abstract override fun createPointer(): Pointer<out VueNamedSymbol>
 }

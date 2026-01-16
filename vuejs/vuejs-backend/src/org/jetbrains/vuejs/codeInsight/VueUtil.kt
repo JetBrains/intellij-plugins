@@ -45,9 +45,12 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.IncorrectOperationException
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
+import org.jetbrains.annotations.Nls
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
@@ -57,9 +60,21 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
 import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueComputedProperty
+import org.jetbrains.vuejs.model.VueDataProperty
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueDirectiveArgument
+import org.jetbrains.vuejs.model.VueDirectiveModifier
+import org.jetbrains.vuejs.model.VueEmitCall
 import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueFilter
+import org.jetbrains.vuejs.model.VueFunctionComponent
+import org.jetbrains.vuejs.model.VueInputProperty
+import org.jetbrains.vuejs.model.VueMethod
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VueSlot
+import org.jetbrains.vuejs.model.VueSourceElement
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
@@ -474,3 +489,21 @@ fun isScriptSetupLocalDirectiveName(name: String): Boolean =
 fun createVueFileFromText(project: Project, text: String): VueFile =
   PsiFileFactory.getInstance(project)
     .createFileFromText("dummy$VUE_FILE_EXTENSION", VueFileType, text) as VueFile
+
+@Nls
+fun typeOf(item: VueSourceElement): String =
+  when (item) {
+    is VueFunctionComponent -> "vue.documentation.type.functional.component"
+    is VueComponent -> "vue.documentation.type.component"
+    is VueDirective -> "vue.documentation.type.directive"
+    is VueFilter -> "vue.documentation.type.filter"
+    is VueMethod -> "vue.documentation.type.component.method"
+    is VueEmitCall -> "vue.documentation.type.component.event"
+    is VueSlot -> "vue.documentation.type.slot"
+    is VueInputProperty -> "vue.documentation.type.component.property"
+    is VueComputedProperty -> "vue.documentation.type.component.computed.property"
+    is VueDataProperty -> "vue.documentation.type.component.data.property"
+    is VueDirectiveModifier -> "vue.documentation.type.directive.modifier"
+    is VueDirectiveArgument -> "vue.documentation.type.directive.argument"
+    else -> throw IncorrectOperationException(item.javaClass.name)
+  }.let { VueBundle.message(it) }

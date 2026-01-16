@@ -7,7 +7,7 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import org.jetbrains.vuejs.model.VueScopeElement
 
-interface VueScopeElementSymbolMixin : VueDocumentedItemSymbolMixin, VueScopeElement, PolySymbolScope {
+interface VueScopeElementSymbolMixin : VueSourceElementSymbolMixin, VueScopeElement, PolySymbolScope {
 
   override fun getModificationCount(): Long = -1
 
