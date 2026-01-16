@@ -71,7 +71,7 @@ type GetGeneratedElementTypeArguments = {
 
 export let ngTranspiledTemplates = new Map<string, AngularTranspiledTemplate>()
 
-function ngTranspiledTemplateHandler(ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'),
+function ngTranspiledTemplateHandler(ts: TypeScript,
                                      session: ts.server.Session,
                                      projectService: ts.server.ProjectService,
                                      request: ts.server.protocol.Request) {
@@ -120,7 +120,7 @@ function ngTranspiledTemplateHandler(ts: typeof import('tsc-ide-plugin/tsserverl
   }
 };
 
-function ngGetGeneratedElementTypeHandler(ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'),
+function ngGetGeneratedElementTypeHandler(ts: TypeScript,
                                           _session: ts.server.Session,
                                           projectService: ts.server.ProjectService,
                                           request: ts.server.protocol.Request) {
