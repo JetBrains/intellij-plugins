@@ -9,7 +9,7 @@
   "dependencies": {
     "tsc-ide-plugin": "workspace:*",
     "typescript": "5.4.5",
-    "@vue/typescript-plugin": "^3.2.2"
+    "@vue/typescript-plugin": "3.2.2"
   },
   "devDependencies": {
     "@types/node": "^22.19.3",
