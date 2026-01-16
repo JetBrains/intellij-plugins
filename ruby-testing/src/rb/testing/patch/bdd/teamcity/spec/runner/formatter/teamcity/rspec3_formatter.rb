@@ -38,12 +38,9 @@ module Spec
             if matcher.expected.is_a?(String) && matcher.actual.is_a?(String)
               failure.expected_str = matcher.expected
               failure.actual_str = matcher.actual
-            elsif matcher.respond_to?(:expected_formatted) && matcher.respond_to?(:actual_formatted)
-              failure.expected_str = matcher.expected_formatted.to_s
-              failure.actual_str = matcher.actual_formatted.to_s
-            else
-              failure.expected_str = matcher.expected.inspect
-              failure.actual_str = matcher.actual.inspect
+            elsif ::RSpec::Support::ObjectFormatter.respond_to?(:prepare_for_inspection)
+              failure.expected_str = ::RSpec::Support::ObjectFormatter.prepare_for_inspection(matcher.expected).inspect
+              failure.actual_str = ::RSpec::Support::ObjectFormatter.prepare_for_inspection(matcher.actual).inspect
             end
           end
         end
