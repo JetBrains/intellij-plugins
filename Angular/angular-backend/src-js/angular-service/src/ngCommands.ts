@@ -1,4 +1,4 @@
-import type ts from "tsc-ide-plugin/tsserverlibrary.shim";
+import type ts from "typescript/lib/tsserverlibrary"
 import type {Range} from "tsc-ide-plugin/protocol"
 import {Angular2TcbMappingInfo} from "./mappings"
 import {AngularTranspiledTemplate, buildAngularTranspiledTemplate} from "./code"

@@ -16,6 +16,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "types": [
+      "tsc-ide-plugin/tsserverlibrary.shim",
       "node",
     ],
   },

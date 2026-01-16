@@ -13,7 +13,7 @@ import {
   MAPPING_FLAG_TYPES,
 } from "./mappings"
 
-type TypeScript = typeof import("tsc-ide-plugin/tsserverlibrary.shim")
+type TypeScript = typeof import("typescript/lib/tsserverlibrary")
 
 export class AngularVirtualCode implements VirtualCode {
 
