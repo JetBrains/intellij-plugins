@@ -5,6 +5,9 @@
     "moduleResolution": "nodenext",
     "skipLibCheck": true,
     "strict": true,
+    "types": [
+      "node",
+    ],
   },
   "include": [
     "src/**.ts",

@@ -15,6 +15,9 @@
     "strict": true,
     "skipLibCheck": true,
     "sourceMap": true,
+    "types": [
+      "node",
+    ],
   },
   "include": [
     "src/index.ts",
