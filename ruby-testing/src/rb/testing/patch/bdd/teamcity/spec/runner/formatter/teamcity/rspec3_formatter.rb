@@ -232,7 +232,7 @@ module Spec
         end
 
         def strip_rspec_diff(message)
-          message.slice(0, message.index("\n\nDiff:\e[") || message.length)
+          message.slice(0, message.index("\nDiff:\e[0m") || message.length)
         end
 
         def example_failed(example_notification)
