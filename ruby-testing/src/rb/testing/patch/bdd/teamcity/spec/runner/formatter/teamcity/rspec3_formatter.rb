@@ -155,8 +155,10 @@ module Spec
         def start(count_notification)
           super
 
-          RSpec::Expectations::ExpectationNotMetError.prepend(ExpectationNotMetErrorPatch)
-          RSpec::Expectations::ExpectationHelper.singleton_class.prepend(ExpectationHelperSingletonPatch)
+          unless is_diff_reporting_disabled?
+            RSpec::Expectations::ExpectationNotMetError.prepend(ExpectationNotMetErrorPatch)
+            RSpec::Expectations::ExpectationHelper.singleton_class.prepend(ExpectationHelperSingletonPatch)
+          end
 
           @example_count = count_notification.count
 
@@ -475,6 +477,10 @@ module Spec
             raise ::Rake::TeamCity::InnerException, *excep_data
           end
           TEAMCITY_FORMATTER_INTERNAL_ERRORS << excep_data
+        end
+
+        def is_diff_reporting_disabled?
+          ENV["INTELLIJ_IDEA_RUN_CONF_RSPEC_DIFF_VIEWER_DISABLE"] ? true : false
         end
 
         def get_data_from_storage(example)
