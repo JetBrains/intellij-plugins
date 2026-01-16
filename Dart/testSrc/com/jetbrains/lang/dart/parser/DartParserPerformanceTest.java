@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.parser;
 
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.testFramework.PerformanceUnitTest;
 import com.intellij.testFramework.SkipSlowTestLocally;
 import com.intellij.tools.ide.metrics.benchmark.Benchmark;
 import com.jetbrains.lang.dart.DartFileType;
@@ -9,6 +10,7 @@ import com.jetbrains.lang.dart.DartParserDefinition;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
 @SkipSlowTestLocally
+@PerformanceUnitTest
 public class DartParserPerformanceTest extends ParsingTestCase {
 
   public DartParserPerformanceTest() {

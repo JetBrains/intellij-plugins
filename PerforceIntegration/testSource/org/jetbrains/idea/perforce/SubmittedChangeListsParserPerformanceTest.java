@@ -2,6 +2,7 @@ package org.jetbrains.idea.perforce;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.testFramework.PerformanceUnitTest;
 import org.jetbrains.idea.perforce.perforce.OutputMessageParser;
 import org.junit.Test;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
+@PerformanceUnitTest
 public class SubmittedChangeListsParserPerformanceTest {
   @Test
   public void test() throws IOException {

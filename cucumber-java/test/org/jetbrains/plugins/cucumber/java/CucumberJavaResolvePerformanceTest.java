@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.PerformanceUnitTest;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.tools.ide.metrics.benchmark.Benchmark;
 import org.jetbrains.annotations.NotNullByDefault;
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @NotNullByDefault
+@PerformanceUnitTest
 public class CucumberJavaResolvePerformanceTest extends BasePlatformTestCase {
 
   @Override
