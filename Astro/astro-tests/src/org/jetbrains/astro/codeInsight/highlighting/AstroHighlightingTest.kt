@@ -31,4 +31,15 @@ class AstroHighlightingTest : AstroHighlightingTestBase("codeInsight/highlightin
   }
 
   fun testSlotElement() = doTest()
+
+  fun testShorthandAttributeRequired() {
+    myFixture.configureByText("test.astro", """
+      ---
+      const src = 'myImage.png';
+      const alt = 'placeholder';
+      ---
+      <img {src} {alt}>
+    """.trimIndent())
+    myFixture.testHighlighting()
+  }
 }
