@@ -26,4 +26,16 @@ class AstroHtmlExtension : HtmlSymbolsXmlExtension() {
     }
     return super.isSelfClosingTagAllowed(tag)
   }
+
+  override fun isRequiredAttributeImplicitlyPresent(tag: XmlTag?, attrName: String?): Boolean {
+    if (tag == null || attrName == null) return false
+    for (attribute in tag.attributes) {
+      val attributeText = attribute.text.trim()
+      if (attributeText == "{$attrName}") {
+        return true
+      }
+    }
+
+    return super.isRequiredAttributeImplicitlyPresent(tag, attrName)
+  }
 }
