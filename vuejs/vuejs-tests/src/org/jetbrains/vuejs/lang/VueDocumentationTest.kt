@@ -61,7 +61,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testScriptSetupDestructing() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     defaultTest()
   }
 
@@ -88,7 +88,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testMergedWebTypesComponents() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkLookupItems(renderPriority = true, checkDocumentation = true) {
       it.lookupString in setOf("n-affix", "n-bar", "n-a", "n-button", "n-alert")
@@ -97,7 +97,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
 
   fun testMergedWebTypesPropsGlobal() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true) {
       it.lookupString in setOf("bottom", "offset-top", "position", "trigger-bottom")
@@ -106,7 +106,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
 
   fun testMergedWebTypesPropsLocal() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true) {
       it.lookupString in setOf("bottom", "offset-top", "position", "trigger-bottom")
@@ -114,7 +114,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testMergedWebTypesSlots() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkLookupItems(renderPriority = true, checkDocumentation = true)
   }
@@ -132,7 +132,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testPrimeVueMergedProps() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.PRIMEVUE_3_8_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.PRIMEVUE_3_8_2)
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkLookupItems(renderPriority = true, renderTypeText = true, checkDocumentation = true,
                                fileName = "PrimeVueMergedPropsElement") {
@@ -149,42 +149,42 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testEmitEvents() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     defaultTest()
   }
 
   fun testGenericComponentProp() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     defaultTest()
   }
 
   fun testPropJsDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     defaultTest()
   }
 
   fun testPropRefJsDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     defaultTest()
   }
 
   fun testDataPropJsDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     defaultTest()
   }
 
   fun testDataPropRefJsDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     defaultTest()
   }
 
   fun testPropWithDefaults() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     defaultTest()
   }
 
   fun testNoComponentDocInCodeCompletion() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_4)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkLookupItems(checkDocumentation = true) {
       it.lookupString == "NoComponentDocInCodeCompletion" || it.lookupString == "Component"
