@@ -111,7 +111,10 @@ class VueCompletionTest : VueTestCase("completion") {
     doLookupTest(dir = true, lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties)
 
   fun testCompleteElementsFromLocalData() =
-    doLookupTest(VueTestModule.VUE_2_5_3, lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties)
+    doLookupTest(
+      VueTestModule.VUE_2_5_3,
+      lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties,
+    )
 
   fun testCompleteElementsFromLocalData2() =
     doLookupTest(VueTestModule.VUE_2_5_3) { it.priority > 10 }
@@ -202,7 +205,10 @@ class VueCompletionTest : VueTestCase("completion") {
   }
 
   fun testPrettyLookup() =
-    doLookupTest(renderTailText = true, lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties)
+    doLookupTest(
+      renderTailText = true,
+      lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties,
+    )
 
   fun testCompleteVBind() =
     doLookupTest(locations = listOf("<child-comp :<caret>>", "<a v-bind:<caret>>"), lookupItemFilter = filterOutAriaAttributes)
@@ -244,16 +250,32 @@ class VueCompletionTest : VueTestCase("completion") {
     }
 
   fun testIviewCompletion() =
-    doLookupTest(VueTestModule.IVIEW_2_8_0, fileContents = "<template><a<caret></template>", lookupItemFilter = filterOutStandardHtmlSymbols)
+    doLookupTest(
+      VueTestModule.IVIEW_2_8_0,
+      fileContents = "<template><a<caret></template>",
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
 
   fun testIview3Completion() =
-    doLookupTest(VueTestModule.IVIEW_3_5_4, locations = listOf("v-bind:<caret>", "v-on:<caret>"), lookupItemFilter = filterOutAriaAttributes)
+    doLookupTest(
+      VueTestModule.IVIEW_3_5_4,
+      locations = listOf("v-bind:<caret>", "v-on:<caret>"),
+      lookupItemFilter = filterOutAriaAttributes,
+    )
 
   fun testBootstrapVueCompletion() =
-    doLookupTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11, fileContents = "<template><<caret></template>", lookupItemFilter = filterOutStandardHtmlSymbols)
+    doLookupTest(
+      VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11,
+      fileContents = "<template><<caret></template>",
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
 
   fun testShardsVueCompletion() =
-    doLookupTest(VueTestModule.SHARDS_VUE_1_0_5, fileContents = "<template><<caret></template>", lookupItemFilter = filterOutStandardHtmlSymbols)
+    doLookupTest(
+      VueTestModule.SHARDS_VUE_1_0_5,
+      fileContents = "<template><<caret></template>",
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
 
   fun testWrongPropsNotInCompletion() =
     doCompletionAutoPopupTest(checkResult = false) {
@@ -303,7 +325,14 @@ class VueCompletionTest : VueTestCase("completion") {
     doLookupTest(dir = true) { it.priority > 10 }
 
   fun testCompletionWithRecursiveMixins() =
-    doLookupTest(dir = true, locations = listOf("<<caret>div", "<HiddenComponent fr<caret>/>"), lookupItemFilter = filterOutStandardHtmlSymbols)
+    doLookupTest(
+      dir = true,
+      locations = listOf(
+        "<<caret>div",
+        "<HiddenComponent fr<caret>/>",
+      ),
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
 
   fun testNoImportInsertedForRecursivelyLocalComponent() =
     doLookupTest(dir = true, typeToFinishLookup = "")
