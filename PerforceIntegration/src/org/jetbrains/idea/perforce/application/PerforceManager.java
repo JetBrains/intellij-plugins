@@ -261,7 +261,7 @@ public final class PerforceManager  {
     return View.getRelativePath(P4File.unescapeWildcards(filePath), client.getName(), client.getViews());
   }
 
-  public static @Nullable File getFileByDepotName(final String depotPath, PerforceClient client) throws VcsException {
+  public static @Nullable File getFileByDepotName(@NotNull String depotPath, @NotNull PerforceClient client) throws VcsException {
 
     int revNumStart = depotPath.indexOf("#");
 
@@ -287,11 +287,62 @@ public final class PerforceManager  {
     List<String> roots = client.getRoots();
     List<File> resultCandidates = roots.isEmpty() ? Collections.singletonList(new File(FileUtil.toSystemDependentName(relativePath.trim())))
                                                   : ContainerUtil.map(roots, clientRoot -> new File(clientRoot, relativePath.trim()));
-    File resultInProject = ContainerUtil.find(resultCandidates, result -> project == null || PerforceConnectionManager.getInstance(project).isUnderProjectConnections(result));
+
+    resultCandidates =
+      ContainerUtil.mapNotNull(resultCandidates,
+                               candidate -> project != null
+                                            ? new File(mapToPossibleJunctionVcsRootPath(candidate.getPath(), project))
+                                            : null);
+
+    File resultInProject = ContainerUtil.find(resultCandidates, result -> project == null ||
+                                                                          PerforceConnectionManager.getInstance(project)
+                                                                            .isUnderProjectConnections(result));
     if (LOG_RELATIVE_PATH.isDebugEnabled()) {
-      LOG_RELATIVE_PATH.debug("depot: '" + depotPath + "' result: '" + resultInProject + "'" + (resultInProject == null ? " checked " + resultCandidates : ""));
+      LOG_RELATIVE_PATH.debug(
+        "depot: '" + depotPath + "' result: '" + resultInProject + "'" + (resultInProject == null ? " checked " + resultCandidates : ""));
     }
+
     return resultInProject;
+  }
+
+  private @NotNull String mapToPossibleJunctionPath(@NotNull String filePath) {
+    return mapToPossibleJunctionVcsRootPath(FileUtil.toSystemIndependentName(filePath.trim()), myProject);
+  }
+
+  /**
+   * If the project is accessed via junction (e.g., symlink), map candidates to junction paths
+   */
+  private static @NotNull String mapToPossibleJunctionVcsRootPath(@NotNull String filePath, @NotNull Project project) {
+    Map<VirtualFile, P4Connection> allConnections = PerforceConnectionManager.getInstance(project).getAllConnections();
+
+    for (VirtualFile vcsRoot : allConnections.keySet()) {
+      String vcsRootPath = vcsRoot.getPath();
+      if (FileUtil.startsWith(filePath, vcsRootPath)) {
+        //already under vcs root
+        continue;
+      }
+
+      try {
+        // Compare canonical paths of the file and VCS root.
+        // If they matched, the file is under junction VCS root, return the junction file path.
+        String canonicalVcsRootPath = new File(vcsRootPath).getCanonicalPath();
+        String canonicalFilePath = new File(filePath).getCanonicalPath();
+
+        if (FileUtil.startsWith(canonicalFilePath, canonicalVcsRootPath)) {
+          String relativeToRoot = canonicalFilePath.substring(canonicalVcsRootPath.length());
+          String mappedPath = vcsRootPath + relativeToRoot;
+          if (LOG_RELATIVE_PATH.isDebugEnabled()) {
+            LOG_RELATIVE_PATH.debug("mapToVcsRootPath: '" + filePath + "' -> '" + mappedPath + "' via vcsRoot '" + vcsRootPath + "'");
+          }
+          return mappedPath;
+        }
+      }
+      catch (IOException e) {
+        LOG.debug("Failed map file path to vcs root: " + filePath + ", vcsRoot: " + vcsRootPath);
+      }
+    }
+
+    return filePath;
   }
 
   private static String missingLocalFileDiagnostics(String depotPath, PerforceClient client) throws VcsException {
@@ -339,8 +390,8 @@ public final class PerforceManager  {
     return myClientRootsCache.getRaw(convertedRoot);
   }
 
-  public String convertP4ParsedPath(@Nullable String convertedClientRoot, @NotNull String s) {
-    final String result = myClientRootsCache.convertPath(convertedClientRoot, s);
+  public @NotNull String convertP4ParsedPath(@Nullable String convertedClientRoot, @NotNull String s) {
+    String result = mapToPossibleJunctionPath(myClientRootsCache.convertPath(convertedClientRoot, s));
     LOG_RELATIVE_PATH.debug("convertion, s: '" + s + "' converted: '" + result + "' convertedRoot: '" + convertedClientRoot + "'");
     return result;
   }
