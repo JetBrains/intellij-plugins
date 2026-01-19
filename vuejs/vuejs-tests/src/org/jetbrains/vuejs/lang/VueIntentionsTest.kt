@@ -19,8 +19,8 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.inspections.ES6ShorthandObjectPropertyInspection
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
 
@@ -144,7 +144,8 @@ class VueIntentionsTest : BasePlatformTestCase() {
       myFixture.moveToOffsetBySignature(signature)
       val intention = try {
         myFixture.findSingleIntention("Import component locally")
-      } catch (e: AssertionError) {
+      }
+      catch (e: AssertionError) {
         throw AssertionError("Failed for $signature: ${e.message}", e)
       }
       WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
