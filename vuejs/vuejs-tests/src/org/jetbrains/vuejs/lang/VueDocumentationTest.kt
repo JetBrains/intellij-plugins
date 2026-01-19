@@ -3,11 +3,11 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.lang.javascript.TypeScriptTestUtil
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.polySymbols.testFramework.checkDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.checkNoDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
 class VueDocumentationTest : BasePlatformTestCase() {
