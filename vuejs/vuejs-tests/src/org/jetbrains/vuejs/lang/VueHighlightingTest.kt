@@ -967,7 +967,12 @@ fun createLocalComponentsExtendsData(fixture: CodeInsightTestFixture, withMarkup
       }
   </script>
   """)
-  val nameWithMarkup = if (withMarkup) "<warning descr=\"Element CompB doesn't have required attribute prop-from-a\">CompB</warning>" else "CompB"
+
+  val nameWithMarkup = if (withMarkup)
+    "<warning descr=\"Element CompB doesn't have required attribute prop-from-a\">CompB</warning>"
+  else
+    "CompB"
+
   fixture.configureByText("CompB.vue", """
   <template>
       <$nameWithMarkup <caret>/>
