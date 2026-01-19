@@ -1,4 +1,4 @@
-package org.intellij.plugins.postcss.copyright;
+package com.intellij.postcss.copyright;
 
 import com.intellij.psi.css.UpdateCssCopyrightsProvider;
 

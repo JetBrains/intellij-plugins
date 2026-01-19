@@ -37,7 +37,7 @@
   </dependencies>
 
   <content>
-    <module name="intellij.postcss/copyright"/>
+    <module name="intellij.postcss.copyright"/>
   </content>
 
   <extensions defaultExtensionNs="com.intellij">

@@ -1,3 +1,6 @@
+- name: lib/modules/intellij.postcss.copyright.jar
+  contentModules:
+  - name: intellij.postcss.copyright
 - name: lib/postcss.jar
   modules:
   - name: intellij.postcss

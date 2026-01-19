@@ -49,11 +49,9 @@ jvm_library(
     "@community//xml/xml-parser:parser",
     "@community//xml/impl",
     "//plugins/css/plugin",
-    "@community//plugins/copyright",
     "@community//platform/core-ui",
     "//plugins/css/common/psi",
     "//plugins/css/backend",
-    "//plugins/css/copyright",
   ],
   exports = ["@community//xml/impl"]
 )
@@ -87,12 +85,11 @@ jvm_library(
     "@community//platform/testFramework",
     "@community//platform/testFramework:testFramework_test_lib",
     "//plugins/css/plugin",
-    "@community//plugins/copyright",
-    "@community//plugins/copyright:copyright_test_lib",
     "@community//platform/core-ui",
     "//plugins/css/common/psi",
     "//plugins/css/backend",
-    "//plugins/css/copyright",
+    "@community//plugins/copyright",
+    "@community//plugins/copyright:copyright_test_lib",
   ],
   exports = ["@community//xml/impl"]
 )

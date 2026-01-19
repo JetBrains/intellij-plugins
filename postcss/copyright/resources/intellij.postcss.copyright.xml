@@ -1,4 +1,4 @@
-<idea-plugin package="org.intellij.plugins.postcss.copyright">
+<idea-plugin>
 
   <dependencies>
     <plugin id="com.intellij.copyright"/>
@@ -6,6 +6,6 @@
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij.copyright">
-    <updater filetype="PostCSS" implementationClass="org.intellij.plugins.postcss.copyright.PostCssCopyrightsProvider"/>
+    <updater filetype="PostCSS" implementationClass="com.intellij.postcss.copyright.PostCssCopyrightsProvider"/>
   </extensions>
 </idea-plugin>

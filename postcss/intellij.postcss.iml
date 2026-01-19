@@ -33,10 +33,9 @@
     <orderEntry type="module" module-name="intellij.xml.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.css.plugin" />
-    <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.css.backend" />
-    <orderEntry type="module" module-name="intellij.css.copyright" />
+    <orderEntry type="module" module-name="intellij.copyright" scope="TEST" />
   </component>
 </module>
