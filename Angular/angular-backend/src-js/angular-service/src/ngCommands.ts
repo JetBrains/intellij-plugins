@@ -1,4 +1,4 @@
-import type ts from "tsc-ide-plugin/tsserverlibrary.shim";
+import type ts from "typescript/lib/tsserverlibrary"
 import type {Range} from "tsc-ide-plugin/protocol"
 import {Angular2TcbMappingInfo} from "./mappings"
 import {AngularTranspiledTemplate, buildAngularTranspiledTemplate} from "./code"
@@ -71,7 +71,7 @@ type GetGeneratedElementTypeArguments = {
 
 export let ngTranspiledTemplates = new Map<string, AngularTranspiledTemplate>()
 
-function ngTranspiledTemplateHandler(ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'),
+function ngTranspiledTemplateHandler(ts: TypeScript,
                                      session: ts.server.Session,
                                      projectService: ts.server.ProjectService,
                                      request: ts.server.protocol.Request) {
@@ -120,7 +120,7 @@ function ngTranspiledTemplateHandler(ts: typeof import('tsc-ide-plugin/tsserverl
   }
 };
 
-function ngGetGeneratedElementTypeHandler(ts: typeof import('tsc-ide-plugin/tsserverlibrary.shim'),
+function ngGetGeneratedElementTypeHandler(ts: TypeScript,
                                           _session: ts.server.Session,
                                           projectService: ts.server.ProjectService,
                                           request: ts.server.protocol.Request) {

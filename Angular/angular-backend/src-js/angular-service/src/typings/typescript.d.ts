@@ -1,10 +1,10 @@
 import type {GetElementTypeResponse} from "tsc-ide-plugin/protocol"
 
-declare module "tsc-ide-plugin/tsserverlibrary.shim" {
+declare module "typescript/lib/tsserverlibrary" {
 
   interface LanguageService {
     webStormNgGetGeneratedElementType(
-      ts: typeof import("tsc-ide-plugin/tsserverlibrary.shim"),
+      ts: typeof import("typescript/lib/tsserverlibrary"),
       fileName: string,
       range: {
         start: LineAndCharacter;

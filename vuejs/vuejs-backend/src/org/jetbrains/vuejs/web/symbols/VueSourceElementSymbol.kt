@@ -11,10 +11,10 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
-import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
+import org.jetbrains.vuejs.codeInsight.typeOf
+import org.jetbrains.vuejs.model.VueSourceElement
 
-abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
+abstract class VueSourceElementSymbol<T : VueSourceElement>(
   override val name: String,
   internal val item: T,
 ) : PolySymbolScope, PsiSourcedPolySymbol, VueSymbol {
@@ -32,15 +32,15 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
     PolySymbolDocumentationTarget.create(this, location, VueSymbolDocumentationProvider)
 
   override val presentation: TargetPresentation
-    get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(item), name))
+    get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", typeOf(item), name))
       .icon(icon)
       .presentation()
 
-  abstract override fun createPointer(): Pointer<out VueDocumentedItemSymbol<T>>
+  abstract override fun createPointer(): Pointer<out VueSourceElementSymbol<T>>
 
   override fun equals(other: Any?): Boolean =
     other === this ||
-    (other is VueDocumentedItemSymbol<*>
+    (other is VueSourceElementSymbol<*>
      && other.javaClass == this.javaClass
      && name == other.name
      && item == other.item)
@@ -49,7 +49,7 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
     31 * name.hashCode() + item.hashCode()
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
-    if (symbol is VueDocumentedItemSymbol<*>)
+    if (symbol is VueSourceElementSymbol<*>)
       symbol === this || (symbol.javaClass == this.javaClass
                           && symbol.name == name)
     //&& VueDelegatedContainer.unwrap(item) == VueDelegatedContainer.unwrap(symbol.item))

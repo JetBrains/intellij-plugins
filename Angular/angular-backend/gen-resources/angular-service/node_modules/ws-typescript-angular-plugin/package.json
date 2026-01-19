@@ -3,14 +3,17 @@
   "version": "0.0.1",
   "private": true,
   "main": "index.js",
+  "workspaces": [
+    "../../../../../plugins/JavaScriptLanguage/resources/tscplugin"
+  ],
   "dependencies": {
-    "@volar/typescript": "2.4.27",
-    "tsc-ide-plugin": "file:/../../../../../plugins/JavaScriptLanguage/resources/tscplugin",
-    "esbuild": "^0.20.0"
+    "typescript": "5.4.5",
+    "tsc-ide-plugin": "workspace:*",
+    "@volar/typescript": "2.4.27"
   },
   "devDependencies": {
-    "@types/node": "^18.13.10",
-    "typescript": "^5.1.0"
+    "@types/node": "22.19.7",
+    "esbuild": "^0.20.0"
   },
   "scripts": {
     "build:clean": "npm run clean && npm run build",

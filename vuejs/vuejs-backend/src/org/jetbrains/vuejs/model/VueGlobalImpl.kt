@@ -167,20 +167,18 @@ internal class VueGlobalImpl(
   }
 }
 
-val VueGlobal?.provides: List<VueProvideEntry>
+val VueGlobal?.provides: List<VueProvide>
   get() {
     if (this == null) return emptyList()
 
-    val entries = mutableListOf<VueProvideEntry>()
+    val entries = mutableListOf<VueProvide>()
     val visited = mutableSetOf<VueScopeElement>()
 
     fun acceptElement(element: VueScopeElement?) {
       if (element == null || !visited.add(element)) return
 
       if (element is VueContainer) {
-        element.provides.forEach {
-          entries.add(VueProvideEntry(it, element))
-        }
+        entries.addAll(element.provides)
       }
 
       if (element is VueGlobal) {
@@ -197,5 +195,3 @@ val VueGlobal?.provides: List<VueProvideEntry>
 
     return entries
   }
-
-data class VueProvideEntry(val provide: VueProvide, val owner: VueContainer)

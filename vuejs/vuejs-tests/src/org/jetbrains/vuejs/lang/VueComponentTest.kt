@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.testFramework.DebugOutputPrinter
 import com.intellij.polySymbols.testFramework.checkTextByFile
 import com.intellij.psi.PsiDocumentManager
@@ -15,7 +16,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
 
@@ -244,16 +244,15 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "name", sourceElement.name)
         if (sourceElement is VueNamedEntity)
           printProperty(level, "defaultName", sourceElement.defaultName)
-        if (sourceElement is VueDocumentedItem)
-          printProperty(level, "description", sourceElement.description)
+        printProperty(level, "description", sourceElement.description)
         if (printSources) {
           printProperty(level, "source", sourceElement.source)
           printProperty(level, "rawSource", sourceElement.rawSource.takeIf { it != sourceElement.source })
         }
         if (sourceElement is VueDirective) {
-          printProperty(level, "jsType", sourceElement.jsType)
-          printProperty(level, "modifiers", sourceElement.modifiers.takeIf { it.isNotEmpty() })
-          printProperty(level, "argument", sourceElement.argument)
+          printProperty(level, "jsType", sourceElement.type)
+          printProperty(level, "modifiers", sourceElement.directiveModifiers.takeIf { it.isNotEmpty() })
+          printProperty(level, "argument", sourceElement.vueArgument)
         }
         if (sourceElement is VueDirectiveArgument) {
           printProperty(level, "pattern", sourceElement.pattern)
@@ -288,8 +287,8 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "defaultValue", sourceElement.defaultValue)
         }
         if (sourceElement is VueSlot) {
-          printProperty(level, "scope", sourceElement.scope)
-          printProperty(level, "pattern", sourceElement.pattern)
+          printProperty(level, "scope", sourceElement.type)
+          printProperty(level, "pattern", (sourceElement as? PolySymbolWithPattern)?.pattern)
         }
         if (sourceElement is VueEmitCall) {
           printProperty(level, "eventJSType", sourceElement.type)

@@ -15,9 +15,13 @@
     "strict": true,
     "skipLibCheck": true,
     "sourceMap": true,
+    "types": [
+      "tsc-ide-plugin/typescript",
+      "node",
+    ],
   },
   "include": [
     "src/index.ts",
-    "src/*.d.ts",
+    "src/typings/*.d.ts",
   ]
 }

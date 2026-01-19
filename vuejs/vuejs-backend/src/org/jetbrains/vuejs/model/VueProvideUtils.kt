@@ -50,13 +50,13 @@ fun findInjectForCall(call: JSCallExpression, component: VueComponent): VueInjec
   return component.asSafely<VueContainer>()?.injects?.find { it.name == injectionKey }
 }
 
-fun evaluateInjectedType(inject: VueInject, provides: List<VueProvideEntry>): JSType? {
+fun evaluateInjectedType(inject: VueInject, provides: List<VueProvide>): JSType? {
   if (provides.isEmpty()) return null
   val defaultValue = inject.defaultValue
   val isOptional = defaultValue == null || defaultValue is JSUndefinedType || defaultValue is JSVoidType
-  return provides.asSequence().map { it.provide }.find { provide ->
+  return provides.find { provide ->
     provide.injectionKey?.isEquivalentTo(inject.injectionKey) ?: (provide.name == (inject.from ?: inject.name))
-  }?.jsType?.optionalIf(isOptional)
+  }?.type?.optionalIf(isOptional)
 }
 
 fun resolveInjectionSymbol(element: PsiElement?): JSFieldVariable? {

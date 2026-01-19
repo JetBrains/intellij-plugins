@@ -7,8 +7,8 @@ import com.intellij.lang.typescript.lsp.bind
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.openapi.project.Project
-import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import com.intellij.ui.layout.ValueComponentPredicate
 import com.intellij.ui.layout.not
 import org.jetbrains.vuejs.VueBundle
@@ -59,7 +59,7 @@ class VueConfigurable(private val project: Project) : UiDslUnnamedConfigurable.S
 
           comboBox(
             items = VueTSPluginVersion.entries,
-            renderer = SimpleListCellRenderer.create("", VueTSPluginVersion::versionString)
+            renderer = textListCellRenderer("") { it.versionString }
           )
             .enabledIf(tsPluginPreviewDisabled.not())
             .bindItem(settings::tsPluginVersion.toNullableProperty())

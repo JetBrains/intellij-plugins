@@ -380,13 +380,13 @@ private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
 private fun analyzeDefineSlots(call: JSCallExpression): List<VueSlot> =
   call.takeIf { JSStubBasedPsiTreeUtil.isStubBased(it) }
     ?.typeArguments
-    ?.singleOrNull()
-    ?.jsType?.asRecordType()?.typeMembers
-    ?.asSequence()
-    ?.filterIsInstance<JSRecordType.PropertySignature>()
-    ?.map {
-      val slotType = it.jsType?.asSafely<JSFunctionType>()?.parameters?.firstOrNull()?.inferredType
-      VueScriptSetupSlot(it.memberName, it.memberSource.singleElement, slotType)
+    ?.singleOrNull()?.let { typeDeclaration ->
+      typeDeclaration.jsType.asRecordType().typeMembers
+        .asSequence()
+        .filterIsInstance<JSRecordType.PropertySignature>()
+        .map {
+          VueScriptSetupSlot(typeDeclaration, it)
+        }
     }
     ?.toList()
   ?: emptyList()
@@ -708,7 +708,38 @@ private class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) :
 }
 
 private class VueScriptSetupSlot(
-  override val name: String,
-  override val source: PsiElement?,
-  override val scope: JSType?,
-) : VueSlot
+  private val typeDeclaration: JSTypeDeclaration,
+  signature: JSRecordType.PropertySignature,
+) : VueSlot, PsiSourcedPolySymbol {
+  override val name: String =
+    signature.memberName
+
+  override val source: PsiElement? =
+    signature.memberSource.singleElement
+
+  override val type: JSType? =
+    signature.jsType?.asSafely<JSFunctionType>()?.parameters?.firstOrNull()?.inferredType
+
+  override fun createPointer(): Pointer<VueScriptSetupSlot> {
+    val typeDeclarationPtr = typeDeclaration.createSmartPointer()
+    val memberName = name
+    return Pointer {
+      val typeDeclaration = typeDeclarationPtr.dereference() ?: return@Pointer null
+      typeDeclaration.jsType.asRecordType().findPropertySignature(memberName)?.let {
+        VueScriptSetupSlot(typeDeclaration, it)
+      }
+    }
+  }
+
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is VueScriptSetupSlot
+    && other.typeDeclaration == typeDeclaration
+    && other.name == name
+
+  override fun hashCode(): Int {
+    var result = typeDeclaration.hashCode()
+    result = 31 * result + name.hashCode()
+    return result
+  }
+}

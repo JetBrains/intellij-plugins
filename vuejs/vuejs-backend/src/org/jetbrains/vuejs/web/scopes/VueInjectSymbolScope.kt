@@ -14,10 +14,10 @@ import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.utils.ReferencingPolySymbol
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
+import org.jetbrains.vuejs.model.VueProvide
 import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_PROVIDES
-import org.jetbrains.vuejs.web.symbols.VueProvideSymbol
 
 class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
   PolySymbolScopeWithCache<VueSourceComponent, Unit>(enclosingComponent.source.project, enclosingComponent, Unit) {
@@ -28,10 +28,8 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
     || kind == JS_PROPERTIES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    val provides = enclosingComponent.global.provides
-
-    provides.forEach { (provide, container) ->
-      consumer(VueProvideSymbol(provide, container))
+    enclosingComponent.global.provides.forEach {
+      consumer(it)
     }
 
     consumer(vueInjectStringSymbol)
@@ -46,7 +44,7 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
     stack: PolySymbolQueryStack,
   ): List<PolySymbolCodeCompletionItem> {
     return super.getCodeCompletions(qualifiedName, params, stack).filter {
-      it.symbol.asSafely<VueProvideSymbol>()?.injectionKey == null
+      it.symbol.asSafely<VueProvide>()?.injectionKey == null
     }
   }
 

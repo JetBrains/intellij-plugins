@@ -1,6 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 
-import type ts from "tsc-ide-plugin/tsserverlibrary.shim";
+import type ts from "typescript/lib/tsserverlibrary"
 import {type TypeScriptServiceScript} from "@volar/typescript"
 import {createLanguageServicePlugin} from "@volar/typescript/lib/quickstart/createLanguageServicePlugin"
 import {Language, LanguagePlugin} from "@volar/language-core"

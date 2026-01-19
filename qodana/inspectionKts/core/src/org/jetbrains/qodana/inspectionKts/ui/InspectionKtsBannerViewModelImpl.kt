@@ -1,6 +1,6 @@
 package org.jetbrains.qodana.inspectionKts.ui
 
-import com.intellij.openapi.application.UI
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.writeIntentReadAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -96,7 +96,7 @@ class InspectionKtsBannerViewModelImpl(
       val exceptionLocationInLogFile = errorInLogProvider.loggedExceptionLocation(exception) ?: return@launch
       val logFileVirtualFile = LocalFileSystem.getInstance().findFileByNioFile(exceptionLocationInLogFile.file) ?: return@launch
 
-      withContext(Dispatchers.UI) {
+      withContext(Dispatchers.EDT) {
         OpenFileDescriptor(project, logFileVirtualFile, exceptionLocationInLogFile.line, 0).navigate(true)
       }
     }
@@ -129,7 +129,7 @@ class InspectionKtsBannerViewModelImpl(
   }
 
   private fun chooseFileAndOpenPsiViewer(psiViewerSupport: PsiViewerSupport) {
-    scope.launch(Dispatchers.UI) {
+    scope.launch(Dispatchers.EDT) {
       val projectDir = project.guessProjectDir()
       val chooserDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor().let {
         if (projectDir == null) it else it.withRoots(projectDir)
@@ -159,14 +159,14 @@ class InspectionKtsBannerViewModelImpl(
     scope.launch(Dispatchers.Default) {
       val vfsUrl = VfsUtilCore.convertFromUrl(url)
       val file = VirtualFileManager.getInstance().refreshAndFindFileByUrl(vfsUrl) ?: return@launch
-      withContext(Dispatchers.UI) {
+      withContext(Dispatchers.EDT) {
         OpenFileDescriptor(project, file, 0).navigate(true)
       }
     }
   }
 
   suspend fun createEditor(document: Document, fileType: FileType): Editor {
-    return withContext(Dispatchers.UI) {
+    return withContext(Dispatchers.EDT) {
       writeIntentReadAction {
         val editor = EditorFactory.getInstance().createEditor(document, project, EditorKind.MAIN_EDITOR)
         (editor as? EditorEx)?.highlighter = EditorHighlighterFactory.getInstance().createEditorHighlighter(project, fileType)

@@ -3,13 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "main": "index.js",
+  "workspaces": [
+    "../../../../../plugins/JavaScriptLanguage/resources/tscplugin"
+  ],
   "dependencies": {
-    "tsc-ide-plugin": "file:/../../../../../plugins/JavaScriptLanguage/resources/tscplugin",
-    "typescript": "^5.9.3",
-    "@vue/typescript-plugin": "^3.2.2"
+    "typescript": "5.4.5",
+    "tsc-ide-plugin": "workspace:*",
+    "@vue/typescript-plugin": "3.2.2"
   },
   "devDependencies": {
-    "@types/node": "^22.19.3",
+    "@types/node": "22.19.7",
     "@vercel/ncc": "^0.38.4"
   },
   "scripts": {

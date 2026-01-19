@@ -5,8 +5,13 @@
     "moduleResolution": "nodenext",
     "skipLibCheck": true,
     "strict": true,
+    "types": [
+      "tsc-ide-plugin/typescript",
+      "node",
+    ],
   },
   "include": [
-    "src/**.ts",
+    "src/index.ts",
+    "src/typings/*.d.ts",
   ]
 }

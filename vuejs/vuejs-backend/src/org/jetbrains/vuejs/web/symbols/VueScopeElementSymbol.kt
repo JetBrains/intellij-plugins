@@ -8,7 +8,7 @@ import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import org.jetbrains.vuejs.model.VueScopeElement
 
 abstract class VueScopeElementSymbol<T : VueScopeElement>(name: String, item: T) :
-  VueDocumentedItemSymbol<T>(name, item) {
+  VueSourceElementSymbol<T>(name, item) {
 
   abstract override fun createPointer(): Pointer<out VueScopeElementSymbol<T>>
 

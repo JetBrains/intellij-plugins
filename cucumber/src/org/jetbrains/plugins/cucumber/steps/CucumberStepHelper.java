@@ -51,19 +51,6 @@ public final class CucumberStepHelper {
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(project, fileName);
   }
 
-  /// Searches for all step definitions that are available from `featureFile` and returns them.
-  ///
-  /// @see CucumberJvmExtensionPoint#loadStepsFor(PsiFile, Module)
-  /// @deprecated Use [#loadStepsFor] instead.
-  @Deprecated(forRemoval = true)
-  public static Collection<AbstractStepDefinition> findAllStepDefinitions(PsiFile featureFile) {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
-    if (module == null) {
-      return Collections.emptyList();
-    }
-    return loadStepsFor(featureFile, module);
-  }
-
   /// Searches for all step definitions that [match][AbstractStepDefinition#matches] `step`,
   /// groups them by step definition class, and sorts them by pattern size.
   /// For each step definition class it finds the largest pattern.
@@ -159,6 +146,19 @@ public final class CucumberStepHelper {
   /// @deprecated Use [#loadStepsFor(PsiFile, Module)] instead.
   @Deprecated(forRemoval = true)
   public static List<AbstractStepDefinition> getAllStepDefinitions(PsiFile featureFile) {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
+    if (module == null) {
+      return Collections.emptyList();
+    }
+    return loadStepsFor(featureFile, module);
+  }
+
+  /// Searches for all step definitions that are available from `featureFile` and returns them.
+  ///
+  /// @see CucumberJvmExtensionPoint#loadStepsFor(PsiFile, Module)
+  /// @deprecated Use [#loadStepsFor] instead.
+  @Deprecated(forRemoval = true)
+  public static Collection<AbstractStepDefinition> findAllStepDefinitions(PsiFile featureFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) {
       return Collections.emptyList();
