@@ -19,6 +19,8 @@ class VueNodeDownloadEditorNotificationProviderTest : BasePlatformTestCase() {
     assertNotNull(getNotificationData())
   }
 
-  private fun getNotificationData() = NodeDownloadEditorNotificationProvider().collectNotificationData(myFixture.project, myFixture.file.virtualFile)
+  private fun getNotificationData() =
+    NodeDownloadEditorNotificationProvider()
+      .collectNotificationData(myFixture.project, myFixture.file.virtualFile)
 
 }
