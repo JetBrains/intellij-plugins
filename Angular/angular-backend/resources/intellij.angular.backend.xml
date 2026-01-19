@@ -2,7 +2,7 @@
   <dependencies>
     <module name="intellij.xml.impl"/>
     <module name="intellij.css.backend"/>
-    <module name="intellij.javascript.ultimate"/>
+    <module name="intellij.javascript.codeinsight"/>
     <plugin id="HtmlTools"/>
     <plugin id="intellij.webpack"/>
 

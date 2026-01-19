@@ -57,7 +57,7 @@ jvm_library(
     "@community//platform/lang-impl",
     "@community//platform/core-impl",
     "//plugins/JavaScriptLanguage:javascript-backend",
-    "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "@community//platform/platform-impl:ide-impl",
     "@community//platform/projectModel-api:projectModel",
     "@community//xml/impl",

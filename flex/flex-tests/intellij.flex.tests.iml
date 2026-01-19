@@ -14,7 +14,7 @@
     <orderEntry type="module" module-name="intellij.javascript.parser" />
     <orderEntry type="module" module-name="intellij.css.common" />
     <orderEntry type="module" module-name="intellij.javascript.backend" />
-    <orderEntry type="module" module-name="intellij.javascript.ultimate" />
+    <orderEntry type="module" module-name="intellij.javascript.codeinsight" />
     <orderEntry type="module" module-name="intellij.platform.analysis" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.codeStyle" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core" scope="TEST" />

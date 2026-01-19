@@ -49,7 +49,7 @@ jvm_library(
     "@community//platform/execution-impl",
     "@community//platform/execution",
     "//plugins/JavaScriptLanguage:javascript-backend",
-    "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "@community//xml/impl",
     "//plugins/css/plugin",
     "//plugins/webpack",

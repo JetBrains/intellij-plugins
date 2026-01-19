@@ -21,7 +21,7 @@
 
   <!--suppress PluginXmlValidity -->
   <content namespace="jetbrains">
-    <!-- The implicit main module of the plugin depends on internal module (intellij.javascript.ultimate), so it's required to set the namespace for it
+    <!-- The implicit main module of the plugin depends on internal module (intellij.javascript.codeinsight), so it's required to set the namespace for it
          todo: extract elements and dependencies to an explicit content module (see IJPL-212351) -->
   </content>
 
@@ -29,7 +29,7 @@
     <module name="intellij.spellchecker"/>
     <plugin id="com.intellij.modules.xml"/>
     <module name="intellij.css.backend"/>
-    <module name="intellij.javascript.ultimate"/>
+    <module name="intellij.javascript.codeinsight"/>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.modules.ultimate"/>
   </dependencies>

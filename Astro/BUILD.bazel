@@ -51,7 +51,7 @@ jvm_library(
     "//plugins/JavaScriptLanguage/javascript-common",
     "@community//libraries/gson",
     "@community//xml/emmet",
-    "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight",
   ]
 )
 ### auto-generated section `build intellij.astro` end

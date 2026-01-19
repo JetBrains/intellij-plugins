@@ -98,7 +98,7 @@ jvm_library(
     "@community//platform/statistics/testFramework",
     "@community//platform/diff-impl",
     "//plugins/JavaScriptLanguage/javascript-common",
-    "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight",
   ]
 )
 ### auto-generated section `build intellij.prettierJS` end

@@ -31,7 +31,7 @@ jvm_library(
     "@community//plugins/coverage-common:coverage",
     "@community//plugins/coverage-common/intellij.platform.coverage.agent:coverage-agent",
     "//plugins/JavaScriptLanguage/javascript-common",
-    "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-coverage",
   ]
 )
@@ -71,7 +71,7 @@ jvm_library(
     "//duplicatedetector:duplicatesDetector_test_lib",
     "//plugins/NodeJS/tests:tests_test_lib",
     "//plugins/JavaScriptLanguage/javascript-common",
-    "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "//plugins/JavaScriptLanguage/javascript-coverage",
   ]
 )

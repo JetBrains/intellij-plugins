@@ -37,7 +37,7 @@ jvm_library(
     "@community//platform/usageView",
     "//plugins/JavaScriptLanguage/javascript-parser",
     "//plugins/JavaScriptLanguage:javascript-backend",
-    "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight",
     "@community//xml/xml-parser:parser",
     "@community//platform/indexing-impl",
     "//plugins/JavaScriptDebugger/backend",

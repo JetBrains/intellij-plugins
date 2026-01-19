@@ -50,7 +50,7 @@ jvm_library(
     "@community//platform/polySymbols:polySymbols-testFramework",
     "@community//xml/testFramework",
     "//plugins/css/common",
-    "//plugins/JavaScriptLanguage/javascript-ultimate",
+    "//plugins/JavaScriptLanguage/javascript-codeinsight",
   ],
   runtime_deps = [":astro-tests"]
 )

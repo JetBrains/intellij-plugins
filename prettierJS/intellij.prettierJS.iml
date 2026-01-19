@@ -46,6 +46,6 @@
     <orderEntry type="module" module-name="intellij.platform.statistics.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.diff.impl" />
     <orderEntry type="module" module-name="intellij.javascript.common" />
-    <orderEntry type="module" module-name="intellij.javascript.ultimate" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.codeinsight" scope="TEST" />
   </component>
 </module>
