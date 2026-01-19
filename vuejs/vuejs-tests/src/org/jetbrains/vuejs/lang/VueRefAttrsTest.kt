@@ -13,7 +13,7 @@ class VueRefAttrsTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/refAttrs"
 
   fun testJSCompletionAndRename() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureByFile("js.vue")
 
     myFixture.moveToOffsetBySignature(" \$refs.<caret>")
@@ -36,7 +36,7 @@ class VueRefAttrsTest : BasePlatformTestCase() {
   }
 
   fun testTSCompletionAndRename() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureByFile("ts.vue")
 
     myFixture.moveToOffsetBySignature(" \$refs.<caret>")
@@ -59,7 +59,7 @@ class VueRefAttrsTest : BasePlatformTestCase() {
   }
 
   fun testResolve() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureByFile("js.after.vue")
     for ((signature, result) in listOf(
       Pair("\$refs.input<caret>Ref", "ref='inputRef'"),
@@ -70,7 +70,7 @@ class VueRefAttrsTest : BasePlatformTestCase() {
            "     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLInputElement/validationMessage)\n" +
            "     */\n" +
            "    readonly validationMessage: string"),
-      Pair("this.\$refs.about.\$re<caret>fs", "\$refs: Data"),
+      Pair("this.\$refs.about.\$re<caret>fs", "\$refs: Data & TypeRefs"),
       Pair("this.\$refs.div<caret>Ref3", "ref='divRef3'"),
       Pair("this.\$refs.di<caret>v\n", "{\n    [P in K]: T;\n}"),
     )) {
