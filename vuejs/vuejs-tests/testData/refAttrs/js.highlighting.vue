@@ -20,7 +20,7 @@ export default defineComponent({
   methods: {
     insert () {
       this.$refs.about.$refs
-      this.$refs.about.$rafs
+      this.$refs.about.<weak_warning descr="Unresolved variable $rafs">$rafs</weak_warning>
       this.$refs.divRef3
       this.$refs.divRef3.<weak_warning descr="Unresolved variable foo">foo</weak_warning>
       this.$refs.inputRef[0].<weak_warning descr="Unresolved variable validationMesage">validationMesage</weak_warning>

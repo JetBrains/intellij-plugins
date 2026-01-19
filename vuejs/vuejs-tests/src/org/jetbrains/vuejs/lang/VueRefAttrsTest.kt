@@ -87,7 +87,7 @@ class VueRefAttrsTest : BasePlatformTestCase() {
   }
 
   fun testHighlighting() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("js.highlighting.vue")
     myFixture.checkHighlighting()
