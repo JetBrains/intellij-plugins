@@ -66,7 +66,7 @@ class VueFindUsagesTest : BasePlatformTestCase() {
 
   fun testCreateApp() {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.configureFromTempProjectFile("main.ts")
 
     myFixture.checkUsages("\"f<caret>oo", "createApp.foo")
@@ -79,7 +79,7 @@ class VueFindUsagesTest : BasePlatformTestCase() {
   fun testComponentEmitsDefinitions() {
     val testName = getTestName(true)
     myFixture.copyDirectoryToProject(testName, ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
 
     myFixture.configureFromTempProjectFile("defineComponent.vue")
     myFixture.checkUsages("\"test<caret>-event", "$testName.test-event")
@@ -91,7 +91,7 @@ class VueFindUsagesTest : BasePlatformTestCase() {
   fun testComponentFile() {
     val testName = getTestName(true)
     myFixture.copyDirectoryToProject(testName, ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
 
     myFixture.configureFromTempProjectFile("SomeComponent.vue")
     myFixture.checkFileUsages(testName)
