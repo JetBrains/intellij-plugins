@@ -266,7 +266,8 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       styleSettings.getCommonSettings(HTMLLanguage.INSTANCE).RIGHT_MARGIN = 30
       //styleSettings.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_TEXT_WRAP = WRAP_ALWAYS
       doTestFromFile("vue")
-    }}
+    }
+  }
 
   private fun doTest(id: Int) {
     val testName = getTestName(false)
