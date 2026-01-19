@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.JSAbstractDocumentationTest
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHolder
 import com.intellij.lang.typescript.service.TypeScriptServiceTestBase
 import com.intellij.platform.testFramework.core.FileComparisonFailedError
-import org.intellij.lang.annotations.Language
+import org.jetbrains.vuejs.VueTsConfigFile
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
@@ -14,20 +14,12 @@ import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
-class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
-  override fun getBasePath(): String = vueRelativeTestDataPath() + "/ts-plugin"
+class VuePluginTypeScriptServiceTest :
+  TypeScriptServiceTestBase() {
 
-  @Language("JSON")
-  private val tsconfig = """
-    {
-      "compilerOptions": {
-        "moduleDetection": "force",
-        "strict": true,
-        "noUnusedLocals": true
-      },
-      "include": ["**/*.vue", "*.vue", "**/*.ts", "*.ts"]
-    }
-  """.trimIndent()
+  private val DEFAULT_VUE_MODULE: VueTestModule = VueTestModule.VUE_3_5_0
+
+  override fun getBasePath(): String = vueRelativeTestDataPath() + "/ts-plugin"
 
   override fun getExtension(): String {
     return "vue"
@@ -45,7 +37,7 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
     oldTsPluginPreviewEnabled = vueSettings.tsPluginPreviewEnabled
     vueSettings.tsPluginPreviewEnabled = true
     myFixture.enableInspections(VueInspectionsProvider())
-    myFixture.configureByText("tsconfig.json", tsconfig)
+    myFixture.configureByText(VueTsConfigFile.FILE_NAME, VueTsConfigFile.DEFAULT_TSCONFIG_CONTENT)
   }
 
   override fun tearDown() {
@@ -60,12 +52,18 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
     }
   }
 
+  private fun configureVueDependencies(
+    vueModule: VueTestModule = DEFAULT_VUE_MODULE,
+  ) {
+    myFixture.configureVueDependencies(modules = arrayOf(vueModule, VueTestModule.VUE_TSCONFIG_0_8_1))
+  }
+
   private fun doSimpleHighlightTest(
-    vararg modules: VueTestModule,
+    vueModule: VueTestModule = DEFAULT_VUE_MODULE,
     fileName: String = "App",
     warnings: Boolean = false,
   ) {
-    myFixture.configureVueDependencies(modules = modules)
+    configureVueDependencies(vueModule)
     myFixture.copyDirectoryToProject(getTestName(true), "")
     myFixture.configureFromTempProjectFile("$fileName.$extension")
     checkHighlightingByOptions(warnings)
@@ -76,15 +74,15 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   fun testSimpleVue() {
-    doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
+    doSimpleHighlightTest()
   }
 
   fun testEnableSuggestions() {
-    doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
+    doSimpleHighlightTest()
   }
 
   fun testAugmentedComponentCustomPropertiesWithOverrides() {
-    doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
+    doSimpleHighlightTest()
   }
 
   fun testAugmentedComponentCustomPropertiesWithOverrides__vapor() {
@@ -92,7 +90,7 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   fun testAugmentedComponentCustomPropertiesWithOverridesErrors() {
-    doSimpleHighlightTest(VueTestModule.VUE_3_5_0)
+    doSimpleHighlightTest()
   }
 
   fun testAugmentedComponentCustomPropertiesWithOverridesErrors__vapor() {
@@ -100,7 +98,7 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   fun testSimpleRename() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
+    configureVueDependencies()
     val fileToRename = myFixture.addFileToProject("Usage.vue", """
       <script setup lang="ts">
         console.log("test");
@@ -125,7 +123,7 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   fun testBasicCompletion() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
+    configureVueDependencies()
     myFixture.configureByText("main.vue", """
       <script setup>
         import { ref } from 'vue'
@@ -153,7 +151,7 @@ class VuePluginTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   fun testBasicDoc() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
+    configureVueDependencies()
     myFixture.configureByText("main.vue", """
       <script setup>
         import { ref } from 'vue'

@@ -33,7 +33,7 @@ class VueTsConfigFile :
     const val FILE_NAME: String = "tsconfig.json"
 
     // language=jsonc
-    private val DEFAULT_TSCONFIG_CONTENT = """
+    val DEFAULT_TSCONFIG_CONTENT = """
     {
       "extends": "@vue/tsconfig/tsconfig.dom.json",
       "compilerOptions": {
