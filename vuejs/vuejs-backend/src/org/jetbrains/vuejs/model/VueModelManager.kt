@@ -327,7 +327,7 @@ class VueModelManager {
           ?.takeIf { it.originalName != JavaScriptBundle.message("element.name.anonymous") }
         CachedValueProvider.Result.create(VueSourceComponent(implicitElement
                                                              ?: buildImplicitElement(declaration),
-                                                             descr, data), declaration)
+                                                             descr, data?.originalName), declaration)
       }
 
     fun getMixin(mixin: PsiElement): VueMixin? =

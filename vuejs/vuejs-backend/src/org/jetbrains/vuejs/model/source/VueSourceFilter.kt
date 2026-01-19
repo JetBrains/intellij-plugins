@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -11,7 +10,7 @@ import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueFilter
 import org.jetbrains.vuejs.model.VueGlobalImpl
 import org.jetbrains.vuejs.web.VUE_FILTERS
-import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbolMixin
+import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol
 
 class VueSourceFilter(
   override val name: String,
@@ -20,9 +19,6 @@ class VueSourceFilter(
 
   override val kind: PolySymbolKind
     get() = VUE_FILTERS
-
-  override val defaultName: @NlsSafe String
-    get() = name
 
   override val parents: List<VueEntitiesContainer>
     get() = VueGlobalImpl.getParents(this)
@@ -43,7 +39,7 @@ class VueSourceFilter(
     return result
   }
 
-  override fun createPointer(): Pointer<out VueScopeElementSymbolMixin> {
+  override fun createPointer(): Pointer<out VueScopeElementSymbol> {
     val name = name
     val originalSourcePtr = originalSource.createSmartPointer()
     return Pointer {

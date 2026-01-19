@@ -21,7 +21,7 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueSourceElementSymbolMixin
+import org.jetbrains.vuejs.web.symbols.VueSourceElementSymbol
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
 
@@ -59,7 +59,7 @@ data class VueModelDirectiveProperties(
   }
 }
 
-interface VueNamedSymbol : VueSourceElementSymbolMixin {
+interface VueNamedSymbol : VueSourceElementSymbol {
 
   abstract override fun createPointer(): Pointer<out VueNamedSymbol>
 }

@@ -50,7 +50,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
           .asSequence()
           .flatMap { it.value }
           .flatMap { component ->
-            val componentFile = component.source?.containingFile?.virtualFile
+            val componentFile = component.componentSource?.containingFile?.virtualFile
                                 ?: return@flatMap emptySequence()
             val index = resolvedDirs.indexOfFirst { VfsUtil.isAncestor(it.first, componentFile, true) }
             if (index < 0) return@flatMap emptySequence()

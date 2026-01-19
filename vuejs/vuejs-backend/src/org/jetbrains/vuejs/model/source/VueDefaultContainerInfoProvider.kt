@@ -191,7 +191,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
               ?.let { VueModelManager.getComponent(it) }
           }?.let {
             if (element is JSPsiNamedElementBase && it is VueRegularComponent) {
-              VueLocallyDefinedRegularComponent(it, element)
+              VueLocallyDefinedRegularComponent.create(it, element)
             }
             else it
           }

@@ -7,12 +7,12 @@ import com.intellij.lang.javascript.psi.types.JSSimpleRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.REF_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.findAttribute
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueInstanceOwner
-import org.jetbrains.vuejs.model.VueNamedEntity
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
 import org.jetbrains.vuejs.model.source.INSTANCE_REFS_PROP
@@ -36,8 +36,8 @@ class VueRefsType(
     if (format == JSType.TypeTextFormat.SIMPLE) {
       builder.append("#VueRefsType: ")
         .append(instanceOwner.javaClass.simpleName)
-      if (instanceOwner is VueNamedEntity) {
-        builder.append("(").append(instanceOwner.defaultName).append(")")
+      if (instanceOwner is PolySymbol) {
+        builder.append("(").append(instanceOwner.name).append(")")
       }
       return
     }

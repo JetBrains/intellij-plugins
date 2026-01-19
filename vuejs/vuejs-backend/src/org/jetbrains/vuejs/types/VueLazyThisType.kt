@@ -7,9 +7,9 @@ import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.types.JSCodeBasedType
 import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.model.VueInstanceOwner
-import org.jetbrains.vuejs.model.VueNamedEntity
 
 class VueLazyThisType(
   source: JSTypeSource,
@@ -33,8 +33,8 @@ class VueLazyThisType(
     if (format == JSType.TypeTextFormat.SIMPLE) {
       builder.append("#VueLazyThisType: ")
         .append(instanceOwner.javaClass.simpleName)
-      if (instanceOwner is VueNamedEntity) {
-        builder.append("(").append(instanceOwner.defaultName).append(")")
+      if (instanceOwner is PolySymbol) {
+        builder.append("(").append(instanceOwner.name).append(")")
       }
       return
     }

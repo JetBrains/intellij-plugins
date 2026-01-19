@@ -131,7 +131,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     JSRefactoringUtil.format(formatFixers)
   }
 
-  private val file: PsiFile? get() = component.dereference()?.source?.containingFile
+  private val file: PsiFile? get() = component.dereference()?.componentSource?.containingFile
   private val formatFixers = mutableListOf<FormatFixer>()
 
   private fun createScriptTag(file: XmlFile): XmlTag {

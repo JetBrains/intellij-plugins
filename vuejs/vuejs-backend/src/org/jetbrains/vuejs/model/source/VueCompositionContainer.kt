@@ -103,7 +103,7 @@ abstract class VueCompositionContainer(
           val args = getFilteredArgs(call)
           VueModelManager.getComponent(getComponentDescriptor(getParam(implicitElement, call, 1, args))).let {
             val literal = args.getOrNull(0) as? JSLiteralExpression ?: return@let it
-            if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, literal) else it
+            if (it is VueRegularComponent) VueLocallyDefinedRegularComponent.create(it, literal) else it
           }
         }
 
@@ -178,16 +178,17 @@ abstract class VueCompositionContainer(
       }.toList()
 
       val components = processCalls(COMPONENT_FUN, true) { name, el, nameLiteral ->
-        VueModelManager.getComponent(getComponentDescriptor(el))?.let {
-          val component = if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, nameLiteral!!) else it
-          var delegate: VueScopeElement? = component
-          while (true) {
-            if (delegate is UserDataHolder) delegate.putUserData(IS_COMPOSITION_APP_COMPONENT_KEY, true)
-            if (delegate is VueDelegatedEntitiesContainer<*>) delegate = delegate.delegate
-            else break
+        VueModelManager.getComponent(getComponentDescriptor(el))
+          ?.let { if (it is VueRegularComponent) VueLocallyDefinedRegularComponent.create(it, nameLiteral ?: return@let null) else it }
+          ?.let { component ->
+            var delegate: VueScopeElement? = component
+            while (true) {
+              if (delegate is UserDataHolder) delegate.putUserData(IS_COMPOSITION_APP_COMPONENT_KEY, true)
+              if (delegate is VueDelegatedEntitiesContainer<*>) delegate = delegate.delegate
+              else break
+            }
+            Pair(name, component)
           }
-          Pair(name, component)
-        }
       }.toMap()
 
       val directives = processCalls(DIRECTIVE_FUN, true) { name, el, nameLiteral ->
@@ -237,6 +238,13 @@ abstract class VueCompositionContainer(
     }
 
     private val IS_COMPOSITION_APP_COMPONENT_KEY = Key.create<Boolean>("vue.composition.app.component")
+
+    fun VueComponent.applyCompositionInfoFrom(component: VueComponent): VueComponent {
+      if (this is UserDataHolder) {
+        putUserData(IS_COMPOSITION_APP_COMPONENT_KEY, isCompositionAppComponent(component))
+      }
+      return this
+    }
 
     fun isCompositionAppComponent(component: VueComponent): Boolean =
       component is UserDataHolder && component.getUserData(IS_COMPOSITION_APP_COMPONENT_KEY) == true

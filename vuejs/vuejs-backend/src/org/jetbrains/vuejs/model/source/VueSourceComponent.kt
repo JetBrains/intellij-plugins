@@ -25,7 +25,6 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.index.VueIndexData
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptVaporTag
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
@@ -35,9 +34,16 @@ import org.jetbrains.vuejs.types.VueSourceSlotScopeType
 class VueSourceComponent(
   sourceElement: JSImplicitElement,
   descriptor: VueSourceEntityDescriptor,
-  private val indexData: VueIndexData?,
+  private val forcedName: String? = null,
+  override val vueProximity: VueModelVisitor.Proximity? = null,
 ) : VueSourceContainer(sourceElement, descriptor),
     VueRegularComponent {
+
+  override val source: PsiElement
+    get() = super<VueRegularComponent>.source
+            ?: super<VueSourceContainer>.source
+
+  override val componentSource: JSImplicitElement = sourceElement
 
   override val mode: VueMode
     get() {
@@ -48,6 +54,12 @@ class VueSourceComponent(
       return if (vapor) VueMode.VAPOR else VueMode.CLASSIC
     }
 
+  override fun withNameAndProximity(
+    name: String,
+    proximity: VueModelVisitor.Proximity,
+  ): VueComponent =
+    VueSourceComponent(componentSource, descriptor, name, proximity)
+
   override val nameElement: PsiElement?
     get() = descriptor.initializer
       ?.asSafely<JSObjectLiteralExpression>()
@@ -55,8 +67,12 @@ class VueSourceComponent(
       ?.let { it.literalExpressionInitializer ?: it.value }
 
   override val defaultName: String?
-    get() = indexData?.originalName
+    get() = forcedName
             ?: getTextIfLiteral(nameElement)
+
+  override val name: String
+    get() = defaultName
+            ?: descriptor.source.containingFile.name
 
   override val slots: List<VueSlot>
     get() {
@@ -71,17 +87,18 @@ class VueSourceComponent(
 
   override fun createPointer(): Pointer<VueSourceComponent> {
     val descriptor = this.descriptor.createPointer()
-    val source = (this.source as JSImplicitElement).createSmartPointer()
-    val indexData = this.indexData
+    val source = this.componentSource.createSmartPointer()
+    val forcedName = this.forcedName
+    val vueProximity = this.vueProximity
     return Pointer {
       val newDescriptor = descriptor.dereference() ?: return@Pointer null
       val newSource = source.dereference() ?: return@Pointer null
-      VueSourceComponent(newSource, newDescriptor, indexData)
+      VueSourceComponent(newSource, newDescriptor, forcedName, vueProximity)
     }
   }
 
   override fun toString(): String {
-    return "VueSourceComponent(${defaultName ?: descriptor.source.containingFile.name})"
+    return "VueSourceComponent(${name})"
   }
 
   override val typeParameters: List<TypeScriptTypeParameter>
@@ -98,7 +115,7 @@ class VueSourceComponent(
           tag.stubSafeAttributes
             .asSequence()
             .filter { !it.value.isNullOrBlank() }
-            .mapNotNull { attr ->
+            .firstNotNullOfOrNull { attr ->
               VueAttributeNameParser.parse(attr.name, SLOT_TAG_NAME).let { info ->
                 if (info.kind == VueAttributeKind.SLOT_NAME) {
                   attr.value?.let { name -> VueSourceSlot(name, tag) }
@@ -113,7 +130,6 @@ class VueSourceComponent(
                 else null
               }
             }
-            .firstOrNull()
             .let {
               result.add(it ?: VueSourceSlot(DEFAULT_SLOT_NAME, tag))
             }

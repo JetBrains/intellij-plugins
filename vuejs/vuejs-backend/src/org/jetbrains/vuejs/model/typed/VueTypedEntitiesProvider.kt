@@ -137,7 +137,7 @@ object VueTypedEntitiesProvider {
               else null
             }
             .firstOrNull()?.let {
-              componentsFromDts[it.defaultName] = it
+              componentsFromDts[it.name] = it
             }
         }
     }

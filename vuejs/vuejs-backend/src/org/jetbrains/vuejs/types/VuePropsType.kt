@@ -7,9 +7,9 @@ import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.types.JSCodeBasedType
 import com.intellij.lang.javascript.psi.types.JSTypeBaseImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.model.VueInstanceOwner
-import org.jetbrains.vuejs.model.VueNamedEntity
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 
 class VuePropsType(
@@ -34,8 +34,8 @@ class VuePropsType(
     if (format == JSType.TypeTextFormat.SIMPLE) {
       builder.append("#VuePropsType: ")
         .append(instanceOwner.javaClass.simpleName)
-      if (instanceOwner is VueNamedEntity) {
-        builder.append("(").append(instanceOwner.defaultName).append(")")
+      if (instanceOwner is PolySymbol) {
+        builder.append("(").append(instanceOwner.name).append(")")
       }
       return
     }

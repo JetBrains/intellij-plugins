@@ -21,7 +21,6 @@ import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueLocallyDefinedRegularComponent
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
@@ -83,8 +82,8 @@ class VueComponentNamespaceSymbol(
       val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
       val component = VueModelManager.getComponent(source) as? VueRegularComponent
       if (component != null && kind == VUE_COMPONENTS) {
-        VueNamespacedComponent(
-          VueComponentSymbol(symbol.name, VueLocallyDefinedRegularComponent(component, source), VueModelVisitor.Proximity.LOCAL))
+        VueLocallyDefinedRegularComponent.create(component, source)
+          ?.let { VueNamespacedComponent(it) }
       }
       else if (component == null && kind == VUE_COMPONENT_NAMESPACES) {
         VueComponentNamespaceSymbol(symbol.name, source)
@@ -100,7 +99,7 @@ class VueComponentNamespaceSymbol(
   override fun hashCode(): Int =
     31 * name.hashCode() + source.hashCode()
 
-  private class VueNamespacedComponent(override val delegate: VueComponentSymbol) : PsiSourcedPolySymbolDelegate<VueComponentSymbol> {
+  private class VueNamespacedComponent(override val delegate: VueRegularComponent) : PsiSourcedPolySymbolDelegate<VueRegularComponent> {
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
 

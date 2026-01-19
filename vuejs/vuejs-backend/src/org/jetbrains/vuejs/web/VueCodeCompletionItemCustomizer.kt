@@ -20,7 +20,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.isVueFileName
-import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
+import org.jetbrains.vuejs.model.VueComponent
 
 class VueCodeCompletionItemCustomizer :
   PolySymbolCodeCompletionItemCustomizer {
@@ -45,7 +45,7 @@ class VueCodeCompletionItemCustomizer :
     else item
 
   private fun shouldFilterOutLowerCaseScriptSetupIdentifier(item: PolySymbolCodeCompletionItem): Boolean {
-    val source = item.symbol.asSafely<VueComponentSymbol>()?.source?.asSafely<JSPsiNamedElementBase>()
+    val source = item.symbol.asSafely<VueComponent>()?.source?.asSafely<JSPsiNamedElementBase>()
     if (source?.contextOfType<XmlTag>(false)?.isScriptSetupTag() != true)
       return false
     val originalName = if (source is ES6ImportSpecifier) source.declaredName else source.name

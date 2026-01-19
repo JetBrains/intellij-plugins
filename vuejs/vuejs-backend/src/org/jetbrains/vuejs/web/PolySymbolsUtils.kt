@@ -5,7 +5,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.html.elements.HtmlElementSymbolDescriptor
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
+import org.jetbrains.vuejs.model.source.VueCompositionContainer.Companion.applyCompositionInfoFrom
 
 fun HtmlElementSymbolDescriptor.getModel(): VueModelDirectiveProperties =
   runListSymbolsQuery(VUE_MODEL, true).firstOrNull()
@@ -17,7 +17,8 @@ fun HtmlElementSymbolDescriptor.getModel(): VueModelDirectiveProperties =
 
 fun VueScopeElement.asPolySymbol(name: String, forcedProximity: VueModelVisitor.Proximity): PolySymbol? =
   when (this) {
-    is VueComponent -> VueComponentSymbol(toAsset(name, true), this, forcedProximity)
+    is VueComponent -> withNameAndProximity(toAsset(name, true), forcedProximity)
+      .applyCompositionInfoFrom(this)
     is VueDirective -> withVueProximity(forcedProximity)
     else -> null
   }

@@ -34,7 +34,7 @@ import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.expr.stub.VueJSEmbeddedExpressionContentStub
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
-import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
+import org.jetbrains.vuejs.model.VueComponent
 
 class VueJSEmbeddedExpressionContentImpl :
   JSStubElementImpl<VueJSEmbeddedExpressionContentStub>, JSSuppressionHolder, VueJSEmbeddedExpressionContent,
@@ -148,7 +148,7 @@ class VueJSEmbeddedExpressionContentImpl :
       val component = (tag.descriptor as? HtmlElementSymbolDescriptor)
         ?.symbol
         ?.unwrapMatchedSymbols()
-        ?.firstNotNullOfOrNull { it as? VueComponentSymbol }
+        ?.firstNotNullOfOrNull { it as? VueComponent }
       component?.typeParameters?.forEach {
         if (!substitutor.containsId(it.genericId)) {
           substitutor.put(it.genericId, JSUnknownType.TS_INSTANCE)

@@ -1,8 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiSymbolService
@@ -14,11 +12,9 @@ import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
-import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbolMixin
+import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol
 
-interface VueDirective : VueNamedEntity, VueScopeElementSymbolMixin {
-
-  override val defaultName: String get() = name
+interface VueDirective : VueScopeElementSymbol {
 
   val directiveModifiers: List<VueDirectiveModifier> get() = emptyList()
 

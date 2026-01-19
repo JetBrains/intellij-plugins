@@ -12,38 +12,46 @@ import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 
 class VueLocallyDefinedRegularComponent
 private constructor(
+  override val defaultName: String?,
   override val delegate: VueRegularComponent,
   source: PsiElement,
+  override val vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
 ) : VueDelegatedContainer<VueRegularComponent>(),
     VueRegularComponent {
 
-  constructor(delegate: VueRegularComponent, source: JSLiteralExpression)
-    : this(delegate, source as PsiElement)
+  companion object {
+    fun create(delegate: VueRegularComponent, source: JSLiteralExpression): VueLocallyDefinedRegularComponent {
+      return VueLocallyDefinedRegularComponent(getTextIfLiteral(source), delegate, source)
+    }
 
-  constructor(delegate: VueRegularComponent, source: JSPsiNamedElementBase)
-    : this(delegate, source as PsiElement)
+    fun create(delegate: VueRegularComponent, source: JSPsiNamedElementBase): VueLocallyDefinedRegularComponent {
+      return VueLocallyDefinedRegularComponent(source.name, delegate, source)
+    }
+  }
 
   private val mySource = source
 
-  override val nameElement: PsiElement
-    get() = if (mySource is JSPsiNamedElementBase) source else mySource
+  override val name: String
+    get() = defaultName ?: "<unnamed>"
 
-  override val source: PsiElement by lazy(LazyThreadSafetyMode.PUBLICATION) {
+  override fun withNameAndProximity(name: String, proximity: VueModelVisitor.Proximity): VueComponent =
+    VueLocallyDefinedRegularComponent(name, delegate, mySource, proximity)
+
+  override val source: PsiElement
+    get() = mySource
+
+  override val nameElement: PsiElement
+    get() = if (mySource is JSPsiNamedElementBase) componentSource else mySource
+
+  override val componentSource: PsiElement by lazy(LazyThreadSafetyMode.PUBLICATION) {
     if (mySource is JSPsiNamedElementBase)
       mySource.resolveIfImportSpecifier()
     else
-      (delegate.source ?: mySource)
+      (delegate.componentSource ?: mySource)
   }
 
   override val rawSource: PsiElement
-    get() = if (mySource is JSPsiNamedElementBase)
-      mySource
-    else
-      (delegate.rawSource ?: mySource)
-
-  override val defaultName: String?
-    get() = (source as? JSPsiNamedElementBase)?.name
-            ?: getTextIfLiteral(source as JSLiteralExpression)
+    get() = mySource as? JSPsiNamedElementBase ?: delegate.rawSource ?: mySource
 
   override val description: String?
     get() = delegate.description
@@ -52,20 +60,27 @@ private constructor(
     get() = delegate.typeParameters
 
   override fun createPointer(): Pointer<VueLocallyDefinedRegularComponent> {
+    val defaultName = this.defaultName
+    val vueProximity = this.vueProximity
     val delegate = this.delegate.createPointer()
-    val source = this.source.createSmartPointer()
+    val source = this.mySource.createSmartPointer()
     return Pointer {
       val newDelegate = delegate.dereference() ?: return@Pointer null
       val newSource = source.dereference() ?: return@Pointer null
-      VueLocallyDefinedRegularComponent(newDelegate, newSource)
+      VueLocallyDefinedRegularComponent(defaultName, newDelegate, newSource, vueProximity)
     }
   }
 
   override fun equals(other: Any?): Boolean =
     other is VueLocallyDefinedRegularComponent
+    && other.name == name
     && other.delegate == delegate
     && other.mySource == mySource
 
-  override fun hashCode(): Int =
-    delegate.hashCode() + mySource.hashCode()
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + delegate.hashCode()
+    result = 31 * result + mySource.hashCode()
+    return result
+  }
 }

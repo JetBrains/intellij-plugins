@@ -16,21 +16,30 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.lang.html.isVueFileName
+import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueRegularComponent
 
 class VueTypedComponent(
-  override val source: PsiElement,
-  override val defaultName: String,
-) : VueTypedContainer(source), VueRegularComponent {
+  override val componentSource: PsiElement,
+  override val name: String,
+  override val vueProximity: VueModelVisitor.Proximity? = null,
+) : VueTypedContainer(componentSource), VueRegularComponent {
+
+  override fun withNameAndProximity(name: String, proximity: VueModelVisitor.Proximity): VueComponent =
+    VueTypedComponent(componentSource, name, proximity)
 
   override val nameElement: PsiElement?
     get() = null
 
+  override val source: PsiElement
+    get() = componentSource
+
   override val thisType: JSType
-    get() = CachedValuesManager.getCachedValue(source) {
+    get() = CachedValuesManager.getCachedValue(componentSource) {
       CachedValueProvider.Result.create(
-        resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
+        resolveElementTo(componentSource, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
           ?.let { componentDefinition ->
             when (componentDefinition) {
               is JSTypeOwner ->
@@ -64,14 +73,14 @@ class VueTypedComponent(
   }
 
   override val typeParameters: List<TypeScriptTypeParameter>
-    get() = resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
+    get() = resolveElementTo(componentSource, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
               .asSafely<TypeScriptTypeParameterListOwner>()
               ?.typeParameters?.toList()
             ?: emptyList()
 
   override fun createPointer(): Pointer<VueTypedComponent> {
-    val sourcePtr = source.createSmartPointer()
-    val defaultName = this.defaultName
+    val sourcePtr = componentSource.createSmartPointer()
+    val defaultName = this.name
     return Pointer {
       val source = sourcePtr.dereference() ?: return@Pointer null
       VueTypedComponent(source, defaultName)
@@ -81,9 +90,9 @@ class VueTypedComponent(
   override fun equals(other: Any?): Boolean =
     other === this ||
     other is VueTypedComponent
-    && other.source == this.source
+    && other.componentSource == this.componentSource
 
   override fun hashCode(): Int =
-    source.hashCode()
+    componentSource.hashCode()
 
 }

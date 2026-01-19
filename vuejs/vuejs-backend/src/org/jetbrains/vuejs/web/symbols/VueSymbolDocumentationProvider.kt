@@ -15,7 +15,6 @@ internal object VueSymbolDocumentationProvider : PolySymbolDocumentationProvider
     location: PsiElement?,
   ): PolySymbolDocumentation = PolySymbolDocumentation.builder(symbol, location).apply {
     val item = (symbol as? VueSourceElement)
-               ?: (symbol as? VueSourceElementSymbol<*>)?.item
                ?: throw IllegalArgumentException("Can't create documentation for $symbol")
     description = item.description
 

@@ -19,10 +19,10 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
+import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.PROP_VUE_COMPOSITION_COMPONENT
 import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
-import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 
 class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
 
@@ -64,7 +64,7 @@ class VueImportComponentIntention : JavaScriptIntention(), HighPriorityAction {
   private fun PolySymbol.getElementToImport() =
     this.asSafely<PsiSourcedPolySymbol>()
       ?.let {
-        if (it is VueComponentSymbol)
+        if (it is VueComponent)
           it.rawSource
         else
           it.source

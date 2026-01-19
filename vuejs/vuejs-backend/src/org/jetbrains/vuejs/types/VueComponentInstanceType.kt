@@ -6,9 +6,9 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.model.VueInstanceOwner
-import org.jetbrains.vuejs.model.VueNamedEntity
 import java.util.*
 
 class VueComponentInstanceType(
@@ -57,8 +57,8 @@ class VueComponentInstanceType(
     if (format == JSType.TypeTextFormat.SIMPLE) {
       builder.append("#VueComponentInstanceType: ")
         .append(instanceOwner.javaClass.simpleName)
-      if (instanceOwner is VueNamedEntity) {
-        builder.append("(").append(instanceOwner.defaultName).append(")")
+      if (instanceOwner is PolySymbol) {
+        builder.append("(").append(instanceOwner.name).append(")")
       }
       builder.append(" [")
       membersNames.forEach { builder.append(it).append(",") }

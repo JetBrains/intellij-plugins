@@ -19,6 +19,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
@@ -29,8 +30,8 @@ import com.intellij.psi.util.contextOfType
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.source.VueSourceEntity
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueSourceElementSymbol
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
@@ -157,11 +158,11 @@ private constructor(
   }
 
   private fun PolySymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, PolySymbol>): List<PolySymbol> {
-    if (this !is VueSourceElementSymbol<*>) return listOf(this)
+    if (this !is VueSourceElementSymbol || this !is PsiSourcedPolySymbol) return listOf(this)
 
     val source =
-      (this as? VueComponentSymbol)
-        ?.sourceDescriptor
+      (this as? VueSourceEntity)
+        ?.descriptor
         ?.source
         ?.let {
           it.contextOfType(ES6ExportDefaultAssignment::class)

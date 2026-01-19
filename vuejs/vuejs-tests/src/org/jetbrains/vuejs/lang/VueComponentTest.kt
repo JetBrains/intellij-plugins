@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.testFramework.DebugOutputPrinter
 import com.intellij.polySymbols.testFramework.checkTextByFile
@@ -242,8 +243,10 @@ class VueComponentTest : BasePlatformTestCase() {
         printProperty(level, "class", sourceElement.javaClass.simpleName)
         if (sourceElement is VueNamedSymbol)
           printProperty(level, "name", sourceElement.name)
-        if (sourceElement is VueNamedEntity)
+        if (sourceElement is VueComponent)
           printProperty(level, "defaultName", sourceElement.defaultName)
+        else if (sourceElement is VueDirective || sourceElement is VueFilter)
+          printProperty(level, "defaultName", sourceElement.name)
         printProperty(level, "description", sourceElement.description)
         if (printSources) {
           printProperty(level, "source", sourceElement.source)

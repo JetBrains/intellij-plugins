@@ -59,22 +59,7 @@ import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
-import org.jetbrains.vuejs.model.VueComponent
-import org.jetbrains.vuejs.model.VueComputedProperty
-import org.jetbrains.vuejs.model.VueDataProperty
-import org.jetbrains.vuejs.model.VueDirective
-import org.jetbrains.vuejs.model.VueDirectiveArgument
-import org.jetbrains.vuejs.model.VueDirectiveModifier
-import org.jetbrains.vuejs.model.VueEmitCall
-import org.jetbrains.vuejs.model.VueEntitiesContainer
-import org.jetbrains.vuejs.model.VueFilter
-import org.jetbrains.vuejs.model.VueFunctionComponent
-import org.jetbrains.vuejs.model.VueInputProperty
-import org.jetbrains.vuejs.model.VueMethod
-import org.jetbrains.vuejs.model.VueModelProximityVisitor
-import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.VueSlot
-import org.jetbrains.vuejs.model.VueSourceElement
+import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
@@ -453,7 +438,7 @@ fun resolveLocalComponent(context: VueEntitiesContainer, tagName: String, contai
     override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
       return acceptSameProximity(proximity, fromAsset(name) == normalizedTagName) {
         // Cannot self refer without export declaration with component name
-        if ((component.source as? JSImplicitElement)?.context != containingFile) {
+        if ((component.componentSource as? JSImplicitElement)?.context != containingFile) {
           result.add(component)
         }
       }

@@ -119,7 +119,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
           }
           else if (name != null && element !is JSClass) {
             (VueModelManager.getComponent(VueComponents.getComponentDescriptor(element)) ?: VueUnresolvedComponent(element, element, name))
-              .let { components[name] = if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, element) else it }
+              .let { if (it is VueRegularComponent) VueLocallyDefinedRegularComponent.create(it, element) else it }
+              ?.let { components[name] = it }
           }
           true
         },
