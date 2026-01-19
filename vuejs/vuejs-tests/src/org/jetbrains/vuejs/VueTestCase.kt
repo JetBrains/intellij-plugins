@@ -21,18 +21,19 @@ abstract class VueTestCase(
       val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
         it::class == VuePluginTypeScriptService::class
       } as TypeScriptServerServiceImpl
-      
+
       service.assertProcessStarted()
       runInEdtAndWait {
         waitEmptyServiceQueueForService(service)
       }
 
-      // TODO: support config
-      /*
       if (configuration.configurators.any { it is VueTsConfigFile }) {
-        TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(testRootDisposable, myFixture.tempDirFixture.getFile("tsconfig.json")!!)
+        TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(
+          testRootDisposable,
+          myFixture.tempDirFixture.getFile(VueTsConfigFile.FILE_NAME)!!,
+        )
       }
-      */
+
       runInEdtAndWait {
         FileDocumentManager.getInstance().saveAllDocuments()
       }
