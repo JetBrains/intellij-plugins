@@ -82,7 +82,7 @@ jvm_library(
     "@community//platform/structuralsearch:structuralSearch",
     "@community//xml/xml-analysis-api:analysis",
     "//plugins/css/backend",
-    "//plugins/css/ultimate/analysis",
+    "//plugins/css/codeinsight/analysis",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/graph",
     "@community//platform/execution",

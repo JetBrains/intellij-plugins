@@ -55,7 +55,7 @@ jvm_library(
     "@community//platform/xdebugger-api:debugger",
     "@community//xml/impl",
     "@community//spellchecker",
-    "//plugins/css/ultimate/analysis",
+    "//plugins/css/codeinsight/analysis",
     "@community//platform/built-in-server:builtInServer-impl",
     "//plugins/JavaScriptLanguage/javascript-common",
     "//plugins/webpack",
