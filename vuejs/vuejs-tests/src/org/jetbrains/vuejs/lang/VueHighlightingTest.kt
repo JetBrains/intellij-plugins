@@ -143,7 +143,7 @@ const props = {seeMe: {}}
 
   fun testRequiredAttributeWithVModel() = doDirTest(listOf(VueTestModule.VUE_2_6_10))
 
-  fun testRequiredAttributeWithVModel3() = doDirTest(listOf(VueTestModule.VUE_3_0_0))
+  fun testRequiredAttributeWithVModel3() = doDirTest(listOf(VueTestModule.VUE_3_5_0))
 
   fun testVueAttributeInCustomTag() = doTest()
 
@@ -177,7 +177,7 @@ const props = {seeMe: {}}
 
   fun testSpellchecking() {
     myFixture.enableInspections(GrazieSpellCheckingInspection())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testTypeScriptTypesAreResolved() = doTest()
@@ -473,16 +473,16 @@ const props = {seeMe: {}}
 
   fun testScriptSetup() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testScriptSetupComplexImports() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testMissingLabelSuppressed() {
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.enableInspections(HtmlFormInputWithoutLabelInspection())
     myFixture.configureByText("Foo.vue", """<input>""")
     myFixture.checkHighlighting()
@@ -502,7 +502,7 @@ const props = {seeMe: {}}
     doTest()
   }
 
-  fun testScriptSetupScopePriority() = doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  fun testScriptSetupScopePriority() = doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
 
   fun testBindingToDataAttributes() = doTest()
 
@@ -520,22 +520,22 @@ const props = {seeMe: {}}
     myFixture.enableInspections(
       ES6UnusedImportsInspection(),
     )
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testTypedComponentsScriptSetup() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest(addNodeModules = listOf(VueTestModule.NAIVE_UI_2_19_11, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.VUE_3_2_2))
+    doTest(addNodeModules = listOf(VueTestModule.NAIVE_UI_2_19_11, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.VUE_3_5_0))
   }
 
   fun testTypedComponentsScriptSetup2() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doTest(addNodeModules = listOf(VueTestModule.NAIVE_UI_2_19_11, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.VUE_3_2_2))
+    doTest(addNodeModules = listOf(VueTestModule.NAIVE_UI_2_19_11, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.VUE_3_5_0))
   }
 
   fun testCssVBind() {
     myFixture.enableInspections(CssInvalidFunctionInspection::class.java)
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testCssVBindVue31() {
@@ -545,7 +545,7 @@ const props = {seeMe: {}}
 
   fun testGlobalSymbols() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_1_0))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testStandardBooleanAttributes() {
@@ -555,7 +555,7 @@ const props = {seeMe: {}}
 
   fun testRefUnwrap() {
     myFixture.enableInspections(VueInspectionsProvider())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testVModelWithMixin() {
@@ -571,7 +571,7 @@ const props = {seeMe: {}}
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(
       fileName = "MyTable.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_2_2, VueTestModule.QUASAR_2_6_5),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0, VueTestModule.QUASAR_2_6_5),
     )
   }
 
@@ -579,7 +579,7 @@ const props = {seeMe: {}}
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(
       fileName = "HelloWorld.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_2_2),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
@@ -587,7 +587,7 @@ const props = {seeMe: {}}
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(
       fileName = "HelloWorld.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_2_2),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
@@ -623,17 +623,17 @@ const props = {seeMe: {}}
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(
       fileName = "Catalogue.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_2_2),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
   fun testCustomEvents() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testCustomEventsTypedComponent() {
     doDirTest(
-      addNodeModules = listOf(VueTestModule.VUE_3_2_2),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
@@ -658,7 +658,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testLifecycleEventsVue3DefineComponent() {
@@ -666,7 +666,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testIdIndexer() {
@@ -674,7 +674,7 @@ const props = {seeMe: {}}
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
     )
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testVueCreateApp() {
@@ -686,7 +686,7 @@ const props = {seeMe: {}}
   }
 
   fun testScriptCaseSensitivity() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testVPre() {
@@ -694,7 +694,7 @@ const props = {seeMe: {}}
   }
 
   fun testHtmlTagOmission() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), extension = "html")
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0), extension = "html")
   }
 
   fun testVueNoTagOmission() {
@@ -702,19 +702,19 @@ const props = {seeMe: {}}
   }
 
   fun testScriptSetupGeneric() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testGenericComponentUsage() {
     doDirTest(
-      addNodeModules = listOf(VueTestModule.VUE_3_3_4),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
   fun testComponentFromFunctionPlugin() {
     doDirTest(
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
@@ -728,7 +728,7 @@ const props = {seeMe: {}}
   fun testComponentFromNestedFunctionPlugin() {
     doDirTest(
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
@@ -742,7 +742,7 @@ const props = {seeMe: {}}
   fun testComponentFromNestedFunctionPluginWithCycle() {
     doDirTest(
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
@@ -756,7 +756,7 @@ const props = {seeMe: {}}
   fun testComponentFromObjectPlugin() {
     doDirTest(
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
@@ -770,7 +770,7 @@ const props = {seeMe: {}}
   fun testComponentFromNestedObjectPlugin() {
     doDirTest(
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
@@ -784,7 +784,7 @@ const props = {seeMe: {}}
   fun testComponentFromNestedObjectPluginWithCycle() {
     doDirTest(
       fileName = "App.vue",
-      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
@@ -886,12 +886,12 @@ const props = {seeMe: {}}
 
   fun testPropTypeJsDoc() {
     myFixture.enableInspections(JSValidateTypesInspection())
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testPropsWithDefaults() {
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testPropsWithDefaultsInTs() {
@@ -904,17 +904,17 @@ const props = {seeMe: {}}
   }
 
   fun testBindShorthandAttribute() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_4_0))
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0))
   }
 
   fun testWatchProperty() {
-    doTest(addNodeModules = listOf(VueTestModule.VUE_3_4_0), extension = "js")
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_5_0), extension = "js")
   }
 
   fun testTypedMixins() {
     doDirTest(
       fileName = "index.js",
-      addNodeModules = listOf(VueTestModule.VUE_3_4_0),
+      addNodeModules = listOf(VueTestModule.VUE_3_5_0),
     )
   }
 
