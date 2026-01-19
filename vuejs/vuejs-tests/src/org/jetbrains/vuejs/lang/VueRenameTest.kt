@@ -33,25 +33,25 @@ import org.jetbrains.vuejs.VueTestCase
 class VueRenameTest : VueTestCase("rename") {
 
   fun testComponentFieldFromTemplate() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testComponentFieldFromStringUsageInTemplate() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testTemplateLocalVariable() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDestructuringInVFor() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testSlotProps() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testQualifiedWatchProperty() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testWatchProperty() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testInlineFieldRename() =
     doConfiguredTest(checkResult = true) {
@@ -59,49 +59,49 @@ class VueRenameTest : VueTestCase("rename") {
     }
 
   fun testComponentNameFromDeclaration() =
-    checkSymbolRename("componentNameFromDeclaration1.vue", "AfterComponent")
+    doRenameTest(mainFile = "componentNameFromDeclaration1.vue", newName = "AfterComponent")
 
   fun testComponentNameFromPropertyName() =
-    checkSymbolRename("AfterComponent")
+    doRenameTest(newName = "AfterComponent")
 
   fun testCssVBind() =
-    checkSymbolRename("newColor", dir = false)
+    doRenameTest(newName = "newColor", dir = false)
 
   fun testCssVBindScriptSetup() =
-    checkSymbolRename("newColor", dir = false)
+    doRenameTest(newName = "newColor", dir = false)
 
   fun testCreateAppComponent() =
-    checkSymbolRename("main.ts", "NewCar", VueTestModule.VUE_3_2_2)
+    doRenameTest(mainFile = "main.ts", newName = "NewCar")
 
   fun testCreateAppComponentFromUsage() =
-    checkSymbolRename("App.vue", "NewCar", VueTestModule.VUE_3_2_2)
+    doRenameTest(mainFile = "App.vue", newName = "NewCar")
 
   fun testCreateAppDirective() =
-    checkSymbolRename("main.ts", "bar", VueTestModule.VUE_3_2_2)
+    doRenameTest(mainFile = "main.ts", newName = "bar")
 
   fun testCreateAppDirectiveFromUsage() =
-    checkSymbolRename("TheComponent.vue", "bar", VueTestModule.VUE_3_2_2)
+    doRenameTest(mainFile = "TheComponent.vue", newName = "bar")
 
   fun testNamespacedComponents() =
-    checkSymbolRename("scriptSetup.vue", "NewName", VueTestModule.VUE_3_2_2)
+    doRenameTest(mainFile = "scriptSetup.vue", newName = "NewName")
 
   fun testCompositionApiLocalDirective() =
-    checkSymbolRename("scriptSetup.vue", "vNewName", VueTestModule.VUE_3_2_2)
+    doRenameTest(mainFile = "scriptSetup.vue", newName = "vNewName")
 
   fun testModelDeclaration() =
-    checkSymbolRename("alignment", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "alignment", dir = false)
 
   fun testModelDeclarationWithVar() =
-    checkSymbolRename("alignment", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "alignment", dir = false)
 
   fun testModelDeclarationProp() =
-    checkSymbolRename("ModelDeclarationProp.vue", "count", VueTestModule.VUE_3_2_2)
+    doRenameTest(mainFile = "ModelDeclarationProp.vue", newName = "count")
 
   fun testModelDeclarationEvent() =
-    checkSymbolRename("ModelDeclarationEvent.vue", "count", VueTestModule.VUE_3_2_2)
+    doRenameTest(mainFile = "ModelDeclarationEvent.vue", newName = "count")
 
   fun testInjectLiteral() =
-    checkSymbolRename("InjectLiteral.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "InjectLiteral.vue", newName = "newName")
 
   fun testComponentFile() =
     withRenameUsages(false) {
@@ -119,212 +119,215 @@ class VueRenameTest : VueTestCase("rename") {
     }
 
   fun testPropsOptionsFromDefinition() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testPropsOptionsFromUsage1() =
-    checkSymbolRename("newName23", dir = false)
+    doRenameTest(newName = "newName23", dir = false)
 
   fun testPropsOptionsFromUsage2() =
-    checkSymbolRename("newName23", dir = false)
+    doRenameTest(newName = "newName23", dir = false)
 
   fun testPropsOptionsFromUsage3() =
-    checkSymbolRename("newName23", dir = false)
+    doRenameTest(newName = "newName23", dir = false)
 
   fun testPropsOptionsUpperCaseFromDefinition() =
-    checkSymbolRename("NewName", dir = false)
+    doRenameTest(newName = "NewName", dir = false)
 
   fun testPropsOptionsNumberFromDefinition() =
-    checkSymbolRename("newName23", dir = false)
+    doRenameTest(newName = "newName23", dir = false)
 
   fun testPropsOptionsExtUsageFromDefinition() =
-    checkSymbolRename("MyComponent.vue", "newName")
+    doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
   fun testPropsOptionsExtUsageFromUsage() =
-    checkSymbolRename("MyUsage.vue", "newName23")
+    doRenameTest(mainFile = "MyUsage.vue", newName = "newName23")
 
   fun testPropsStringsFromDefinition() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testPropsStringsFromUsage1() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testPropsStringsFromUsage2() =
-    checkSymbolRename("newName", dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testPropsStringsExtUsageFromDefinition() =
-    checkSymbolRename("MyComponent.vue", "newName")
+    doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
   fun testPropsStringsExtUsageFromUsage() =
-    checkSymbolRename("MyUsage.vue", "newName")
+    doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
   fun testDefinePropsRecordTypeFromDefinition() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsRecordTypeFromUsage1() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsRecordTypeFromUsage2() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsRecordTypeExtUsageFromDefinition() =
-    checkSymbolRename("MyComponent.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
   fun testDefinePropsRecordTypeExtUsageFromUsage() =
-    checkSymbolRename("MyUsage.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
   fun testDefinePropsArrayLiteralFromDefinition() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsArrayLiteralFromUsage1() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsArrayLiteralFromUsage2() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsArrayLiteralExtUsageFromDefinition() =
-    checkSymbolRename("MyComponent.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
   fun testDefinePropsArrayLiteralExtUsageFromUsage() =
-    checkSymbolRename("MyUsage.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
   fun testDefinePropsObjectLiteralFromDefinition() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsObjectLiteralFromUsage1() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsObjectLiteralFromUsage2() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsObjectLiteralExtUsageFromDefinition() =
-    checkSymbolRename("MyComponent.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
   fun testDefinePropsObjectLiteralExtUsageFromUsage() =
-    checkSymbolRename("MyUsage.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
   fun testDefinePropsInterfaceFromDefinition() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsInterfaceFromUsage1() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsInterfaceFromUsage2() =
-    checkSymbolRename("newName", VueTestModule.VUE_3_3_4, dir = false)
+    doRenameTest(newName = "newName", dir = false)
 
   fun testDefinePropsInterfaceExtUsageFromDefinition() =
-    checkSymbolRename("MyComponent.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
   fun testDefinePropsInterfaceExtUsageFromUsage() =
-    checkSymbolRename("MyUsage.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
   fun testDefinePropsExtInterfaceFromDefinition() =
-    checkSymbolRename("fooProps.ts", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "fooProps.ts", newName = "newName")
 
   fun testDefinePropsExtInterfaceFromUsage1() =
-    checkSymbolRename("definePropsInterface.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "definePropsInterface.vue", newName = "newName")
 
   fun testDefinePropsExtInterfaceFromUsage2() =
-    checkSymbolRename("definePropsInterface.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "definePropsInterface.vue", newName = "newName")
 
   fun testDefinePropsExtInterfaceExtUsageFromDefinition() =
-    checkSymbolRename("fooProps.ts", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "fooProps.ts", newName = "newName")
 
   fun testDefinePropsExtInterfaceExtUsageFromUsage() =
-    checkSymbolRename("MyUsage.vue", "newName", VueTestModule.VUE_3_3_4)
+    doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
+
   fun testComponentFromFunctionPlugin_renameFromDeclaration() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "global-components.ts",
       newName = "OtherButtonFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromFunctionPlugin_renameFromUsage() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "App.vue",
       newName = "OtherButtonFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromNestedFunctionPlugin_renameFromDeclaration() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "other-global-components.js",
       newName = "OtherLabelFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromNestedFunctionPlugin_renameFromUsage() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "App.vue",
       newName = "OtherLabelFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromNestedFunctionPluginWithCycle_renameFromDeclaration() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "other-global-components.js",
       newName = "OtherLabelFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromNestedFunctionPluginWithCycle_renameFromUsage() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "App.vue",
       newName = "OtherLabelFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromObjectPlugin_renameFromDeclaration() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "global-components.ts",
       newName = "OtherButtonFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromObjectPlugin_renameFromUsage() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "App.vue",
       newName = "OtherButtonFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromNestedObjectPlugin_renameFromDeclaration() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "other-global-components.js",
       newName = "OtherLabelFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromNestedObjectPlugin_renameFromUsage() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "App.vue",
       newName = "OtherLabelFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromNestedObjectPluginWithCycle_renameFromDeclaration() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "other-global-components.js",
       newName = "OtherLabelFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
   fun testComponentFromNestedObjectPluginWithCycle_renameFromUsage() {
-    checkSymbolRename(
+    doRenameTest(
       mainFile = "App.vue",
       newName = "OtherLabelFromPlugin",
-      modules = arrayOf(VueTestModule.VUE_3_4_0),
     )
   }
 
+  private fun doRenameTest(
+    mainFile: String = "$testName.$defaultExtension",
+    newName: String,
+    dir: Boolean = true,
+  ) {
+    checkSymbolRename(
+      mainFile = mainFile,
+      newName = newName,
+      dir = dir,
+      modules = arrayOf(
+        VueTestModule.VUE_3_5_0,
+      ),
+    )
+  }
 }
