@@ -17,7 +17,6 @@ import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Plow.Companion.toPlow
 import com.intellij.util.ProcessingContext
@@ -63,7 +62,6 @@ import org.intellij.terraform.hcl.patterns.HCLPatterns.IdentifierOrStringLiteral
 import org.intellij.terraform.hcl.patterns.HCLPatterns.IdentifierOrStringLiteralOrSimple
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Object
 import org.intellij.terraform.hcl.patterns.HCLPatterns.Property
-import org.intellij.terraform.hcl.patterns.HCLPatterns.PropertyOrBlock
 import org.intellij.terraform.hcl.patterns.HCLPatterns.WhiteSpace
 import org.intellij.terraform.hcl.psi.HCLArray
 import org.intellij.terraform.hcl.psi.HCLBlock
@@ -120,37 +118,7 @@ class TfConfigCompletionContributor : HilCompletionContributor() {
       .withSuperParent(5, Block), PropertyValueCompletionProvider)
     //endregion
 
-    //region InBlock PropertyWithObjectValue Key
-    // property = { <caret> }
-    // property = { "<caret>" }
-    // property { <caret> }
-    // property { "<caret>" }
-    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-      .inFile(TerraformConfigFile)
-      .withParent(Object)
-      .withSuperParent(2, PropertyOrBlock)
-      .withSuperParent(3, Object), TfPropertyObjectKeyCompletionProvider)
-    // property = { <caret>a="" }
-    // property = { "<caret>a"="" }
-    // property { <caret>="" }
-    // property { "<caret>"="" }
-    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-      .inFile(TerraformConfigFile)
-      .withParent(IdentifierOrStringLiteral)
-      .withSuperParent(2, Property)
-      .withSuperParent(3, Object)
-      .withSuperParent(4, PropertyOrBlock)
-      .withSuperParent(5, Object)
-      .withSuperParent(6, Block), TfPropertyObjectKeyCompletionProvider)
-    // property = { a=""  <caret> }
-    extend(CompletionType.BASIC, psiElement().withElementType(HCLTokenTypes.IDENTIFYING_LITERALS)
-      .inFile(TerraformConfigFile)
-      .withParent(psiElement(PsiErrorElement::class.java))
-      .withSuperParent(2, Object)
-      .withSuperParent(3, PropertyOrBlock)
-      .withSuperParent(4, Object)
-      .withSuperParent(5, Block), TfPropertyObjectKeyCompletionProvider)
-    //endregion
+    TfPropertyObjectKeyCompletionProvider.registerTo(this, TerraformConfigFile)
 
     //region .tfvars
     // Variables in .tvars files

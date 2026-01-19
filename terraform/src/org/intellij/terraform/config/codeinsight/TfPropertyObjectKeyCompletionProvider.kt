@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionParameters
@@ -17,6 +17,7 @@ import org.intellij.terraform.config.model.ObjectType
 import org.intellij.terraform.config.model.PropertyType
 import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.getTerraformModule
+import org.intellij.terraform.hcl.codeinsight.HclObjectKeyCompletionProvider
 import org.intellij.terraform.hcl.psi.HCLBlock
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLObject
@@ -26,7 +27,7 @@ import org.intellij.terraform.hcl.psi.HCLStringLiteral
 import org.intellij.terraform.hcl.psi.getNameElementUnquoted
 import org.intellij.terraform.hcl.psi.getParent
 
-object TfPropertyObjectKeyCompletionProvider : TfConfigCompletionContributor.TfCompletionProvider() {
+internal object TfPropertyObjectKeyCompletionProvider : HclObjectKeyCompletionProvider() {
   private val LOG = Logger.getInstance(TfPropertyObjectKeyCompletionProvider::class.java)
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {

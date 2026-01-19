@@ -84,6 +84,7 @@ internal object HclRequiredProvidersCompletion : CompletionProvider<CompletionPa
 
   private fun providerPropertyPattern(requiredProviderBlock: PsiElementPattern.Capture<HCLBlock>): PsiElementPattern.Capture<HCLProperty> =
     PlatformPatterns.psiElement(HCLProperty::class.java)
+      .withParent(HCLPatterns.Object)
       .withSuperParent(2, requiredProviderBlock)
 
   private fun buildLookupForRequiredProvider(provider: ProviderType, element: PsiElement): LookupElement =

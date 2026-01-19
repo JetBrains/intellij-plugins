@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.model
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
@@ -261,13 +261,13 @@ class Module private constructor(val moduleRoot: PsiFileSystemItem) {
     return getDefinedHclBlocks(HCL_RESOURCE_IDENTIFIER, numberOfArguments = 2, firstArgument = type, secondArgument = name)
   }
 
-  fun findDefinedRequiredProvider(type: String): HCLProperty? {
+  fun getDefinedRequiredProviders(): List<HCLProperty>? {
     // `required_providers` should be only 1 in terraform module
     val requiredProvidersBlock = getDefinedHclBlocks(HCL_TERRAFORM_IDENTIFIER, numberOfArguments = 0).firstNotNullOfOrNull { terraformBlock ->
       terraformBlock.`object`?.blockList?.firstOrNull { it.name == HCL_TERRAFORM_REQUIRED_PROVIDERS }
     } ?: return null
 
-    return requiredProvidersBlock.`object`?.findProperty(type)
+    return requiredProvidersBlock.`object`?.propertyList
   }
 
   // numberOfArguments should be 0, 1 or 2:

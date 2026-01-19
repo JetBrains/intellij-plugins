@@ -50,6 +50,8 @@ internal object Constants {
   const val HCL_CONDITION_IDENTIFIER: String = "condition"
   const val HCL_ID_IDENTIFIER: String = "id"
   const val HCL_STACK_IDENTIFIER: String = "stack"
+  const val HCL_COMPONENT_IDENTIFIER = "component"
+  const val HCL_PROVIDERS_IDENTIFIER = "providers"
 
   const val REGISTRY_DOMAIN: String = "registry.terraform.io"
   const val LATEST_VERSION: String = "latest"

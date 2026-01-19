@@ -15,6 +15,8 @@ internal class TfComponentCompletionContributor : CompletionContributor(), DumbA
     HclBlockPropertiesCompletionProvider.registerTo(this, TfComponentFile)
 
     HclRequiredProvidersCompletion.registerTo(this, TfComponentPsiPatterns.TfComponentRequiredProviders)
+
+    TfComponentObjectKeyCompletionProvider.registerTo(this, TfComponentFile)
   }
 }
 

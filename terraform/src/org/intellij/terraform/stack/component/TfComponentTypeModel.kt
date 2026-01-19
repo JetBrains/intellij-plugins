@@ -1,11 +1,13 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.stack.component
 
+import org.intellij.terraform.config.Constants.HCL_COMPONENT_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_CONFIG_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_DEPENDS_ON_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_FOR_EACH_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_INPUTS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_OUTPUT_IDENTIFIER
+import org.intellij.terraform.config.Constants.HCL_PROVIDERS_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_PROVIDER_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_REMOVED_BLOCK_IDENTIFIER
 import org.intellij.terraform.config.Constants.HCL_SOURCE_IDENTIFIER
@@ -28,14 +30,14 @@ import org.intellij.terraform.config.model.Types
 import org.intellij.terraform.config.model.toMap
 
 private val SourceProperty: PropertyType = PropertyType(HCL_SOURCE_IDENTIFIER, Types.String, required = true)
-private val ProvidersProperty: PropertyType = PropertyType("providers", Types.Object, required = true)
+private val ProvidersProperty: PropertyType = PropertyType(HCL_PROVIDERS_IDENTIFIER, Types.Object, required = true)
 private val ForEachProperty: PropertyType = PropertyType(HCL_FOR_EACH_IDENTIFIER, Types.Any)
 private val TypeProperty: PropertyType = PropertyType(HCL_TYPE_IDENTIFIER, Types.Any, required = true)
 
 internal val InputsProperty = PropertyType(HCL_INPUTS_IDENTIFIER, Types.Object, required = true)
 
 internal val ComponentBlockType: BlockType = BlockType(
-  COMPONENT_IDENTIFIER, 1,
+  HCL_COMPONENT_IDENTIFIER, 1,
   properties = listOf(
     SourceProperty,
     createVersionProperty(),
@@ -110,5 +112,3 @@ internal val TfComponentRootBlocks: List<BlockType> = listOf(
 internal val TfComponentRootBlocksMap: Map<String, BlockType> = TfComponentRootBlocks.associateBy { it.literal }
 
 internal fun createVersionProperty(isRequired: Boolean = false) = PropertyType(HCL_VERSION_IDENTIFIER, Types.String, required = isRequired)
-
-internal const val COMPONENT_IDENTIFIER = "component"

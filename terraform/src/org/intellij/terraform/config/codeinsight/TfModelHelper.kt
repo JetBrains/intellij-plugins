@@ -295,19 +295,20 @@ internal object TfModelHelper {
 
   private fun getModuleProperties(block: HCLBlock): Map<String, PropertyOrBlockType> {
     val defaults = TfTypeModel.Module.properties
-    val module = Module.getAsModuleBlock(block) ?: return defaults
-    val variables = module.getAllVariables()
-    if (variables.isEmpty()) {
-      return defaults
-    }
+    val variables = getModuleRequiredVariables(block).ifEmpty { return defaults }
 
-    val properties = HashMap<String, PropertyOrBlockType>()
-    properties.putAll(defaults)
-    for (v in variables) {
-      val hasDefault = v.getDefault() != null
-      properties[v.name] = PropertyType(v.name, v.getType() ?: Types.Any, required = !hasDefault)
+    return defaults + variables
+  }
+
+  fun getModuleRequiredVariables(block: HCLBlock): Map<String, PropertyType> {
+    val module = Module.getAsModuleBlock(block) ?: return emptyMap()
+    val variables = module.getAllVariables()
+    if (variables.isEmpty()) return emptyMap()
+
+    return variables.associate { variable ->
+      val hasDefault = variable.getDefault() != null
+      variable.name to PropertyType(variable.name, variable.getType() ?: Types.Any, required = !hasDefault)
     }
-    return properties
   }
 
   private fun getPropertiesWithDefaults(defaults: BlockType, origin: BlockType?): Map<String, PropertyOrBlockType> {

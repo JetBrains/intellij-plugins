@@ -132,7 +132,7 @@ internal object RequiredProvidersReference : PsiReferenceProvider() {
 
     return arrayOf(HCLElementLazyReference(element, false) { _, _ ->
       val module = element.getTerraformModule()
-      val requiredProvider = module.findDefinedRequiredProvider(element.unquotedText)
+      val requiredProvider = module.getDefinedRequiredProviders()?.firstOrNull { it.name == element.unquotedText }
       requiredProvider?.let { listOf(it) } ?: emptyList()
     })
   }
