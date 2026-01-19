@@ -54,8 +54,10 @@
     <!-- endregion -->
   </dependencies>
 
+  <!--suppress PluginXmlValidity -->
   <content namespace="jetbrains">
-    <module name="intellij.osgi/javaee"/>
+    <!-- The implicit main module of the plugin depends on internal module (intellij.libraries.plexus.utils), so it's required to set the namespace for it
+         todo: extract elements and dependencies to an explicit content module (see IJPL-212351) -->
   </content>
 
   <depends optional="true" config-file="osgi-maven-support.xml">org.jetbrains.idea.maven</depends>
