@@ -277,7 +277,7 @@ module Spec
           if expectation_not_met
             if failure.respond_to?(:expected_str) && failure.respond_to?(:actual_str)
               message = strip_rspec_diff message
-              log(@message_factory.create_test_failed(example_data.full_name, message, backtrace, example_data.id, failure.expected_str, failure.actual_str))
+              log(@message_factory.create_test_failed(example_data.full_name, message, backtrace, example_data.id, failure.expected_str, failure.actual_str, false))
             else
               log(@message_factory.create_test_failed(example_data.full_name, message, backtrace, example_data.id))
             end

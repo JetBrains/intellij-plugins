@@ -104,7 +104,7 @@ module Rake
                        :nodeId => node_id
       end
 
-      def self.create_test_failed(test_name, message, stacktrace, node_id = nil, expected = nil, actual = nil)
+      def self.create_test_failed(test_name, message, stacktrace, node_id = nil, expected = nil, actual = nil, print_expected_and_actual = true)
         stacktrace = format_stacktrace_if_needed(message, stacktrace)
         attrs = {
           :message_name => 'testFailed',
@@ -115,8 +115,9 @@ module Rake
         }
         if expected != nil && actual != nil
           attrs[:type] = 'comparisonFailure'
-          attrs[:expected] = expected.to_s
-          attrs[:actual] = actual.to_s
+          attrs[:expected] = expected
+          attrs[:actual] = actual
+          attrs[:printExpectedAndActual] = print_expected_and_actual
         end
         create_message attrs
       end
