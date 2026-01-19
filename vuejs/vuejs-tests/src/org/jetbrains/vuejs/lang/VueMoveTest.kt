@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSMoveTestBase
 
-open class VueMoveTest: JSMoveTestBase() {
+open class VueMoveTest : JSMoveTestBase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/refactoring/move/"
 
   override fun getTestRoot(): String {
