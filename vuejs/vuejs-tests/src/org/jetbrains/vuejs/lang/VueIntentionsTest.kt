@@ -90,7 +90,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
 
   fun testExternalSymbolsImport() {
     myFixture.enableInspections(VueInspectionsProvider())
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.copyDirectoryToProject(getTestName(true), ".")
 
     fun doTest() {
@@ -123,7 +123,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
 
   fun testImportNoScriptOrScriptSetupComponentInCode() {
     myFixture.enableInspections(VueInspectionsProvider())
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
     myFixture.copyDirectoryToProject(getTestName(true), ".")
 
     myFixture.configureFromTempProjectFile("test.ts")
@@ -137,7 +137,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
 
   fun testImportGlobalComponent() {
     myFixture.copyDirectoryToProject(getTestName(true), ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.PRIMEVUE_3_8_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.PRIMEVUE_3_8_2)
     myFixture.configureFromTempProjectFile("test.vue")
 
     for (signature in listOf("<F<caret>oo", "<A<caret>vatar")) {
@@ -157,7 +157,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
   fun testAddMissingComponentImport() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(true), ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
 
     myFixture.configureFromTempProjectFile("test.vue")
     myFixture.moveToOffsetBySignature("to-be-<caret>imported")
@@ -171,7 +171,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
   fun testAddMissingComponentImportWithConflictingTagName() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(true), ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0, additionalDependencies = mapOf("@inertiajs/vue3" to "1.0.14"))
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, additionalDependencies = mapOf("@inertiajs/vue3" to "1.0.14"))
 
     myFixture.configureFromTempProjectFile("${getTestName(true)}.vue")
     myFixture.moveToOffsetBySignature("Li<caret>nk")
@@ -185,7 +185,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
   fun testSkipMissingComponentImportForHtmlTags() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(true), ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_4_0, additionalDependencies = mapOf("@inertiajs/vue3" to "1.0.14"))
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, additionalDependencies = mapOf("@inertiajs/vue3" to "1.0.14"))
 
     myFixture.configureFromTempProjectFile("${getTestName(true)}.vue")
     myFixture.moveToOffsetBySignature("li<caret>nk")
@@ -196,7 +196,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
   fun testAddMissingFunctionImport() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(true), ".")
-    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
 
     myFixture.configureFromTempProjectFile("components/Test.vue")
     myFixture.moveToOffsetBySignature("get<caret>Client()")
