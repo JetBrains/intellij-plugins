@@ -9,13 +9,17 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-open class VueExtractComponentTest(
-  useTsc: Boolean = true,
-) : VueTestCase("extract_component", useTsc = useTsc) {
+class VueExtractComponentTest :
+  VueExtractComponentTestBase() {
 
   class WithoutServiceTest :
-    VueExtractComponentTest(useTsc = false)
+    VueExtractComponentTestBase(useTsc = false)
+}
+
+@RunWith(JUnit4::class)
+abstract class VueExtractComponentTestBase(
+  useTsc: Boolean = true,
+) : VueTestCase("extract_component", useTsc = useTsc) {
 
   @Test
   fun testExtractSingleTag__options() {

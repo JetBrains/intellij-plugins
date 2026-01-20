@@ -6,13 +6,17 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-open class VueAutoPopupTest(
-  useTsc: Boolean = true,
-) : VueTestCase("autoPopup", useTsc = useTsc) {
+class VueAutoPopupTest :
+  VueAutoPopupTestBase() {
 
   class WithoutServiceTest :
-    VueAutoPopupTest(useTsc = false)
+    VueAutoPopupTestBase(useTsc = false)
+}
+
+@RunWith(JUnit4::class)
+abstract class VueAutoPopupTestBase(
+  useTsc: Boolean = true,
+) : VueTestCase("autoPopup", useTsc = useTsc) {
 
   @Test
   fun testEventsAfterAt() =
