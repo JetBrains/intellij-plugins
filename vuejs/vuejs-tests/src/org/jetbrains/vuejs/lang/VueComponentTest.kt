@@ -51,77 +51,115 @@ import org.jetbrains.vuejs.model.*
  * } */
  * ```
  */
-class VueComponentTest : BasePlatformTestCase() {
+class VueComponentTest :
+  BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/component"
+  override fun getTestDataPath(): String = 
+    getVueTestDataPath() + "/component"
 
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(VueInspectionsProvider())
   }
 
-  fun testOptionsApiRuntimeDeclarationJS() = doTest()
+  fun testOptionsApiRuntimeDeclarationJS() =
+    doTest()
 
-  fun testOptionsApiRuntimeDeclarationPropTypeTS() = doTest()
+  fun testOptionsApiRuntimeDeclarationPropTypeTS() =
+    doTest()
 
-  fun testOptionsApiRuntimeDeclarationArrayJS() = doTest()
+  fun testOptionsApiRuntimeDeclarationArrayJS() =
+    doTest()
 
-  fun testDefinePropsRuntimeDeclarationTS() = doTest(true)
+  fun testDefinePropsRuntimeDeclarationTS() =
+    doTest(true)
 
-  fun testDefinePropsRuntimeDeclarationWithAssignmentTS() = doTest(true)
+  fun testDefinePropsRuntimeDeclarationWithAssignmentTS() =
+    doTest(true)
 
-  fun testDefinePropsRuntimeDeclarationArrayTS() = doTest()
+  fun testDefinePropsRuntimeDeclarationArrayTS() =
+    doTest()
 
-  fun testDefinePropsTypeDeclarationTS() = doTest(true)
+  fun testDefinePropsTypeDeclarationTS() =
+    doTest(true)
 
-  fun testDefinePropsTypeDeclarationWithAssignmentTS() = doTest(true)
+  fun testDefinePropsTypeDeclarationWithAssignmentTS() =
+    doTest(true)
 
-  fun testDefinePropsTypeDeclarationInterfaceTS() = doTest(true)
+  fun testDefinePropsTypeDeclarationInterfaceTS() =
+    doTest(true)
 
-  fun testDefinePropsTypeDeclarationTypeAliasTS() = doTest(true)
+  fun testDefinePropsTypeDeclarationTypeAliasTS() =
+    doTest(true)
 
-  fun testWithDefaultsTypeDeclarationTS() = doSingleStrictnessTest(false)
-  fun testWithDefaultsTypeDeclarationTSNullChecks() = doSingleStrictnessTest(true)
+  fun testWithDefaultsTypeDeclarationTS() =
+    doSingleStrictnessTest(false)
 
-  fun testWithDefaultsTypeDeclarationWithAssignmentTS() = doSingleStrictnessTest(false)
-  fun testWithDefaultsTypeDeclarationWithAssignmentTSNullChecks() = doSingleStrictnessTest(true)
+  fun testWithDefaultsTypeDeclarationTSNullChecks() =
+    doSingleStrictnessTest(true)
 
-  fun testWithDefaultsTypeDeclarationPartialTS() = doTest()
+  fun testWithDefaultsTypeDeclarationWithAssignmentTS() =
+    doSingleStrictnessTest(false)
 
-  fun testWithDefaultsTypeDeclarationLocalReferencesTS() = doTest(true)
+  fun testWithDefaultsTypeDeclarationWithAssignmentTSNullChecks() =
+    doSingleStrictnessTest(true)
 
-  fun testPropsDestructureTypeDeclarationTS() = doSingleStrictnessTest(false)
-  fun testPropsDestructureTypeDeclarationTSNullChecks() = doSingleStrictnessTest(true)
+  fun testWithDefaultsTypeDeclarationPartialTS() =
+    doTest()
 
-  fun testPropsDestructureRuntimeDeclarationJS() = doTest()
+  fun testWithDefaultsTypeDeclarationLocalReferencesTS() =
+    doTest(true)
 
-  fun testBothScriptsJS() = doTest()
+  fun testPropsDestructureTypeDeclarationTS() =
+    doSingleStrictnessTest(false)
 
-  fun testDefineEmits() = doTest()
+  fun testPropsDestructureTypeDeclarationTSNullChecks() =
+    doSingleStrictnessTest(true)
 
-  fun testDefineEmitsObjectLiteral() = doTest()
+  fun testPropsDestructureRuntimeDeclarationJS() =
+    doTest()
 
-  fun testDefineEmitsExplicitType() = doTest()
+  fun testBothScriptsJS() =
+    doTest()
 
-  fun testDefineEmitsPropertyContractTupleParameters() = doTest(true)
+  fun testDefineEmits() =
+    doTest()
 
-  fun testDefineEmitsPropertyContractNonTupleParameters() = doTest(true)
+  fun testDefineEmitsObjectLiteral() =
+    doTest()
 
-  fun testDefineComponentWithEmits() = doTest()
+  fun testDefineEmitsExplicitType() =
+    doTest()
 
-  fun testScriptSetupGeneric() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+  fun testDefineEmitsPropertyContractTupleParameters() =
+    doTest(true)
 
-  fun testPropsConstructorsAndGenerics() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+  fun testDefineEmitsPropertyContractNonTupleParameters() =
+    doTest(true)
 
-  fun testDecoratedComponentEmitsTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+  fun testDefineComponentWithEmits() =
+    doTest()
 
-  fun testDefineModels() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+  fun testScriptSetupGeneric() =
+    doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
-  fun testDefineModelsTS() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+  fun testPropsConstructorsAndGenerics() =
+    doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
-  fun testDefineModelsOverride() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+  fun testDecoratedComponentEmitsTS() =
+    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
 
-  fun testTypedSlots() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+  fun testDefineModels() =
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+
+  fun testDefineModelsTS() =
+    doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+
+  fun testDefineModelsOverride() =
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
+
+  fun testTypedSlots() =
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
   /**
    * Runs `doTestInner` twice: once for default TS config, once for strict TS config
