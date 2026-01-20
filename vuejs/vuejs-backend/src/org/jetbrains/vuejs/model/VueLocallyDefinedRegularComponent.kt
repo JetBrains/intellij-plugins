@@ -9,6 +9,7 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
@@ -23,7 +24,7 @@ private constructor(
   source: PsiElement,
   override val vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
 ) : VueDelegatedContainer<VueRegularComponent>(),
-    VueRegularComponent {
+    VueRegularComponent, PsiSourcedPolySymbol {
 
   companion object {
     fun create(delegate: VueRegularComponent, source: JSLiteralExpression): VueLocallyDefinedRegularComponent {

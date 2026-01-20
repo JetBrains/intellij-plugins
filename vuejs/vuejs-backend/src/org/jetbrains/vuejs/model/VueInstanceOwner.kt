@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.polySymbols.query.PolySymbolWithPattern
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -170,7 +171,7 @@ private fun contributeComponentProperties(
       override fun visitInject(inject: VueInject, proximity: Proximity): Boolean {
         if (inject is VueCallInject) return true
 
-        val sourceElement = inject.source ?: return true
+        val sourceElement = inject.source
         val type = evaluateInjectedType(inject, provides)
         val implicitElement = VueImplicitElement(inject.name, type, sourceElement, JSImplicitElement.Type.Property, true)
         process(inject, proximity, injects, true, type, implicitElement)
@@ -189,8 +190,7 @@ private fun contributeComponentProperties(
           val jsType = type ?: symbol.asSafely<VueProperty>()?.type
           dest.merge(symbol.name,
                      PropertySignatureImpl(symbol.name, jsType, false,
-                                           isReadOnly,
-                                           source ?: symbol.source),
+                                           isReadOnly, source ?: (symbol as? PsiSourcedPolySymbol)?.source),
                      ::mergeSignatures)
         }
       }

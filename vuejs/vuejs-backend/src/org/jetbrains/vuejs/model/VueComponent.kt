@@ -3,14 +3,17 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
+import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.model.source.VueCompositionContainer
 import org.jetbrains.vuejs.web.*
 import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol
@@ -29,6 +32,14 @@ interface VueComponent : VueInstanceOwner, VueScopeElementSymbol,
 
   override val kind: PolySymbolKind
     get() = VUE_COMPONENTS
+
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.component", name))
+      .icon(icon)
+      .presentation()
+
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
 
   val mode: VueMode
     get() = VueMode.CLASSIC

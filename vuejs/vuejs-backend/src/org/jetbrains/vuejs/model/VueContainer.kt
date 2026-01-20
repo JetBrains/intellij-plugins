@@ -4,9 +4,8 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.platform.backend.documentation.DocumentationTarget
+import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.*
-import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_EVENTS
@@ -17,11 +16,10 @@ import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueElementSymbol
 import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
@@ -77,20 +75,28 @@ data class VueModelDirectiveProperties(
   }
 }
 
-interface VueNamedSymbol : VueElementSymbol {
+interface VueNamedSymbol : VueSymbol {
 
-  val source: PsiElement?
+  override val searchTarget: PolySymbolSearchTarget?
+    get() = PolySymbolSearchTarget.create(this)
 
   abstract override fun createPointer(): Pointer<out VueNamedSymbol>
 }
 
 interface VueSlot : VueNamedSymbol, PolySymbolScope {
 
+  val source: PsiElement?
+
   override val kind: PolySymbolKind
     get() = HTML_SLOTS
 
-  override val searchTarget: PolySymbolSearchTarget?
-    get() = null
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.slot", name))
+      .icon(icon)
+      .presentation()
+
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
 
   override fun getSymbols(
     kind: PolySymbolKind,
@@ -126,8 +132,18 @@ interface VueEmitCall : VueNamedSymbol {
    */
   val hasStrictSignature: Boolean get() = false
 
+  val source: PsiElement?
+
   override val kind: PolySymbolKind
     get() = JS_EVENTS
+
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.component.event", name))
+      .icon(icon)
+      .presentation()
+
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
 
   override val type: JSType?
     get() = handlerSignature
@@ -173,6 +189,9 @@ interface VueProperty : VueNamedSymbol, PolySymbolScope {
   override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
     kind == JS_PROPERTIES
 
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
+
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolNameMatchQueryParams,
@@ -200,6 +219,11 @@ interface VueInputProperty : VueProperty {
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_PROPS
 
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.component.property", name))
+      .icon(icon)
+      .presentation()
+
   override val modifiers: Set<PolySymbolModifier>
     get() = when (required) {
       true -> setOf(PolySymbolModifier.REQUIRED)
@@ -222,6 +246,11 @@ interface VueDataProperty : VueProperty {
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_DATA_PROPERTIES
 
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.component.data.property", name))
+      .icon(icon)
+      .presentation()
+
   override fun createPointer(): Pointer<out VueDataProperty>
 
 }
@@ -231,6 +260,11 @@ interface VueComputedProperty : VueProperty {
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_COMPUTED_PROPERTIES
 
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.component.computed.property", name))
+      .icon(icon)
+      .presentation()
+
   override fun createPointer(): Pointer<out VueComputedProperty>
 }
 
@@ -238,6 +272,11 @@ interface VueMethod : VueProperty {
 
   override val kind: PolySymbolKind
     get() = VUE_METHODS
+
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.component.method", name))
+      .icon(icon)
+      .presentation()
 
   override fun createPointer(): Pointer<out VueMethod>
 }
@@ -250,6 +289,8 @@ interface VueModelDecl : VueNamedSymbol {
 
   override val kind: PolySymbolKind
     get() = VUE_MODEL_DECL
+
+  val source: PsiElement
 
   /**
    * Type of a property outside of a component, e.g. a component attribute's type.
@@ -281,6 +322,9 @@ interface VueProvide : VueNamedSymbol {
 }
 
 interface VueInject : VueNamedSymbol {
+
+  val source: PsiElement
+
   val injectionKey: PsiNamedElement? get() = null
 
   val from: String? get() = null
@@ -289,6 +333,9 @@ interface VueInject : VueNamedSymbol {
 
   override val kind: PolySymbolKind
     get() = VUE_INJECTS
+
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
 
   abstract override fun createPointer(): Pointer<out VueInject>
 }

@@ -2,8 +2,10 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_ICON
 import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HtmlFrameworkSymbol
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
@@ -11,7 +13,9 @@ import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.utils.PolySymbolTypeSupport.Companion.PROP_TYPE_SUPPORT
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.model.VueElement
 import org.jetbrains.vuejs.web.VueFramework
 import javax.swing.Icon
@@ -34,5 +38,10 @@ interface VueSymbol : HtmlFrameworkSymbol, VueElement {
       PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
       PROP_TYPE_SUPPORT -> property.tryCast(TypeScriptSymbolTypeSupport.default)
       else -> super.get(property)
+    }
+
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
+    PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
+      library = getLibraryNameForDocumentationOf(symbol.psiContext)
     }
 }

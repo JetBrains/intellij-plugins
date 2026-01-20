@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.query.PolySymbolWithPattern
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.testFramework.DebugOutputPrinter
 import com.intellij.polySymbols.testFramework.checkTextByFile
 import com.intellij.psi.PsiDocumentManager
@@ -21,7 +22,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.web.symbols.VueElementSymbol
 
 /**
  * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
@@ -259,7 +259,7 @@ class VueComponentTest : BasePlatformTestCase() {
           val rawSource = (sourceElement as? VueComponent)?.rawSource
                           ?: (sourceElement as? VueDirective)?.rawSource
           val source = (sourceElement as? VueScopeElement)?.source
-                       ?: (sourceElement as? VueNamedSymbol)?.source
+                       ?: (sourceElement as? PsiSourcedPolySymbol)?.source
           printProperty(level, "source", source)
           printProperty(level, "rawSource", rawSource.takeIf { it != source })
         }

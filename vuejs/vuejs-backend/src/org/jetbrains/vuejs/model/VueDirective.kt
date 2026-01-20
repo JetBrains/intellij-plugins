@@ -4,11 +4,14 @@ package org.jetbrains.vuejs.model
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiSymbolService
+import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.asPolySymbolPriority
@@ -22,12 +25,20 @@ interface VueDirective : VueScopeElementSymbol {
   val rawSource: PsiElement?
     get() = source
 
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
+
   val vueProximity: VueModelVisitor.Proximity?
 
   fun withVueProximity(proximity: VueModelVisitor.Proximity?): VueDirective
 
   override val priority: PolySymbol.Priority?
     get() = vueProximity?.asPolySymbolPriority()
+
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.directive", name))
+      .icon(icon)
+      .presentation()
 
   override fun createPointer(): Pointer<out VueDirective>
 

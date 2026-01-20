@@ -257,7 +257,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       isRequired(hasOuterDefault, sourceElement)
     }
 
-    override val source: VueImplicitElement =
+    val source: VueImplicitElement =
       VueImplicitElement(name, createType(sourceElement, isOptional(sourceElement)),
                          sourceElement, JSImplicitElement.Type.Property, true)
 
@@ -495,7 +495,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class VueSourceInject(
     override val name: String,
-    override val source: PsiElement?,
+    override val source: PsiElement,
   ) : VueInject, PsiSourcedPolySymbol {
 
     private val keyType: VueInjectKey? by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -513,10 +513,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override fun createPointer(): Pointer<VueSourceInject> {
       val name = name
-      val sourcePointer = source?.createSmartPointer()
+      val sourcePointer = source.createSmartPointer()
       return Pointer {
-        val source = sourcePointer?.let { it.dereference() ?: return@Pointer null }
-        VueSourceInject(name, source)
+        VueSourceInject(name, sourcePointer.dereference() ?: return@Pointer null)
       }
     }
 
@@ -528,7 +527,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override fun hashCode(): Int {
       var result = name.hashCode()
-      result = 31 * result + (source?.hashCode() ?: 0)
+      result = 31 * result + source.hashCode()
       return result
     }
 

@@ -32,7 +32,6 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueSourceEntity
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueElementSymbol
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
 
@@ -158,8 +157,7 @@ private constructor(
   }
 
   private fun PolySymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, PolySymbol>): List<PolySymbol> {
-    if (this !is VueElementSymbol || this !is PsiSourcedPolySymbol) return listOf(this)
-
+    if (this !is PsiSourcedPolySymbol) return listOf(this)
     val source =
       (this as? VueSourceEntity)
         ?.descriptor
@@ -168,8 +166,10 @@ private constructor(
           it.contextOfType(ES6ExportDefaultAssignment::class)
           ?: it as? HtmlFileImpl
         }
-      ?: ((this as? VueDirective)?.rawSource ?: (this as? VueComponent)?.rawSource ?: this.source)
-        ?.let { source ->
+      ?: ((this as? VueDirective)?.rawSource
+          ?: (this as? VueComponent)?.rawSource
+          ?: this.source
+         )?.let { source ->
           if (source is JSProperty)
             JSPsiImplUtils.getInitializerReference(source)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, source) }
           else source
