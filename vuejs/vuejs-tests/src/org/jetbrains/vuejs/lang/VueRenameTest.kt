@@ -29,210 +29,279 @@ package org.jetbrains.vuejs.lang
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.jetbrains.vuejs.VueTestCase
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
-class VueRenameTest : 
+@RunWith(JUnit4::class)
+class VueRenameTest :
   VueTestCase("rename", useTsc = false) {
 
+  @Test
   fun testComponentFieldFromTemplate() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testComponentFieldFromStringUsageInTemplate() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testTemplateLocalVariable() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDestructuringInVFor() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testSlotProps() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testQualifiedWatchProperty() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testWatchProperty() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testInlineFieldRename() =
     doConfiguredTest(checkResult = true) {
       CodeInsightTestUtil.doInlineRename(VariableInplaceRenameHandler(), "foo", myFixture)
     }
 
+  @Test
   fun testComponentNameFromDeclaration() =
     doRenameTest(mainFile = "componentNameFromDeclaration1.vue", newName = "AfterComponent")
 
+  @Test
   fun testComponentNameFromPropertyName() =
     doRenameTest(newName = "AfterComponent")
 
+  @Test
   fun testCssVBind() =
     doRenameTest(newName = "newColor", dir = false)
 
+  @Test
   fun testCssVBindScriptSetup() =
     doRenameTest(newName = "newColor", dir = false)
 
+  @Test
   fun testCreateAppComponent() =
     doRenameTest(mainFile = "main.ts", newName = "NewCar")
 
+  @Test
   fun testCreateAppComponentFromUsage() =
     doRenameTest(mainFile = "App.vue", newName = "NewCar")
 
+  @Test
   fun testCreateAppDirective() =
     doRenameTest(mainFile = "main.ts", newName = "bar")
 
+  @Test
   fun testCreateAppDirectiveFromUsage() =
     doRenameTest(mainFile = "TheComponent.vue", newName = "bar")
 
+  @Test
   fun testNamespacedComponents() =
     doRenameTest(mainFile = "scriptSetup.vue", newName = "NewName")
 
+  @Test
   fun testCompositionApiLocalDirective() =
     doRenameTest(mainFile = "scriptSetup.vue", newName = "vNewName")
 
+  @Test
   fun testModelDeclaration() =
     doRenameTest(newName = "alignment", dir = false)
 
+  @Test
   fun testModelDeclarationWithVar() =
     doRenameTest(newName = "alignment", dir = false)
 
+  @Test
   fun testModelDeclarationProp() =
     doRenameTest(mainFile = "ModelDeclarationProp.vue", newName = "count")
 
+  @Test
   fun testModelDeclarationEvent() =
     doRenameTest(mainFile = "ModelDeclarationEvent.vue", newName = "count")
 
+  @Test
   fun testInjectLiteral() =
     doRenameTest(mainFile = "InjectLiteral.vue", newName = "newName")
 
+  @Test
   fun testComponentFile() =
     withRenameUsages(false) {
       checkFileRename("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
+  @Test
   fun testComponentFileWithUsages() =
     withRenameUsages(true) {
       checkFileRename("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
+  @Test
   fun testComponentFileWithReexports() =
     withRenameUsages(true) {
       checkFileRename("OrdersListView.vue", "SomeComponent.vue", searchCommentsAndText = false)
     }
 
+  @Test
   fun testPropsOptionsFromDefinition() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testPropsOptionsFromUsage1() =
     doRenameTest(newName = "newName23", dir = false)
 
+  @Test
   fun testPropsOptionsFromUsage2() =
     doRenameTest(newName = "newName23", dir = false)
 
+  @Test
   fun testPropsOptionsFromUsage3() =
     doRenameTest(newName = "newName23", dir = false)
 
+  @Test
   fun testPropsOptionsUpperCaseFromDefinition() =
     doRenameTest(newName = "NewName", dir = false)
 
+  @Test
   fun testPropsOptionsNumberFromDefinition() =
     doRenameTest(newName = "newName23", dir = false)
 
+  @Test
   fun testPropsOptionsExtUsageFromDefinition() =
     doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
+  @Test
   fun testPropsOptionsExtUsageFromUsage() =
     doRenameTest(mainFile = "MyUsage.vue", newName = "newName23")
 
+  @Test
   fun testPropsStringsFromDefinition() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testPropsStringsFromUsage1() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testPropsStringsFromUsage2() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testPropsStringsExtUsageFromDefinition() =
     doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
+  @Test
   fun testPropsStringsExtUsageFromUsage() =
     doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsRecordTypeFromDefinition() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsRecordTypeFromUsage1() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsRecordTypeFromUsage2() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsRecordTypeExtUsageFromDefinition() =
     doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsRecordTypeExtUsageFromUsage() =
     doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsArrayLiteralFromDefinition() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsArrayLiteralFromUsage1() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsArrayLiteralFromUsage2() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsArrayLiteralExtUsageFromDefinition() =
     doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsArrayLiteralExtUsageFromUsage() =
     doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsObjectLiteralFromDefinition() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsObjectLiteralFromUsage1() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsObjectLiteralFromUsage2() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsObjectLiteralExtUsageFromDefinition() =
     doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsObjectLiteralExtUsageFromUsage() =
     doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsInterfaceFromDefinition() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsInterfaceFromUsage1() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsInterfaceFromUsage2() =
     doRenameTest(newName = "newName", dir = false)
 
+  @Test
   fun testDefinePropsInterfaceExtUsageFromDefinition() =
     doRenameTest(mainFile = "MyComponent.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsInterfaceExtUsageFromUsage() =
     doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsExtInterfaceFromDefinition() =
     doRenameTest(mainFile = "fooProps.ts", newName = "newName")
 
+  @Test
   fun testDefinePropsExtInterfaceFromUsage1() =
     doRenameTest(mainFile = "definePropsInterface.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsExtInterfaceFromUsage2() =
     doRenameTest(mainFile = "definePropsInterface.vue", newName = "newName")
 
+  @Test
   fun testDefinePropsExtInterfaceExtUsageFromDefinition() =
     doRenameTest(mainFile = "fooProps.ts", newName = "newName")
 
+  @Test
   fun testDefinePropsExtInterfaceExtUsageFromUsage() =
     doRenameTest(mainFile = "MyUsage.vue", newName = "newName")
 
+  @Test
   fun testComponentFromFunctionPlugin_renameFromDeclaration() {
     doRenameTest(
       mainFile = "global-components.ts",
@@ -240,6 +309,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromFunctionPlugin_renameFromUsage() {
     doRenameTest(
       mainFile = "App.vue",
@@ -247,6 +317,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromNestedFunctionPlugin_renameFromDeclaration() {
     doRenameTest(
       mainFile = "other-global-components.js",
@@ -254,6 +325,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromNestedFunctionPlugin_renameFromUsage() {
     doRenameTest(
       mainFile = "App.vue",
@@ -261,6 +333,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromNestedFunctionPluginWithCycle_renameFromDeclaration() {
     doRenameTest(
       mainFile = "other-global-components.js",
@@ -268,6 +341,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromNestedFunctionPluginWithCycle_renameFromUsage() {
     doRenameTest(
       mainFile = "App.vue",
@@ -275,6 +349,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromObjectPlugin_renameFromDeclaration() {
     doRenameTest(
       mainFile = "global-components.ts",
@@ -282,6 +357,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromObjectPlugin_renameFromUsage() {
     doRenameTest(
       mainFile = "App.vue",
@@ -289,6 +365,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromNestedObjectPlugin_renameFromDeclaration() {
     doRenameTest(
       mainFile = "other-global-components.js",
@@ -296,6 +373,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromNestedObjectPlugin_renameFromUsage() {
     doRenameTest(
       mainFile = "App.vue",
@@ -303,6 +381,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromNestedObjectPluginWithCycle_renameFromDeclaration() {
     doRenameTest(
       mainFile = "other-global-components.js",
@@ -310,6 +389,7 @@ class VueRenameTest :
     )
   }
 
+  @Test
   fun testComponentFromNestedObjectPluginWithCycle_renameFromUsage() {
     doRenameTest(
       mainFile = "App.vue",
