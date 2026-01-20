@@ -28,6 +28,7 @@
     <module name="intellij.xml.emmet"/>
     <plugin id="com.intellij.modules.ultimate"/>
     <module name="intellij.javascript.codeinsight"/>
+    <module name="intellij.javascript.ultimate"/>
   </dependencies>
 
   <!--suppress PluginXmlValidity -->

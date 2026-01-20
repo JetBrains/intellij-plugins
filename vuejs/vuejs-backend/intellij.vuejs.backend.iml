@@ -71,5 +71,6 @@
     <orderEntry type="module" module-name="intellij.xml.analysis" />
     <orderEntry type="module" module-name="intellij.platform.execution" />
     <orderEntry type="module" module-name="intellij.javascript.codeinsight" />
+    <orderEntry type="module" module-name="intellij.javascript.ultimate" />
   </component>
 </module>
