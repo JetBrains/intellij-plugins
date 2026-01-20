@@ -22,6 +22,9 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
 /**
  * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
@@ -51,6 +54,7 @@ import org.jetbrains.vuejs.model.*
  * } */
  * ```
  */
+@RunWith(JUnit4::class)
 class VueComponentTest :
   BasePlatformTestCase() {
 
@@ -62,102 +66,135 @@ class VueComponentTest :
     myFixture.enableInspections(VueInspectionsProvider())
   }
 
+  @Test
   fun testOptionsApiRuntimeDeclarationJS() =
     doTest()
 
+  @Test
   fun testOptionsApiRuntimeDeclarationPropTypeTS() =
     doTest()
 
+  @Test
   fun testOptionsApiRuntimeDeclarationArrayJS() =
     doTest()
 
+  @Test
   fun testDefinePropsRuntimeDeclarationTS() =
     doTest(true)
 
+  @Test
   fun testDefinePropsRuntimeDeclarationWithAssignmentTS() =
     doTest(true)
 
+  @Test
   fun testDefinePropsRuntimeDeclarationArrayTS() =
     doTest()
 
+  @Test
   fun testDefinePropsTypeDeclarationTS() =
     doTest(true)
 
+  @Test
   fun testDefinePropsTypeDeclarationWithAssignmentTS() =
     doTest(true)
 
+  @Test
   fun testDefinePropsTypeDeclarationInterfaceTS() =
     doTest(true)
 
+  @Test
   fun testDefinePropsTypeDeclarationTypeAliasTS() =
     doTest(true)
 
+  @Test
   fun testWithDefaultsTypeDeclarationTS() =
     doSingleStrictnessTest(false)
 
+  @Test
   fun testWithDefaultsTypeDeclarationTSNullChecks() =
     doSingleStrictnessTest(true)
 
+  @Test
   fun testWithDefaultsTypeDeclarationWithAssignmentTS() =
     doSingleStrictnessTest(false)
 
+  @Test
   fun testWithDefaultsTypeDeclarationWithAssignmentTSNullChecks() =
     doSingleStrictnessTest(true)
 
+  @Test
   fun testWithDefaultsTypeDeclarationPartialTS() =
     doTest()
 
+  @Test
   fun testWithDefaultsTypeDeclarationLocalReferencesTS() =
     doTest(true)
 
+  @Test
   fun testPropsDestructureTypeDeclarationTS() =
     doSingleStrictnessTest(false)
 
+  @Test
   fun testPropsDestructureTypeDeclarationTSNullChecks() =
     doSingleStrictnessTest(true)
 
+  @Test
   fun testPropsDestructureRuntimeDeclarationJS() =
     doTest()
 
+  @Test
   fun testBothScriptsJS() =
     doTest()
 
+  @Test
   fun testDefineEmits() =
     doTest()
 
+  @Test
   fun testDefineEmitsObjectLiteral() =
     doTest()
 
+  @Test
   fun testDefineEmitsExplicitType() =
     doTest()
 
+  @Test
   fun testDefineEmitsPropertyContractTupleParameters() =
     doTest(true)
 
+  @Test
   fun testDefineEmitsPropertyContractNonTupleParameters() =
     doTest(true)
 
+  @Test
   fun testDefineComponentWithEmits() =
     doTest()
 
+  @Test
   fun testScriptSetupGeneric() =
     doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
+  @Test
   fun testPropsConstructorsAndGenerics() =
     doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
+  @Test
   fun testDecoratedComponentEmitsTS() =
     doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
 
+  @Test
   fun testDefineModels() =
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
+  @Test
   fun testDefineModelsTS() =
     doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
+  @Test
   fun testDefineModelsOverride() =
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
+  @Test
   fun testTypedSlots() =
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_4))
 
