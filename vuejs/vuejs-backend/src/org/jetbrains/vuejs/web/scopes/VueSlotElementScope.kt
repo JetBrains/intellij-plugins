@@ -82,7 +82,7 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
     }
   }
 
-  private class VueSlotPropertiesSymbol(slotName: String?) : PolySymbolWithPattern, VueSymbol {
+  private class VueSlotPropertiesSymbol(slotName: String?) : PolySymbolWithPattern, VueTemplateSymbol {
 
     override val kind: PolySymbolKind
       get() = HTML_ATTRIBUTES

@@ -111,7 +111,7 @@ interface VueSlot : VueSymbol, PolySymbolScope {
 }
 
 @JvmDefaultWithCompatibility
-interface VueEmitCall : VueSymbol {
+interface VueEmitCall : VueTemplateSymbol {
   /**
    * Event parameters not including event type itself, e.g.
    * for `{(event: 'add', item: string): void}` contains only `item: string`.
@@ -199,7 +199,7 @@ interface VueProperty : VueSymbol, PolySymbolScope {
 /**
  * Base interface for Vue component prop
  */
-interface VueInputProperty : VueProperty {
+interface VueInputProperty : VueProperty, VueTemplateSymbol {
   val required: Boolean
 
   val defaultValue: String? get() = null
@@ -273,7 +273,7 @@ interface VueModelOwner {
   val modelDecl: VueModelDecl
 }
 
-interface VueModelDecl : VueSymbol {
+interface VueModelDecl : VueTemplateSymbol {
 
   override val kind: PolySymbolKind
     get() = VUE_MODEL_DECL

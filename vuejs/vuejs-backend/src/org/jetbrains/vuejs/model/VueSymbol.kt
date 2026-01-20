@@ -22,7 +22,6 @@ import javax.swing.Icon
 interface VueSymbol : HtmlFrameworkSymbol, VueElement {
 
   val type: JSType? get() = null
-  val attributeValue: PolySymbolHtmlAttributeValue? get() = null
 
   override val framework: FrameworkId
     get() = VueFramework.ID
@@ -34,7 +33,6 @@ interface VueSymbol : HtmlFrameworkSymbol, VueElement {
     when (property) {
       PolySymbol.PROP_DOC_HIDE_ICON -> property.tryCast(true)
       PROP_JS_TYPE -> property.tryCast(type)
-      PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
       PolySymbolTypeSupport.PROP_TYPE_SUPPORT -> property.tryCast(TypeScriptSymbolTypeSupport.default)
       else -> super.get(property)
     }
