@@ -31,9 +31,7 @@ import kotlin.io.path.isDirectory
 
 @State(name = "PlatformIOWorkspace")
 @Service(Service.Level.PROJECT)
-internal class PlatformioWorkspace(project: Project) : ExternalWorkspace(project), WorkspaceWithEnvironment {
-  override val clientKey: String
-    get() = ID.id
+internal class PlatformioWorkspace(project: Project) : ExternalWorkspace(project, ID), WorkspaceWithEnvironment {
 
   class PlatformioStartupActivity : ProjectActivity {
 
