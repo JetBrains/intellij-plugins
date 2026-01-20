@@ -21,7 +21,6 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
 
 class VueIntentionsTest : BasePlatformTestCase() {
@@ -82,7 +81,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     for (signature in listOf("v-<caret>model=", "v-<caret>model.lazy", "v-<caret>model.number", "v-<caret>model.trim")) {
       myFixture.moveToOffsetBySignature(signature)
       val intention = myFixture.findSingleIntention("Expand v-model")
-      TestCase.assertTrue(intention.startInWriteAction())
+      assertTrue(intention.startInWriteAction())
       WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
     }
     myFixture.checkResultByFile("expandVModel.after.vue")
@@ -211,7 +210,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
   private fun doIntentionTest(name: String) {
     val intention = myFixture.getAvailableIntention(name, getTestName(true) + ".vue")
     if (intention == null) {
-      TestCase.fail("Intention by name $name not found")
+      fail("Intention by name $name not found")
       return
     }
     WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(myFixture.project, myFixture.editor, myFixture.file) }
