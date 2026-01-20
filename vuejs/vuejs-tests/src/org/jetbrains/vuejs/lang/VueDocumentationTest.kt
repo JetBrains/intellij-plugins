@@ -8,7 +8,6 @@ import com.intellij.polySymbols.testFramework.checkLookupItems
 import com.intellij.polySymbols.testFramework.checkNoDocumentationAtCaret
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
 
 class VueDocumentationTest : BasePlatformTestCase() {
 
@@ -29,8 +28,8 @@ class VueDocumentationTest : BasePlatformTestCase() {
     val documentationProvider = DocumentationManager.getProviderFromElement(elementAtCaret, element)
     documentationProvider as ExternalDocumentationProvider
     val urls = documentationProvider.getUrlFor(elementAtCaret, element)
-    TestCase.assertNotNull(urls)
-    TestCase.assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false))
+    assertNotNull(urls)
+    assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false))
   }
 
   fun testTopLevelTemplate() {
