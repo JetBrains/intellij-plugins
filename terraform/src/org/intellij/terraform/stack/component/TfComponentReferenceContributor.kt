@@ -7,6 +7,6 @@ import org.intellij.terraform.hcl.psi.reference.SourcePropertyReferenceProvider
 
 internal class TfComponentReferenceContributor : PsiReferenceContributor() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    SourcePropertyReferenceProvider.register(registrar, TfComponentPsiPatterns.TfComponentOrStackBlock)
+    SourcePropertyReferenceProvider.register(registrar, TfComponentPsiPatterns.TfComponentBlocksWithSource)
   }
 }
