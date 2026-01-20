@@ -1,6 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.typed
 
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.types.JSAnyType
@@ -8,6 +9,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -42,6 +44,11 @@ class VueTypedDirective(
         PsiModificationTracker.MODIFICATION_COUNT,
       )
     }
+
+  override val renameTarget: PolySymbolRenameTarget?
+    get() = if (source is JSLiteralExpression)
+      PolySymbolRenameTarget.create(this)
+    else null
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity?): VueDirective =
     VueTypedDirective(source, name, proximity)

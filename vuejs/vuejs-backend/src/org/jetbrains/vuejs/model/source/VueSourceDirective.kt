@@ -1,10 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.DumbService
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -43,6 +45,11 @@ class VueSourceDirective(
         )
       }
     }
+
+  override val renameTarget: PolySymbolRenameTarget?
+    get() = if (source is JSLiteralExpression)
+      PolySymbolRenameTarget.create(this)
+    else null
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity?): VueDirective =
     VueSourceDirective(name, source, typeSource, mode, proximity)

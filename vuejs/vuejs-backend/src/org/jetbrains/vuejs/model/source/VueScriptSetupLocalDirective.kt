@@ -1,10 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -30,6 +32,11 @@ class VueScriptSetupLocalDirective(
 
   override val source: PsiElement
     get() = rawSource.resolveIfImportSpecifier()
+
+  override val renameTarget: PolySymbolRenameTarget?
+    get() = if (source is JSLiteralExpression)
+      PolySymbolRenameTarget.create(this)
+    else null
 
   override val directiveModifiers: List<VueDirectiveModifier>
     get() = CachedValuesManager.getCachedValue(source) {

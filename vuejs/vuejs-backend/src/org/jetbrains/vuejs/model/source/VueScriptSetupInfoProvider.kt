@@ -41,7 +41,6 @@ import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.index.isScriptVaporTag
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueSourceModelPropType
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.types.optionalIf
 import org.jetbrains.vuejs.web.symbols.VueSymbol
 

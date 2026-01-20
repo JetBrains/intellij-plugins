@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.typed
 
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeOwner
@@ -8,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.*
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.model.Pointer
+import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -35,6 +37,11 @@ class VueTypedComponent(
 
   override val source: PsiElement
     get() = componentSource
+
+  override val renameTarget: PolySymbolRenameTarget?
+    get() = if (source is JSLiteralExpression)
+      PolySymbolRenameTarget.create(this)
+    else null
 
   override val thisType: JSType
     get() = CachedValuesManager.getCachedValue(componentSource) {

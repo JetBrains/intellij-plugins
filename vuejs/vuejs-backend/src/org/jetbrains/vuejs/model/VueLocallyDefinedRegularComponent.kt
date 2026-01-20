@@ -9,6 +9,7 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
+import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -59,6 +60,11 @@ private constructor(
 
   override val rawSource: PsiElement
     get() = mySource as? JSPsiNamedElementBase ?: delegate.rawSource ?: mySource
+
+  override val renameTarget: PolySymbolRenameTarget?
+    get() = if (source is JSLiteralExpression)
+      PolySymbolRenameTarget.create(this)
+    else null
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     PolySymbolDocumentationTarget.create(

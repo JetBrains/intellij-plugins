@@ -8,7 +8,6 @@ import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueFilter
 import org.jetbrains.vuejs.model.VueGlobalImpl
-import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol
 
 data class VueSourceFilter(
   override val name: String,
@@ -22,7 +21,7 @@ data class VueSourceFilter(
     get() = (originalSource as? PsiReference)?.resolve()
             ?: originalSource
 
-  override fun createPointer(): Pointer<out VueScopeElementSymbol> {
+  override fun createPointer(): Pointer<VueSourceFilter> {
     val name = name
     val originalSourcePtr = originalSource.createSmartPointer()
     return Pointer {

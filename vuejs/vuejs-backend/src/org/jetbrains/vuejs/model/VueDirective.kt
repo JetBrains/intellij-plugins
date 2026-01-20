@@ -9,6 +9,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
@@ -16,9 +17,9 @@ import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
-import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
-interface VueDirective : VueScopeElementSymbol {
+interface VueDirective : VueSymbol, VueScopeElement, PolySymbolScope {
 
   val directiveModifiers: List<VueDirectiveModifier> get() = emptyList()
 
@@ -67,4 +68,6 @@ interface VueDirective : VueScopeElementSymbol {
 
       else -> emptyList()
     }
+
+  override fun getModificationCount(): Long = -1
 }

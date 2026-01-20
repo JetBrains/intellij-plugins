@@ -16,9 +16,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.model.source.VueCompositionContainer
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
-interface VueComponent : VueInstanceOwner, VueScopeElementSymbol,
+interface VueComponent : VueInstanceOwner, VueSymbol, VueScopeElement,
                          PolySymbolScope, PsiSourcedPolySymbol /* to be removed */ {
 
   val defaultName: String?
@@ -103,6 +103,8 @@ interface VueComponent : VueInstanceOwner, VueScopeElementSymbol,
       PROP_VUE_COMPOSITION_COMPONENT -> VueCompositionContainer.isCompositionAppComponent(this) as T
       else -> null
     }
+
+  override fun getModificationCount(): Long = -1
 
   override fun createPointer(): Pointer<out VueComponent>
 }

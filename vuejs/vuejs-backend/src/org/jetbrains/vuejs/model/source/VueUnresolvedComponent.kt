@@ -15,7 +15,6 @@ import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.query.PolySymbolMatch
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
@@ -33,9 +32,6 @@ class VueUnresolvedComponent(
 ) : VueComponent {
 
   override val name: String = defaultName ?: "<unnamed>"
-
-  override val renameTarget: PolySymbolRenameTarget?
-    get() = null
 
   override val componentSource: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     (rawSource as? ES6ImportSpecifier)?.resolveIfImportSpecifier() ?: rawSource

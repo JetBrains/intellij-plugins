@@ -13,6 +13,7 @@ import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
 import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.VueBundle

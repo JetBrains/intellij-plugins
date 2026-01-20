@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
@@ -12,6 +13,7 @@ import com.intellij.model.Pointer
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
+import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -59,6 +61,11 @@ class VueSourceComponent(
     proximity: VueModelVisitor.Proximity,
   ): VueComponent =
     VueSourceComponent(componentSource, descriptor, name, proximity)
+
+  override val renameTarget: PolySymbolRenameTarget?
+    get() = if (source is JSLiteralExpression)
+      PolySymbolRenameTarget.create(this)
+    else null
 
   override val nameElement: PsiElement?
     get() = descriptor.initializer
