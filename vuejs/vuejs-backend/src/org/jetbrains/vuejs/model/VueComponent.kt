@@ -21,6 +21,10 @@ interface VueComponent : VueInstanceOwner, VueScopeElementSymbol,
   val defaultName: String?
     get() = name
 
+  @Suppress("DEPRECATION")
+  val rawSource: PsiElement?
+    get() = componentSource
+
   val componentSource: PsiElement?
 
   override val kind: PolySymbolKind
@@ -38,9 +42,6 @@ interface VueComponent : VueInstanceOwner, VueScopeElementSymbol,
 
   override val source: PsiElement?
     get() = rawSource
-
-  override val rawSource: PsiElement?
-    get() = componentSource
 
   override val priority: PolySymbol.Priority?
     get() = vueProximity?.asPolySymbolPriority()

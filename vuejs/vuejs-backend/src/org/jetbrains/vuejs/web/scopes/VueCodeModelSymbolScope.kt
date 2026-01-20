@@ -168,7 +168,7 @@ private constructor(
           it.contextOfType(ES6ExportDefaultAssignment::class)
           ?: it as? HtmlFileImpl
         }
-      ?: this.rawSource
+      ?: ((this as? VueDirective)?.rawSource ?: (this as? VueComponent)?.rawSource ?: this.source)
         ?.let { source ->
           if (source is JSProperty)
             JSPsiImplUtils.getInitializerReference(source)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, source) }

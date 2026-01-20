@@ -255,8 +255,10 @@ class VueComponentTest : BasePlatformTestCase() {
           ?.documentation
         printProperty(level, "description", documentation?.description)
         if (printSources) {
+          val rawSource = (sourceElement as? VueComponent)?.rawSource
+                          ?: (sourceElement as? VueDirective)?.rawSource
           printProperty(level, "source", sourceElement.source)
-          printProperty(level, "rawSource", sourceElement.rawSource.takeIf { it != sourceElement.source })
+          printProperty(level, "rawSource", rawSource.takeIf { it != sourceElement.source })
         }
         if (sourceElement is VueDirective) {
           printProperty(level, "jsType", sourceElement.type)

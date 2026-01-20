@@ -8,6 +8,7 @@ import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.asPolySymbolPriority
@@ -19,6 +20,9 @@ interface VueDirective : VueScopeElementSymbol {
   val directiveModifiers: List<VueDirectiveModifier> get() = emptyList()
 
   val vueArgument: VueDirectiveArgument? get() = null
+
+  val rawSource: PsiElement?
+    get() = source
 
   val vueProximity: VueModelVisitor.Proximity?
 

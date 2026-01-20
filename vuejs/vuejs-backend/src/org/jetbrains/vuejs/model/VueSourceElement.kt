@@ -7,8 +7,4 @@ interface VueSourceElement {
 
   val source: PsiElement?
 
-  @Suppress("DEPRECATION")
-  val rawSource: PsiElement?
-    get() = source
-
 }

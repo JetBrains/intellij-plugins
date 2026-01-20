@@ -32,9 +32,6 @@ abstract class VueDelegatedContainer<T : VueContainer> : VueDelegatedEntitiesCon
   override val source: PsiElement?
     get() = delegate?.source
 
-  override val rawSource: PsiElement?
-    get() = delegate?.rawSource
-
   override val element: String?
     get() = delegate?.element
 
