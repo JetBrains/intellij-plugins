@@ -10,7 +10,12 @@ import com.intellij.psi.PsiDirectory
 import org.jetbrains.vuejs.VueCreateFromTemplateHandler.Companion.VUE_COMPOSITION_API_TEMPLATE_NAME
 import org.jetbrains.vuejs.VueTestCase
 
-class VueNewComponentTest : VueTestCase("new_component") {
+open class VueNewComponentTest(
+  useTsc: Boolean = true,
+) : VueTestCase("new_component", useTsc = useTsc) {
+  
+  class WithoutServiceTest :
+    VueNewComponentTest(useTsc = false)
 
   override fun setUp() {
     super.setUp()

@@ -3,7 +3,12 @@ package org.jetbrains.vuejs.lang
 
 import org.jetbrains.vuejs.VueTestCase
 
-class VueAutoPopupTest : VueTestCase("autoPopup") {
+open class VueAutoPopupTest(
+  useTsc: Boolean = true,
+) : VueTestCase("autoPopup", useTsc = useTsc) {
+
+  class WithoutServiceTest :
+    VueAutoPopupTest(useTsc = false)
 
   fun testEventsAfterAt() =
     doCompletionAutoPopupTest(checkResult = false) {
@@ -30,7 +35,7 @@ class VueAutoPopupTest : VueTestCase("autoPopup") {
       type(":")
       assertLookupShown()
       type("a")
-      checkLookupItems{ item ->
+      checkLookupItems { item ->
         item.lookupString.let {
           !it.startsWith(":aria-") || it.startsWith(":aria-a")
         }
