@@ -9,6 +9,9 @@ import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCach
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.vuejs.VueCreateFromTemplateHandler.Companion.VUE_COMPOSITION_API_TEMPLATE_NAME
 import org.jetbrains.vuejs.VueTestCase
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
 class VueNewComponentTest :
   VueNewComponentTestBase() {
@@ -17,6 +20,7 @@ class VueNewComponentTest :
     VueNewComponentTestBase(useTsc = false)
 }
 
+@RunWith(JUnit4::class)
 abstract class VueNewComponentTestBase(
   useTsc: Boolean = true,
 ) : VueTestCase("new_component", useTsc = useTsc) {
@@ -27,18 +31,22 @@ abstract class VueNewComponentTestBase(
     this.enableIdempotenceChecksOnEveryCache()
   }
 
+  @Test
   fun testCompositionComponentWithJsLang() {
     doNewComponentCheck(componentName = "MyJsLabel")
   }
 
+  @Test
   fun testCompositionComponentWithTsLang() {
     doNewComponentCheck(componentName = "MyTsLabel")
   }
 
+  @Test
   fun testVaporComponentWithJsLang() {
     doNewComponentCheck(componentName = "MyVaporJsLabel")
   }
 
+  @Test
   fun testVaporComponentWithTsLang() {
     doNewComponentCheck(componentName = "MyVaporTsLabel")
   }
