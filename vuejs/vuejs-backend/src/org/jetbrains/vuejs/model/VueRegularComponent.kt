@@ -12,11 +12,9 @@ import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.web.VUE_MODEL
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
-import org.jetbrains.vuejs.web.symbols.VueModelSymbol
 
 interface VueRegularComponent : VueComponent, VueContainer {
 
@@ -41,7 +39,7 @@ interface VueRegularComponent : VueComponent, VueContainer {
       VUE_MODEL -> {
         collectModelDirectiveProperties()
           .takeIf { it.prop != null || it.event != null }
-          ?.let { listOf(VueModelSymbol(it)) }
+          ?.let { listOf(it) }
         ?: emptyList()
       }
       else -> super.getSymbols(kind, params, stack)

@@ -4,10 +4,7 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.PolySymbolModifier
-import com.intellij.polySymbols.PolySymbolQualifiedName
+import com.intellij.polySymbols.*
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_EVENTS
@@ -22,6 +19,7 @@ import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
 import org.jetbrains.vuejs.web.*
 import org.jetbrains.vuejs.web.symbols.VueSourceElementSymbol
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
 
@@ -45,7 +43,24 @@ interface VueContainer : VueEntitiesContainer {
 data class VueModelDirectiveProperties(
   val prop: String? = null,
   val event: String? = null,
-) {
+) : VueSymbol {
+
+  override val name: String
+    get() = "Vue Model"
+
+  override val kind: PolySymbolKind
+    get() = VUE_MODEL
+
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_VUE_MODEL_PROP -> prop as T?
+      PROP_VUE_MODEL_EVENT -> event as T?
+      else -> null
+    }
+
+  override fun createPointer(): Pointer<VueModelDirectiveProperties> =
+    Pointer.hardPointer(this)
+
   companion object {
 
     private val DEFAULT_V2 = VueModelDirectiveProperties("value", "input")
