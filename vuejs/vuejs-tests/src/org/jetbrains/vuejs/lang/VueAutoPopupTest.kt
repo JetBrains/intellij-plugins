@@ -2,7 +2,11 @@
 package org.jetbrains.vuejs.lang
 
 import org.jetbrains.vuejs.VueTestCase
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4::class)
 open class VueAutoPopupTest(
   useTsc: Boolean = true,
 ) : VueTestCase("autoPopup", useTsc = useTsc) {
@@ -10,6 +14,7 @@ open class VueAutoPopupTest(
   class WithoutServiceTest :
     VueAutoPopupTest(useTsc = false)
 
+  @Test
   fun testEventsAfterAt() =
     doCompletionAutoPopupTest(checkResult = false) {
       type("@")
@@ -20,6 +25,7 @@ open class VueAutoPopupTest(
       }
     }
 
+  @Test
   fun testEventsAfterVOnColon() =
     doCompletionAutoPopupTest(checkResult = false) {
       type(":")
@@ -30,6 +36,7 @@ open class VueAutoPopupTest(
       }
     }
 
+  @Test
   fun testVBindShorthand() =
     doCompletionAutoPopupTest(checkResult = false) {
       type(":")
@@ -42,6 +49,7 @@ open class VueAutoPopupTest(
       }
     }
 
+  @Test
   fun testNoAutopopupAfterMinus() =
     doCompletionAutoPopupTest(checkResult = false) {
       type("-")
