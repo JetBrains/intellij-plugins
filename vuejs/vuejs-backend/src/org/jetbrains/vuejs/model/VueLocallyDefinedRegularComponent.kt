@@ -5,8 +5,14 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
+import com.intellij.platform.backend.documentation.DocumentationTarget
+import com.intellij.polySymbols.documentation.PolySymbolDocumentation
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
+import com.intellij.util.asSafely
+import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 
@@ -53,8 +59,23 @@ private constructor(
   override val rawSource: PsiElement
     get() = mySource as? JSPsiNamedElementBase ?: delegate.rawSource ?: mySource
 
-  override val description: String?
-    get() = delegate.description
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
+    PolySymbolDocumentationTarget.create(
+      this, location,
+      PolySymbolDocumentationProvider<VueLocallyDefinedRegularComponent> { symbol, location ->
+        val myDoc = PolySymbolDocumentation.create(symbol, location) {
+          library = getLibraryNameForDocumentationOf(symbol.source)
+        }
+        symbol.delegate
+          .getDocumentationTarget(location)
+          .asSafely<PolySymbolDocumentationTarget>()
+          ?.documentation
+          ?.withLibrary(myDoc.library)
+          ?.withName(myDoc.name)
+          ?.withDefinition(myDoc.definition)
+          ?.withIcon(myDoc.icon)
+        ?: myDoc
+      })
 
   override val typeParameters: List<TypeScriptTypeParameter>
     get() = delegate.typeParameters

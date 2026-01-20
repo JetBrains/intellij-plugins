@@ -12,12 +12,15 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeKeyTypeImpl
 import com.intellij.model.Pointer
+import com.intellij.platform.backend.documentation.DocumentationTarget
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
+import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
@@ -124,7 +127,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
     override val name: String,
   ) : VueNamedSymbol, PsiSourcedPolySymbol {
 
-    override val description: String? by lazy {
+    val description: String? by lazy {
       val doc = JSDocumentationProvider()
                   .generateDoc(source ?: return@lazy null, null) ?: return@lazy null
       val contentStart = doc.indexOf(DocumentationMarkup.CONTENT_START)
@@ -138,6 +141,12 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
     }
 
     abstract override fun createPointer(): Pointer<out VueTypedDocumentedElement>
+
+    override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
+      PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
+        description = symbol.description
+        library = getLibraryNameForDocumentationOf(symbol.source)
+      }
 
     fun <S : VueNamedSymbol, T : S> createPointer(clazz: KClass<T>, listProvider: (VueTypedContainer) -> List<S>): Pointer<T> {
       val name = name

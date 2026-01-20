@@ -3,15 +3,18 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.ecmascript6.psi.ES6ImportCall
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.withTypeEvaluationLocation
 import com.intellij.lang.javascript.index.JSSymbolUtil
+import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
@@ -32,6 +35,7 @@ import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.html.NAMESPACE_HTML
@@ -492,3 +496,16 @@ fun typeOf(item: VueSourceElement): String =
     is VueDirectiveArgument -> "vue.documentation.type.directive.argument"
     else -> throw IncorrectOperationException(item.javaClass.name)
   }.let { VueBundle.message(it) }
+
+@NlsSafe
+fun getLibraryNameForDocumentationOf(element: PsiElement?): String? =
+  element
+    ?.containingFile
+    ?.virtualFile
+    ?.let { PackageJsonUtil.findUpPackageJson(it) }
+    ?.takeIf { NodeModuleUtil.hasNodeModulesDirInPath(it, null) }
+    ?.let { PackageJsonData.getOrCreate(it) }
+    ?.takeIf { it.name != null }
+    ?.let { data ->
+      data.name + (data.version?.toString()?.let { "@$it" } ?: "")
+    }

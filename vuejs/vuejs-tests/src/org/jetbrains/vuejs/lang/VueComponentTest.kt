@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.testFramework.DebugOutputPrinter
 import com.intellij.polySymbols.testFramework.checkTextByFile
@@ -17,6 +18,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
 
@@ -247,7 +249,11 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "defaultName", sourceElement.defaultName)
         else if (sourceElement is VueDirective || sourceElement is VueFilter)
           printProperty(level, "defaultName", sourceElement.name)
-        printProperty(level, "description", sourceElement.description)
+        val documentation = (sourceElement as? PolySymbol)
+          ?.getDocumentationTarget(null)
+          ?.asSafely<PolySymbolDocumentationTarget>()
+          ?.documentation
+        printProperty(level, "description", documentation?.description)
         if (printSources) {
           printProperty(level, "source", sourceElement.source)
           printProperty(level, "rawSource", sourceElement.rawSource.takeIf { it != sourceElement.source })
