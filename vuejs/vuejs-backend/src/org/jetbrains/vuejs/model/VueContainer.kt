@@ -13,7 +13,6 @@ import com.intellij.polySymbols.js.JS_PROPERTIES
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.symbols.getMatchingJSPropertySymbols
 import com.intellij.polySymbols.query.*
-import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.vuejs.VueBundle
@@ -75,15 +74,7 @@ data class VueModelDirectiveProperties(
   }
 }
 
-interface VueNamedSymbol : VueSymbol {
-
-  override val searchTarget: PolySymbolSearchTarget?
-    get() = PolySymbolSearchTarget.create(this)
-
-  abstract override fun createPointer(): Pointer<out VueNamedSymbol>
-}
-
-interface VueSlot : VueNamedSymbol, PolySymbolScope {
+interface VueSlot : VueSymbol, PolySymbolScope {
 
   val source: PsiElement?
 
@@ -120,7 +111,7 @@ interface VueSlot : VueNamedSymbol, PolySymbolScope {
 }
 
 @JvmDefaultWithCompatibility
-interface VueEmitCall : VueNamedSymbol {
+interface VueEmitCall : VueSymbol {
   /**
    * Event parameters not including event type itself, e.g.
    * for `{(event: 'add', item: string): void}` contains only `item: string`.
@@ -167,9 +158,6 @@ interface VueEmitCall : VueNamedSymbol {
     return super.adjustNameForRefactoring(queryExecutor, oldName, newName, occurence)
   }
 
-  override val searchTarget: PolySymbolSearchTarget
-    get() = PolySymbolSearchTarget.create(this)
-
   override fun createPointer(): Pointer<out VueEmitCall>
 }
 
@@ -178,7 +166,7 @@ interface VueEmitCall : VueNamedSymbol {
  *
  * @see VueInputProperty
  */
-interface VueProperty : VueNamedSymbol, PolySymbolScope {
+interface VueProperty : VueSymbol, PolySymbolScope {
 
   override val type: JSType?
 
@@ -285,7 +273,7 @@ interface VueModelOwner {
   val modelDecl: VueModelDecl
 }
 
-interface VueModelDecl : VueNamedSymbol {
+interface VueModelDecl : VueSymbol {
 
   override val kind: PolySymbolKind
     get() = VUE_MODEL_DECL
@@ -312,7 +300,7 @@ interface VueModelDecl : VueNamedSymbol {
   override fun createPointer(): Pointer<out VueModelDecl>
 }
 
-interface VueProvide : VueNamedSymbol {
+interface VueProvide : VueSymbol {
   val injectionKey: PsiNamedElement? get() = null
 
   override val kind: PolySymbolKind
@@ -321,7 +309,7 @@ interface VueProvide : VueNamedSymbol {
   abstract override fun createPointer(): Pointer<out VueProvide>
 }
 
-interface VueInject : VueNamedSymbol {
+interface VueInject : VueSymbol {
 
   val source: PsiElement
 

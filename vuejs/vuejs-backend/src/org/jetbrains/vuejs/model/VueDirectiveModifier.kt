@@ -7,8 +7,9 @@ import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
-interface VueDirectiveModifier : VueNamedSymbol {
+interface VueDirectiveModifier : VueSymbol {
 
   override val kind: PolySymbolKind
     get() = VUE_DIRECTIVE_MODIFIERS

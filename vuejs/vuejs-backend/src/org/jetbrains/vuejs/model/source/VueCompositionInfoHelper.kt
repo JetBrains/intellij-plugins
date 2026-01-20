@@ -14,6 +14,7 @@ import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueUnwrapRefType
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
 
@@ -21,7 +22,7 @@ object VueCompositionInfoHelper {
 
   private const val READ_ONLY_TYPE = "ReadOnly"
 
-  fun <T : PsiElement> createRawBindings(context: PsiElement, typeSource: T, setupTypeProvider: (T) -> JSType?): List<VueNamedSymbol> =
+  fun <T : PsiElement> createRawBindings(context: PsiElement, typeSource: T, setupTypeProvider: (T) -> JSType?): List<VueSymbol> =
     setupTypeProvider(typeSource)
       ?.asRecordType()
       ?.typeMembers
@@ -61,7 +62,7 @@ object VueCompositionInfoHelper {
     psiContext: PsiElement,
     setupTypeSource: T,
     setupTypeProvider: (T) -> JSType?,
-  ): VueNamedSymbol {
+  ): VueSymbol {
     val name = signature.memberName
     val context = JSTypeSubstitutionContextImpl(psiContext)
     var signatureType = signature.jsType?.let { substituteRefType(it, context) }

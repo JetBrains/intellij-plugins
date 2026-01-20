@@ -24,6 +24,7 @@ import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
 import java.util.*
@@ -125,7 +126,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
   private abstract class VueTypedDocumentedElement(
     private val container: VueTypedContainer,
     override val name: String,
-  ) : VueNamedSymbol, PsiSourcedPolySymbol {
+  ) : VueSymbol, PsiSourcedPolySymbol {
 
     val description: String? by lazy {
       val doc = JSDocumentationProvider()
@@ -148,7 +149,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
         library = getLibraryNameForDocumentationOf(symbol.source)
       }
 
-    fun <S : VueNamedSymbol, T : S> createPointer(clazz: KClass<T>, listProvider: (VueTypedContainer) -> List<S>): Pointer<T> {
+    fun <S : VueSymbol, T : S> createPointer(clazz: KClass<T>, listProvider: (VueTypedContainer) -> List<S>): Pointer<T> {
       val name = name
       val containerPtr = container.createPointer()
       return Pointer {

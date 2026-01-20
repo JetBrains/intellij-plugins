@@ -9,6 +9,7 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 import java.util.*
 
 abstract class VueSourceContainer(
@@ -158,7 +159,7 @@ abstract class VueSourceContainer(
     }
   }
 
-  private class NamedListAccessor<T : VueNamedSymbol>(
+  private class NamedListAccessor<T : VueSymbol>(
     extInfoAccessor: (VueContainerInfo) -> List<T>,
   ) : ListAccessor<T>(extInfoAccessor) {
 

@@ -22,6 +22,7 @@ import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 class VueCompositionInfoProvider : VueContainerInfoProvider {
 
@@ -47,19 +48,19 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
     override val injects: List<VueInject>
       get() = methodCalls.filterIsInstance<VueInject>()
 
-    private val rawBindings: List<VueNamedSymbol>
+    private val rawBindings: List<VueSymbol>
       get() = CachedValuesManager.getCachedValue(initializer) {
         CachedValueProvider.Result.create(VueCompositionInfoHelper.createRawBindings(
           initializer, initializer, ::getSetupFunctionType
         ), PsiModificationTracker.MODIFICATION_COUNT)
       }
 
-    private val methodCalls: List<VueNamedSymbol>
+    private val methodCalls: List<VueSymbol>
       get() = CachedValuesManager.getCachedValue(initializer) {
         CachedValueProvider.Result.create(getSetupCalls(initializer), PsiModificationTracker.MODIFICATION_COUNT)
       }
 
-    private fun getSetupCalls(initializer: JSObjectLiteralExpression): List<VueNamedSymbol> =
+    private fun getSetupCalls(initializer: JSObjectLiteralExpression): List<VueSymbol> =
       resolveElementTo(initializer.findProperty(SETUP_METHOD), JSFunction::class)
         ?.let { JSStubBasedPsiTreeUtil.findDescendants<JSCallExpression>(it, TokenSet.create(JSElementTypes.CALL_EXPRESSION)) }
         ?.mapNotNull {

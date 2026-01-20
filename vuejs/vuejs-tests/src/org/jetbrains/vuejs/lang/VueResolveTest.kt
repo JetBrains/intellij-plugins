@@ -22,7 +22,7 @@ import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueNamedSymbol
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.web.scopes.VueBindingShorthandSymbol
 
@@ -1807,7 +1807,7 @@ export default class UsageComponent extends Vue {
     val file = myFixture.configureByFile("at_component.vue")
     val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
 
-    val getNames = { list: Collection<VueNamedSymbol> -> list.map { it.name }.sorted() }
+    val getNames = { list: Collection<VueSymbol> -> list.map { it.name }.sorted() }
 
     assertSameElements(getNames(component.props), "bar", "foo_prop", "name", "checked")
     assertSameElements(getNames(component.data), "foo", "foo_prop", "foo_data")
@@ -1823,7 +1823,7 @@ export default class UsageComponent extends Vue {
     val file = myFixture.configureByFile("at_component_ts.vue")
     val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
 
-    val getNames = { list: Collection<VueNamedSymbol> -> list.map { it.name }.sorted() }
+    val getNames = { list: Collection<VueSymbol> -> list.map { it.name }.sorted() }
 
     assertSameElements(getNames(component.props), "bar", "foo_prop", "name", "checked")
     assertSameElements(getNames(component.data), "foo", "foo_prop", "foo_data")

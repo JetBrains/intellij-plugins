@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
@@ -454,6 +455,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val name: String,
     override val source: PsiElement,
   ) : VueEmitCall, PsiSourcedPolySymbol {
+
+    override val searchTarget: PolySymbolSearchTarget
+      get() = PolySymbolSearchTarget.create(this)
 
     override fun createPointer(): Pointer<VueSourceEmitDefinition> {
       val name = name

@@ -26,6 +26,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_STATE
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreStateElement
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.model.source.METHODS_PROP
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
@@ -42,7 +43,7 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
       private val METHODS = SimpleMemberAccessor(ContainerMember.Methods, ::VuexMappedSourceMethod)
     }
 
-    private class SimpleMemberAccessor<T : VueNamedSymbol>(
+    private class SimpleMemberAccessor<T : VueSymbol>(
       val member: ContainerMember,
       val provider: (String, JSElement) -> T,
     ) : ListAccessor<T>() {

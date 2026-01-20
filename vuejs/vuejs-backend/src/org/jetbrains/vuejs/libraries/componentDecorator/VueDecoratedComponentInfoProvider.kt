@@ -21,6 +21,7 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 import org.jetbrains.vuejs.types.optionalIf
 import java.util.*
@@ -142,7 +143,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     private abstract class VueDecoratedNamedSymbol<T : TypeMember>(
       override val name: String,
       protected val member: T,
-    ) : VueNamedSymbol, PsiSourcedPolySymbol {
+    ) : VueSymbol, PsiSourcedPolySymbol {
       override val source: PsiElement?
         get() = member.memberSource.singleElement
 

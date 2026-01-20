@@ -29,6 +29,7 @@ import org.jetbrains.vuejs.index.VUE_CORE_MODULES
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.VueCompleteRecordType
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.types.VueComponentInstanceType
 import org.jetbrains.vuejs.types.VueRefsType
 import org.jetbrains.vuejs.types.createStrictTypeSource
@@ -179,7 +180,7 @@ private fun contributeComponentProperties(
       }
 
       private fun process(
-        symbol: VueNamedSymbol,
+        symbol: VueSymbol,
         proximity: Proximity,
         dest: MutableMap<String, PropertySignature>,
         isReadOnly: Boolean,

@@ -25,6 +25,7 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -40,6 +41,7 @@ import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.index.isScriptVaporTag
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueSourceModelPropType
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.types.optionalIf
 import org.jetbrains.vuejs.web.symbols.VueSymbol
 
@@ -93,7 +95,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         CachedValueProvider.Result.create(analyzeModule(module), PsiModificationTracker.MODIFICATION_COUNT)
       }
 
-    private val injectionCalls: List<VueNamedSymbol>
+    private val injectionCalls: List<VueSymbol>
       get() = CachedValuesManager.getCachedValue(module) {
         CachedValueProvider.Result.create(getInjectionCalls(module), PsiModificationTracker.MODIFICATION_COUNT)
       }
@@ -136,7 +138,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       var props: List<VueInputProperty> = emptyList()
       var emits: List<VueEmitCall> = emptyList()
       var slots: List<VueSlot> = emptyList()
-      var rawBindings: List<VueNamedSymbol> = emptyList()
+      var rawBindings: List<VueSymbol> = emptyList()
       val modelDecls: MutableMap<String, VueScriptSetupModelDecl> = mutableMapOf()
 
       module.getStubSafeDefineCalls().forEach { call ->
@@ -220,7 +222,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     val props: List<VueInputProperty>,
     val emits: List<VueEmitCall>,
     val slots: List<VueSlot>,
-    val rawBindings: List<VueNamedSymbol>,
+    val rawBindings: List<VueSymbol>,
   )
 
 }
@@ -277,8 +279,8 @@ private fun getLiteralValue(literal: JSLiteralExpression): String? =
     ?.let { unquoteWithoutUnescapingStringLiteralValue(it) }
     ?.takeIf { it.isNotBlank() }
 
-private fun getInjectionCalls(module: JSExecutionScope): List<VueNamedSymbol> {
-  val symbols: MutableList<VueNamedSymbol> = mutableListOf()
+private fun getInjectionCalls(module: JSExecutionScope): List<VueSymbol> {
+  val symbols: MutableList<VueSymbol> = mutableListOf()
 
   module.getStubSafeDefineCalls().forEach { call ->
     when (getFunctionNameFromVueIndex(call)) {
@@ -465,6 +467,9 @@ private class VueScriptSetupLiteralBasedEvent(
         ?.significantValue
         ?.let { VueScriptSetupLiteralBasedEvent(unquoteWithoutUnescapingStringLiteralValue(it), literal) }
   }
+
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
 
   override fun createPointer(): Pointer<VueScriptSetupLiteralBasedEvent> {
     val sourcePtr = source.createSmartPointer()
@@ -674,8 +679,11 @@ private data class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl
   override val name: String
     get() = "$EMIT_CALL_UPDATE_PREFIX${modelDecl.name}"
 
-  override val source: PsiElement?
+  override val source: PsiElement
     get() = modelDecl.source
+
+  override val searchTarget: PolySymbolSearchTarget
+    get() = PolySymbolSearchTarget.create(this)
 
   override val params: List<JSParameterTypeDecorator> =
     listOf(JSParameterTypeDecoratorImpl("value", modelDecl.referenceType, false, false, true))

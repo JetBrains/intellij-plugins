@@ -22,6 +22,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 /**
  * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
@@ -244,12 +245,11 @@ class VueComponentTest : BasePlatformTestCase() {
     private fun StringBuilder.printVueSourceElement(topLevel: Int, sourceElement: VueElement): StringBuilder =
       printObject(topLevel) { level ->
         printProperty(level, "class", sourceElement.javaClass.simpleName)
-        if (sourceElement is VueNamedSymbol)
-          printProperty(level, "name", sourceElement.name)
-        if (sourceElement is VueComponent)
-          printProperty(level, "defaultName", sourceElement.defaultName)
-        else if (sourceElement is VueDirective || sourceElement is VueFilter)
-          printProperty(level, "defaultName", sourceElement.name)
+        when (sourceElement) {
+          is VueComponent -> printProperty(level, "defaultName", sourceElement.defaultName)
+          is VueDirective, is VueFilter -> printProperty(level, "defaultName", sourceElement.name)
+          is VueSymbol -> printProperty(level, "name", sourceElement.name)
+        }
         val documentation = (sourceElement as? PolySymbol)
           ?.getDocumentationTarget(null)
           ?.asSafely<PolySymbolDocumentationTarget>()

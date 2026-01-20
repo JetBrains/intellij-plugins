@@ -19,6 +19,7 @@ import org.jetbrains.vuejs.index.getFunctionImplicitElement
 import org.jetbrains.vuejs.model.source.VueCallInject
 import org.jetbrains.vuejs.model.source.VueSourceProvide
 import org.jetbrains.vuejs.types.optionalIf
+import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 
 fun analyzeProvide(call: JSCallExpression): VueProvide? {
@@ -29,7 +30,7 @@ fun analyzeInject(call: JSCallExpression): VueInject? {
   return analyzeCall(call, ::VueCallInject)
 }
 
-private fun <T : VueNamedSymbol> analyzeCall(
+private fun <T : VueSymbol> analyzeCall(
   call: JSCallExpression,
   factory: (name: String, source: PsiElement, symbol: PsiNamedElement?) -> T,
 ): T? {
