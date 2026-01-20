@@ -62,6 +62,7 @@ jvm_library(
     "//webcore/impl",
     "//plugins/css/common/psi",
     "//plugins/css/common",
+    "//plugins/JavaScriptLanguage/diagrams",
   ]
 )
 
@@ -140,6 +141,7 @@ jvm_library(
     "//plugins/css/common/psi",
     "//plugins/css/common",
     "//plugins/JavaScriptLanguage/javascript-common",
+    "//plugins/JavaScriptLanguage/diagrams",
   ]
 )
 ### auto-generated section `build intellij.angularJS` end

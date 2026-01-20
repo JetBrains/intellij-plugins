@@ -104,5 +104,6 @@
     <orderEntry type="module" module-name="intellij.css.common.psi" />
     <orderEntry type="module" module-name="intellij.css.common" />
     <orderEntry type="module" module-name="intellij.javascript.common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.backend.diagrams" />
   </component>
 </module>
