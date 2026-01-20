@@ -26,7 +26,7 @@ internal object TfComponentObjectKeyCompletionProvider : HclObjectKeyCompletionP
     val componentProperty = hclObject.parent as? HCLProperty ?: return
     val componentBlock = componentProperty.parentOfType<HCLBlock>() ?: return
 
-    val properties = if (TfComponentPsiPatterns.InputsPropertyOfComponent.accepts(componentProperty)) {
+    val properties = if (TfComponentPsiPatterns.InputsPropertyBlock.accepts(componentProperty)) {
       TfModelHelper.getModuleRequiredVariables(componentBlock).values
     }
     else if (TfComponentPsiPatterns.ProvidersPropertyOfComponent.accepts(componentProperty)) {

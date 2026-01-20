@@ -155,6 +155,33 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
     """.trimIndent(), "tfc_kubernetes_audience", "kubernetes_version")
   }
 
+  fun testInputsCompletionInStack() {
+    myFixture.addFileToProject("aws-eks-addon/main.tf", """
+      locals {
+        tags = {
+          Blueprint = var.cluster_name
+        }
+      }
+
+      variable "vpc_id" {
+        type    = string
+      }
+      variable "cluster_name" {
+        type    = string
+      }
+      variable "cluster_endpoint" {
+        type    = string
+      }
+    """.trimIndent())
+
+    doBasicCompletionTest("""
+      stack "test" {
+        inputs = { <caret> }
+        source  = "./aws-eks-addon"
+      }
+    """.trimIndent(), "vpc_id", "cluster_name", "cluster_endpoint")
+  }
+
   fun testComponentProvidersCompletion() {
     myFixture.addFileToProject("aws-vpc/providers.tf", """
       terraform {
