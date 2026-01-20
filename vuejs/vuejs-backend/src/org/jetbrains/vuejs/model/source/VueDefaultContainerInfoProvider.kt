@@ -450,22 +450,10 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       createPointer(::VueSourceMethod)
   }
 
-  private class VueSourceEmitDefinition(
+  private data class VueSourceEmitDefinition(
     override val name: String,
     override val source: PsiElement,
   ) : VueEmitCall, PsiSourcedPolySymbol {
-
-    override fun equals(other: Any?): Boolean =
-      other === this
-      || other is VueSourceEmitDefinition
-      && other.name == name
-      && other.source == source
-
-    override fun hashCode(): Int {
-      var result = name.hashCode()
-      result = 31 * result + source.hashCode()
-      return result
-    }
 
     override fun createPointer(): Pointer<VueSourceEmitDefinition> {
       val name = name

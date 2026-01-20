@@ -76,12 +76,12 @@ object VueCompositionInfoHelper {
         }
       }
       is JSFunctionType -> {
-        return VueComposedMethod(name,
-                                 signature.memberSource.singleElement,
-                                 signature.jsType,
-                                 psiContext,
-                                 setupTypeSource,
-                                 setupTypeProvider)
+        return VueComposedMethod(name = name,
+                                 source = signature.memberSource.singleElement,
+                                 type = signature.jsType,
+                                 psiContext = psiContext,
+                                 setupTypeSource = setupTypeSource,
+                                 setupTypeProvider = setupTypeProvider)
       }
     }
 

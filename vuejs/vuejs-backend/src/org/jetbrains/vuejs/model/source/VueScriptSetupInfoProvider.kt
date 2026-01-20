@@ -646,7 +646,7 @@ private class VueScriptSetupModelDecl(
   }
 }
 
-private class VueScriptSetupModelInputProperty(
+private data class VueScriptSetupModelInputProperty(
   override val modelDecl: VueScriptSetupModelDecl,
 ) : VueInputProperty, VueModelOwner, PsiSourcedPolySymbol {
   override val name: String
@@ -661,26 +661,15 @@ private class VueScriptSetupModelInputProperty(
   override val type: JSType
     get() = modelDecl.type
 
-  override fun equals(other: Any?): Boolean =
-    other === this
-    || other is VueScriptSetupModelInputProperty
-    && other.modelDecl == modelDecl
-
-  override fun hashCode(): Int =
-    modelDecl.hashCode()
-
-  override fun toString(): String {
-    return "VueScriptSetupModelInputProperty(modelDecl=$modelDecl)"
-  }
-
   override fun createPointer(): Pointer<VueScriptSetupModelInputProperty> {
     val modelDecl = modelDecl.createPointer()
     return Pointer { modelDecl.dereference()?.let { VueScriptSetupModelInputProperty(it) } }
   }
 }
 
-private class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) :
+private data class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) :
   VueEmitCall, VueModelOwner, PsiSourcedPolySymbol {
+
   override val name: String
     get() = "$EMIT_CALL_UPDATE_PREFIX${modelDecl.name}"
 
@@ -691,14 +680,6 @@ private class VueScriptSetupModelEvent(override val modelDecl: VueModelDecl) :
     listOf(JSParameterTypeDecoratorImpl("value", modelDecl.referenceType, false, false, true))
 
   override val hasStrictSignature: Boolean = true
-
-  override fun equals(other: Any?): Boolean =
-    other === this
-    || other is VueScriptSetupModelEvent
-    && other.modelDecl == modelDecl
-
-  override fun hashCode(): Int =
-    modelDecl.hashCode()
 
   override fun createPointer(): Pointer<VueScriptSetupModelEvent> {
     val modelDeclPtr = modelDecl.createPointer()
