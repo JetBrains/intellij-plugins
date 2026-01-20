@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.lang.typescript.service.VuePluginTypeScriptService
 
 abstract class VueTestCase(
   override val testCasePath: String,
-  private val useTsc: Boolean = false,
+  private val useTsc: Boolean = true,
 ) : WebFrameworkTestCase(if (useTsc) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
