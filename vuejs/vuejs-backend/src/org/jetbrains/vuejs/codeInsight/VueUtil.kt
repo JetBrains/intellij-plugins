@@ -482,7 +482,6 @@ fun createVueFileFromText(project: Project, text: String): VueFile =
 @Nls
 fun typeOf(item: VueSourceElement): String =
   when (item) {
-    is VueFunctionComponent -> "vue.documentation.type.functional.component"
     is VueComponent -> "vue.documentation.type.component"
     is VueDirective -> "vue.documentation.type.directive"
     is VueFilter -> "vue.documentation.type.filter"
@@ -493,7 +492,6 @@ fun typeOf(item: VueSourceElement): String =
     is VueComputedProperty -> "vue.documentation.type.component.computed.property"
     is VueDataProperty -> "vue.documentation.type.component.data.property"
     is VueDirectiveModifier -> "vue.documentation.type.directive.modifier"
-    is VueDirectiveArgument -> "vue.documentation.type.directive.argument"
     else -> throw IncorrectOperationException(item.javaClass.name)
   }.let { VueBundle.message(it) }
 
