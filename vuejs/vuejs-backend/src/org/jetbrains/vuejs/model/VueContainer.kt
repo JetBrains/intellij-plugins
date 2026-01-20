@@ -4,7 +4,9 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.*
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.JS_EVENTS
@@ -15,10 +17,11 @@ import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueSourceElementSymbol
+import org.jetbrains.vuejs.web.symbols.VueElementSymbol
 import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
@@ -74,7 +77,9 @@ data class VueModelDirectiveProperties(
   }
 }
 
-interface VueNamedSymbol : VueSourceElementSymbol {
+interface VueNamedSymbol : VueElementSymbol {
+
+  val source: PsiElement?
 
   abstract override fun createPointer(): Pointer<out VueNamedSymbol>
 }

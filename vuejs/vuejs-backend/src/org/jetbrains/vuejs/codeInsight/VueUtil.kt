@@ -480,7 +480,7 @@ fun createVueFileFromText(project: Project, text: String): VueFile =
     .createFileFromText("dummy$VUE_FILE_EXTENSION", VueFileType, text) as VueFile
 
 @Nls
-fun typeOf(item: VueSourceElement): String =
+fun typeOf(item: VueElement): String =
   when (item) {
     is VueComponent -> "vue.documentation.type.component"
     is VueDirective -> "vue.documentation.type.directive"

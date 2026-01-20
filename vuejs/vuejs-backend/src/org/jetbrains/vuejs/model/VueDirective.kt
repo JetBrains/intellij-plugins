@@ -19,8 +19,6 @@ interface VueDirective : VueScopeElementSymbol {
 
   val directiveModifiers: List<VueDirectiveModifier> get() = emptyList()
 
-  val vueArgument: VueDirectiveArgument? get() = null
-
   val rawSource: PsiElement?
     get() = source
 

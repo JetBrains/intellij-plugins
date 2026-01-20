@@ -7,16 +7,19 @@ import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.codeInsight.typeOf
-import org.jetbrains.vuejs.model.VueSourceElement
+import org.jetbrains.vuejs.model.VueElement
 
-interface VueSourceElementSymbol : VueSymbol, VueSourceElement {
+interface VueElementSymbol : VueSymbol, VueElement {
 
   override val searchTarget: PolySymbolSearchTarget?
     get() = PolySymbolSearchTarget.create(this)
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
-    PolySymbolDocumentationTarget.create(this, location, VueSymbolDocumentationProvider)
+    PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
+      library = getLibraryNameForDocumentationOf(symbol.psiContext)
+    }
 
   override val presentation: TargetPresentation
     get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", typeOf(this), name))

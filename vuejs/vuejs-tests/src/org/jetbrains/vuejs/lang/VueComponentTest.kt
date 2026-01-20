@@ -21,6 +21,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.web.symbols.VueElementSymbol
 
 /**
  * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
@@ -212,7 +213,7 @@ class VueComponentTest : BasePlatformTestCase() {
   private class ComponentModelDebugOutputPrinter(val printSources: Boolean) : DebugOutputPrinter() {
     override fun printValueImpl(builder: StringBuilder, level: Int, value: Any?): StringBuilder =
       when (value) {
-        is VueSourceElement -> builder.printVueSourceElement(level, value)
+        is VueElement -> builder.printVueSourceElement(level, value)
         is VueModelDirectiveProperties -> builder.printVueModelDirectiveProperties(level, value)
         is VueTemplate<*> -> builder.printVueTemplate(level, value)
         is JSType -> builder.printJSType(level, value)
@@ -240,7 +241,7 @@ class VueComponentTest : BasePlatformTestCase() {
         printProperty(level, "type", param.inferredType?.substitute()?.getTypeText(JSType.TypeTextFormat.PRESENTABLE))
       }
 
-    private fun StringBuilder.printVueSourceElement(topLevel: Int, sourceElement: VueSourceElement): StringBuilder =
+    private fun StringBuilder.printVueSourceElement(topLevel: Int, sourceElement: VueElement): StringBuilder =
       printObject(topLevel) { level ->
         printProperty(level, "class", sourceElement.javaClass.simpleName)
         if (sourceElement is VueNamedSymbol)
@@ -257,17 +258,14 @@ class VueComponentTest : BasePlatformTestCase() {
         if (printSources) {
           val rawSource = (sourceElement as? VueComponent)?.rawSource
                           ?: (sourceElement as? VueDirective)?.rawSource
-          printProperty(level, "source", sourceElement.source)
-          printProperty(level, "rawSource", rawSource.takeIf { it != sourceElement.source })
+          val source = (sourceElement as? VueScopeElement)?.source
+                       ?: (sourceElement as? VueNamedSymbol)?.source
+          printProperty(level, "source", source)
+          printProperty(level, "rawSource", rawSource.takeIf { it != source })
         }
         if (sourceElement is VueDirective) {
           printProperty(level, "jsType", sourceElement.type)
           printProperty(level, "modifiers", sourceElement.directiveModifiers.takeIf { it.isNotEmpty() })
-          printProperty(level, "argument", sourceElement.vueArgument)
-        }
-        if (sourceElement is VueDirectiveArgument) {
-          printProperty(level, "pattern", sourceElement.pattern)
-          printProperty(level, "required", sourceElement.required)
         }
         if (sourceElement is VueEntitiesContainer) {
           printProperty(level, "components", sourceElement.components.takeIf { it.isNotEmpty() }

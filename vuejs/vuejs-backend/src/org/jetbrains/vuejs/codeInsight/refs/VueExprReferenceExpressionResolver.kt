@@ -88,10 +88,7 @@ class VueExprReferenceExpressionResolver(
 
     val filters = resolveFiltersFromReferenceExpression(expression)
     return filters.asSequence()
-      .map {
-        JSResolveResult(it.source ?: JSImplicitElementImpl.Builder(myReferencedName!!, expression)
-          .forbidAstAccess().toImplicitElement())
-      }
+      .map { JSResolveResult(it.source) }
       .toList()
       .toTypedArray()
   }

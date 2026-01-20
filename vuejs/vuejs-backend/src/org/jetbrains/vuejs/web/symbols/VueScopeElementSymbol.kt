@@ -3,11 +3,17 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Pointer
+import com.intellij.platform.backend.documentation.DocumentationTarget
+import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
+import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.model.VueScopeElement
 
-interface VueScopeElementSymbol : VueSourceElementSymbol, VueScopeElement, PolySymbolScope {
+interface VueScopeElementSymbol : VueElementSymbol, VueScopeElement, PolySymbolScope {
+
+  override val source: PsiElement?
 
   override fun getModificationCount(): Long = -1
 
@@ -17,5 +23,10 @@ interface VueScopeElementSymbol : VueSourceElementSymbol, VueScopeElement, PolyS
     get() = if (source is JSLiteralExpression)
       PolySymbolRenameTarget.create(this)
     else null
+
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
+    PolySymbolDocumentationTarget.create(this, location) { symbol, _ ->
+      library = getLibraryNameForDocumentationOf(symbol.source)
+    }
 
 }

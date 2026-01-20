@@ -32,7 +32,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueSourceEntity
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueSourceElementSymbol
+import org.jetbrains.vuejs.web.symbols.VueElementSymbol
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
 
@@ -158,7 +158,7 @@ private constructor(
   }
 
   private fun PolySymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, PolySymbol>): List<PolySymbol> {
-    if (this !is VueSourceElementSymbol || this !is PsiSourcedPolySymbol) return listOf(this)
+    if (this !is VueElementSymbol || this !is PsiSourcedPolySymbol) return listOf(this)
 
     val source =
       (this as? VueSourceEntity)

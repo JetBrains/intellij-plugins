@@ -12,10 +12,11 @@ import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.utils.PolySymbolTypeSupport.Companion.PROP_TYPE_SUPPORT
 import org.jetbrains.vuejs.VuejsIcons
+import org.jetbrains.vuejs.model.VueElement
 import org.jetbrains.vuejs.web.VueFramework
 import javax.swing.Icon
 
-interface VueSymbol : HtmlFrameworkSymbol {
+interface VueSymbol : HtmlFrameworkSymbol, VueElement {
 
   val type: JSType? get() = null
   val attributeValue: PolySymbolHtmlAttributeValue? get() = null
