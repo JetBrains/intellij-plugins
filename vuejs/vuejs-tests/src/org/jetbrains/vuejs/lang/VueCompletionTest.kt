@@ -12,11 +12,15 @@ import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import org.jetbrains.vuejs.VueTestCase
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
 private val FILTER_DEFAULT_ATTRIBUTES = (filterOutStandardHtmlSymbols
   and filterOutMostOfGlobalJSSymbolsInVue
   and { info -> info.lookupString.let { !it.contains("aria-") && !it.startsWith("on") } })
 
+@RunWith(JUnit4::class)
 class VueCompletionTest :
   VueTestCase("completion", useTsc = false) {
 
@@ -26,38 +30,46 @@ class VueCompletionTest :
     this.enableIdempotenceChecksOnEveryCache()
   }
 
+  @Test
   fun testCompleteCssClasses() =
     doLookupTest(dir = true)
 
+  @Test
   fun testCompleteAttributesWithVueInNodeModules() =
     doLookupTest(VueTestModule.VUE_2_5_3, configureFileName = "index.html", dir = true) {
       it.lookupString.startsWith("v-")
     }
 
+  @Test
   fun testCompleteAttributesWithVueInPackageJson() =
     doLookupTest(configureFileName = "index.html", dir = true) {
       it.lookupString.startsWith("v-")
     }
 
+  @Test
   fun testNoVueCompletionWithoutVue() =
     doLookupTest(configureFileName = "index.html", dir = true) {
       it.lookupString.startsWith("v-")
     }
 
+  @Test
   fun testCompleteImportedComponent() =
     doLookupTest(dir = true) {
       it.lookupString.startsWith("comp")
     }
 
+  @Test
   fun testCompleteWithImport() =
     doLookupTest(dir = true, typeToFinishLookup = "", renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testCompleteWithImportNoExtension() =
     withTempCodeStyleSettings {
       it.getCustomSettings(JSCodeStyleSettings::class.java).USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.UseExplicitExtension.NEVER
       doLookupTest(dir = true, typeToFinishLookup = "", renderPriority = false, renderTypeText = false)
     }
 
+  @Test
   fun testCompleteNoImportIfSettingIsOffJs() {
     val jsApplicationSettings = JSApplicationSettings.getInstance()
     val before = jsApplicationSettings.isUseJavaScriptAutoImport
@@ -70,6 +82,7 @@ class VueCompletionTest :
     }
   }
 
+  @Test
   fun testCompleteNoImportIfSettingIsOffTs() {
     val jsApplicationSettings = JSApplicationSettings.getInstance()
     val before = jsApplicationSettings.isUseTypeScriptAutoImport
@@ -82,78 +95,100 @@ class VueCompletionTest :
     }
   }
 
+  @Test
   fun testCompleteWithImportCreateExport() =
     doLookupTest(dir = true, typeToFinishLookup = "", renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testCompleteWithImportCreateScript() =
     doLookupTest(VueTestModule.VUE_2_6_10, dir = true, typeToFinishLookup = "", renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testCompleteWithImportCreateScriptNoExport() =
     doLookupTest(VueTestModule.VUE_2_6_10, dir = true, typeToFinishLookup = "", renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testCompleteWithoutImportForRenamedGlobalComponent() =
     doLookupTest(dir = true, typeToFinishLookup = "", renderPriority = false, renderTypeText = false)
 
 
+  @Test
   fun testCompleteWithoutImportForGlobalComponent() =
     doLookupTest(dir = true, typeToFinishLookup = "", renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testCompleteAttributesFromProps() =
     doLookupTest(dir = true) { it.priority > 10 }
 
+  @Test
   fun testCompletePropsInInterpolation() {
     doLookupTest(lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties)
   }
 
+  @Test
   fun testCompleteComputedPropsInInterpolation() =
     doLookupTest(lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties)
 
+  @Test
   fun testCompleteMethodsInBoundAttributes() =
     doLookupTest(dir = true, lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties)
 
+  @Test
   fun testCompleteElementsFromLocalData() =
     doLookupTest(
       VueTestModule.VUE_2_5_3,
       lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties,
     )
 
+  @Test
   fun testCompleteElementsFromLocalData2() =
     doLookupTest(VueTestModule.VUE_2_5_3) { it.priority > 10 }
 
+  @Test
   fun testSrcInStyleCompletion() =
     doLookupTest(dir = true)
 
+  @Test
   fun testSrcInStyleCompletionWithLang() =
     doLookupTest(dir = true)
 
+  @Test
   fun testInsertAttributeWithoutValue() =
     doLookupTest(typeToFinishLookup = "")
 
+  @Test
   fun testInsertAttributeWithValue() =
     doLookupTest(typeToFinishLookup = "")
 
+  @Test
   fun testMixinsInCompletion() =
     doLookupTest(configureFileName = "CompWithTwoMixins.vue", dir = true) { it.priority > 10 }
 
+  @Test
   fun testNoNotImportedMixinsInCompletion() =
     doLookupTest(dir = true) { it.priority > 10 }
 
+  @Test
   fun testNoCompletionInVueAttributes() =
     JSTestUtils.withNoLibraries(project) {
       doLookupTest()
     }
 
+  @Test
   fun testTypeScriptCompletionFromPredefined() =
     JSTestUtils.withNoLibraries(project) {
       doLookupTest()
     }
 
+  @Test
   fun testCustomDirectivesInCompletion() =
     doLookupTest(configureFileName = "CustomDirectives.vue", dir = true) { it.lookupString.startsWith("v-") }
 
+  @Test
   fun testCustomDirectivesLinkedFilesInCompletion() =
     doLookupTest(VueTestModule.VUE_2_5_3, configureFileName = "CustomDirectives.html", dir = true) { it.lookupString.startsWith("v-") }
 
+  @Test
   fun testGlobalItemsAugmentedFromCompilerOptionsTypes() {
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -178,6 +213,7 @@ class VueCompletionTest :
     )
   }
 
+  @Test
   fun testDirectivesFromGlobalDirectives() {
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -191,6 +227,7 @@ class VueCompletionTest :
     )
   }
 
+  @Test
   fun testDirectivesWithModifiersFromGlobalDirectives() {
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -205,51 +242,64 @@ class VueCompletionTest :
     )
   }
 
+  @Test
   fun testPrettyLookup() =
     doLookupTest(
       renderTailText = true,
       lookupItemFilter = filterOutDollarPrefixedProperties and filterOutJsKeywordsGlobalObjectsAndCommonProperties,
     )
 
+  @Test
   fun testCompleteVBind() =
     doLookupTest(locations = listOf("<child-comp :<caret>>", "<a v-bind:<caret>>"), lookupItemFilter = filterOutAriaAttributes)
 
+  @Test
   fun testCompleteVBindUser() =
     doLookupTest(configureFileName = "User.vue", dir = true, lookupItemFilter = filterOutAriaAttributes)
 
+  @Test
   fun testVueOutObjectLiteral() =
     doLookupTest(VueTestModule.VUE_2_5_3, renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testVueOutObjectLiteralTs() =
     doLookupTest(VueTestModule.VUE_2_5_3, renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testVueOutObjectLiteralCompletionJsx() =
     doLookupTest(VueTestModule.VUE_2_5_3, renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testNoDoubleCompletionForLocalComponent() =
     doLookupTest(dir = true) { it.priority > 1 }
 
+  @Test
   fun testElementUiCompletion() =
     doLookupTest(VueTestModule.ELEMENT_UI_2_0_5, fileContents = "<template><el-<caret></template>")
 
+  @Test
   fun testMintUiCompletion() =
     doLookupTest(VueTestModule.MINT_UI_2_2_3, fileContents = "<template><mt-<caret></template>")
 
+  @Test
   fun testVuetifyCompletion_017() =
     doLookupTest(VueTestModule.VUETIFY_0_17_2, fileContents = "<template><<caret></template>") { item ->
       item.lookupString.let { it.startsWith("V") || it.startsWith("v") }
     }
 
+  @Test
   fun testVuetifyCompletion_137() =
     doLookupTest(VueTestModule.VUETIFY_1_3_7, fileContents = "<template><<caret></template>") { item ->
       item.lookupString.let { it.startsWith("V") || it.startsWith("v") }
     }
 
+  @Test
   fun testVuetifyCompletion_1210() =
     doLookupTest(VueTestModule.VUETIFY_1_2_10, fileContents = "<template><<caret></template>") { item ->
       item.lookupString.let { it.startsWith("V") || it.startsWith("v") }
     }
 
+  @Test
   fun testIviewCompletion() =
     doLookupTest(
       VueTestModule.IVIEW_2_8_0,
@@ -257,6 +307,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testIview3Completion() =
     doLookupTest(
       VueTestModule.IVIEW_3_5_4,
@@ -264,6 +315,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutAriaAttributes,
     )
 
+  @Test
   fun testBootstrapVueCompletion() =
     doLookupTest(
       VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11,
@@ -271,6 +323,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testShardsVueCompletion() =
     doLookupTest(
       VueTestModule.SHARDS_VUE_1_0_5,
@@ -278,6 +331,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testWrongPropsNotInCompletion() =
     doCompletionAutoPopupTest(checkResult = false) {
       completeBasic()
@@ -291,40 +345,52 @@ class VueCompletionTest :
       checkLookupItems(lookupItemFilter = filterOutAriaAttributes)
     }
 
+  @Test
   fun testBuefyCompletion() =
     doLookupTest(VueTestModule.BUEFY_0_6_2, fileContents = "<template><b-<caret></template>")
 
+  @Test
   fun testClassComponentCompletion() =
     doLookupTest(fileContents = "<template><<caret></template>", dir = true, lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testClassComponentCompletionTs() =
     doLookupTest(fileContents = "<template><<caret></template>", dir = true, lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testComponentInsertionNoScript() =
     doLookupTest(VueTestModule.VUE_2_6_10, dir = true, typeToFinishLookup = "")
 
+  @Test
   fun testComponentInsertionScriptNoImports() =
     doLookupTest(VueTestModule.VUE_2_6_10, dir = true, typeToFinishLookup = "")
 
+  @Test
   fun testComponentInsertionScriptVueImport() =
     doLookupTest(VueTestModule.VUE_2_6_10, dir = true, typeToFinishLookup = "")
 
+  @Test
   fun testComponentInsertionScriptVueClassComponentImport() =
     doLookupTest(VueTestModule.VUE_2_6_10, dir = true, typeToFinishLookup = "")
 
+  @Test
   fun testComponentInsertionWithClassDefined() =
     doLookupTest(VueTestModule.VUE_2_6_10, dir = true, typeToFinishLookup = "")
 
+  @Test
   fun testTypescriptVForItemCompletion() =
     doLookupTest(lookupItemFilter = filterOutJsKeywordsGlobalObjectsAndCommonProperties)
 
+  @Test
   fun testTypescriptVForCompletionWebTypes() =
     doLookupTest(VueTestModule.VUE_2_5_3,
                  lookupItemFilter = filterOutJsKeywordsGlobalObjectsAndCommonProperties and filterOutDollarPrefixedProperties)
 
+  @Test
   fun testLocalComponentsExtendsCompletion() =
     doLookupTest(dir = true) { it.priority > 10 }
 
+  @Test
   fun testCompletionWithRecursiveMixins() =
     doLookupTest(
       dir = true,
@@ -335,12 +401,15 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testNoImportInsertedForRecursivelyLocalComponent() =
     doLookupTest(dir = true, typeToFinishLookup = "")
 
+  @Test
   fun testCssClassInPug() =
     doLookupTest()
 
+  @Test
   fun testEventsAfterAt() =
     doCompletionAutoPopupTest(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11, checkResult = false) {
       type("@")
@@ -358,6 +427,7 @@ class VueCompletionTest :
       checkLookupItems()
     }
 
+  @Test
   fun testEventsAfterVOn() =
     doCompletionAutoPopupTest(checkResult = false) {
       type(":")
@@ -378,6 +448,7 @@ class VueCompletionTest :
     }
 
 
+  @Test
   fun testEventModifiers() =
     doLookupTest(locations = listOf(
       // general modifiers only
@@ -390,6 +461,7 @@ class VueCompletionTest :
       "@drop.<caret>"
     ))
 
+  @Test
   fun testAutopopupAfterVOnSelection() =
     doCompletionAutoPopupTest {
       completeBasic()
@@ -399,50 +471,65 @@ class VueCompletionTest :
       type("\n")
     }
 
+  @Test
   fun testStyleAttributes() =
     doLookupTest(VueTestModule.VUE_2_5_3) { it.priority > 1 }
 
+  @Test
   fun testTemplateAttributes() =
     doLookupTest(VueTestModule.VUE_2_5_3) { it.priority > 1 }
 
+  @Test
   fun testNoVueTagsWithNamespace() =
     doLookupTest()
 
+  @Test
   fun testVueCompletionInsideScript() =
     doLookupTest(VueTestModule.VUE_2_5_3, lookupItemFilter = filterOutDollarPrefixedProperties)
 
+  @Test
   fun testVueCompletionInsideScriptLifecycleHooks() =
     doLookupTest(VueTestModule.VUE_2_5_3)
 
+  @Test
   fun testVueCompletionInsideScriptNoLifecycleHooksTopLevel() =
     doLookupTest(VueTestModule.VUE_2_5_3) { it.lookupString.startsWith("$") }
 
+  @Test
   fun testVueCompletionInsideScriptNoLifecycleHooksWithoutThis() =
     doLookupTest(VueTestModule.VUE_2_5_3) { it.lookupString.startsWith("$") }
 
+  @Test
   fun testVueCompletionWithExtend() =
     doLookupTest(dir = true) { it.priority > 10 }
 
+  @Test
   fun testVueNoComponentNameAsStyleSelector() =
     doLookupTest(dir = true, locations = listOf(">\ninp<caret>", "<inp<caret>"))
 
+  @Test
   fun testCompletionPriorityAndHints() =
     doLookupTest(VueTestModule.VUETIFY_1_2_10, VueTestModule.SHARDS_VUE_1_0_5, dir = true, lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testCompletionPriorityAndHintsBuiltInTags() =
     doLookupTest(VueTestModule.VUE_2_5_3, lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testDirectiveCompletionOnComponent() =
     doLookupTest(VueTestModule.VUETIFY_1_3_7, renderPriority = false, renderTypeText = false, containsCheck = true)
 
+  @Test
   fun testBuiltInTagsAttributeCompletion() =
     doLookupTest(VueTestModule.VUE_2_5_3) { it.priority >= 10 && !it.lookupString.startsWith("v-") }
 
+  @Test
   fun testBindProposalsPriority() =
     doLookupTest(VueTestModule.VUETIFY_1_2_10, VueTestModule.VUE_2_6_10, renderTypeText = false, renderProximity = true) {
       !it.lookupString.contains("aria-") && !it.lookupString.startsWith("on")
     }
 
+  @Test
   fun testBindProposalsStdTag() =
     doLookupTest(VueTestModule.VUE_2_6_10, renderPriority = false, renderTypeText = false, lookupItemFilter = filterOutAriaAttributes)
 
@@ -452,32 +539,41 @@ class VueCompletionTest :
       !it.lookupString.contains("aria-") && !it.lookupString.startsWith("on")
     }
 
+  @Test
   fun testAttributeNamePriorityVue26() =
     doAttributeNamePriorityTest(VueTestModule.VUE_2_6_10)
 
+  @Test
   fun testAttributeNamePriorityVue30() =
     doAttributeNamePriorityTest(VueTestModule.VUE_3_0_0)
 
+  @Test
   fun testAttributeNamePriorityVue31() =
     doAttributeNamePriorityTest(VueTestModule.VUE_3_1_0)
 
+  @Test
   fun testAttributeNamePriorityVue32() =
     doAttributeNamePriorityTest(VueTestModule.VUE_3_2_2)
 
+  @Test
   fun testComplexComponentDecorator() =
     doLookupTest(configureFileName = "App.vue", dir = true) { it.priority > 10 }
 
+  @Test
   fun testComplexComponentDecoratorTs() =
     doLookupTest(configureFileName = "App.vue", dir = true) { it.priority > 10 }
 
+  @Test
   fun testComplexComponentDecorator8Ts() =
     doLookupTest(configureFileName = "App.vue", dir = true,
                  locations = listOf("<HW <caret>", "<<caret>HW"),
                  lookupItemFilter = filterOutStandardHtmlSymbols and { it.priority > 0 && !it.lookupString.startsWith("v-") })
 
+  @Test
   fun testDestructuringVariableTypeInVFor() =
     doLookupTest(VueTestModule.VUE_2_5_3)
 
+  @Test
   fun testWebTypesComplexSetup() {
     myFixture.copyDirectoryToProject("web-types", ".")
     listOf(Triple("root.vue",
@@ -499,12 +595,14 @@ class VueCompletionTest :
       }
   }
 
+  @Test
   fun testSlotProps() =
     doLookupTest(renderPriority = true, renderTypeText = false) {
       // Ignore global objects and keywords
       it.priority > 10
     }
 
+  @Test
   fun testVueDefaultSymbolsWithDefinitions() =
     doLookupTest(VueTestModule.VUE_2_5_3, locations = listOf(
       "v-on:click=\"<caret>\"",
@@ -514,6 +612,7 @@ class VueCompletionTest :
       it.priority > 10
     }
 
+  @Test
   fun testVueDefaultSymbols() =
     doLookupTest(locations = listOf(
       "v-on:click=\"<caret>\"",
@@ -523,9 +622,11 @@ class VueCompletionTest :
       || info.lookupString.startsWith("A") // Check also if we have some global symbols, but don't list all of them
     }
 
+  @Test
   fun testSlotTag() =
     doLookupTest(VueTestModule.VUE_2_5_3, containsCheck = true, renderPriority = true, renderTypeText = false)
 
+  @Test
   fun testSlotNames() =
     doLookupTest(
       configureFileName = "test.vue", renderPriority = false, renderTypeText = false, dir = true,
@@ -535,16 +636,20 @@ class VueCompletionTest :
         listOf(tag to "$tag><template v-slot:<caret></$tag", tag to "$tag><div slot=\"<caret>\"</$tag")
       })
 
+  @Test
   fun testFilters() =
     doLookupTest(dir = true, renderTypeText = false, renderPriority = false)
 
+  @Test
   fun testComplexThisContext() =
     doLookupTest(VueTestModule.VUEX_3_1_0, VueTestModule.VUE_2_5_3,
                  renderTypeText = false, renderPriority = false, dir = true)
 
+  @Test
   fun testTopLevelTagsNoI18n() =
     doLookupTest(VueTestModule.VUE_2_5_3, fileContents = "<<caret>", lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testTopLevelTags() =
     doLookupTest(VueTestModule.VUE_2_5_3, dir = true, locations = listOf(
       "<<caret>i18n",
@@ -554,30 +659,36 @@ class VueCompletionTest :
       "<style <caret>a",
     ), lookupItemFilter = filterOutStandardHtmlSymbols and { it.priority > 0 && !it.lookupString.startsWith("v-") })
 
+  @Test
   fun testScriptLangAttributeWithAlreadyPresentCode() =
     doLookupTest(typeToFinishLookup = "\t") { it.priority > 0 }
 
+  @Test
   fun testComputedTypeTS() =
     doLookupTest(VueTestModule.VUE_2_6_10, renderPriority = false, locations = listOf(
       "{{ a<caret>",
       "this.<caret>"
     ))
 
+  @Test
   fun testComputedTypeJS() =
     doLookupTest(VueTestModule.VUE_2_6_10, renderPriority = false, locations = listOf(
       "{{ a<caret>",
       "this.<caret>"
     ))
 
+  @Test
   fun testDataTypeTS() =
     doLookupTest(VueTestModule.VUE_2_6_10, renderPriority = false, locations = listOf(
       "this.<caret>msg\"",
       "= this.<caret>userInput"
     ), lookupItemFilter = filterOutDollarPrefixedProperties)
 
+  @Test
   fun testCustomModifiers() =
     doLookupTest(dir = true, renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testVue2CompositionApi() =
     doLookupTest(VueTestModule.VUE_2_6_10, VueTestModule.COMPOSITION_API_0_4_0, locations = listOf(
       "{{<caret>}}",
@@ -588,6 +699,7 @@ class VueCompletionTest :
       it.priority > 10
     }
 
+  @Test
   fun testVue3CompositionApi() {
     // Used TS type is recursive in itself and recursion prevention is expected
     RecursionManager.disableAssertOnRecursionPrevention(testRootDisposable)
@@ -603,14 +715,17 @@ class VueCompletionTest :
     }
   }
 
+  @Test
   fun testDefineComponent() =
     doLookupTest(VueTestModule.VUE_2_5_3, VueTestModule.COMPOSITION_API_0_4_0,
                  dir = true, fileContents = """<template><<caret></template>""", lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testDefineOptions() =
     doLookupTest(VueTestModule.VUE_3_5_0, dir = true,
                  fileContents = """<template><<caret></template>""", lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testNoDuplicateCompletionProposals() =
     doCompletionAutoPopupTest(checkResult = false) {
       completeBasic()
@@ -625,6 +740,7 @@ class VueCompletionTest :
       assertLookupDoesntContain(":foo", ":id")
     }
 
+  @Test
   fun testPropsDataOptionsJS() =
     doLookupTest(namedLocations = listOf(
       "props" to "{{this.\$props.<caret>", "props" to "{{\$props.<caret>", "props" to "this.\$props.<caret>foo",
@@ -633,17 +749,21 @@ class VueCompletionTest :
       "this" to "this.<caret>\$options.foo"
     ), lookupItemFilter = filterOutJsKeywordsGlobalObjectsAndCommonProperties)
 
+  @Test
   fun testSassGlobalFunctions() =
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doLookupTest(renderTypeText = false)
     }
 
+  @Test
   fun testImportEmptyObjectInitializerComponent() =
     doLookupTest(VueTestModule.VUE_2_6_10, dir = true, typeToFinishLookup = "-")
 
+  @Test
   fun testImportFunctionPropertyObjectInitializerComponent() =
     doLookupTest(VueTestModule.VUE_2_6_10, dir = true, typeToFinishLookup = "-")
 
+  @Test
   fun testCastedObjectProps() =
     doLookupTest(VueTestModule.VUE_3_5_0, locations = listOf(
       "post.<caret>",
@@ -651,9 +771,11 @@ class VueCompletionTest :
       "message.<caret>"
     ))
 
+  @Test
   fun testImportVueExtend() =
     doLookupTest(dir = true)
 
+  @Test
   fun testScriptSetup() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -667,6 +789,7 @@ class VueCompletionTest :
       lookupItemFilter = FILTER_DEFAULT_ATTRIBUTES,
     )
 
+  @Test
   fun testScriptSetupTs() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     doLookupTest(
@@ -684,39 +807,49 @@ class VueCompletionTest :
     )
   }
 
+  @Test
   fun testExpression() =
     doLookupTest(VueTestModule.VUE_2_6_10) {
       // Ignore global objects
       it.priority > 1
     }
 
+  @Test
   fun testObjectLiteralProperty() =
     doLookupTest(VueTestModule.VUE_3_5_0)
 
+  @Test
   fun testEnum() =
     doLookupTest(VueTestModule.VUE_3_5_0) {
       // Ignore global objects and keywords
       it.priority > 10
     }
 
+  @Test
   fun testScriptSetupRef() =
     doLookupTest(VueTestModule.VUE_3_5_0)
 
+  @Test
   fun testScriptSetupGlobals() =
     doLookupTest(VueTestModule.VUE_3_5_0, typeToFinishLookup = "Pro")
 
+  @Test
   fun testScriptSetupGlobalsTs() =
     doLookupTest(VueTestModule.VUE_3_5_0, typeToFinishLookup = "Pro", dir = true)
 
+  @Test
   fun testTypedComponentsImportClassic() =
     doLookupTest(VueTestModule.VUE_3_5_0, VueTestModule.HEADLESS_UI_1_4_1, typeToFinishLookup = "")
 
+  @Test
   fun testTypedComponentsImportScriptSetup() =
     doLookupTest(VueTestModule.HEADLESS_UI_1_4_1, typeToFinishLookup = "\n")
 
+  @Test
   fun testTypedComponentsImportScriptSetup2() =
     doLookupTest(VueTestModule.NAIVE_UI_2_19_11_NO_WEB_TYPES, typeToFinishLookup = "\n")
 
+  @Test
   fun testTypedComponentsPropsAndEvents() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     doLookupTest(VueTestModule.VUE_3_5_0,
@@ -726,6 +859,7 @@ class VueCompletionTest :
                                     "el-affix v-bind:<caret>", "el-affix v-on:<caret>"), lookupItemFilter = filterOutAriaAttributes)
   }
 
+  @Test
   fun testTypedComponentsList() =
     doLookupTest(VueTestModule.VUE_3_5_0,
                  VueTestModule.HEADLESS_UI_1_4_1,
@@ -734,25 +868,31 @@ class VueCompletionTest :
                  fileContents = """<template><<caret></template>""",
                  lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testStyleVBind() =
     doLookupTest(VueTestModule.VUE_3_5_0, renderPriority = false, renderTypeText = false)
 
+  @Test
   fun testStyleVBindScriptSetupCss() =
     doLookupTest(VueTestModule.VUE_3_5_0, renderPriority = false)
 
+  @Test
   fun testStyleVBindScriptSetupScss() =
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doLookupTest(VueTestModule.VUE_3_5_0, renderPriority = false)
     }
 
+  @Test
   fun testStyleVBindScriptSetupSass() =
     WorkspaceEntityLifecycleSupporterUtils.withAllEntitiesInWorkspaceFromProvidersDefinedOnEdt(project) {
       doLookupTest(VueTestModule.VUE_3_5_0, renderPriority = false)
     }
 
+  @Test
   fun testStyleVBindScriptSetupLess() =
     doLookupTest(VueTestModule.VUE_3_5_0, renderPriority = false)
 
+  @Test
   fun testComponentFromFunctionPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -762,6 +902,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromFunctionPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -771,6 +912,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromNestedFunctionPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -780,6 +922,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromNestedFunctionPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -789,6 +932,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromNestedFunctionPluginWithCycle() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -798,6 +942,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromNestedFunctionPluginWithCycle_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -807,6 +952,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromObjectPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -816,6 +962,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromObjectPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -825,6 +972,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromNestedObjectPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -834,6 +982,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromNestedObjectPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -843,6 +992,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromNestedObjectPluginWithCycle() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -852,6 +1002,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentFromNestedObjectPluginWithCycle_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -861,6 +1012,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentsWithTwoScriptTags() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -873,6 +1025,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testComponentsWithTwoScriptTags_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -885,6 +1038,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testPropsOfComponentsWithTwoScriptTags() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -899,6 +1053,7 @@ class VueCompletionTest :
         and { info -> info.priority > 10 },
     )
 
+  @Test
   fun testPropsOfComponentsWithTwoScriptTags_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -913,6 +1068,7 @@ class VueCompletionTest :
         and { info -> info.priority > 10 },
     )
 
+  @Test
   fun testDirectivesFromFunctionPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -927,6 +1083,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromFunctionPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -943,6 +1100,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromNestedFunctionPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -955,6 +1113,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromNestedFunctionPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -969,6 +1128,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -981,6 +1141,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromNestedFunctionPluginWithCycle_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -995,6 +1156,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromObjectPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -1009,6 +1171,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromObjectPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -1025,6 +1188,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromNestedObjectPlugin() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -1037,6 +1201,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromNestedObjectPlugin_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -1051,6 +1216,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromNestedObjectPluginWithCycle() =
     doLookupTest(
       VueTestModule.VUE_3_5_0,
@@ -1063,6 +1229,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testDirectivesFromNestedObjectPluginWithCycle_vapor() =
     doLookupTest(
       VueTestModule.VUE_3_6_0,
@@ -1077,6 +1244,7 @@ class VueCompletionTest :
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
 
+  @Test
   fun testCreateAppIndex() =
     doLookupTest(VueTestModule.VUE_3_5_0,
                  dir = true,
@@ -1084,6 +1252,7 @@ class VueCompletionTest :
                  locations = listOf("<<caret>Boo", "<div v-<caret>", "w<<caret>"),
                  lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testCreateAppIncludedComponent() =
     doLookupTest(VueTestModule.VUE_3_5_0,
                  dir = true,
@@ -1091,6 +1260,7 @@ class VueCompletionTest :
                  locations = listOf("<<caret>Boo", "<div v-<caret>"),
                  lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testCreateAppRootComponent() =
     doLookupTest(VueTestModule.VUE_3_5_0,
                  dir = true,
@@ -1098,51 +1268,63 @@ class VueCompletionTest :
                  locations = listOf("<<caret>Boo", "<div v-<caret>"),
                  lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testCreateAppImportedByRootComponent() =
     doLookupTest(VueTestModule.VUE_3_5_0,
                  dir = true,
                  configureFileName = "ImportedByRoot.vue",
                  lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testCreateAppNotImported() =
     doLookupTest(VueTestModule.VUE_3_5_0,
                  dir = true,
                  configureFileName = "NotImported.vue",
                  lookupItemFilter = filterOutStandardHtmlSymbols)
 
+  @Test
   fun testSlotsWithPatterns() =
     doLookupTest(dir = true, renderPriority = false, renderPresentedText = true, locations = listOf("<template #<caret>"))
 
+  @Test
   fun testSlotTypes() =
     doLookupTest(VueTestModule.VUE_3_5_0, VueTestModule.QUASAR_2_6_5,
                  dir = true, renderPriority = false,
                  locations = listOf("props.<caret>key", "{<caret>selected,"))
 
+  @Test
   fun testAutoImportInsertion() =
     doLookupTest(VueTestModule.VUE_3_5_0, VueTestModule.HEADLESS_UI_1_4_1, typeToFinishLookup = "al\n")
 
+  @Test
   fun testScriptKeywordsJS() =
     doLookupTest(VueTestModule.VUE_3_5_0) {
       it.priority >= JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
     }
 
+  @Test
   fun testScriptKeywordsTS() =
     doLookupTest(VueTestModule.VUE_3_5_0) {
       it.priority >= JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
     }
 
+  @Test
   fun testExpressionOperationKeywordsJS() =
     doLookupTest(VueTestModule.VUE_3_5_0)
 
+  @Test
   fun testExpressionOperationKeywordsTS() =
     doLookupTest(VueTestModule.VUE_3_5_0)
 
+  @Test
   fun testExpressionOperationKeywordsNestedJS() =
     doLookupTest(VueTestModule.VUE_3_5_0)
 
+  @Test
   fun testExpressionOperationKeywordsNestedTS() =
     doLookupTest(VueTestModule.VUE_3_5_0)
 
+  @Test
   fun testComponentEmitsDefinitions() =
     doLookupTest(VueTestModule.VUE_3_5_0, dir = true, renderPriority = true, renderTypeText = false,
                  locations = listOf("define-emits @<caret>", "define-component @<caret>", "export-component @<caret>",
@@ -1150,9 +1332,11 @@ class VueCompletionTest :
       it.isItemTextBold
     }
 
+  @Test
   fun testExternalSymbolsImport() =
     doTestExternalSymbolsImport()
 
+  @Test
   fun testExternalSymbolsImportClassic() =
     doTestExternalSymbolsImport()
 
@@ -1173,9 +1357,11 @@ class VueCompletionTest :
       type("tems\n")
     }
 
+  @Test
   fun testImportComponentFromTextContext() =
     doLookupTest(dir = true, configureFileName = "Check.vue", typeToFinishLookup = "")
 
+  @Test
   fun testImportNoScriptOrScriptSetupComponentInCode() =
     doCompletionAutoPopupTest(VueTestModule.VUE_3_5_0, configureFileName = "test.ts", dir = true) {
       completeBasic()
@@ -1185,6 +1371,7 @@ class VueCompletionTest :
       type("riptSet\n")
     }
 
+  @Test
   fun testImportNoScriptOrScriptSetupComponentImports() =
     doCompletionAutoPopupTest(VueTestModule.VUE_3_5_0, configureFileName = "imports.ts", dir = true) {
       completeBasic()
@@ -1194,12 +1381,14 @@ class VueCompletionTest :
       type("riptSet\n")
     }
 
+  @Test
   fun testExternalScriptComponentEdit() =
     doCompletionAutoPopupTest(configureFileName = "foo.vue", dir = true) {
       completeBasic()
       type("Col\n.r\n")
     }
 
+  @Test
   fun testExternalScriptComponentImport() =
     doCompletionAutoPopupTest(VueTestModule.VUE_3_5_0, configureFileName = "test.vue", dir = true) {
       type("<")
@@ -1209,12 +1398,15 @@ class VueCompletionTest :
       type("ms\n")
     }
 
+  @Test
   fun testAliasedComponentImport() =
     doAliasedComponentImportTest()
 
+  @Test
   fun testAliasedComponentImportKebabCase() =
     doAliasedComponentImportTest()
 
+  @Test
   fun testAliasedComponentImportOptionsApi() =
     doAliasedComponentImportTest()
 
@@ -1224,26 +1416,32 @@ class VueCompletionTest :
       checkResultByFile("$testName/apps/vue-app/src/App.after.vue")
     }
 
+  @Test
   fun testImportComponentUsedInApp() =
     doConfiguredTest(dir = true, configureFileName = "src/components/CheckImportComponent.vue") {
       completeBasic()
       checkResultByFile("$testName/src/components/CheckImportComponent.after.vue")
     }
 
+  @Test
   fun testVueTscComponent() =
     doLookupTest(VueTestModule.VUE_3_5_0, dir = true, renderPriority = true) {
       it.isItemTextBold
     }
 
+  @Test
   fun testVueTscComponentQualifiedComponentType() =
     doLookupTest(VueTestModule.VUE_3_5_0, dir = true, typeToFinishLookup = "")
 
+  @Test
   fun testVueTscComponentWithSlots() =
     doLookupTest(VueTestModule.VUE_3_5_0, dir = true) { it.priority > 10 }
 
+  @Test
   fun testVueTscComponentAliasedExport() =
     doLookupTest(VueTestModule.VUE_3_5_0, dir = true) { it.priority >= 100 }
 
+  @Test
   fun testWatchProperty() =
     doCompletionAutoPopupTest(VueTestModule.VUE_2_6_10) {
       completeBasic()
@@ -1254,6 +1452,7 @@ class VueCompletionTest :
       type("\n")
     }
 
+  @Test
   fun testNamespacedComponents() =
     doCompletionAutoPopupTest(VueTestModule.VUE_3_5_0, configureFileName = "scriptSetup.vue", dir = true) {
       type("Forms.")
@@ -1266,22 +1465,28 @@ class VueCompletionTest :
       type("fo\n")
     }
 
+  @Test
   fun testNoFilterForOnProps() =
     doLookupTest()
 
+  @Test
   fun testScriptSetupGeneric() =
     doLookupTest(VueTestModule.VUE_3_5_0, locations = listOf(
       "clearable.<caret>", "value.<caret>", "Clearable).<caret>\">", "Clearable).<caret> }}", "foo.<caret>;"))
 
+  @Test
   fun testDefineModelAttribute() =
     doLookupTest(VueTestModule.VUE_3_5_0, configureFileName = "app.vue", dir = true) { it.priority > 10 }
 
+  @Test
   fun testInjectInLiterals() =
     doLookupTest(VueTestModule.VUE_3_5_0, configureFileName = "InjectInLiterals.vue", dir = true)
 
+  @Test
   fun testInjectInLiteralsUnique() =
     doLookupTest(VueTestModule.VUE_3_5_0, configureFileName = "InjectInLiteralsUnique.vue", dir = true)
 
+  @Test
   fun testInjectInLiteralsUnquoted() =
     doCompletionAutoPopupTest(VueTestModule.VUE_3_5_0, configureFileName = "InjectInLiteralsUnquoted.vue", dir = true) {
       completeBasic()
@@ -1296,6 +1501,7 @@ class VueCompletionTest :
       completeBasic()
     }
 
+  @Test
   fun testInjectInScriptSetupLiteralsUnquoted() =
     doCompletionAutoPopupTest(VueTestModule.VUE_3_5_0, configureFileName = "InjectInScriptSetupLiteralsUnquoted.vue", dir = true) {
       completeBasic()
@@ -1307,37 +1513,46 @@ class VueCompletionTest :
       type("provideG\n")
     }
 
+  @Test
   fun testInjectInProperties() =
     doLookupTest(VueTestModule.VUE_3_5_0, configureFileName = "InjectInProperties.vue", dir = true) {
       it.priority > 10
     }
 
+  @Test
   fun testDefineSlotsSlotName() =
     doLookupTest(VueTestModule.VUE_3_5_0)
 
+  @Test
   fun testComponentCustomProperties() =
     doLookupTest(VueTestModule.VUE_2_6_10, configureFileName = "ComponentCustomProperties.vue", dir = true) {
       it.priority > 100
     }
 
+  @Test
   fun testComponentCustomPropertiesWithFunctionOverloads() =
     doLookupTest(VueTestModule.VUE_2_6_10, configureFileName = "ComponentCustomPropertiesWithFunctionOverloads.vue", dir = true,
                  containsCheck = true)
 
+  @Test
   fun testDefineSlotsProperties() =
     doLookupTest(VueTestModule.VUE_3_5_0) {
       it.priority >= 10 && !it.lookupString.startsWith("v-")
     }
 
+  @Test
   fun testDefineExpose() =
     doLookupTest(VueTestModule.VUE_3_3_4, dir = true)
 
+  @Test
   fun testPropsBindings() =
     doLookupTest(VueTestModule.VUE_3_5_0, dir = true, renderPriority = false)
 
+  @Test
   fun testCompleteComponentWithDefineOptions() =
     doLookupTest(VueTestModule.VUE_3_5_0, configureFileName = "Component.vue", dir = true, typeToFinishLookup = "\n")
 
+  @Test
   fun testVaporAttribute() {
     doLookupTest(
       VueTestModule.VUE_3_6_0,
