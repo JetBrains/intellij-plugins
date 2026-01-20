@@ -22,7 +22,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 /**
  * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.

@@ -20,7 +20,6 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.model.source.MODEL_VALUE_PROP
 import org.jetbrains.vuejs.web.*
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 const val EMIT_CALL_UPDATE_PREFIX: String = "update:"
 

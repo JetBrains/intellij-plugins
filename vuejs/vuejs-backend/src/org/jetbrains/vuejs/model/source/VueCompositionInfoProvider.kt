@@ -22,7 +22,6 @@ import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 class VueCompositionInfoProvider : VueContainerInfoProvider {
 

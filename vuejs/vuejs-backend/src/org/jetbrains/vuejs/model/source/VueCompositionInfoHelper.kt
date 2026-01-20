@@ -14,7 +14,6 @@ import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.types.VueUnwrapRefType
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
 

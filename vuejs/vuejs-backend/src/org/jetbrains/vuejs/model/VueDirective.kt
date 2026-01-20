@@ -17,7 +17,6 @@ import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 interface VueDirective : VueSymbol, VueScopeElement, PolySymbolScope {
 

@@ -1,9 +1,9 @@
 // Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.vuejs.web.symbols
+package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.platform.backend.documentation.DocumentationTarget
-import com.intellij.polySymbols.PolySymbol.Companion.PROP_DOC_HIDE_ICON
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.framework.FrameworkId
@@ -12,11 +12,10 @@ import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
 import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
-import com.intellij.polySymbols.utils.PolySymbolTypeSupport.Companion.PROP_TYPE_SUPPORT
+import com.intellij.polySymbols.utils.PolySymbolTypeSupport
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
-import org.jetbrains.vuejs.model.VueElement
 import org.jetbrains.vuejs.web.VueFramework
 import javax.swing.Icon
 
@@ -33,10 +32,10 @@ interface VueSymbol : HtmlFrameworkSymbol, VueElement {
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
-      PROP_DOC_HIDE_ICON -> property.tryCast(true)
+      PolySymbol.PROP_DOC_HIDE_ICON -> property.tryCast(true)
       PROP_JS_TYPE -> property.tryCast(type)
       PROP_HTML_ATTRIBUTE_VALUE -> property.tryCast(attributeValue)
-      PROP_TYPE_SUPPORT -> property.tryCast(TypeScriptSymbolTypeSupport.default)
+      PolySymbolTypeSupport.PROP_TYPE_SUPPORT -> property.tryCast(TypeScriptSymbolTypeSupport.default)
       else -> super.get(property)
     }
 

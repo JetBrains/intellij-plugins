@@ -22,8 +22,8 @@ import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.model.VueRegularComponent
+import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.web.scopes.VueBindingShorthandSymbol
 
 class VueResolveTest : BasePlatformTestCase() {

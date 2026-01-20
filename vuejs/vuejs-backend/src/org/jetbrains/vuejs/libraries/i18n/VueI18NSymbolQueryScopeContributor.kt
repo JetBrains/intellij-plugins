@@ -18,9 +18,9 @@ import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xml.util.HtmlUtil.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.web.VUE_TOP_LEVEL_ELEMENTS
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 class VueI18NSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
 

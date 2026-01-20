@@ -24,7 +24,6 @@ import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
 import java.util.*

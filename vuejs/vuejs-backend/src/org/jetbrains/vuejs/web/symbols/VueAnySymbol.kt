@@ -9,6 +9,7 @@ import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
+import org.jetbrains.vuejs.model.VueSymbol
 
 class VueAnySymbol(
   override val kind: PolySymbolKind,

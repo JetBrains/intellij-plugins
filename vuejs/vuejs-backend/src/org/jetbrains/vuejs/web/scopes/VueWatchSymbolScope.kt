@@ -27,11 +27,11 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueDataProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_COMPONENT_COMPUTED_PROPERTIES
 import org.jetbrains.vuejs.web.VUE_COMPONENT_DATA_PROPERTIES
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
   PolySymbolScopeWithCache<VueSourceComponent, Unit>(enclosingComponent.source.project, enclosingComponent, Unit) {

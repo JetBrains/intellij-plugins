@@ -21,7 +21,6 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 import org.jetbrains.vuejs.types.optionalIf
 import java.util.*

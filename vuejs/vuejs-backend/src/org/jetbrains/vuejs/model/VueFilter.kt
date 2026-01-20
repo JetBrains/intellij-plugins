@@ -8,7 +8,6 @@ import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.web.VUE_FILTERS
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 interface VueFilter : VueSymbol, VueScopeElement {
   override val source: PsiElement

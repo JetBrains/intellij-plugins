@@ -13,12 +13,8 @@ import com.intellij.polySymbols.query.*
 import com.intellij.polySymbols.utils.match
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.vuejs.model.DEFAULT_SLOT_NAME
-import org.jetbrains.vuejs.model.getAvailableSlots
-import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
-import org.jetbrains.vuejs.model.getMatchingAvailableSlots
+import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VUE_AVAILABLE_SLOTS
-import org.jetbrains.vuejs.web.symbols.VueSymbol
 
 class VueAvailableSlotsScope(private val tag: XmlTag) : PolySymbolScope {
 
