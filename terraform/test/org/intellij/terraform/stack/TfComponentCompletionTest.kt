@@ -119,6 +119,75 @@ internal class TfComponentCompletionTest : CompletionTestCase() {
     """.trimIndent(), 1, "version")
   }
 
+  fun testComponentInputsCompletion() {
+    myFixture.addFileToProject("aws-eks-fargate/variables.tf", """
+      variable "vpc_id" {
+        type = string
+      }
+      variable "kubernetes_version" {
+        type = string
+      }
+      variable "tfc_hostname" {
+        type    = string
+        default = "https://app.terraform.io"
+      }
+      variable "tfc_kubernetes_audience" {
+        type = string
+      }
+    """.trimIndent())
+
+    doBasicCompletionTest("""
+      component "eks" {
+        source = "./aws-eks-fargate"
+        inputs = {
+          <caret>
+        }
+      }
+    """.trimIndent(), "vpc_id", "kubernetes_version", "tfc_hostname", "tfc_kubernetes_audience")
+    doBasicCompletionTest("""
+      component "eks" {
+        source = "./aws-eks-fargate"
+        inputs = {
+          tfc_hostname = var.tfc_hostname
+          t<caret>
+        }
+      }
+    """.trimIndent(), "tfc_kubernetes_audience", "kubernetes_version")
+  }
+
+  fun testComponentProvidersCompletion() {
+    myFixture.addFileToProject("aws-vpc/providers.tf", """
+      terraform {
+        required_providers {
+          aws = {
+            source  = "hashicorp/aws"
+            version = "~> 5.0"
+          }
+          kubernetes = {
+            source  = "hashicorp/kubernetes"
+            version = "2.38.0"
+          }
+        }
+      }
+    """.trimIndent())
+
+    doBasicCompletionTest("""
+      component "vpc" {
+        source = "./aws-vpc"
+        providers = { <caret> }
+      }
+    """.trimIndent(), "aws", "kubernetes")
+    doBasicCompletionTest("""
+      component "vpc" {
+        source = "./aws-vpc"
+        providers = {
+          aws = provider.aws.configurations[each.value]
+          <caret>
+        }
+      }
+    """.trimIndent(), "kubernetes")
+  }
+
   companion object {
     val TfComponentBlockKeywords: List<String> = TfComponentRootBlocks.map { it.name }
 
