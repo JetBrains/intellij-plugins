@@ -30,7 +30,8 @@ import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.jetbrains.vuejs.VueTestCase
 
-class VueRenameTest : VueTestCase("rename") {
+class VueRenameTest : 
+  VueTestCase("rename", useTsc = false) {
 
   fun testComponentFieldFromTemplate() =
     doRenameTest(newName = "newName", dir = false)

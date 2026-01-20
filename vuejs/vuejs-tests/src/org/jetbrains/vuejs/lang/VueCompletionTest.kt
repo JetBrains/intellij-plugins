@@ -17,7 +17,8 @@ private val FILTER_DEFAULT_ATTRIBUTES = (filterOutStandardHtmlSymbols
   and filterOutMostOfGlobalJSSymbolsInVue
   and { info -> info.lookupString.let { !it.contains("aria-") && !it.startsWith("on") } })
 
-class VueCompletionTest : VueTestCase("completion") {
+class VueCompletionTest :
+  VueTestCase("completion", useTsc = false) {
 
   override fun setUp() {
     super.setUp()
