@@ -22,8 +22,13 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
-class VueIntentionsTest : BasePlatformTestCase() {
+@RunWith(JUnit4::class)
+class VueIntentionsTest :
+  BasePlatformTestCase() {
 
   override fun getBasePath(): String {
     return "" // not used
@@ -31,42 +36,51 @@ class VueIntentionsTest : BasePlatformTestCase() {
 
   override fun getTestDataPath(): String = getVueTestDataPath() + "/intentions"
 
+  @Test
   fun testComputeConstant() {
     doIntentionTest(JSIntentionBundle.message("string.join-concatenated-string-literals.display-name"))
   }
 
+  @Test
   fun testFlipConditional() {
     doIntentionTest(JSIntentionBundle.message("conditional.flip-conditional.display-name"))
   }
 
+  @Test
   fun testPropagateToDestructuring() {
     doIntentionTest(JavaScriptBundle.message("refactoring.destructuring.vars.intention.propagate"))
   }
 
+  @Test
   fun testPropagateToDestructuringWhenWithIndexer() {
     doIntentionTest(JavaScriptBundle.message("refactoring.destructuring.vars.intention.propagate"))
   }
 
+  @Test
   fun testDepropagateFromDestructuring() {
     doIntentionTest(JavaScriptBundle.message("refactoring.destructuring.vars.intention.depropagate"))
   }
 
+  @Test
   fun testReplaceIfElseWithElvis() {
     doIntentionTest(JSIntentionBundle.message("trivialif.replace-if-with-conditional.display-name"))
   }
 
+  @Test
   fun testExpandShorthandPropertyJS() {
     myFixture.enableInspections(ES6ShorthandObjectPropertyInspection())
     doIntentionTest(JavaScriptBundle.message("js.expand.shorthand.property.quick.fix"))
     myFixture.checkHighlighting()
   }
 
+  @Test
   fun testExpandShorthandPropertyTS() {
     myFixture.enableInspections(ES6ShorthandObjectPropertyInspection())
     doIntentionTest(JavaScriptBundle.message("js.expand.shorthand.property.quick.fix"))
     myFixture.checkHighlighting()
   }
 
+  @Test
   fun testReplaceWithIndexerAccess() {
     JSTestUtils.testWithTempCodeStyleSettings<RuntimeException>(project) { settings ->
       val custom = settings.getCustomSettings(JSCodeStyleSettings::class.java)
@@ -75,6 +89,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     }
   }
 
+  @Test
   fun testExpandVModel() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("expandVModel.vue")
@@ -87,6 +102,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("expandVModel.after.vue")
   }
 
+  @Test
   fun testExternalSymbolsImport() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
@@ -120,6 +136,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("${getTestName(true)}/HelloWorldClassic.after.vue")
   }
 
+  @Test
   fun testImportNoScriptOrScriptSetupComponentInCode() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
@@ -134,6 +151,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("${getTestName(true)}/test.after.ts")
   }
 
+  @Test
   fun testImportGlobalComponent() {
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0, VueTestModule.PRIMEVUE_3_8_2)
@@ -153,6 +171,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
   }
 
+  @Test
   fun testAddMissingComponentImport() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(true), ".")
@@ -167,6 +186,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
   }
 
+  @Test
   fun testAddMissingComponentImportWithConflictingTagName() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(true), ".")
@@ -181,6 +201,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
   }
 
+  @Test
   fun testSkipMissingComponentImportForHtmlTags() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(true), ".")
@@ -192,6 +213,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     assertNull(myFixture.getAvailableIntention("Import 'Link' component"))
   }
 
+  @Test
   fun testAddMissingFunctionImport() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.copyDirectoryToProject(getTestName(true), ".")
