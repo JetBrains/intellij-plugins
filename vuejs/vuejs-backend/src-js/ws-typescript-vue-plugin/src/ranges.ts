@@ -1,22 +1,65 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+import type ts from "typescript/lib/tsserverlibrary"
 import type {Language, Mapper} from "@volar/language-core"
 import {forEachEmbeddedCode} from "@volar/language-core"
 import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
+import type {Position, Range} from "tsc-ide-plugin/protocol"
 
 export function createReverseMapper(
   language: Language<string>,
 ): ReverseMapper {
   return (sourceFile, generatedRange) => {
-    const fileName = sourceFile.fileName
+    const sourceRange = toSourceRange(language, sourceFile, generatedRange)
 
-    // TODO: calculate
-    const sourceRange = generatedRange
+    if (!sourceRange)
+      return undefined
 
     return {
       sourceRange,
-      fileName,
+      fileName: sourceFile.fileName,
     }
   }
+}
+
+function toSourceRange(
+  language: Language<string>,
+  sourceFile: ts.SourceFile,
+  generatedRange: Range,
+): Range | undefined {
+  const sourceScript = language.scripts.get(sourceFile.fileName)
+  if (!sourceScript)
+    return undefined
+
+  const virtualCode = sourceScript.generated?.root
+  if (!virtualCode)
+    return undefined
+
+  for (const code of forEachEmbeddedCode(virtualCode)) {
+    if (!code.id.startsWith('script_'))
+      continue
+
+    const mapper = language.maps.get(code, sourceScript)
+    
+    const sourceStartOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.start))
+    if (sourceStartOffset === undefined) continue
+    
+    const sourceEndOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.end))
+    if (sourceEndOffset === undefined) continue
+    
+    return {
+      start: sourceFile.getLineAndCharacterOfPosition(sourceStartOffset),
+      end: sourceFile.getLineAndCharacterOfPosition(sourceEndOffset),
+    }
+  }
+
+  return undefined
+}
+
+function getOffset(
+  sourceFile: ts.SourceFile,
+  position: Position,
+): number {
+  return sourceFile.getPositionOfLineAndCharacter(position.line, position.character)
 }
 
 export function toGeneratedRange(
@@ -50,6 +93,17 @@ export function toGeneratedRange(
       generatedStartOffset + tsShift,
       generatedEndOffset + tsShift,
     ]
+  }
+
+  return undefined
+}
+
+function toSourceOffset(
+  mapper: Mapper,
+  offset: number,
+): number | undefined {
+  for (const [sourceOffset] of mapper.toSourceLocation(offset)) {
+    return sourceOffset
   }
 
   return undefined
