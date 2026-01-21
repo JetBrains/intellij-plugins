@@ -1,7 +1,5 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import type ts from "typescript/lib/tsserverlibrary"
-import type {WebStormGetOptions} from "typescript/lib/tsserverlibrary"
-
 import type {Language} from "@volar/language-core"
 import {toGeneratedRange} from "./ranges"
 
@@ -27,7 +25,7 @@ export function decorateIdeLanguageServiceExtensions(
   ) return
 
   function withReverseMapper<
-    O extends WebStormGetOptions,
+    O extends ts.WebStormGetOptions,
     R extends Record<never, never> | undefined,
   >(source: (options: O) => R): (options: O) => R {
     return (options) =>
