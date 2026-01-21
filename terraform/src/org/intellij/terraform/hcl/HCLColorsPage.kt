@@ -1,4 +1,4 @@
-// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl
 
 import com.intellij.application.options.colors.InspectionColorSettingsPage
@@ -10,6 +10,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
 import com.intellij.psi.codeStyle.DisplayPriority
 import com.intellij.psi.codeStyle.DisplayPrioritySortable
+import org.intellij.terraform.TerraformIcons
 import javax.swing.Icon
 
 class HCLColorsPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPrioritySortable {
@@ -49,7 +50,7 @@ class HCLColorsPage : ColorSettingsPage, InspectionColorSettingsPage, DisplayPri
   )
 
   override fun getIcon(): Icon {
-    return Icons.FileTypes.HCL
+    return TerraformIcons.HashiCorp
   }
 
   override fun getHighlighter(): SyntaxHighlighter {

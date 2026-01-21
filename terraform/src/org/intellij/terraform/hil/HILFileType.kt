@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hil
 
 import com.intellij.openapi.fileTypes.LanguageFileType
@@ -10,7 +10,7 @@ object HILFileType : LanguageFileType(HILLanguage) {
   private const val DEFAULT_EXTENSION: String = "hil"
 
   override fun getIcon(): Icon {
-    return Icons.FileTypes.HIL
+    return Icons.HIL
   }
 
   override fun getDefaultExtension(): String {

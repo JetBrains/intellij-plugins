@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.config.codeinsight
 
 import com.intellij.codeInsight.completion.CompletionParameters
@@ -35,7 +35,6 @@ import org.intellij.terraform.config.model.TfFunction
 import org.intellij.terraform.config.model.TfTypeModel
 import org.intellij.terraform.hcl.HCLElementTypes
 import org.intellij.terraform.hcl.HCLTokenTypes
-import org.intellij.terraform.hcl.Icons
 import org.intellij.terraform.hcl.psi.HCLIdentifier
 import org.intellij.terraform.hcl.psi.HCLObject
 import org.intellij.terraform.hcl.psi.HCLPsiUtil
@@ -44,6 +43,8 @@ import org.intellij.terraform.hil.codeinsight.ScopeSelectInsertHandler
 import org.intellij.terraform.opentofu.OpenTofuConstants.OpenTofuScopes
 import org.intellij.terraform.opentofu.OpenTofuFileType
 import org.intellij.terraform.stack.component.TfComponentFileType
+import org.intellij.terraform.stack.deployment.TfDeployFileType
+import org.intellij.terraform.terragrunt.TerragruntFileType
 import java.util.SortedSet
 import javax.swing.Icon
 
@@ -170,9 +171,9 @@ internal object TfCompletionUtil {
   }
 
   fun getLookupIcon(element: PsiElement): Icon = when (element.containingFile.fileType) {
-    is TerraformFileType -> TerraformIcons.Terraform
-    is TfComponentFileType -> TerraformIcons.Terraform
+    is TerraformFileType, TfComponentFileType, TfDeployFileType -> TerraformIcons.Terraform
     is OpenTofuFileType -> TerraformIcons.Opentofu
-    else -> Icons.FileTypes.HCL
+    is TerragruntFileType -> TerraformIcons.Terragrunt
+    else -> TerraformIcons.HashiCorp
   }
 }
