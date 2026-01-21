@@ -1,6 +1,23 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import type {Language, Mapper} from "@volar/language-core"
 import {forEachEmbeddedCode} from "@volar/language-core"
+import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
+
+export function createReverseMapper(
+  language: Language<string>,
+): ReverseMapper {
+  return (sourceFile, generatedRange) => {
+    const fileName = sourceFile.fileName
+
+    // TODO: calculate
+    const sourceRange = generatedRange
+
+    return {
+      sourceRange,
+      fileName,
+    }
+  }
+}
 
 export function toGeneratedRange(
   language: Language<string>,

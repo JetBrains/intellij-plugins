@@ -1,7 +1,7 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import type ts from "typescript/lib/tsserverlibrary"
 import type {Language} from "@volar/language-core"
-import {toGeneratedRange} from "./ranges"
+import {createReverseMapper, toGeneratedRange} from "./ranges"
 
 export function decorateIdeLanguageServiceExtensions(
   language: Language<string>,
@@ -24,6 +24,8 @@ export function decorateIdeLanguageServiceExtensions(
     || webStormGetSymbolType === undefined
   ) return
 
+  const reverseMapper = createReverseMapper(language)
+
   function withReverseMapper<
     O extends ts.WebStormGetOptions,
     R extends Record<never, never> | undefined,
@@ -31,7 +33,7 @@ export function decorateIdeLanguageServiceExtensions(
     return (options) =>
       source({
         ...options,
-        // reverseMapper: ...,
+        reverseMapper,
       })
   }
 
@@ -50,6 +52,7 @@ export function decorateIdeLanguageServiceExtensions(
       ...options,
       startOffset,
       endOffset,
+      reverseMapper,
     })
   }
 
