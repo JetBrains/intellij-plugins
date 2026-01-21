@@ -7,11 +7,11 @@
     "strict": true,
     "types": [
       "tsc-ide-plugin/typescript",
-      "node",
-    ],
+      "node"
+    ]
   },
   "include": [
     "src/index.ts",
-    "src/typings/*.d.ts",
+    "src/typings/*.d.ts"
   ]
 }

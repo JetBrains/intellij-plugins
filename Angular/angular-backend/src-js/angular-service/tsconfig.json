@@ -3,7 +3,7 @@
     "baseUrl": "./",
     "target": "ES2021",
     "lib": [
-      "ES2021",
+      "ES2021"
     ],
     "outDir": "../../gen-resources/angular-service/node_modules/ws-typescript-angular-plugin",
     "declaration": false,
@@ -17,11 +17,11 @@
     "sourceMap": true,
     "types": [
       "tsc-ide-plugin/typescript",
-      "node",
-    ],
+      "node"
+    ]
   },
   "include": [
     "src/index.ts",
-    "src/typings/*.d.ts",
+    "src/typings/*.d.ts"
   ]
 }
