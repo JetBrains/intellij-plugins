@@ -17,7 +17,7 @@ public final class TerraformIcons {
     return IconManager.getInstance().loadRasterizedIcon(path, expUIPath, TerraformIcons.class.getClassLoader(), cacheKey, flags);
   }
   /** 16x16 */ public static final @NotNull Icon CollectionKey = load("icons/collectionKey.svg", 412033564, 2);
-  /** 16x16 */ public static final @NotNull Icon HashiCorp = load("icons/newui/hashiCorp.svg", 434150068, 2);
+  /** 16x16 */ public static final @NotNull Icon HashiCorp = load("icons/newui/hashiCorp.svg", 1234038182, 2);
   /** 16x16 */ public static final @NotNull Icon Opentofu = load("icons/opentofu.svg", -1454201568, 0);
   /** 16x16 */ public static final @NotNull Icon Terraform = load("icons/newui/terraform.svg", "icons/terraform.svg", -828836963, 2);
   /** 16x16 */ public static final @NotNull Icon Terragrunt = load("icons/newui/terragrunt.svg", -1419677701, 2);

@@ -29,7 +29,6 @@ import org.intellij.terraform.terragrunt.TERRAGRUNT_FEATURE
 import org.intellij.terraform.terragrunt.TERRAGRUNT_GENERATE
 import org.intellij.terraform.terragrunt.TERRAGRUNT_INCLUDE
 import org.intellij.terraform.terragrunt.TERRAGRUNT_REMOTE_STATE
-import org.intellij.terraform.terragrunt.TERRAGRUNT_STACK
 import org.intellij.terraform.terragrunt.TERRAGRUNT_UNIT
 
 // Terragrunt `terraform` block schema based on Terragrunt documentation
