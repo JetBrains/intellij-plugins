@@ -75,7 +75,7 @@ export function toGeneratedRange(
 function* scriptMappers(
   language: Language<string>,
   fileName: string,
-): Generator<[Mapper, SourceScript<string>]> {
+): Generator<[mapper: Mapper, sourceScript: SourceScript<string>], void, undefined> {
   const sourceScript = language.scripts.get(fileName)
   if (!sourceScript)
     return
