@@ -1,2 +1,2 @@
-aProp (typeText=null; priority=101.0; bold)
-mixinProp (typeText=null; priority=101.0; bold)
+aProp (typeText='number'; priority=101.0; bold)
+mixinProp (typeText='string'; priority=101.0; bold)

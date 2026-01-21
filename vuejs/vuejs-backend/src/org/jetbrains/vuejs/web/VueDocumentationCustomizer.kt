@@ -40,7 +40,7 @@ class VueDocumentationCustomizer : PolySymbolDocumentationCustomizer {
       }
     }
     else {
-      if (symbol.kind == VUE_COMPONENT_PROPS) {
+      if (symbol.kind == VUE_COMPONENT_PROPS || symbol.kind == VUE_COMPONENT_DATA_PROPERTIES || symbol.kind == VUE_COMPONENT_COMPUTED_PROPERTIES) {
         symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name), location, getTypeSubstitutorFor(location))?.let {
           return documentation.withDefinition(it)
         }

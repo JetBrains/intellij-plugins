@@ -1,5 +1,5 @@
 annualReportPeriodId (typeText='number')
-callMe (typeText='void')
+callMe (typeText=null)
 $attrs (typeText=null)
 $createElement (typeText='CreateElement')
 $data (typeText=null)

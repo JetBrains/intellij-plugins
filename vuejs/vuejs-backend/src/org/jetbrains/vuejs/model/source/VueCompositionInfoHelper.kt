@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
@@ -61,8 +62,11 @@ object VueCompositionInfoHelper {
     psiContext: PsiElement,
     setupTypeSource: T,
     setupTypeProvider: (T) -> JSType?,
-  ): VueSymbol {
+  ): VueSymbol? {
     val name = signature.memberName
+    val source = signature.memberSource.singleElement
+    if (source !is PsiNamedElement || source.name != name)
+      return null
     val context = JSTypeSubstitutionContextImpl(psiContext)
     var signatureType = signature.jsType?.let { substituteRefType(it, context) }
     var isReadOnly = false
@@ -77,7 +81,7 @@ object VueCompositionInfoHelper {
       }
       is JSFunctionType -> {
         return VueComposedMethod(name = name,
-                                 source = signature.memberSource.singleElement,
+                                 source = source,
                                  type = signature.jsType,
                                  psiContext = psiContext,
                                  setupTypeSource = setupTypeSource,
@@ -92,20 +96,18 @@ object VueCompositionInfoHelper {
         ?.asSafely<JSObjectLiteralExpression>()
       ?: psiContext
     val type = signatureType?.let { VueUnwrapRefType(it, unwrapRefTypeSource) }
-    val source = signature.memberSource.singleElement
-    val element = source?.let { VueImplicitElement(signature.memberName, type, it, JSImplicitElement.Type.Property, true) }
     return if (isReadOnly) {
-      VueComposedComputedProperty(name, element, type, psiContext, setupTypeSource, setupTypeProvider)
+      VueComposedComputedProperty(name, source, type, psiContext, setupTypeSource, setupTypeProvider)
     }
     else {
-      VueComposedDataProperty(name, element, type, psiContext, setupTypeSource, setupTypeProvider)
+      VueComposedDataProperty(name, source, type, psiContext, setupTypeSource, setupTypeProvider)
     }
   }
 
 
   private abstract class VueComposedProperty<T : PsiElement>(
     override val name: String,
-    override val source: PsiElement?,
+    override val source: PsiNamedElement,
     override val type: JSType?,
     override val psiContext: PsiElement,
     private val setupTypeSource: T,
@@ -148,7 +150,7 @@ object VueCompositionInfoHelper {
 
   private class VueComposedDataProperty<T : PsiElement>(
     name: String,
-    source: PsiElement?,
+    source: PsiNamedElement,
     type: JSType?,
     psiContext: PsiElement,
     setupTypeSource: T,
@@ -161,7 +163,7 @@ object VueCompositionInfoHelper {
 
   private class VueComposedComputedProperty<T : PsiElement>(
     name: String,
-    source: PsiElement?,
+    source: PsiNamedElement,
     type: JSType?,
     psiContext: PsiElement,
     setupTypeSource: T,
@@ -174,7 +176,7 @@ object VueCompositionInfoHelper {
 
   private class VueComposedMethod<T : PsiElement>(
     name: String,
-    source: PsiElement?,
+    source: PsiNamedElement,
     type: JSType?,
     psiContext: PsiElement,
     setupTypeSource: T,

@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.polySymbols.js.references.PolySymbolJSImplicitElement
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
@@ -51,6 +52,12 @@ class VueImplicitElement(
   override fun isEquivalentTo(another: PsiElement?): Boolean =
     when (another) {
       is VueImplicitElement -> equals(another)
+      is PolySymbolJSImplicitElement ->
+        another.name == name
+        && (another.jsType == jsType
+            || another.jsType?.isEquivalentTo(jsType, null, false) == true)
+        && another.context == context
+        && another.explicitKind == explicitKind
       is JSImplicitElement -> equals(another.parent)
       else -> equivalentToProvider && this.myProvider == another
     }

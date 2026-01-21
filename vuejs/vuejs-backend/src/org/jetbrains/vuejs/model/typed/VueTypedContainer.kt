@@ -178,7 +178,9 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
     container: VueTypedContainer,
     val property: PropertySignature,
   ) : VueTypedDocumentedElement(container, property.memberName), VueProperty {
+
     override val type: JSType? get() = property.jsType
+
     override val source: PsiElement?
       get() = property.memberSource.singleElement.let {
         if (it is JSProperty)
@@ -197,7 +199,6 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
 
     override val required: Boolean
       get() = false
-
 
     override fun createPointer(): Pointer<VueTypedInputProperty> =
       createPointer(VueTypedInputProperty::class, VueTypedContainer::props)

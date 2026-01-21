@@ -8,8 +8,6 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.util.ProcessingContext
@@ -89,12 +87,13 @@ class VueExprCompletionProvider : CompletionProvider<CompletionParameters>() {
         VueTemplateScopesResolver.resolve(ref, Processor { resolveResult ->
           val element = resolveResult.element as? JSPsiNamedElementBase
           if (element != null) {
-            patchedResult.addElement(JSCompletionUtil.withJSLookupPriority(
-              JSLookupUtilImpl.createLookupElement(element, StringUtil.notNullize(element.name)),
+            JSLookupUtilImpl.createPrioritizedLookupItem(
+              element, StringUtil.notNullize(element.name),
               if (element.name?.startsWith("$") == true)
                 LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
               else
-                LOCAL_SCOPE_MAX_PRIORITY))
+                LOCAL_SCOPE_MAX_PRIORITY
+            )?.let { patchedResult.addElement(it) }
           }
           true
         })

@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
@@ -16,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
@@ -255,31 +257,20 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   ) : VueInputProperty {
 
     override val required: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
-      isRequired(hasOuterDefault, sourceElement)
+      // script setup defineProps runtime declarations rely on this class (see VueScriptSetupInfoProvider)
+      // withDefaults call is incompatible, but defaults from props destructure should work
+      !hasOuterDefault && getRequiredFromPropOptions((sourceElement as? JSProperty)?.initializerOrStub)
     }
 
-    val source: VueImplicitElement =
-      VueImplicitElement(name, createType(sourceElement, isOptional(sourceElement)),
-                         sourceElement, JSImplicitElement.Type.Property, true)
-
-    override val type: JSType? = createType(sourceElement, !required)
-
-    private fun createType(sourceElement: PsiElement, optional: Boolean) =
-      (sourceElement as? PsiNamedElement)?.let { VueSourcePropType(it) }?.optionalIf(optional)
+    override val type: JSType? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      (sourceElement as? PsiNamedElement)
+        ?.let { VueSourcePropType(it) }
+        ?.optionalIf(getPropOptionality((sourceElement as? JSProperty)?.initializerOrStub, required))
+    }
 
     override fun toString(): String {
       return "VueSourceInputProperty(name='$name', required=$required, jsType=$type)"
     }
-
-    private fun isRequired(hasOuterDefault: Boolean, sourceElement: PsiElement?): Boolean {
-      // script setup defineProps runtime declarations rely on this class (see VueScriptSetupInfoProvider)
-      // withDefaults call is incompatible, but defaults from props destructure should work
-      if (hasOuterDefault) return false
-      return getRequiredFromPropOptions((sourceElement as? JSProperty)?.initializerOrStub)
-    }
-
-    private fun isOptional(sourceElement: PsiElement?): Boolean =
-      getPropOptionality((sourceElement as? JSProperty)?.initializerOrStub, required)
 
     override fun equals(other: Any?): Boolean =
       other === this ||
@@ -315,6 +306,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   ) : VueSourceInputProperty<PsiNamedElement>(name, sourceElement, hasOuterDefault),
       PsiSourcedPolySymbol {
 
+    override val source: PsiNamedElement get() = sourceElement
+
     override fun createPointer(): Pointer<out VuePsiNamedElementInputProperty> {
       val name = name
       val propertyPtr = sourceElement.createSmartPointer()
@@ -332,7 +325,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     sourceElement: JSLiteralExpression,
     hasOuterDefault: Boolean,
   ) : VueSourceInputProperty<JSLiteralExpression>(name, sourceElement, hasOuterDefault),
-      PolySymbolDeclaredInPsi, PsiSourcedPolySymbol {
+      PolySymbolDeclaredInPsi {
 
     override val textRangeInSourceElement: TextRange
       get() = TextRange(1, sourceElement.textRange.length - 1)
@@ -393,7 +386,11 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   ) : VueSourceProperty(name, source), VueDataProperty {
 
     override val type: JSType?
-      get() = null
+      get() = when (source) {
+        is JSProperty -> JSResolveUtil.getElementJSType(source)
+        is JSImplicitElement -> source.jsType
+        else -> null
+      }
 
     override fun createPointer(): Pointer<VueSourceDataProperty> =
       createPointer(::VueSourceDataProperty)
@@ -445,7 +442,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     source: PsiElement,
   ) : VueSourceProperty(name, source), VueMethod {
 
-    override val type: JSType? get() = (source as? JSProperty)?.jsType
+    override val type: JSType?
+      get() = JSResolveUtil.getElementJSType(source)
 
     override fun createPointer(): Pointer<VueSourceMethod> =
       createPointer(::VueSourceMethod)

@@ -1,6 +1,6 @@
 <template>
   <div class="home" :about='test'>
-    {{ te<caret>st }} | {{ test1 }}
+    {{ test }} | {{ test1 }}
   </div>
 </template>
 
@@ -9,7 +9,7 @@ import {Component, Vue} from 'vue-property-decorator';
 
 @Component({})
 export default class Home extends Vue {
-  private test = 'test';
+  private te<caret>st = 'test';
   private test1 = 'test1'
 }
 </script>

@@ -17,8 +17,9 @@ import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.polySymbols.js.jsType
+import com.intellij.polySymbols.js.toJSImplicitElement
 import com.intellij.polySymbols.query.PolySymbolWithPattern
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -174,7 +175,7 @@ private fun contributeComponentProperties(
         val sourceElement = inject.source
         val type = evaluateInjectedType(inject, provides)
         val implicitElement = VueImplicitElement(inject.name, type, sourceElement, JSImplicitElement.Type.Property, true)
-        process(inject, proximity, injects, true, type, implicitElement)
+        process(inject, proximity, injects, true,  implicitElement)
         return true
       }
 
@@ -183,14 +184,13 @@ private fun contributeComponentProperties(
         proximity: Proximity,
         dest: MutableMap<String, PropertySignature>,
         isReadOnly: Boolean,
-        type: JSType? = null,
-        source: PsiElement? = null,
+        forcedSource: JSImplicitElement? = null,
       ) {
         if ((proximityMap.putIfAbsent(symbol.name, proximity) ?: proximity) >= proximity) {
-          val jsType = type ?: symbol.asSafely<VueProperty>()?.type
+          val jsType = if (forcedSource != null) forcedSource.jsType else symbol.jsType
           dest.merge(symbol.name,
                      PropertySignatureImpl(symbol.name, jsType, false,
-                                           isReadOnly, source ?: (symbol as? PsiSourcedPolySymbol)?.source),
+                                           isReadOnly, forcedSource ?: symbol.toJSImplicitElement(source)),
                      ::mergeSignatures)
         }
       }

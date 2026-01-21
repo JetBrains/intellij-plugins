@@ -41,7 +41,7 @@ class VueTemplateInjectionsTest : BasePlatformTestCase() {
 
     TestCase.assertNotNull(PsiTreeUtil.getParentOfType(injectedElement, VueJSEmbeddedExpressionContent::class.java))
 
-    val resolved = (injectedElement!!.parent as JSReferenceExpression).resolve()
+    val resolved = (injectedElement!!.parent as JSReferenceExpression).resolve()?.context
     TestCase.assertTrue(resolved!!.text, resolved.text.contains("Check me"))
   }
 

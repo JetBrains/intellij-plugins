@@ -1,6 +1,6 @@
 a (typeText='number'; priority=101.0; bold)
 b (typeText='number'; priority=101.0; bold)
-foo (typeText=null; priority=101.0; bold)
+foo (typeText='number'; priority=101.0; bold)
 $attrs (typeText=null; priority=100.0; bold)
 $children (typeText='Vue[]'; priority=100.0; bold)
 $createElement (typeText='CreateElement'; priority=100.0; bold)

@@ -3,7 +3,7 @@ defineProps(["newName"])
 </script>
 
 <template>
-  {{ new<caret>Name }}
+  {{new<caret>Name}}
   <define-props-array-literal-from-usage2 new-name="foo"></define-props-array-literal-from-usage2>
   <define-props-array-literal-from-usage2 newName="foo"></define-props-array-literal-from-usage2>
   <define-props-array-literal-from-usage2 OptionsApiWithType="foo"></define-props-array-literal-from-usage2>

@@ -105,7 +105,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     myFixture.configureByFile("propsWithDefaultScriptSetup-ts.vue")
 
     doTest(
-      "msg" to "string",
+      "msg" to "string | undefined",
       prefix = PREFIX_INTERPOLATION,
     )
   }
@@ -117,7 +117,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
 
     doTest(
       "modelValue" to "string | undefined",
-      "numDefault" to "123 | 234",
+      "numDefault" to "123 | 234 | undefined",
       "nameRequired" to "string",
       "nameRequiredGeneric" to "string",
       prefix = PREFIX_INTERPOLATION,

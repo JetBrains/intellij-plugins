@@ -53,6 +53,7 @@ import org.junit.runners.Suite
   VueAutoPopupTest::class,
   VueEmmetTest::class,
   VueTypeResolveTest::class,
+  VueTemplateInjectionsTest::class,
   LibrariesTestSuite::class,
   PugTemplateTest::class,
   VuePugFoldingTest::class,

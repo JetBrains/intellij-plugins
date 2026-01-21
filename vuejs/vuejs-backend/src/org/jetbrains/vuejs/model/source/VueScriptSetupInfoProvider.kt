@@ -404,13 +404,11 @@ private class VueScriptSetupInputProperty(
   private val propertySignature: JSRecordType.PropertySignature,
   private val hasOuterDefault: Boolean,
 ) : VueInputProperty, PsiSourcedPolySymbol {
+
   override val name: String
     get() = propertySignature.memberName
 
-  override val source: PsiElement? = propertySignature.memberSource.singleElement?.let { sourceElement ->
-    VueImplicitElement(name, propertySignature.jsType?.optionalIf(isOptional),
-                       sourceElement, JSImplicitElement.Type.Property, true)
-  }
+  override val source: PsiElement? = propertySignature.memberSource.singleElement
 
   override val required: Boolean
     get() {
@@ -421,10 +419,7 @@ private class VueScriptSetupInputProperty(
     }
 
   override val type: JSType?
-    get() = propertySignature.jsTypeWithOptionality
-
-  private val isOptional: Boolean
-    get() = if (hasOuterDefault) false else propertySignature.isOptional
+    get() = propertySignature.jsType?.optionalIf(propertySignature.isOptional)
 
   override fun equals(other: Any?): Boolean =
     other === this

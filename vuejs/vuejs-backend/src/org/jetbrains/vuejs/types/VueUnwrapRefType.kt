@@ -50,7 +50,7 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
     }
     if (format == JSType.TypeTextFormat.PRESENTABLE &&
         ((typeToUnwrap as? JSGenericTypeImpl)?.type as? JSTypeImpl)?.typeText.equals("UnwrapNestedRefs")) {
-      substituteManually().buildTypeText(format, builder)
+      substituteManually(typeToUnwrap).buildTypeText(format, builder)
       return
     }
     val substitute = substitute()
@@ -66,6 +66,9 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType {
     val unrefFunction = resolveUnrefFunction()
+    val typeToUnwrap = typeToUnwrap.substitute()
+    if (JSTypeUtils.isAnyType(typeToUnwrap))
+      return JSAnyType.get(source)
     if (unrefFunction != null) {
       val baseType = JSCodeBasedTypeFactory.getPsiBasedType(unrefFunction, JSEvaluateContext(unrefFunction.containingFile))
       return JSApplyCallType(baseType, mutableListOf(typeToUnwrap), source)
@@ -75,10 +78,10 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
     }
 
     // old vue-composite doesn't have unref(), see VueCompletionTest.testVue2CompositionApi
-    return substituteManually()
+    return substituteManually(typeToUnwrap)
   }
 
-  private fun substituteManually(): JSType {
+  private fun substituteManually(typeToUnwrap: JSType): JSType {
     val substituted = VueCompositionInfoHelper.substituteRefType(typeToUnwrap)
       .let {
         if (source.isJavaScript) {
@@ -92,8 +95,8 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
         }
         else it
       }
-
-    if (JSTypeUtils.isAnyType(substituted)) return JSAnyType.get(source)
+    if (JSTypeUtils.isAnyType(substituted))
+      return JSAnyType.get(source)
 
     val hasUnwrap = (substituted as? JSGenericTypeImpl)
       ?.type

@@ -48,9 +48,9 @@ class VuelidateTest : BasePlatformTestCase() {
 
   fun testResolve() {
     myFixture.configureByFile("basic.vue")
-    TestCase.assertEquals("age: 0", myFixture.resolveReference("{{\$v.a<caret>ge.\$params").context?.text)
-    TestCase.assertEquals("name: ''", myFixture.resolveReference("!\$v.na<caret>me.required").context?.text)
-    TestCase.assertEquals("name: ''", myFixture.resolveReference("this.\$v.n<caret>ame.\$touch()").context?.text)
+    TestCase.assertEquals("age: 0", myFixture.resolveReference("{{\$v.a<caret>ge.\$params").parent.context?.text)
+    TestCase.assertEquals("name: ''", myFixture.resolveReference("!\$v.na<caret>me.required").parent.context?.text)
+    TestCase.assertEquals("name: ''", myFixture.resolveReference("this.\$v.n<caret>ame.\$touch()").parent.context?.text)
   }
 
   fun testHighlighting() {

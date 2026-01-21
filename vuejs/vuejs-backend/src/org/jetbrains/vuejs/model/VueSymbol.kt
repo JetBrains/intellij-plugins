@@ -10,6 +10,8 @@ import com.intellij.polySymbols.framework.FrameworkId
 import com.intellij.polySymbols.html.HtmlFrameworkSymbol
 import com.intellij.polySymbols.html.PROP_HTML_ATTRIBUTE_VALUE
 import com.intellij.polySymbols.html.PolySymbolHtmlAttributeValue
+import com.intellij.polySymbols.js.JsSymbolSymbolKind
+import com.intellij.polySymbols.js.PROP_JS_SYMBOL_KIND
 import com.intellij.polySymbols.js.types.PROP_JS_TYPE
 import com.intellij.polySymbols.js.types.TypeScriptSymbolTypeSupport
 import com.intellij.polySymbols.utils.PolySymbolTypeSupport
@@ -33,6 +35,7 @@ interface VueSymbol : HtmlFrameworkSymbol, VueElement {
     when (property) {
       PolySymbol.PROP_DOC_HIDE_ICON -> property.tryCast(true)
       PROP_JS_TYPE -> property.tryCast(type)
+      PROP_JS_SYMBOL_KIND -> property.tryCast(JsSymbolSymbolKind.Property)
       PolySymbolTypeSupport.PROP_TYPE_SUPPORT -> property.tryCast(TypeScriptSymbolTypeSupport.default)
       else -> super.get(property)
     }

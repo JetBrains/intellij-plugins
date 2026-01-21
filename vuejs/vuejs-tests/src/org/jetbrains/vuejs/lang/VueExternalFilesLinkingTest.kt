@@ -1,6 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
+import com.intellij.polySymbols.testFramework.polySymbolSourceAtCaret
 import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
@@ -59,13 +62,14 @@ class VueExternalFilesLinkingTest : BasePlatformTestCase() {
 
   private fun doTest(mainFile: String = "template.html", targetFile: String = "script.js") {
     val testName = getTestName(true)
-    val targetText = if (testName.endsWith("Decorators")) "@Prop foo" else "\"foo\""
+    val targetText = if (testName.endsWith("Decorators")) "foo" else "\"foo\""
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureVueDependencies()
     myFixture.configureFromTempProjectFile(mainFile)
-    val element = myFixture.resolveReference("{{ <caret>foo }}")
+    myFixture.moveToOffsetBySignature("{{ <caret>foo }}")
+    val element = myFixture.polySymbolSourceAtCaret()!!
     assertEquals(targetFile, element.containingFile.name)
-    assertEquals(targetText, element.context?.text)
+    assertEquals(targetText, element.text)
   }
 
 }

@@ -80,18 +80,9 @@ class VueResolveTest :
     props: ['message25620Arr']
   }
 </script>""")
-    val reference = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(reference)
-    assertTrue(reference is JSReferenceExpression)
-    val resolver = VueJSSpecificHandlersFactory().createReferenceExpressionResolver(
-      reference as JSReferenceExpressionImpl, true)
-    val results = resolver.resolve(reference, false)
-    assertEquals(1, results.size)
-    val element = results[0].element!!
-    assertInstanceOf(element, JSImplicitElement::class.java)
-    val literal = element.parent
+    val literal = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(literal, JSLiteralExpression::class.java)
-    assertInstanceOf(literal.parent, JSArrayLiteralExpression::class.java)
+    assertInstanceOf(literal!!.parent, JSArrayLiteralExpression::class.java)
     assertEquals("'message25620Arr'", literal.text)
   }
 
@@ -111,9 +102,7 @@ class VueResolveTest :
   }
   let message25620 = 111;
 </script>""")
-    val reference = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(reference)
-    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(literal, JSLiteralExpression::class.java)
     assertInstanceOf(literal!!.parent, JSArrayLiteralExpression::class.java)
     assertEquals("'pascalCase'", literal.text)
@@ -135,9 +124,7 @@ export default {
   }
 }
 </script>""")
-    val reference = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = myFixture.polySymbolSourceAtCaret()
     assertTrue((property as JSImplicitElement).context is JSFunctionItem)
     assertEquals("testRight", (property.context as JSFunctionItem).name)
   }
@@ -199,7 +186,7 @@ export default {
 </script>""")
     val reference = myFixture.getReferenceAtCaretPosition()
     assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
     assertTrue(property is JSProperty)
     assertEquals("me215thod", (property as JSProperty).name)
   }
@@ -217,9 +204,7 @@ export default {
     }
   }
 }</script>""")
-    val reference = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(reference)
-    val literal = reference!!.resolve()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()
     assertTrue(literal is JSLiteralExpression)
     assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
     assertEquals("'parentMsg'", literal.text)
@@ -239,9 +224,7 @@ export default {
     }
   }
 }</script>""")
-    val reference = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(reference)
-    val literal = reference!!.resolve()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()
     assertTrue(literal is JSLiteralExpression)
     assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
     assertEquals("'parentMsg'", literal.text)
@@ -262,9 +245,7 @@ export default {
     }
   }
 }</script>""")
-    val reference = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(reference)
-    val literal = reference!!.resolve()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()
     assertTrue(literal is JSLiteralExpression)
     assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
     assertEquals("'parentMsg'", literal.text)
@@ -531,7 +512,7 @@ export default {
 """)
     val reference = myFixture.getReferenceAtCaretPosition()
     assertNotNull(reference)
-    val part = reference!!.resolve()
+    val part = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
     assertNotNull(part)
     assertTrue(part is JSProperty)
     assertTrue(part!!.parent is JSObjectLiteralExpression)
@@ -598,7 +579,7 @@ export default {
 """)
     val reference = myFixture.getReferenceAtCaretPosition()
     assertNotNull(reference)
-    val part = reference!!.resolve()
+    val part = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
     assertNotNull(part)
     assertTrue(part is JSProperty)
     assertTrue(part!!.parent is JSObjectLiteralExpression)
@@ -723,7 +704,7 @@ new Vue({
 """)
     val reference = myFixture.getReferenceAtCaretPosition()
     assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
     assertNotNull(property)
     assertTrue(property is JSProperty)
     assertTrue(property!!.parent.parent is JSProperty)
@@ -749,14 +730,11 @@ new Vue({
 </body>
 </html>
 """)
-    val reference = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(reference)
-    val arrayItem = reference!!.resolve()
-    assertNotNull(arrayItem)
-    assertInstanceOf(arrayItem, JSImplicitElement::class.java)
-    assertInstanceOf(arrayItem!!.parent, JSLiteralExpression::class.java)
-    assertInstanceOf(arrayItem.parent.parent.parent, JSProperty::class.java)
-    assertEquals("props", (arrayItem.parent.parent.parent as JSProperty).name)
+    val literal = myFixture.polySymbolSourceAtCaret()
+    assertNotNull(literal)
+    assertInstanceOf(literal, JSLiteralExpression::class.java)
+    assertInstanceOf(literal!!.parent.parent, JSProperty::class.java)
+    assertEquals("props", (literal.parent.parent as JSProperty).name)
   }
 
   @Test
@@ -788,7 +766,7 @@ new Vue({
 """)
     val reference = myFixture.getReferenceAtCaretPosition()
     assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
     assertNotNull(property)
     assertTrue(property is JSProperty)
     assertTrue(property!!.parent.parent is JSProperty)
@@ -837,7 +815,7 @@ export default {
 </script>
 """)
 
-    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(literal, JSLiteralExpression::class.java)
     assertEquals("'libComponentProp'", literal!!.text)
     assertInstanceOf(literal.parent, JSArrayLiteralExpression::class.java)
@@ -861,7 +839,7 @@ export default {
       </template>
     """.trimIndent())
 
-    val property = myFixture.polySymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(property, JSProperty::class.java)
     assertEquals("kuku", (property as JSProperty).name)
     assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -877,7 +855,7 @@ export default {
       </template>
     """.trimIndent())
 
-    val property = myFixture.polySymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(property, JSProperty::class.java)
     assertEquals("to", (property as JSProperty).name)
     assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -909,7 +887,7 @@ export default {
       </template>
 """)
 
-    val property = myFixture.polySymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()
     assertNotNull(property)
     assertTrue(property is JSProperty)
     assertEquals("from", (property as JSProperty).name)
@@ -958,8 +936,7 @@ Vue.component('global-comp-literal', {
   <global-comp-literal <caret>inside-global-comp-literal=222></global-comp-literal>
 </template>
 """)
-    val element = myFixture.polySymbolSourceAtCaret()
-    val property = element!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(property, JSProperty::class.java)
     assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
     assertTrue(property.parent.parent is JSProperty)
@@ -984,7 +961,7 @@ Vue.component('global-comp-literal', {
 """)
     myFixture.checkHighlighting()
     myFixture.doHighlighting()
-    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(literal, JSLiteralExpression::class.java)
     assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
     assertTrue(literal.parent is JSArrayLiteralExpression)
@@ -1008,7 +985,7 @@ const props = ['oneTwo']
 </script>
 """)
     myFixture.doHighlighting()
-    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()
     assertNotNull(literal)
     assertTrue(literal is JSLiteralExpression)
     assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
@@ -1041,7 +1018,7 @@ const props = ['oneTwo']
 """)
     myFixture.checkHighlighting()
     myFixture.doHighlighting()
-    val literal = myFixture.polySymbolSourceAtCaret()!!.parent
+    val literal = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(literal, JSLiteralExpression::class.java)
     assertEquals("seeMe", (literal as JSLiteralExpression).stringValue)
     assertEquals("compUI.vue", literal.containingFile.name)
@@ -1073,7 +1050,7 @@ const props = {seeMe: {}}
 </script>
 """)
     myFixture.checkHighlighting()
-    val property = myFixture.polySymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()
     assertNotNull(property)
     assertTrue(property is JSProperty)
     assertEquals("seeMe", (property as JSProperty).name)
@@ -1106,7 +1083,7 @@ const props = {seeMe: {}}
 </script>
 """)
     myFixture.checkHighlighting()
-    val property = myFixture.polySymbolSourceAtCaret()!!.parent
+    val property = myFixture.polySymbolSourceAtCaret()
     assertNotNull(property)
     assertTrue(property is JSProperty)
     assertTrue(property!!.parent.parent is JSProperty)
@@ -1159,7 +1136,7 @@ const props = {seeMe: {}}
 </script>
 """)
 
-    val property = myFixture.polySymbolSourceAtCaret()?.parent
+    val property = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(property, JSProperty::class.java)
     assertEquals("mixinProp", (property as JSProperty).name)
     assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -1201,7 +1178,7 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting(true, false, true)
 
     val checkResolve = { propName: String, file: String ->
-      val literal = myFixture.polySymbolSourceAtCaret()!!.parent
+      val literal = myFixture.polySymbolSourceAtCaret()
       assertInstanceOf(literal, JSLiteralExpression::class.java)
       assertEquals(propName, (literal as JSLiteralExpression).stringValue)
       assertInstanceOf(literal.parent.parent, JSProperty::class.java)
@@ -1271,7 +1248,7 @@ const props = {seeMe: {}}
   }
 
   private fun doTestResolveIntoProperty(name: String) {
-    val property = myFixture.polySymbolSourceAtCaret()?.parent
+    val property = myFixture.polySymbolSourceAtCaret()
     assertInstanceOf(property, JSProperty::class.java)
     assertEquals(name, (property as JSProperty).name)
     assertInstanceOf(property.parent.parent, JSProperty::class.java)
@@ -2034,13 +2011,13 @@ export default class UsageComponent extends Vue {
     myFixture.moveToOffsetBySignature("\"show<caret>1\"")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true, true),
-                           "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=101.0; bold)",
+                           "show1 (tailText='() (mixin.ts)'; typeText='void'; priority=101.0; bold)",
                            "show2 (tailText='() (component.vue)'; typeText='void'; priority=101.0; bold)",
                            "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=101.0; bold)")
     myFixture.moveToOffsetBySignature("this.<caret>show2()")
     myFixture.completeBasic()
     assertContainsElements(myFixture.renderLookupItems(true, true, true),
-                           "show1 (tailText='() (test.methods, mixin.ts)'; typeText='void'; priority=99.0; bold)",
+                           "show1 (tailText='() (mixin.ts)'; typeText='void'; priority=99.0; bold)",
                            "show2 (tailText='() (component.vue)'; typeText='void'; priority=99.0; bold)",
                            "show5 (tailText='() (mixin2.ts)'; typeText='void'; priority=99.0; bold)")
 
