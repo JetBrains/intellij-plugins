@@ -1,6 +1,6 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import type ts from "typescript/lib/tsserverlibrary"
-import type {Language, Mapper} from "@volar/language-core"
+import type {Language, Mapper, SourceScript} from "@volar/language-core"
 import {forEachEmbeddedCode} from "@volar/language-core"
 import type {ReverseMapper} from "tsc-ide-plugin/ide-get-element-type"
 import type {Position, Range} from "tsc-ide-plugin/protocol"
@@ -26,26 +26,13 @@ function toSourceRange(
   sourceFile: ts.SourceFile,
   generatedRange: Range,
 ): Range | undefined {
-  const sourceScript = language.scripts.get(sourceFile.fileName)
-  if (!sourceScript)
-    return undefined
-
-  const virtualCode = sourceScript.generated?.root
-  if (!virtualCode)
-    return undefined
-
-  for (const code of forEachEmbeddedCode(virtualCode)) {
-    if (!code.id.startsWith('script_'))
-      continue
-
-    const mapper = language.maps.get(code, sourceScript)
-    
+  for (const [mapper] of scriptMappers(language, sourceFile.fileName)) {
     const sourceStartOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.start))
     if (sourceStartOffset === undefined) continue
-    
+
     const sourceEndOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.end))
     if (sourceEndOffset === undefined) continue
-    
+
     return {
       start: sourceFile.getLineAndCharacterOfPosition(sourceStartOffset),
       end: sourceFile.getLineAndCharacterOfPosition(sourceEndOffset),
@@ -68,20 +55,7 @@ export function toGeneratedRange(
   startOffset: number,
   endOffset: number,
 ): [startOffset: number, endOffset: number] | undefined {
-  const sourceScript = language.scripts.get(fileName)
-  if (!sourceScript)
-    return undefined
-
-  const virtualCode = sourceScript.generated?.root
-  if (!virtualCode)
-    return undefined
-
-  for (const code of forEachEmbeddedCode(virtualCode)) {
-    if (!code.id.startsWith('script_'))
-      continue
-
-    const mapper = language.maps.get(code, sourceScript)
-
+  for (const [mapper, sourceScript] of scriptMappers(language, fileName)) {
     const generatedStartOffset = toGeneratedOffset(mapper, startOffset)
     if (generatedStartOffset === undefined) continue
 
@@ -96,6 +70,26 @@ export function toGeneratedRange(
   }
 
   return undefined
+}
+
+function* scriptMappers(
+  language: Language<string>,
+  fileName: string,
+): Generator<[Mapper, SourceScript<string>]> {
+  const sourceScript = language.scripts.get(fileName)
+  if (!sourceScript)
+    return
+
+  const virtualCode = sourceScript.generated?.root
+  if (!virtualCode)
+    return
+
+  for (const code of forEachEmbeddedCode(virtualCode)) {
+    if (!code.id.startsWith('script_'))
+      continue
+
+    yield [language.maps.get(code, sourceScript), sourceScript]
+  }
 }
 
 function toSourceOffset(
