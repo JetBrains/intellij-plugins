@@ -11,6 +11,7 @@ export function decorateIdeLanguageServiceExtensions(
 ) {
 
   const {
+    webStormGetCompletionSymbols,
     webStormGetElementType,
     webStormGetTypeProperties,
     webStormGetTypeProperty,
@@ -18,7 +19,8 @@ export function decorateIdeLanguageServiceExtensions(
   } = languageService
 
   if (
-    webStormGetElementType === undefined
+    webStormGetCompletionSymbols === undefined
+    || webStormGetElementType === undefined
     || webStormGetTypeProperties === undefined
     || webStormGetTypeProperty === undefined
     || webStormGetSymbolType === undefined
@@ -53,6 +55,7 @@ export function decorateIdeLanguageServiceExtensions(
     })
   }
 
+  languageService.webStormGetCompletionSymbols = withReverseMapper(webStormGetCompletionSymbols)
   languageService.webStormGetSymbolType = withReverseMapper(webStormGetSymbolType)
   languageService.webStormGetTypeProperties = withReverseMapper(webStormGetTypeProperties)
   languageService.webStormGetTypeProperty = withReverseMapper(webStormGetTypeProperty)
