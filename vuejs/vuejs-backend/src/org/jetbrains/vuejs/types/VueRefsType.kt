@@ -12,8 +12,8 @@ import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.REF_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.findAttribute
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
+import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueInstanceOwner
-import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
 import org.jetbrains.vuejs.model.source.INSTANCE_REFS_PROP
 
@@ -46,7 +46,7 @@ class VueRefsType(
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType {
     val members: MutableMap<String, JSRecordType.TypeMember> = mutableMapOf()
-    (instanceOwner as? VueRegularComponent)?.template?.safeVisitTags { tag ->
+    (instanceOwner as? VueComponent)?.template?.safeVisitTags { tag ->
       (findAttribute(tag, REF_ATTRIBUTE_NAME) as? VueRefAttribute)
         ?.implicitElement
         ?.let {

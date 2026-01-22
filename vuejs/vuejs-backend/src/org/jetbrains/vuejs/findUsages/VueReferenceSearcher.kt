@@ -36,7 +36,6 @@ import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.isVueFile
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.DEFINE_PROPS_FUN
 import org.jetbrains.vuejs.model.source.PROPS_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
@@ -121,7 +120,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
 
       val component = if (!isPropertyElement) {
         if (element is JSImplicitElement && element.context.let { it is JSLiteralExpression && it.context !is JSArrayLiteralExpression })
-          VueModelManager.findEnclosingComponent(element)?.takeIf { (it as? VueRegularComponent)?.nameElement == element.context }
+          VueModelManager.findEnclosingComponent(element)?.takeIf { it.nameElement == element.context }
         else
           VueComponents.getComponentDescriptor(element)?.let { VueModelManager.getComponent(it) }
       }
@@ -198,7 +197,6 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
       if (name != null && isVueContext(element)) {
         JSUtils.getMemberContainingClass(element)
           ?.let { VueModelManager.getComponent(it) }
-          ?.asSafely<VueRegularComponent>()
           ?.template
           ?.source
           ?.let {

@@ -28,8 +28,8 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDire
 import org.jetbrains.vuejs.codeInsight.resolveLocalComponent
 import org.jetbrains.vuejs.index.processScriptSetupTopLevelDeclarations
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
+import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.VueCompositionInfoHelper
 
 class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, VueRefAttribute {
@@ -67,7 +67,7 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
     }
 
   private fun resolveTagType(): JSType? {
-    val component = VueModelManager.findEnclosingContainer(this) as? VueRegularComponent ?: return null
+    val component = VueModelManager.findEnclosingContainer(this) as? VueComponent ?: return null
     val source = JSTypeSourceFactory.createTypeSource(this, true)
     return (resolveLocalComponent(component, containingTagName, containingFile.originalFile)
               .takeIf { it.isNotEmpty() }

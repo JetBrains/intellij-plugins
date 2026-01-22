@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.javascript.navigation.JSDeclarationEvaluator
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -18,10 +19,7 @@ import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
-import org.jetbrains.vuejs.model.VueComponent
-import org.jetbrains.vuejs.model.VueEntitiesContainer
-import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
+import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
 class VueUnresolvedComponent(
@@ -33,6 +31,8 @@ class VueUnresolvedComponent(
 
   override val name: String = defaultName ?: "<unnamed>"
 
+  override val nameElement: PsiElement? get() = null
+
   override val componentSource: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     (rawSource as? ES6ImportSpecifier)?.resolveIfImportSpecifier() ?: rawSource
   }
@@ -42,6 +42,9 @@ class VueUnresolvedComponent(
     proximity: VueModelVisitor.Proximity,
   ): VueComponent =
     VueUnresolvedComponent(context, rawSource, name, proximity)
+
+  override val typeParameters: List<TypeScriptTypeParameter>
+    get() = emptyList()
 
   override val parents: List<VueEntitiesContainer> = emptyList()
 
@@ -90,4 +93,33 @@ class VueUnresolvedComponent(
     result = 31 * result + rawSource.hashCode()
     return result
   }
+
+  override val components: Map<String, VueComponent>
+    get() = emptyMap()
+  override val directives: Map<String, VueDirective>
+    get() = emptyMap()
+  override val filters: Map<String, VueFilter>
+    get() = emptyMap()
+  override val mixins: List<VueMixin>
+    get() = emptyList()
+  override val data: List<VueDataProperty>
+    get() = emptyList()
+  override val computed: List<VueComputedProperty>
+    get() = emptyList()
+  override val methods: List<VueMethod>
+    get() = emptyList()
+  override val props: List<VueInputProperty>
+    get() = emptyList()
+  override val emits: List<VueEmitCall>
+    get() = emptyList()
+  override val slots: List<VueSlot>
+    get() = emptyList()
+  override val provides: List<VueProvide>
+    get() = emptyList()
+  override val injects: List<VueInject>
+    get() = emptyList()
+  override val extends: List<VueContainer>
+    get() = emptyList()
+  override val model: VueModelDirectiveProperties?
+    get() = null
 }

@@ -19,8 +19,8 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
+import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.VueSymbol
 import org.jetbrains.vuejs.web.scopes.VueBindingShorthandSymbol
 import org.junit.Test
@@ -1829,7 +1829,7 @@ export default class UsageComponent extends Vue {
         }
       </script>
     """)
-    val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
+    val component = VueModelManager.findEnclosingContainer(file) as VueComponent
     assertEquals(null, component.model?.prop)
     assertEquals("foo", component.model?.event)
   }
@@ -1854,7 +1854,7 @@ export default class UsageComponent extends Vue {
   fun testAtComponentResolution() {
     myFixture.configureVueDependencies(VUE_2_6_10)
     val file = myFixture.configureByFile("at_component.vue")
-    val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
+    val component = VueModelManager.findEnclosingContainer(file) as VueComponent
 
     val getNames = { list: Collection<VueSymbol> -> list.map { it.name }.sorted() }
 
@@ -1871,7 +1871,7 @@ export default class UsageComponent extends Vue {
   fun testAtComponentResolutionTs() {
     myFixture.configureVueDependencies(VUE_2_6_10)
     val file = myFixture.configureByFile("at_component_ts.vue")
-    val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
+    val component = VueModelManager.findEnclosingContainer(file) as VueComponent
 
     val getNames = { list: Collection<VueSymbol> -> list.map { it.name }.sorted() }
 

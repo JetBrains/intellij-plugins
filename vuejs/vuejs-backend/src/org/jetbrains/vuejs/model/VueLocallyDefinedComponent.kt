@@ -18,22 +18,22 @@ import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 
-class VueLocallyDefinedRegularComponent
+class VueLocallyDefinedComponent
 private constructor(
   override val defaultName: String?,
-  override val delegate: VueRegularComponent,
+  override val delegate: VueComponent,
   source: PsiElement,
   override val vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueDelegatedContainer<VueRegularComponent>(),
-    VueRegularComponent, PsiSourcedPolySymbol {
+) : VueDelegatedContainer<VueComponent>(),
+    VueComponent, PsiSourcedPolySymbol {
 
   companion object {
-    fun create(delegate: VueRegularComponent, source: JSLiteralExpression): VueLocallyDefinedRegularComponent {
-      return VueLocallyDefinedRegularComponent(getTextIfLiteral(source), delegate, source)
+    fun create(delegate: VueComponent, source: JSLiteralExpression): VueLocallyDefinedComponent {
+      return VueLocallyDefinedComponent(getTextIfLiteral(source), delegate, source)
     }
 
-    fun create(delegate: VueRegularComponent, source: JSPsiNamedElementBase): VueLocallyDefinedRegularComponent {
-      return VueLocallyDefinedRegularComponent(source.name, delegate, source)
+    fun create(delegate: VueComponent, source: JSPsiNamedElementBase): VueLocallyDefinedComponent {
+      return VueLocallyDefinedComponent(source.name, delegate, source)
     }
   }
 
@@ -43,7 +43,7 @@ private constructor(
     get() = defaultName ?: "<unnamed>"
 
   override fun withNameAndProximity(name: String, proximity: VueModelVisitor.Proximity): VueComponent =
-    VueLocallyDefinedRegularComponent(name, delegate, mySource, proximity)
+    VueLocallyDefinedComponent(name, delegate, mySource, proximity)
 
   override val source: PsiElement
     get() = mySource
@@ -69,7 +69,7 @@ private constructor(
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     PolySymbolDocumentationTarget.create(
       this, location,
-      PolySymbolDocumentationProvider<VueLocallyDefinedRegularComponent> { symbol, location ->
+      PolySymbolDocumentationProvider<VueLocallyDefinedComponent> { symbol, location ->
         val myDoc = PolySymbolDocumentation.create(symbol, location) {
           library = getLibraryNameForDocumentationOf(symbol.source)
         }
@@ -87,7 +87,7 @@ private constructor(
   override val typeParameters: List<TypeScriptTypeParameter>
     get() = delegate.typeParameters
 
-  override fun createPointer(): Pointer<VueLocallyDefinedRegularComponent> {
+  override fun createPointer(): Pointer<VueLocallyDefinedComponent> {
     val defaultName = this.defaultName
     val vueProximity = this.vueProximity
     val delegate = this.delegate.createPointer()
@@ -95,12 +95,12 @@ private constructor(
     return Pointer {
       val newDelegate = delegate.dereference() ?: return@Pointer null
       val newSource = source.dereference() ?: return@Pointer null
-      VueLocallyDefinedRegularComponent(defaultName, newDelegate, newSource, vueProximity)
+      VueLocallyDefinedComponent(defaultName, newDelegate, newSource, vueProximity)
     }
   }
 
   override fun equals(other: Any?): Boolean =
-    other is VueLocallyDefinedRegularComponent
+    other is VueLocallyDefinedComponent
     && other.name == name
     && other.delegate == delegate
     && other.mySource == mySource

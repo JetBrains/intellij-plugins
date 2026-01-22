@@ -21,13 +21,12 @@ import org.jetbrains.vuejs.lang.html.isVueFileName
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.VueRegularComponent
 
 class VueTypedComponent(
   override val componentSource: PsiElement,
   override val name: String,
   override val vueProximity: VueModelVisitor.Proximity? = null,
-) : VueTypedContainer(componentSource), VueRegularComponent {
+) : VueTypedContainer(componentSource), VueComponent {
 
   override fun withNameAndProximity(name: String, proximity: VueModelVisitor.Proximity): VueComponent =
     VueTypedComponent(componentSource, name, proximity)
@@ -72,7 +71,7 @@ class VueTypedComponent(
         ?.takeIf { isVueFileName(it) }
         ?.let { contextFile.virtualFile?.parent?.findFileByRelativePath(it) }
         ?.let { contextFile.manager.findFile(it) }
-        ?.let { VueModelManager.findEnclosingContainer(it) as? VueRegularComponent }
+        ?.let { VueModelManager.findEnclosingContainer(it) as? VueComponent }
         ?.thisType
         ?.asRecordType()
     }

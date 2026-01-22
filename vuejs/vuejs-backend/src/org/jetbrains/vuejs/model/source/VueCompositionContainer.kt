@@ -101,9 +101,10 @@ abstract class VueCompositionContainer(
       return when (implicitElement.name) {
         COMPONENT_FUN -> {
           val args = getFilteredArgs(call)
-          VueModelManager.getComponent(getComponentDescriptor(getParam(implicitElement, call, 1, args))).let {
-            val literal = args.getOrNull(0) as? JSLiteralExpression ?: return@let it
-            if (it is VueRegularComponent) VueLocallyDefinedRegularComponent.create(it, literal) else it
+          VueModelManager.getComponent(getComponentDescriptor(getParam(implicitElement, call, 1, args)))?.let {
+            val literal = args.getOrNull(0) as? JSLiteralExpression
+                          ?: return@let it
+            VueLocallyDefinedComponent.create(it, literal)
           }
         }
 
@@ -179,7 +180,7 @@ abstract class VueCompositionContainer(
 
       val components = processCalls(COMPONENT_FUN, true) { name, el, nameLiteral ->
         VueModelManager.getComponent(getComponentDescriptor(el))
-          ?.let { if (it is VueRegularComponent) VueLocallyDefinedRegularComponent.create(it, nameLiteral ?: return@let null) else it }
+          ?.let { VueLocallyDefinedComponent.create(it, nameLiteral ?: return@let null) }
           ?.let { component ->
             var delegate: VueScopeElement? = component
             while (true) {

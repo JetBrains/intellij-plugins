@@ -17,7 +17,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.PolySymbolModifier
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
@@ -193,8 +192,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
             else -> getComponentDescriptor(meaningfulElement as? JSElement)
               ?.let { VueModelManager.getComponent(it) }
           }?.let {
-            if (element is JSPsiNamedElementBase && it is VueRegularComponent) {
-              VueLocallyDefinedRegularComponent.create(it, element)
+            if (element is JSPsiNamedElementBase) {
+              VueLocallyDefinedComponent.create(it, element)
             }
             else it
           }

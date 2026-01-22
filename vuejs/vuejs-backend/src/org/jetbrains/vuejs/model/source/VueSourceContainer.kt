@@ -37,7 +37,7 @@ abstract class VueSourceContainer(
 
   override val slots: List<VueSlot> get() = get(SLOTS)
 
-  override val template: VueTemplate<*>? get() = if (this is VueRegularComponent) get(TEMPLATE) else null
+  override val template: VueTemplate<*>? get() = if (this is VueComponent) get(TEMPLATE) else null
 
   override val delimiters: Pair<String, String>? get() = get(DELIMITERS)
   override val extends: List<VueContainer> get() = get(EXTENDS)

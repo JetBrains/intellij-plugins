@@ -38,11 +38,10 @@ class VueSourceComponent(
   descriptor: VueSourceEntityDescriptor,
   private val forcedName: String? = null,
   override val vueProximity: VueModelVisitor.Proximity? = null,
-) : VueSourceContainer(sourceElement, descriptor),
-    VueRegularComponent {
+) : VueSourceContainer(sourceElement, descriptor), VueComponent {
 
   override val source: PsiElement
-    get() = super<VueRegularComponent>.source
+    get() = super<VueComponent>.source
             ?: super<VueSourceContainer>.source
 
   override val componentSource: JSImplicitElement = sourceElement

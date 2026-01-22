@@ -38,7 +38,6 @@ import org.jetbrains.vuejs.lang.html.VueFileElementType.Companion.INJECTED_FILE_
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.DELIMITERS_PROP
 import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
 import org.jetbrains.vuejs.model.source.VueComponents.onlyLocal
@@ -138,7 +137,7 @@ internal class VueInjector : MultiHostInjector {
              && parent.parent is JSObjectLiteralExpression
              && shouldInjectVueTemplate(context, parent.parent as JSObjectLiteralExpression)) {
 
-      val braces = (VueModelManager.getComponent(parent.parent) as? VueRegularComponent)
+      val braces = VueModelManager.getComponent(parent.parent)
                      ?.delimiters
                      ?.let {
                        Pair(it.first, it.second)

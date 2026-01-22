@@ -18,8 +18,8 @@ import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.util.PsiEditorUtil
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
+import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
 import org.jetbrains.vuejs.model.source.METHODS_PROP
 
@@ -29,7 +29,7 @@ class VueAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
     if (place is JSEmbeddedContentImpl && place.context is HtmlTag) return place
     if (place !is JSReferenceExpression) return null
     ApplicationManager.getApplication().assertReadAccessAllowed()
-    val component = VueModelManager.findEnclosingContainer(place) as? VueRegularComponent ?: return null
+    val component = VueModelManager.findEnclosingContainer(place) as? VueComponent ?: return null
     val componentEdit = VueComponentSourceEdit.create(component) ?: return null
     val project = place.project
     return runUndoTransparentWriteAction {
@@ -44,7 +44,7 @@ class VueAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
 
   override fun postProcessScope(place: PsiElement, info: JSImportDescriptor, scope: PsiElement) {
     ApplicationManager.getApplication().assertReadAccessAllowed()
-    val component = VueModelManager.findEnclosingContainer(place) as? VueRegularComponent ?: return
+    val component = VueModelManager.findEnclosingContainer(place) as? VueComponent ?: return
     val componentEdit = VueComponentSourceEdit.create(component) ?: return
 
     if (!componentEdit.isScriptSetup()) {
