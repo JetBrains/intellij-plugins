@@ -29,13 +29,23 @@ package org.jetbrains.vuejs.lang
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.jetbrains.vuejs.VueTestCase
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
+@Ignore
 class VueRenameTest :
-  VueTestCase("rename", useTsc = false) {
+  VueRenameTestBase() {
+
+  class WithoutServiceTest :
+    VueRenameTestBase(useTsc = false)
+}
+
+@RunWith(JUnit4::class)
+abstract class VueRenameTestBase(
+  useTsc: Boolean = true,
+) : VueTestCase("rename", useTsc = useTsc) {
 
   @Test
   fun testComponentFieldFromTemplate() =

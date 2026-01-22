@@ -12,6 +12,7 @@ import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import org.jetbrains.vuejs.VueTestCase
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -20,9 +21,18 @@ private val FILTER_DEFAULT_ATTRIBUTES = (filterOutStandardHtmlSymbols
   and filterOutMostOfGlobalJSSymbolsInVue
   and { info -> info.lookupString.let { !it.contains("aria-") && !it.startsWith("on") } })
 
-@RunWith(JUnit4::class)
+@Ignore
 class VueCompletionTest :
-  VueTestCase("completion", useTsc = false) {
+  VueCompletionTestBase() {
+
+  class WithoutServiceTest :
+    VueCompletionTestBase(useTsc = false)
+}
+
+@RunWith(JUnit4::class)
+abstract class VueCompletionTestBase(
+  useTsc: Boolean = true,
+) : VueTestCase("completion", useTsc = useTsc) {
 
   override fun setUp() {
     super.setUp()
