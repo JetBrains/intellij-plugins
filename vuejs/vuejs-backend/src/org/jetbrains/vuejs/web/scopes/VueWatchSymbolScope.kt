@@ -2,9 +2,11 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.model.Pointer
+import com.intellij.model.Pointer.hardPointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
@@ -103,9 +105,16 @@ class VueWatchSymbolScope(private val enclosingComponent: VueSourceComponent) :
 
     override val pattern: PolySymbolPattern =
       createComplexPattern(
-        ComplexPatternOptions(symbolsResolver = PolySymbolPatternReferenceResolver(
-          Reference(kind = VUE_COMPONENT_DATA_PROPERTIES),
-          Reference(kind = VUE_COMPONENT_COMPUTED_PROPERTIES))
+        ComplexPatternOptions(
+          symbolsResolver = PolySymbolPatternReferenceResolver(
+            Reference(kind = VUE_COMPONENT_DATA_PROPERTIES),
+            Reference(kind = VUE_COMPONENT_COMPUTED_PROPERTIES)),
+          additionalLastSegmentSymbol = object: VueSymbol {
+            override val kind: PolySymbolKind get() = JS_PROPERTIES
+            override val name: String get() = "watch property type provider"
+            override val type: JSType? get() = JSAnyType.get(null) // TODO return proper type
+            override fun createPointer(): Pointer<out PolySymbol> = hardPointer(this)
+          }
         ), false,
         createPatternSequence(
           createSymbolReferencePlaceholder(),
