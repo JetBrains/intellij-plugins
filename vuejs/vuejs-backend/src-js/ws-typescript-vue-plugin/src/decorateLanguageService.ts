@@ -11,17 +11,19 @@ export function decorateIdeLanguageServiceExtensions(
   const {
     webStormGetCompletionSymbols,
     webStormGetElementType,
+    webStormGetSymbolType,
     webStormGetTypeProperties,
     webStormGetTypeProperty,
-    webStormGetSymbolType,
+    webStormGetResolvedSignature,
   } = languageService
 
   if (
     webStormGetCompletionSymbols === undefined
     || webStormGetElementType === undefined
+    || webStormGetSymbolType === undefined
     || webStormGetTypeProperties === undefined
     || webStormGetTypeProperty === undefined
-    || webStormGetSymbolType === undefined
+    || webStormGetResolvedSignature === undefined
   ) return
 
   const reverseMapper = createReverseMapper(language)
@@ -60,4 +62,5 @@ export function decorateIdeLanguageServiceExtensions(
   languageService.webStormGetSymbolType = withReverseMapper(webStormGetSymbolType)
   languageService.webStormGetTypeProperties = withReverseMapper(webStormGetTypeProperties)
   languageService.webStormGetTypeProperty = withReverseMapper(webStormGetTypeProperty)
+  languageService.webStormGetResolvedSignature = withReverseMapper(webStormGetResolvedSignature)
 }
