@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.icons.AllIcons
@@ -81,5 +81,5 @@ private val IS_EXIST: DialogValidation.WithParameter<() -> String> = validationE
 }
 
 private val CHECK_EXECUTABLE: DialogValidation.WithParameter<() -> String> = validationErrorIf(HCLBundle.message("tool.executor.non.executable.path")) { filePath ->
-  !TfToolPathDetector.isExecutable(Path(filePath))
+  !isValidExecutablePath(filePath)
 }

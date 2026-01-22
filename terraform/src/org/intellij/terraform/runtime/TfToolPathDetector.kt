@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.notification.Notification
@@ -26,10 +26,6 @@ internal interface TfToolPathDetector {
 
   companion object {
     fun getInstance(project: Project): TfToolPathDetector = project.service<TfToolPathDetector>()
-
-    fun isExecutable(path: Path): Boolean {
-      return path.pathString.isNotBlank() && path.isRegularFile() && path.isExecutable()
-    }
   }
 
   suspend fun detectAndVerifyTool(toolType: TfToolType, overrideExistingValue: Boolean): Boolean = true
@@ -45,7 +41,7 @@ internal class TfToolPathDetectorImpl(val project: Project, val coroutineScope: 
         detectToolAndUpdateSettings(toolType)
       }
     }
-    return TfToolPathDetector.isExecutable(Path(toolType.getToolSettings(project).toolPath))
+    return isValidExecutablePath(toolType.getToolSettings(project).toolPath)
   }
 
   private suspend fun detectToolAndUpdateSettings(toolType: TfToolType): TfToolSettings {
@@ -63,12 +59,12 @@ internal class TfToolPathDetectorImpl(val project: Project, val coroutineScope: 
   override suspend fun detect(path: String): String? {
     return withContext(Dispatchers.IO) {
       val filePath = Path(path)
-      if (TfToolPathDetector.isExecutable(filePath)) {
+      if (isValidExecutable(filePath)) {
         return@withContext path
       }
       val fileName = filePath.fileName.nameWithoutExtension
       val eelApi = project.getEelDescriptor().toEelApi()
-      val exePath = eelApi.exec.where(fileName)?.asNioPath()?.takeIf { TfToolPathDetector.isExecutable(it) }?.absolutePathString()
+      val exePath = eelApi.exec.where(fileName)?.asNioPath()?.takeIf { isValidExecutable(it) }?.absolutePathString()
       return@withContext exePath
     }
   }
@@ -91,4 +87,13 @@ internal class OpenSettingsAction : NotificationAction(HCLBundle.message("terraf
     notification.expire()
     ShowSettingsUtil.getInstance().showSettingsDialog(e.project, TfToolConfigurable::class.java)
   }
+}
+
+internal fun isValidExecutable(path: Path): Boolean = path.pathString.isNotBlank() && path.isRegularFile() && path.isExecutable()
+
+internal fun isValidExecutablePath(path: String): Boolean {
+  if (path.isBlank()) return false
+
+  val nioPath = runCatching { Path(path) }.getOrNull() ?: return false
+  return isValidExecutable(nioPath)
 }
