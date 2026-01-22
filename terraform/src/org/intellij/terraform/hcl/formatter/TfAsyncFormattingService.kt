@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.hcl.formatter
 
 import com.intellij.application.options.CodeStyle
@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.eel.EelProcess
+import com.intellij.platform.eel.provider.asEelPath
 import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.toEelApi
 import com.intellij.platform.eel.provider.utils.readWholeText
@@ -25,6 +26,7 @@ import org.intellij.terraform.config.util.getApplicableToolType
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.runtime.TfToolPathDetector
 import java.util.concurrent.CancellationException
+import kotlin.io.path.Path
 
 internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
   override fun getName(): String = TF_FMT
@@ -66,8 +68,9 @@ internal class TfAsyncFormattingService : AsyncDocumentFormattingService() {
                 try {
                   withContext(Dispatchers.IO) {
                     val eelApi = project.getEelDescriptor().toEelApi()
+                    val eelExePath = Path(exePath).asEelPath()
                     val envVariables = eelApi.exec.fetchLoginShellEnvVariables()
-                    process = @Suppress("checkedExceptions") eelApi.exec.spawnProcess(exePath)
+                    process = @Suppress("checkedExceptions") eelApi.exec.spawnProcess(eelExePath)
                       .args("fmt", "-")
                       .env(envVariables)
                       .eelIt()

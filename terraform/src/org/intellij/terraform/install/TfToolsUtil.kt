@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.install
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.platform.eel.ExecuteProcessException
+import com.intellij.platform.eel.provider.asEelPath
 import com.intellij.platform.eel.provider.getEelDescriptor
 import com.intellij.platform.eel.provider.toEelApi
 import com.intellij.platform.eel.provider.utils.readWholeText
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nls
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.Path
 
 internal enum class TfToolType(@param:Nls val executableName: String) {
   TERRAFORM("terraform") {
@@ -162,8 +164,9 @@ internal fun getBinaryName(executableName: String): String {
 
 internal suspend fun getToolVersion(project: Project, tool: TfToolType, exePath: String): @NlsSafe String {
   val eelApi = project.getEelDescriptor().toEelApi()
+  val eelExePath = Path(exePath).asEelPath()
   val envVariables = eelApi.exec.fetchLoginShellEnvVariables()
-  val processBuilder = eelApi.exec.spawnProcess(exePath)
+  val processBuilder = eelApi.exec.spawnProcess(eelExePath)
     .args("--version")
     .env(envVariables)
 
