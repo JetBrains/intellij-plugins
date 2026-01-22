@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.runtime
 
 import com.intellij.CommonBundle
@@ -73,7 +73,7 @@ internal abstract class TfToolsRunConfigurationBase(
   }
 
   private fun checkExecutableAndThrow() {
-    if (!TfToolPathDetector.isExecutable(Path(toolPath))) {
+    if (!isValidExecutablePath(toolPath)) {
       val exception = RuntimeConfigurationException(
         HCLBundle.message("run.configuration.terraform.path.incorrect", toolPath.ifEmpty { toolType.executableName }, toolType.displayName),
         CommonBundle.getErrorTitle()

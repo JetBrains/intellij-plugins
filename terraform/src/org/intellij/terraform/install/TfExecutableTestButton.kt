@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform.install
 
 import com.intellij.icons.AllIcons
@@ -30,11 +30,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.intellij.terraform.hcl.HCLBundle
 import org.intellij.terraform.runtime.TfToolPathDetector
+import org.intellij.terraform.runtime.isValidExecutablePath
 import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.SwingConstants
-import kotlin.io.path.Path
 
 private const val ICON_TEXT_HGAP: Int = 4
 private const val PARSE_DELAY = 100L
@@ -181,7 +181,7 @@ internal class TfExecutableTestButton(
   private suspend fun validateAndTestAction(): String {
     val currentPath = withContext(Dispatchers.EDT) { fieldToUpdate.text }
 
-    val validPath = if (currentPath.isNotBlank() && TfToolPathDetector.isExecutable(Path(currentPath))) {
+    val validPath = if (isValidExecutablePath(currentPath)) {
       currentPath
     }
     else {
@@ -192,7 +192,7 @@ internal class TfExecutableTestButton(
       detectedPath
     }
 
-    return if (validPath.isNotEmpty() && TfToolPathDetector.isExecutable(Path(validPath))) {
+    return if (isValidExecutablePath(validPath)) {
       val versionLine = getToolVersion(project, toolType, validPath).lineSequence().firstOrNull()?.trim()
       versionLine?.split(" ")?.firstOrNull {
         VERSION_REGEX.matches(StringUtil.newBombedCharSequence(it, PARSE_DELAY))
