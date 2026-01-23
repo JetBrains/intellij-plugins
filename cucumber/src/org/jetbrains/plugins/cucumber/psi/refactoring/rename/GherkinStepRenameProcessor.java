@@ -17,6 +17,7 @@ import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpTT;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.cucumber.*;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
@@ -130,6 +131,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
   /// Wraps each special symbol of `regexText` with a group and cuts static text.
   ///
   /// @return List of strings. The first one is prepared regex, then static elements of the regex
+  @TestOnly
   public static List<String> prepareRegexAndGetStaticTexts(String regexText) {
     final ArrayList<String> result = new ArrayList<>();
     final StringBuilder preparedRegexp = new StringBuilder();
@@ -193,6 +195,7 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
     return result;
   }
 
+  @TestOnly
   public static String prepareRegexFromCukex(String cukex, ParameterTypeManager parameterTypeManager) {
     String preparedRegex = CucumberUtil.buildRegexpFromCucumberExpression(cukex, parameterTypeManager);
     return preparedRegex.substring(1).substring(0, preparedRegex.length() - 2);
@@ -201,12 +204,14 @@ public final class GherkinStepRenameProcessor extends RenamePsiElementProcessor 
   /// Wraps all special cukex special symbols with regex groups and cuts out static text.
   ///
   /// @return List of strings. Each string is a static part of the cukex.
+  @TestOnly
   public static List<String> getStaticTextsFromCukex(String cukex) {
     List<TextRange> ranges = CucumberUtil.getCukexRanges(cukex);
     return CucumberUtil.textRangesOutsideToSubstrings(cukex, ranges);
   }
 
   /// Returns a _concrete_ new name of a specific renamed step usage.
+  @TestOnly
   public static String getNewStepName(String oldStepName, Pattern oldStepDefPattern, List<String> newStaticTexts) {
     newStaticTexts = new ArrayList<>(newStaticTexts);
     final Matcher matcher = oldStepDefPattern.matcher(oldStepName);
