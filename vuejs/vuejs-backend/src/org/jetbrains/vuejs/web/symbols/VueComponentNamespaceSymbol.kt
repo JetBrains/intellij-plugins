@@ -84,7 +84,7 @@ class VueComponentNamespaceSymbol(
       val component = VueModelManager.getComponent(source)
       if (component != null && kind == VUE_COMPONENTS) {
         VueLocallyDefinedComponent.create(component, source)
-          .let { VueNamespacedComponent(it) }
+          ?.let { VueNamespacedComponent(it) }
       }
       else if (component == null && kind == VUE_COMPONENT_NAMESPACES) {
         VueComponentNamespaceSymbol(symbol.name, source)

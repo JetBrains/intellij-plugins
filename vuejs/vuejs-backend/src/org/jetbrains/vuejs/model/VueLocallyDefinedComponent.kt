@@ -5,12 +5,16 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
+import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
+import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
@@ -18,58 +22,32 @@ import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 
-class VueLocallyDefinedComponent
-private constructor(
-  override val defaultName: String?,
+sealed class VueLocallyDefinedComponent<T : PsiElement> protected constructor(
+  override val name: String,
   override val delegate: VueComponent,
-  source: PsiElement,
+  val sourceElement: T,
   override val vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueDelegatedContainer<VueComponent>(),
-    VueComponent, PsiSourcedPolySymbol {
+) : VueDelegatedContainer<VueComponent>(), VueComponent {
 
   companion object {
-    fun create(delegate: VueComponent, source: JSLiteralExpression): VueLocallyDefinedComponent {
-      return VueLocallyDefinedComponent(getTextIfLiteral(source), delegate, source)
-    }
+    fun create(delegate: VueComponent, source: JSLiteralExpression): VueLocallyDefinedComponent<*>? =
+      getTextIfLiteral(source)?.let { VueStringLiteralLocallyDefinedComponent(it, delegate, source) }
 
-    fun create(delegate: VueComponent, source: JSPsiNamedElementBase): VueLocallyDefinedComponent {
-      return VueLocallyDefinedComponent(source.name, delegate, source)
-    }
+    fun create(delegate: VueComponent, source: JSPsiNamedElementBase): VueLocallyDefinedComponent<*>? =
+      source.name?.let { VuePsiNamedElementLocallyDefinedComponent(it, delegate, source) }
+
   }
 
-  private val mySource = source
-
-  override val name: String
-    get() = defaultName ?: "<unnamed>"
-
-  override fun withNameAndProximity(name: String, proximity: VueModelVisitor.Proximity): VueComponent =
-    VueLocallyDefinedComponent(name, delegate, mySource, proximity)
+  override val defaultName: String
+    get() = name
 
   override val source: PsiElement
-    get() = mySource
-
-  override val nameElement: PsiElement
-    get() = if (mySource is JSPsiNamedElementBase) componentSource else mySource
-
-  override val componentSource: PsiElement by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    if (mySource is JSPsiNamedElementBase)
-      mySource.resolveIfImportSpecifier()
-    else
-      (delegate.componentSource ?: mySource)
-  }
-
-  override val rawSource: PsiElement
-    get() = mySource as? JSPsiNamedElementBase ?: delegate.rawSource ?: mySource
-
-  override val renameTarget: PolySymbolRenameTarget?
-    get() = if (source is JSLiteralExpression)
-      PolySymbolRenameTarget.create(this)
-    else null
+    get() = sourceElement
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
     PolySymbolDocumentationTarget.create(
       this, location,
-      PolySymbolDocumentationProvider<VueLocallyDefinedComponent> { symbol, location ->
+      PolySymbolDocumentationProvider<VueLocallyDefinedComponent<*>> { symbol, location ->
         val myDoc = PolySymbolDocumentation.create(symbol, location) {
           library = getLibraryNameForDocumentationOf(symbol.source)
         }
@@ -87,28 +65,93 @@ private constructor(
   override val typeParameters: List<TypeScriptTypeParameter>
     get() = delegate.typeParameters
 
-  override fun createPointer(): Pointer<VueLocallyDefinedComponent> {
-    val defaultName = this.defaultName
-    val vueProximity = this.vueProximity
-    val delegate = this.delegate.createPointer()
-    val source = this.mySource.createSmartPointer()
-    return Pointer {
-      val newDelegate = delegate.dereference() ?: return@Pointer null
-      val newSource = source.dereference() ?: return@Pointer null
-      VueLocallyDefinedComponent(defaultName, newDelegate, newSource, vueProximity)
-    }
-  }
-
   override fun equals(other: Any?): Boolean =
-    other is VueLocallyDefinedComponent
+    other === this ||
+    other is VueLocallyDefinedComponent<*>
+    && other.javaClass == javaClass
     && other.name == name
     && other.delegate == delegate
-    && other.mySource == mySource
+    && other.sourceElement == sourceElement
 
   override fun hashCode(): Int {
     var result = name.hashCode()
     result = 31 * result + delegate.hashCode()
-    result = 31 * result + mySource.hashCode()
+    result = 31 * result + sourceElement.hashCode()
     return result
   }
+
+  protected fun <C : VueLocallyDefinedComponent<T>> createPointer(constructor: (String, VueComponent, T, VueModelVisitor.Proximity) -> C): Pointer<C> {
+    val name = this.name
+    val vueProximity = this.vueProximity
+    val delegate = this.delegate.createPointer()
+    val sourceElement = this.sourceElement.createSmartPointer()
+    return Pointer {
+      val newDelegate = delegate.dereference() ?: return@Pointer null
+      val newSourceElement = sourceElement.dereference() ?: return@Pointer null
+      constructor(name, newDelegate, newSourceElement, vueProximity)
+    }
+  }
+
+  abstract override fun createPointer(): Pointer<out VueLocallyDefinedComponent<T>>
+}
+
+private class VuePsiNamedElementLocallyDefinedComponent(
+  name: String,
+  delegate: VueComponent,
+  sourceElement: JSPsiNamedElementBase,
+  vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
+) : VueLocallyDefinedComponent<JSPsiNamedElementBase>(name, delegate, sourceElement, vueProximity),
+    PsiSourcedPolySymbol {
+
+  override val nameElement: PsiElement
+    get() = componentSource
+
+  override val componentSource: PsiElement by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    sourceElement.resolveIfImportSpecifier()
+  }
+
+  override val rawSource: PsiElement
+    get() = sourceElement
+
+  override fun withNameAndProximity(name: String, proximity: VueModelVisitor.Proximity): VueComponent =
+    VuePsiNamedElementLocallyDefinedComponent(name, delegate, sourceElement, proximity)
+
+  override fun createPointer(): Pointer<VuePsiNamedElementLocallyDefinedComponent> =
+    createPointer(::VuePsiNamedElementLocallyDefinedComponent)
+}
+
+private class VueStringLiteralLocallyDefinedComponent(
+  name: String,
+  delegate: VueComponent,
+  sourceElement: JSLiteralExpression,
+  vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
+) : VueLocallyDefinedComponent<JSLiteralExpression>(name, delegate, sourceElement, vueProximity),
+    PolySymbolDeclaredInPsi {
+
+  override val textRangeInSourceElement: TextRange
+    get() = TextRange(1, sourceElement.textRange.length - 1)
+
+  override val psiContext: PsiElement?
+    get() = super<PolySymbolDeclaredInPsi>.psiContext
+
+  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+    super<PolySymbolDeclaredInPsi>.getNavigationTargets(project)
+
+  override val nameElement: PsiElement
+    get() = sourceElement
+
+  override val componentSource: PsiElement
+    get() = delegate.componentSource ?: sourceElement
+
+  override val rawSource: PsiElement
+    get() = delegate.rawSource ?: sourceElement
+
+  override val renameTarget: PolySymbolRenameTarget?
+    get() = PolySymbolRenameTarget.create(this)
+
+  override fun withNameAndProximity(name: String, proximity: VueModelVisitor.Proximity): VueComponent =
+    VueStringLiteralLocallyDefinedComponent(name, delegate, sourceElement, proximity)
+
+  override fun createPointer(): Pointer<VueStringLiteralLocallyDefinedComponent> =
+    createPointer(::VueStringLiteralLocallyDefinedComponent)
 }
