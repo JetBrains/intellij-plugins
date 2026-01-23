@@ -26,7 +26,6 @@ import com.intellij.rt.coverage.data.ProjectData
 import com.intellij.rt.coverage.report.XMLProjectData
 import com.intellij.util.containers.ComparatorUtil.min
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.qodana.staticAnalysis.inspections.coverageData.COVERAGE_DATA
 import org.jetbrains.qodana.staticAnalysis.inspections.runner.QodanaGlobalInspectionContext
 import java.io.File
@@ -168,13 +167,6 @@ fun isUnderLocalChangesOnOldCode(context: QodanaGlobalInspectionContext): Boolea
 
 fun isLocalChanges(context: QodanaGlobalInspectionContext): Boolean {
   return context.coverageComputationState().isIncrementalAnalysis()
-}
-
-// SCL-23064 - deprecated API method
-@ApiStatus.ScheduledForRemoval
-@Deprecated("Use isLocalChanges(context: QodanaGlobalInspectionContext) instead", ReplaceWith("LocalChangesService.getInstance(project).isIncrementalAnalysis.toString()"))
-fun isLocalChanges(project: Project): Boolean {
-  return false
 }
 
 fun loadMissingData(project: Project, textRange: TextRange, psiFile: PsiFile, warnMissingCoverage: Boolean,
