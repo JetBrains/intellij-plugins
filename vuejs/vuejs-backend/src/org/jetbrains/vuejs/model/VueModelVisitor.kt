@@ -3,12 +3,12 @@ package org.jetbrains.vuejs.model
 
 abstract class VueModelVisitor {
 
-  open fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+  open fun visitComponent(component: VueNamedComponent, proximity: Proximity): Boolean {
     return true
   }
 
   open fun visitSelfComponent(component: VueComponent, proximity: Proximity): Boolean {
-    return component.defaultName?.let { visitComponent(it, component, proximity) } ?: true
+    return (component as? VueNamedComponent)?.let { visitComponent(component, proximity) } ?: true
   }
 
   open fun visitSelfApplication(application: VueApp, proximity: Proximity): Boolean {
@@ -19,11 +19,11 @@ abstract class VueModelVisitor {
     return true
   }
 
-  open fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
+  open fun visitFilter(filter: VueFilter, proximity: Proximity): Boolean {
     return true
   }
 
-  open fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+  open fun visitDirective(directive: VueDirective, proximity: Proximity): Boolean {
     return true
   }
 

@@ -10,7 +10,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.getComponent
 
 data class VueCompositionApp(
   override val source: JSCallExpression,
@@ -29,9 +29,7 @@ data class VueCompositionApp(
           VueModelManager.getApp(initializer)
         else
           CachedValuesManager.getCachedValue(initializer) {
-            val container = getComponentDescriptor(initializer)?.let {
-              VueModelManager.getComponent(it)
-            } as? VueContainer
+            val container = getComponent(initializer)
             CachedValueProvider.Result.create(container, PsiModificationTracker.MODIFICATION_COUNT)
           }
       }

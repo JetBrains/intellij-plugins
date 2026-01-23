@@ -7,7 +7,7 @@ abstract class VueDelegatedEntitiesContainer<T : VueEntitiesContainer> : UserDat
 
   abstract val delegate: T?
 
-  override val components: Map<String, VueComponent> get() = delegate?.components ?: emptyMap()
+  override val components: Map<String, VueNamedComponent> get() = delegate?.components ?: emptyMap()
   override val directives: Map<String, VueDirective> get() = delegate?.directives ?: emptyMap()
   override val filters: Map<String, VueFilter> get() = delegate?.filters ?: emptyMap()
   override val mixins: List<VueMixin> get() = delegate?.mixins ?: emptyList()

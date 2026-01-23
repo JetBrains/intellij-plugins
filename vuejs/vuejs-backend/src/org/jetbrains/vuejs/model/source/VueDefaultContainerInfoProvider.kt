@@ -34,7 +34,7 @@ import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.getComponent
 import org.jetbrains.vuejs.model.typed.VueTypedMixin
 import org.jetbrains.vuejs.types.VueSourcePropType
 import org.jetbrains.vuejs.types.optionalIf
@@ -52,7 +52,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override val delimiters: Pair<String, String>? get() = get(Holder.DELIMITERS).get()
     override val extends: List<VueMixin> get() = get(Holder.EXTENDS) + get(Holder.EXTENDS_CALL)
-    override val components: Map<String, VueComponent> get() = get(Holder.COMPONENTS)
+    override val components: Map<String, VueNamedComponent> get() = get(Holder.COMPONENTS)
     override val directives: Map<String, VueDirective> get() = get(Holder.DIRECTIVES)
     override val mixins: List<VueMixin> get() = get(Holder.MIXINS)
     override val filters: Map<String, VueFilter> get() = get(Holder.FILTERS)
@@ -105,8 +105,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         ?.implicitElements
         ?.asSequence()
         ?.filter { it.userString == VUE_EXTENDS_BINDING_INDEX_JS_KEY }
-        ?.mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
-        ?.mapNotNull { VueModelManager.getMixin(it) }
+        ?.mapNotNull { VueComponents.vueMixinFinder(it) }
         ?.toList()
       ?: emptyList()
   }
@@ -124,8 +123,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         resolve(LOCAL, GlobalSearchScope.fileScope(mixinsProperty.containingFile.originalFile), indexKey)
           .asSequence()
           .filter { PsiTreeUtil.isAncestor(original, it.parent, false) }
-          .mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
-          .mapNotNull { VueModelManager.getMixin(it) }
+          .mapNotNull { VueComponents.vueMixinFinder(it) }
           .toList()
 
       val expressions: List<JSExpression> =
@@ -169,12 +167,12 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     }
   }
 
-  private class ComponentsAccessor : MapAccessor<VueComponent>() {
-    override fun build(declaration: JSElement): Map<String, VueComponent> {
-      return StreamEx.of(Holder.ContainerMember.Components.readMembers(declaration))
-        .mapToEntry({ p -> p.first }, { p -> p.second })
-        .mapValues { element ->
-          when (val meaningfulElement = VueComponents.meaningfulExpression(element) ?: element) {
+  private class ComponentsAccessor : MapAccessor<VueNamedComponent>() {
+    override fun build(declaration: JSElement): Map<String, VueNamedComponent> {
+      return Holder.ContainerMember.Components.readMembers(declaration)
+        .asSequence()
+        .mapNotNull { (_, element) ->
+          val component = when (val meaningfulElement = VueComponents.meaningfulExpression(element) ?: element) {
             is ES6ImportedBinding ->
               meaningfulElement.declaration?.fromClause
                 ?.resolveReferencedElements()
@@ -186,21 +184,16 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                   || hasAttribute(it, VAPOR_ATTRIBUTE_NAME)
                 }
                 ?.containingFile
-                ?.let { VueModelManager.getComponent(it) }
-            is HtmlFileImpl ->
-              VueModelManager.getComponent(meaningfulElement)
-            else -> getComponentDescriptor(meaningfulElement as? JSElement)
-              ?.let { VueModelManager.getComponent(it) }
-          }?.let {
-            if (element is JSPsiNamedElementBase) {
-              VueLocallyDefinedComponent.create(it, element)
-            }
-            else it
-          }
-          ?: VueUnresolvedComponent(declaration, element, element.name)
+                ?.let { getComponent(it) }
+            is HtmlFileImpl -> getComponent(meaningfulElement)
+            else -> getComponent(meaningfulElement as? JSElement)
+          } ?: VueUnresolvedComponent(element)
+            if (element is JSPsiNamedElementBase && !(component is VuePsiSourcedComponent && component.source == element))
+              VueLocallyDefinedComponent.create(component, element)
+            else
+              component as? VueNamedComponent
         }
-        .distinctKeys()
-        .into(mutableMapOf<String, VueComponent>())
+        .associateBy { it.name }
     }
   }
 

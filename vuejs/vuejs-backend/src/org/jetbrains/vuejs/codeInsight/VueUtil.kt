@@ -60,14 +60,13 @@ import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
-import org.jetbrains.vuejs.model.VueComponent
-import org.jetbrains.vuejs.model.VueEntitiesContainer
-import org.jetbrains.vuejs.model.VueModelProximityVisitor
-import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import java.util.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.reflect.KClass
 
 val VUE_NOTIFICATIONS: NotificationGroup
@@ -142,12 +141,22 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExp
     }
 }
 
-fun getTextIfLiteral(holder: PsiElement?, forceStubs: Boolean = true): String? =
-  (if (holder is JSReferenceExpression) {
+@OptIn(ExperimentalContracts::class)
+fun getTextLiteralExpression(holder: PsiElement?, forceStubs: Boolean = true): JSLiteralExpression? {
+  contract { returnsNotNull() implies (holder != null) }
+  return (if (holder is JSReferenceExpression) {
     resolveLocally(holder).firstNotNullOfOrNull { (it as? JSVariable)?.initializerOrStub }
   }
   else holder)
     ?.asSafely<JSLiteralExpression>()
+    ?.takeIf {
+      (forceStubs && !it.stubSafeStringValue.isNullOrBlank())
+      || (!forceStubs && it.isQuotedLiteral && !it.stringValue.isNullOrBlank())
+    }
+}
+
+fun getTextIfLiteral(holder: PsiElement?, forceStubs: Boolean = true): String? =
+  getTextLiteralExpression(holder, forceStubs)
     ?.let { literalExpr ->
       when {
         forceStubs -> literalExpr.stubSafeStringValue
@@ -439,8 +448,8 @@ fun resolveLocalComponent(context: VueEntitiesContainer, tagName: String, contai
   val result = mutableListOf<VueComponent>()
   val normalizedTagName = fromAsset(tagName)
   context.acceptEntities(object : VueModelProximityVisitor() {
-    override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-      return acceptSameProximity(proximity, fromAsset(name) == normalizedTagName) {
+    override fun visitComponent(component: VueNamedComponent, proximity: Proximity): Boolean {
+      return acceptSameProximity(proximity, fromAsset(component.name) == normalizedTagName) {
         // Cannot self refer without export declaration with component name
         if ((component.componentSource as? JSImplicitElement)?.context != containingFile) {
           result.add(component)

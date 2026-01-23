@@ -40,6 +40,7 @@ import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.DELIMITERS_PROP
 import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
+import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.onlyLocal
 import org.jetbrains.vuejs.model.source.VueSourceContainer
 
@@ -50,7 +51,7 @@ internal class VueInjector : MultiHostInjector {
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil.delimitersFactory(
       VueJSLanguage.id, // might be slightly wrong for VueTSLanguage, but so far nothing was found
       { element ->
-        (VueModelManager.findEnclosingContainer(element) as? VueSourceContainer)
+        (VueModelManager.findEnclosingContainer(element) as? VueSourceContainer<*>)
           ?.delimiters
           ?.let {
             Pair(it.first, it.second)
@@ -137,7 +138,7 @@ internal class VueInjector : MultiHostInjector {
              && parent.parent is JSObjectLiteralExpression
              && shouldInjectVueTemplate(context, parent.parent as JSObjectLiteralExpression)) {
 
-      val braces = VueModelManager.getComponent(parent.parent)
+      val braces = VueComponents.getComponent(parent.parent)
                      ?.delimiters
                      ?.let {
                        Pair(it.first, it.second)

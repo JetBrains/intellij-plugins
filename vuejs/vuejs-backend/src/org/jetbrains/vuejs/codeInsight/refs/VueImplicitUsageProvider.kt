@@ -20,12 +20,11 @@ class VueImplicitUsageProvider : ImplicitUsageProvider {
       return element.context == findModule(element, false)
     }
     else if (element is JSProperty || element is JSFunctionItem) {
-      val component = VueModelManager.findEnclosingComponent(element as JSElement)
-      val descriptor = (component as? VueSourceComponent)?.descriptor
+      val component = VueModelManager.findEnclosingComponent(element as JSElement) as? VueSourceComponent<*>
       val name = element.name
-      if (name != null && descriptor != null
-          && (descriptor.clazz == element.context
-              || descriptor.initializer == element.context)) {
+      if (name != null && component != null
+          && (component.clazz == element.context
+              || component.initializer == element.context)) {
         return WebJSResolveUtil.resolveSymbolFromNodeModule(
           element, VUE_MODULE, "ComponentOptions", JSClass::class.java)
           ?.jsType?.asRecordType()?.findPropertySignature(name) != null

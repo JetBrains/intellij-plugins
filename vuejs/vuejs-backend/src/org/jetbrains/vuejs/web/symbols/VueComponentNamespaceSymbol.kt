@@ -19,10 +19,11 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.vuejs.model.VueComponent
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
-import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VuePsiSourcedComponent
 import org.jetbrains.vuejs.model.VueSymbol
+import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 
@@ -81,9 +82,10 @@ class VueComponentNamespaceSymbol(
   private fun List<JSPropertySymbol>.adaptToNamespaceComponents(kind: PolySymbolKind): List<PolySymbol> =
     mapNotNull { symbol ->
       val source = symbol.source as? JSPsiNamedElementBase ?: return@mapNotNull null
-      val component = VueModelManager.getComponent(source)
+      val component = VueComponents.getComponent(source)
       if (component != null && kind == VUE_COMPONENTS) {
         VueLocallyDefinedComponent.create(component, source)
+          ?.asSafely<VuePsiSourcedComponent>()
           ?.let { VueNamespacedComponent(it) }
       }
       else if (component == null && kind == VUE_COMPONENT_NAMESPACES) {
@@ -100,7 +102,8 @@ class VueComponentNamespaceSymbol(
   override fun hashCode(): Int =
     31 * name.hashCode() + source.hashCode()
 
-  private class VueNamespacedComponent(override val delegate: VueComponent) : PsiSourcedPolySymbolDelegate<VueComponent> {
+  private class VueNamespacedComponent(override val delegate: VuePsiSourcedComponent) :
+    PsiSourcedPolySymbolDelegate<VuePsiSourcedComponent> {
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
 

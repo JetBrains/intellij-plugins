@@ -10,7 +10,6 @@ import com.intellij.polySymbols.js.JS_EVENTS
 import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryExecutorFactory
 import com.intellij.polySymbols.query.PolySymbolQueryStack
-import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
@@ -32,7 +31,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
         // "createApp()" syntax support
         val callExpr = parent.parent as? JSCallExpression ?: return emptyList()
         VueCompositionContainer.getVueElement(callExpr)
-          ?.asPolySymbol(name, VueModelVisitor.Proximity.APP)
+          ?.asPolySymbol(VueModelVisitor.Proximity.APP)
       }
       is JSArrayLiteralExpression -> {
         val (kind, element) =
@@ -60,8 +59,6 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
           } ?: return emptyList()
 
         VueModelManager.findEnclosingComponent(element)
-          ?.asPolySymbol("", VueModelVisitor.Proximity.LOCAL)
-          ?.asSafely<PolySymbolScope>()
           ?.getMatchingSymbols(kind.withName(name),
                                PolySymbolNameMatchQueryParams.create(PolySymbolQueryExecutorFactory.create(parent, false)),
                                PolySymbolQueryStack())

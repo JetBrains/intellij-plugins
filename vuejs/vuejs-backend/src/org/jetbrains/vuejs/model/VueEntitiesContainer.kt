@@ -6,7 +6,7 @@ import com.intellij.model.Pointer
 interface VueEntitiesContainer : VueScopeElement, VueInstanceOwner {
   fun createPointer(): Pointer<out VueEntitiesContainer>
 
-  val components: Map<String, VueComponent>
+  val components: Map<String, VueNamedComponent>
   val directives: Map<String, VueDirective>
   val filters: Map<String, VueFilter>
   val mixins: List<VueMixin>

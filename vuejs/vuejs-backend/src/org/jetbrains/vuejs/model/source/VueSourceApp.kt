@@ -11,21 +11,18 @@ import org.jetbrains.vuejs.model.VueLibrary
 import org.jetbrains.vuejs.model.VueModelVisitor
 
 class VueSourceApp(
-  source: JSImplicitElement,
   declaration: JSObjectLiteralExpression,
-) : VueSourceContainer(source, VueSourceEntityDescriptor(declaration)),
+) : VueSourceContainer<JSObjectLiteralExpression>(declaration, declaration, null),
     VueApp {
 
   override fun getProximity(library: VueLibrary): VueModelVisitor.Proximity =
     library.defaultProximity
 
   override fun createPointer(): Pointer<out VueEntitiesContainer> {
-    val sourcePtr = (source as JSImplicitElement).createSmartPointer()
-    val declarationPtr = (descriptor.initializer as JSObjectLiteralExpression).createSmartPointer()
+    val sourcePtr = source.createSmartPointer()
     return Pointer {
       val source = sourcePtr.dereference() ?: return@Pointer null
-      val declaration = declarationPtr.dereference() ?: return@Pointer null
-      VueSourceApp(source, declaration)
+      VueSourceApp(source)
     }
   }
 

@@ -66,10 +66,10 @@ class VueExprCompletionProvider : CompletionProvider<CompletionParameters>() {
     if (ref is VueJSFilterReferenceExpression) {
       val container = VueModelManager.findEnclosingContainer(ref)
       container.acceptEntities(object : VueModelVisitor() {
-        override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
+        override fun visitFilter(filter: VueFilter, proximity: Proximity): Boolean {
           if (proximity !== Proximity.OUT_OF_SCOPE) {
             filter.source
-              .let { JSLookupUtilImpl.createLookupElement(it, name) }
+              .let { JSLookupUtilImpl.createLookupElement(it, filter.name) }
               .let { JSCompletionUtil.withJSLookupPriority(it, getJSLookupPriorityOf(proximity)) }
               .let { result.consume(it) }
           }

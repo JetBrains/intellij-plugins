@@ -8,8 +8,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.SETUP_METHOD
+import org.jetbrains.vuejs.model.source.VueComponents
 
 object VueCompositionPropsTypeProvider {
   fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, result: PsiElement): Boolean {
@@ -21,7 +21,7 @@ object VueCompositionPropsTypeProvider {
           || PsiTreeUtil.getContextOfType(initializer, true, JSClass::class.java, JSObjectLiteralExpression::class.java) != null
           || !isVueContext(method)
       ) return false
-      VueModelManager.getComponent(initializer)
+      VueComponents.getComponent(initializer)
         ?.let {
           evaluator.addType(VuePropsType(it))
           return true

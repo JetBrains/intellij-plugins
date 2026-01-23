@@ -122,7 +122,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
         if (element is JSImplicitElement && element.context.let { it is JSLiteralExpression && it.context !is JSArrayLiteralExpression })
           VueModelManager.findEnclosingComponent(element)?.takeIf { it.nameElement == element.context }
         else
-          VueComponents.getComponentDescriptor(element)?.let { VueModelManager.getComponent(it) }
+          VueComponents.getComponent(element)
       }
       else null
 
@@ -196,7 +196,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
       val name = element.name
       if (name != null && isVueContext(element)) {
         JSUtils.getMemberContainingClass(element)
-          ?.let { VueModelManager.getComponent(it) }
+          ?.let { VueComponents.getComponent(it) }
           ?.template
           ?.source
           ?.let {

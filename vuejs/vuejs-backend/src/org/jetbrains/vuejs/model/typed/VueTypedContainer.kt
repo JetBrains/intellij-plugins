@@ -107,7 +107,7 @@ abstract class VueTypedContainer(override val source: PsiElement) : VueContainer
     get() = emptyList()
   final override val extends: List<VueContainer>
     get() = emptyList()
-  final override val components: Map<String, VueComponent>
+  final override val components: Map<String, VueNamedComponent>
     get() = emptyMap()
   final override val directives: Map<String, VueDirective>
     get() = emptyMap()

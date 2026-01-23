@@ -23,16 +23,16 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
     emptyList()
 
   data class ComponentsInfo(
-    val local: MultiMap<String, VueComponent>,
-    val global: MultiMap<String, VueComponent>,
+    val local: MultiMap<String, VueNamedComponent>,
+    val global: MultiMap<String, VueNamedComponent>,
   ) {
-    fun get(local: Boolean): MultiMap<String, VueComponent> =
+    fun get(local: Boolean): MultiMap<String, VueNamedComponent> =
       if (local) this.local else global
   }
 
   @JvmDefaultWithCompatibility
   interface VueContainerInfo {
-    val components: Map<String, VueComponent> get() = emptyMap()
+    val components: Map<String, VueNamedComponent> get() = emptyMap()
     val directives: Map<String, VueDirective> get() = emptyMap()
     val filters: Map<String, VueFilter> get() = emptyMap()
     val mixins: List<VueMixin> get() = emptyList()

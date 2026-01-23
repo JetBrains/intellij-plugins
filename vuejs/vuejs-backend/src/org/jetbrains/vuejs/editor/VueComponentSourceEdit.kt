@@ -47,12 +47,12 @@ import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.model.tryResolveSrcReference
 
-class VueComponentSourceEdit private constructor(private val component: Pointer<VueSourceComponent>) {
+class VueComponentSourceEdit private constructor(private val component: Pointer<out VueSourceComponent<*>>) {
 
   companion object {
 
     fun create(component: VueEntitiesContainer?): VueComponentSourceEdit? =
-      if (component is VueSourceComponent)
+      if (component is VueSourceComponent<*>)
         VueComponentSourceEdit(component.createPointer())
       else null
 
@@ -164,12 +164,12 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     val defaultExport = ES6PsiUtil.findDefaultExport(scriptScope) as? JSExportAssignment
                         ?: createDefaultComponentExport(scriptScope)
 
-    val descriptor = VueComponents.getSourceComponentDescriptor(defaultExport)
-                     ?: return null
-    val initializer = if (descriptor.initializer == null && descriptor.clazz != null)
-      addInitializerToComponentClass(descriptor.clazz)
+    val sourceComponent = VueComponents.getSourceComponent(defaultExport)
+                          ?: return null
+    val initializer = if (sourceComponent.initializer == null && sourceComponent.clazz != null)
+      addInitializerToComponentClass(sourceComponent.clazz!!)
     else
-      descriptor.initializer.asSafely<JSObjectLiteralExpression>()
+      sourceComponent.initializer.asSafely<JSObjectLiteralExpression>()
 
     return initializer?.let { ObjectLiteralBasedComponentEdit(it) }
   }
@@ -232,7 +232,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     val newClass = JSPsiElementFactory.createJSClass("@Component({}) class A {}", decorator)
     val newDecorator = VueComponents.getComponentDecorator(newClass)!!
     reformat(decorator.replace(newDecorator))
-    return VueComponents.getSourceComponentDescriptor(clazz)?.initializer as? JSObjectLiteralExpression
+    return VueComponents.getSourceComponent(clazz)?.initializer as? JSObjectLiteralExpression
   }
 
   private fun insertImportIfNotThere(exportedName: String, isDefault: Boolean, module: String, content: PsiElement) {

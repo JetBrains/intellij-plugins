@@ -75,7 +75,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
     ?: true
 
   private fun hasEmptyDescriptor(exportedElement: JSElement?) =
-    VueComponents.getSourceComponentDescriptor(exportedElement)
+    VueComponents.getSourceComponent(exportedElement)
       ?.initializer
       ?.asSafely<JSObjectLiteralExpression>()
       ?.properties

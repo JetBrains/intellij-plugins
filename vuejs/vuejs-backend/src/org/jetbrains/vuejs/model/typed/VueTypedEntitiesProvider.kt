@@ -3,7 +3,10 @@ package org.jetbrains.vuejs.model.typed
 
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.frameworks.modules.JSExactFileReference
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSElementVisitor
+import com.intellij.lang.javascript.psi.JSField
+import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.ecma6.*
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.stubs.JSFrameworkMarkersIndex
@@ -18,10 +21,9 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.stubs.Stub
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
-import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.VueFrameworkHandler
-import org.jetbrains.vuejs.model.VueComponent
-import org.jetbrains.vuejs.model.source.VueEntityDescriptor
+import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
+import org.jetbrains.vuejs.model.VueNamedComponent
 
 object VueTypedEntitiesProvider {
 
@@ -92,26 +94,13 @@ object VueTypedEntitiesProvider {
   private fun checkTypeName(typeName: String?) =
     typeName != null && typeName.matches(vueComponentTypenameRegex)
 
-  fun getComponentDescriptor(element: PsiElement?): VueEntityDescriptor? {
-    if (element == null) return null
-    val source = if (element is JSPsiNamedElementBase) {
-      element.resolveIfImportSpecifier()
-    }
-    else element
-    val componentDefinition: JSQualifiedNamedElement? = resolveElementTo(element, TypeScriptVariable::class,
-                                                                         TypeScriptInterfaceClass::class)
-    return componentDefinition?.takeIf { isComponentDefinition(it) }?.let {
-      VueTypedComponentDescriptor(source, (source as? PsiNamedElement)?.name ?: componentDefinition.name!!)
-    }
-  }
+  fun getComponent(element: PsiElement?): VueTypedComponent? =
+    resolveElementTo(element, TypeScriptVariable::class, TypeScriptInterfaceClass::class)
+      ?.takeIf { isComponentDefinition(it) }
+      ?.let { VueTypedComponent.create(it) }
 
-  fun getComponent(descriptor: VueEntityDescriptor?): VueTypedComponent? =
-    (descriptor as? VueTypedComponentDescriptor)?.let {
-      VueTypedComponent(it.source, it.name)
-    }
-
-  fun calculateDtsComponents(moduleDir: PsiDirectory): Map<String, VueComponent> {
-    val componentsFromDts = mutableMapOf<String, VueComponent>()
+  fun calculateDtsComponents(moduleDir: PsiDirectory): Map<String, VueNamedComponent> {
+    val componentsFromDts = mutableMapOf<String, VueNamedComponent>()
     val componentDefs = JSFrameworkMarkersIndex.getElements(
       VueFrameworkHandler.TYPED_COMPONENT_MARKER, TypeScriptVariable::class.java, moduleDir.project,
       GlobalSearchScopesCore.directoryScope(moduleDir, true)
@@ -128,15 +117,23 @@ object VueTypedEntitiesProvider {
         .forEach { export ->
           export.memberSource
             .allSourceElements
-            .asSequence()
-            .mapNotNull {
-              val variable = if (it !is TypeScriptVariable) resolveElementTo(it, TypeScriptVariable::class) else it
+            .firstNotNullOfOrNull { memberSource ->
+              if ((memberSource as? PsiNamedElement)?.name != export.memberName)
+                return@firstNotNullOfOrNull null
+              val variable =
+                memberSource as? TypeScriptVariable
+                ?: resolveElementTo(memberSource, TypeScriptVariable::class)
               if (variable != null && componentDefs.contains(variable)) {
-                VueTypedComponent(it, export.memberName)
+                VueTypedComponent.create(variable)
+                  ?.let {
+                    if (memberSource != variable)
+                      VueLocallyDefinedComponent.create(it, memberSource)
+                    else
+                      it
+                  }
               }
               else null
-            }
-            .firstOrNull()?.let {
+            }?.let {
               componentsFromDts[it.name] = it
             }
         }
@@ -145,16 +142,11 @@ object VueTypedEntitiesProvider {
       componentDefs.forEach { variable ->
         val name = variable.name
         if (variable.isExported && name != null) {
-          componentsFromDts[name] = VueTypedComponent(variable, name)
+          VueTypedComponent.create(variable)?.let { componentsFromDts[name] = it }
         }
       }
     }
     return componentsFromDts
   }
-
-  class VueTypedComponentDescriptor(
-    override val source: PsiElement,
-    val name: String,
-  ) : VueEntityDescriptor
 
 }

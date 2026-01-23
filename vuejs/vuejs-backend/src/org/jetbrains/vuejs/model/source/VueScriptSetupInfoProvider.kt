@@ -23,8 +23,6 @@ import com.intellij.lang.typescript.TypeScriptElementTypes
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
@@ -58,7 +56,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
   class VueScriptSetupInfo(val module: JSExecutionScope) : VueContainerInfoProvider.VueContainerInfo {
 
-    override val components: Map<String, VueComponent>
+    override val components: Map<String, VueNamedComponent>
       get() = structure.components
 
     override val directives: Map<String, VueDirective>
@@ -108,7 +106,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     private fun analyzeModule(module: JSExecutionScope): VueScriptSetupStructure {
       val mode = getVueMode(module)
-      val components = mutableMapOf<String, VueComponent>()
+      val components = mutableMapOf<String, VueNamedComponent>()
       val directives = mutableMapOf<String, VueDirective>()
 
       JSStubBasedPsiTreeUtil.processDeclarationsInScope(
@@ -119,7 +117,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             directives[name.substring(1)] = VueScriptSetupLocalDirective(name, element, mode)
           }
           else if (name != null && element !is JSClass) {
-            (VueModelManager.getComponent(VueComponents.getComponentDescriptor(element)) ?: VueUnresolvedComponent(element, element, name))
+            (VueComponents.getComponent(element) ?: VueUnresolvedComponent(element))
               .let { VueLocallyDefinedComponent.create(it, element) }
               ?.let { components[name] = it }
           }
@@ -128,10 +126,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         false
       )
 
-      val fileName = FileUtil.getNameWithoutExtension(module.containingFile.name)
-      VueModelManager.findEnclosingComponent(module)?.let { component ->
-        components.putIfAbsent(StringUtil.capitalize(fileName), component)
-      }
+      VueModelManager.findEnclosingComponent(module)
+        ?.let { VueLocallyDefinedComponent.create(it, module.containingFile) }
+        ?.let { component -> components.putIfAbsent(component.name, component) }
 
       var props: List<VueInputProperty> = emptyList()
       var emits: List<VueEmitCall> = emptyList()
@@ -215,7 +212,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
   }
 
   private data class VueScriptSetupStructure(
-    val components: Map<String, VueComponent>,
+    val components: Map<String, VueNamedComponent>,
     val directives: Map<String, VueDirective>,
     val props: List<VueInputProperty>,
     val emits: List<VueEmitCall>,

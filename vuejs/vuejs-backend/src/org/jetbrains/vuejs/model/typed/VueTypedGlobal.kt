@@ -22,10 +22,12 @@ data class VueTypedGlobal(
 ) : VueDelegatedEntitiesContainer<VueGlobal>(),
     VueGlobal {
 
-  private val typedGlobalComponents: Map<String, VueComponent> =
+  private val typedGlobalComponents: Map<String, VueNamedComponent> =
     CachedValuesManager.getCachedValue(source) {
       val result = resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, GLOBAL_COMPONENTS)
-        .mapValues { VueTypedComponent(it.value, it.key) }
+        .values
+        .mapNotNull { VueTypedComponent.create(it) }
+        .associateBy { it.name }
 
       CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
     }
@@ -51,7 +53,7 @@ data class VueTypedGlobal(
       CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
     }
 
-  override val components: Map<String, VueComponent>
+  override val components: Map<String, VueNamedComponent>
     get() = delegate.components + typedGlobalComponents
 
   override val directives: Map<String, VueDirective>

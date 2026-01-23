@@ -24,7 +24,7 @@ import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_JS_KEY
 import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_KEY
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueComponents.getComponentDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.getComponent
 
 abstract class VueCompositionContainer(
   private val mode: VueMode,
@@ -38,7 +38,7 @@ abstract class VueCompositionContainer(
   protected open fun pluginChain(): List<VuePlugin> =
     emptyList()
 
-  override val components: Map<String, VueComponent>
+  override val components: Map<String, VueNamedComponent>
     get() = buildMap {
       val container = delegate?.takeUnless { it is VueComponent }
       if (container != null) {
@@ -101,11 +101,13 @@ abstract class VueCompositionContainer(
       return when (implicitElement.name) {
         COMPONENT_FUN -> {
           val args = getFilteredArgs(call)
-          VueModelManager.getComponent(getComponentDescriptor(getParam(implicitElement, call, 1, args)))?.let {
-            val literal = args.getOrNull(0) as? JSLiteralExpression
-                          ?: return@let it
-            VueLocallyDefinedComponent.create(it, literal)
-          }
+          getParam(implicitElement, call, 1, args)
+            ?.let { getComponent(it) }
+            ?.let {
+              val literal = args.getOrNull(0) as? JSLiteralExpression
+                            ?: return@let it
+              VueLocallyDefinedComponent.create(it, literal)
+            }
         }
 
         DIRECTIVE_FUN,
@@ -122,7 +124,7 @@ abstract class VueCompositionContainer(
             }
           }
 
-        MIXIN_FUN -> VueModelManager.getMixin(getComponentDescriptor(getParam(implicitElement, call, 0)) as? VueSourceEntityDescriptor)
+        MIXIN_FUN -> VueModelManager.getMixin(getComponent(getParam(implicitElement, call, 0)))
 
         else -> null
       }
@@ -179,7 +181,7 @@ abstract class VueCompositionContainer(
       }.toList()
 
       val components = processCalls(COMPONENT_FUN, true) { name, el, nameLiteral ->
-        VueModelManager.getComponent(getComponentDescriptor(el))
+        getComponent(el)
           ?.let { VueLocallyDefinedComponent.create(it, nameLiteral ?: return@let null) }
           ?.let { component ->
             var delegate: VueScopeElement? = component
@@ -197,7 +199,7 @@ abstract class VueCompositionContainer(
       }.toMap()
 
       val mixins = processCalls(MIXIN_FUN, false) { _, el, _ ->
-        VueModelManager.getMixin(getComponentDescriptor(el) as? VueSourceEntityDescriptor)
+        VueModelManager.getMixin(getComponent(el))
       }.toList()
 
       val filters = processCalls(FILTER_FUN, true) { name, _, nameLiteral ->
@@ -240,7 +242,7 @@ abstract class VueCompositionContainer(
 
     private val IS_COMPOSITION_APP_COMPONENT_KEY = Key.create<Boolean>("vue.composition.app.component")
 
-    fun VueComponent.applyCompositionInfoFrom(component: VueComponent): VueComponent {
+    fun VueNamedComponent.applyCompositionInfoFrom(component: VueComponent): VueNamedComponent {
       if (this is UserDataHolder) {
         putUserData(IS_COMPOSITION_APP_COMPONENT_KEY, isCompositionAppComponent(component))
       }
@@ -253,7 +255,7 @@ abstract class VueCompositionContainer(
 
   private data class EntitiesAnalysis(
     val plugins: List<VuePlugin>,
-    val components: Map<String, VueComponent>,
+    val components: Map<String, VueNamedComponent>,
     val directives: Map<String, VueDirective>,
     val mixins: List<VueMixin>,
     val filters: Map<String, VueFilter>,

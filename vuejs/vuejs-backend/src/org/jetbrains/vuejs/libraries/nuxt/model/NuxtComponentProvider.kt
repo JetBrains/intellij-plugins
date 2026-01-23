@@ -14,7 +14,7 @@ import com.intellij.webpack.WebpackReferenceContributor
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_COMPONENTS_DEFS
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
-import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
 /**
@@ -96,7 +96,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
           }
           .sortedBy { it.third }
           .distinctBy { it.first }
-          .fold(MultiMap.create<String, VueComponent>()) { map, (name, component) -> map.also { it.putValue(name, component) } }
+          .fold(MultiMap.create<String, VueNamedComponent>()) { map, (name, component) -> map.also { it.putValue(name, component) } }
           .let { VueContainerInfoProvider.ComponentsInfo(MultiMap.empty(), it) }
       }
 

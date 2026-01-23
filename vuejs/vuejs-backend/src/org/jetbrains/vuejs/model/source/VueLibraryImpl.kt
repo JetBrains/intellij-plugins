@@ -17,6 +17,7 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.BOOTSTRAP_VUE_MODULE
 import org.jetbrains.vuejs.index.SHARDS_VUE_MODULE
 import org.jetbrains.vuejs.index.VUETIFY_MODULE
@@ -43,10 +44,10 @@ class VueLibraryImpl(
   override val defaultProximity: VueModelVisitor.Proximity
     get() = componentsWithProximity.first
 
-  override val components: Map<String, VueComponent>
+  override val components: Map<String, VueNamedComponent>
     get() = componentsWithProximity.second
 
-  private val componentsWithProximity: Pair<VueModelVisitor.Proximity, Map<String, VueComponent>>
+  private val componentsWithProximity: Pair<VueModelVisitor.Proximity, Map<String, VueNamedComponent>>
     get() = CachedValuesManager.getManager(project).getCachedValue(this) {
       val dependencies = mutableListOf<Any>(
         NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
@@ -54,7 +55,7 @@ class VueLibraryImpl(
         DumbService.getInstance(project).modificationTracker,
       )
       val psiDirectory = source
-      val components: Pair<VueModelVisitor.Proximity, Map<String, VueComponent>>
+      val components: Pair<VueModelVisitor.Proximity, Map<String, VueNamedComponent>>
       if (psiDirectory == null) {
         components = Pair(VueModelVisitor.Proximity.GLOBAL, emptyMap())
         dependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
@@ -76,8 +77,9 @@ class VueLibraryImpl(
           VueTypedEntitiesProvider.calculateDtsComponents(indexedPsiDirectory)
             .takeIf { it.isNotEmpty() }
             ?.let { Pair(VueModelVisitor.Proximity.OUT_OF_SCOPE, it) }
-          ?: VueComponentsCalculation.calculateScopeComponents(scope, globalize).map.asSequence()
-            .mapNotNull { VueModelManager.getComponent(it.value.first)?.let { component -> Pair(it.key, component) } }
+          ?: VueComponentsCalculation.calculateScopeComponents(scope, globalize)
+            .list.asSequence()
+            .map { Pair(fromAsset(it.first.name), it.first) }
             .distinctBy { it.first }
             .toMap()
             .let { Pair(VueModelVisitor.Proximity.GLOBAL, it) }

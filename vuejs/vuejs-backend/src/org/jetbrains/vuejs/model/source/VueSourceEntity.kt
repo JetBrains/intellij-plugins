@@ -2,14 +2,15 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.psi.util.PsiTreeUtil
 
 interface VueSourceEntity {
 
   fun isPartOfImplementation(element: JSElement): Boolean =
     PsiTreeUtil.isContextAncestor(initializer, element, false)
-    || PsiTreeUtil.isContextAncestor(descriptor.clazz, element, false)
+    || PsiTreeUtil.isContextAncestor(clazz, element, false)
 
-  val descriptor: VueSourceEntityDescriptor
-  val initializer: JSElement? get() = descriptor.initializer
+  val initializer: JSElement?
+  val clazz: JSClass?
 }

@@ -14,8 +14,6 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.resolve.ResolveResultSink
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.polySymbols.js.references.PolySymbolJSImplicitElement
 import com.intellij.psi.ResolveResult
@@ -42,8 +40,8 @@ class VueExprReferenceExpressionResolver(
       val filters = mutableListOf<VueFilter>()
       val referenceName = expression.referenceName
       container.acceptEntities(object : VueModelProximityVisitor() {
-        override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
-          return acceptSameProximity(proximity, name == referenceName) {
+        override fun visitFilter(filter: VueFilter, proximity: Proximity): Boolean {
+          return acceptSameProximity(proximity, filter.name == referenceName) {
             filters.add(filter)
           }
         }
@@ -125,7 +123,8 @@ class VueExprReferenceExpressionResolver(
     // there's also `resolveResult.actionScriptImport` but Vue doesn't interact with AS, so this is fine;
     // this code could probably be simplified, I'm not sure if we need so many objects
     val importUsed = if (resolveResult is JSResolveResult) resolveResult.eS6Import else null
-    when (val element = if (resolvedElement is VueImplicitElement || resolvedElement is PolySymbolJSImplicitElement) resolvedElement.context else resolvedElement) {
+    when (val element =
+      if (resolvedElement is VueImplicitElement || resolvedElement is PolySymbolJSImplicitElement) resolvedElement.context else resolvedElement) {
       is JSFunctionItem -> {
         val add: (JSFunctionItem) -> Unit = if (resolvedElement is VueImplicitElement)
           { it -> results.add(JSResolveResult(resolvedElement.copyWithProvider(it), importUsed, null)) }

@@ -102,15 +102,15 @@ private constructor(
   ) {
     container.acceptEntities(object : VueModelVisitor() {
 
-      override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-        component.asPolySymbol(name, forcedProximity)
+      override fun visitComponent(component: VueNamedComponent, proximity: Proximity): Boolean {
+        component.asPolySymbol(forcedProximity)
           ?.tryMergeWithWebTypes(webTypesContributions)
           ?.forEach(consumer)
         return true
       }
 
-      override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-        directive.asPolySymbol(name, forcedProximity)
+      override fun visitDirective(directive: VueDirective, proximity: Proximity): Boolean {
+        directive.asPolySymbol(forcedProximity)
           ?.tryMergeWithWebTypes(webTypesContributions)
           ?.forEach(consumer)
         return true
@@ -160,8 +160,7 @@ private constructor(
     if (this !is PsiSourcedPolySymbol) return listOf(this)
     val source =
       (this as? VueSourceEntity)
-        ?.descriptor
-        ?.source
+        ?.let { it.initializer ?: it.clazz }
         ?.let {
           it.contextOfType(ES6ExportDefaultAssignment::class)
           ?: it as? HtmlFileImpl

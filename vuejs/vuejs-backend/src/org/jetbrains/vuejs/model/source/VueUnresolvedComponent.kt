@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
-import com.intellij.lang.javascript.navigation.JSDeclarationEvaluator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.types.JSAnyType
@@ -20,16 +19,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
 class VueUnresolvedComponent(
-  private val context: PsiElement,
   override val rawSource: PsiElement?,
-  override val defaultName: String?,
-  override val vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.OUT_OF_SCOPE,
 ) : VueComponent {
-
-  override val name: String = defaultName ?: "<unnamed>"
 
   override val nameElement: PsiElement? get() = null
 
@@ -37,25 +30,16 @@ class VueUnresolvedComponent(
     (rawSource as? ES6ImportSpecifier)?.resolveIfImportSpecifier() ?: rawSource
   }
 
-  override fun withNameAndProximity(
-    name: String,
-    proximity: VueModelVisitor.Proximity,
-  ): VueComponent =
-    VueUnresolvedComponent(context, rawSource, name, proximity)
-
   override val typeParameters: List<TypeScriptTypeParameter>
     get() = emptyList()
+
+  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+    emptyList()
 
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val thisType: JSType
-    get() = getDefaultVueComponentInstanceType(context) ?: JSAnyType.get(context)
-
-  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> {
-    val source = componentSource ?: return emptyList()
-    val adjustedSources = JSDeclarationEvaluator.adjustDeclaration(source, null) ?: source
-    return listOf(VueComponentSourceNavigationTarget(adjustedSources))
-  }
+    get() = getDefaultVueComponentInstanceType(rawSource) ?: JSAnyType.get(rawSource)
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
@@ -69,32 +53,22 @@ class VueUnresolvedComponent(
 
 
   override fun createPointer(): Pointer<VueUnresolvedComponent> {
-    val context = this.context.createSmartPointer()
-    val source = this.componentSource?.createSmartPointer()
-    val defaultName = this.defaultName
-    val vueProximity = this.vueProximity
+    val source = this.rawSource?.createSmartPointer()
     return Pointer {
-      val newContext = context.dereference() ?: return@Pointer null
       val newSource = source?.let { it.dereference() ?: return@Pointer null }
-      VueUnresolvedComponent(newContext, newSource, defaultName, vueProximity)
+      VueUnresolvedComponent(newSource)
     }
   }
 
   override fun equals(other: Any?): Boolean =
     other === this
     || other is VueUnresolvedComponent
-    && other.defaultName == defaultName
-    && other.context == context
     && other.rawSource == rawSource
 
-  override fun hashCode(): Int {
-    var result = defaultName.hashCode()
-    result = 31 * result + context.hashCode()
-    result = 31 * result + rawSource.hashCode()
-    return result
-  }
+  override fun hashCode(): Int =
+    rawSource.hashCode()
 
-  override val components: Map<String, VueComponent>
+  override val components: Map<String, VueNamedComponent>
     get() = emptyMap()
   override val directives: Map<String, VueDirective>
     get() = emptyMap()

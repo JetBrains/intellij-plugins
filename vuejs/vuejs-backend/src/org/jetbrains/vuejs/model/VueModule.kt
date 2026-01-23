@@ -17,7 +17,7 @@ class VueModule(
 ) : VueDelegatedEntitiesContainer<VueGlobal>(),
     VueGlobal {
 
-  override val components: Map<String, VueComponent>
+  override val components: Map<String, VueNamedComponent>
     get() = delegate.components
 
   override val apps: List<VueApp>

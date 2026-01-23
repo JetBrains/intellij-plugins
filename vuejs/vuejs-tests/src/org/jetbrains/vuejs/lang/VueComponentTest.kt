@@ -58,7 +58,7 @@ import org.junit.runners.JUnit4
 class VueComponentTest :
   BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = 
+  override fun getTestDataPath(): String =
     getVueTestDataPath() + "/component"
 
   override fun setUp() {
@@ -320,7 +320,7 @@ class VueComponentTest :
       printObject(topLevel) { level ->
         printProperty(level, "class", sourceElement.javaClass.simpleName)
         when (sourceElement) {
-          is VueComponent -> printProperty(level, "defaultName", sourceElement.defaultName)
+          is VueNamedComponent -> printProperty(level, "defaultName", sourceElement.name)
           is VueDirective, is VueFilter -> printProperty(level, "defaultName", sourceElement.name)
           is VueSymbol -> printProperty(level, "name", sourceElement.name)
         }

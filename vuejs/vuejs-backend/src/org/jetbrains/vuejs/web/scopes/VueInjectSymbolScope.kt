@@ -19,8 +19,8 @@ import org.jetbrains.vuejs.model.provides
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.web.VUE_PROVIDES
 
-class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent) :
-  PolySymbolScopeWithCache<VueSourceComponent, Unit>(enclosingComponent.source.project, enclosingComponent, Unit) {
+class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent<*>) :
+  PolySymbolScopeWithCache<VueSourceComponent<*>, Unit>(enclosingComponent.source.project, enclosingComponent, Unit) {
 
   override fun provides(kind: PolySymbolKind): Boolean =
     kind == VUE_PROVIDES

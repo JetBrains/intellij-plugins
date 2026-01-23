@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.codeInsight.fromAsset
 
 interface VueScopeElement : VueElement {
 
@@ -19,7 +18,7 @@ interface VueScopeElement : VueElement {
     visitor: VueModelVisitor,
     minimumProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.GLOBAL,
   ): Boolean {
-    val visited = mutableSetOf<Pair<String, VueScopeElement>>()
+    val visited = mutableSetOf<VueScopeElement>()
     val containersStack = mutableListOf<Pair<VueEntitiesContainer, VueModelVisitor.Proximity>>()
 
     if (minimumProximity <= VueModelVisitor.Proximity.GLOBAL) {
@@ -52,7 +51,7 @@ interface VueScopeElement : VueElement {
     while (containersStack.isNotEmpty()) {
       val (container, proximity) = containersStack.removeAt(containersStack.size - 1)
 
-      if (!visited.add(Pair("", container))) continue
+      if (!visited.add(container)) continue
 
       if ((container is VueMixin && !visitor.visitMixin(container, proximity)) ||
           (container is VueComponent && !visitor.visitSelfComponent(container, proximity)) ||
@@ -67,20 +66,20 @@ interface VueScopeElement : VueElement {
         containersStack.add(Pair(mixin, proximity))
       }
       container.components.forEach { (name, component) ->
-        if (visited.add(Pair(fromAsset(name), component))
-            && !visitor.visitComponent(name, component, proximity)) {
+        if (visited.add(component)
+            && !visitor.visitComponent(component, proximity)) {
           return false
         }
       }
       container.directives.forEach { (name, directive) ->
-        if (visited.add(Pair(fromAsset(name), directive))
-            && !visitor.visitDirective(name, directive, proximity)) {
+        if (visited.add(directive)
+            && !visitor.visitDirective(directive, proximity)) {
           return false
         }
       }
       container.filters.forEach { (name, filter) ->
-        if (visited.add(Pair(name, filter))
-            && !visitor.visitFilter(name, filter, proximity)) {
+        if (visited.add(filter)
+            && !visitor.visitFilter(filter, proximity)) {
           return false
         }
       }

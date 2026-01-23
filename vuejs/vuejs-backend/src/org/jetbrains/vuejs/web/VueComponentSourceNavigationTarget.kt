@@ -3,17 +3,19 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.codeInsight.navigation.targetPresentation
 import com.intellij.ide.util.EditSourceUtil
+import com.intellij.lang.javascript.navigation.JSDeclarationEvaluator
 import com.intellij.model.Pointer
-import com.intellij.navigation.EmptyNavigatable
 import com.intellij.platform.backend.navigation.NavigationRequest
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import org.jetbrains.vuejs.model.source.VueComponents
 
-class VueComponentSourceNavigationTarget(private val myElement: PsiElement) : NavigationTarget {
+class VueComponentSourceNavigationTarget(element: PsiElement) : NavigationTarget {
+
+  private val myElement: PsiElement = JSDeclarationEvaluator.adjustDeclaration(element, null)
+                                      ?: element
 
   override fun createPointer(): Pointer<out NavigationTarget> {
     val elementPointer = myElement.createSmartPointer()
@@ -23,11 +25,8 @@ class VueComponentSourceNavigationTarget(private val myElement: PsiElement) : Na
   }
 
   override fun navigationRequest(): NavigationRequest? =
-    (VueComponents.getComponentDescriptor(myElement)?.source ?: myElement).let {
-      it as? Navigatable
-      ?: EditSourceUtil.getDescriptor(it)
-      ?: EmptyNavigatable.INSTANCE
-    }?.navigationRequest()
+    (myElement as? Navigatable ?: EditSourceUtil.getDescriptor(myElement))
+      ?.navigationRequest()
 
   override fun computePresentation(): TargetPresentation = targetPresentation(myElement)
 

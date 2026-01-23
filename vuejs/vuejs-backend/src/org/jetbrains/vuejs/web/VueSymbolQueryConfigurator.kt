@@ -168,7 +168,7 @@ class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
   private object VueWatchSymbolScopeContributor : PolySymbolLocationQueryScopeProvider<JSObjectLiteralExpression> {
     override fun getScopes(location: JSObjectLiteralExpression): List<PolySymbolScope> {
       if (location.context?.asSafely<JSProperty>()?.name == WATCH_PROP) {
-        val enclosingComponent = VueModelManager.findEnclosingComponent(location) as? VueSourceComponent
+        val enclosingComponent = VueModelManager.findEnclosingComponent(location) as? VueSourceComponent<*>
                                  ?: return emptyList()
         return listOf(VueWatchSymbolScope(enclosingComponent))
       }
@@ -184,7 +184,7 @@ class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
           isInjectedAsAlias(location) ||
           isInjectedAsProperty(location) ||
           isInjectedAsMacroCall(location)) {
-        val enclosingComponent = VueModelManager.findEnclosingComponent(location) as? VueSourceComponent
+        val enclosingComponent = VueModelManager.findEnclosingComponent(location) as? VueSourceComponent<*>
                                  ?: return emptyList()
         return listOf(VueInjectSymbolScope(enclosingComponent))
       }
@@ -260,7 +260,7 @@ class VueSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
           containerToProximity[global] = VueModelVisitor.Proximity.GLOBAL
         }
 
-        if (enclosingContainer is VueSourceComponent && containerToProximity.keys.none { it is VueApp }) {
+        if (enclosingContainer is VueSourceComponent<*> && containerToProximity.keys.none { it is VueApp }) {
           enclosingContainer.global?.apps?.filterIsInstance<VueCompositionApp>()?.forEach {
             containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE
           }

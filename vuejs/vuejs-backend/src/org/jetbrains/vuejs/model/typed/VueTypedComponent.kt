@@ -1,15 +1,18 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.typed
 
-import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.model.Pointer
+import com.intellij.openapi.project.Project
+import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -21,26 +24,39 @@ import org.jetbrains.vuejs.lang.html.isVueFileName
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
-class VueTypedComponent(
-  override val componentSource: PsiElement,
+class VueTypedComponent private constructor(
+  override val source: JSQualifiedNamedElement,
   override val name: String,
   override val vueProximity: VueModelVisitor.Proximity? = null,
-) : VueTypedContainer(componentSource), VueComponent {
+) : VueTypedContainer(source), VueNamedComponent, PsiSourcedPolySymbol {
 
-  override fun withNameAndProximity(name: String, proximity: VueModelVisitor.Proximity): VueComponent =
-    VueTypedComponent(componentSource, name, proximity)
+  companion object {
+    fun create(source: JSQualifiedNamedElement): VueTypedComponent? {
+      val name = source.name ?: return null
+      return VueTypedComponent(source, name)
+    }
+  }
+
+  override fun withProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
+    VueTypedComponent(source, name, proximity)
+
+  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+    listOf(VueComponentSourceNavigationTarget(source))
+
+  override val delegate: VueComponent?
+    get() = null
 
   override val nameElement: PsiElement?
     get() = null
 
-  override val source: PsiElement
-    get() = componentSource
+  override val componentSource: PsiElement
+    get() = source
 
   override val renameTarget: PolySymbolRenameTarget?
-    get() = if (source is JSLiteralExpression)
-      PolySymbolRenameTarget.create(this)
-    else null
+    get() = null
 
   override val thisType: JSType
     get() = CachedValuesManager.getCachedValue(componentSource) {
@@ -85,7 +101,7 @@ class VueTypedComponent(
             ?: emptyList()
 
   override fun createPointer(): Pointer<VueTypedComponent> {
-    val sourcePtr = componentSource.createSmartPointer()
+    val sourcePtr = source.createSmartPointer()
     val defaultName = this.name
     return Pointer {
       val source = sourcePtr.dereference() ?: return@Pointer null
@@ -96,9 +112,9 @@ class VueTypedComponent(
   override fun equals(other: Any?): Boolean =
     other === this ||
     other is VueTypedComponent
-    && other.componentSource == this.componentSource
+    && other.source == this.source
 
   override fun hashCode(): Int =
-    componentSource.hashCode()
+    source.hashCode()
 
 }

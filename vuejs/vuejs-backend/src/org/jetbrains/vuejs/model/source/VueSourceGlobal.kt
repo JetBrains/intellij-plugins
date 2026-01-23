@@ -41,11 +41,11 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
   override val mixins: List<VueMixin>
     get() = getCachedValue { buildMixinsList(it) }
 
-  override val components: Map<String, VueComponent>
+  override val components: Map<String, VueNamedComponent>
     get() = getComponents(true)
 
   override val unregistered: VueEntitiesContainer = object : VueEntitiesContainer {
-    override val components: Map<String, VueComponent>
+    override val components: Map<String, VueNamedComponent>
       get() = getComponents(false)
     override val directives: Map<String, VueDirective> = emptyMap()
     override val filters: Map<String, VueFilter> = emptyMap()
@@ -67,11 +67,11 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
   override fun getParents(scopeElement: VueScopeElement): List<VueEntitiesContainer> =
     emptyList()
 
-  private fun getComponents(global: Boolean): Map<String, VueComponent> =
+  private fun getComponents(global: Boolean): Map<String, VueNamedComponent> =
     getCachedValue { scope ->
 
-      val localComponents: MultiMap<String, VueComponent> = MultiMap.createLinked()
-      val globalComponents: MultiMap<String, VueComponent> = MultiMap.createLinked()
+      val localComponents: MultiMap<String, VueNamedComponent> = MultiMap.createLinked()
+      val globalComponents: MultiMap<String, VueNamedComponent> = MultiMap.createLinked()
 
       // Add Vue files without regular initializer as possible imports
       val psiManager = PsiManager.getInstance(project)
@@ -79,34 +79,37 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
         VUE_NO_INITIALIZER_COMPONENTS_INDEX, setOf(true),
         { file ->
           psiManager.findFile(file)
-            ?.let { psiFile ->
-              VueModelManager.getComponent(VueSourceEntityDescriptor(source = psiFile))
-            }
-            ?.let { localComponents.putValue(fromAsset(file.nameWithoutExtension), it) }
+            ?.let { VueSourceComponent.create(it) }
+            ?.let { localComponents.putValue(it.name, it) }
           true
         }, scope)
 
       // Add components from global and local indices
       val componentsData = VueComponentsCalculation.calculateScopeComponents(scope, false)
-      val moduleComponents = componentsData.map
+      val moduleComponents = componentsData.list
 
-      moduleComponents.entries
+      moduleComponents
         .asSequence()
-        .filter { !it.value.second }
-        .mapNotNull { (name, data) -> VueModelManager.getComponent(data.first)?.let { Pair(name, it) } }
-        .fold(localComponents) { map, (name, component) -> map.also { it.putValue(name, component) } }
+        .filter { !it.second }
+        .fold(localComponents) { map, (component, _) ->
+          map.also { it.putValue(fromAsset(component.name), component) }
+        }
 
-      moduleComponents.entries
+      moduleComponents
         .asSequence()
-        .filter { it.value.second }
-        .mapNotNull { (name, data) -> VueModelManager.getComponent(data.first)?.let { Pair(name, it) } }
-        .fold(globalComponents) { map, (name, component) -> map.also { it.putValue(name, component) } }
+        .filter { it.second }
+        .fold(globalComponents) { map, (component, _) ->
+          map.also { it.putValue(fromAsset(component.name), component) }
+        }
 
       componentsData.libCompResolveMap.forEach { (alias, target) ->
-        localComponents[target].firstOrNull()
-          ?.let { if (localComponents[alias].isEmpty()) localComponents.putValue(alias, it) }
-        globalComponents[target].firstOrNull()
-          ?.let { if (globalComponents[alias].isEmpty()) globalComponents.putValue(alias, it) }
+        val aliasComponent = VueLocallyDefinedComponent.create(target, alias)
+                             ?: return@forEach
+        val aliasName = fromAsset(aliasComponent.name)
+        localComponents[fromAsset(target.name)].find { it == target }
+          ?.let { if (localComponents[aliasName].isEmpty()) localComponents.putValue(aliasName, aliasComponent) }
+        globalComponents[fromAsset(target.name)].find { it == target }
+          ?.let { if (globalComponents[aliasName].isEmpty()) globalComponents.putValue(aliasName, aliasComponent) }
       }
 
       // Contribute components from providers.
@@ -120,10 +123,15 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
 
       Pair(
         localComponents.entrySet().asSequence()
-          .mapNotNull { (name, components) -> components.lastOrNull()?.let { Pair(name, it) } }
-          .sortedBy { it.first }.toMap(),
+          .mapNotNull { (_, components) ->
+            components.lastOrNull()?.let { Pair(fromAsset(it.name), it) }
+          }
+          .sortedBy { it.first }
+          .toMap(),
         globalComponents.entrySet().asSequence()
-          .mapNotNull { (name, components) -> components.lastOrNull()?.let { Pair(name, it) } }
+          .mapNotNull { (_, components) ->
+            components.lastOrNull()?.let { Pair(fromAsset(it.name), it) }
+          }
           .sortedBy { it.first }.toMap())
     }.let {
       if (global) it.second else it.first
@@ -164,8 +172,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
     private fun buildMixinsList(scope: GlobalSearchScope): List<VueMixin> =
       resolve(GLOBAL, scope, VUE_MIXIN_BINDING_INDEX_KEY)
         .asSequence()
-        .mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
-        .mapNotNull { VueModelManager.getMixin(it) }
+        .mapNotNull { VueComponents.vueMixinFinder(it) }
         .toList()
 
     private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> =

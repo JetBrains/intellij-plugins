@@ -2,10 +2,13 @@
 package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.model.Pointer
+import com.intellij.openapi.project.Project
+import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.html.HTML_ATTRIBUTES
@@ -23,6 +26,7 @@ import com.intellij.polySymbols.patterns.PolySymbolPatternReferenceResolver.Refe
 import com.intellij.polySymbols.query.PolySymbolNameConversionRules
 import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
+import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
@@ -35,7 +39,6 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_SPECIAL_PROPERTIES
-import org.jetbrains.vuejs.web.asPolySymbol
 
 private const val SLOT_LOCAL_COMPONENT = "\$local"
 
@@ -47,7 +50,8 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
     VueModelManager.findEnclosingContainer(dataHolder)
-      .asPolySymbol(SLOT_LOCAL_COMPONENT, VueModelVisitor.Proximity.LOCAL)
+      .asSafely<VueComponent>()
+      ?.let { SlotLocalComponent(it) }
       ?.let(consumer)
 
     consumer(VueSlotPropertiesSymbol(getSlotName()))
@@ -79,6 +83,35 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
     val componentPointer = dataHolder.createSmartPointer()
     return Pointer {
       componentPointer.dereference()?.let { VueSlotElementScope(it) }
+    }
+  }
+
+  private class SlotLocalComponent(
+    override val delegate: VueComponent,
+  ) : VueDelegatedContainer<VueComponent>(), VueNamedComponent {
+    override val name: String get() = SLOT_LOCAL_COMPONENT
+    override val source: PsiElement?
+      get() = delegate.source
+    override val nameElement: PsiElement?
+      get() = null
+    override val componentSource: PsiElement?
+      get() = delegate.componentSource
+    override val typeParameters: List<TypeScriptTypeParameter>
+      get() = emptyList()
+    override val vueProximity: VueModelVisitor.Proximity
+      get() = VueModelVisitor.Proximity.LOCAL
+
+    override fun withProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
+      this
+
+    override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+      delegate.getNavigationTargets(project)
+
+    override fun createPointer(): Pointer<out VueNamedComponent> {
+      val delegatePtr = delegate.createPointer()
+      return Pointer {
+        delegatePtr.dereference()?.let { SlotLocalComponent(it) }
+      }
     }
   }
 

@@ -15,8 +15,8 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VuePsiSourcedComponent
 import org.jetbrains.vuejs.model.source.VueComponents
-import org.jetbrains.vuejs.model.source.VueSourceComponent
 import java.util.function.Consumer
 
 class VueComponentImportCandidatesProvider(private val placeInfo: JSImportPlaceInfo) : JSImportCandidatesBase(placeInfo) {
@@ -28,8 +28,8 @@ class VueComponentImportCandidatesProvider(private val placeInfo: JSImportPlaceI
 
   override fun processCandidates(name: String, processor: JSCandidatesProcessor) {
     val component = VueModelManager.getGlobal(placeInfo.place).unregistered.components[fromAsset(name)]
-    if (component != null && component is VueSourceComponent) {
-      val source = component.descriptor.source
+    if (component != null && component is VuePsiSourcedComponent) {
+      val source = component.source
       if (source is PsiFile) {
         processor.processCandidate(ES6ImportCandidate(name, source, placeInfo.place))
       }

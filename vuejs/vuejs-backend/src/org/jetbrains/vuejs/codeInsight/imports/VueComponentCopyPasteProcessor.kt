@@ -44,6 +44,7 @@ import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
 import org.jetbrains.vuejs.model.source.NAME_PROP
 import java.awt.datatransfer.DataFlavor
@@ -207,18 +208,18 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
 
         val destinationComponents = mutableSetOf<String>()
         destinationComponent.acceptEntities(object : VueModelVisitor() {
-          override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-            destinationComponents.add(toAsset(name, true))
+          override fun visitComponent(component: VueNamedComponent, proximity: Proximity): Boolean {
+            destinationComponents.add(toAsset(component.name, true))
             return true
           }
         })
 
         val toImport = mutableMapOf<String, VueComponent>()
         sourceComponent.acceptEntities(object : VueModelVisitor() {
-          override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-            val capitalizedName = toAsset(name, true)
+          override fun visitComponent(component: VueNamedComponent, proximity: Proximity): Boolean {
+            val capitalizedName = toAsset(component.name, true)
             if (fragmentComponentNames.contains(capitalizedName) && !destinationComponents.contains(capitalizedName)) {
-              toImport.putIfAbsent(name, component)
+              toImport.putIfAbsent(component.name, component)
             }
             return true
           }

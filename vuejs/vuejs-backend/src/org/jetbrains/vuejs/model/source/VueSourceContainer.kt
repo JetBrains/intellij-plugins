@@ -1,29 +1,36 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
-import java.util.*
 
-abstract class VueSourceContainer(
-  sourceElement: JSImplicitElement,
-  override val descriptor: VueSourceEntityDescriptor,
+abstract class VueSourceContainer<T: PsiElement>(
+  override val source: T,
+  override val initializer: JSElement?, /* JSObjectLiteralExpression | JSFile */
+  override val clazz: JSClass?,
 ) : UserDataHolderBase(),
     VueContainer,
     VueSourceEntity {
 
-  override val source: PsiElement = sourceElement
+  init {
+    assert(initializer == null || initializer is JSObjectLiteralExpression || initializer is JSFile)
+  }
+
+  private val descriptor = VueSourceEntityDescriptor(initializer, clazz, initializer ?: clazz ?: source)
+
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
 
   override val element: String?
     get() = getTextIfLiteral(
-      descriptor.initializer?.asSafely<JSObjectLiteralExpression>()
+      initializer?.asSafely<JSObjectLiteralExpression>()
         ?.findProperty(EL_PROP)?.literalExpressionInitializer)
 
   override val data: List<VueDataProperty> get() = get(DATA)
@@ -41,29 +48,33 @@ abstract class VueSourceContainer(
 
   override val delimiters: Pair<String, String>? get() = get(DELIMITERS)
   override val extends: List<VueContainer> get() = get(EXTENDS)
-  override val components: Map<String, VueComponent> get() = get(COMPONENTS)
+  override val components: Map<String, VueNamedComponent> get() = get(COMPONENTS)
   override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
   override val mixins: List<VueMixin> get() = get(MIXINS)
   override val filters: Map<String, VueFilter> get() = get(FILTERS)
   override val provides: List<VueProvide> get() = get(PROVIDES)
   override val injects: List<VueInject> get() = get(INJECTS)
 
-  private fun <T> get(accessor: MemberAccessor<T>): T {
-    return accessor.get(descriptor)
-  }
+  private operator fun <T> get(accessor: MemberAccessor<T>): T =
+    accessor.get(descriptor)
 
   override fun equals(other: Any?): Boolean =
     other === this ||
-    (other is VueSourceContainer
+    (other is VueSourceContainer<*>
      && other.javaClass == javaClass
      && other.source == source
-     && other.descriptor == descriptor)
+     && other.initializer == initializer
+     && other.clazz == clazz)
 
-  override fun hashCode(): Int =
-    Objects.hash(source, descriptor)
+  override fun hashCode(): Int {
+    var result = source.hashCode()
+    result = 31 * result + initializer.hashCode()
+    result = 31 * result + clazz.hashCode()
+    return result
+  }
 
   override fun toString(): String {
-    return "${javaClass.simpleName}(${descriptor.source})"
+    return "${javaClass.simpleName}(${source})"
   }
 
   companion object {
@@ -87,9 +98,6 @@ abstract class VueSourceContainer(
     private val MODEL = ModelAccessor(VueContainerInfo::model)
     private val TEMPLATE = TemplateAccessor(VueContainerInfo::template)
 
-    fun getTemplate(descriptor: VueSourceEntityDescriptor): VueTemplate<*>? {
-      return TEMPLATE.get(descriptor)
-    }
   }
 
   private abstract class MemberAccessor<T>(
@@ -97,19 +105,18 @@ abstract class VueSourceContainer(
     val takeFirst: Boolean = false,
   ) {
 
-    fun get(descriptor: VueSourceEntityDescriptor): T {
-      return getContainerInfoProviders()
-               .asSequence()
-               .mapNotNull {
-                 it.getInfo(descriptor)
-                   ?.let(extInfoAccessor)
-               }
-               .let {
-                 if (takeFirst) it.firstOrNull()
-                 else it.reduceOrNull(::merge)
-               }
-             ?: empty()
-    }
+    fun get(descriptor: VueSourceEntityDescriptor): T =
+      getContainerInfoProviders()
+        .asSequence()
+        .mapNotNull {
+          it.getInfo(descriptor)
+            ?.let(extInfoAccessor)
+        }
+        .let {
+          if (takeFirst) it.firstOrNull()
+          else it.reduceOrNull(::merge)
+        }
+      ?: empty()
 
     protected open fun getContainerInfoProviders(): List<VueContainerInfoProvider> =
       VueContainerInfoProvider.getProviders()
