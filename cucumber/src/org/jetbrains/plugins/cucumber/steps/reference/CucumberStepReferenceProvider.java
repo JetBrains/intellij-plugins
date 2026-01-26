@@ -28,8 +28,8 @@ public final class CucumberStepReferenceProvider extends PsiReferenceProvider {
 
   @Override
   public PsiReference[] getReferencesByElement(PsiElement element, ProcessingContext context) {
-    if (element instanceof GherkinStep) {
-      ASTNode textNode = element.getNode().findChildByType(TEXT_AND_PARAM_SET);
+    if (element instanceof GherkinStep gherkinStep) {
+      ASTNode textNode = gherkinStep.getNode().findChildByType(TEXT_AND_PARAM_SET);
       if (textNode != null) {
         int start = textNode.getTextRange().getStartOffset();
         int end = textNode.getTextRange().getEndOffset();
@@ -41,7 +41,7 @@ public final class CucumberStepReferenceProvider extends PsiReferenceProvider {
           textNode = textNode.getTreeNext();
         }
         TextRange textRange = new TextRange(start, endBeforeSpace);
-        CucumberStepReference reference = new CucumberStepReference(element, textRange.shiftRight(-element.getTextOffset()));
+        CucumberStepReference reference = new CucumberStepReference(gherkinStep, textRange.shiftRight(-gherkinStep.getTextOffset()));
         return new PsiReference[]{reference};
       }
     }
