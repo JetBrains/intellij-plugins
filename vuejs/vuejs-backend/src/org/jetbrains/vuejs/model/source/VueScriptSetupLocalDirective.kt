@@ -46,7 +46,7 @@ class VueScriptSetupLocalDirective(
       )
     }
 
-  override fun withVueProximity(proximity: VueModelVisitor.Proximity?): VueDirective =
+  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueDirective =
     VueScriptSetupLocalDirective(name, rawSource, mode, proximity)
 
   override fun createPointer(): Pointer<VueScriptSetupLocalDirective> {

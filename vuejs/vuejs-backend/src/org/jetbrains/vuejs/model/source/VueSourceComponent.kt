@@ -77,7 +77,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       if (stub != null) {
         val stubs = stub.childrenStubs
         initializer = stubs.firstOrNull { it.elementType === JSElementTypes.OBJECT_LITERAL_EXPRESSION }?.psi as? JSObjectLiteralExpression
-        nameLiteral =stubs.getOrNull(0)?.psi as? JSLiteralExpression
+        nameLiteral = stubs.getOrNull(0)?.psi as? JSLiteralExpression
       }
       else {
         val arguments = call.argumentList?.arguments
@@ -182,7 +182,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     override val psiContext: PsiElement?
       get() = super<PolySymbolDeclaredInPsi>.psiContext
 
-    override fun withProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
+    override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
       VueNamedSourceComponent(source, initializer, proximity)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
@@ -206,7 +206,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
 
     override val name: @NlsSafe String = fromAsset(this@VueFileSourceComponent.source.virtualFile.nameWithoutExtension)
 
-    override fun withProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
+    override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
       VueFileSourceComponent(source, proximity)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
@@ -228,7 +228,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
 
     override val name: @NlsSafe String = clazz.name!!
 
-    override fun withProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
+    override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
       VueClassSourceComponent(source, initializer, proximity)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =

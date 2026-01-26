@@ -101,7 +101,7 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
     override val vueProximity: VueModelVisitor.Proximity
       get() = VueModelVisitor.Proximity.LOCAL
 
-    override fun withProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
+    override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
       this
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =

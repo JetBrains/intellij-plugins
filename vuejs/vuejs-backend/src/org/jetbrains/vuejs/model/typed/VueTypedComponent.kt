@@ -40,7 +40,7 @@ class VueTypedComponent private constructor(
     }
   }
 
-  override fun withProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
+  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
     VueTypedComponent(source, name, proximity)
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =

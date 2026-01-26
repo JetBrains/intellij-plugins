@@ -16,7 +16,7 @@ import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
-interface VueNamedComponent : VueComponent, VueSymbol {
+interface VueNamedComponent : VueComponent, VueScopeElementSymbol {
 
   override val kind: PolySymbolKind
     get() = VUE_COMPONENTS
@@ -34,9 +34,7 @@ interface VueNamedComponent : VueComponent, VueSymbol {
 
   val delegate: VueComponent?
 
-  val vueProximity: VueModelVisitor.Proximity?
-
-  fun withProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent
+  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent
 
   @Suppress("UNCHECKED_CAST")
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =

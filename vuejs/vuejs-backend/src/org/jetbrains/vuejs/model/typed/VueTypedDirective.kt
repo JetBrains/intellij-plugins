@@ -50,7 +50,7 @@ class VueTypedDirective(
       PolySymbolRenameTarget.create(this)
     else null
 
-  override fun withVueProximity(proximity: VueModelVisitor.Proximity?): VueDirective =
+  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueDirective =
     VueTypedDirective(source, name, proximity)
 
   override fun createPointer(): Pointer<VueTypedDirective> {

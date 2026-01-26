@@ -182,16 +182,8 @@ abstract class VueCompositionContainer(
 
       val components = processCalls(COMPONENT_FUN, true) { name, el, nameLiteral ->
         getComponent(el)
-          ?.let { VueLocallyDefinedComponent.create(it, nameLiteral ?: return@let null) }
-          ?.let { component ->
-            var delegate: VueScopeElement? = component
-            while (true) {
-              if (delegate is UserDataHolder) delegate.putUserData(IS_COMPOSITION_APP_COMPONENT_KEY, true)
-              if (delegate is VueDelegatedEntitiesContainer<*>) delegate = delegate.delegate
-              else break
-            }
-            Pair(name, component)
-          }
+          ?.let { VueLocallyDefinedComponent.create(it, nameLiteral ?: return@let null, isCompositionAppComponent = true) }
+          ?.let { component -> Pair(name, component) }
       }.toMap()
 
       val directives = processCalls(DIRECTIVE_FUN, true) { name, el, nameLiteral ->
@@ -240,17 +232,8 @@ abstract class VueCompositionContainer(
       )
     }
 
-    private val IS_COMPOSITION_APP_COMPONENT_KEY = Key.create<Boolean>("vue.composition.app.component")
-
-    fun VueNamedComponent.applyCompositionInfoFrom(component: VueComponent): VueNamedComponent {
-      if (this is UserDataHolder) {
-        putUserData(IS_COMPOSITION_APP_COMPONENT_KEY, isCompositionAppComponent(component))
-      }
-      return this
-    }
-
     fun isCompositionAppComponent(component: VueComponent): Boolean =
-      component is UserDataHolder && component.getUserData(IS_COMPOSITION_APP_COMPONENT_KEY) == true
+      component is VueLocallyDefinedComponent<*> && component.isCompositionAppComponent
   }
 
   private data class EntitiesAnalysis(

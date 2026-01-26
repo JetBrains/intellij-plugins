@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.web.VUE_FILTERS
 
-interface VueFilter : VueSymbol, VueScopeElement {
+interface VueFilter : VueScopeElementSymbol {
   override val source: PsiElement
 
   override val kind: PolySymbolKind

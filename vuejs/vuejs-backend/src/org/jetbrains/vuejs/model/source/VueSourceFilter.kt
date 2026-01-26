@@ -8,10 +8,13 @@ import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueFilter
 import org.jetbrains.vuejs.model.VueGlobalImpl
+import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VueScopeElementSymbol
 
 data class VueSourceFilter(
   override val name: String,
   private val originalSource: PsiElement,
+  override val vueProximity: VueModelVisitor.Proximity? = null,
 ) : VueFilter {
 
   override val parents: List<VueEntitiesContainer>
@@ -20,6 +23,9 @@ data class VueSourceFilter(
   override val source: PsiElement
     get() = (originalSource as? PsiReference)?.resolve()
             ?: originalSource
+
+  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueScopeElementSymbol =
+    VueSourceFilter(name, originalSource, proximity)
 
   override fun createPointer(): Pointer<VueSourceFilter> {
     val name = name

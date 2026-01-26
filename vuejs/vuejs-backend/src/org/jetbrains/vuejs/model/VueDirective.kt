@@ -18,7 +18,7 @@ import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
 
-interface VueDirective : VueSymbol, VueScopeElement, PolySymbolScope {
+interface VueDirective : VueScopeElementSymbol, PolySymbolScope {
 
   val directiveModifiers: List<VueDirectiveModifier> get() = emptyList()
 
@@ -27,10 +27,6 @@ interface VueDirective : VueSymbol, VueScopeElement, PolySymbolScope {
 
   override val searchTarget: PolySymbolSearchTarget
     get() = PolySymbolSearchTarget.create(this)
-
-  val vueProximity: VueModelVisitor.Proximity?
-
-  fun withVueProximity(proximity: VueModelVisitor.Proximity?): VueDirective
 
   override val priority: PolySymbol.Priority?
     get() = vueProximity?.asPolySymbolPriority()
