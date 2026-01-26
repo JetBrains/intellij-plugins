@@ -39,7 +39,7 @@ public class MeteorSpacebarsCompletionTest extends CodeInsightFixtureTestCase {
     String filePath = getTestName(true) + "/" + "templates" + ".html";
     final String fullPath = getTestName(true) + "/module";
     myFixture.copyDirectoryToProject(fullPath, "module");
-    UIUtil.dispatchAllInvocationEvents();
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
     myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject(filePath, StringUtil.getShortName(filePath, '/')));
     updateMeteorStatus();
 
