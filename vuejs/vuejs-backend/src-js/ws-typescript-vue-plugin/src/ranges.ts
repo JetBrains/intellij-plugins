@@ -26,16 +26,17 @@ function toSourceRange(
   sourceFile: ts.SourceFile,
   generatedRange: Range,
 ): Range | undefined {
-  for (const {toSourceOffset} of scriptMappers(language, sourceFile.fileName)) {
-    const sourceStartOffset = toSourceOffset(getOffset(sourceFile, generatedRange.start))
-    if (sourceStartOffset === undefined) continue
+  for (const {toSourceRange} of scriptMappers(language, sourceFile.fileName)) {
+    const sourceRange = toSourceRange(
+      getOffset(sourceFile, generatedRange.start),
+      getOffset(sourceFile, generatedRange.end),
+    )
 
-    const sourceEndOffset = toSourceOffset(getOffset(sourceFile, generatedRange.end))
-    if (sourceEndOffset === undefined) continue
+    if (sourceRange === undefined) continue
 
     return {
-      start: sourceFile.getLineAndCharacterOfPosition(sourceStartOffset),
-      end: sourceFile.getLineAndCharacterOfPosition(sourceEndOffset),
+      start: sourceFile.getLineAndCharacterOfPosition(sourceRange[0]),
+      end: sourceFile.getLineAndCharacterOfPosition(sourceRange[1]),
     }
   }
 
@@ -54,18 +55,11 @@ export function toGeneratedRange(
   fileName: string,
   startOffset: number,
   endOffset: number,
-): [startOffset: number, endOffset: number] | undefined {
-  for (const {toGeneratedOffset} of scriptMappers(language, fileName)) {
-    const generatedStartOffset = toGeneratedOffset(startOffset)
-    if (generatedStartOffset === undefined) continue
-
-    const generatedEndOffset = toGeneratedOffset(endOffset)
-    if (generatedEndOffset === undefined) continue
-
-    return [
-      generatedStartOffset,
-      generatedEndOffset,
-    ]
+): SimpleRange {
+  for (const {toGeneratedRange} of scriptMappers(language, fileName)) {
+    const generatedRange = toGeneratedRange(startOffset, endOffset)
+    if (generatedRange) 
+      return generatedRange
   }
 
   return undefined
@@ -94,6 +88,8 @@ function* scriptMappers(
   }
 }
 
+type SimpleRange = [startOffset: number, endOffset: number] | undefined
+
 class ScriptMapper {
   constructor(
     readonly mapper: Mapper,
@@ -101,7 +97,33 @@ class ScriptMapper {
   ) {
   }
 
-  toSourceOffset = (offset: number): number | undefined => {
+  toSourceRange = (
+    startOffset: number,
+    endOffset: number,
+  ): SimpleRange =>
+    this.#toRange(startOffset, endOffset, this.#toSourceOffset)
+
+  toGeneratedRange = (
+    startOffset: number,
+    endOffset: number,
+  ): SimpleRange =>
+    this.#toRange(startOffset, endOffset, this.#toGeneratedOffset)
+
+  #toRange = (
+    startOffset: number,
+    endOffset: number,
+    transform: (offset: number) => number | undefined,
+  ): SimpleRange => {
+    const start = transform(startOffset)
+    if (start === undefined) return undefined
+
+    const end = transform(endOffset)
+    if (end === undefined) return undefined
+
+    return [start, end]
+  }
+
+  #toSourceOffset = (offset: number): number | undefined => {
     for (const [sourceOffset] of this.mapper.toSourceLocation(offset - this.tsShift)) {
       return sourceOffset
     }
@@ -109,7 +131,7 @@ class ScriptMapper {
     return undefined
   }
 
-  toGeneratedOffset = (offset: number): number | undefined => {
+  #toGeneratedOffset = (offset: number): number | undefined => {
     for (const [generatedOffset] of this.mapper.toGeneratedLocation(offset + this.tsShift)) {
       return generatedOffset
     }
