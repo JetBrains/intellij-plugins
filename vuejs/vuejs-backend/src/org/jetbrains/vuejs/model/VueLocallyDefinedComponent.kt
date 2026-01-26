@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.model.Pointer
+import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.DocumentationTarget
@@ -109,14 +110,24 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
     && other.delegate == delegate
     && other.sourceElement == sourceElement
     && other.isCompositionAppComponent == isCompositionAppComponent
+    && other.vueProximity == vueProximity
 
   override fun hashCode(): Int {
     var result = name.hashCode()
     result = 31 * result + delegate.hashCode()
     result = 31 * result + sourceElement.hashCode()
     result = 31 * result + isCompositionAppComponent.hashCode()
+    result = 31 * result + vueProximity.hashCode()
     return result
   }
+
+  override fun isEquivalentTo(symbol: Symbol): Boolean =
+    symbol === this
+    || symbol is VueLocallyDefinedComponent<*>
+    && symbol.javaClass == javaClass
+    && symbol.name == name
+    && symbol.delegate == delegate
+    && symbol.sourceElement == sourceElement
 
   protected fun <C : VueLocallyDefinedComponent<T>> createPointer(clazz: KClass<C>): Pointer<C> {
     val vueProximity = this.vueProximity
@@ -152,6 +163,10 @@ private class VuePsiNamedElementLocallyDefinedComponent(
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(sourceElement)) }
+
+  override fun isEquivalentTo(symbol: Symbol): Boolean =
+    super<VuePsiSourcedComponent>.isEquivalentTo(symbol)
+    || super<VueLocallyDefinedComponent>.isEquivalentTo(symbol)
 
   override val rawSource: PsiElement
     get() = sourceElement
@@ -189,6 +204,10 @@ private class VueFileLocallyDefinedComponent(
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
     VueFileLocallyDefinedComponent(name, delegate, sourceElement, proximity)
+
+  override fun isEquivalentTo(symbol: Symbol): Boolean =
+    super<VueFileComponent>.isEquivalentTo(symbol)
+    || super<VueLocallyDefinedComponent>.isEquivalentTo(symbol)
 
   override fun createPointer(): Pointer<VueFileLocallyDefinedComponent> =
     createPointer(VueFileLocallyDefinedComponent::class)
