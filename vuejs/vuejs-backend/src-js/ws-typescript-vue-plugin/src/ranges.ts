@@ -26,11 +26,13 @@ function toSourceRange(
   sourceFile: ts.SourceFile,
   generatedRange: Range,
 ): Range | undefined {
-  for (const [mapper] of scriptMappers(language, sourceFile.fileName)) {
-    const sourceStartOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.start))
+  for (const [mapper, sourceScript] of scriptMappers(language, sourceFile.fileName)) {
+    const tsShift = sourceScript.snapshot.getLength()
+
+    const sourceStartOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.start, tsShift))
     if (sourceStartOffset === undefined) continue
 
-    const sourceEndOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.end))
+    const sourceEndOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.end, tsShift))
     if (sourceEndOffset === undefined) continue
 
     return {
@@ -45,8 +47,9 @@ function toSourceRange(
 function getOffset(
   sourceFile: ts.SourceFile,
   position: Position,
+  tsShift: number,
 ): number {
-  return sourceFile.getPositionOfLineAndCharacter(position.line, position.character)
+  return sourceFile.getPositionOfLineAndCharacter(position.line, position.character) - tsShift
 }
 
 export function toGeneratedRange(
