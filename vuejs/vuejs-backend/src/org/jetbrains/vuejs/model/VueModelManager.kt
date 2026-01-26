@@ -167,13 +167,7 @@ class VueModelManager {
 
       return when (context) {
         is JSObjectLiteralExpression -> VueSourceComponent.create(context)
-        is ES6Decorator -> {
-          when (val parentContext = context.context?.context) {
-            is JSExportAssignment -> parentContext.stubSafeElement as? JSClass
-            is JSClass -> parentContext
-            else -> null
-          }?.let { VueSourceComponent.create(it) }
-        }
+        is ES6Decorator -> VueSourceComponent.create(context)
         is JSClass -> VueSourceComponent.create(context)
         null -> null
         else -> getComponentFromVueModule(context)

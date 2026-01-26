@@ -1,12 +1,15 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.Pointer
@@ -35,8 +38,10 @@ import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.getTextLiteralExpression
+import org.jetbrains.vuejs.index.VUE_COMPONENTS_INDEX_JS_KEY
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptVaporTag
+import org.jetbrains.vuejs.index.getVueIndexData
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.getComponentDecorator
@@ -51,6 +56,13 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
 ) : VueSourceContainer<T>(source, initializer, clazz), VueComponent {
 
   companion object {
+
+    fun create(decorator: ES6Decorator): VueSourceComponent<JSClass>? =
+      when (val parentContext = decorator.context?.context) {
+        is JSExportAssignment -> parentContext.stubSafeElement as? JSClass
+        is JSClass -> parentContext
+        else -> null
+      }?.let { create(it) }
 
     fun create(clazz: JSClass): VueSourceComponent<JSClass>? {
       val initializer = getComponentDecorator(clazz)?.let { getDescriptorFromDecorator(it) }
@@ -70,10 +82,10 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     fun create(file: PsiFile): VueFileSourceComponent =
       VueFileSourceComponent(file)
 
-    fun create(call: JSCallExpression): VueSourceComponent<out JSElement>? {
+    fun create(call: JSCallExpression): VueComponent? {
       val stub = (call as? StubBasedPsiElement<*>)?.stub
       val initializer: JSObjectLiteralExpression?
-      val nameLiteral: JSLiteralExpression?
+      var nameLiteral: JSLiteralExpression?
       if (stub != null) {
         val stubs = stub.childrenStubs
         initializer = stubs.firstOrNull { it.elementType === JSElementTypes.OBJECT_LITERAL_EXPRESSION }?.psi as? JSObjectLiteralExpression
@@ -85,23 +97,48 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
           ?.firstNotNullOfOrNull { it as? JSObjectLiteralExpression }
         nameLiteral = arguments?.getOrNull(0) as? JSLiteralExpression
       }
-      return if (initializer == null)
-        null
-      else if (getTextLiteralExpression(nameLiteral) != null) {
-        VueNamedSourceComponent(nameLiteral, initializer)
+      val indexingData = call.indexingData
+        ?.implicitElements
+        ?.find { it.userString == VUE_COMPONENTS_INDEX_JS_KEY }
+        ?.let { getVueIndexData(it) }
+      if (nameLiteral == null) {
+        nameLiteral = indexingData
+          ?.nameQualifiedReference
+          ?.let { JSStubBasedPsiTreeUtil.resolveLocallyWithMergedResults(it, call) }
+          ?.firstNotNullOfOrNull { getTextLiteralExpression(it) }
       }
-      else {
-        VueUnnamedSourceComponent(initializer)
+      return when {
+          initializer == null -> {
+              indexingData
+                  ?.descriptorQualifiedReference
+                  ?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, call) }
+                  ?.let { VueComponents.getComponent(it) }
+                  ?.let { delegate ->
+                      if (nameLiteral != null)
+                          VueLocallyDefinedComponent.create(delegate, nameLiteral)
+                      else
+                          delegate
+                  }
+          }
+          getTextLiteralExpression(nameLiteral) != null -> {
+              VueNamedSourceComponent(nameLiteral, initializer)
+          }
+          else -> {
+              VueUnnamedSourceComponent(initializer)
+          }
       }
     }
 
-    fun create(element: JSImplicitElement): VueSourceComponent<*>? {
-      val context = element.context
-      when (context) {
-        is JSCallExpression -> return create(context)
+    fun create(element: JSImplicitElement): VueComponent? =
+      when (val context = element.context) {
+        is JSCallExpression -> create(context)
+        is JSProperty -> {
+          (context.value as? JSObjectLiteralExpression)
+            ?.let { create(it) }
+        }
+        is ES6Decorator -> create(context)
         else -> throw IllegalStateException("Unexpected implicit element context: ${element.context?.javaClass?.name}")
       }
-    }
   }
 
   override val source: T

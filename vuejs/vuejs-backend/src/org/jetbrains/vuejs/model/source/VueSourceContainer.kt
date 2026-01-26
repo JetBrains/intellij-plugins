@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 
 abstract class VueSourceContainer<T: PsiElement>(
   override val source: T,
-  override val initializer: JSElement?, /* JSObjectLiteralExpression | JSFile */
+  initializer: JSElement?, /* JSObjectLiteralExpression | JSFile */
   override val clazz: JSClass?,
 ) : UserDataHolderBase(),
     VueContainer,
@@ -25,6 +25,10 @@ abstract class VueSourceContainer<T: PsiElement>(
   }
 
   private val descriptor = EntityContainerInfoProvider.EntityDescriptor(initializer, clazz, initializer ?: clazz ?: source)
+
+  @Suppress("CanBePrimaryConstructorProperty")
+  // must be explicitly assigned here, otherwise descriptor is not built properly
+  override val initializer: JSElement? = initializer
 
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
 
