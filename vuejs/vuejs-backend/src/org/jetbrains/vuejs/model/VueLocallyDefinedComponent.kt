@@ -1,9 +1,10 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.lang.javascript.psi.JSInitializerOwner
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
-import com.intellij.lang.javascript.psi.JSVariable
+import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.model.Pointer
@@ -32,23 +33,46 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
   override val name: String,
   override val delegate: VueComponent,
   val sourceElement: T,
-  val isCompositionAppComponent: Boolean,
   override val vueProximity: VueModelVisitor.Proximity,
+  val isCompositionAppComponent: Boolean = false,
 ) : VueDelegatedContainer<VueComponent>(), VueNamedComponent {
 
   companion object {
-    fun create(delegate: VueComponent, source: PsiElement, isCompositionAppComponent: Boolean = false): VueLocallyDefinedComponent<*>? =
+
+    fun createFromInitializerTextLiteral(
+      delegate: VueComponent,
+      source: JSInitializerOwner,
+    ): VueLocallyDefinedComponent<*>? =
+      source.asSafely<JSTypeOwner>()?.jsType
+        ?.asSafely<JSStringLiteralTypeImpl>()?.literal
+        ?.let { VueInitializerTextLiteralLocallyDefinedComponent(it, delegate, source) }
+
+    fun create(
+      delegate: VueComponent,
+      source: JSPsiNamedElementBase,
+    ): VueLocallyDefinedComponent<*>? =
+      source.name
+        ?.let { VuePsiNamedElementLocallyDefinedComponent(it, delegate, source) }
+
+    fun create(
+      delegate: VueComponent,
+      source: JSLiteralExpression,
+      isCompositionAppComponent: Boolean = false,
+    ): VueLocallyDefinedComponent<*>? =
+      getTextIfLiteral(source)
+        ?.let { VueStringLiteralLocallyDefinedComponent(it, delegate, source, isCompositionAppComponent) }
+
+    fun create(
+      delegate: VueComponent,
+      source: PsiFile,
+    ): VueLocallyDefinedComponent<*> =
+      VueFileLocallyDefinedComponent(fromAsset(source.virtualFile.nameWithoutExtension), delegate, source)
+
+    private fun create(delegate: VueComponent, source: PsiElement, isCompositionAppComponent: Boolean): VueLocallyDefinedComponent<*>? =
       when (source) {
-        is JSVariable -> source.jsType.asSafely<JSStringLiteralTypeImpl>()?.literal
-          ?.let { VueVariableStringLiteralLocallyDefinedComponent(it, delegate, source, isCompositionAppComponent) }
-        is JSPsiNamedElementBase -> source.name
-          ?.let { VuePsiNamedElementLocallyDefinedComponent(it, delegate, source, isCompositionAppComponent) }
-        is JSLiteralExpression -> getTextIfLiteral(source)
-          ?.let { VueStringLiteralLocallyDefinedComponent(it, delegate, source, isCompositionAppComponent) }
-        is PsiFile -> VueFileLocallyDefinedComponent(fromAsset(source.virtualFile.nameWithoutExtension),
-                                                     delegate,
-                                                     source,
-                                                     isCompositionAppComponent)
+        is JSPsiNamedElementBase -> create(delegate, source)
+        is JSLiteralExpression -> create(delegate, source, isCompositionAppComponent)
+        is PsiFile -> create(delegate, source)
         else -> null
       }
   }
@@ -114,9 +138,8 @@ private class VuePsiNamedElementLocallyDefinedComponent(
   name: String,
   delegate: VueComponent,
   sourceElement: JSPsiNamedElementBase,
-  isCompositionAppComponent: Boolean,
   vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueLocallyDefinedComponent<JSPsiNamedElementBase>(name, delegate, sourceElement, isCompositionAppComponent, vueProximity),
+) : VueLocallyDefinedComponent<JSPsiNamedElementBase>(name, delegate, sourceElement, vueProximity),
     VuePsiSourcedComponent {
 
   override val nameElement: PsiElement
@@ -134,7 +157,7 @@ private class VuePsiNamedElementLocallyDefinedComponent(
     get() = sourceElement
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-    VuePsiNamedElementLocallyDefinedComponent(name, delegate, sourceElement, isCompositionAppComponent, proximity)
+    VuePsiNamedElementLocallyDefinedComponent(name, delegate, sourceElement, proximity)
 
   override fun createPointer(): Pointer<VuePsiNamedElementLocallyDefinedComponent> =
     createPointer(VuePsiNamedElementLocallyDefinedComponent::class)
@@ -144,9 +167,8 @@ private class VueFileLocallyDefinedComponent(
   name: String,
   delegate: VueComponent,
   source: PsiFile,
-  isCompositionAppComponent: Boolean,
   override val vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueLocallyDefinedComponent<PsiFile>(name, delegate, source, isCompositionAppComponent, vueProximity),
+) : VueLocallyDefinedComponent<PsiFile>(name, delegate, source, vueProximity),
     VueFileComponent {
 
   override val source: PsiFile
@@ -166,7 +188,7 @@ private class VueFileLocallyDefinedComponent(
     get() = sourceElement
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-    VueFileLocallyDefinedComponent(name, delegate, sourceElement, isCompositionAppComponent, proximity)
+    VueFileLocallyDefinedComponent(name, delegate, sourceElement, proximity)
 
   override fun createPointer(): Pointer<VueFileLocallyDefinedComponent> =
     createPointer(VueFileLocallyDefinedComponent::class)
@@ -178,7 +200,7 @@ private class VueStringLiteralLocallyDefinedComponent(
   sourceElement: JSLiteralExpression,
   isCompositionAppComponent: Boolean,
   vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueLocallyDefinedComponent<JSLiteralExpression>(name, delegate, sourceElement, isCompositionAppComponent, vueProximity),
+) : VueLocallyDefinedComponent<JSLiteralExpression>(name, delegate, sourceElement, vueProximity, isCompositionAppComponent),
     PolySymbolDeclaredInPsi {
 
   override val textRangeInSourceElement: TextRange
@@ -210,13 +232,12 @@ private class VueStringLiteralLocallyDefinedComponent(
     createPointer(VueStringLiteralLocallyDefinedComponent::class)
 }
 
-private class VueVariableStringLiteralLocallyDefinedComponent(
+private class VueInitializerTextLiteralLocallyDefinedComponent(
   name: String,
   delegate: VueComponent,
-  sourceElement: JSVariable,
-  isCompositionAppComponent: Boolean,
+  sourceElement: JSInitializerOwner,
   vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueLocallyDefinedComponent<JSVariable>(name, delegate, sourceElement, isCompositionAppComponent, vueProximity) {
+) : VueLocallyDefinedComponent<JSInitializerOwner>(name, delegate, sourceElement, vueProximity) {
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)
@@ -232,8 +253,15 @@ private class VueVariableStringLiteralLocallyDefinedComponent(
     get() = delegate.rawSource ?: sourceElement
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-    VueVariableStringLiteralLocallyDefinedComponent(name, delegate, sourceElement, isCompositionAppComponent, proximity)
+    VueInitializerTextLiteralLocallyDefinedComponent(name, delegate, sourceElement, proximity)
 
-  override fun createPointer(): Pointer<VueVariableStringLiteralLocallyDefinedComponent> =
-    createPointer(VueVariableStringLiteralLocallyDefinedComponent::class)
+  override fun createPointer(): Pointer<VueInitializerTextLiteralLocallyDefinedComponent> {
+    val delegatePtr = delegate.createPointer()
+    val sourcePtr = sourceElement.createSmartPointer()
+    return Pointer {
+      val delegate = delegatePtr.dereference() ?: return@Pointer null
+      val source = sourcePtr.dereference() ?: return@Pointer null
+      createFromInitializerTextLiteral(delegate, source) as? VueInitializerTextLiteralLocallyDefinedComponent
+    }
+  }
 }

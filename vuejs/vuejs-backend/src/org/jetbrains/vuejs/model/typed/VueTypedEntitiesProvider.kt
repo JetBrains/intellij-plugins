@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSField
 import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecma6.*
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.stubs.JSFrameworkMarkersIndex
@@ -118,7 +119,7 @@ object VueTypedEntitiesProvider {
           export.memberSource
             .allSourceElements
             .firstNotNullOfOrNull { memberSource ->
-              if ((memberSource as? PsiNamedElement)?.name != export.memberName)
+              if ((memberSource as? JSPsiNamedElementBase)?.name != export.memberName)
                 return@firstNotNullOfOrNull null
               val variable =
                 memberSource as? TypeScriptVariable

@@ -103,8 +103,9 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
         }
 
       componentsData.libCompResolveMap.forEach { (alias, target) ->
-        val aliasComponent = VueLocallyDefinedComponent.create(target, alias)
-                             ?: return@forEach
+        val aliasComponent =
+          VueLocallyDefinedComponent.createFromInitializerTextLiteral(target, alias)
+          ?: return@forEach
         val aliasName = fromAsset(aliasComponent.name)
         localComponents[fromAsset(target.name)].find { it == target }
           ?.let { if (localComponents[aliasName].isEmpty()) localComponents.putValue(aliasName, aliasComponent) }

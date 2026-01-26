@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -24,7 +23,7 @@ class VueComponentsCalculation {
   companion object {
     fun calculateScopeComponents(scope: GlobalSearchScope, globalize: Boolean): ComponentsData {
       val allValues = getForAllKeys(scope, VUE_COMPONENTS_INDEX_KEY)
-      val libCompResolveMap = mutableMapOf<PsiElement, VueNamedComponent>()
+      val libCompResolveMap = mutableMapOf<JSInitializerOwner, VueNamedComponent>()
 
       val componentData = mutableMapOf<String, MutableList<Pair<VueNamedComponent, Boolean>>>()
       for (value in allValues) {
@@ -48,8 +47,7 @@ class VueComponentsCalculation {
             val singleGlobalRegistration = resolveGlobalComponentName(value, pair?.first)
             if (singleGlobalRegistration != null) {
               val normalizedName = fromAsset(singleGlobalRegistration.component.name)
-              //val normalizedAlias = fromAsset(singleGlobalRegistration.alias.ifBlank { name.substringBefore(GLOBAL_BINDING_MARK) })
-              libCompResolveMap[singleGlobalRegistration.alias ?: value] = singleGlobalRegistration.component
+              singleGlobalRegistration.alias?.let { libCompResolveMap[it] = singleGlobalRegistration.component }
               componentData.putValue(normalizedName, Pair(singleGlobalRegistration.component, true))
             }
           }
@@ -78,7 +76,7 @@ class VueComponentsCalculation {
         ?.let { Pair(it, indexedAccessUsed) }
     }
 
-    private class SingleGlobalRegistration(val component: VueNamedComponent, val alias: PsiElement?)
+    private class SingleGlobalRegistration(val component: VueNamedComponent, val alias: JSInitializerOwner?)
 
     // resolves name of 'singular' registration of Vue.component(ref (SomeComp.name or ref = 'literalName'), ref (SomeComp))
     private fun resolveGlobalComponentName(
@@ -107,7 +105,7 @@ class VueComponentsCalculation {
           val alias = property.takeIf { nameReferenceParts[1] != NAME_PROP }
           return SingleGlobalRegistration(
             component as? VueNamedComponent
-            ?: VueLocallyDefinedComponent.create(component, alias ?: return null)
+            ?: VueLocallyDefinedComponent.createFromInitializerTextLiteral(component, alias ?: return null)
             ?: return null, alias?.takeIf { component is VueNamedComponent })
         }
         return null
@@ -117,14 +115,14 @@ class VueComponentsCalculation {
         ?.let {
           SingleGlobalRegistration(
             component as? VueNamedComponent
-            ?: VueLocallyDefinedComponent.create(component, it)
+            ?: VueLocallyDefinedComponent.createFromInitializerTextLiteral(component, it)
             ?: return null, it.takeIf { component is VueNamedComponent })
         }
     }
 
     private fun processComponentGroupRegistration(
       objLiteral: JSObjectLiteralExpression,
-      libCompResolveMap: MutableMap<PsiElement, VueNamedComponent>,
+      libCompResolveMap: MutableMap<JSInitializerOwner, VueNamedComponent>,
       componentData: MutableMap<String, MutableList<Pair<VueNamedComponent, Boolean>>>,
     ) {
       // object properties iteration
@@ -173,6 +171,6 @@ class VueComponentsCalculation {
 
   class ComponentsData(
     val list: List<Pair<VueNamedComponent, Boolean>>,
-    val libCompResolveMap: Map<PsiElement, VueNamedComponent>,
+    val libCompResolveMap: Map<JSInitializerOwner, VueNamedComponent>,
   )
 }
