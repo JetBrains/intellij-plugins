@@ -24,7 +24,7 @@ abstract class VueSourceContainer<T: PsiElement>(
     assert(initializer == null || initializer is JSObjectLiteralExpression || initializer is JSFile)
   }
 
-  private val descriptor = VueSourceEntityDescriptor(initializer, clazz, initializer ?: clazz ?: source)
+  private val descriptor = EntityContainerInfoProvider.EntityDescriptor(initializer, clazz, initializer ?: clazz ?: source)
 
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
 
@@ -105,7 +105,7 @@ abstract class VueSourceContainer<T: PsiElement>(
     val takeFirst: Boolean = false,
   ) {
 
-    fun get(descriptor: VueSourceEntityDescriptor): T =
+    fun get(descriptor: EntityContainerInfoProvider.EntityDescriptor): T =
       getContainerInfoProviders()
         .asSequence()
         .mapNotNull {

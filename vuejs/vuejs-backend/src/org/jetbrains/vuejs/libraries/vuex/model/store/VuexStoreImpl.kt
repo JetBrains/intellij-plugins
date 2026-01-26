@@ -1,12 +1,14 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
+import com.intellij.diagnostic.PluginException
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
@@ -15,8 +17,8 @@ import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.libraries.vuex.types.VuexGetterType
 import org.jetbrains.vuejs.model.VueImplicitElement
+import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider.BooleanValueAccessor
-import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 
 abstract class VuexContainerImpl : VuexContainer {
 
@@ -43,7 +45,15 @@ abstract class VuexContainerImpl : VuexContainer {
 
   private fun getInfo(): VuexContainerInfoProvider.VuexContainerInfo? =
     initializer
-      ?.let { VueSourceEntityDescriptor.tryCreate(it, null) }
+      ?.let {
+        try {
+          EntityContainerInfoProvider.EntityDescriptor(it, null)
+        }
+        catch (e: PluginException) {
+          thisLogger().error(e)
+          null
+        }
+      }
       ?.let { VuexContainerInfoProvider.INSTANCE.getInfo(it) }
 }
 

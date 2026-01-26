@@ -43,7 +43,7 @@ import org.jetbrains.vuejs.types.optionalIf
 
 class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
-  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfoProvider.VueContainerInfo? {
+  override fun getInfo(descriptor: EntityContainerInfoProvider.EntityDescriptor): VueContainerInfoProvider.VueContainerInfo? {
     return descriptor.source
       .takeIf { it is JSObjectLiteralExpression || it is XmlFile }
       ?.let { findModule(it, true) }

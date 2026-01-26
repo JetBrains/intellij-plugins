@@ -29,7 +29,7 @@ import org.jetbrains.vuejs.model.*
 
 class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
 
-  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfoProvider.VueContainerInfo =
+  override fun getInfo(descriptor: EntityContainerInfoProvider.EntityDescriptor): VueContainerInfoProvider.VueContainerInfo =
     VueComponentTemplateInfo(descriptor.initializer ?: descriptor.clazz ?: descriptor.source)
 
   private class VueComponentTemplateInfo(private val element: PsiElement) : VueContainerInfoProvider.VueContainerInfo {

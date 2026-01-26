@@ -14,13 +14,13 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderFrameworkHandler.Companion.WITH_RENDER
 import org.jetbrains.vuejs.model.VueFileTemplate
 import org.jetbrains.vuejs.model.VueTemplate
+import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
-import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 
 class TemplateLoaderComponentInfoProvider : VueContainerInfoProvider {
 
-  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo? {
+  override fun getInfo(descriptor: EntityContainerInfoProvider.EntityDescriptor): VueContainerInfo? {
     return when {
       descriptor.clazz != null -> TemplateLoaderClassInfo(descriptor.clazz)
       descriptor.initializer is JSObjectLiteralExpression -> TemplateLoaderInitializerInfo(descriptor.initializer)

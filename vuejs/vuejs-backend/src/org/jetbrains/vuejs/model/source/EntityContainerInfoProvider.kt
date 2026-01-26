@@ -1,7 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.diagnostic.PluginException
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSElementTypesImpl
@@ -13,7 +12,6 @@ import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -27,11 +25,24 @@ import java.util.concurrent.ConcurrentHashMap
 
 interface EntityContainerInfoProvider<T> {
 
-  fun getInfo(descriptor: VueSourceEntityDescriptor): T? = null
+  fun getInfo(descriptor: EntityDescriptor): T? = null
+
+  class EntityDescriptor(
+    val initializer: JSElement? /* JSObjectLiteralExpression | JSFile */ = null,
+    val clazz: JSClass? = null,
+    val source: PsiElement = clazz ?: initializer!!,
+  ) {
+    init {
+      assert(initializer == null || initializer is JSObjectLiteralExpression || initializer is JSFile)
+      source.let { PsiUtilCore.ensureValid(it) }
+      initializer?.let { PsiUtilCore.ensureValid(it) }
+      clazz?.let { PsiUtilCore.ensureValid(it) }
+    }
+  }
 
   abstract class DecoratedContainerInfoProvider<T>(val createInfo: (clazz: JSClass) -> T) : EntityContainerInfoProvider<T> {
 
-    final override fun getInfo(descriptor: VueSourceEntityDescriptor): T? =
+    final override fun getInfo(descriptor: EntityDescriptor): T? =
       descriptor.clazz?.let {
         val manager = CachedValuesManager.getManager(it.project)
         manager.getCachedValue(it, manager.getKeyForClass(this::class.java), {
@@ -48,7 +59,7 @@ interface EntityContainerInfoProvider<T> {
 
   abstract class InitializedContainerInfoProvider<T>(val createInfo: (initializer: JSElement) -> T) : EntityContainerInfoProvider<T> {
 
-    final override fun getInfo(descriptor: VueSourceEntityDescriptor): T? =
+    final override fun getInfo(descriptor: EntityDescriptor): T? =
       descriptor.initializer?.let {
         val manager = CachedValuesManager.getManager(it.project)
         manager.getCachedValue(it, manager.getKeyForClass(this::class.java), {
@@ -205,32 +216,4 @@ interface EntityContainerInfoProvider<T> {
 
   }
 
-}
-
-class VueSourceEntityDescriptor(
-  val initializer: JSElement? /* JSObjectLiteralExpression | JSFile */ = null,
-  val clazz: JSClass? = null,
-  val source: PsiElement = clazz ?: initializer!!,
-) {
-  init {
-    assert(initializer == null || initializer is JSObjectLiteralExpression || initializer is JSFile)
-    source.let { PsiUtilCore.ensureValid(it) }
-    initializer?.let { PsiUtilCore.ensureValid(it) }
-    clazz?.let { PsiUtilCore.ensureValid(it) }
-  }
-
-  companion object {
-    fun tryCreate(
-      initializer: JSElement? /* JSObjectLiteralExpression | JSFile */ = null,
-      clazz: JSClass? = null,
-      source: PsiElement = clazz ?: initializer!!,
-    ): VueSourceEntityDescriptor? =
-      try {
-        VueSourceEntityDescriptor(initializer, clazz, source)
-      }
-      catch (e: PluginException) {
-        thisLogger().error(e)
-        null
-      }
-  }
 }
