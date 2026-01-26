@@ -66,7 +66,10 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
 
     fun create(clazz: JSClass): VueSourceComponent<JSClass>? {
       val initializer = getComponentDecorator(clazz)?.let { getDescriptorFromDecorator(it) }
-      return VueClassSourceComponent(clazz.takeIf { it.name != null } ?: return null, initializer)
+      return if (clazz.name != null)
+        VueNamedClassSourceComponent(clazz, initializer)
+      else
+        VueUnnamedClassSourceComponent(clazz, initializer)
     }
 
     fun create(initializer: JSObjectLiteralExpression): VueSourceComponent<out PsiElement> {
@@ -257,7 +260,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     }
   }
 
-  private class VueClassSourceComponent(
+  private class VueNamedClassSourceComponent(
     clazz: JSClass,
     override val initializer: JSObjectLiteralExpression?,
     override val vueProximity: VueModelVisitor.Proximity? = null,
@@ -266,15 +269,28 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     override val name: @NlsSafe String = clazz.name!!
 
     override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-      VueClassSourceComponent(source, initializer, proximity)
+      VueNamedClassSourceComponent(source, initializer, proximity)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<VueSourceComponent>.getNavigationTargets(project)
 
-    override fun createPointer(): Pointer<VueClassSourceComponent> {
+    override fun createPointer(): Pointer<VueNamedClassSourceComponent> {
       val sourcePtr = source.createSmartPointer()
       return Pointer {
-        sourcePtr.dereference()?.let { create(it) } as? VueClassSourceComponent
+        sourcePtr.dereference()?.let { create(it) } as? VueNamedClassSourceComponent
+      }
+    }
+  }
+
+  private class VueUnnamedClassSourceComponent(
+    clazz: JSClass,
+    override val initializer: JSObjectLiteralExpression?,
+  ) : VueSourceComponent<JSClass>(clazz, initializer, clazz) {
+
+    override fun createPointer(): Pointer<VueUnnamedClassSourceComponent> {
+      val sourcePtr = source.createSmartPointer()
+      return Pointer {
+        sourcePtr.dereference()?.let { create(it) } as? VueUnnamedClassSourceComponent
       }
     }
   }
