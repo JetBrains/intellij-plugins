@@ -26,11 +26,11 @@ function toSourceRange(
   sourceFile: ts.SourceFile,
   generatedRange: Range,
 ): Range | undefined {
-  for (const [mapper, tsShift] of scriptMappers(language, sourceFile.fileName)) {
-    const sourceStartOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.start) - tsShift)
+  for (const {toSourceOffset} of scriptMappers(language, sourceFile.fileName)) {
+    const sourceStartOffset = toSourceOffset(getOffset(sourceFile, generatedRange.start))
     if (sourceStartOffset === undefined) continue
 
-    const sourceEndOffset = toSourceOffset(mapper, getOffset(sourceFile, generatedRange.end) - tsShift)
+    const sourceEndOffset = toSourceOffset(getOffset(sourceFile, generatedRange.end))
     if (sourceEndOffset === undefined) continue
 
     return {
@@ -55,16 +55,16 @@ export function toGeneratedRange(
   startOffset: number,
   endOffset: number,
 ): [startOffset: number, endOffset: number] | undefined {
-  for (const [mapper, tsShift] of scriptMappers(language, fileName)) {
-    const generatedStartOffset = toGeneratedOffset(mapper, startOffset)
+  for (const {toGeneratedOffset} of scriptMappers(language, fileName)) {
+    const generatedStartOffset = toGeneratedOffset(startOffset)
     if (generatedStartOffset === undefined) continue
 
-    const generatedEndOffset = toGeneratedOffset(mapper, endOffset)
+    const generatedEndOffset = toGeneratedOffset(endOffset)
     if (generatedEndOffset === undefined) continue
 
     return [
-      generatedStartOffset + tsShift,
-      generatedEndOffset + tsShift,
+      generatedStartOffset,
+      generatedEndOffset,
     ]
   }
 
@@ -74,7 +74,7 @@ export function toGeneratedRange(
 function* scriptMappers(
   language: Language<string>,
   fileName: string,
-): Generator<[mapper: Mapper, tsShift: number], void, undefined> {
+): Generator<ScriptMapper, void, undefined> {
   const sourceScript = language.scripts.get(fileName)
   if (!sourceScript)
     return
@@ -83,34 +83,37 @@ function* scriptMappers(
   if (!virtualCode)
     return
 
-  const tsShift = sourceScript.snapshot.getLength()
-
   for (const code of forEachEmbeddedCode(virtualCode)) {
     if (!code.id.startsWith('script_'))
       continue
 
-    yield [language.maps.get(code, sourceScript), tsShift]
+    yield new ScriptMapper(
+      language.maps.get(code, sourceScript),
+      sourceScript.snapshot.getLength(),
+    )
   }
 }
 
-function toSourceOffset(
-  mapper: Mapper,
-  offset: number,
-): number | undefined {
-  for (const [sourceOffset] of mapper.toSourceLocation(offset)) {
-    return sourceOffset
+class ScriptMapper {
+  constructor(
+    readonly mapper: Mapper,
+    readonly tsShift: number,
+  ) {
   }
 
-  return undefined
-}
+  toSourceOffset = (offset: number): number | undefined => {
+    for (const [sourceOffset] of this.mapper.toSourceLocation(offset - this.tsShift)) {
+      return sourceOffset
+    }
 
-function toGeneratedOffset(
-  mapper: Mapper,
-  offset: number,
-): number | undefined {
-  for (const [generatedOffset] of mapper.toGeneratedLocation(offset)) {
-    return generatedOffset
+    return undefined
   }
 
-  return undefined
+  toGeneratedOffset = (offset: number): number | undefined => {
+    for (const [generatedOffset] of this.mapper.toGeneratedLocation(offset + this.tsShift)) {
+      return generatedOffset
+    }
+
+    return undefined
+  }
 }
