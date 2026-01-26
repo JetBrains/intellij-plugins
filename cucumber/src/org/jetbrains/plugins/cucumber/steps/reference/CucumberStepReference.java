@@ -14,7 +14,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
-import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
@@ -125,7 +125,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   }
 
   public Collection<AbstractStepDefinition> resolveToDefinitions() {
-    return CucumberStepHelper.findStepDefinitions(step.getContainingFile(), ((GherkinStepImpl)step));
+    return CucumberStepHelper.findStepDefinitions(step.getContainingFile(), ((GherkinStep)step));
   }
 
   private static class MyResolver implements ResolveCache.PolyVariantResolver<CucumberStepReference> {
