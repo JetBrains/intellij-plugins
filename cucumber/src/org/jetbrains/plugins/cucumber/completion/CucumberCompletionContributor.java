@@ -278,7 +278,7 @@ public final class CucumberCompletionContributor extends CompletionContributor {
           ranges.add(new TextRange(m.start(), m.end()));
         }
 
-        final PsiElement element = stepDefinition.getElement();
+        final PsiElement element = stepDefinition.getNavigationElement();
         final LookupElementBuilder lookup = element != null
                                             ? LookupElementBuilder.create(element, stepCompletion).bold()
                                             : LookupElementBuilder.create(stepCompletion);

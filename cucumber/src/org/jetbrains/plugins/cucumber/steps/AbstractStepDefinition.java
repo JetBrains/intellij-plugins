@@ -54,7 +54,12 @@ public abstract class AbstractStepDefinition {
     return elementPointer.getElement();
   }
 
-  /// Returns a [Pattern] pattern for the step (or null if the regex is malformed).
+  /// Returns the PSI element that should be used for navigation and documentation purposes.
+  public @Nullable PsiElement getNavigationElement() {
+    return getElement();
+  }
+
+  /// Returns the regex pattern for the step (or null if the regex is malformed).
   ///
   /// Depends on [#getCucumberRegex()].
   public @Nullable Pattern getPattern() {

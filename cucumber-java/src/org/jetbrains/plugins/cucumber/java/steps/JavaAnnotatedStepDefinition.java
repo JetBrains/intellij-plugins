@@ -52,6 +52,13 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   }
 
   @Override
+  public @Nullable PsiElement getNavigationElement() {
+    final PsiAnnotation annotation = getElement();
+    if (annotation == null) return null;
+    return PsiTreeUtil.getParentOfType(annotation, PsiMethod.class);
+  }
+
+  @Override
   public List<String> getVariableNames() {
     PsiElement element = getElement();
     if (element instanceof PsiAnnotation annotation) {

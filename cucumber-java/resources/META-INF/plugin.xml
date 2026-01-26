@@ -44,6 +44,9 @@
     <registryKey key="cucumber.java.run.configuration.glue.use.idea"
                  description="Find glue using Cucumber for Java IntelliJ plugin instead of cucumber-jvm (applies only to cucumber-jvm v6 and newer)"
                  defaultValue="false"/>
+
+    <platform.backend.documentation.psiTargetProvider
+      implementation="org.jetbrains.plugins.cucumber.java.CucumberJavaStepDocumentationTargetProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
