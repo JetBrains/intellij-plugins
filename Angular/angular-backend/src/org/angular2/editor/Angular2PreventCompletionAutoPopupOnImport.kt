@@ -23,7 +23,7 @@ class Angular2PreventCompletionAutoPopupOnImport : CompletionConfidence() {
       editor.putUserData(SHOULD_SKIP_AUTO_POPUP_ON_IMPORT_COMPLETION, null)
       return ThreeState.YES
     }
-    return super.shouldSkipAutopopup(editor, contextElement, psiFile, offset)
+    return ThreeState.UNSURE
   }
 
 }

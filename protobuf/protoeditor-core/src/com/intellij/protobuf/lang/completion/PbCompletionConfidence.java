@@ -16,6 +16,7 @@
 package com.intellij.protobuf.lang.completion;
 
 import com.intellij.codeInsight.completion.CompletionConfidence;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.protobuf.lang.psi.PbNumberValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -26,8 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public class PbCompletionConfidence extends CompletionConfidence {
 
   @Override
-  public @NotNull ThreeState shouldSkipAutopopup(
-      @NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
+  public @NotNull ThreeState shouldSkipAutopopup(@NotNull Editor editor, @NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
     // IntelliJ can trigger an auto-popup when you type a numeric digit
     // https://github.com/JetBrains/intellij-community/commit/fe0ead80c0bd419fa4d7b6f6014f86fd10a154b4
     //
