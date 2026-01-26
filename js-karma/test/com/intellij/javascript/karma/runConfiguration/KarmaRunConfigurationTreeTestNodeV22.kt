@@ -34,7 +34,44 @@ class KarmaRunConfigurationTreeTestNodeV22: KarmaRunConfigurationTestsBase() {
   }
 
   // WEB-75680
-  fun `test angularV21`() {
+  // Test case for template project like `npx --yes --package @angular/cli@21 ng new angular-21-karma --standalone=true --test-runner=karma`
+  fun `test angularV21NgTemplate`() {
+    doTreeTest(
+      {
+        it.setScopeKind(KarmaScopeKind.TEST_FILE)
+          .setTestFilePath(getAbsolutePathToProjectDirOrFile("/src/app/app.spec.ts"))
+      },
+      PassedTest(
+        "Chrome .*",
+        PassedTest(
+          "App",
+          PassedTest("should create the app"),
+          PassedTest("should render title"),
+        )
+      ).withNameAsRegex()
+    )
+  }
+
+  // WEB-75680
+  fun `test angularV21AndAngularDevkitBuildAngularPkg`() {
+    doTreeTest(
+      {
+        it.setScopeKind(KarmaScopeKind.TEST_FILE)
+          .setTestFilePath(getAbsolutePathToProjectDirOrFile("/src/app/app.spec.ts"))
+      },
+      PassedTest(
+        "Chrome .*",
+        PassedTest(
+          "App",
+          PassedTest("should create the app"),
+          PassedTest("should render title"),
+        )
+      ).withNameAsRegex()
+    )
+  }
+
+  // WEB-76243
+  fun `test angularV21AndKarmaTestBuilder`() {
     doTreeTest(
       {
         it.setScopeKind(KarmaScopeKind.TEST_FILE)

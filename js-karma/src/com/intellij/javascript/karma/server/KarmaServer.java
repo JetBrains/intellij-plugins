@@ -17,6 +17,7 @@ import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.testing.AngularCliConfig;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.openapi.Disposable;
@@ -26,6 +27,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.NioFiles;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -36,14 +39,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class KarmaServer {
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
+  private static final String RUN_WITH_NG_UNIT_TEST_BUILDER_ENV_VAR_NAME = "_JETBRAINS_RUN_WITH_NG_UNIT_TEST_BUILDER_";
 
   private final KarmaProcessOutputManager myProcessOutputManager;
   private final KarmaServerState myState;
@@ -208,13 +215,30 @@ public final class KarmaServer {
 
         TargetValue<String> configurationPath = targetRun.path(configFile);
 
+        boolean shouldUseRunnerConfig = false;
         if (version != null && version.isGreaterOrEqualThan(21, 0, 0)) {
+          // It's still possible to set up not unit-test builder in the 21 version, so we have to check builder too, see WEB-76243
+          String ngProjectTestBuilder = resolveNgProjectTestBuilder(serverSettings);
+          shouldUseRunnerConfig = Objects.equals(ngProjectTestBuilder, "@angular/build:unit-test");
+        }
+
+        if (shouldUseRunnerConfig) {
+          commandLine.addEnvironmentVariable(RUN_WITH_NG_UNIT_TEST_BUILDER_ENV_VAR_NAME, String.valueOf(true));
           // Since v21 passing config API was changed for unification with other test runners
           // see https://github.com/angular/angular-cli/commit/20079ed73dc138db3f22aea20eeaa4b0f8b46c52
           commandLine.addParameter(
             TargetValue.map(configurationPath, path -> "--runner-config=\"" + path + "\"")
           );
           commandLineFolder.addPlaceholderText("--runner-config=" + userConfigFileName);
+
+          // Pass the 'watch' option to NG CLI builder to rebuild assets after file changes while the Karma server is running.
+          // See the builder code https://github.com/angular/angular-cli/blob/1c2d49ec736818d22773916d7eaafd3446275ea0/packages/angular/build/src/builders/karma/application_builder.ts#L78
+          // It helps to have updated test's code between reruns the Karma runner.
+          // Without it, the user has to restart the Karma server after editing the code.
+          // The Karma's watch option will be set as 'false' in the IJ Karma's config.
+          // See https://jetbrains.team/p/ij/repositories/ultimate/files/76354725b39c8f27b7b364367ca6b6e24153a018/contrib/js-karma/resources/js_reporter/karma-intellij/lib/intellij.conf.js?tab=source&line=164
+          commandLine.addParameter("--watch");
+
           // Note about passing `source-maps` in 21. The option was missed during the generalization wrappers above.
           // However long time ago it was changed to default for Karma https://github.com/angular/angular-cli/blob/8df6fcd43f4ca57594a3e483d9d0435bf9f5e33b/packages/angular/build/src/builders/karma/schema.json#L197.
           // So it's ok to ignore passing the option.
@@ -280,6 +304,27 @@ public final class KarmaServer {
       setIntellijParameter(commandLine, "debug", TargetValue.fixed("true"));
     }
     return targetRun;
+  }
+
+  private static @Nullable String resolveNgProjectTestBuilder(@NotNull KarmaServerSettings serverSettings) {
+    Path workingDirPath;
+    try {
+      workingDirPath = Paths.get(serverSettings.getWorkingDirectorySystemDependent());
+    } catch (InvalidPathException ignored) {
+      return null;
+    }
+
+    VirtualFile workingDirFile = LocalFileSystem.getInstance().findFileByNioFile(workingDirPath);
+    if (workingDirFile == null) return null;
+
+    AngularCliConfig angularCliConfig = AngularCliConfig.findProjectConfig(workingDirPath);
+    if (angularCliConfig == null) return null;
+
+    String currentNgProject = angularCliConfig.getProjectContainingFile(workingDirFile);
+    if (currentNgProject == null) return null;
+
+    String currentNgProjectTestBuilder = angularCliConfig.getProjectTestBuilder(currentNgProject);
+    return currentNgProjectTestBuilder;
   }
 
   private static @NotNull Path findPackageBinFile(@NotNull NodePackage pkg,
