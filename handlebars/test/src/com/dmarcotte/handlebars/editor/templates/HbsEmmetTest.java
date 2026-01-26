@@ -8,6 +8,7 @@ import com.intellij.codeInsight.template.impl.TemplateSettings;
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.ui.UIUtil;
 
@@ -39,7 +40,7 @@ public class HbsEmmetTest extends BasePlatformTestCase {
 
   private void checkResult() {
     NonBlockingReadActionImpl.waitForAsyncTaskCompletion();
-    UIUtil.dispatchAllInvocationEvents();
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
 
     myFixture.checkResult("<div><span></span></div>");
   }
