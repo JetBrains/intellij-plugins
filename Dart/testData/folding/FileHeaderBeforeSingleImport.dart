@@ -4,3 +4,5 @@
 import "dart:core";
 
 class A{}
+
+<caret>
