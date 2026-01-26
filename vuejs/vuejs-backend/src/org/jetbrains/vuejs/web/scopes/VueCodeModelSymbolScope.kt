@@ -62,7 +62,7 @@ private constructor(
   }
 
   override fun toString(): String {
-    return "EntityContainerWrapper($container)"
+    return "VueCodeModelSymbolScope($container)"
   }
 
   override fun createPointer(): Pointer<VueCodeModelSymbolScope<K>> {
