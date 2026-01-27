@@ -62,6 +62,7 @@ import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
+import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
@@ -459,6 +460,9 @@ fun PolySymbol.extractComponentSymbol(): PolySymbol? =
   this as? VueNamedComponent
   ?: (this as? VueWebTypesMergedSymbol)
     ?.delegate
+  ?: this.takeIf { it.kind == VUE_COMPONENTS }
+    ?.unwrapMatchedSymbols()
+    ?.singleOrNull()
   ?: this.takeIf { it.namespace == NAMESPACE_HTML }
     ?.unwrapMatchedSymbols()
     ?.toList()
