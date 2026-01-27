@@ -8,11 +8,11 @@ import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.CreateImportExportInfo
 import com.intellij.lang.ecmascript6.refactoring.ES6ReferenceExpressionsInfo
 import com.intellij.lang.javascript.editor.JSCopyPasteService
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSExecutionScope
+import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.application.WriteAction
@@ -28,7 +28,6 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.util.parentOfTypes
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
@@ -37,7 +36,6 @@ import org.jetbrains.vuejs.codeInsight.imports.VueComponentCopyPasteProcessor.Vu
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.index.resolveLocally
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueFile
@@ -46,7 +44,6 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
-import org.jetbrains.vuejs.model.source.NAME_PROP
 import java.awt.datatransfer.DataFlavor
 import com.intellij.openapi.util.Pair as OpenApiPair
 
@@ -232,8 +229,8 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
           if (source is ES6ImportExportDeclarationPart) {
             elements.add(OpenApiPair(capitalizedName, source))
           }
-          else if (source is JSImplicitElement && source.context is VueFile) {
-            createImportedElementForComponentFile(source.context as VueFile, capitalizedName)
+          else if (source is VueFile) {
+            createImportedElementForComponentFile(source, capitalizedName)
               ?.let { result.add(it) }
           }
         }

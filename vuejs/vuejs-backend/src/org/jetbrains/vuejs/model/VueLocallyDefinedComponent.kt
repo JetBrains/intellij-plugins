@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSInitializerOwner
 import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
@@ -156,7 +157,8 @@ private class VuePsiNamedElementLocallyDefinedComponent(
     VuePsiSourcedComponent {
 
   override val elementToImport: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    sourceElement.resolveIfImportSpecifier()
+    sourceElement.resolveIfImportSpecifier().takeIf { it !is JSProperty }
+    ?: delegate.elementToImport
   }
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
