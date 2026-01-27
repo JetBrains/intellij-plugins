@@ -1646,7 +1646,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testWatchProperty() =
-    doCompletionAutoPopupTest(VueTestModule.VUE_2_6_10) {
+    doCompletionAutoPopupTest(VueTestModule.VUE_2_6_10, dir = true) {
       completeBasic()
       type("doubleA")
       selectItem("doubleAge.")

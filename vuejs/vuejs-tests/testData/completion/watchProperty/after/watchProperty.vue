@@ -15,7 +15,7 @@ export default {
     }
   },
   watch: {
-    "doubleAge.a<caret>"
+    "doubleAge.a"
   }
 };
 </script>
