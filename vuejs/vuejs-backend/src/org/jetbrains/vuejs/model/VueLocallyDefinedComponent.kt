@@ -1,30 +1,20 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.lang.javascript.psi.JSInitializerOwner
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
-import com.intellij.lang.javascript.psi.JSTypeOwner
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.documentation.PolySymbolDocumentation
-import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
-import com.intellij.polySymbols.documentation.PolySymbolDocumentationTarget
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.utils.PolySymbolDeclaredInPsi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -34,11 +24,11 @@ import kotlin.reflect.safeCast
 
 sealed class VueLocallyDefinedComponent<T : PsiElement>(
   override val name: String,
-  override val delegate: VueComponent,
+  delegate: VueComponent,
   val sourceElement: T,
-  override val vueProximity: VueModelVisitor.Proximity,
+  vueProximity: VueModelVisitor.Proximity,
   val isCompositionAppComponent: Boolean = false,
-) : VueDelegatedContainer<VueComponent>(), VueNamedComponent {
+) : VueDelegatedComponent(delegate, vueProximity) {
 
   companion object {
 
@@ -84,27 +74,6 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
   override val source: PsiElement
     get() = sourceElement
 
-  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget? =
-    PolySymbolDocumentationTarget.create(
-      this, location,
-      PolySymbolDocumentationProvider<VueLocallyDefinedComponent<*>> { symbol, location ->
-        val myDoc = PolySymbolDocumentation.create(symbol, location) {
-          library = getLibraryNameForDocumentationOf(symbol.source)
-        }
-        (symbol.delegate as? VueNamedComponent)
-          ?.getDocumentationTarget(location)
-          ?.asSafely<PolySymbolDocumentationTarget>()
-          ?.documentation
-          ?.withLibrary(myDoc.library)
-          ?.withName(myDoc.name)
-          ?.withDefinition(myDoc.definition)
-          ?.withIcon(myDoc.icon)
-        ?: myDoc
-      })
-
-  override val typeParameters: List<TypeScriptTypeParameter>
-    get() = delegate.typeParameters
-
   override fun equals(other: Any?): Boolean =
     other === this ||
     other is VueLocallyDefinedComponent<*>
@@ -133,7 +102,7 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
     && symbol.sourceElement == sourceElement
 
   protected fun <C : VueLocallyDefinedComponent<T>> createPointer(clazz: KClass<C>): Pointer<C> {
-    val vueProximity = this.vueProximity
+    val vueProximity = this.vueProximity ?: VueModelVisitor.Proximity.LOCAL
     val isCompositionAppComponent = this.isCompositionAppComponent
     val delegate = this.delegate.createPointer()
     val sourceElement = this.sourceElement.createSmartPointer()
@@ -180,7 +149,7 @@ private class VueFileLocallyDefinedComponent(
   name: String,
   delegate: VueComponent,
   source: PsiFile,
-  override val vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
+  vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
 ) : VueLocallyDefinedComponent<PsiFile>(name, delegate, source, vueProximity),
     VueFileComponent {
 
@@ -224,9 +193,6 @@ private class VueStringLiteralLocallyDefinedComponent(
     delegate.getNavigationTargets(project)
       .ifEmpty { super.getNavigationTargets(project) }
 
-  override val elementToImport: PsiElement?
-    get() = delegate.elementToImport
-
   override val renameTarget: PolySymbolRenameTarget?
     get() = PolySymbolRenameTarget.create(this)
 
@@ -247,9 +213,6 @@ private class VueInitializerTextLiteralLocallyDefinedComponent(
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(sourceElement)) }
-
-  override val elementToImport: PsiElement?
-    get() = delegate.elementToImport
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
     VueInitializerTextLiteralLocallyDefinedComponent(name, delegate, sourceElement, proximity)

@@ -2,14 +2,16 @@
 package org.jetbrains.vuejs.libraries.nuxt
 
 import com.intellij.lang.javascript.JSTestUtils.checkResolveToDestination
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.polySymbols.testFramework.multiResolveReference
+import com.intellij.polySymbols.testFramework.resolvePolySymbolReference
 import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.polySymbols.testFramework.resolveToPolySymbolSource
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
+import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtGlobalComponent
 
 class NuxtResolveTest : BasePlatformTestCase() {
 
@@ -19,13 +21,15 @@ class NuxtResolveTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_15_6, VueTestModule.VUE_2_6_10)
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("test.vue")
-    myFixture.resolveToPolySymbolSource("<H<caret>eaders>")
+    myFixture.resolvePolySymbolReference("<H<caret>eaders>")
       .let {
-        TestCase.assertEquals("level0", it.containingFile.virtualFile.parent.name)
+        assertInstanceOf(it, NuxtGlobalComponent::class.java)
+        TestCase.assertEquals("level0", (it as NuxtGlobalComponent).elementToImport?.containingFile?.virtualFile?.parent?.name)
       }
-    myFixture.resolveToPolySymbolSource("<F<caret>ooters>")
+    myFixture.resolvePolySymbolReference("<F<caret>ooters>")
       .let {
-        TestCase.assertEquals("deep", it.containingFile.virtualFile.parent.name)
+        assertInstanceOf(it, NuxtGlobalComponent::class.java)
+        TestCase.assertEquals("deep", (it as NuxtGlobalComponent).elementToImport?.containingFile?.virtualFile?.parent?.name)
       }
   }
 

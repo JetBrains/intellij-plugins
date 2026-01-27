@@ -12,8 +12,10 @@ import com.intellij.util.containers.MultiMap
 import com.intellij.webpack.WebpackConfigManager
 import com.intellij.webpack.WebpackReferenceContributor
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_COMPONENTS_DEFS
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
+import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtGlobalComponent
 import org.jetbrains.vuejs.model.VueNamedComponent
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
@@ -86,17 +88,19 @@ class NuxtComponentProvider : VueContainerInfoProvider {
               val name = partsWithoutLazy.joinToString("-")
 
               sequenceOf(
-                Triple(name, component, index),
-                Triple("$LAZY-$name", component, index)
+                Pair(NuxtGlobalComponent(toAsset(name, true), component), index),
+                Pair(NuxtGlobalComponent(toAsset("$LAZY-$name", true), component), index)
               )
             }
             else {
               emptySequence()
             }
           }
-          .sortedBy { it.third }
-          .distinctBy { it.first }
-          .fold(MultiMap.create<String, VueNamedComponent>()) { map, (name, component) -> map.also { it.putValue(name, component) } }
+          .sortedBy { it.second }
+          .distinctBy { it.first.name }
+          .fold(MultiMap.create<String, VueNamedComponent>()) { map, (component) ->
+            map.also { it.putValue(fromAsset(component.name), component) }
+          }
           .let { VueContainerInfoProvider.ComponentsInfo(MultiMap.empty(), it) }
       }
 
