@@ -466,6 +466,9 @@ fun SemVer.withoutPreRelease(): SemVer =
 
 fun PolySymbol.extractComponentSymbol(): VueNamedComponent? =
   this as? VueNamedComponent
+  ?: (this as? VueWebTypesMergedSymbol)
+    ?.delegate
+    ?.asSafely<VueNamedComponent>()
   ?: this.takeIf { it.namespace == NAMESPACE_HTML }
     ?.unwrapMatchedSymbols()
     ?.toList()

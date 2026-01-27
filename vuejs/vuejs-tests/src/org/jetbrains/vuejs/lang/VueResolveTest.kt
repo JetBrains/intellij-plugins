@@ -911,15 +911,7 @@ Vue.component(alias, WiseComp)
                               """
 <template><<caret>wise-comp-alias</template>
 """)
-    doResolveAliasIntoLibraryComponent("wise-comp", "WiseComp.vue")
-  }
-
-  private fun doResolveAliasIntoLibraryComponent(compName: String, fileName: String) {
-    val target = myFixture.polySymbolSourceAtCaret()
-    assertNotNull(target)
-    assertEquals(fileName, target!!.containingFile.name)
-    assertInstanceOf(target.parent, JSProperty::class.java)
-    assertEquals(compName, (target as JSLiteralExpression).value)
+    myFixture.checkGotoDeclaration("<<caret>wise-comp-alias", "export default <caret>{ name:", "WiseComp.vue")
   }
 
   @Test
@@ -1549,10 +1541,7 @@ Object.keys(obj).forEach(key => {
     myFixture.configureByText("ResolveAliasedObjectMemberComponent.vue",
                               """<template><<caret>alias/></template>""")
 
-    val target = myFixture.polySymbolSourceAtCaret()
-    assertNotNull(target)
-    assertEquals("lib-comp-for-alias.es6", target!!.containingFile.name)
-    assertTrue(target.parent is JSProperty)
+    myFixture.checkGotoDeclaration("<<caret>alias/>", "export default <caret>{\n", "lib-comp-for-alias.es6")
   }
 
   @Test
@@ -1604,10 +1593,7 @@ Object.keys(other).forEach(key => {
 """)
     myFixture.configureByText("ResolveObjectWithSpreadComponentAliased.vue",
                               """<template><<caret>lib-spread-alias/></template>""")
-    val target = myFixture.polySymbolSourceAtCaret()
-    assertNotNull(target)
-    assertEquals("lib-spread.es6", target!!.containingFile.name)
-    assertTrue(target.parent is JSProperty)
+    myFixture.checkGotoDeclaration("<<caret>lib-spread-alias", "export default <caret>{\n", "lib-spread.es6")
   }
 
   @Test
@@ -2480,7 +2466,7 @@ export default class UsageComponent extends Vue {
     myFixture.configureVueDependencies()
     myFixture.copyDirectoryToProject("resolveGlobalAppComponent", "")
     myFixture.configureFromTempProjectFile("ForComponent.vue")
-    myFixture.checkGotoDeclaration("<Global<caret>Component></GlobalComponent>", "<caret>name: \"GlobalComponent\"", "GlobalComponent.vue")
+    myFixture.checkGotoDeclaration("<Global<caret>Component></GlobalComponent>", "defineComponent(<caret>{\n", "GlobalComponent.vue")
   }
 
   @Test

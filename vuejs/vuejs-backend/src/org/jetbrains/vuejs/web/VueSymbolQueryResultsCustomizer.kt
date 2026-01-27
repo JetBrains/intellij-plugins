@@ -17,7 +17,6 @@ import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.html.StandardHtmlSymbol
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizer
 import com.intellij.polySymbols.query.PolySymbolQueryResultsCustomizerFactory
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.nameSegments
 import com.intellij.polySymbols.webTypes.WebTypesSymbol
 import com.intellij.psi.PsiElement
@@ -26,7 +25,7 @@ import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
-import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 
@@ -53,6 +52,7 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
     var result = matches
     if (qualifiedName.matches(VUE_COMPONENTS)) {
       if (result.size > 1) {
+        result = mergeLocallyDefinedComponents(result)
         val mergedSymbol = result.find { it is VueWebTypesMergedSymbol } as? VueWebTypesMergedSymbol
         if (mergedSymbol != null) {
           val mergedWebTypes = mergedSymbol.webTypesSymbols
@@ -80,6 +80,22 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
       symbol[PROP_VUE_COMPOSITION_COMPONENT] == true
     }
   }
+
+  private fun mergeLocallyDefinedComponents(result: List<PolySymbol>): List<PolySymbol> =
+    result.groupBy { it.extractComponentSymbol()?.elementToImport }
+      .values
+      .flatMap { list ->
+        val originalComponent = list.find { it !is VueLocallyDefinedComponent<*> }
+        if (originalComponent != null)
+          list.filter {
+            it !is VueLocallyDefinedComponent<*>
+            || it.delegate != originalComponent
+            || (it.vueProximity ?: VueModelVisitor.Proximity.OUT_OF_SCOPE) > (originalComponent[PROP_VUE_PROXIMITY]
+                                                                              ?: VueModelVisitor.Proximity.OUT_OF_SCOPE)
+          }
+        else
+          list
+      }
 
   override fun apply(
     item: PolySymbolCodeCompletionItem,
