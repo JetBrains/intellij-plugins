@@ -26,9 +26,7 @@ class VuePluginTypeScriptServiceTest :
   }
 
   override val service: VuePluginTypeScriptService
-    get() {
-      return TypeScriptServiceHolder.getForFile(project, file.virtualFile) as VuePluginTypeScriptService
-    }
+    get() = TypeScriptServiceHolder.getForFile(project, file.virtualFile) as VuePluginTypeScriptService
 
   var oldTsPluginPreviewEnabled = false
   override fun setUp() {
