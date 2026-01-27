@@ -18,6 +18,7 @@ import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.JSDaemonAnalyzerTestCase;
 import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.*;
@@ -41,6 +42,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
@@ -69,6 +73,7 @@ import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import com.sixrr.inspectjs.validity.FunctionWithInconsistentReturnsJSInspection;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +83,7 @@ import java.util.List;
 
 import static com.intellij.lang.javascript.highlighting.JSLineMarkerUtilKt.ourClassInheritorsNavHandler;
 import static com.intellij.lang.javascript.highlighting.JSLineMarkerUtilKt.ourInterfaceImplementationsNavHandler;
+import static org.junit.Assert.assertNotNull;
 
 public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
@@ -1344,8 +1350,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testOverrideInInterfaceFix() {
     configureByFiles(null, BASE_PATH + getTestName(false) + ".js2");
-    JSTestUtils.checkThatActionDisabled("OverrideMethods");
-    JSTestUtils.checkThatActionDisabled("ImplementMethods");
+    checkThatActionDisabled("OverrideMethods");
+    checkThatActionDisabled("ImplementMethods");
   }
 
   public void testOverridePackageLocal() throws Exception {
@@ -1750,7 +1756,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testDelegateMethodsDisabled() {
     configureByFiles(null, BASE_PATH + getTestName(false) + ".js2");
-    JSTestUtils.checkThatActionDisabled("DelegateMethods");
+    checkThatActionDisabled("DelegateMethods");
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
@@ -2320,5 +2326,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                           new HtmlUnknownAttributeInspection(),
                           new HtmlUnknownBooleanAttributeInspection());
     defaultTest();
+  }
+
+  public static void checkThatActionDisabled(@org.intellij.lang.annotations.Language("devkit-action-id") @NotNull String actionId) {
+    final AnAction action = ActionManager.getInstance().getAction(actionId);
+    Assert.assertNotNull(action);
+    final AnActionEvent event = AnActionEvent.createFromAnAction(action, null, "", DataManager.getInstance().getDataContext());
+    action.update(event);
+    Assert.assertFalse(event.getPresentation().isEnabled());
   }
 }
