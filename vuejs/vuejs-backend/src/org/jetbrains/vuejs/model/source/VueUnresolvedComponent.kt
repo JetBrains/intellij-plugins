@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.types.JSAnyType
@@ -17,16 +16,14 @@ import com.intellij.polySymbols.query.PolySymbolNameMatchQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
-import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.model.*
 
 class VueUnresolvedComponent(
-  override val rawSource: PsiElement?,
+  override val source: PsiElement?,
 ) : VueComponent {
 
-  override val componentSource: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    (rawSource as? ES6ImportSpecifier)?.resolveIfImportSpecifier() ?: rawSource
-  }
+  override val elementToImport: PsiElement?
+    get() = null
 
   override val typeParameters: List<TypeScriptTypeParameter>
     get() = emptyList()
@@ -37,7 +34,7 @@ class VueUnresolvedComponent(
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val thisType: JSType
-    get() = getDefaultVueComponentInstanceType(rawSource) ?: JSAnyType.get(rawSource)
+    get() = getDefaultVueComponentInstanceType(source) ?: JSAnyType.get(source)
 
   override fun getMatchingSymbols(
     qualifiedName: PolySymbolQualifiedName,
@@ -51,7 +48,7 @@ class VueUnresolvedComponent(
 
 
   override fun createPointer(): Pointer<VueUnresolvedComponent> {
-    val source = this.rawSource?.createSmartPointer()
+    val source = this.source?.createSmartPointer()
     return Pointer {
       val newSource = source?.let { it.dereference() ?: return@Pointer null }
       VueUnresolvedComponent(newSource)
@@ -61,10 +58,10 @@ class VueUnresolvedComponent(
   override fun equals(other: Any?): Boolean =
     other === this
     || other is VueUnresolvedComponent
-    && other.rawSource == rawSource
+    && other.source == source
 
   override fun hashCode(): Int =
-    rawSource.hashCode()
+    source.hashCode()
 
   override val components: Map<String, VueNamedComponent>
     get() = emptyMap()

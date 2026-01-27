@@ -153,7 +153,7 @@ private class VuePsiNamedElementLocallyDefinedComponent(
 ) : VueLocallyDefinedComponent<JSPsiNamedElementBase>(name, delegate, sourceElement, vueProximity),
     VuePsiSourcedComponent {
 
-  override val componentSource: PsiElement by lazy(LazyThreadSafetyMode.PUBLICATION) {
+  override val elementToImport: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     sourceElement.resolveIfImportSpecifier()
   }
 
@@ -164,9 +164,6 @@ private class VuePsiNamedElementLocallyDefinedComponent(
   override fun isEquivalentTo(symbol: Symbol): Boolean =
     super<VuePsiSourcedComponent>.isEquivalentTo(symbol)
     || super<VueLocallyDefinedComponent>.isEquivalentTo(symbol)
-
-  override val rawSource: PsiElement
-    get() = sourceElement
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
     VuePsiNamedElementLocallyDefinedComponent(name, delegate, sourceElement, proximity)
@@ -186,15 +183,12 @@ private class VueFileLocallyDefinedComponent(
   override val source: PsiFile
     get() = sourceElement
 
-  override val componentSource: PsiElement
-    get() = delegate.componentSource ?: sourceElement
+  override val elementToImport: PsiElement
+    get() = source
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(sourceElement)) }
-
-  override val rawSource: PsiElement
-    get() = sourceElement
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
     VueFileLocallyDefinedComponent(name, delegate, sourceElement, proximity)
@@ -226,11 +220,8 @@ private class VueStringLiteralLocallyDefinedComponent(
     delegate.getNavigationTargets(project)
       .ifEmpty { super.getNavigationTargets(project) }
 
-  override val componentSource: PsiElement
-    get() = delegate.componentSource ?: sourceElement
-
-  override val rawSource: PsiElement
-    get() = delegate.rawSource ?: sourceElement
+  override val elementToImport: PsiElement?
+    get() = delegate.elementToImport
 
   override val renameTarget: PolySymbolRenameTarget?
     get() = PolySymbolRenameTarget.create(this)
@@ -253,11 +244,8 @@ private class VueInitializerTextLiteralLocallyDefinedComponent(
     delegate.getNavigationTargets(project)
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(sourceElement)) }
 
-  override val componentSource: PsiElement
-    get() = delegate.componentSource ?: sourceElement
-
-  override val rawSource: PsiElement
-    get() = delegate.rawSource ?: sourceElement
+  override val elementToImport: PsiElement?
+    get() = delegate.elementToImport
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
     VueInitializerTextLiteralLocallyDefinedComponent(name, delegate, sourceElement, proximity)

@@ -137,10 +137,10 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
         else scope
       }
 
-      if ((component != null || isPropertyElement) && isVueContext(component?.componentSource ?: element)) {
+      if ((component != null || isPropertyElement) && isVueContext(component?.source ?: element)) {
         // Add search for default export if present
         if (element is JSImplicitElement && component != null) {
-          findDefaultExport(findModule(component.componentSource?.containingFile, false))?.let { defaultExport ->
+          findDefaultExport(findModule(component.source?.containingFile, false))?.let { defaultExport ->
             val optimizer = queryParameters.optimizer
             val collector = SearchRequestCollector(optimizer.searchSession)
             optimizer.searchQuery(
@@ -159,7 +159,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
           }
         }
 
-        val searchTarget = if (element is JSImplicitElement) component?.componentSource ?: element else element
+        val searchTarget = if (element is JSImplicitElement) component?.source ?: element else element
         alternateNames(elementName).forEach {
           queryParameters.optimizer.searchWord(
             it,

@@ -169,7 +169,7 @@ private constructor(
           ?: it as? HtmlFileImpl
         }
       ?: ((this as? VueDirective)?.rawSource
-          ?: (this as? VueComponent)?.rawSource
+          ?: (this as? VueComponent)?.elementToImport
           ?: this.source
          )?.let { source ->
           if (source is JSProperty)

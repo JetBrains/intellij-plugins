@@ -46,19 +46,19 @@ class VueTypedComponent private constructor(
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     listOf(VueComponentSourceNavigationTarget(source))
 
+  override val elementToImport: PsiElement
+    get() = source
+
   override val delegate: VueComponent?
     get() = null
-
-  override val componentSource: PsiElement
-    get() = source
 
   override val renameTarget: PolySymbolRenameTarget?
     get() = null
 
   override val thisType: JSType
-    get() = CachedValuesManager.getCachedValue(componentSource) {
+    get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
-        resolveElementTo(componentSource, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
+        resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
           ?.let { componentDefinition ->
             when (componentDefinition) {
               is JSTypeOwner ->
@@ -92,7 +92,7 @@ class VueTypedComponent private constructor(
   }
 
   override val typeParameters: List<TypeScriptTypeParameter>
-    get() = resolveElementTo(componentSource, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
+    get() = resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
               .asSafely<TypeScriptTypeParameterListOwner>()
               ?.typeParameters?.toList()
             ?: emptyList()

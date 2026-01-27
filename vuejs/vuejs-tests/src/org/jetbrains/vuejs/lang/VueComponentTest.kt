@@ -330,7 +330,7 @@ class VueComponentTest :
           ?.documentation
         printProperty(level, "description", documentation?.description)
         if (printSources) {
-          val rawSource = (sourceElement as? VueComponent)?.rawSource
+          val rawSource = (sourceElement as? VueComponent)?.elementToImport
                           ?: (sourceElement as? VueDirective)?.rawSource
           val source = (sourceElement as? VueScopeElement)?.source
                        ?: (sourceElement as? PsiSourcedPolySymbol)?.source
@@ -392,7 +392,7 @@ class VueComponentTest :
 
 private fun Map<String, VueComponent>.filterOutLowercaseScriptSetupVariables(): Map<String, VueComponent> =
   filter { (_, component) ->
-    component.rawSource.let {
+    component.source.let {
       it !is JSVariable
       || findModule(it, true) == null
       || it.name?.getOrNull(0)?.isUpperCase() == true

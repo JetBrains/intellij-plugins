@@ -23,7 +23,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
 import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
@@ -63,7 +62,7 @@ import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.asCompleteType
-import org.jetbrains.vuejs.web.VUE_COMPONENTS
+import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -451,7 +450,7 @@ fun resolveLocalComponent(context: VueEntitiesContainer, tagName: String, contai
     override fun visitComponent(component: VueNamedComponent, proximity: Proximity): Boolean {
       return acceptSameProximity(proximity, fromAsset(component.name) == normalizedTagName) {
         // Cannot self refer without export declaration with component name
-        if ((component.componentSource as? JSImplicitElement)?.context != containingFile) {
+        if (component !is VueFileComponent || component.source != containingFile) {
           result.add(component)
         }
       }
@@ -465,13 +464,16 @@ fun SemVer.withoutPreRelease(): SemVer =
     SemVer("${this.major}.${this.minor}.${this.patch}", this.major, this.minor, this.patch)
   else this
 
-fun PolySymbol.extractComponentSymbol(): PolySymbol? =
+fun PolySymbol.extractComponentSymbol(): VueNamedComponent? =
   this.takeIf { it.namespace == NAMESPACE_HTML }
     ?.unwrapMatchedSymbols()
     ?.toList()
     ?.takeIf { it.size == 2 && it[0] is PolySymbolWithPattern }
     ?.get(1)
-    ?.takeIf { it.kind == VUE_COMPONENTS }
+    ?.let {
+      if (it is VueWebTypesMergedSymbol) it.delegate else it
+    }
+    ?.asSafely<VueNamedComponent>()
 
 inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this

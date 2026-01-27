@@ -144,14 +144,11 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       }
   }
 
-  override val source: T
-    get() = super<VueSourceContainer>.source
+  override val elementToImport: PsiElement?
+    get() = source
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    listOf(VueComponentSourceNavigationTarget(super<VueSourceContainer>.source))
-
-  override val componentSource: PsiElement
-    get() = super<VueSourceContainer>.source
+    listOf(VueComponentSourceNavigationTarget(super.source))
 
   override val mode: VueMode
     get() {
@@ -203,12 +200,11 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     literal: JSLiteralExpression,
     override val initializer: JSObjectLiteralExpression,
     override val vueProximity: VueModelVisitor.Proximity? = null,
-  ) : VueSourceComponent<JSLiteralExpression>(literal, initializer, null), VueNamedComponent, PolySymbolDeclaredInPsi {
+  ) : VueSourceComponent<JSObjectLiteralExpression>(initializer, initializer, null), VueNamedComponent, PolySymbolDeclaredInPsi {
 
-    override val name: @NlsSafe String = source.stubSafeStringValue!!
+    override val name: @NlsSafe String = literal.stubSafeStringValue!!
 
-    override val sourceElement: PsiElement
-      get() = source
+    override val sourceElement: JSLiteralExpression = literal
 
     override val textRangeInSourceElement: TextRange
       get() = TextRange(1, sourceElement.textRange.length - 1)
@@ -217,7 +213,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       get() = super<PolySymbolDeclaredInPsi>.psiContext
 
     override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-      VueNamedSourceComponent(source, initializer, proximity)
+      VueNamedSourceComponent(sourceElement, initializer, proximity)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<PolySymbolDeclaredInPsi>.getNavigationTargets(project)

@@ -228,26 +228,7 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentImp
         val elements = mutableListOf<OpenApiPair<String, ES6ImportExportDeclarationPart>>()
         val result = mutableSetOf<ImportedElement>()
         toImport.entries.forEach { (capitalizedName, component) ->
-          val source = component.rawSource
-            ?.let {
-              when (it) {
-                is JSProperty -> {
-                  it.value
-                    ?.asSafely<JSReferenceExpression>()
-                    ?.let(::resolveLocally)
-                    ?.firstOrNull()
-                }
-                is JSImplicitElement -> {
-                  val implicitContext = it.context
-                  // Self referenced component
-                  if (implicitContext is JSProperty && implicitContext.name == NAME_PROP) {
-                    JSImplicitElementImpl(capitalizedName, sourceComponentFile)
-                  }
-                  else null
-                }
-                else -> it
-              }
-            }
+          val source = component.elementToImport
           if (source is ES6ImportExportDeclarationPart) {
             elements.add(OpenApiPair(capitalizedName, source))
           }

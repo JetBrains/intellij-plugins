@@ -105,7 +105,7 @@ class VueComponentNamespaceSymbol(
   private class VueNamespacedComponent(override val delegate: VuePsiSourcedComponent) :
     PsiSourcedPolySymbolDelegate<VuePsiSourcedComponent> {
 
-    private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.rawSource as JSPsiNamedElementBase)
+    private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.source as JSPsiNamedElementBase)
 
     override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
       isNamespacedKind(kind) || super.isExclusiveFor(kind)
