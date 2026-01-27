@@ -11,7 +11,6 @@ import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
-import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
 
 class VuePluginTypeScriptServiceTest :
@@ -28,26 +27,10 @@ class VuePluginTypeScriptServiceTest :
   override val service: VuePluginTypeScriptService
     get() = TypeScriptServiceHolder.getForFile(project, file.virtualFile) as VuePluginTypeScriptService
 
-  var oldTsPluginPreviewEnabled = false
   override fun setUp() {
     super.setUp()
-    val vueSettings = getVueSettings(myFixture.project)
-    oldTsPluginPreviewEnabled = vueSettings.tsPluginPreviewEnabled
-    vueSettings.tsPluginPreviewEnabled = true
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByText(VueTsConfigFile.FILE_NAME, VueTsConfigFile.DEFAULT_TSCONFIG_CONTENT)
-  }
-
-  override fun tearDown() {
-    try {
-      getVueSettings(myFixture.project).tsPluginPreviewEnabled = oldTsPluginPreviewEnabled
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
   }
 
   private fun configureVueDependencies(
