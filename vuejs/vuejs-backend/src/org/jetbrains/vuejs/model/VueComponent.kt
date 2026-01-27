@@ -20,8 +20,6 @@ import org.jetbrains.vuejs.web.VUE_MODEL
 
 interface VueComponent : VueContainer, PolySymbolScope, VueMixin {
 
-  val nameElement: PsiElement?
-
   @Suppress("DEPRECATION")
   val rawSource: PsiElement?
     get() = componentSource
@@ -36,7 +34,7 @@ interface VueComponent : VueContainer, PolySymbolScope, VueMixin {
   fun getNavigationTargets(project: Project): Collection<NavigationTarget>
 
   override val source: PsiElement?
-    get() = nameElement ?: rawSource
+    get() = rawSource
 
   override fun getSymbols(
     kind: PolySymbolKind,

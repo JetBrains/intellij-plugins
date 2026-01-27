@@ -153,9 +153,6 @@ private class VuePsiNamedElementLocallyDefinedComponent(
 ) : VueLocallyDefinedComponent<JSPsiNamedElementBase>(name, delegate, sourceElement, vueProximity),
     VuePsiSourcedComponent {
 
-  override val nameElement: PsiElement
-    get() = componentSource
-
   override val componentSource: PsiElement by lazy(LazyThreadSafetyMode.PUBLICATION) {
     sourceElement.resolveIfImportSpecifier()
   }
@@ -188,9 +185,6 @@ private class VueFileLocallyDefinedComponent(
 
   override val source: PsiFile
     get() = sourceElement
-
-  override val nameElement: PsiElement?
-    get() = null
 
   override val componentSource: PsiElement
     get() = delegate.componentSource ?: sourceElement
@@ -232,9 +226,6 @@ private class VueStringLiteralLocallyDefinedComponent(
     delegate.getNavigationTargets(project)
       .ifEmpty { super.getNavigationTargets(project) }
 
-  override val nameElement: PsiElement
-    get() = sourceElement
-
   override val componentSource: PsiElement
     get() = delegate.componentSource ?: sourceElement
 
@@ -261,9 +252,6 @@ private class VueInitializerTextLiteralLocallyDefinedComponent(
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(sourceElement)) }
-
-  override val nameElement: PsiElement?
-    get() = null
 
   override val componentSource: PsiElement
     get() = delegate.componentSource ?: sourceElement

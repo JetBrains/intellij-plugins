@@ -92,8 +92,6 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
     override val name: String get() = SLOT_LOCAL_COMPONENT
     override val source: PsiElement?
       get() = delegate.source
-    override val nameElement: PsiElement?
-      get() = null
     override val componentSource: PsiElement?
       get() = delegate.componentSource
     override val typeParameters: List<TypeScriptTypeParameter>

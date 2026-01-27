@@ -49,9 +49,6 @@ class VueTypedComponent private constructor(
   override val delegate: VueComponent?
     get() = null
 
-  override val nameElement: PsiElement?
-    get() = null
-
   override val componentSource: PsiElement
     get() = source
 

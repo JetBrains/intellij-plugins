@@ -24,8 +24,6 @@ class VueUnresolvedComponent(
   override val rawSource: PsiElement?,
 ) : VueComponent {
 
-  override val nameElement: PsiElement? get() = null
-
   override val componentSource: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
     (rawSource as? ES6ImportSpecifier)?.resolveIfImportSpecifier() ?: rawSource
   }

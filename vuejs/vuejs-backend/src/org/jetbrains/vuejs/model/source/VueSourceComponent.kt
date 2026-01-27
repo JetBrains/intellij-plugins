@@ -162,12 +162,6 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       return if (vapor) VueMode.VAPOR else VueMode.CLASSIC
     }
 
-  override val nameElement: PsiElement?
-    get() = initializer
-      ?.asSafely<JSObjectLiteralExpression>()
-      ?.findProperty(NAME_PROP)
-      ?.let { it.literalExpressionInitializer ?: it.value }
-
   override val slots: List<VueSlot>
     get() {
       val declaredSlots = super.slots
@@ -180,7 +174,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     }
 
   override fun toString(): String {
-    return "VueSourceComponent(${(this as? VueNamedComponent)?.name ?: getTextIfLiteral(nameElement)})"
+    return "VueSourceComponent(${(this as? VueNamedComponent)?.name})"
   }
 
   abstract override fun createPointer(): Pointer<out VueSourceComponent<*>>

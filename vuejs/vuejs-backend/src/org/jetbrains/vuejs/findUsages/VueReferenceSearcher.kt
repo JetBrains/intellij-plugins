@@ -120,7 +120,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
 
       val component = if (!isPropertyElement) {
         if (element is JSImplicitElement && element.context.let { it is JSLiteralExpression && it.context !is JSArrayLiteralExpression })
-          VueModelManager.findEnclosingComponent(element)?.takeIf { it.nameElement == element.context }
+          VueModelManager.findEnclosingComponent(element)
         else
           VueComponents.getComponent(element)
       }
