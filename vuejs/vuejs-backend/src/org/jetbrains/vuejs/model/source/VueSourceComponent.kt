@@ -39,7 +39,6 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.getTextLiteralExpression
-import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.VUE_COMPONENTS_INDEX_JS_KEY
 import org.jetbrains.vuejs.index.findModule
@@ -87,7 +86,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       }
       else {
         val result = VueUnnamedSourceComponent(initializer)
-        if (result.elementToImport?.context is ES6ExportDefaultAssignment)
+        if (result.elementToImport is PsiFile)
           VueFileSourceComponent(initializer)
         else result
       }
@@ -151,9 +150,10 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
             val delegate = VueComponents.getComponent(context.value.asSafely<JSReferenceExpression>())
                            ?: VueUnresolvedComponent(context.value)
             VueLocallyDefinedComponent.create(delegate, context)
-          } else
-          (context.context as? JSObjectLiteralExpression ?: context.initializerOrStub as? JSObjectLiteralExpression)
-            ?.let { create(it) }
+          }
+          else
+            (context.context as? JSObjectLiteralExpression ?: context.initializerOrStub as? JSObjectLiteralExpression)
+              ?.let { create(it) }
         }
         is ES6Decorator -> create(context)
         else -> throw IllegalStateException("Unexpected implicit element context: ${element.context?.javaClass?.name}")
@@ -161,15 +161,21 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
   }
 
   override val elementToImport: PsiElement?
-    get() = if (source is JSObjectLiteralExpression)
-      when (val context = source.context) {
-        is ES6ExportDefaultAssignment -> source
-        is JSArgumentList, is JSCallExpression ->
-          context.contextOfType<JSCallExpression>(true)
-            ?.takeIf { it.context is ES6ExportDefaultAssignment }
-        else -> source
-      }
-    else source
+    get() = when (source) {
+      is JSObjectLiteralExpression ->
+        when (val context = source.context) {
+          is ES6ExportDefaultAssignment -> source.containingFile
+          is JSArgumentList, is JSCallExpression ->
+            context.contextOfType<JSCallExpression>(true)
+              ?.takeIf { it.context is ES6ExportDefaultAssignment || VueComponents.isDefineOptionsCall(it)}
+              ?.containingFile
+          else -> null
+        }
+      is JSClass ->
+        source.context.asSafely<ES6ExportDefaultAssignment>()?.containingFile
+      else ->
+        source.asSafely<PsiFile>()
+    }
 
   override val mode: VueMode
     get() {
@@ -271,7 +277,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       : this(clazz.containingFile, initializer, clazz, null)
 
     override val name: @NlsSafe String =
-      toAsset(FileUtilRt.getNameWithoutExtension (this@VueFileSourceComponent.source.name), true)
+      toAsset(FileUtilRt.getNameWithoutExtension(this@VueFileSourceComponent.source.name), true)
 
     override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
       VueFileSourceComponent(source, initializer, clazz, proximity)

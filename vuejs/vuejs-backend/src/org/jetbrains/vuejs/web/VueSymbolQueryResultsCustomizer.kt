@@ -24,7 +24,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
+import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
+import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 
@@ -92,7 +94,7 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
             .contains(item.name)
         ) return null
         val proximity = item.symbol?.get(PROP_VUE_PROXIMITY)
-        val element = (item.symbol as? PsiSourcedPolySymbol)?.source
+        val element = item.symbol?.extractComponentSymbol()?.elementToImport
         if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
           val settings = JSApplicationSettings.getInstance()
           if ((scriptLanguage != null && "ts" == scriptLanguage)
