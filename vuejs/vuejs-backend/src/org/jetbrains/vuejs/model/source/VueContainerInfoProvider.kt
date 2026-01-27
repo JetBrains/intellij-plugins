@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.DecoratedContainerInfoProvider
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider
@@ -22,10 +23,20 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
   ): Collection<PropertySignature> =
     emptyList()
 
-  data class ComponentsInfo(
-    val local: MultiMap<String, VueNamedComponent>,
-    val global: MultiMap<String, VueNamedComponent>,
+  class ComponentsInfo(
+    local: Collection<VueNamedComponent>,
+    global: Collection<VueNamedComponent>,
   ) {
+    val local: MultiMap<String, VueNamedComponent> =
+      local.fold(MultiMap.create()) { map, component ->
+        map.also { it.putValue(fromAsset(component.name), component) }
+      }
+
+    val global: MultiMap<String, VueNamedComponent> =
+      global.fold(MultiMap.create()) { map, component ->
+        map.also { it.putValue(fromAsset(component.name), component) }
+      }
+
     fun get(local: Boolean): MultiMap<String, VueNamedComponent> =
       if (local) this.local else global
   }

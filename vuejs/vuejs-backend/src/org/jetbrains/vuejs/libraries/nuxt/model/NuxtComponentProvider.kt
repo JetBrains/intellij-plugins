@@ -98,10 +98,9 @@ class NuxtComponentProvider : VueContainerInfoProvider {
           }
           .sortedBy { it.second }
           .distinctBy { it.first.name }
-          .fold(MultiMap.create<String, VueNamedComponent>()) { map, (component) ->
-            map.also { it.putValue(fromAsset(component.name), component) }
-          }
-          .let { VueContainerInfoProvider.ComponentsInfo(MultiMap.empty(), it) }
+          .map { it.first }
+          .toList()
+          .let { VueContainerInfoProvider.ComponentsInfo(emptyList(), it) }
       }
 
   private fun resolvePath(configFile: PsiFile, componentDir: NuxtConfig.ComponentsDirectoryConfig): VirtualFile? =

@@ -118,7 +118,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
       }
 
       // Contribute components from providers.
-      val sourceComponents = VueContainerInfoProvider.ComponentsInfo(localComponents.copy(), globalComponents.copy())
+      val sourceComponents = VueContainerInfoProvider.ComponentsInfo(localComponents.values(), globalComponents.values())
       VueContainerInfoProvider.getProviders()
         .mapNotNull { it.getAdditionalComponents(scope, sourceComponents) }
         .forEach {
