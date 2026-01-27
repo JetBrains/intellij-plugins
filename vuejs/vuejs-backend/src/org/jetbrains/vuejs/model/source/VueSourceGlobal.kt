@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -16,6 +17,7 @@ import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.vuejs.codeInsight.fromAsset
@@ -105,6 +107,8 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
       componentsData.libCompResolveMap.forEach { (alias, target) ->
         val aliasComponent =
           VueLocallyDefinedComponent.createFromInitializerTextLiteral(target, alias)
+          ?: alias.asSafely<JSProperty>()?.takeIf { it.isShorthanded }
+            ?.let { VueLocallyDefinedComponent.create(target, alias) }
           ?: return@forEach
         val aliasName = fromAsset(aliasComponent.name)
         localComponents[fromAsset(target.name)].find { it == target }
