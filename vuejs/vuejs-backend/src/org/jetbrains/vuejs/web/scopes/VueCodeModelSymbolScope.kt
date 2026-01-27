@@ -162,7 +162,8 @@ private constructor(
   }
 
   private fun PolySymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, PolySymbol>): List<PolySymbol> {
-    if (this !is PsiSourcedPolySymbol) return listOf(this)
+    if (this !is PsiSourcedPolySymbol || webTypesContributions.isEmpty)
+      return listOf(this)
     val source =
       (this as? VueSourceEntity)
         ?.let { it.initializer ?: it.clazz }

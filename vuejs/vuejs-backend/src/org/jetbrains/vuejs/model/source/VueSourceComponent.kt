@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
@@ -17,7 +18,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
-import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
@@ -29,6 +29,7 @@ import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.contextOfType
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
@@ -37,7 +38,6 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.getTextLiteralExpression
 import org.jetbrains.vuejs.index.VUE_COMPONENTS_INDEX_JS_KEY
 import org.jetbrains.vuejs.index.findModule
@@ -50,7 +50,6 @@ import org.jetbrains.vuejs.model.source.VueComponents.getDescriptorFromDecorator
 import org.jetbrains.vuejs.types.VueSourceSlotScopeType
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 import org.jetbrains.vuejs.web.symbols.VueAnySlot
-import org.jetbrains.vuejs.web.symbols.VueAnySymbol
 
 abstract class VueSourceComponent<T : PsiElement> private constructor(
   source: T,
@@ -81,7 +80,10 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
         VueNamedSourceComponent(nameLiteral, initializer)
       }
       else {
-        VueUnnamedSourceComponent(initializer)
+        val result = VueUnnamedSourceComponent(initializer)
+        if (result.elementToImport?.context is ES6ExportDefaultAssignment)
+          VueFileSourceComponent(initializer)
+        else result
       }
     }
 
@@ -114,24 +116,24 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
           ?.firstNotNullOfOrNull { getTextLiteralExpression(it) }
       }
       return when {
-          initializer == null -> {
-              indexingData
-                  ?.descriptorQualifiedReference
-                  ?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, call) }
-                  ?.let { VueComponents.getComponent(it) }
-                  ?.let { delegate ->
-                      if (nameLiteral != null)
-                          VueLocallyDefinedComponent.create(delegate, nameLiteral)
-                      else
-                          delegate
-                  }
-          }
-          getTextLiteralExpression(nameLiteral) != null -> {
-              VueNamedSourceComponent(nameLiteral, initializer)
-          }
-          else -> {
-              VueUnnamedSourceComponent(initializer)
-          }
+        initializer == null -> {
+          indexingData
+            ?.descriptorQualifiedReference
+            ?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, call) }
+            ?.let { VueComponents.getComponent(it) }
+            ?.let { delegate ->
+              if (nameLiteral != null)
+                VueLocallyDefinedComponent.create(delegate, nameLiteral)
+              else
+                delegate
+            }
+        }
+        getTextLiteralExpression(nameLiteral) != null -> {
+          VueNamedSourceComponent(nameLiteral, initializer)
+        }
+        else -> {
+          create(initializer)
+        }
       }
     }
 
@@ -139,7 +141,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       when (val context = element.context) {
         is JSCallExpression -> create(context)
         is JSProperty -> {
-          (context.initializerOrStub as? JSObjectLiteralExpression ?: context.context as? JSObjectLiteralExpression)
+          (context.context as? JSObjectLiteralExpression ?: context.initializerOrStub as? JSObjectLiteralExpression)
             ?.let { create(it) }
         }
         is ES6Decorator -> create(context)
@@ -148,7 +150,15 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
   }
 
   override val elementToImport: PsiElement?
-    get() = source
+    get() = if (source is JSObjectLiteralExpression)
+      when (val context = source.context) {
+        is ES6ExportDefaultAssignment -> source
+        is JSArgumentList, is JSCallExpression ->
+          context.contextOfType<JSCallExpression>(true)
+            ?.takeIf { it.context is ES6ExportDefaultAssignment }
+        else -> source
+      }
+    else source
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     listOf(VueComponentSourceNavigationTarget(super.source))
@@ -230,25 +240,34 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
 
   }
 
-  class VueFileSourceComponent(
+  class VueFileSourceComponent private constructor(
     file: PsiFile,
-    override val vueProximity: VueModelVisitor.Proximity? = null,
+    override val initializer: JSObjectLiteralExpression?,
+    override val vueProximity: VueModelVisitor.Proximity?,
   ) : VueSourceComponent<PsiFile>(
-    file, null, null
+    file, initializer, null
   ), VueFileComponent {
+
+    constructor(file: PsiFile): this(file, null, null)
+    constructor(initializer: JSObjectLiteralExpression): this(initializer.containingFile, initializer, null)
 
     override val name: @NlsSafe String = fromAsset(this@VueFileSourceComponent.source.virtualFile.nameWithoutExtension)
 
     override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-      VueFileSourceComponent(source, proximity)
+      VueFileSourceComponent(source, initializer, proximity)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<VueSourceComponent>.getNavigationTargets(project)
 
     override fun createPointer(): Pointer<VueFileSourceComponent> {
       val sourcePtr = source.createSmartPointer()
+      val initializerPtr = initializer?.createSmartPointer()
       return Pointer {
-        sourcePtr.dereference()?.let { create(it) }
+        if (initializerPtr != null) {
+          initializerPtr.dereference()?.let { create(it) } as? VueFileSourceComponent
+        } else {
+          sourcePtr.dereference()?.let { create(it) }
+        }
       }
     }
   }
