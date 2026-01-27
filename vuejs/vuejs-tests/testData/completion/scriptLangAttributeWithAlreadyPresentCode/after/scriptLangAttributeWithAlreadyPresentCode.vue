@@ -1,4 +1,4 @@
-<script lang="<caret>">
+<script lang="">
 export default {
   name: "Test"
 };

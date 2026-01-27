@@ -1,0 +1,1 @@
+<template v-once></template>

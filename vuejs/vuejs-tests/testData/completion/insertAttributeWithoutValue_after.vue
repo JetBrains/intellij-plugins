@@ -1,1 +1,0 @@
-<template v-once<caret>></template>
