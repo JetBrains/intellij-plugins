@@ -39,6 +39,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.getTextLiteralExpression
+import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.VUE_COMPONENTS_INDEX_JS_KEY
 import org.jetbrains.vuejs.index.findModule
@@ -146,6 +147,11 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       when (val context = element.context) {
         is JSCallExpression -> create(context)
         is JSProperty -> {
+          if (context.isShorthanded) {
+            val delegate = VueComponents.getComponent(context.value.asSafely<JSReferenceExpression>())
+                           ?: VueUnresolvedComponent(context.value)
+            VueLocallyDefinedComponent.create(delegate, context)
+          } else
           (context.context as? JSObjectLiteralExpression ?: context.initializerOrStub as? JSObjectLiteralExpression)
             ?.let { create(it) }
         }
