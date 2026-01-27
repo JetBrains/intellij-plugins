@@ -68,7 +68,10 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
 
     fun create(clazz: JSClass): VueSourceComponent<JSClass>? {
       val initializer = getComponentDecorator(clazz)?.let { getDescriptorFromDecorator(it) }
-      return if (clazz.name != null)
+      val stringLiteral = getTextLiteralExpression(initializer?.findProperty(NAME_PROP)?.initializerOrStub)
+      return if (stringLiteral != null)
+        VueStringLiteralNamedClassSourceComponent(clazz, stringLiteral, initializer)
+      else if (clazz.name != null)
         VueNamedClassSourceComponent(clazz, initializer)
       else
         VueUnnamedClassSourceComponent(clazz, initializer)
@@ -292,6 +295,38 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
         sourcePtr.dereference()?.let { create(it) } as? VueNamedClassSourceComponent
       }
     }
+  }
+
+  private class VueStringLiteralNamedClassSourceComponent(
+    clazz: JSClass,
+    literal: JSLiteralExpression,
+    override val initializer: JSObjectLiteralExpression,
+    override val vueProximity: VueModelVisitor.Proximity? = null,
+  ) : VueSourceComponent<JSClass>(clazz, initializer, clazz), VueNamedComponent, PolySymbolDeclaredInPsi {
+
+    override val name: @NlsSafe String = literal.stubSafeStringValue!!
+
+    override val sourceElement: JSLiteralExpression = literal
+
+    override val textRangeInSourceElement: TextRange
+      get() = TextRange(1, sourceElement.textRange.length - 1)
+
+    override val psiContext: PsiElement?
+      get() = super<PolySymbolDeclaredInPsi>.psiContext
+
+    override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
+      VueStringLiteralNamedClassSourceComponent(source,sourceElement, initializer, proximity)
+
+    override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+      super<PolySymbolDeclaredInPsi>.getNavigationTargets(project)
+
+    override fun createPointer(): Pointer<VueStringLiteralNamedClassSourceComponent> {
+      val sourcePtr = source.createSmartPointer()
+      return Pointer {
+        sourcePtr.dereference()?.let { create(it) } as? VueStringLiteralNamedClassSourceComponent
+      }
+    }
+
   }
 
   private class VueUnnamedClassSourceComponent(
