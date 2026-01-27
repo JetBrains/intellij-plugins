@@ -322,7 +322,7 @@ class VueComponentTest :
         printProperty(level, "class", sourceElement.javaClass.simpleName)
         when (sourceElement) {
           is VueFileComponent -> {}
-          is VueNamedComponent -> printProperty(level, "name", toAsset(sourceElement.name, true))
+          is VueNamedComponent -> printProperty(level, "name", sourceElement.name)
           is VueSymbol -> printProperty(level, "name", sourceElement.name)
         }
         val documentation = (sourceElement as? PolySymbol)

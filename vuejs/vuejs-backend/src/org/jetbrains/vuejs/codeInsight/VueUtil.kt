@@ -465,7 +465,8 @@ fun SemVer.withoutPreRelease(): SemVer =
   else this
 
 fun PolySymbol.extractComponentSymbol(): VueNamedComponent? =
-  this.takeIf { it.namespace == NAMESPACE_HTML }
+  this as? VueNamedComponent
+  ?: this.takeIf { it.namespace == NAMESPACE_HTML }
     ?.unwrapMatchedSymbols()
     ?.toList()
     ?.takeIf { it.size == 2 && it[0] is PolySymbolWithPattern }

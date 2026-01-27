@@ -99,10 +99,8 @@ class VueTypedComponent private constructor(
 
   override fun createPointer(): Pointer<VueTypedComponent> {
     val sourcePtr = source.createSmartPointer()
-    val defaultName = this.name
     return Pointer {
-      val source = sourcePtr.dereference() ?: return@Pointer null
-      VueTypedComponent(source, defaultName)
+      sourcePtr.dereference()?.let { create(source) }
     }
   }
 

@@ -1,6 +1,5 @@
 {
- class: "VueNamedClassSourceComponent",
- name: "HelloWorld",
+ class: "VueFileSourceComponent",
  computed: [
   {
    class: "VueDecoratedComputedProperty",

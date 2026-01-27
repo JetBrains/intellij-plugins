@@ -1,19 +1,19 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.scopes
 
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.query.*
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.asSafely
+import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.index.findScriptTag
+import org.jetbrains.vuejs.model.VueFileComponent
 
 /**
  * This container ensures that components from other container are not self referred without export declaration with component name or script setup
@@ -74,11 +74,11 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
 
   // Cannot self refer without export declaration with component name or script setup
   private fun isNotIncorrectlySelfReferred(symbol: PolySymbol?) =
-    symbol !is PsiSourcedPolySymbol
-    || (symbol.source as? JSImplicitElement)?.context.let { context ->
-      context == null
-      || context != file
-      || context.containingFile.asSafely<XmlFile>()?.let { findScriptTag(it, true) } != null
-    }
+    symbol
+      ?.extractComponentSymbol()
+      ?.asSafely<VueFileComponent>()
+      ?.source
+      ?.asSafely<XmlFile>()
+      .let { it == null || it != file || findScriptTag(it, true) != null }
 
 }

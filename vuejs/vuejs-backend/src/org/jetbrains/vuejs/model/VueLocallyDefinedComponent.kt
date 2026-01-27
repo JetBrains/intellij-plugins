@@ -11,6 +11,7 @@ import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
@@ -22,10 +23,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.createSmartPointer
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
+import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
@@ -53,6 +54,7 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
       source: JSPsiNamedElementBase,
     ): VueLocallyDefinedComponent<*>? =
       source.name
+        ?.let { toAsset(it, true) }
         ?.let { VuePsiNamedElementLocallyDefinedComponent(it, delegate, source) }
 
     fun create(
@@ -67,7 +69,7 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
       delegate: VueComponent,
       source: PsiFile,
     ): VueLocallyDefinedComponent<*> =
-      VueFileLocallyDefinedComponent(fromAsset(source.virtualFile.nameWithoutExtension), delegate, source)
+      VueFileLocallyDefinedComponent(toAsset(FileUtilRt.getNameWithoutExtension(source.name), true), delegate, source)
 
     private fun create(delegate: VueComponent, source: PsiElement, isCompositionAppComponent: Boolean): VueLocallyDefinedComponent<*>? =
       when (source) {
