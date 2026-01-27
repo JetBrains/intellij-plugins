@@ -312,27 +312,47 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testElementUiCompletion() =
-    doLookupTest(VueTestModule.ELEMENT_UI_2_0_5, fileContents = "<template><el-<caret></template>")
+    doLookupTest(
+      VueTestModule.ELEMENT_UI_2_0_5,
+      dir = true,
+      fileContents = "<template><el-<caret></template>",
+    )
 
   @Test
   fun testMintUiCompletion() =
-    doLookupTest(VueTestModule.MINT_UI_2_2_3, fileContents = "<template><mt-<caret></template>")
+    doLookupTest(
+      VueTestModule.MINT_UI_2_2_3,
+      dir = true,
+      fileContents = "<template><mt-<caret></template>",
+    )
 
   @Test
   fun testVuetifyCompletion_017() =
-    doLookupTest(VueTestModule.VUETIFY_0_17_2, fileContents = "<template><<caret></template>") { item ->
+    doLookupTest(
+      VueTestModule.VUETIFY_0_17_2,
+      dir = true,
+      fileContents = "<template><<caret></template>",
+    ) { item ->
       item.lookupString.let { it.startsWith("V") || it.startsWith("v") }
     }
 
   @Test
   fun testVuetifyCompletion_137() =
-    doLookupTest(VueTestModule.VUETIFY_1_3_7, fileContents = "<template><<caret></template>") { item ->
+    doLookupTest(
+      VueTestModule.VUETIFY_1_3_7,
+      dir = true,
+      fileContents = "<template><<caret></template>",
+    ) { item ->
       item.lookupString.let { it.startsWith("V") || it.startsWith("v") }
     }
 
   @Test
   fun testVuetifyCompletion_1210() =
-    doLookupTest(VueTestModule.VUETIFY_1_2_10, fileContents = "<template><<caret></template>") { item ->
+    doLookupTest(
+      VueTestModule.VUETIFY_1_2_10,
+      dir = true,
+      fileContents = "<template><<caret></template>",
+    ) { item ->
       item.lookupString.let { it.startsWith("V") || it.startsWith("v") }
     }
 
@@ -340,6 +360,7 @@ abstract class VueCompletionTestBase(
   fun testIviewCompletion() =
     doLookupTest(
       VueTestModule.IVIEW_2_8_0,
+      dir = true,
       fileContents = "<template><a<caret></template>",
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
@@ -357,6 +378,7 @@ abstract class VueCompletionTestBase(
   fun testBootstrapVueCompletion() =
     doLookupTest(
       VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11,
+      dir = true,
       fileContents = "<template><<caret></template>",
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
@@ -365,6 +387,7 @@ abstract class VueCompletionTestBase(
   fun testShardsVueCompletion() =
     doLookupTest(
       VueTestModule.SHARDS_VUE_1_0_5,
+      dir = true,
       fileContents = "<template><<caret></template>",
       lookupItemFilter = filterOutStandardHtmlSymbols,
     )
@@ -385,7 +408,11 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testBuefyCompletion() =
-    doLookupTest(VueTestModule.BUEFY_0_6_2, fileContents = "<template><b-<caret></template>")
+    doLookupTest(
+      VueTestModule.BUEFY_0_6_2,
+      dir = true,
+      fileContents = "<template><b-<caret></template>",
+    )
 
   @Test
   fun testClassComponentCompletion() =
@@ -616,8 +643,14 @@ abstract class VueCompletionTestBase(
     )
 
   private fun doAttributeNamePriorityTest(vueVersion: VueTestModule) =
-    doLookupTest(VueTestModule.VUETIFY_1_2_10, vueVersion, renderTypeText = false, renderProximity = true,
-                 fileContents = """<template><v-alert <caret><template>""") {
+    doLookupTest(
+      VueTestModule.VUETIFY_1_2_10,
+      vueVersion,
+      dir = true,
+      renderTypeText = false,
+      renderProximity = true,
+      fileContents = """<template><v-alert <caret><template>""",
+    ) {
       !it.lookupString.contains("aria-") && !it.lookupString.startsWith("on")
     }
 
@@ -757,7 +790,12 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testTopLevelTagsNoI18n() =
-    doLookupTest(VueTestModule.VUE_2_5_3, fileContents = "<<caret>", lookupItemFilter = filterOutStandardHtmlSymbols)
+    doLookupTest(
+      VueTestModule.VUE_2_5_3,
+      dir = true,
+      fileContents = "<<caret>",
+      lookupItemFilter = filterOutStandardHtmlSymbols,
+    )
 
   @Test
   fun testTopLevelTags() =
