@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.xml.util.Html5TagAndAttributeNamesProvider
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
+import org.jetbrains.vuejs.codeInsight.elementToImport
 import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueLocallyDefinedComponent

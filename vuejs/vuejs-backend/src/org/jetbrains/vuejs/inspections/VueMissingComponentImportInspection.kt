@@ -12,6 +12,7 @@ import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.codeInsight.elementToImport
 import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix

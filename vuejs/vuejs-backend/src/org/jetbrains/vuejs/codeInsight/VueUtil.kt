@@ -39,6 +39,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.html.NAMESPACE_HTML
 import com.intellij.polySymbols.query.PolySymbolWithPattern
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.namespace
 import com.intellij.polySymbols.utils.unwrapMatchedSymbols
 import com.intellij.psi.*
@@ -464,11 +465,10 @@ fun SemVer.withoutPreRelease(): SemVer =
     SemVer("${this.major}.${this.minor}.${this.patch}", this.major, this.minor, this.patch)
   else this
 
-fun PolySymbol.extractComponentSymbol(): VueNamedComponent? =
+fun PolySymbol.extractComponentSymbol(): PolySymbol? =
   this as? VueNamedComponent
   ?: (this as? VueWebTypesMergedSymbol)
     ?.delegate
-    ?.asSafely<VueNamedComponent>()
   ?: this.takeIf { it.namespace == NAMESPACE_HTML }
     ?.unwrapMatchedSymbols()
     ?.toList()
@@ -477,7 +477,11 @@ fun PolySymbol.extractComponentSymbol(): VueNamedComponent? =
     ?.let {
       if (it is VueWebTypesMergedSymbol) it.delegate else it
     }
-    ?.asSafely<VueNamedComponent>()
+    ?.takeIf { it is VueNamedComponent || it is PsiSourcedPolySymbol}
+
+val PolySymbol.elementToImport: PsiElement?
+  get() = (this as? VueNamedComponent)?.elementToImport
+          ?: (this as? PsiSourcedPolySymbol)?.source
 
 inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this

@@ -16,6 +16,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.codeInsight.elementToImport
 import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
 
