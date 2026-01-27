@@ -871,7 +871,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testNoDuplicateCompletionProposals() =
-    doCompletionAutoPopupTest(checkResult = false) {
+    doCompletionAutoPopupTest(dir = true, checkResult = false) {
       completeBasic()
       assertLookupContains("v-dir2", "v-on:", "v-bind:")
       assertLookupDoesntContain("v-dir1", "v-slot", "v-slot:")
