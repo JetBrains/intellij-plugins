@@ -11,4 +11,11 @@
    callSignature: "(event: "test-event", ...args: any[]) => void",
   },
  ],
+ slots: [
+  {
+   class: "VueAnySlot",
+   name: "Unknown slot",
+   pattern: \.*\,
+  },
+ ],
 }

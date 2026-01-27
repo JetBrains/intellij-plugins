@@ -156,4 +156,11 @@
    callSignature: "(event: "update:name3", arg: any) => void",
   },
  ],
+ slots: [
+  {
+   class: "VueAnySlot",
+   name: "Unknown slot",
+   pattern: \.*\,
+  },
+ ],
 }

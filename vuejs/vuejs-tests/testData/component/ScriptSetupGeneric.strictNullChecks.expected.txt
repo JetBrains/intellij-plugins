@@ -23,4 +23,11 @@
    required: false,
   },
  ],
+ slots: [
+  {
+   class: "VueAnySlot",
+   name: "Unknown slot",
+   pattern: \.*\,
+  },
+ ],
 }

@@ -19,7 +19,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.xml.impl.schema.AnyXmlElementDescriptor
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
-import org.jetbrains.vuejs.web.symbols.VueAnySymbol
+import org.jetbrains.vuejs.web.symbols.VueAnySlot
 
 const val DEFAULT_SLOT_NAME: String = "default"
 
@@ -27,7 +27,12 @@ fun getMatchingAvailableSlots(tag: XmlTag, name: String, newApi: Boolean): List<
   processSlots(
     tag = tag,
     newApi = newApi,
-    anyMatch = { anySlot.match(name, PolySymbolNameMatchQueryParams.create(PolySymbolQueryExecutorFactory.getInstance(tag.project).create(null)), PolySymbolQueryStack()) },
+    anyMatch = {
+      VueAnySlot.match(
+        name,
+        PolySymbolNameMatchQueryParams.create(PolySymbolQueryExecutorFactory.getInstance(tag.project).create(null)),
+        PolySymbolQueryStack())
+    },
     process = { runNameMatchQuery(HTML_SLOTS.withName(name)) },
   )
 
@@ -40,11 +45,6 @@ fun getAvailableSlotsCompletions(tag: XmlTag, name: String, position: Int, newAp
   processSlots(tag, newApi, { emptyList() }) {
     runCodeCompletionQuery(HTML_SLOTS, name, position)
   }
-
-private val anySlot = VueAnySymbol(
-  HTML_SLOTS,
-  "Unknown slot"
-)
 
 private fun <T> processSlots(
   tag: XmlTag,

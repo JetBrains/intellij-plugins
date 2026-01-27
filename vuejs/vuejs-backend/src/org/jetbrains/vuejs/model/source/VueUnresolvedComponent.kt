@@ -17,6 +17,7 @@ import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.web.symbols.VueAnySlot
 
 class VueUnresolvedComponent(
   override val source: PsiElement?,
@@ -82,7 +83,7 @@ class VueUnresolvedComponent(
   override val emits: List<VueEmitCall>
     get() = emptyList()
   override val slots: List<VueSlot>
-    get() = emptyList()
+    get() = listOf(VueAnySlot)
   override val provides: List<VueProvide>
     get() = emptyList()
   override val injects: List<VueInject>

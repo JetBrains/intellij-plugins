@@ -31,4 +31,11 @@
    callSignature: "(event: "change", ctx: string) => void",
   },
  ],
+ slots: [
+  {
+   class: "VueAnySlot",
+   name: "Unknown slot",
+   pattern: \.*\,
+  },
+ ],
 }

@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.navigation.NavigationTarget
+import com.intellij.polySymbols.html.HTML_SLOTS
 import com.intellij.polySymbols.patterns.PolySymbolPattern
 import com.intellij.polySymbols.patterns.PolySymbolPatternFactory
 import com.intellij.polySymbols.query.PolySymbolWithPattern
@@ -48,6 +49,8 @@ import org.jetbrains.vuejs.model.source.VueComponents.getComponentDecorator
 import org.jetbrains.vuejs.model.source.VueComponents.getDescriptorFromDecorator
 import org.jetbrains.vuejs.types.VueSourceSlotScopeType
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
+import org.jetbrains.vuejs.web.symbols.VueAnySlot
+import org.jetbrains.vuejs.web.symbols.VueAnySymbol
 
 abstract class VueSourceComponent<T : PsiElement> private constructor(
   source: T,
@@ -164,7 +167,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       val declaredSlots = super.slots
       if (declaredSlots.isNotEmpty()) return declaredSlots
 
-      val template = template ?: return emptyList()
+      val template = template ?: return listOf(VueAnySlot)
       return CachedValuesManager.getCachedValue(template.source) {
         create(buildSlotsList(template), template.source)
       }
