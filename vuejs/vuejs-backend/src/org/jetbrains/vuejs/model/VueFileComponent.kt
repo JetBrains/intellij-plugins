@@ -8,13 +8,10 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
-interface VueFileComponent : VueNamedComponent, PsiSourcedPolySymbol {
+interface VueFileComponent : VuePsiSourcedComponent, PsiSourcedPolySymbol {
 
   override val source: PsiFile
 
   override fun createPointer(): Pointer<out VueFileComponent>
-
-  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    listOf(VueComponentSourceNavigationTarget(source))
 
 }

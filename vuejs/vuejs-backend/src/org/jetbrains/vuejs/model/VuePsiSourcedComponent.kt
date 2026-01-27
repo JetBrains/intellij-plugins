@@ -8,7 +8,7 @@ import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
-interface VuePsiSourcedComponent : VueComponent, PsiSourcedPolySymbol {
+interface VuePsiSourcedComponent : VueNamedComponent, PsiSourcedPolySymbol {
 
   override val source: PsiElement
 

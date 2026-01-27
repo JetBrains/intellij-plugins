@@ -25,13 +25,14 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueNamedComponent
+import org.jetbrains.vuejs.model.VuePsiSourcedComponent
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
 class VueTypedComponent private constructor(
   override val source: JSQualifiedNamedElement,
   override val name: String,
   override val vueProximity: VueModelVisitor.Proximity? = null,
-) : VueTypedContainer(source), VueNamedComponent, PsiSourcedPolySymbol {
+) : VueTypedContainer(source), VuePsiSourcedComponent {
 
   companion object {
     fun create(source: JSQualifiedNamedElement): VueTypedComponent? {
@@ -42,9 +43,6 @@ class VueTypedComponent private constructor(
 
   override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
     VueTypedComponent(source, name, proximity)
-
-  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-    listOf(VueComponentSourceNavigationTarget(source))
 
   override val elementToImport: PsiElement
     get() = source
