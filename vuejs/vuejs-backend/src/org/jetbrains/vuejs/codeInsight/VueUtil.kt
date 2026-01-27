@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.evaluation.JSTypeEvaluationLocationProvider.
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.JSComputedPropertyNameOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
@@ -122,9 +121,7 @@ fun toAsset(name: String, capitalized: Boolean = false): String {
 fun JSPsiNamedElementBase.resolveIfImportSpecifier(): JSPsiNamedElementBase =
   (this as? ES6ImportSpecifier)
     ?.multiResolve(false)
-    ?.asSequence()
-    ?.mapNotNull { it.takeIf { it.isValidResult }?.element as? JSPsiNamedElementBase }
-    ?.firstOrNull()
+    ?.firstNotNullOfOrNull { it.takeIf { it.isValidResult }?.element as? JSPsiNamedElementBase }
   ?: this
 
 fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExpression> {
@@ -280,7 +277,7 @@ fun collectMembers(element: JSObjectLiteralExpression, includeComputed: Boolean 
         if (property.name != null) {
           result.add(Pair(property.name!!, property))
         }
-        else if (includeComputed && property is JSComputedPropertyNameOwner) {
+        else if (includeComputed) {
           property.computedPropertyName?.expressionAsReferenceName?.let {
             result.add(Pair(it, property))
           }
@@ -334,12 +331,13 @@ fun getPropTypeFromDocComment(element: PsiNamedElement): JSType? =
 
 fun JSType.fixPrimitiveTypes(): JSType =
   transformTypeHierarchy {
-    if (it is JSPrimitiveType && !it.isPrimitive)
-      JSNamedTypeFactory.createType(it.primitiveTypeText, it.source, it.typeContext)
-    else if (it is JSTypeImpl && JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_TYPE_MAP.containsKey(it.typeText)) {
-      JSNamedTypeFactory.createType(JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_TYPE_MAP[it.typeText]!!, it.source, it.typeContext)
+    when (it) {
+      is JSPrimitiveType if !it.isPrimitive -> JSNamedTypeFactory.createType(it.primitiveTypeText, it.source, it.typeContext)
+      is JSTypeImpl if JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_TYPE_MAP.containsKey(it.typeText) -> {
+        JSNamedTypeFactory.createType(JSCommonTypeNames.WRAPPER_TO_PRIMITIVE_TYPE_MAP[it.typeText]!!, it.source, it.typeContext)
+      }
+      else -> it
     }
-    else it
   }
 
 private fun getPropTypeFromConstructor(expression: JSExpression): JSType {
@@ -399,9 +397,8 @@ fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
     ?.jsType
     ?.substitute()
 
-inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
-  return findVueJSEmbeddedExpressionContent()?.firstChild as? T
-}
+inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? =
+  findVueJSEmbeddedExpressionContent()?.firstChild as? T
 
 fun XmlAttributeValue.findVueJSEmbeddedExpressionContent(): VueJSEmbeddedExpressionContent? {
   val root = when {
@@ -416,13 +413,10 @@ fun XmlAttributeValue.findVueJSEmbeddedExpressionContent(): VueJSEmbeddedExpress
   return root?.firstChild?.asSafely<VueJSEmbeddedExpressionContent>()
 }
 
-fun getFirstInjectedFile(element: PsiElement?): PsiFile? {
-  return element
+fun getFirstInjectedFile(element: PsiElement?): PsiFile? =
+  element
     ?.let { InjectedLanguageManager.getInstance(element.project).getInjectedPsiFiles(element) }
-    ?.asSequence()
-    ?.mapNotNull { it.first as? PsiFile }
-    ?.firstOrNull()
-}
+    ?.firstNotNullOfOrNull { it.first as? PsiFile }
 
 fun getHostFile(context: PsiElement): PsiFile? {
   val original = CompletionUtil.getOriginalOrSelf(context)
@@ -436,13 +430,9 @@ fun findDefaultExport(element: PsiElement?): PsiElement? =
     ?: findDefaultCommonJSExport(it)
   }
 
-private fun findDefaultCommonJSExport(element: PsiElement): PsiElement? {
-  return JSClassResolver.getInstance().findElementsByQNameIncludingImplicit(JSSymbolUtil.MODULE_EXPORTS, element.containingFile)
-    .asSequence()
-    .filterIsInstance<JSDefinitionExpression>()
-    .mapNotNull { it.initializerOrStub }
-    .firstOrNull()
-}
+private fun findDefaultCommonJSExport(element: PsiElement): PsiElement? =
+  JSClassResolver.getInstance().findElementsByQNameIncludingImplicit(JSSymbolUtil.MODULE_EXPORTS, element.containingFile)
+    .firstNotNullOfOrNull { (it as? JSDefinitionExpression)?.initializerOrStub }
 
 fun resolveLocalComponent(context: VueEntitiesContainer, tagName: String, containingFile: PsiFile): List<VueComponent> {
   val result = mutableListOf<VueComponent>()
@@ -477,7 +467,7 @@ fun PolySymbol.extractComponentSymbol(): PolySymbol? =
     ?.let {
       if (it is VueWebTypesMergedSymbol) it.delegate else it
     }
-    ?.takeIf { it is VueNamedComponent || it is PsiSourcedPolySymbol}
+    ?.takeIf { it is VueNamedComponent || it is PsiSourcedPolySymbol }
 
 val PolySymbol.elementToImport: PsiElement?
   get() = (this as? VueNamedComponent)?.elementToImport
