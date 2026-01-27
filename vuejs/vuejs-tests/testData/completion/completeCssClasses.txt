@@ -1,2 +1,0 @@
-externalClass (typeText='a.css:1'; priority=0.0)
-internalClass (typeText='completeCssClasses.vue'; priority=0.0)
