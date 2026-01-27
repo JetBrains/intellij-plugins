@@ -7,6 +7,7 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -29,6 +30,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.contextOfType
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueSourceEntity
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
@@ -168,10 +170,11 @@ private constructor(
           it.contextOfType(ES6ExportDefaultAssignment::class)
           ?: it as? HtmlFileImpl
         }
-      ?: ((this as? VueDirective)?.rawSource
-          ?: (this as? VueComponent)?.elementToImport
+      ?: ((this as? VueComponent)?.elementToImport
           ?: this.source
-         )?.let { source ->
+         )
+        ?.let { if (it is JSPsiNamedElementBase) it.resolveIfImportSpecifier() else it }
+        ?.let { source ->
           if (source is JSProperty)
             JSPsiImplUtils.getInitializerReference(source)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, source) }
           else source

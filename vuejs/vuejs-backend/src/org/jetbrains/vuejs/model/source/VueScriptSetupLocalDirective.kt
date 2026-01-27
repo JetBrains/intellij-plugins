@@ -1,12 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
+import com.intellij.model.psi.PsiSymbolService
 import com.intellij.polySymbols.PolySymbolKind
-import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -20,7 +19,7 @@ import org.jetbrains.vuejs.web.VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
 
 class VueScriptSetupLocalDirective(
   override val name: String,
-  override val rawSource: JSPsiNamedElementBase,
+  private val rawSource: JSPsiNamedElementBase,
   private val mode: VueMode,
   override val vueProximity: VueModelVisitor.Proximity? = null,
 ) : VueDirective, PsiSourcedPolySymbol {
@@ -30,13 +29,9 @@ class VueScriptSetupLocalDirective(
   override val kind: PolySymbolKind
     get() = VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
 
-  override val source: PsiElement
-    get() = rawSource.resolveIfImportSpecifier()
-
-  override val renameTarget: PolySymbolRenameTarget?
-    get() = if (source is JSLiteralExpression)
-      PolySymbolRenameTarget.create(this)
-    else null
+  override val source: PsiElement by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    rawSource.resolveIfImportSpecifier()
+  }
 
   override val directiveModifiers: List<VueDirectiveModifier>
     get() = CachedValuesManager.getCachedValue(source) {
@@ -62,7 +57,8 @@ class VueScriptSetupLocalDirective(
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
     super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
-    || super<VueDirective>.isEquivalentTo(symbol)
+    || PsiSymbolService.getInstance().extractElementFromSymbol(symbol)
+      ?.let { it.manager.areElementsEquivalent(it, rawSource) } == true
     || symbol is VueScriptSetupLocalDirective
     && symbol.source == source
     && symbol.name == name
@@ -71,12 +67,12 @@ class VueScriptSetupLocalDirective(
     other === this
     || other is VueScriptSetupLocalDirective
     && other.name == name
-    && other.source == source
+    && other.rawSource == rawSource
     && other.vueProximity == vueProximity
 
   override fun hashCode(): Int {
     var result = name.hashCode()
-    result = 31 * result + source.hashCode()
+    result = 31 * result + rawSource.hashCode()
     result = 31 * result + (vueProximity?.hashCode() ?: 0)
     return result
   }

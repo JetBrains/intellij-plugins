@@ -65,7 +65,6 @@ class VueTypedDirective(
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
     super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
-    || super<VueDirective>.isEquivalentTo(symbol)
     || symbol is VueTypedDirective
     && symbol.source == source
 

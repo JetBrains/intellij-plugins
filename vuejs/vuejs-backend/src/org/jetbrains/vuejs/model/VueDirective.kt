@@ -22,9 +22,6 @@ interface VueDirective : VueScopeElementSymbol, PolySymbolScope {
 
   val directiveModifiers: List<VueDirectiveModifier> get() = emptyList()
 
-  val rawSource: PsiElement?
-    get() = source
-
   override val searchTarget: PolySymbolSearchTarget
     get() = PolySymbolSearchTarget.create(this)
 
@@ -37,13 +34,6 @@ interface VueDirective : VueScopeElementSymbol, PolySymbolScope {
       .presentation()
 
   override fun createPointer(): Pointer<out VueDirective>
-
-  override fun isEquivalentTo(symbol: Symbol): Boolean {
-    val target = PsiSymbolService.getInstance().extractElementFromSymbol(symbol)
-    if (target != null && target.manager.areElementsEquivalent(target, rawSource))
-      return true
-    return super.isEquivalentTo(symbol)
-  }
 
   override fun getSymbols(
     kind: PolySymbolKind,
