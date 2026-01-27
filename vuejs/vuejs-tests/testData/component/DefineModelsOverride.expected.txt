@@ -1,19 +1,19 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  DefineModelsOverride: <recursive value of class VueSourceComponent>,
+  DefineModelsOverride: <recursive value of class VueFileSourceComponent>,
  },
  props: [
   {
    class: "VueScriptSetupModelInputProperty",
    name: "count",
-   jsType: "number | boolean[]",
+   type: "number | boolean[]",
    required: true,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "modelValue",
-   jsType: "number",
+   type: "number",
    required: true,
   },
  ],
@@ -21,7 +21,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:count",
-   eventJSType: "(value: (number | boolean[])) => void",
+   type: "(value: (number | boolean[])) => void",
    params: [
     {
      name: "value",
@@ -34,7 +34,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:modelValue",
-   eventJSType: "(value: number) => void",
+   type: "(value: number) => void",
    params: [
     {
      name: "value",

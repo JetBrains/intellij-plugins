@@ -1,13 +1,13 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  DefineEmitsPropertyContractTupleParameters: <recursive value of class VueSourceComponent>,
+  DefineEmitsPropertyContractTupleParameters: <recursive value of class VueFileSourceComponent>,
  },
  emits: [
   {
    class: "VueScriptSetupPropertyContractEvent",
    name: "add",
-   eventJSType: "(id: number) => void",
+   type: "(id: number) => void",
    params: [
     {
      name: "id",
@@ -20,7 +20,7 @@
   {
    class: "VueScriptSetupPropertyContractEvent",
    name: "add_o",
-   eventJSType: "(id?: number) => void",
+   type: "(id?: number) => void",
    params: [
     {
      name: "id",
@@ -33,7 +33,7 @@
   {
    class: "VueScriptSetupPropertyContractEvent",
    name: "change",
-   eventJSType: "(id: number, options: unknown) => void",
+   type: "(id: number, options: unknown) => void",
    params: [
     {
      name: "id",
@@ -50,7 +50,7 @@
   {
    class: "VueScriptSetupPropertyContractEvent",
    name: "change_o",
-   eventJSType: "(id: number, options?: unknown) => void",
+   type: "(id: number, options?: unknown) => void",
    params: [
     {
      name: "id",
@@ -67,7 +67,7 @@
   {
    class: "VueScriptSetupPropertyContractEvent",
    name: "delete",
-   eventJSType: "(id: number) => void",
+   type: "(id: number) => void",
    params: [
     {
      name: "id",
@@ -80,7 +80,7 @@
   {
    class: "VueScriptSetupPropertyContractEvent",
    name: "delete_o",
-   eventJSType: "(id?: number) => void",
+   type: "(id?: number) => void",
    params: [
     {
      name: "id",

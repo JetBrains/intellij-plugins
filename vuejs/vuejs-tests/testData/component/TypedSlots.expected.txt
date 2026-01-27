@@ -1,5 +1,5 @@
 {
- class: "VueSourceComponent",
+ class: "VueUnnamedSourceComponent",
  slots: [
   {
    class: "VueSourceSlot",

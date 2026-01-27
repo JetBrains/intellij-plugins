@@ -1,13 +1,13 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  DefineEmitsObjectLiteral: <recursive value of class VueSourceComponent>,
+  DefineEmitsObjectLiteral: <recursive value of class VueFileSourceComponent>,
  },
  emits: [
   {
    class: "VueScriptSetupCallSignatureEvent",
    name: "add",
-   eventJSType: "(ctx: number) => void",
+   type: "(ctx: number) => void",
    params: [
     {
      name: "ctx",
@@ -20,7 +20,7 @@
   {
    class: "VueScriptSetupCallSignatureEvent",
    name: "change",
-   eventJSType: "(ctx: string) => void",
+   type: "(ctx: string) => void",
    params: [
     {
      name: "ctx",

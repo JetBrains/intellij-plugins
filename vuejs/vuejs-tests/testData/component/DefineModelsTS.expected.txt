@@ -1,37 +1,37 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  DefineModelsTS: <recursive value of class VueSourceComponent>,
+  DefineModelsTS: <recursive value of class VueFileSourceComponent>,
  },
  props: [
   {
    class: "VueScriptSetupModelInputProperty",
    name: "count",
-   jsType: "number",
+   type: "number",
    required: false,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "countLocal",
-   jsType: "number",
+   type: "number",
    required: false,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "countRequired",
-   jsType: "number | boolean[]",
+   type: "number | boolean[]",
    required: true,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "countType",
-   jsType: "string",
+   type: "string",
    required: false,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "modelValue",
-   jsType: "string",
+   type: "string",
    required: true,
   },
  ],
@@ -39,7 +39,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:count",
-   eventJSType: "(value: (number | undefined)) => void",
+   type: "(value: (number | undefined)) => void",
    params: [
     {
      name: "value",
@@ -52,7 +52,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:countLocal",
-   eventJSType: "(value: (number | undefined)) => void",
+   type: "(value: (number | undefined)) => void",
    params: [
     {
      name: "value",
@@ -65,7 +65,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:countRequired",
-   eventJSType: "(value: (number | boolean[])) => void",
+   type: "(value: (number | boolean[])) => void",
    params: [
     {
      name: "value",
@@ -78,7 +78,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:countType",
-   eventJSType: "(value: (string | undefined)) => void",
+   type: "(value: (string | undefined)) => void",
    params: [
     {
      name: "value",
@@ -91,7 +91,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:modelValue",
-   eventJSType: "(value: string) => void",
+   type: "(value: string) => void",
    params: [
     {
      name: "value",

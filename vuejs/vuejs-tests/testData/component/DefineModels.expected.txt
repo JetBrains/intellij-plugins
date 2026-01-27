@@ -1,43 +1,43 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  DefineModels: <recursive value of class VueSourceComponent>,
+  DefineModels: <recursive value of class VueFileSourceComponent>,
  },
  props: [
   {
    class: "VueScriptSetupModelInputProperty",
    name: "count",
-   jsType: "number",
+   type: "number",
    required: false,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "countAny",
-   jsType: "any",
+   type: "any",
    required: false,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "countLocal",
-   jsType: "number",
+   type: "number",
    required: false,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "countRequired",
-   jsType: "number | boolean",
+   type: "number | boolean",
    required: true,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "countType",
-   jsType: "string",
+   type: "string",
    required: false,
   },
   {
    class: "VueScriptSetupModelInputProperty",
    name: "modelValue",
-   jsType: "string",
+   type: "string",
    required: true,
   },
  ],
@@ -45,7 +45,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:count",
-   eventJSType: "(value: number) => void",
+   type: "(value: number) => void",
    params: [
     {
      name: "value",
@@ -58,7 +58,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:countAny",
-   eventJSType: "(value: any) => void",
+   type: "(value: any) => void",
    params: [
     {
      name: "value",
@@ -71,7 +71,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:countLocal",
-   eventJSType: "(value: number) => void",
+   type: "(value: number) => void",
    params: [
     {
      name: "value",
@@ -84,7 +84,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:countRequired",
-   eventJSType: "(value: number | boolean) => void",
+   type: "(value: number | boolean) => void",
    params: [
     {
      name: "value",
@@ -97,7 +97,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:countType",
-   eventJSType: "(value: string) => void",
+   type: "(value: string) => void",
    params: [
     {
      name: "value",
@@ -110,7 +110,7 @@
   {
    class: "VueScriptSetupModelEvent",
    name: "update:modelValue",
-   eventJSType: "(value: string) => void",
+   type: "(value: string) => void",
    params: [
     {
      name: "value",

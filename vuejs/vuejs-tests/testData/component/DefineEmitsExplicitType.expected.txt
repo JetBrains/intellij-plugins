@@ -1,13 +1,13 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  DefineEmitsExplicitType: <recursive value of class VueSourceComponent>,
+  DefineEmitsExplicitType: <recursive value of class VueFileSourceComponent>,
  },
  emits: [
   {
    class: "VueScriptSetupCallSignatureEvent",
    name: "add",
-   eventJSType: "(value: number) => void",
+   type: "(value: number) => void",
    params: [
     {
      name: "value",
@@ -20,7 +20,7 @@
   {
    class: "VueScriptSetupCallSignatureEvent",
    name: "change",
-   eventJSType: "() => void",
+   type: "() => void",
    params: [],
    hasStrictSignature: true,
    callSignature: "(event: "change") => void",
@@ -28,7 +28,7 @@
   {
    class: "VueScriptSetupCallSignatureEvent",
    name: "delete",
-   eventJSType: "(uuid: string) => void",
+   type: "(uuid: string) => void",
    params: [
     {
      name: "uuid",

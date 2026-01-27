@@ -1,11 +1,11 @@
 {
- class: "VueSourceComponent",
- defaultName: "TestComponent",
+ class: "VueNamedSourceComponent",
+ name: "TestComponent",
  emits: [
   {
    class: "VueSourceEmitDefinition",
    name: "test-event",
-   eventJSType: "(...args: any[]) => void",
+   type: "(...args: any[]) => void",
    params: [],
    hasStrictSignature: false,
    callSignature: "(event: "test-event", ...args: any[]) => void",

@@ -1,23 +1,23 @@
 {
- class: "VueSourceComponent",
- defaultName: "PropsConstructorsAndGenerics",
+ class: "VueNamedSourceComponent",
+ name: "PropsConstructorsAndGenerics",
  props: [
   {
    class: "VuePsiNamedElementInputProperty",
    name: "autofocus",
-   jsType: "boolean | undefined",
+   type: "boolean | undefined",
    required: false,
   },
   {
    class: "VuePsiNamedElementInputProperty",
    name: "msg",
-   jsType: "string",
+   type: "string",
    required: true,
   },
   {
    class: "VuePsiNamedElementInputProperty",
    name: "value",
-   jsType: "number | undefined",
+   type: "number | undefined",
    required: false,
   },
  ],

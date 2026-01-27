@@ -20,6 +20,7 @@ import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.asSafely
+import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
 import org.junit.Test
@@ -288,8 +289,8 @@ class VueComponentTest :
   private class ComponentModelDebugOutputPrinter(val printSources: Boolean) : DebugOutputPrinter() {
     override fun printValueImpl(builder: StringBuilder, level: Int, value: Any?): StringBuilder =
       when (value) {
-        is VueElement -> builder.printVueSourceElement(level, value)
         is VueModelDirectiveProperties -> builder.printVueModelDirectiveProperties(level, value)
+        is VueElement -> builder.printVueSourceElement(level, value)
         is VueTemplate<*> -> builder.printVueTemplate(level, value)
         is JSType -> builder.printJSType(level, value)
         is JSParameterTypeDecorator -> builder.printParameter(level, value)
@@ -320,8 +321,8 @@ class VueComponentTest :
       printObject(topLevel) { level ->
         printProperty(level, "class", sourceElement.javaClass.simpleName)
         when (sourceElement) {
-          is VueNamedComponent -> printProperty(level, "defaultName", sourceElement.name)
-          is VueDirective, is VueFilter -> printProperty(level, "defaultName", sourceElement.name)
+          is VueFileComponent -> {}
+          is VueNamedComponent -> printProperty(level, "name", toAsset(sourceElement.name, true))
           is VueSymbol -> printProperty(level, "name", sourceElement.name)
         }
         val documentation = (sourceElement as? PolySymbol)
@@ -330,20 +331,23 @@ class VueComponentTest :
           ?.documentation
         printProperty(level, "description", documentation?.description)
         if (printSources) {
-          val rawSource = (sourceElement as? VueComponent)?.elementToImport
-                          ?: (sourceElement as? VueDirective)?.rawSource
+          val elementToImport = (sourceElement as? VueComponent)?.elementToImport
+                                ?: (sourceElement as? VueDirective)?.source
           val source = (sourceElement as? VueScopeElement)?.source
                        ?: (sourceElement as? PsiSourcedPolySymbol)?.source
           printProperty(level, "source", source)
-          printProperty(level, "rawSource", rawSource.takeIf { it != source })
+          printProperty(level, "elementToImport", elementToImport.takeIf { it != source })
         }
         if (sourceElement is VueDirective) {
-          printProperty(level, "jsType", sourceElement.type)
+          printProperty(level, "type", sourceElement.type)
           printProperty(level, "modifiers", sourceElement.directiveModifiers.takeIf { it.isNotEmpty() })
         }
         if (sourceElement is VueEntitiesContainer) {
           printProperty(level, "components", sourceElement.components.takeIf { it.isNotEmpty() }
-            ?.filterOutLowercaseScriptSetupVariables()?.toSortedMap())
+            ?.filterOutLowercaseScriptSetupVariables()
+            ?.mapKeys { toAsset(it.key, true) }
+            ?.mapValues { (_, component) -> (component as? VueLocallyDefinedComponent<*>)?.delegate ?: component }
+            ?.toSortedMap())
           printProperty(level, "directives", sourceElement.directives.takeIf { it.isNotEmpty() }?.toSortedMap())
           printProperty(level, "mixins", sourceElement.mixins.takeIf { it.isNotEmpty() })
         }
@@ -363,7 +367,7 @@ class VueComponentTest :
           printProperty(level, "model", sourceElement.model?.takeIf { it.event != null && it.prop != null })
         }
         if (sourceElement is VueProperty) {
-          printProperty(level, "jsType", sourceElement.type)
+          printProperty(level, "type", sourceElement.type)
         }
         if (sourceElement is VueInputProperty) {
           printProperty(level, "required", sourceElement.required)
@@ -374,13 +378,13 @@ class VueComponentTest :
           printProperty(level, "pattern", (sourceElement as? PolySymbolWithPattern)?.pattern)
         }
         if (sourceElement is VueEmitCall) {
-          printProperty(level, "eventJSType", sourceElement.type)
+          printProperty(level, "type", sourceElement.type)
           printProperty(level, "params", sourceElement.params)
           printProperty(level, "hasStrictSignature", sourceElement.hasStrictSignature)
           printProperty(level, "callSignature", sourceElement.callSignature)
         }
         if (sourceElement is VueModelDecl) {
-          printProperty(level, "jsType", sourceElement.type)
+          printProperty(level, "type", sourceElement.type)
           printProperty(level, "required", sourceElement.required)
           printProperty(level, "defaultValue", sourceElement.defaultValue)
           printProperty(level, "local", sourceElement.local)

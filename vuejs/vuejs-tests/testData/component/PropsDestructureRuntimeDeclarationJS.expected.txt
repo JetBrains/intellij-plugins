@@ -1,31 +1,31 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  PropsDestructureRuntimeDeclarationJS: <recursive value of class VueSourceComponent>,
+  PropsDestructureRuntimeDeclarationJS: <recursive value of class VueFileSourceComponent>,
  },
  props: [
   {
    class: "VuePsiNamedElementInputProperty",
    name: "prop1",
-   jsType: "number",
+   type: "number",
    required: true,
   },
   {
    class: "VuePsiNamedElementInputProperty",
    name: "prop2",
-   jsType: "number",
+   type: "number",
    required: false,
   },
   {
    class: "VuePsiNamedElementInputProperty",
    name: "prop3",
-   jsType: "number",
+   type: "number",
    required: false,
   },
   {
    class: "VuePsiNamedElementInputProperty",
    name: "prop4",
-   jsType: "number",
+   type: "number",
    required: false,
   },
  ],

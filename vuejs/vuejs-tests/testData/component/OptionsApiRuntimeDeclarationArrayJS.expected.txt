@@ -1,6 +1,6 @@
 {
- class: "VueSourceComponent",
- defaultName: "TestComponent",
+ class: "VueNamedSourceComponent",
+ name: "TestComponent",
  props: [
   {
    class: "VueStringLiteralInputProperty",

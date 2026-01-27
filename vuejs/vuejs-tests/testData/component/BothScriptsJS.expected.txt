@@ -1,14 +1,14 @@
 {
- class: "VueSourceComponent",
- defaultName: "Rename",
+ class: "VueNamedSourceComponent",
+ name: "Rename",
  components: {
-  BothScriptsJS: <recursive value of class VueSourceComponent>,
+  BothScriptsJS: <recursive value of class VueNamedSourceComponent>,
  },
  props: [
   {
    class: "VuePsiNamedElementInputProperty",
    name: "optional",
-   jsType: "Struct",
+   type: "Struct",
    required: false,
   },
  ],

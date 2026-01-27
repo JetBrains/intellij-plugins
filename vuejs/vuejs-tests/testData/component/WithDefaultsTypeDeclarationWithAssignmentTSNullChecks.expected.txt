@@ -1,31 +1,31 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  WithDefaultsTypeDeclarationWithAssignmentTSNullChecks: <recursive value of class VueSourceComponent>,
+  WithDefaultsTypeDeclarationWithAssignmentTSNullChecks: <recursive value of class VueFileSourceComponent>,
  },
  props: [
   {
    class: "VueScriptSetupInputProperty",
    name: "prop1",
-   jsType: "number",
+   type: "number",
    required: true,
   },
   {
    class: "VueScriptSetupInputProperty",
    name: "prop2",
-   jsType: "number",
+   type: "number",
    required: false,
   },
   {
    class: "VueScriptSetupInputProperty",
    name: "prop3",
-   jsType: "number | undefined",
+   type: "number | undefined",
    required: false,
   },
   {
    class: "VueScriptSetupInputProperty",
    name: "prop4",
-   jsType: "number | undefined",
+   type: "number | undefined",
    required: false,
   },
  ],

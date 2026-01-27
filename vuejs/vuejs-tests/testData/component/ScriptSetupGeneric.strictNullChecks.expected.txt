@@ -1,25 +1,25 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  ScriptSetupGeneric: <recursive value of class VueSourceComponent>,
+  ScriptSetupGeneric: <recursive value of class VueFileSourceComponent>,
  },
  props: [
   {
    class: "VueScriptSetupInputProperty",
    name: "clearable",
-   jsType: "Clearable | undefined",
+   type: "Clearable | undefined",
    required: false,
   },
   {
    class: "VueScriptSetupInputProperty",
    name: "onChange",
-   jsType: "Clearable extends true ? (<ValueType>(value: (ValueType | null)) => void) : (<Va…",
+   type: "Clearable extends true ? (<ValueType>(value: (ValueType | null)) => void) : (<Va…",
    required: false,
   },
   {
    class: "VueScriptSetupInputProperty",
    name: "value",
-   jsType: "ValueType | undefined",
+   type: "ValueType | undefined",
    required: false,
   },
  ],

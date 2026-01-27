@@ -1,13 +1,13 @@
 {
- class: "VueSourceComponent",
+ class: "VueFileSourceComponent",
  components: {
-  WithDefaultsTypeDeclarationPartialTS: <recursive value of class VueSourceComponent>,
+  WithDefaultsTypeDeclarationPartialTS: <recursive value of class VueFileSourceComponent>,
  },
  props: [
   {
    class: "VueScriptSetupInputProperty",
    name: "stillProp",
-   jsType: "number",
+   type: "number",
    required: true,
   },
  ],

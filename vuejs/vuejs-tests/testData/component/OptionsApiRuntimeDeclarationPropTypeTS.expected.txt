@@ -1,11 +1,11 @@
 {
- class: "VueSourceComponent",
- defaultName: "TestComponent",
+ class: "VueNamedSourceComponent",
+ name: "TestComponent",
  props: [
   {
    class: "VuePsiNamedElementInputProperty",
    name: "book",
-   jsType: "Book",
+   type: "Book",
    required: true,
   },
  ],
