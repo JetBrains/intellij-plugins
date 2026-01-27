@@ -136,7 +136,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       when (val context = element.context) {
         is JSCallExpression -> create(context)
         is JSProperty -> {
-          (context.value as? JSObjectLiteralExpression)
+          (context.initializerOrStub as? JSObjectLiteralExpression ?: context.context as? JSObjectLiteralExpression)
             ?.let { create(it) }
         }
         is ES6Decorator -> create(context)
