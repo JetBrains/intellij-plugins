@@ -9,10 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.model.Pointer
-import com.intellij.openapi.project.Project
-import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
-import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.CachedValueProvider
@@ -21,12 +18,8 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.lang.html.isVueFileName
-import org.jetbrains.vuejs.model.VueComponent
-import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.VueNamedComponent
-import org.jetbrains.vuejs.model.VuePsiSourcedComponent
-import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
+import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.source.VueComponents
 
 class VueTypedComponent private constructor(
   override val source: JSQualifiedNamedElement,
@@ -35,8 +28,12 @@ class VueTypedComponent private constructor(
 ) : VueTypedContainer(source), VuePsiSourcedComponent {
 
   companion object {
-    fun create(source: JSQualifiedNamedElement): VueTypedComponent? {
+    fun create(source: JSQualifiedNamedElement): VueNamedComponent? {
       val name = source.name ?: return null
+      if (source is TypeScriptPropertySignature) {
+        VueComponents.getSourceComponent(source)
+          ?.let { return VueLocallyDefinedComponent.create(it, source) }
+      }
       return VueTypedComponent(source, name)
     }
   }
@@ -98,7 +95,7 @@ class VueTypedComponent private constructor(
   override fun createPointer(): Pointer<VueTypedComponent> {
     val sourcePtr = source.createSmartPointer()
     return Pointer {
-      sourcePtr.dereference()?.let { create(source) }
+      sourcePtr.dereference()?.let { create(source) as? VueTypedComponent }
     }
   }
 

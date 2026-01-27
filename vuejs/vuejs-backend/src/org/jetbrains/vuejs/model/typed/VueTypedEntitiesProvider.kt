@@ -95,7 +95,7 @@ object VueTypedEntitiesProvider {
   private fun checkTypeName(typeName: String?) =
     typeName != null && typeName.matches(vueComponentTypenameRegex)
 
-  fun getComponent(element: PsiElement?): VueTypedComponent? =
+  fun getComponent(element: PsiElement?): VueNamedComponent? =
     resolveElementTo(element, TypeScriptVariable::class, TypeScriptInterfaceClass::class)
       ?.takeIf { isComponentDefinition(it) }
       ?.let { VueTypedComponent.create(it) }
