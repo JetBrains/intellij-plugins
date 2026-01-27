@@ -5,7 +5,7 @@ import org.angularjs.codeInsight.*;
 import org.angularjs.codeInsight.messageFormat.AngularMessageFormatAnnotatorTest;
 import org.angularjs.diagrams.DiagramsTest;
 import org.angularjs.editor.AngularTypedHandlerTest;
-import org.angularjs.findUsages.FindUsagesTest;
+import org.angularjs.findUsages.AngularFindUsagesTest;
 import org.angularjs.index.AngularDirectiveCommentParsingTest;
 import org.angularjs.lang.lexer.AngularJSLexerTest;
 import org.angularjs.lang.parser.AngularJSParserTest;
@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
   TagsTest.class,
   DirectivesTest.class,
   AngularTypedHandlerTest.class,
-  FindUsagesTest.class,
+  AngularFindUsagesTest.class,
   AngularDirectiveCommentParsingTest.class,
   AngularJSInjectorMatchingEndFinderTest.class,
   AngularMessageFormatAnnotatorTest.class,

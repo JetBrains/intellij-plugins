@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * @author Dennis.Ushakov
  */
-public class FindUsagesTest extends BasePlatformTestCase {
+public class AngularFindUsagesTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass());
