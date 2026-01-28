@@ -163,11 +163,11 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testSrcInStyleCompletion() =
-    doLookupTest(dir = true)
+    doLookupTest(dir = true, configureFileName = "src/App.vue")
 
   @Test
   fun testSrcInStyleCompletionWithLang() =
-    doLookupTest(dir = true)
+    doLookupTest(dir = true, configureFileName = "src/App.vue")
 
   @Test
   fun testInsertAttributeWithoutValue() =
