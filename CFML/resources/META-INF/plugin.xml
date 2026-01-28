@@ -18,6 +18,7 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
   <depends>com.intellij.java</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.idea.ultimate</depends>
+  <incompatible-with>com.intellij.jetbrains.client</incompatible-with>
   <!--todo intellij.javaee.web.coverage module dependency-->
 
   <extensions defaultExtensionNs="com.intellij">
