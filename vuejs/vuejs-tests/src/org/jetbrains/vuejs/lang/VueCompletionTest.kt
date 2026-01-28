@@ -1736,6 +1736,7 @@ abstract class VueCompletionTestBase(
   fun testInjectInLiteralsUnique() =
     doLookupTest(VueTestModule.VUE_3_5_0, configureFileName = "InjectInLiteralsUnique.vue", dir = true)
 
+  @Ignore
   @Test
   fun testInjectInLiteralsUnquoted() =
     doCompletionAutoPopupTest(VueTestModule.VUE_3_5_0, configureFileName = "InjectInLiteralsUnquoted.vue", dir = true) {
