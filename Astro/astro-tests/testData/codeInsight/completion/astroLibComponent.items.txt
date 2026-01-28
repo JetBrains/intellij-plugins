@@ -1,3 +1,4 @@
 Debug (typeText='astro/components'; priority=0.0; typeGreyed)
+Debug (typeText='astro:components'; priority=0.0; typeGreyed)
 DevToolbarBadge (typeText='astro/runtime/client/dev-toolbar/ui-library/badge.js'; priority=0.0; typeGreyed)
 DevToolbarButton (typeText='astro/runtime/client/dev-toolbar/ui-library/button.js'; priority=0.0; typeGreyed)
