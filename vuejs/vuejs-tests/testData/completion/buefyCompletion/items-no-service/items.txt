@@ -1,0 +1,5 @@
+b-autocomplete (typeText='buefy'; priority=10.0; typeGreyed)
+b-checkbox (typeText='buefy'; priority=10.0; typeGreyed)
+b-checkbox-button (typeText='buefy'; priority=10.0; typeGreyed)
+b-radio (typeText='buefy'; priority=10.0; typeGreyed)
+b-radio-button (typeText='buefy'; priority=10.0; typeGreyed)

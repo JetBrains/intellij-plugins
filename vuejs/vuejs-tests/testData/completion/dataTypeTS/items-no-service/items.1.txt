@@ -1,0 +1,4 @@
+addItemToList (typeText='void')
+msg (typeText='number')
+tasks (typeText='string[]')
+userInput (typeText='string')

@@ -1,0 +1,4 @@
+@test-event (priority=100.0; bold)
+@test-event-2 (priority=100.0; bold)
+@testEvent (priority=100.0; bold)
+@testEvent2 (priority=100.0; bold)

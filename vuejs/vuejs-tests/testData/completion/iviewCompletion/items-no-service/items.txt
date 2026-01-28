@@ -1,0 +1,7 @@
+affix (typeText='iview'; priority=10.0; typeGreyed)
+alert (typeText='iview'; priority=10.0; typeGreyed)
+auto-complete (typeText='iview'; priority=10.0; typeGreyed)
+avatar (typeText='iview'; priority=10.0; typeGreyed)
+keep-alive (typeText='vue'; priority=10.0; typeGreyed)
+transition (typeText='vue'; priority=10.0; typeGreyed)
+transition-group (typeText='vue'; priority=10.0; typeGreyed)

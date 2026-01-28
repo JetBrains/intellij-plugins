@@ -1,0 +1,7 @@
+@input (typeText=null; priority=10.0; typeGreyed)
+.capture (typeText=null; priority=10.0; typeGreyed)
+.once (typeText=null; priority=10.0; typeGreyed)
+.passive (typeText=null; priority=10.0; typeGreyed)
+.prevent (typeText=null; priority=10.0; typeGreyed)
+.self (typeText=null; priority=10.0; typeGreyed)
+.stop (typeText=null; priority=10.0; typeGreyed)

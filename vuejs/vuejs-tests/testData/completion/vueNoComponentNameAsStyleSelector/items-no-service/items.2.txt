@@ -1,0 +1,2 @@
+input-comp (typeText=null; priority=1.0; typeGreyed)
+input (typeText=null; priority=1.0)

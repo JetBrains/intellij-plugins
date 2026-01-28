@@ -1,0 +1,4 @@
+id (typeText='number'; priority=101.0; bold)
+slug (typeText='string'; priority=101.0; bold)
+subtitle (typeText='string'; priority=101.0; bold)
+title (typeText='string'; priority=101.0; bold)

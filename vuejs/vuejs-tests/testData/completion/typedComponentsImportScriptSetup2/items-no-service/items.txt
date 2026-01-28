@@ -1,0 +1,6 @@
+n-affix (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-alert (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-anchor (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-anchor-link (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-auto-complete (typeText='naive-ui'; priority=1.0; typeGreyed)
+n-avatar (typeText='naive-ui'; priority=1.0; typeGreyed)

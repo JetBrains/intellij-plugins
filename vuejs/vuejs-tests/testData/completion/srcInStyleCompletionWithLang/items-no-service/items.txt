@@ -1,0 +1,2 @@
+b.styl (typeText=null; priority=0.0)
+foo (typeText=null; priority=0.0)

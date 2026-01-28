@@ -1,0 +1,1 @@
+someClass (typeText='cssClassInPug.vue'; priority=20.0)

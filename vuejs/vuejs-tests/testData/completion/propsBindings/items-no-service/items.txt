@@ -1,0 +1,2 @@
+my-message (typeText='string')
+myMessage (typeText='string')

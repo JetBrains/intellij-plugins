@@ -1,0 +1,8 @@
+__trClass (typeText='string')
+color (typeText='string')
+cols (typeText='any')
+colsMap (typeText='any')
+dark (typeText='boolean')
+dense (typeText='boolean')
+expand (typeText='boolean')
+header (typeText='boolean')

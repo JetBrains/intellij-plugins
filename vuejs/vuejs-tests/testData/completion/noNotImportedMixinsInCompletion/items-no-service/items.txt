@@ -1,0 +1,5 @@
+hi2dden (typeText='any'; priority=100.0; bold; typeGreyed)
+interesting-prop (typeText='any'; priority=100.0; bold; typeGreyed)
+interestingProp (typeText='any'; priority=100.0; bold; typeGreyed)
+required-mixin-prop (typeText='any'; priority=100.0; bold; typeGreyed)
+requiredMixinProp (typeText='any'; priority=100.0; bold; typeGreyed)

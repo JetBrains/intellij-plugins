@@ -1,0 +1,2 @@
+MyButtonFromPlugin (typeText=null; priority=50.0; typeGreyed)
+MyLabelFromPlugin (typeText=null; priority=50.0; typeGreyed)

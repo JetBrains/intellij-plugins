@@ -1,0 +1,2 @@
+prop1 (typeText='boolean'; priority=100.0; bold; typeGreyed)
+prop2 (typeText='Ref'; priority=100.0; bold; typeGreyed)

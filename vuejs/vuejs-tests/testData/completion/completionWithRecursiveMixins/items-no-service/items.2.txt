@@ -1,0 +1,4 @@
+from-d (typeText='any'; priority=100.0; bold; typeGreyed)
+from-hidden (typeText='any'; priority=100.0; bold; typeGreyed)
+fromD (typeText='any'; priority=100.0; bold; typeGreyed)
+fromHidden (typeText='any'; priority=100.0; bold; typeGreyed)

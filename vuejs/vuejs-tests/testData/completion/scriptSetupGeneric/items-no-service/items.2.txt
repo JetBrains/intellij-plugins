@@ -1,0 +1,8 @@
+a (typeText='string'; priority=101.0; bold)
+valueOf (typeText='boolean'; priority=101.0; bold)
+constructor (typeText='Function'; priority=98.0)
+hasOwnProperty (typeText='boolean'; priority=98.0)
+isPrototypeOf (typeText='boolean'; priority=98.0)
+propertyIsEnumerable (typeText='boolean'; priority=98.0)
+toLocaleString (typeText='string'; priority=98.0)
+toString (typeText='string'; priority=98.0)

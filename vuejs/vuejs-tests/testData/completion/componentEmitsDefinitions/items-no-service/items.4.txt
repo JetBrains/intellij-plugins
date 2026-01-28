@@ -1,0 +1,2 @@
+@on-login-click (priority=100.0; bold)
+@onLoginClick (priority=100.0; bold)

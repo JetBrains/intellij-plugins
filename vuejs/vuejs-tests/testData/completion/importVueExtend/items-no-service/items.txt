@@ -1,0 +1,4 @@
+foo-bar (typeText=null; priority=1.0; typeGreyed)
+foo-bar2 (typeText=null; priority=1.0; typeGreyed)
+foo-bar3 (typeText=null; priority=1.0; typeGreyed)
+foo-bar4 (typeText=null; priority=1.0; typeGreyed)
