@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.model.VueProvide
 import org.jetbrains.vuejs.model.resolveInjectionSymbol
 import org.jetbrains.vuejs.types.VueSourceProvideType
 
-class VueSourceProvide(
+data class VueSourceProvide(
   override val name: String,
   private val sourceElement: PsiElement,
   private val symbolSource: PsiNamedElement? = null,
@@ -40,17 +40,4 @@ class VueSourceProvide(
       VueSourceProvide(name, source, symbolSource)
     }
   }
-
-  override fun equals(other: Any?): Boolean =
-    other === this ||
-    other is VueSourceProvide
-    && other.name == name
-    && other.sourceElement == sourceElement
-
-  override fun hashCode(): Int {
-    var result = name.hashCode()
-    result = 31 * result + sourceElement.hashCode()
-    return result
-  }
-
 }

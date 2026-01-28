@@ -459,7 +459,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   }
 
-  private class VueSourceSlot(
+  private data class VueSourceSlot(
     override val name: String,
     override val source: PsiElement,
   ) : VueSlot, PsiSourcedPolySymbol {
@@ -473,21 +473,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         VueSourceSlot(name, source)
       }
     }
-
-    override fun equals(other: Any?): Boolean =
-      other === this ||
-      other is VueSourceSlot
-      && other.name == name
-      && other.source == source
-
-    override fun hashCode(): Int {
-      var result = name.hashCode()
-      result = 31 * result + source.hashCode()
-      return result
-    }
   }
 
-  private class VueSourceInject(
+  private data class VueSourceInject(
     override val name: String,
     override val source: PsiElement,
   ) : VueInject, PsiSourcedPolySymbol {
@@ -511,18 +499,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       return Pointer {
         VueSourceInject(name, sourcePointer.dereference() ?: return@Pointer null)
       }
-    }
-
-    override fun equals(other: Any?): Boolean =
-      other === this
-      || other is VueSourceInject
-      && other.name == name
-      && other.source == source
-
-    override fun hashCode(): Int {
-      var result = name.hashCode()
-      result = 31 * result + source.hashCode()
-      return result
     }
 
     private data class VueInjectKey(val name: String? = null, val symbol: PsiNamedElement? = null)

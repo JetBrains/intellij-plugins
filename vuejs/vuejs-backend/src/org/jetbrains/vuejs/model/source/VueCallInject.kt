@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.model.VueInject
 import org.jetbrains.vuejs.model.resolveInjectionSymbol
 import org.jetbrains.vuejs.types.VueSourceProvideType
 
-class VueCallInject(
+data class VueCallInject(
   override val name: String,
   override val source: PsiElement,
   private val symbolSource: PsiNamedElement? = null,
@@ -36,17 +36,4 @@ class VueCallInject(
       VueCallInject(name, source, symbolSource)
     }
   }
-
-  override fun equals(other: Any?): Boolean =
-    other === this ||
-    other is VueCallInject
-    && other.name == name
-    && other.source == source
-
-  override fun hashCode(): Int {
-    var result = name.hashCode()
-    result = 31 * result + source.hashCode()
-    return result
-  }
-
 }

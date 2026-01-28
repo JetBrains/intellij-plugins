@@ -27,7 +27,7 @@ import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_COMPONENT_NAMESPACES
 
-class VueComponentNamespaceSymbol(
+data class VueComponentNamespaceSymbol(
   override val name: String,
   override val source: JSPsiNamedElementBase,
 ) : PsiSourcedPolySymbol, PolySymbolScope, VueSymbol {
@@ -94,15 +94,7 @@ class VueComponentNamespaceSymbol(
       else null
     }
 
-  override fun equals(other: Any?): Boolean =
-    other is VueComponentNamespaceSymbol
-    && other.name == name
-    && other.source == source
-
-  override fun hashCode(): Int =
-    31 * name.hashCode() + source.hashCode()
-
-  private class VueNamespacedComponent(override val delegate: VuePsiSourcedComponent) :
+  private data class VueNamespacedComponent(override val delegate: VuePsiSourcedComponent) :
     PsiSourcedPolySymbolDelegate<VuePsiSourcedComponent> {
 
     private val namespaceSymbol = VueComponentNamespaceSymbol(delegate.name, delegate.source as JSPsiNamedElementBase)
@@ -143,12 +135,6 @@ class VueComponentNamespaceSymbol(
     ): List<PolySymbolCodeCompletionItem> =
       namespaceSymbol.getCodeCompletions(qualifiedName, params, stack) +
       super.getCodeCompletions(qualifiedName, params, stack)
-
-    override fun equals(other: Any?): Boolean =
-      other is VueNamespacedComponent && other.delegate == delegate
-
-    override fun hashCode(): Int =
-      delegate.hashCode()
 
   }
 

@@ -404,7 +404,7 @@ private fun getSlotNameRegex(expr: JSExpression): String {
   return ".*"
 }
 
-private class VueSourceRegexSlot(
+private data class VueSourceRegexSlot(
   private val regex: String,
   override val source: XmlTag,
 ) : VueSlot, PolySymbolWithPattern, PsiSourcedPolySymbol {
@@ -426,22 +426,9 @@ private class VueSourceRegexSlot(
       VueSourceRegexSlot(regex, source)
     }
   }
-
-  override fun equals(other: Any?): Boolean =
-    other === this ||
-    other is VueSourceRegexSlot
-    && other.regex == regex
-    && other.source == source
-
-  override fun hashCode(): Int {
-    var result = regex.hashCode()
-    result = 31 * result + source.hashCode()
-    return result
-  }
-
 }
 
-private class VueSourceSlot(
+private data class VueSourceSlot(
   override val name: String,
   override val source: XmlTag,
 ) : VueSlot, PsiSourcedPolySymbol {
@@ -456,17 +443,4 @@ private class VueSourceSlot(
       VueSourceSlot(name, source)
     }
   }
-
-  override fun equals(other: Any?): Boolean =
-    other === this ||
-    other is VueSourceSlot
-    && other.name == name
-    && other.source == source
-
-  override fun hashCode(): Int {
-    var result = name.hashCode()
-    result = 31 * result + source.hashCode()
-    return result
-  }
-
 }

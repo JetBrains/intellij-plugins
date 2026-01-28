@@ -28,9 +28,7 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent<*>
     || kind == JS_PROPERTIES
 
   override fun initialize(consumer: (PolySymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    enclosingComponent.global.provides.forEach {
-      consumer(it)
-    }
+    enclosingComponent.global.provides.forEach(consumer)
 
     consumer(vueInjectStringSymbol)
     consumer(vueInjectPropertySymbol)
@@ -42,11 +40,10 @@ class VueInjectSymbolScope(private val enclosingComponent: VueSourceComponent<*>
     qualifiedName: PolySymbolQualifiedName,
     params: PolySymbolCodeCompletionQueryParams,
     stack: PolySymbolQueryStack,
-  ): List<PolySymbolCodeCompletionItem> {
-    return super.getCodeCompletions(qualifiedName, params, stack).filter {
+  ): List<PolySymbolCodeCompletionItem> =
+    super.getCodeCompletions(qualifiedName, params, stack).filter {
       it.symbol.asSafely<VueProvide>()?.injectionKey == null
     }
-  }
 
   override fun createPointer(): Pointer<VueInjectSymbolScope> {
     val componentPointer = enclosingComponent.createPointer()
