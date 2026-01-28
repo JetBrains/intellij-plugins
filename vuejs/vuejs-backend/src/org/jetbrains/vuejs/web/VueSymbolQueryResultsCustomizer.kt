@@ -28,6 +28,7 @@ import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueLocallyDefinedComponent
 import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.web.symbols.VueComponentWithProximity
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 
 class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySymbolQueryResultsCustomizer {
@@ -86,13 +87,14 @@ class VueSymbolQueryResultsCustomizer(private val context: PsiElement) : PolySym
     result.groupBy { it.extractComponentSymbol()?.elementToImport }
       .values
       .flatMap { list ->
-        val originalComponent = list.find { it !is VueLocallyDefinedComponent<*> }
+        val originalComponent = list.find { it.unwrapVueSymbolWithProximity() !is VueLocallyDefinedComponent<*> }
         if (originalComponent != null)
           list.filter {
-            it !is VueLocallyDefinedComponent<*>
-            || it.delegate != originalComponent
-            || (it.vueProximity ?: VueModelVisitor.Proximity.OUT_OF_SCOPE) > (originalComponent[PROP_VUE_PROXIMITY]
-                                                                              ?: VueModelVisitor.Proximity.OUT_OF_SCOPE)
+            val component = it.unwrapVueSymbolWithProximity()
+            component !is VueLocallyDefinedComponent<*>
+            || component.delegate != originalComponent
+            || (it[PROP_VUE_PROXIMITY] ?: VueModelVisitor.Proximity.OUT_OF_SCOPE) > (originalComponent[PROP_VUE_PROXIMITY]
+                                                                                     ?: VueModelVisitor.Proximity.OUT_OF_SCOPE)
           }
         else
           list

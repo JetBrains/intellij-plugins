@@ -14,6 +14,7 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.extractComponentSymbol
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.model.VueFileComponent
+import org.jetbrains.vuejs.web.symbols.VueComponentWithProximity
 
 /**
  * This container ensures that components from other container are not self referred without export declaration with component name or script setup
@@ -76,6 +77,7 @@ class VueIncorrectlySelfReferredComponentFilteringScope(
   private fun isNotIncorrectlySelfReferred(symbol: PolySymbol?) =
     symbol
       ?.extractComponentSymbol()
+      ?.let { if (it is VueComponentWithProximity) it.delegate else it }
       ?.asSafely<VueFileComponent>()
       ?.source
       ?.asSafely<XmlFile>()

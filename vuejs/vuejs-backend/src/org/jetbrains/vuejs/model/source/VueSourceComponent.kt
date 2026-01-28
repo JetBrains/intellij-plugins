@@ -167,7 +167,7 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
           is ES6ExportDefaultAssignment -> source.containingFile
           is JSArgumentList, is JSCallExpression ->
             context.contextOfType<JSCallExpression>(true)
-              ?.takeIf { it.context is ES6ExportDefaultAssignment || VueComponents.isDefineOptionsCall(it)}
+              ?.takeIf { it.context is ES6ExportDefaultAssignment || VueComponents.isDefineOptionsCall(it) }
               ?.containingFile
           else -> null
         }
@@ -213,9 +213,6 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
               ?.typeParameters?.toList()
             ?: emptyList()
 
-  val delegate: VueComponent?
-    get() = null
-
   private class VueUnnamedSourceComponent(
     override val initializer: JSObjectLiteralExpression,
   ) : VueSourceComponent<JSObjectLiteralExpression>(initializer, initializer, null) {
@@ -231,7 +228,6 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
   private class VueNamedSourceComponent(
     literal: JSLiteralExpression,
     override val initializer: JSObjectLiteralExpression,
-    override val vueProximity: VueModelVisitor.Proximity? = null,
   ) : VueSourceComponent<JSObjectLiteralExpression>(initializer, initializer, null),
       VueNamedComponent, PolySymbolDeclaredInPsi {
 
@@ -244,9 +240,6 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
 
     override val psiContext: PsiElement?
       get() = super<PolySymbolDeclaredInPsi>.psiContext
-
-    override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-      VueNamedSourceComponent(sourceElement, initializer, proximity)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<VueSourceComponent>.getNavigationTargets(project)
@@ -264,28 +257,24 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     file: PsiFile,
     override val initializer: JSObjectLiteralExpression?,
     clazz: JSClass?,
-    override val vueProximity: VueModelVisitor.Proximity?,
   ) : VueSourceComponent<PsiFile>(
     file, initializer, clazz
   ), VueFileComponent {
 
     constructor(file: PsiFile)
-      : this(file, null, null, null)
+      : this(file, null, null)
 
     constructor(initializer: JSObjectLiteralExpression)
-      : this(initializer.containingFile, initializer, null, null)
+      : this(initializer.containingFile, initializer, null)
 
     constructor(clazz: JSClass, initializer: JSObjectLiteralExpression?)
-      : this(clazz.containingFile, initializer, clazz, null)
+      : this(clazz.containingFile, initializer, clazz)
 
     override val name: @NlsSafe String =
       toAsset(FileUtilRt.getNameWithoutExtension(this@VueFileSourceComponent.source.name), true)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<VueSourceComponent>.getNavigationTargets(project)
-
-    override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-      VueFileSourceComponent(source, initializer, clazz, proximity)
 
     override fun createPointer(): Pointer<VueFileSourceComponent> {
       val sourcePtr = source.createSmartPointer()
@@ -307,16 +296,12 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
   private class VueNamedClassSourceComponent(
     clazz: JSClass,
     override val initializer: JSObjectLiteralExpression?,
-    override val vueProximity: VueModelVisitor.Proximity? = null,
   ) : VueSourceComponent<JSClass>(clazz, initializer, clazz), VuePsiSourcedComponent {
 
     override val name: @NlsSafe String = clazz.name!!
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<VueSourceComponent>.getNavigationTargets(project)
-
-    override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-      VueNamedClassSourceComponent(source, initializer, proximity)
 
     override fun createPointer(): Pointer<VueNamedClassSourceComponent> {
       val sourcePtr = source.createSmartPointer()
@@ -330,7 +315,6 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     clazz: JSClass,
     literal: JSLiteralExpression,
     override val initializer: JSObjectLiteralExpression,
-    override val vueProximity: VueModelVisitor.Proximity? = null,
   ) : VueSourceComponent<JSClass>(clazz, initializer, clazz), VueNamedComponent, PolySymbolDeclaredInPsi {
 
     override val name: @NlsSafe String = toAsset(literal.stubSafeStringValue!!, true)
@@ -342,9 +326,6 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
 
     override val psiContext: PsiElement?
       get() = super<PolySymbolDeclaredInPsi>.psiContext
-
-    override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-      VueStringLiteralNamedClassSourceComponent(source, sourceElement, initializer, proximity)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<VueSourceComponent>.getNavigationTargets(project)

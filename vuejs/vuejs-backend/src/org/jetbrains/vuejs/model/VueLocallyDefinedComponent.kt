@@ -26,9 +26,8 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
   override val name: String,
   delegate: VueComponent,
   val sourceElement: T,
-  vueProximity: VueModelVisitor.Proximity,
   val isCompositionAppComponent: Boolean = false,
-) : VueDelegatedComponent(delegate, vueProximity) {
+) : VueDelegatedComponent<VueComponent>(delegate) {
 
   companion object {
 
@@ -82,35 +81,31 @@ sealed class VueLocallyDefinedComponent<T : PsiElement>(
     && other.delegate == delegate
     && other.sourceElement == sourceElement
     && other.isCompositionAppComponent == isCompositionAppComponent
-    && other.vueProximity == vueProximity
 
   override fun hashCode(): Int {
     var result = name.hashCode()
     result = 31 * result + delegate.hashCode()
     result = 31 * result + sourceElement.hashCode()
     result = 31 * result + isCompositionAppComponent.hashCode()
-    result = 31 * result + vueProximity.hashCode()
     return result
   }
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
-    symbol === this
-    || symbol is VueLocallyDefinedComponent<*>
+    symbol === this ||
+    symbol is VueLocallyDefinedComponent<*>
     && symbol.javaClass == javaClass
     && symbol.name == name
     && symbol.delegate == delegate
     && symbol.sourceElement == sourceElement
 
   protected fun <C : VueLocallyDefinedComponent<T>> createPointer(clazz: KClass<C>): Pointer<C> {
-    val vueProximity = this.vueProximity ?: VueModelVisitor.Proximity.LOCAL
     val isCompositionAppComponent = this.isCompositionAppComponent
     val delegate = this.delegate.createPointer()
     val sourceElement = this.sourceElement.createSmartPointer()
     return Pointer {
       val newDelegate = delegate.dereference() ?: return@Pointer null
       val newSourceElement = sourceElement.dereference() ?: return@Pointer null
-      clazz.safeCast(create(delegate = newDelegate, source = newSourceElement, isCompositionAppComponent = isCompositionAppComponent)
-                       ?.withVueProximity(proximity = vueProximity))
+      clazz.safeCast(create(delegate = newDelegate, source = newSourceElement, isCompositionAppComponent = isCompositionAppComponent))
     }
   }
 
@@ -121,8 +116,7 @@ private class VuePsiNamedElementLocallyDefinedComponent(
   name: String,
   delegate: VueComponent,
   sourceElement: JSPsiNamedElementBase,
-  vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueLocallyDefinedComponent<JSPsiNamedElementBase>(name, delegate, sourceElement, vueProximity),
+) : VueLocallyDefinedComponent<JSPsiNamedElementBase>(name, delegate, sourceElement),
     VuePsiSourcedComponent {
 
   override val elementToImport: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -138,9 +132,6 @@ private class VuePsiNamedElementLocallyDefinedComponent(
     super<VuePsiSourcedComponent>.isEquivalentTo(symbol)
     || super<VueLocallyDefinedComponent>.isEquivalentTo(symbol)
 
-  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-    VuePsiNamedElementLocallyDefinedComponent(name, delegate, sourceElement, proximity)
-
   override fun createPointer(): Pointer<VuePsiNamedElementLocallyDefinedComponent> =
     createPointer(VuePsiNamedElementLocallyDefinedComponent::class)
 }
@@ -149,8 +140,7 @@ private class VueFileLocallyDefinedComponent(
   name: String,
   delegate: VueComponent,
   source: PsiFile,
-  vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueLocallyDefinedComponent<PsiFile>(name, delegate, source, vueProximity),
+) : VueLocallyDefinedComponent<PsiFile>(name, delegate, source),
     VueFileComponent {
 
   override val source: PsiFile
@@ -162,9 +152,6 @@ private class VueFileLocallyDefinedComponent(
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(sourceElement)) }
-
-  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-    VueFileLocallyDefinedComponent(name, delegate, sourceElement, proximity)
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
     super<VueFileComponent>.isEquivalentTo(symbol)
@@ -179,8 +166,7 @@ private class VueStringLiteralLocallyDefinedComponent(
   delegate: VueComponent,
   sourceElement: JSLiteralExpression,
   isCompositionAppComponent: Boolean,
-  vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueLocallyDefinedComponent<JSLiteralExpression>(name, delegate, sourceElement, vueProximity, isCompositionAppComponent),
+) : VueLocallyDefinedComponent<JSLiteralExpression>(name, delegate, sourceElement, isCompositionAppComponent),
     PolySymbolDeclaredInPsi {
 
   override val textRangeInSourceElement: TextRange
@@ -196,9 +182,6 @@ private class VueStringLiteralLocallyDefinedComponent(
   override val renameTarget: PolySymbolRenameTarget?
     get() = PolySymbolRenameTarget.create(this)
 
-  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-    VueStringLiteralLocallyDefinedComponent(name, delegate, sourceElement, isCompositionAppComponent, proximity)
-
   override fun createPointer(): Pointer<VueStringLiteralLocallyDefinedComponent> =
     createPointer(VueStringLiteralLocallyDefinedComponent::class)
 }
@@ -207,15 +190,11 @@ private class VueInitializerTextLiteralLocallyDefinedComponent(
   name: String,
   delegate: VueComponent,
   sourceElement: JSInitializerOwner,
-  vueProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.LOCAL,
-) : VueLocallyDefinedComponent<JSInitializerOwner>(name, delegate, sourceElement, vueProximity) {
+) : VueLocallyDefinedComponent<JSInitializerOwner>(name, delegate, sourceElement) {
 
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     delegate.getNavigationTargets(project)
       .ifEmpty { listOf(VueComponentSourceNavigationTarget(sourceElement)) }
-
-  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-    VueInitializerTextLiteralLocallyDefinedComponent(name, delegate, sourceElement, proximity)
 
   override fun createPointer(): Pointer<VueInitializerTextLiteralLocallyDefinedComponent> {
     val delegatePtr = delegate.createPointer()

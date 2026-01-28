@@ -26,15 +26,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.contextOfType
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueSourceEntity
 import org.jetbrains.vuejs.web.VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.VUE_GLOBAL_DIRECTIVES
 import org.jetbrains.vuejs.web.VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
+import org.jetbrains.vuejs.web.symbols.VueComponentWithProximity
+import org.jetbrains.vuejs.web.symbols.VueDirectiveWithProximity
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
 
@@ -106,14 +106,14 @@ private constructor(
     container.acceptEntities(object : VueModelVisitor() {
 
       override fun visitComponent(component: VueNamedComponent, proximity: Proximity): Boolean {
-        component.withVueProximity(forcedProximity)
+        VueComponentWithProximity.create(component, forcedProximity)
           .tryMergeWithWebTypes(webTypesContributions)
           .forEach(consumer)
         return true
       }
 
       override fun visitDirective(directive: VueDirective, proximity: Proximity): Boolean {
-        directive.withVueProximity(forcedProximity)
+        VueDirectiveWithProximity.create(directive, forcedProximity)
           .tryMergeWithWebTypes(webTypesContributions)
           .forEach(consumer)
         return true

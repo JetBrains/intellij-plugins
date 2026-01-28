@@ -24,7 +24,6 @@ import org.jetbrains.vuejs.model.source.VueComponents
 class VueTypedComponent private constructor(
   override val source: JSQualifiedNamedElement,
   override val name: String,
-  override val vueProximity: VueModelVisitor.Proximity? = null,
 ) : VueTypedContainer(source), VuePsiSourcedComponent {
 
   companion object {
@@ -38,14 +37,8 @@ class VueTypedComponent private constructor(
     }
   }
 
-  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueNamedComponent =
-    VueTypedComponent(source, name, proximity)
-
   override val elementToImport: PsiElement
     get() = source
-
-  override val delegate: VueComponent?
-    get() = null
 
   override val renameTarget: PolySymbolRenameTarget?
     get() = null

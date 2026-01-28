@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.GlobalSearchScopeUtil
@@ -25,6 +26,7 @@ import org.jetbrains.vuejs.index.VUE_COMPOSITION_APP_INDEX_KEY
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.getComponent
+import org.jetbrains.vuejs.web.unwrapVueSymbolWithProximity
 
 abstract class VueCompositionContainer(
   private val mode: VueMode,
@@ -233,7 +235,9 @@ abstract class VueCompositionContainer(
     }
 
     fun isCompositionAppComponent(component: VueComponent): Boolean =
-      component is VueLocallyDefinedComponent<*> && component.isCompositionAppComponent
+      (component as? PolySymbol)?.unwrapVueSymbolWithProximity().let {
+        it is VueLocallyDefinedComponent<*> && it.isCompositionAppComponent
+      }
   }
 
   private data class EntitiesAnalysis(

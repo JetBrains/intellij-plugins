@@ -12,6 +12,7 @@ import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtGlobalComponent
+import org.jetbrains.vuejs.web.unwrapVueSymbolWithProximity
 
 class NuxtResolveTest : BasePlatformTestCase() {
 
@@ -22,11 +23,13 @@ class NuxtResolveTest : BasePlatformTestCase() {
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("test.vue")
     myFixture.resolvePolySymbolReference("<H<caret>eaders>")
+      .unwrapVueSymbolWithProximity()
       .let {
         assertInstanceOf(it, NuxtGlobalComponent::class.java)
         TestCase.assertEquals("level0", (it as NuxtGlobalComponent).elementToImport?.containingFile?.virtualFile?.parent?.name)
       }
     myFixture.resolvePolySymbolReference("<F<caret>ooters>")
+      .unwrapVueSymbolWithProximity()
       .let {
         assertInstanceOf(it, NuxtGlobalComponent::class.java)
         TestCase.assertEquals("deep", (it as NuxtGlobalComponent).elementToImport?.containingFile?.virtualFile?.parent?.name)

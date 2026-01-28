@@ -13,15 +13,17 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueDirectiveModifier
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueMode
 import org.jetbrains.vuejs.model.typed.VueTypedDirectives.getDirectiveModifiers
 import org.jetbrains.vuejs.web.VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
 
-class VueScriptSetupLocalDirective(
+data class VueScriptSetupLocalDirective(
   override val name: String,
   private val rawSource: JSPsiNamedElementBase,
   private val mode: VueMode,
-  override val vueProximity: VueModelVisitor.Proximity? = null,
 ) : VueDirective, PsiSourcedPolySymbol {
 
   override val parents: List<VueEntitiesContainer> = emptyList()
@@ -41,17 +43,13 @@ class VueScriptSetupLocalDirective(
       )
     }
 
-  override fun withVueProximity(proximity: VueModelVisitor.Proximity): VueDirective =
-    VueScriptSetupLocalDirective(name, rawSource, mode, proximity)
-
   override fun createPointer(): Pointer<VueScriptSetupLocalDirective> {
     val name = name
     val source = this.rawSource.createSmartPointer()
     val mode = this.mode
-    val vueProximity = this.vueProximity
     return Pointer {
       val newSource = source.dereference() ?: return@Pointer null
-      VueScriptSetupLocalDirective(name, newSource, mode, vueProximity)
+      VueScriptSetupLocalDirective(name, newSource, mode)
     }
   }
 
@@ -59,25 +57,5 @@ class VueScriptSetupLocalDirective(
     super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
     || PsiSymbolService.getInstance().extractElementFromSymbol(symbol)
       ?.let { it.manager.areElementsEquivalent(it, rawSource) } == true
-    || symbol is VueScriptSetupLocalDirective
-    && symbol.source == source
-    && symbol.name == name
 
-  override fun equals(other: Any?): Boolean =
-    other === this
-    || other is VueScriptSetupLocalDirective
-    && other.name == name
-    && other.rawSource == rawSource
-    && other.vueProximity == vueProximity
-
-  override fun hashCode(): Int {
-    var result = name.hashCode()
-    result = 31 * result + rawSource.hashCode()
-    result = 31 * result + (vueProximity?.hashCode() ?: 0)
-    return result
-  }
-
-  override fun toString(): String {
-    return "VueScriptSetupLocalDirective($name)"
-  }
 }

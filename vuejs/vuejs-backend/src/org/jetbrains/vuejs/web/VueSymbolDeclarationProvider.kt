@@ -17,8 +17,6 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.getFunctionNameFromVueIndex
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.VueScopeElementSymbol
 import org.jetbrains.vuejs.model.source.*
 
 class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
@@ -32,8 +30,7 @@ class VueSymbolDeclarationProvider : PolySymbolDeclarationProvider {
         // "createApp()" syntax support
         val callExpr = parent.parent as? JSCallExpression ?: return emptyList()
         VueCompositionContainer.getVueElement(callExpr)
-          ?.asSafely<VueScopeElementSymbol>()
-          ?.withVueProximity(VueModelVisitor.Proximity.APP)
+          ?.asSafely<PolySymbol>()
       }
       is JSArrayLiteralExpression -> {
         val (kind, element) =

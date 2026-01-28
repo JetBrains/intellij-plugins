@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
-import com.intellij.model.Symbol
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.documentation.PolySymbolDocumentation
 import com.intellij.polySymbols.documentation.PolySymbolDocumentationProvider
@@ -12,15 +11,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getLibraryNameForDocumentationOf
 
-abstract class VueDelegatedComponent(
-  final override val delegate: VueComponent,
-  final override val vueProximity: VueModelVisitor.Proximity?,
-) : VueDelegatedContainer<VueComponent>(), VueNamedComponent {
+abstract class VueDelegatedComponent<T : VueComponent>(
+  final override val delegate: T,
+) : VueDelegatedContainer<T>(), VueNamedComponent {
 
   final override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
     PolySymbolDocumentationTarget.create(
       this, location,
-      PolySymbolDocumentationProvider<VueDelegatedComponent> { symbol, location ->
+      PolySymbolDocumentationProvider<VueDelegatedComponent<*>> { symbol, location ->
         val myDoc = PolySymbolDocumentation.create(symbol, location) {
           library = getLibraryNameForDocumentationOf(symbol.source)
         }
@@ -43,25 +41,16 @@ abstract class VueDelegatedComponent(
 
   override fun equals(other: Any?): Boolean =
     other === this ||
-    other is VueDelegatedComponent
+    other is VueDelegatedComponent<*>
     && other.javaClass == javaClass
     && other.name == name
     && other.delegate == delegate
-    && other.vueProximity == vueProximity
 
   override fun hashCode(): Int {
     var result = name.hashCode()
     result = 31 * result + delegate.hashCode()
-    result = 31 * result + vueProximity.hashCode()
     return result
   }
 
-  override fun isEquivalentTo(symbol: Symbol): Boolean =
-    symbol === this
-    || symbol is VueDelegatedComponent
-    && symbol.javaClass == javaClass
-    && symbol.name == name
-    && symbol.delegate == delegate
-
-  abstract override fun createPointer(): Pointer<out VueDelegatedComponent>
+  abstract override fun createPointer(): Pointer<out VueDelegatedComponent<T>>
 }
