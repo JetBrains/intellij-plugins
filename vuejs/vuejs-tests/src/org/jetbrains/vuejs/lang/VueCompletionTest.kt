@@ -26,7 +26,14 @@ class VueCompletionTest :
   VueCompletionTestBase() {
 
   class WithoutServiceTest :
-    VueCompletionTestBase(useTsc = false)
+    VueCompletionTestBase(useTsc = false) {
+
+    override fun getExpectedItemsLocation(dir: Boolean): String {
+      require(dir) { "Only `dir` option is supported!" }
+      
+      return super.getExpectedItemsLocation(dir) + "/items-no-service"
+    }
+  }
 }
 
 @RunWith(JUnit4::class)
