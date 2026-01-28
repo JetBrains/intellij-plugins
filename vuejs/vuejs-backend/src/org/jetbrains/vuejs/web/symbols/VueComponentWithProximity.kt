@@ -58,8 +58,11 @@ internal open class VueComponentWithProximity private constructor(
     delegate.getNavigationTargets(project)
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
-    super.isEquivalentTo(symbol)
-    || delegate.isEquivalentTo(symbol)
+    if (symbol is VueComponentWithProximity)
+      delegate.isEquivalentTo(symbol.delegate)
+    else
+      super.isEquivalentTo(symbol)
+      || delegate.isEquivalentTo(symbol)
 
   override fun createPointer(): Pointer<out VueDelegatedComponent<VueNamedComponent>> {
     val delegatePtr = delegate.createPointer()
@@ -87,11 +90,8 @@ internal open class VueComponentWithProximity private constructor(
       delegate.getNavigationTargets(project)
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
-      if (symbol is VueComponentWithProximity)
-        delegate.isEquivalentTo(symbol.delegate)
-      else
-        super<PolySymbolDeclaredInPsi>.isEquivalentTo(symbol)
-        || delegate.isEquivalentTo(symbol)
+      super<PolySymbolDeclaredInPsi>.isEquivalentTo(symbol)
+      || super<VueComponentWithProximity>.isEquivalentTo(symbol)
 
     override fun createPointer(): Pointer<VueComponentDeclaredInPsiWithProximity> {
       val delegatePtr = delegate.createPointer()
@@ -115,7 +115,7 @@ internal open class VueComponentWithProximity private constructor(
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
       super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
-      || delegate.isEquivalentTo(symbol)
+      || super<VueComponentWithProximity>.isEquivalentTo(symbol)
 
     override fun createPointer(): Pointer<VuePsiSourcedComponentWithProximity> {
       val delegatePtr = delegate.createPointer()

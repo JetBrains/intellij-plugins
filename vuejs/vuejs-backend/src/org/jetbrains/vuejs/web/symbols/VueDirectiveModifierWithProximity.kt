@@ -7,34 +7,23 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
-import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.refactoring.PolySymbolRenameTarget
 import com.intellij.polySymbols.search.PolySymbolSearchTarget
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueDirectiveModifier
-import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
 import org.jetbrains.vuejs.web.asPolySymbolPriority
 
-internal open class VueDirectiveWithProximity private constructor(
-  val delegate: VueDirective,
+internal open class VueDirectiveModifierWithProximity private constructor(
+  val delegate: VueDirectiveModifier,
   val vueProximity: VueModelVisitor.Proximity,
-) : VueDirective {
+) : VueDirectiveModifier {
 
-  companion object {
-    fun create(delegate: VueDirective, proximity: VueModelVisitor.Proximity): VueDirective =
-      if (delegate is PsiSourcedPolySymbol)
-        VuePsiSourcedDirectiveWithProximity(delegate, proximity)
-      else
-        VueDirectiveWithProximity(delegate, proximity)
-  }
-
-  override val directiveModifiers: List<VueDirectiveModifier>
-    get() = delegate.directiveModifiers
+  override val name: @NlsSafe String
+    get() = delegate.name
 
   override val priority: PolySymbol.Priority
     get() = vueProximity.asPolySymbolPriority()
@@ -56,48 +45,33 @@ internal open class VueDirectiveWithProximity private constructor(
     delegate.getNavigationTargets(project)
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
-    if (symbol is VueDirectiveWithProximity)
+    if (symbol is VueDirectiveModifierWithProximity)
       delegate.isEquivalentTo(symbol.delegate)
     else
       super.isEquivalentTo(symbol)
       || delegate.isEquivalentTo(symbol)
 
-  override val kind: PolySymbolKind
-    get() = delegate.kind
-
-  override val name: @NlsSafe String
-    get() = delegate.name
-
-  override val source: PsiElement?
-    get() = delegate.source
-
-  override val parents: List<VueEntitiesContainer>
-    get() = delegate.parents
-
-  override fun equals(other: Any?): Boolean =
-    other === this ||
-    other is VueDirectiveWithProximity
-    && other.delegate == delegate
-    && other.vueProximity == vueProximity
-
-  override fun hashCode(): Int {
-    var result = delegate.hashCode()
-    result = 31 * result + vueProximity.hashCode()
-    return result
-  }
-
-  override fun createPointer(): Pointer<out VueDirective> {
+  override fun createPointer(): Pointer<out VueDirectiveModifier> {
     val delegatePtr = delegate.createPointer()
     val vueProximity = vueProximity
     return Pointer {
-      VueDirectiveWithProximity(delegatePtr.dereference() ?: return@Pointer null, vueProximity)
+      delegatePtr.dereference()?.let { VueDirectiveModifierWithProximity(it, vueProximity) }
     }
   }
 
-  private class VuePsiSourcedDirectiveWithProximity(
-    delegate: VueDirective,
-    vueProximity: VueModelVisitor.Proximity,
-  ) : VueDirectiveWithProximity(delegate, vueProximity), PsiSourcedPolySymbol {
+  companion object {
+    fun create(delegate: VueDirectiveModifier, proximity: VueModelVisitor.Proximity?): VueDirectiveModifier =
+      when {
+        proximity == null -> delegate
+        delegate is PsiSourcedPolySymbol -> VuePsiSourcedDirectiveModifierWithProximity(delegate, proximity)
+        else -> VueDirectiveModifierWithProximity(delegate, proximity)
+      }
+  }
+
+  private class VuePsiSourcedDirectiveModifierWithProximity(
+    delegate: VueDirectiveModifier,
+    proximity: VueModelVisitor.Proximity,
+  ) : VueDirectiveModifierWithProximity(delegate, proximity), PsiSourcedPolySymbol {
 
     override val source: PsiElement?
       get() = (delegate as PsiSourcedPolySymbol).source
@@ -107,14 +81,17 @@ internal open class VueDirectiveWithProximity private constructor(
 
     override fun isEquivalentTo(symbol: Symbol): Boolean =
       super<PsiSourcedPolySymbol>.isEquivalentTo(symbol)
-      || super<VueDirectiveWithProximity>.isEquivalentTo(symbol)
+      || super<VueDirectiveModifierWithProximity>.isEquivalentTo(symbol)
 
-    override fun createPointer(): Pointer<VuePsiSourcedDirectiveWithProximity> {
+    override fun createPointer(): Pointer<VuePsiSourcedDirectiveModifierWithProximity> {
       val delegatePtr = delegate.createPointer()
       val vueProximity = vueProximity
       return Pointer {
-        VuePsiSourcedDirectiveWithProximity(delegatePtr.dereference() ?: return@Pointer null, vueProximity)
+        delegatePtr.dereference()?.let { VuePsiSourcedDirectiveModifierWithProximity(it, vueProximity) }
       }
     }
+
   }
+
+
 }

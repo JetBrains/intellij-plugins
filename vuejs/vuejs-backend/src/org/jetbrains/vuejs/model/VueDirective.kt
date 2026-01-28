@@ -14,6 +14,7 @@ import org.jetbrains.vuejs.web.PROP_VUE_PROXIMITY
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_ARGUMENT
 import org.jetbrains.vuejs.web.VUE_DIRECTIVE_MODIFIERS
 import org.jetbrains.vuejs.web.symbols.VueAnySymbol
+import org.jetbrains.vuejs.web.symbols.VueDirectiveModifierWithProximity
 
 interface VueDirective : VueSymbol, VueScopeElement, PolySymbolScope {
 
@@ -41,7 +42,7 @@ interface VueDirective : VueSymbol, VueScopeElement, PolySymbolScope {
 
       VUE_DIRECTIVE_MODIFIERS -> {
         directiveModifiers
-          .map { it.withProximity(this[PROP_VUE_PROXIMITY]) }
+          .map { VueDirectiveModifierWithProximity.create(it, this[PROP_VUE_PROXIMITY]) }
           .ifEmpty { listOf(VueAnySymbol(kind, "Vue directive modifier")) }
       }
 

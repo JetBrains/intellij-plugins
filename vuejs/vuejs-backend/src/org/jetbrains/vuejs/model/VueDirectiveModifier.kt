@@ -13,8 +13,6 @@ interface VueDirectiveModifier : VueSymbol {
   override val kind: PolySymbolKind
     get() = VUE_DIRECTIVE_MODIFIERS
 
-  fun withProximity(proximity: VueModelVisitor.Proximity?): VueDirectiveModifier
-
   override val presentation: TargetPresentation
     get() = TargetPresentation.builder(VueBundle.message("vue.documentation.type.directive.modifier", name))
       .icon(icon)
