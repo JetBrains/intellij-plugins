@@ -8,6 +8,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.codeInsight.daemon.impl.TestDaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewPopupUpdateProcessor;
 import com.intellij.codeInspection.InspectionProfileEntry;
@@ -100,8 +101,7 @@ public abstract class JSDaemonAnalyzerTestCaseBase extends HeavyPlatformTestCase
 
     InspectionsKt.configureInspections(tools, getProject(), getTestRootDisposable());
 
-    DaemonCodeAnalyzerImpl daemonCodeAnalyzer = (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(getProject());
-    daemonCodeAnalyzer.prepareForTest();
+    new TestDaemonCodeAnalyzerImpl(getProject()).prepareForTest();
     DaemonCodeAnalyzerSettings.getInstance().setImportHintEnabled(false);
 
     myPsiManager = PsiManagerEx.getInstanceEx(myProject);
