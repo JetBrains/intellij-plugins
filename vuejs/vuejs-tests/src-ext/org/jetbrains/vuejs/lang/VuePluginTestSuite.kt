@@ -16,6 +16,16 @@ class VuePluginTestSuite
 
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
+  VueAutoPopupTest.WithLegacyPluginTest::class,
+  VueCompletionTest.WithLegacyPluginTest::class,
+  VueExtractComponentTest.WithLegacyPluginTest::class,
+  VueNewComponentTest.WithLegacyPluginTest::class,
+  VueRenameTest.WithLegacyPluginTest::class,
+)
+class VueLegacyPluginTestSuite
+
+@RunWith(Suite::class)
+@Suite.SuiteClasses(
   VueAutoPopupTest.WithoutServiceTest::class,
   VueCompletionTest.WithoutServiceTest::class,
   VueExtractComponentTest.WithoutServiceTest::class,

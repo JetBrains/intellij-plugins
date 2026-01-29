@@ -10,6 +10,9 @@ import org.junit.runners.JUnit4
 class VueAutoPopupTest :
   VueAutoPopupTestBase() {
 
+  class WithLegacyPluginTest :
+    VueAutoPopupTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+
   class WithoutServiceTest :
     VueAutoPopupTestBase(testMode = VueTestMode.NO_PLUGIN)
 }

@@ -17,6 +17,9 @@ import org.junit.runners.JUnit4
 class VueNewComponentTest :
   VueNewComponentTestBase() {
 
+  class WithLegacyPluginTest :
+    VueNewComponentTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+
   class WithoutServiceTest :
     VueNewComponentTestBase(testMode = VueTestMode.NO_PLUGIN)
 }

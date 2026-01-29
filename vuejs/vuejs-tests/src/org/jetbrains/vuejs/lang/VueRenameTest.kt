@@ -39,6 +39,10 @@ import org.junit.runners.JUnit4
 class VueRenameTest :
   VueRenameTestBase() {
 
+  @Ignore
+  class WithLegacyPluginTest :
+    VueRenameTestBase(testMode = VueTestMode.LEGACY_PLUGIN)
+
   class WithoutServiceTest :
     VueRenameTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
