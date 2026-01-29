@@ -29,6 +29,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,13 +40,13 @@ class VueRenameTest :
   VueRenameTestBase() {
 
   class WithoutServiceTest :
-    VueRenameTestBase(useTsc = false)
+    VueRenameTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
 
 @RunWith(JUnit4::class)
 abstract class VueRenameTestBase(
-  useTsc: Boolean = true,
-) : VueTestCase("rename", useTsc = useTsc) {
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueTestCase("rename", testMode = testMode) {
 
   @Test
   fun testComponentFieldFromTemplate() =

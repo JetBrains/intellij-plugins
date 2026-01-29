@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -10,13 +11,13 @@ class VueAutoPopupTest :
   VueAutoPopupTestBase() {
 
   class WithoutServiceTest :
-    VueAutoPopupTestBase(useTsc = false)
+    VueAutoPopupTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
 
 @RunWith(JUnit4::class)
 abstract class VueAutoPopupTestBase(
-  useTsc: Boolean = true,
-) : VueTestCase("autoPopup", useTsc = useTsc) {
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueTestCase("autoPopup", testMode = testMode) {
 
   @Test
   fun testEventsAfterAt() =

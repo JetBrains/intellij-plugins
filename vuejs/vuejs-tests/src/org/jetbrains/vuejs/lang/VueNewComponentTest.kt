@@ -9,6 +9,7 @@ import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCach
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.vuejs.VueCreateFromTemplateHandler.Companion.VUE_COMPOSITION_API_TEMPLATE_NAME
 import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -17,13 +18,13 @@ class VueNewComponentTest :
   VueNewComponentTestBase() {
 
   class WithoutServiceTest :
-    VueNewComponentTestBase(useTsc = false)
+    VueNewComponentTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
 
 @RunWith(JUnit4::class)
 abstract class VueNewComponentTestBase(
-  useTsc: Boolean = true,
-) : VueTestCase("new_component", useTsc = useTsc) {
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueTestCase("new_component", testMode = testMode) {
 
   override fun setUp() {
     super.setUp()

@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
 import org.jetbrains.vuejs.intentions.extractComponent.getContextForExtractComponentIntention
 import org.junit.Ignore
@@ -13,13 +14,13 @@ class VueExtractComponentTest :
   VueExtractComponentTestBase() {
 
   class WithoutServiceTest :
-    VueExtractComponentTestBase(useTsc = false)
+    VueExtractComponentTestBase(testMode = VueTestMode.NO_PLUGIN)
 }
 
 @RunWith(JUnit4::class)
 abstract class VueExtractComponentTestBase(
-  useTsc: Boolean = true,
-) : VueTestCase("extract_component", useTsc = useTsc) {
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueTestCase("extract_component", testMode = testMode) {
 
   @Test
   fun testExtractSingleTag__options() {

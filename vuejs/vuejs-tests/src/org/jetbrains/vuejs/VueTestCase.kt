@@ -11,13 +11,23 @@ import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
 
+enum class VueTestMode {
+  DEFAULT,
+  LEGACY_PLUGIN,
+  NO_PLUGIN,
+
+  ;
+}
+
 abstract class VueTestCase(
   override val testCasePath: String,
-  private val useTsc: Boolean = true,
-) : WebFrameworkTestCase(if (useTsc) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
+  private val testMode: VueTestMode = VueTestMode.DEFAULT,
+) : WebFrameworkTestCase(
+  mode = if (testMode != VueTestMode.NO_PLUGIN) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform,
+) {
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    if (!useTsc)
+    if (testMode == VueTestMode.NO_PLUGIN)
       return
 
     val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {

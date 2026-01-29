@@ -12,6 +12,7 @@ import com.intellij.polySymbols.testFramework.and
 import com.intellij.polySymbols.testFramework.enableIdempotenceChecksOnEveryCache
 import com.intellij.workspaceModel.ide.impl.WorkspaceEntityLifecycleSupporterUtils
 import org.jetbrains.vuejs.VueTestCase
+import org.jetbrains.vuejs.VueTestMode
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,11 +27,11 @@ class VueCompletionTest :
   VueCompletionTestBase() {
 
   class WithoutServiceTest :
-    VueCompletionTestBase(useTsc = false) {
+    VueCompletionTestBase(testMode = VueTestMode.NO_PLUGIN) {
 
     override fun getExpectedItemsLocation(dir: Boolean): String {
       require(dir) { "Only `dir` option is supported!" }
-      
+
       return super.getExpectedItemsLocation(dir) + "/items-no-service"
     }
   }
@@ -38,8 +39,8 @@ class VueCompletionTest :
 
 @RunWith(JUnit4::class)
 abstract class VueCompletionTestBase(
-  useTsc: Boolean = true,
-) : VueTestCase("completion", useTsc = useTsc) {
+  testMode: VueTestMode = VueTestMode.DEFAULT,
+) : VueTestCase("completion", testMode = testMode) {
 
   override fun setUp() {
     super.setUp()
