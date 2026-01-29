@@ -54,35 +54,35 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testComponentFieldFromTemplate() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testComponentFieldFromStringUsageInTemplate() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testTemplateLocalVariable() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDestructuringInVFor() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testSlotProps() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testQualifiedWatchProperty() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testWatchProperty() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testInlineFieldRename() =
-    doConfiguredTest(checkResult = true) {
+    doConfiguredTest(dir = true, checkResult = true) {
       CodeInsightTestUtil.doInlineRename(VariableInplaceRenameHandler(), "foo", myFixture)
     }
 
@@ -96,11 +96,11 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testCssVBind() =
-    doRenameTest(newName = "newColor", dir = false)
+    doRenameTest(newName = "newColor")
 
   @Test
   fun testCssVBindScriptSetup() =
-    doRenameTest(newName = "newColor", dir = false)
+    doRenameTest(newName = "newColor")
 
   @Test
   fun testCreateAppComponent() =
@@ -128,11 +128,11 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testModelDeclaration() =
-    doRenameTest(newName = "alignment", dir = false)
+    doRenameTest(newName = "alignment")
 
   @Test
   fun testModelDeclarationWithVar() =
-    doRenameTest(newName = "alignment", dir = false)
+    doRenameTest(newName = "alignment")
 
   @Test
   fun testModelDeclarationProp() =
@@ -166,27 +166,27 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testPropsOptionsFromDefinition() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testPropsOptionsFromUsage1() =
-    doRenameTest(newName = "newName23", dir = false)
+    doRenameTest(newName = "newName23")
 
   @Test
   fun testPropsOptionsFromUsage2() =
-    doRenameTest(newName = "newName23", dir = false)
+    doRenameTest(newName = "newName23")
 
   @Test
   fun testPropsOptionsFromUsage3() =
-    doRenameTest(newName = "newName23", dir = false)
+    doRenameTest(newName = "newName23")
 
   @Test
   fun testPropsOptionsUpperCaseFromDefinition() =
-    doRenameTest(newName = "NewName", dir = false)
+    doRenameTest(newName = "NewName")
 
   @Test
   fun testPropsOptionsNumberFromDefinition() =
-    doRenameTest(newName = "newName23", dir = false)
+    doRenameTest(newName = "newName23")
 
   @Test
   fun testPropsOptionsExtUsageFromDefinition() =
@@ -198,15 +198,15 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testPropsStringsFromDefinition() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testPropsStringsFromUsage1() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testPropsStringsFromUsage2() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testPropsStringsExtUsageFromDefinition() =
@@ -218,15 +218,15 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testDefinePropsRecordTypeFromDefinition() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsRecordTypeFromUsage1() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsRecordTypeFromUsage2() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsRecordTypeExtUsageFromDefinition() =
@@ -238,15 +238,15 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testDefinePropsArrayLiteralFromDefinition() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsArrayLiteralFromUsage1() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsArrayLiteralFromUsage2() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsArrayLiteralExtUsageFromDefinition() =
@@ -258,15 +258,15 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testDefinePropsObjectLiteralFromDefinition() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsObjectLiteralFromUsage1() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsObjectLiteralFromUsage2() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsObjectLiteralExtUsageFromDefinition() =
@@ -278,15 +278,15 @@ abstract class VueRenameTestBase(
 
   @Test
   fun testDefinePropsInterfaceFromDefinition() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsInterfaceFromUsage1() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsInterfaceFromUsage2() =
-    doRenameTest(newName = "newName", dir = false)
+    doRenameTest(newName = "newName")
 
   @Test
   fun testDefinePropsInterfaceExtUsageFromDefinition() =
@@ -415,12 +415,11 @@ abstract class VueRenameTestBase(
   private fun doRenameTest(
     mainFile: String = "$testName.$defaultExtension",
     newName: String,
-    dir: Boolean = true,
   ) {
     checkSymbolRename(
       mainFile = mainFile,
       newName = newName,
-      dir = dir,
+      dir = true,
       modules = arrayOf(
         VueTestModule.VUE_3_5_0,
       ),
