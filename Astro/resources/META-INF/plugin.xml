@@ -141,6 +141,7 @@
     <tsImportResolver implementation="org.jetbrains.astro.lang.typescript.AstroTypeScriptImportsResolverProvider"/>
     <importModulePathStrategy order="after TypeScript"
                              implementation="org.jetbrains.astro.lang.AstroImportModulePathStrategy"/>
+    <moduleExportsProvider id="astro" implementation="org.jetbrains.astro.codeInsight.AstroModuleExportsProvider"/>
   </extensions>
   <actions resource-bundle="messages.AstroBundle">
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent"

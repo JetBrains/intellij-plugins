@@ -9,23 +9,24 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.getStubSafeChildren
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.asSafely
 import org.jetbrains.astro.lang.psi.AstroContentRoot
 import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
 
-const val ASTRO_PKG = "astro"
-const val ASTRO_GLOBAL_INTERFACE = "AstroGlobal"
-const val ASTRO_IMPLICIT_OBJECT = "Astro"
-const val ASTRO_PROPS = "Props"
+const val ASTRO_PKG: String = "astro"
+const val ASTRO_GLOBAL_INTERFACE: String = "AstroGlobal"
+const val ASTRO_IMPLICIT_OBJECT: String = "Astro"
+const val ASTRO_PROPS: String = "Props"
 
-const val ASTRO_INLINE_DIRECTIVE = "is:inline"
-const val ASTRO_DEFINE_VARS_DIRECTIVE = "define:vars"
+const val ASTRO_INLINE_DIRECTIVE: String = "is:inline"
+const val ASTRO_DEFINE_VARS_DIRECTIVE: String = "define:vars"
 
-const val ASTRO_CONFIG_NAME = "astro.config"
+const val ASTRO_CONFIG_NAME: String = "astro.config"
 
-val ASTRO_CONFIG_FILES = setOf(
+val ASTRO_CONFIG_FILES: Set<String> = setOf(
   "$ASTRO_CONFIG_NAME.js",
   "$ASTRO_CONFIG_NAME.cjs",
   "$ASTRO_CONFIG_NAME.mjs",
@@ -39,10 +40,10 @@ fun PsiElement.frontmatterScript(): AstroFrontmatterScript? =
   containingFile?.astroContentRoot()?.frontmatterScript()
 
 fun PsiFile.astroContentRoot(): AstroContentRoot? =
-  children.firstNotNullOfOrNull { it as? AstroContentRoot }
+  getStubSafeChildren<AstroContentRoot>().firstOrNull()
 
 fun AstroContentRoot.frontmatterScript(): AstroFrontmatterScript? =
-  children.firstNotNullOfOrNull { it as? AstroFrontmatterScript }
+  getStubSafeChildren<AstroFrontmatterScript>().firstOrNull()
 
 fun AstroFrontmatterScript.propsInterfaceOrTypeAlias(): JSClass? =
   propsInterface() ?: propsTypeAlias()
