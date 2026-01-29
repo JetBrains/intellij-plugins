@@ -26,7 +26,6 @@ import com.intellij.platform.workspace.storage.MutableEntityStorage
 import com.intellij.platform.workspace.storage.WorkspaceEntity
 import com.intellij.platform.workspace.storage.url.VirtualFileUrl
 import com.intellij.platform.workspace.storage.url.VirtualFileUrlManager
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.containers.nullize
 import com.intellij.util.xmlb.annotations.XCollection
 import kotlinx.coroutines.*
@@ -160,7 +159,6 @@ internal class NuxtFolderManager(
   override fun dispose() {}
 
   companion object {
-    @RequiresBlockingContext
     fun getInstance(project: Project): NuxtFolderManager = project.service<NuxtFolderManager>()
     suspend fun serviceAsync(project: Project): NuxtFolderManager = project.serviceAsync<NuxtFolderManager>()
 
