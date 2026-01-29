@@ -47,7 +47,6 @@ class VueUnresolvedComponent(
     else
       super.getMatchingSymbols(qualifiedName, params, stack)
 
-
   override fun createPointer(): Pointer<VueUnresolvedComponent> {
     val source = this.source?.createSmartPointer()
     return Pointer {

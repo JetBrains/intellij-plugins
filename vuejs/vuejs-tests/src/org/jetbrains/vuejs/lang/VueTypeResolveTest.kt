@@ -345,7 +345,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("${getTestName(false)}.vue")
 
     doTest(
-      "type HelloPro<caret>ps" to "{msg: string}",
+      "type HelloPro<caret>ps" to "{readonly msg: string}",
       "type HelloProps<caret>PropRef" to "string",
       "type ShouldBeUn<caret>Refed" to "number",
       "const resu<caret>lt1" to "number | undefined",

@@ -1,4 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+@file:Suppress("CanConvertToMultiDollarString")
+
 package org.jetbrains.vuejs.model
 
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
@@ -7,45 +9,58 @@ import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolPropertiesFr
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
-import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSTypedEntity
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
+import com.intellij.model.Pointer
+import com.intellij.model.Symbol
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
-import com.intellij.polySymbols.js.jsType
-import com.intellij.polySymbols.js.toJSImplicitElement
-import com.intellij.polySymbols.query.PolySymbolWithPattern
+import com.intellij.polySymbols.*
+import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.js.*
+import com.intellij.polySymbols.js.symbols.asJSSymbol
+import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
+import com.intellij.polySymbols.js.types.JSSymbolScopeType
+import com.intellij.polySymbols.js.types.PROP_JS_TYPE
+import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.utils.PolySymbolDelegate
+import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.index.CUSTOM_PROPERTIES
 import org.jetbrains.vuejs.index.VUE_CORE_MODULES
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.types.VueCompleteRecordType
-import org.jetbrains.vuejs.types.VueComponentInstanceType
 import org.jetbrains.vuejs.types.VueRefsType
 import org.jetbrains.vuejs.types.createStrictTypeSource
-import java.util.*
 
 interface VueInstanceOwner : VueScopeElement {
+
   val thisType: JSType
-    get() = source?.let { source ->
-      if (this !is UserDataHolder) return@let null
-      CachedValuesManager.getManager(source.project).getCachedValue(this) {
-        CachedValueProvider.Result.create(RecursionManager.doPreventingRecursion(this.source!!, true) {
-          buildInstanceType(this)
-        }, PsiModificationTracker.MODIFICATION_COUNT)
-      }
-    } ?: JSAnyType.get(source)
+    get() = source
+              ?.takeIf { this is UserDataHolder }
+              ?.let { JSSymbolScopeType(VueInstanceOwnerPropertiesScope(this), it) }
+            ?: JSAnyType.get(source)
+
+  val instanceScope: PolySymbolScope?
+    get() = source
+      ?.takeIf { this is UserDataHolder }
+      ?.let { VueInstanceOwnerPropertiesScope(this) }
+
+  fun createPointer(): Pointer<out VueInstanceOwner>
 }
+
+fun getDefaultVueComponentInstance(context: PsiElement?): JSTypedEntity? =
+  resolveSymbolFromNodeModule(context, VUE_MODULE, "ComponentPublicInstance", TypeScriptTypeAlias::class.java)
+    ?.typeDeclaration
+  ?: resolveSymbolFromNodeModule(context, VUE_MODULE, VUE_NAMESPACE, TypeScriptInterface::class.java)
 
 fun getDefaultVueComponentInstanceType(context: PsiElement?): JSType? =
   resolveSymbolFromNodeModule(context, VUE_MODULE, "ComponentPublicInstance", TypeScriptTypeAlias::class.java)
@@ -61,137 +76,168 @@ private val VUE_INSTANCE_METHODS: List<String> = listOf(
   "\$mount", "\$forceUpdate", "\$destroy", "\$set", "\$delete", "\$watch", "\$on",
   "\$once", "\$off", INSTANCE_EMIT_METHOD, "\$nextTick", "\$createElement")
 
-private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
-  val source = instance.source ?: return null
+private class VueInstanceOwnerPropertiesScope(
+  instanceOwner: VueInstanceOwner,
+) : PolySymbolScopeWithCache<UserDataHolder, Unit>(instanceOwner.source!!.project, instanceOwner as UserDataHolder, Unit) {
 
-  val result = mutableMapOf<String, PropertySignature>()
-  contributeCustomProperties(source, result)
-  contributeDefaultInstanceProperties(source, result)
-  contributeComponentProperties(instance, source, result)
-  replaceStandardProperty(INSTANCE_REFS_PROP, VueRefsType(createStrictTypeSource(source), instance), source, result)
-  contributePropertiesFromProviders(instance, result)
+  override fun initialize(
+    consumer: (PolySymbol) -> Unit,
+    cacheDependencies: MutableSet<Any>,
+  ) {
+    cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
 
-  val properties = result.values.toList()
-  val methods = getCustomMethods(source, properties)
+    val instanceOwner = dataHolder as VueInstanceOwner
+    val source = instanceOwner.source ?: return
 
-  return VueComponentInstanceType(
-    source = JSTypeSourceFactory.createTypeSource(source, true),
-    instanceOwner = instance,
-    typeMembers = properties + methods,
-  )
+    RecursionManager.doPreventingRecursion(source, true) {
+      val result = mutableMapOf<String, PolySymbol>()
+      contributeCustomProperties(source, result)
+      contributeDefaultInstanceProperties(source, result)
+      contributeComponentProperties(instanceOwner, source, result)
+      replaceStandardProperty(INSTANCE_REFS_PROP, StandardTypeProvider(instanceOwner, ::buildRefsType), result)
+      contributePropertiesFromProviders(instanceOwner, result)
+
+      val properties = result.values.toList()
+      val methods = getCustomMethods(source, properties)
+
+      properties.forEach(consumer)
+      methods.forEach(consumer)
+    }
+  }
+
+  override fun provides(kind: PolySymbolKind): Boolean =
+    kind == JS_PROPERTIES
+
+  override fun createPointer(): Pointer<out PolySymbolScopeWithCache<UserDataHolder, Unit>> {
+    val instanceOwnerPtr = (dataHolder as VueInstanceOwner).createPointer()
+    return Pointer {
+      val instanceOwner = instanceOwnerPtr.dereference() ?: return@Pointer null
+      if (instanceOwner.source == null) return@Pointer null
+      VueInstanceOwnerPropertiesScope(instanceOwner)
+    }
+  }
+
 }
 
 private fun contributeCustomProperties(
   source: PsiElement,
-  result: MutableMap<String, PropertySignature>,
+  result: MutableMap<String, PolySymbol>,
 ) {
-  result.putAll(resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES))
+  resolveSymbolPropertiesFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES)
+    .forEach { (string, signature) ->
+      signature.asJSSymbol()?.let { result[string] = it }
+    }
 }
 
 private fun getCustomMethods(
   source: PsiElement,
-  properties: List<PropertySignature>,
-): List<PropertySignature> {
+  properties: List<PolySymbol>,
+): List<PolySymbol> {
   val propertyNames = properties.asSequence()
-    .map { it.memberName }
+    .map { it.name }
     .toSet()
 
   return resolveSymbolMethodsFromAugmentations(source, VUE_CORE_MODULES, CUSTOM_PROPERTIES)
     .filter { it.memberName !in propertyNames }
+    .mapNotNull { it.asJSSymbol() }
 }
 
 private fun contributeDefaultInstanceProperties(
   source: PsiElement,
-  result: MutableMap<String, PropertySignature>,
+  result: MutableMap<String, PolySymbol>,
 ) {
-  val defaultInstanceType = getDefaultVueComponentInstanceType(source)
-  if (defaultInstanceType != null) {
-    defaultInstanceType.asRecordType()
-      .properties
-      .associateByTo(result) { it.memberName }
+  val defaultInstance = getDefaultVueComponentInstance(source)
+  if (defaultInstance != null) {
+    defaultInstance
+      .asJSSymbol()
+      .getJSPropertySymbols()
+      .associateByTo(result) { it.name }
   }
   else {
     // Fallback to a predefined list of properties without any typings
     VUE_INSTANCE_PROPERTIES.forEach {
-      result[it] = createImplicitPropertySignature(it, null, source)
+      result[it] = VueImplicitPropertySymbol(it)
     }
     VUE_INSTANCE_METHODS.forEach {
-      result[it] = createImplicitPropertySignature(it, null, source, kind = JSImplicitElement.Type.Function)
+      result[it] = VueImplicitPropertySymbol(it, jsKind = JsSymbolSymbolKind.Method)
     }
   }
 }
 
 private fun contributePropertiesFromProviders(
   instance: VueInstanceOwner,
-  result: MutableMap<String, PropertySignature>,
+  result: MutableMap<String, PolySymbol>,
 ) {
-  val unmodifiableResult = Collections.unmodifiableMap(result)
   VueContainerInfoProvider.getProviders().asSequence()
-    .flatMap { it.getThisTypeProperties(instance, unmodifiableResult).asSequence() }
-    .associateByTo(result) { it.memberName }
+    .flatMap { it.getThisTypePropertySymbols(instance, result.toMap()).asSequence() }
+    .filter { it.kind == JS_PROPERTIES }
+    .associateByTo(result) { it.name }
 }
 
 private fun contributeComponentProperties(
   instance: VueInstanceOwner,
   source: PsiElement,
-  result: MutableMap<String, PropertySignature>,
+  result: MutableMap<String, PolySymbol>,
 ) {
   val proximityMap = mutableMapOf<String, VueModelVisitor.Proximity>()
 
-  val props = mutableMapOf<String, PropertySignature>()
-  val computed = mutableMapOf<String, PropertySignature>()
-  val data = mutableMapOf<String, PropertySignature>()
-  val methods = mutableMapOf<String, PropertySignature>()
-  val injects = mutableMapOf<String, PropertySignature>()
+  val props = mutableMapOf<String, PolySymbol>()
+  val computed = mutableMapOf<String, PolySymbol>()
+  val data = mutableMapOf<String, PolySymbol>()
+  val methods = mutableMapOf<String, PolySymbol>()
+  val injects = mutableMapOf<String, PolySymbol>()
 
   val provides by lazy(LazyThreadSafetyMode.NONE) { instance.global.provides }
+
+  fun mergeSymbols(existing: PolySymbol, updated: PolySymbol): PolySymbol =
+    if (existing is VueMergedPropertiesSymbol)
+      existing.add(updated)
+    else
+      VueMergedPropertiesSymbol(existing.name, listOf(existing, updated), source)
+
+  fun mergePut(result: MutableMap<String, PolySymbol>, contributions: MutableMap<String, PolySymbol>) {
+    for ((name, value) in contributions) {
+      result.merge(name, value, ::mergeSymbols)
+    }
+  }
 
   instance.asSafely<VueEntitiesContainer>()
     ?.acceptPropertiesAndMethods(object : VueModelProximityVisitor() {
 
       override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
-        process(prop, proximity, props, true)
+        process(prop, proximity, props)
         return true
       }
 
       override fun visitComputedProperty(computedProperty: VueComputedProperty, proximity: Proximity): Boolean {
-        process(computedProperty, proximity, computed, true)
+        process(computedProperty, proximity, computed)
         return true
       }
 
       override fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
-        process(dataProperty, proximity, data, false)
+        process(dataProperty, proximity, data)
         return true
       }
 
       override fun visitMethod(method: VueMethod, proximity: Proximity): Boolean {
-        process(method, proximity, methods, false)
+        process(method, proximity, methods)
         return true
       }
 
       override fun visitInject(inject: VueInject, proximity: Proximity): Boolean {
         if (inject is VueCallInject) return true
 
-        val sourceElement = inject.source
-        val type = evaluateInjectedType(inject, provides)
-        val implicitElement = VueImplicitElement(inject.name, type, sourceElement, JSImplicitElement.Type.Property, true)
-        process(inject, proximity, injects, true,  implicitElement)
+        process(VueDelegatedPropertySymbol(inject, VueInjectedTypeProvider(inject, provides)), proximity, injects)
         return true
       }
 
       private fun process(
-        symbol: VueSymbol,
+        symbol: PolySymbol,
         proximity: Proximity,
-        dest: MutableMap<String, PropertySignature>,
-        isReadOnly: Boolean,
-        forcedSource: JSImplicitElement? = null,
+        dest: MutableMap<String, PolySymbol>,
       ) {
         if ((proximityMap.putIfAbsent(symbol.name, proximity) ?: proximity) >= proximity) {
-          val jsType = if (forcedSource != null) forcedSource.jsType else symbol.jsType
-          dest.merge(symbol.name,
-                     PropertySignatureImpl(symbol.name, jsType, false,
-                                           isReadOnly, forcedSource ?: symbol.toJSImplicitElement(source)),
-                     ::mergeSignatures)
+          dest.merge(symbol.name, symbol, ::mergeSymbols)
         }
       }
 
@@ -200,15 +246,15 @@ private fun contributeComponentProperties(
   replaceStandardProperty(INSTANCE_PROPS_PROP, props.values.toList(), source, result)
   replaceStandardProperty(INSTANCE_DATA_PROP, data.values.toList(), source, result)
 
-  replaceStandardProperty(INSTANCE_OPTIONS_PROP, buildOptionsType(instance, result[INSTANCE_OPTIONS_PROP]?.jsType), source, result)
-  replaceStandardProperty(INSTANCE_SLOTS_PROP, buildSlotsType(instance, result[INSTANCE_SLOTS_PROP]?.jsType), source, result)
+  replaceStandardProperty(INSTANCE_OPTIONS_PROP, StandardTypeProvider(instance, ::buildOptionsType, result[INSTANCE_OPTIONS_PROP]), result)
+  replaceStandardProperty(INSTANCE_SLOTS_PROP, StandardTypeProvider(instance, ::buildSlotsType, result[INSTANCE_SLOTS_PROP]), result)
 
-  replaceStandardProperty(INSTANCE_EMIT_METHOD, buildEmitType(instance), source, result)
+  replaceStandardProperty(INSTANCE_EMIT_METHOD, StandardTypeProvider(instance, ::buildEmitType), result)
 
   // Vue will not proxy data properties starting with _ or $
   // https://vuejs.org/v2/api/#data
   // Interestingly it doesn't apply to computed, methods and props.
-  data.keys.removeIf { it.startsWith("_") || it.startsWith("\$") }
+  data.keys.removeIf { it.startsWith("_") || it.startsWith("$") }
 
   result.keys.removeIf {
     props.containsKey(it) || data.containsKey(it) || computed.containsKey(it) || methods.containsKey(it) || injects.containsKey(it)
@@ -268,6 +314,30 @@ private fun buildOptionsType(
     result, originalType?.source ?: JSTypeSourceFactory.createTypeSource(instance.source!!, false))
 }
 
+private class StandardTypeProvider(
+  private val instance: VueInstanceOwner,
+  private val method: (VueInstanceOwner, JSType?) -> JSType?,
+  private val originalProperty: PolySymbol?,
+) : VueTypeProvider {
+
+  constructor(instance: VueInstanceOwner, method: (VueInstanceOwner) -> JSType?)
+    : this(instance, { instance, _ -> method(instance) }, null)
+
+  override fun getType(): JSType? = method(instance, originalProperty?.jsType)
+
+  override fun createPointer(): Pointer<out VueTypeProvider> {
+    val instancePtr = instance.createPointer()
+    val originalPropertyPtr = originalProperty?.createPointer()
+    val method = method
+    return Pointer {
+      val instance = instancePtr.dereference() ?: return@Pointer null
+      if (instance.source != null) return@Pointer null
+      val originalProperty = originalPropertyPtr?.let { it.dereference() ?: return@Pointer null }
+      StandardTypeProvider(instance, method, originalProperty)
+    }
+  }
+}
+
 private fun buildEmitType(instance: VueInstanceOwner): JSType {
   val source = JSTypeSourceFactory.createTypeSource(instance.source!!, true)
     .copyWithNewLanguage(JSTypeSource.SourceLanguage.TS)
@@ -301,79 +371,225 @@ private fun buildEmitType(instance: VueInstanceOwner): JSType {
   }
 }
 
-private fun replaceStandardProperty(
-  propName: String,
-  properties: List<PropertySignature>,
-  defaultSource: PsiElement,
-  result: MutableMap<String, PropertySignature>,
-) {
-  val propSource = result[propName]?.memberSource?.singleElement ?: defaultSource
-  result[propName] = createImplicitPropertySignature(
-    propName, VueCompleteRecordType(propSource, properties), propSource)
+private fun buildRefsType(instance: VueInstanceOwner): JSType? {
+  return VueRefsType(createStrictTypeSource(instance.source ?: return null), instance)
 }
 
 private fun replaceStandardProperty(
   propName: String,
-  type: JSType,
-  defaultSource: PsiElement,
-  result: MutableMap<String, PropertySignature>,
+  properties: List<PolySymbol>,
+  psiContext: PsiElement,
+  result: MutableMap<String, PolySymbol>,
 ) {
-  val propSource = result[propName]?.memberSource?.singleElement ?: defaultSource
-  result[propName] = createImplicitPropertySignature(propName, type, propSource)
+  result[propName] = VueStandardPropertySymbol(propName, properties, psiContext)
 }
 
-private fun mergeSignatures(
-  existing: PropertySignature,
-  updated: PropertySignature,
-): PropertySignature {
-  val existingType = existing.jsType
-  val updatedType = updated.jsType
-  val type: JSType? = if (existingType != null && updatedType != null)
-    JSCompositeTypeFactory.createUnionType(existingType.source, existingType, updatedType)
-  else
-    null
-
-  return PropertySignatureImpl(
-    existing.memberName,
-    type,
-    existing.isOptional && updated.isOptional,
-    false,
-    JSRecordMemberSourceFactory.createSource(
-      existing.memberSource.allSourceElements + updated.memberSource.allSourceElements,
-      JSRecordType.MemberSourceKind.Union,
-      true,
-    )
-  )
+private fun replaceStandardProperty(
+  propName: String,
+  typeProvider: VueTypeProvider,
+  result: MutableMap<String, PolySymbol>,
+) {
+  result[propName] = VueImplicitPropertySymbol(propName, typeProvider, isReadOnly = true)
 }
 
-private fun mergePut(
-  result: MutableMap<String, PropertySignature>,
-  contributions: MutableMap<String, PropertySignature>,
-) {
-  for ((name, value) in contributions) {
-    result.merge(name, value, ::mergeSignatures)
+class VueDelegatedPropertySymbol(
+  override val delegate: PolySymbol,
+  private val typeProvider: VueTypeProvider? = null,
+) : PolySymbolDelegate<PolySymbol> {
+
+  private val type by lazy(LazyThreadSafetyMode.NONE) { typeProvider?.getType() }
+
+  override val kind: PolySymbolKind
+    get() = JS_PROPERTIES
+
+  override fun isEquivalentTo(symbol: Symbol): Boolean =
+    symbol === this
+    || symbol is VueDelegatedPropertySymbol
+    && symbol.delegate.isEquivalentTo(delegate)
+    || delegate.isEquivalentTo(symbol)
+
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_JS_TYPE -> property.tryCast(type)
+      else -> delegate[property]
+    }
+
+  override fun createPointer(): Pointer<out PolySymbolDelegate<PolySymbol>> {
+    val delegatePtr = delegate.createPointer()
+    val typeProviderPtr = typeProvider?.createPointer()
+    return Pointer {
+      val delegate = delegatePtr.dereference() ?: return@Pointer null
+      val typeProvider = typeProviderPtr?.let { it.dereference() ?: return@Pointer null }
+      VueDelegatedPropertySymbol(delegate, typeProvider)
+    }
+  }
+
+}
+
+interface VueTypeProvider {
+  fun getType(): JSType?
+  fun createPointer(): Pointer<out VueTypeProvider>
+}
+
+class VueImplicitPropertySymbol(
+  override val name: String,
+  private val typeProvider: VueTypeProvider? = null,
+  private val jsKind: JsSymbolSymbolKind = JsSymbolSymbolKind.Property,
+  isReadOnly: Boolean = false,
+) : PolySymbol {
+
+  private val type by lazy(LazyThreadSafetyMode.NONE) { typeProvider?.getType() }
+
+  override val kind: PolySymbolKind
+    get() = JS_PROPERTIES
+
+  override val modifiers: Set<PolySymbolModifier> =
+    if (isReadOnly) setOf(PolySymbolModifier.READONLY) else emptySet()
+
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_JS_SYMBOL_KIND -> property.tryCast(jsKind)
+      PROP_JS_TYPE -> property.tryCast(type)
+      else -> super.get(property)
+    }
+
+  override fun createPointer(): Pointer<out PolySymbol> {
+    val typeProviderPtr = typeProvider?.createPointer()
+    val name = name
+    val jsKind = jsKind
+    return Pointer {
+      val typeProvider = typeProviderPtr?.let { it.dereference() ?: return@Pointer null }
+      VueImplicitPropertySymbol(name, typeProvider, jsKind)
+    }
+  }
+
+}
+
+private class VueStandardPropertySymbol(
+  override val name: String,
+  private val properties: List<PolySymbol>,
+  override val psiContext: PsiElement,
+) : PolySymbol, PolySymbolScope {
+
+  private val type: JSType? by lazy(LazyThreadSafetyMode.NONE) {
+    JSSymbolScopeType(this, psiContext)
+  }
+
+  override val kind: PolySymbolKind
+    get() = JS_PROPERTIES
+
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_JS_TYPE -> property.tryCast(type)
+      else -> super.get(property)
+    }
+
+  override fun getSymbols(kind: PolySymbolKind, params: PolySymbolListSymbolsQueryParams, stack: PolySymbolQueryStack): List<PolySymbol> =
+    if (kind == JS_PROPERTIES) properties else emptyList()
+
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    kind == JS_PROPERTIES
+
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is VueStandardPropertySymbol
+    && other.name == name
+    && other.psiContext == psiContext
+    && other.properties == properties
+
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + psiContext.hashCode()
+    result = 31 * result + properties.hashCode()
+    return result
+  }
+
+  override fun createPointer(): Pointer<VueStandardPropertySymbol> {
+    val name = name
+    val propertiesPtr = properties.map { it.createPointer() }
+    val psiContextPtr = psiContext.createSmartPointer()
+    return Pointer {
+      val name = name
+      val properties = propertiesPtr.map { it.dereference() ?: return@Pointer null }
+      val psiContext = psiContextPtr.dereference() ?: return@Pointer null
+      VueStandardPropertySymbol(name, properties, psiContext)
+    }
+  }
+
+  override fun getModificationCount(): Long = -1
+
+}
+
+private class VueInjectedTypeProvider(private val inject: VueInject, private val provides: List<VueProvide>) : VueTypeProvider {
+  override fun getType(): JSType? =
+    evaluateInjectedType(inject, provides)
+
+  override fun createPointer(): Pointer<out VueTypeProvider> {
+    val injectPtr = inject.createPointer()
+    val providesPtr = provides.map { it.createPointer() }
+    return Pointer {
+      val inject = injectPtr.dereference() ?: return@Pointer null
+      val provides = providesPtr.map { it.dereference() ?: return@Pointer null }
+      VueInjectedTypeProvider(inject, provides)
+    }
   }
 }
 
-fun createImplicitPropertySignature(
-  name: String,
-  type: JSType?,
-  source: PsiElement,
-  equivalentToSource: Boolean = false,
-  isReadOnly: Boolean = false,
-  kind: JSImplicitElement.Type = JSImplicitElement.Type.Property,
-): PropertySignature {
-  return PropertySignatureImpl(
-    name,
-    type,
-    false,
-    isReadOnly,
-    VueImplicitElement(
-      name = name,
-      jsType = type,
-      provider = source,
-      kind = kind,
-      equivalentToProvider = equivalentToSource,
-    ),
-  )
+private data class VueMergedPropertiesSymbol(
+  override val name: @NlsSafe String,
+  private val properties: List<PolySymbol>,
+  override val psiContext: PsiElement,
+) : PolySymbol {
+
+  override val kind: PolySymbolKind
+    get() = JS_PROPERTIES
+
+  override val modifiers: Set<PolySymbolModifier> =
+    setOfNotNull(
+      PolySymbolModifier.READONLY.takeIf { properties.all { it.modifiers.contains(PolySymbolModifier.READONLY) } },
+      PolySymbolModifier.OPTIONAL.takeIf { properties.all { it.modifiers.contains(PolySymbolModifier.OPTIONAL) } }
+    )
+
+  private val type: JSType? by lazy(LazyThreadSafetyMode.NONE) {
+    properties
+      .mapNotNull { it.jsType }
+      .takeIf { it.size == properties.size }
+      ?.let {
+        JSCompositeTypeFactory.createUnionType(it[0].source, it)
+      }
+  }
+
+  private val propertySignature: PropertySignatureImpl? by lazy(LazyThreadSafetyMode.NONE) {
+    PropertySignatureImpl(
+      name, type, modifiers.contains(PolySymbolModifier.OPTIONAL),
+      modifiers.contains(PolySymbolModifier.READONLY),
+      JSRecordMemberSourceFactory.createSource(
+        properties.flatMap { it.toPropertySignature(psiContext).memberSource.allSourceElements },
+        JSRecordType.MemberSourceKind.Union,
+        true,
+      )
+    )
+  }
+
+  fun add(updated: PolySymbol): VueMergedPropertiesSymbol =
+    VueMergedPropertiesSymbol(name, properties + updated, psiContext)
+
+  override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
+    when (property) {
+      PROP_JS_TYPE -> property.tryCast(type)
+      PROP_JS_PROPERTY_SIGNATURE -> property.tryCast(propertySignature)
+      else -> super.get(property)
+    }
+
+  override fun createPointer(): Pointer<out PolySymbol> {
+    val propertiesPtr = properties.map { it.createPointer() }
+    val name = name
+    val psiContextPtr = psiContext.createSmartPointer()
+    return Pointer {
+      val properties = propertiesPtr.map { it.dereference() ?: return@Pointer null }
+      val psiContext = psiContextPtr.element ?: return@Pointer null
+      VueMergedPropertiesSymbol(name, properties, psiContext)
+    }
+  }
+
 }

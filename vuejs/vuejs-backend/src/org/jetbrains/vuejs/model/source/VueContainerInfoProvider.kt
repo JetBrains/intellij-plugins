@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.polySymbols.PolySymbol
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.codeInsight.fromAsset
@@ -17,10 +17,10 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
 
   fun getAdditionalComponents(scope: GlobalSearchScope, sourceComponents: ComponentsInfo): ComponentsInfo? = null
 
-  fun getThisTypeProperties(
+  fun getThisTypePropertySymbols(
     instanceOwner: VueInstanceOwner,
-    standardProperties: MutableMap<String, PropertySignature>,
-  ): Collection<PropertySignature> =
+    standardProperties: Map<String, PolySymbol>,
+  ): Collection<PolySymbol> =
     emptyList()
 
   class ComponentsInfo(

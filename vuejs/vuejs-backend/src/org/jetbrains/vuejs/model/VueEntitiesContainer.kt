@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.model
 import com.intellij.model.Pointer
 
 interface VueEntitiesContainer : VueScopeElement, VueInstanceOwner {
-  fun createPointer(): Pointer<out VueEntitiesContainer>
+  override fun createPointer(): Pointer<out VueEntitiesContainer>
 
   val components: Map<String, VueNamedComponent>
   val directives: Map<String, VueDirective>

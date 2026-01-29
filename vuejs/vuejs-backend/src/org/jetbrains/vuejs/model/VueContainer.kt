@@ -213,10 +213,10 @@ interface VueInputProperty : VueProperty, VueTemplateSymbol {
       .presentation()
 
   override val modifiers: Set<PolySymbolModifier>
-    get() = when (required) {
-      true -> setOf(PolySymbolModifier.REQUIRED)
-      false -> setOf(PolySymbolModifier.OPTIONAL)
-    }
+    get() = setOf(
+      if (required) PolySymbolModifier.REQUIRED else PolySymbolModifier.OPTIONAL,
+      PolySymbolModifier.READONLY
+    )
 
   override val attributeValue: PolySymbolHtmlAttributeValue
     get() =
@@ -244,6 +244,9 @@ interface VueDataProperty : VueProperty {
 }
 
 interface VueComputedProperty : VueProperty {
+
+  override val modifiers: Set<PolySymbolModifier>
+    get() = setOf(PolySymbolModifier.READONLY)
 
   override val kind: PolySymbolKind
     get() = VUE_COMPONENT_COMPUTED_PROPERTIES
