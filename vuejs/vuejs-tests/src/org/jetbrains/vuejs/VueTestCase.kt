@@ -17,26 +17,27 @@ abstract class VueTestCase(
 ) : WebFrameworkTestCase(if (useTsc) HybridTestMode.CodeInsightFixture else HybridTestMode.BasePlatform) {
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    if (useTsc) {
-      val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
-        it::class == VuePluginTypeScriptService::class
-      } as TypeScriptServerServiceImpl
+    if (!useTsc)
+      return
 
-      service.assertProcessStarted()
-      runInEdtAndWait {
-        waitEmptyServiceQueueForService(service)
-      }
+    val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
+      it::class == VuePluginTypeScriptService::class
+    } as TypeScriptServerServiceImpl
 
-      if (configuration.configurators.any { it is VueTsConfigFile }) {
-        TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(
-          testRootDisposable,
-          myFixture.tempDirFixture.getFile(VueTsConfigFile.FILE_NAME)!!,
-        )
-      }
+    service.assertProcessStarted()
+    runInEdtAndWait {
+      waitEmptyServiceQueueForService(service)
+    }
 
-      runInEdtAndWait {
-        FileDocumentManager.getInstance().saveAllDocuments()
-      }
+    if (configuration.configurators.any { it is VueTsConfigFile }) {
+      TypeScriptServerServiceImpl.requireTSConfigsForTypeEvaluation(
+        testRootDisposable,
+        myFixture.tempDirFixture.getFile(VueTsConfigFile.FILE_NAME)!!,
+      )
+    }
+
+    runInEdtAndWait {
+      FileDocumentManager.getInstance().saveAllDocuments()
     }
   }
 
