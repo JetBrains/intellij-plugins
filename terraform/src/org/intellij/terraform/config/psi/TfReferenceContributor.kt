@@ -82,15 +82,16 @@ class TfReferenceContributor : PsiReferenceContributor() {
 
     // 'module' variable setter
     registrar.registerReferenceProvider(
-        psiElement(HCLIdentifier::class.java)
-            .inFile(TerraformConfigFile)
-            .withParent(psiElement(HCLProperty::class.java).with(object : PatternCondition<HCLProperty?>("HCLProperty(!source)") {
-              override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
-                return "source" != t.name
-              }
-            }))
-            .withSuperParent(3, TfPsiPatterns.ModuleRootBlock)
-        , ModuleVariableReferenceProvider)
+      psiElement(HCLIdentifier::class.java)
+        .inFile(TerraformConfigFile)
+        .withParent(psiElement(HCLProperty::class.java).with(
+          object : PatternCondition<HCLProperty?>("HCLProperty(!source)") {
+            override fun accepts(t: HCLProperty, context: ProcessingContext?): Boolean {
+              return "source" != t.name
+            }
+          })
+        )
+        .withSuperParent(3, TfPsiPatterns.ModuleRootBlock), ModuleVariableReferenceProvider)
 
     // 'module' providers key/value
     registrar.registerReferenceProvider(
