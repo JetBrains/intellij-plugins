@@ -12,7 +12,6 @@
   <dependencies>
     <module name="intellij.java.backend"/>
     <plugin id="com.intellij.modules.ultimate"/>
-    <module name="intellij.java.indexing"/>
   </dependencies>
 
   <actions>
