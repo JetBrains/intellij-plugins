@@ -10,6 +10,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.typescript.service.plugin.VuePluginTypeScriptService
+import org.jetbrains.vuejs.options.VueTSPluginVersion
+import org.jetbrains.vuejs.options.getVueSettings
 
 enum class VueTestMode {
   DEFAULT,
@@ -27,8 +29,18 @@ abstract class VueTestCase(
 ) {
 
   override fun beforeConfiguredTest(configuration: TestConfiguration) {
-    if (testMode == VueTestMode.NO_PLUGIN)
-      return
+    val tsPluginVersion = when (testMode) {
+      VueTestMode.DEFAULT,
+        -> VueTSPluginVersion.V3_2_4
+
+      VueTestMode.LEGACY_PLUGIN,
+        -> VueTSPluginVersion.V3_0_10
+
+      VueTestMode.NO_PLUGIN,
+        -> return
+    }
+
+    getVueSettings(project).tsPluginVersion = tsPluginVersion
 
     val service = TypeScriptServiceTestMixin.setUpTypeScriptService(myFixture) {
       it::class == VuePluginTypeScriptService::class
