@@ -202,6 +202,8 @@ interface VueProperty : VueSymbol, PolySymbolScope {
 interface VueInputProperty : VueProperty, VueTemplateSymbol {
   val required: Boolean
 
+  val optional: Boolean get() = !required
+
   val defaultValue: String? get() = null
 
   override val kind: PolySymbolKind
@@ -213,8 +215,9 @@ interface VueInputProperty : VueProperty, VueTemplateSymbol {
       .presentation()
 
   override val modifiers: Set<PolySymbolModifier>
-    get() = setOf(
-      if (required) PolySymbolModifier.REQUIRED else PolySymbolModifier.OPTIONAL,
+    get() = setOfNotNull(
+      PolySymbolModifier.REQUIRED.takeIf { required },
+      PolySymbolModifier.OPTIONAL.takeIf { optional },
       PolySymbolModifier.READONLY
     )
 

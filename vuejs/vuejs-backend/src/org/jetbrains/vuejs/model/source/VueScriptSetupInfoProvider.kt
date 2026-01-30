@@ -415,6 +415,9 @@ private class VueScriptSetupInputProperty(
       return !propertySignature.isOptional
     }
 
+  override val optional: Boolean
+    get() = propertySignature.isOptional
+
   override val type: JSType?
     get() = propertySignature.jsType?.optionalIf(propertySignature.isOptional)
 

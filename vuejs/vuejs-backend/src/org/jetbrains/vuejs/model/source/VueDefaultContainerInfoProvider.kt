@@ -254,11 +254,14 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       !hasOuterDefault && getRequiredFromPropOptions((sourceElement as? JSProperty)?.initializerOrStub)
     }
 
-    override val type: JSType? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-      (sourceElement as? PsiNamedElement)
-        ?.let { VueSourcePropType(it) }
-        ?.optionalIf(getPropOptionality((sourceElement as? JSProperty)?.initializerOrStub, required))
+    override val optional: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      getPropOptionality((sourceElement as? JSProperty)?.initializerOrStub, required)
     }
+
+    override val type: JSType?
+      get() = (sourceElement as? PsiNamedElement)
+        ?.let { VueSourcePropType(it) }
+        ?.optionalIf(optional)
 
     override fun toString(): String {
       return "VueSourceInputProperty(name='$name', required=$required, jsType=$type)"
