@@ -29,6 +29,4 @@ object VueCompositionPropsTypeProvider {
     }
     return false
   }
-
-  fun useOnlyCompleteMatch(type: JSType): Boolean = type is VueCompleteType
 }

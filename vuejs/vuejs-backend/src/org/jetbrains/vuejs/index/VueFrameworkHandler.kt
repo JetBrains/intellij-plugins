@@ -59,6 +59,7 @@ import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.isStrictComponentDefiningCall
 import org.jetbrains.vuejs.model.tryResolveSrcReference
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
+import org.jetbrains.vuejs.types.VueCompleteType
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -395,7 +396,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun useOnlyCompleteMatch(type: JSType, evaluateContext: JSEvaluateContext): Boolean =
-    VueCompositionPropsTypeProvider.useOnlyCompleteMatch(type)
+    type is VueCompleteType
 
   override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
     return hasSignificantValue(node)
