@@ -1,11 +1,13 @@
 // Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.polySymbols.symbols
 
-import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
-import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.*
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolProperty
+import com.intellij.polySymbols.PolySymbolQualifiedName
 import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
 import com.intellij.polySymbols.js.symbols.JSPropertySymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
@@ -17,10 +19,11 @@ import com.intellij.polySymbols.utils.PsiSourcedPolySymbolDelegate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.astro.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENTS
 import org.jetbrains.astro.polySymbols.UI_FRAMEWORK_COMPONENT_NAMESPACES
 
-class AstroNamespacedComponent(
+data class AstroNamespacedComponent(
   override val name: String,
   override val source: PsiElement,
 ) : ComponentPolySymbol, PolySymbolScope {
@@ -44,13 +47,7 @@ class AstroNamespacedComponent(
 
   private val type: Any
     get() = JSPsiBasedTypeOfType(
-      when (val source = source) {
-        is ES6ImportedBinding -> source.multiResolve(false)
-        is ES6ImportSpecifier -> source.multiResolve(false)
-        else -> null
-      }
-        ?.asSequence()?.firstNotNullOfOrNull { it.takeIf { it.isValidResult }?.element }
-      ?: source, false)
+      (source as? JSPsiNamedElementBase)?.resolveIfImportSpecifier() ?: source, false)
 
   override val kind: PolySymbolKind
     get() = UI_FRAMEWORK_COMPONENT_NAMESPACES
@@ -93,15 +90,7 @@ class AstroNamespacedComponent(
       }
     }
 
-  override fun equals(other: Any?): Boolean =
-    other is AstroNamespacedComponent
-    && other.name == name
-    && other.source == source
-
-  override fun hashCode(): Int =
-    31 * name.hashCode() + source.hashCode()
-
-  private class UiFrameworkNamespacedComponent(override val delegate: PsiSourcedPolySymbol) :
+  private data class UiFrameworkNamespacedComponent(override val delegate: PsiSourcedPolySymbol) :
     PsiSourcedPolySymbolDelegate<PsiSourcedPolySymbol> {
 
     private val namespaceSymbol = AstroNamespacedComponent(delegate.name, delegate.source as PsiElement)
@@ -142,12 +131,6 @@ class AstroNamespacedComponent(
     ): List<PolySymbolCodeCompletionItem> =
       namespaceSymbol.getCodeCompletions(qualifiedName, params, stack) +
       super.getCodeCompletions(qualifiedName, params, stack)
-
-    override fun equals(other: Any?): Boolean =
-      other is UiFrameworkNamespacedComponent && other.delegate == delegate
-
-    override fun hashCode(): Int =
-      delegate.hashCode()
   }
 
   companion object {
