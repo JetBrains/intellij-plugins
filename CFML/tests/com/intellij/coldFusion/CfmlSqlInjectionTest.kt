@@ -7,6 +7,7 @@ import com.intellij.database.psi.DbDataSource
 import com.intellij.database.psi.DbPsiFacade
 import com.intellij.database.psi.DbPsiFacadeImpl
 import com.intellij.database.testFramework.DatabaseTestUtils
+import com.intellij.database.testFramework.DatabaseTestUtils.setDialectMapping
 import com.intellij.database.util.DbSqlUtil
 import com.intellij.database.util.SqlDialects
 import com.intellij.lang.annotation.HighlightSeverity
@@ -114,9 +115,8 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
 
   private fun prepareWithDatabase() {
     prepare()
-    val dialect = SqlDialects.findDialectById("SQL92")
-    SqlDialectMappings.getInstance(project).setMapping(myFixture.file.virtualFile, dialect)
-    IndexingTestUtil.waitUntilIndexesAreReady(project)
+    val dialect = SqlDialects.findDialectById("SQL92")!!
+    setDialectMapping(project, myFixture.file.virtualFile, dialect)
     val file: PsiFile = myFixture.file
     FileContentUtil.reparseFiles(project, listOf<VirtualFile>(file.virtualFile), false)
     myFixture.configureFromExistingVirtualFile(file.virtualFile)

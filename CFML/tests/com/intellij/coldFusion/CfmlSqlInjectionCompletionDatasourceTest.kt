@@ -1,11 +1,10 @@
 package com.intellij.coldFusion
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.database.testFramework.DatabaseTestUtils.setDialectMapping
 import com.intellij.database.util.SqlDialects
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.SqlLanguageDialect
-import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.FileContentUtil
 
@@ -89,8 +88,7 @@ class CfmlSqlInjectionCompletionDatasourceTest : BasePlatformTestCase() {
                                contains: Boolean,
                                vararg variants: String) {
     val dialect = SqlDialects.findDialectById("SQLite")
-    SqlDialectMappings.getInstance(project).setMapping(null, dialect as SqlLanguageDialect)
-    IndexingTestUtil.waitUntilIndexesAreReady(project)
+    setDialectMapping(project, null, dialect as SqlLanguageDialect)
     val file = myFixture.file
     println(javaClass.simpleName + "." + getTestName(true) + ": " + dialect.getID())
     val fileText = CFML_QUERY_TEMPLATE.replace("<insert>", sql)
