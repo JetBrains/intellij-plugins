@@ -80,10 +80,8 @@ class VueResolveTest :
     props: ['message25620Arr']
   }
 </script>""")
-    val literal = myFixture.polySymbolSourceAtCaret()
-    assertInstanceOf(literal, JSLiteralExpression::class.java)
-    assertInstanceOf(literal!!.parent, JSArrayLiteralExpression::class.java)
-    assertEquals("'message25620Arr'", literal.text)
+    myFixture.checkGotoDeclaration("+ <caret>message25620Arr", "props: ['<caret>message25620Arr']",
+                                   "ResolveToPropInObject.vue")
   }
 
   @Test
@@ -204,10 +202,8 @@ export default {
     }
   }
 }</script>""")
-    val literal = myFixture.polySymbolSourceAtCaret()
-    assertTrue(literal is JSLiteralExpression)
-    assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
-    assertEquals("'parentMsg'", literal.text)
+    myFixture.checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'",
+                                   "ResolveLocallyInsideComponentPropsArray.vue")
   }
 
   @Test
@@ -224,10 +220,8 @@ export default {
     }
   }
 }</script>""")
-    val literal = myFixture.polySymbolSourceAtCaret()
-    assertTrue(literal is JSLiteralExpression)
-    assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
-    assertEquals("'parentMsg'", literal.text)
+    myFixture.checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'",
+                                   "ResolveLocallyInsideComponentPropsArrayRefVariant.vue")
   }
 
   @Test
@@ -245,10 +239,8 @@ export default {
     }
   }
 }</script>""")
-    val literal = myFixture.polySymbolSourceAtCaret()
-    assertTrue(literal is JSLiteralExpression)
-    assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
-    assertEquals("'parentMsg'", literal.text)
+    myFixture.checkGotoDeclaration("this.<caret>parentMsg", "['<caret>parentMsg'];",
+                                   "ResolveLocallyInsideComponentArrayFunctionInsideExport.vue")
   }
 
   @Test
@@ -702,13 +694,8 @@ new Vue({
 </body>
 </html>
 """)
-    val reference = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(reference)
-    val property = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
-    assertNotNull(property)
-    assertTrue(property is JSProperty)
-    assertTrue(property!!.parent.parent is JSProperty)
-    assertEquals("data", (property.parent.parent as JSProperty).name)
+    myFixture.checkGotoDeclaration("<caret>messageToFind", "<caret>messageToFind: 'Parent'",
+                                   "ResolveByMountedVueInstanceInData.js")
   }
 
   @Test
@@ -730,11 +717,8 @@ new Vue({
 </body>
 </html>
 """)
-    val literal = myFixture.polySymbolSourceAtCaret()
-    assertNotNull(literal)
-    assertInstanceOf(literal, JSLiteralExpression::class.java)
-    assertInstanceOf(literal!!.parent.parent, JSProperty::class.java)
-    assertEquals("props", (literal.parent.parent as JSProperty).name)
+    myFixture.checkGotoDeclaration("<caret>compProp", "props: ['<caret>compProp']",
+                                   "ResolveByMountedVueInstanceInProps.js")
   }
 
   @Test
@@ -764,13 +748,8 @@ new Vue({
 </body>
 </html>
 """)
-    val reference = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(reference)
-    val property = reference!!.resolve()?.let { if (it is JSImplicitElement) it.context else it }
-    assertNotNull(property)
-    assertTrue(property is JSProperty)
-    assertTrue(property!!.parent.parent is JSProperty)
-    assertEquals("data", (property.parent.parent as JSProperty).name)
+    myFixture.checkGotoDeclaration("<caret>mountedItems", "<caret>mountedItems: [",
+                                   "ResolveVForIterableByMountedVueInstance.js")
   }
 
   @Test

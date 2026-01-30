@@ -2,6 +2,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import com.intellij.polySymbols.testFramework.checkGotoDeclaration
 import com.intellij.polySymbols.testFramework.moveToOffsetBySignature
 import com.intellij.polySymbols.testFramework.resolveReference
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -60,22 +63,26 @@ class VueRefAttrsTest : BasePlatformTestCase() {
 
   fun testResolve() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_5_0)
-    myFixture.configureByFile("js.after.vue")
-    for ((signature, result) in listOf(
-      Pair("\$refs.input<caret>Ref", "ref='inputRef'"),
-      Pair("\$refs.inputRef[0].validation<caret>Message",
+    myFixture.setCaresAboutInjection(false)
+    Disposer.register(testRootDisposable) {
+      myFixture.setCaresAboutInjection(true)
+    }
+    for ((signature, result, fileName) in listOf(
+      Triple("\$refs.input<caret>Ref", "ref='<caret>inputRef'", "js.after.vue"),
+      Triple("\$refs.inputRef[0].validation<caret>Message",
            "/**\n" +
            "     * The **`validationMessage`** read-only property of the HTMLInputElement interface returns a string representing a localized message that describes the validation constraints that the input control does not satisfy (if any).\n" +
            "     *\n" +
            "     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLInputElement/validationMessage)\n" +
            "     */\n" +
-           "    readonly validationMessage: string"),
-      Pair("this.\$refs.about.\$re<caret>fs", "\$refs: Data & TypeRefs"),
-      Pair("this.\$refs.div<caret>Ref3", "ref='divRef3'"),
-      Pair("this.\$refs.di<caret>v\n", "{\n    [P in K]: T;\n}"),
+           "    readonly <caret>validationMessage: string", "lib.dom.d.ts"),
+      Triple("this.\$refs.about.\$re<caret>fs", "<caret>\$refs: Data & TypeRefs", "runtime-core.d.ts"),
+      Triple("this.\$refs.div<caret>Ref3", "ref='<caret>divRef3'", "js.after.vue"),
+      Triple("this.\$refs.di<caret>v\n", "<caret>{\n    [P in K]: T;\n}", "lib.es5.d.ts"),
     )) {
       try {
-        TestCase.assertEquals(result, myFixture.resolveReference(signature).let { if (it is JSImplicitElement) it.context!! else it }.text)
+        myFixture.configureByFile("js.after.vue")
+        myFixture.checkGotoDeclaration(signature, result, fileName)
       }
       catch (e: ComparisonFailure) {
         throw ComparisonFailure(signature + ":" + e.message, e.expected, e.actual).initCause(e)
