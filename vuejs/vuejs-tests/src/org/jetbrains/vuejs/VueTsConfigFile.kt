@@ -6,7 +6,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import org.jetbrains.vuejs.lang.configureVueDependencies
 
 class VueTsConfigFile :
   WebFrameworkTestConfigurator {
@@ -15,7 +14,6 @@ class VueTsConfigFile :
     fixture: CodeInsightTestFixture,
     disposable: Disposable?,
   ) {
-    fixture.configureVueDependencies()
     fixture.configureByText(FILE_NAME, DEFAULT_TSCONFIG_CONTENT)
 
     disposable?.let {
@@ -28,7 +26,7 @@ class VueTsConfigFile :
       }
     }
   }
-  
+
   companion object {
     const val FILE_NAME: String = "tsconfig.json"
 
