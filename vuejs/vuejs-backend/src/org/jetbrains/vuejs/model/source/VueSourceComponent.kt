@@ -217,10 +217,10 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
     override val initializer: JSObjectLiteralExpression,
   ) : VueSourceComponent<JSObjectLiteralExpression>(initializer, initializer, null) {
 
-    override fun createPointer(): Pointer<VueNamedSourceComponent> {
+    override fun createPointer(): Pointer<VueUnnamedSourceComponent> {
       val sourcePtr = initializer.createSmartPointer()
       return Pointer {
-        sourcePtr.dereference()?.let { create(it) } as? VueNamedSourceComponent
+        sourcePtr.dereference()?.let { create(it) } as? VueUnnamedSourceComponent
       }
     }
   }
@@ -245,9 +245,12 @@ abstract class VueSourceComponent<T : PsiElement> private constructor(
       super<VueSourceComponent>.getNavigationTargets(project)
 
     override fun createPointer(): Pointer<VueNamedSourceComponent> {
+      val sourceElementPtr = sourceElement.createSmartPointer()
       val sourcePtr = initializer.createSmartPointer()
       return Pointer {
-        sourcePtr.dereference()?.let { create(it) } as? VueNamedSourceComponent
+        val sourceElement = sourceElementPtr.dereference() ?: return@Pointer null
+        val source = sourcePtr.dereference() ?: return@Pointer null
+        VueNamedSourceComponent(sourceElement, source)
       }
     }
 

@@ -20,14 +20,19 @@ import com.intellij.model.Symbol
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
-import com.intellij.polySymbols.*
-import com.intellij.polySymbols.completion.PolySymbolCodeCompletionItem
+import com.intellij.polySymbols.PolySymbol
+import com.intellij.polySymbols.PolySymbolKind
+import com.intellij.polySymbols.PolySymbolModifier
+import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.js.*
 import com.intellij.polySymbols.js.symbols.asJSSymbol
 import com.intellij.polySymbols.js.symbols.getJSPropertySymbols
 import com.intellij.polySymbols.js.types.JSSymbolScopeType
 import com.intellij.polySymbols.js.types.PROP_JS_TYPE
-import com.intellij.polySymbols.query.*
+import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
+import com.intellij.polySymbols.query.PolySymbolQueryStack
+import com.intellij.polySymbols.query.PolySymbolScope
+import com.intellij.polySymbols.query.PolySymbolWithPattern
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
@@ -100,8 +105,12 @@ private class VueInstanceOwnerPropertiesScope(
       val properties = result.values.toList()
       val methods = getCustomMethods(source, properties)
 
-      properties.forEach(consumer)
-      methods.forEach(consumer)
+      for (symbol in properties.asSequence().plus(methods)) {
+        if (symbol is PolySymbolScope && !symbol.isExclusiveFor(JS_PROPERTIES)) {
+          throw IllegalStateException("Symbol ${symbol.name} (${symbol.javaClass.name} is not exclusive for JS properties")
+        }
+        consumer(symbol)
+      }
     }
   }
 
@@ -237,7 +246,10 @@ private fun contributeComponentProperties(
         dest: MutableMap<String, PolySymbol>,
       ) {
         if ((proximityMap.putIfAbsent(symbol.name, proximity) ?: proximity) >= proximity) {
-          dest.merge(symbol.name, symbol, ::mergeSymbols)
+
+          dest.merge(symbol.name,
+                     if (symbol.kind != JS_PROPERTIES) VueDelegatedPropertySymbol(symbol) else symbol,
+                     ::mergeSymbols)
         }
       }
 
@@ -314,7 +326,7 @@ private fun buildOptionsType(
     result, originalType?.source ?: JSTypeSourceFactory.createTypeSource(instance.source!!, false))
 }
 
-private class StandardTypeProvider(
+private data class StandardTypeProvider(
   private val instance: VueInstanceOwner,
   private val method: (VueInstanceOwner, JSType?) -> JSType?,
   private val originalProperty: PolySymbol?,
@@ -331,7 +343,7 @@ private class StandardTypeProvider(
     val method = method
     return Pointer {
       val instance = instancePtr.dereference() ?: return@Pointer null
-      if (instance.source != null) return@Pointer null
+      if (instance.source == null) return@Pointer null
       val originalProperty = originalPropertyPtr?.let { it.dereference() ?: return@Pointer null }
       StandardTypeProvider(instance, method, originalProperty)
     }
@@ -392,15 +404,20 @@ private fun replaceStandardProperty(
   result[propName] = VueImplicitPropertySymbol(propName, typeProvider, isReadOnly = true)
 }
 
-class VueDelegatedPropertySymbol(
+data class VueDelegatedPropertySymbol(
   override val delegate: PolySymbol,
   private val typeProvider: VueTypeProvider? = null,
 ) : PolySymbolDelegate<PolySymbol> {
 
-  private val type by lazy(LazyThreadSafetyMode.NONE) { typeProvider?.getType() }
+  private val type by lazy(LazyThreadSafetyMode.NONE) {
+    typeProvider?.getType() ?: delegate.jsType
+  }
 
   override val kind: PolySymbolKind
     get() = JS_PROPERTIES
+
+  override fun isExclusiveFor(kind: PolySymbolKind): Boolean =
+    kind == JS_PROPERTIES
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
     symbol === this
@@ -429,13 +446,15 @@ class VueDelegatedPropertySymbol(
 interface VueTypeProvider {
   fun getType(): JSType?
   fun createPointer(): Pointer<out VueTypeProvider>
+  override fun hashCode(): Int
+  override fun equals(other: Any?): Boolean
 }
 
-class VueImplicitPropertySymbol(
+data class VueImplicitPropertySymbol(
   override val name: String,
   private val typeProvider: VueTypeProvider? = null,
   private val jsKind: JsSymbolSymbolKind = JsSymbolSymbolKind.Property,
-  isReadOnly: Boolean = false,
+  private val isReadOnly: Boolean = false,
 ) : PolySymbol {
 
   private val type by lazy(LazyThreadSafetyMode.NONE) { typeProvider?.getType() }
@@ -443,8 +462,9 @@ class VueImplicitPropertySymbol(
   override val kind: PolySymbolKind
     get() = JS_PROPERTIES
 
-  override val modifiers: Set<PolySymbolModifier> =
-    if (isReadOnly) setOf(PolySymbolModifier.READONLY) else emptySet()
+  override val modifiers: Set<PolySymbolModifier>
+    get() =
+      if (isReadOnly) setOf(PolySymbolModifier.READONLY) else emptySet()
 
   override fun <T : Any> get(property: PolySymbolProperty<T>): T? =
     when (property) {
@@ -457,9 +477,10 @@ class VueImplicitPropertySymbol(
     val typeProviderPtr = typeProvider?.createPointer()
     val name = name
     val jsKind = jsKind
+    val isReadOnly = isReadOnly
     return Pointer {
       val typeProvider = typeProviderPtr?.let { it.dereference() ?: return@Pointer null }
-      VueImplicitPropertySymbol(name, typeProvider, jsKind)
+      VueImplicitPropertySymbol(name, typeProvider, jsKind, isReadOnly)
     }
   }
 
@@ -520,7 +541,7 @@ private class VueStandardPropertySymbol(
 
 }
 
-private class VueInjectedTypeProvider(private val inject: VueInject, private val provides: List<VueProvide>) : VueTypeProvider {
+private data class VueInjectedTypeProvider(private val inject: VueInject, private val provides: List<VueProvide>) : VueTypeProvider {
   override fun getType(): JSType? =
     evaluateInjectedType(inject, provides)
 

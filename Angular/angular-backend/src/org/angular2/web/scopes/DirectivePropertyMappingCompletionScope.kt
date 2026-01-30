@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
+import com.intellij.model.Symbol
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.polySymbols.*
 import com.intellij.polySymbols.js.JS_STRING_LITERALS
@@ -157,7 +158,7 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
     priority = PolySymbol.Priority.HIGHEST
   )
 
-  private class Angular2FieldPropertySymbol(
+  private data class Angular2FieldPropertySymbol(
     override val delegate: JSPropertySymbol,
     override val kind: PolySymbolKind,
     val owner: TypeScriptClass?,
@@ -182,6 +183,12 @@ class DirectivePropertyMappingCompletionScope(element: JSElement) :
         else -> super<PolySymbolDelegate>.get(property)
                 ?: super<Angular2Symbol>.get(property)
       }
+
+    override fun isEquivalentTo(symbol: Symbol): Boolean =
+      symbol == this
+      || delegate.isEquivalentTo(symbol)
+      || (symbol is Angular2FieldPropertySymbol && delegate.isEquivalentTo(symbol.delegate))
+
 
     override fun createPointer(): Pointer<out Angular2FieldPropertySymbol> {
       val delegatePtr = delegate.createPointer()

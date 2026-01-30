@@ -86,7 +86,7 @@ class VueSlotElementScope(tag: XmlTag) : PolySymbolScopeWithCache<XmlTag, Unit>(
     }
   }
 
-  private class SlotLocalComponent(
+  private data class SlotLocalComponent(
     override val delegate: VueComponent,
   ) : VueDelegatedContainer<VueComponent>(), VueNamedComponent {
     override val name: String get() = SLOT_LOCAL_COMPONENT

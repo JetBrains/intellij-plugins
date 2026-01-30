@@ -37,7 +37,7 @@ class VuelidateContainerInfoProvider : VueContainerInfoProvider {
         ?.let { VueImplicitPropertySymbol(name = "\$v", typeProvider = it, isReadOnly = true) }
     )
 
-  private class CompositeVuelidateTypeProvider(
+  private data class CompositeVuelidateTypeProvider(
     val source: PsiElement,
     val standardProperties: List<PolySymbol>,
   ) : VueTypeProvider {

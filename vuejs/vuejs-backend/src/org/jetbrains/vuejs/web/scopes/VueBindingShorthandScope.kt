@@ -74,7 +74,7 @@ class VueBindingShorthandScope(attribute: XmlAttribute) :
   }
 }
 
-class VueBindingShorthandSymbol(
+data class VueBindingShorthandSymbol(
   private val context: XmlAttribute,
   override val delegate: PsiSourcedPolySymbol,
   private val attrSymbol: PolySymbol,

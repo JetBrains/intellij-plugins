@@ -43,7 +43,7 @@ class VueCssModulesInfoProvider : VueContainerInfoProvider {
            ?: emptyList()
   }
 
-  private class CssModuleTypeProvider(val container: PsiElement, val source: PsiElement?) : VueTypeProvider {
+  private data class CssModuleTypeProvider(val container: PsiElement, val source: PsiElement?) : VueTypeProvider {
     override fun getType(): JSType = CssModuleType(container, source)
     override fun createPointer(): Pointer<out VueTypeProvider> {
       val containerPtr = container.createSmartPointer()
