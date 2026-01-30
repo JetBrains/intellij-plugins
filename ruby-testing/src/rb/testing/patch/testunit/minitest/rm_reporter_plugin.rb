@@ -24,6 +24,9 @@ module Minitest
       assert_no_minitest_reporters
       Minitest.reporter.reporters.clear
       Minitest.reporter.reporters << Minitest::RubyMineReporter.new(options)
+      unless is_diff_reporting_disabled?
+        Minitest::Assertions.prepend(Minitest::RubyMineAssertionsPatch)
+      end
     end
 
     def assert_no_minitest_reporters
@@ -69,6 +72,10 @@ module Minitest
     rescue NameError, NoMethodError
       "ruby_minitest_qn://#{class_name}"
     end
+
+    def is_diff_reporting_disabled?
+      ENV["INTELLIJ_IDEA_RUN_CONF_MINITEST_DIFF_VIEWER_DISABLE"] ? true : false
+    end
   end
 
   class RubymineTestData
@@ -107,6 +114,34 @@ module Minitest
 
     def klass
       @klass || Object.const_get(@class_name)
+    end
+  end
+
+  module RubyMineAssertionPatch
+    attr_accessor :rm_expected_str, :rm_actual_str
+  end
+
+  module RubyMineAssertionsPatch
+    def rm_inject_assertion_details(e, exp, act)
+      e.extend(RubyMineAssertionPatch)
+      if exp.is_a?(String) && act.is_a?(String)
+        e.rm_expected_str = exp
+        e.rm_actual_str = act
+      else
+        e.rm_expected_str = mu_pp(exp)
+        e.rm_actual_str = mu_pp(act)
+      end
+    end
+
+    def assert_equal(exp, act, msg = nil)
+      super
+    rescue Minitest::Assertion => e
+      rm_inject_assertion_details e, exp, act
+      raise
+    end
+
+    def diff(exp, act)
+      nil # prevent minitest from computing and showing its own diff
     end
   end
 
@@ -210,7 +245,14 @@ module Minitest
         if !test_result.passed? && test_result.failure.class == Assertion
           @failures += 1
           with_message_and_backtrace(test_result) do |exception_msg, backtrace|
-            send_service_message(Rake::TeamCity::MessageFactory.create_test_failed(normalized_test_name, exception_msg, backtrace, test_fqn))
+            failure = test_result.failure
+            if failure.respond_to?(:rm_expected_str) && failure.respond_to?(:rm_actual_str)
+              send_service_message(Rake::TeamCity::MessageFactory.create_test_failed(
+                normalized_test_name, exception_msg, backtrace, test_fqn, failure.rm_expected_str, failure.rm_actual_str
+              ))
+            else
+              send_service_message(Rake::TeamCity::MessageFactory.create_test_failed(normalized_test_name, exception_msg, backtrace, test_fqn))
+            end
           end
         end
         if test_result.error?
@@ -372,7 +414,9 @@ module Minitest
     def with_message_and_backtrace(result)
       exception = result.failure
       msg = exception.nil? ? '' : "#{exception.class.name}: #{exception.message}"
-      backtrace = exception.nil? ? '' : Minitest::filter_backtrace(exception.backtrace).join("\n")
+      backtrace = exception.nil? ? '' : Minitest::filter_backtrace(exception.backtrace).reject do |line|
+        line.to_s.include? ":in '#{RubyMineAssertionsPatch.name}#"
+      end.join("\n")
 
       yield(msg, backtrace)
     end
