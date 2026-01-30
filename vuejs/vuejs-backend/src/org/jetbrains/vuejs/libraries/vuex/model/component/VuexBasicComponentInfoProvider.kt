@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitFunctionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSObjectLiteralExpressionStub
 import com.intellij.model.Pointer
-import com.intellij.polySymbols.js.references.PolySymbolJSImplicitElement
+import com.intellij.polySymbols.js.references.JSSymbolImplicitElement
 import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
@@ -239,7 +239,7 @@ private fun resolveToVuexSymbol(source: JSElement, resolveState: Boolean): JSEle
   return if (function == null && element is JSLiteralExpression) {
     element.references.lastOrNull()?.resolve()
       ?.asSafely<JSLocalImplicitElementImpl>()
-      ?.takeIf { it is VueImplicitElement || it is PolySymbolJSImplicitElement || (resolveState && it is VuexStoreStateElement) }
+      ?.takeIf { it is VueImplicitElement || it is JSSymbolImplicitElement || (resolveState && it is VuexStoreStateElement) }
       ?.context
       ?.let {
         if (resolveState) {

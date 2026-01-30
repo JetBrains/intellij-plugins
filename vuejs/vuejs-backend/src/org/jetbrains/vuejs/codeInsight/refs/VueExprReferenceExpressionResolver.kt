@@ -15,7 +15,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.resolve.ResolveResultSink
 import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor
 import com.intellij.lang.javascript.psi.util.JSClassUtils
-import com.intellij.polySymbols.js.references.PolySymbolJSImplicitElement
+import com.intellij.polySymbols.js.references.JSSymbolImplicitElement
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.util.contextOfType
 import com.intellij.psi.xml.XmlTag
@@ -124,11 +124,11 @@ class VueExprReferenceExpressionResolver(
     // this code could probably be simplified, I'm not sure if we need so many objects
     val importUsed = if (resolveResult is JSResolveResult) resolveResult.eS6Import else null
     when (val element =
-      if (resolvedElement is VueImplicitElement || resolvedElement is PolySymbolJSImplicitElement) resolvedElement.context else resolvedElement) {
+      if (resolvedElement is VueImplicitElement || resolvedElement is JSSymbolImplicitElement) resolvedElement.context else resolvedElement) {
       is JSFunctionItem -> {
         val add: (JSFunctionItem) -> Unit = if (resolvedElement is VueImplicitElement)
           { it -> results.add(JSResolveResult(resolvedElement.copyWithProvider(it), importUsed, null)) }
-        else if (resolvedElement is PolySymbolJSImplicitElement)
+        else if (resolvedElement is JSSymbolImplicitElement)
           { it -> results.add(JSResolveResult(resolvedElement.copyWithProvider(it), importUsed, null)) }
         else
           { it -> results.add(JSResolveResult(it, importUsed, null)) }
