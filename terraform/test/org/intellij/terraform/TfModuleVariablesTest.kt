@@ -1,4 +1,4 @@
-// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.intellij.terraform
 
 import com.intellij.codeInsight.codeVision.CodeVisionHost
@@ -23,7 +23,7 @@ import org.intellij.terraform.config.inspection.TfVARSIncorrectElementInspection
 import org.intellij.terraform.config.model.TypeModelProvider
 import org.intellij.terraform.config.model.local.TfLocalSchemaService
 
-class TfModuleVariablesTest() : TfModuleVariablesTestBase("terraform/variables/tf-modules-subdirs") {
+class TfModuleVariablesTest : TfModuleVariablesTestBase("terraform/variables/tf-modules-subdirs") {
 
   fun testModuleVariableDeclarationRename() = timeoutRunBlocking {
     val file = myFixture.configureByFile("modules/fake_module/variables.tf")
@@ -86,7 +86,7 @@ internal suspend fun CodeInsightTestFixture.getCodeVisionsForCaret(): List<Strin
 }
 
 
-class TfModuleVariablesUninitialisedTest() : TfModuleVariablesTestBase("terraform/variables/tf-modules-subdirs-uninitialised")
+class TfModuleVariablesUninitialisedTest : TfModuleVariablesTestBase("terraform/variables/tf-modules-subdirs-uninitialised")
 
 abstract class TfModuleVariablesTestBase(private val testDataRoot: String) : BasePlatformTestCase() {
 

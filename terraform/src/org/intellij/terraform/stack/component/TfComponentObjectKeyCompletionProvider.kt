@@ -30,7 +30,7 @@ internal object TfComponentObjectKeyCompletionProvider : HclObjectKeyCompletionP
       TfModelHelper.getModuleRequiredVariables(componentBlock).values
     }
     else if (TfComponentPsiPatterns.ProvidersPropertyOfComponent.accepts(componentProperty)) {
-      val module = Module.Companion.getAsModuleBlock(componentBlock)
+      val module = Module.getAsModuleBlock(componentBlock)
       val providers = module?.getDefinedRequiredProviders() ?: return
       mapProvidersToProperties(providers)
     }
