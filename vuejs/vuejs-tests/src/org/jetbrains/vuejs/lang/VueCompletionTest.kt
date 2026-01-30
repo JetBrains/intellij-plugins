@@ -78,7 +78,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testCompleteImportedComponent() =
-    doLookupTest() {
+    doLookupTest {
       it.lookupString.startsWith("comp")
     }
 
@@ -142,7 +142,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testCompleteAttributesFromProps() =
-    doLookupTest() { it.priority > 10 }
+    doLookupTest { it.priority > 10 }
 
   @Test
   fun testCompletePropsInInterpolation() {
@@ -194,7 +194,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testNoNotImportedMixinsInCompletion() =
-    doLookupTest() { it.priority > 10 }
+    doLookupTest { it.priority > 10 }
 
   @Test
   fun testNoCompletionInVueAttributes() =
@@ -311,7 +311,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testNoDoubleCompletionForLocalComponent() =
-    doLookupTest() { it.priority > 1 }
+    doLookupTest { it.priority > 1 }
 
   @Test
   fun testElementUiCompletion() =
@@ -450,7 +450,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testLocalComponentsExtendsCompletion() =
-    doLookupTest() { it.priority > 10 }
+    doLookupTest { it.priority > 10 }
 
   @Test
   fun testCompletionWithRecursiveMixins() =
@@ -570,7 +570,7 @@ abstract class VueCompletionTestBase(
 
   @Test
   fun testVueCompletionWithExtend() =
-    doLookupTest() { it.priority > 10 }
+    doLookupTest { it.priority > 10 }
 
   @Test
   fun testVueNoComponentNameAsStyleSelector() =
