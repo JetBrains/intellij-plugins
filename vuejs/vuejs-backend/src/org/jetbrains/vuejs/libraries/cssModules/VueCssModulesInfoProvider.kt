@@ -14,7 +14,7 @@ import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.MODULE_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.findTopLevelVueTags
-import org.jetbrains.vuejs.model.VueImplicitPropertySymbol
+import org.jetbrains.vuejs.model.VueInstancePropertySymbol
 import org.jetbrains.vuejs.model.VueInstanceOwner
 import org.jetbrains.vuejs.model.VueTypeProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
@@ -34,7 +34,7 @@ class VueCssModulesInfoProvider : VueContainerInfoProvider {
                  .firstOrNull { it.name == MODULE_ATTRIBUTE_NAME }
              }
              ?.map { attr ->
-               VueImplicitPropertySymbol(
+               VueInstancePropertySymbol(
                  name = attr.value?.takeIf { it.isNotEmpty() } ?: "\$style",
                  typeProvider = CssModuleTypeProvider(attr.context!!, instanceOwner.source),
                  isReadOnly = true)

@@ -19,7 +19,7 @@ import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.createSmartPointer
 import org.jetbrains.vuejs.index.VUE_INSTANCE_MODULE
-import org.jetbrains.vuejs.model.VueImplicitPropertySymbol
+import org.jetbrains.vuejs.model.VueInstancePropertySymbol
 import org.jetbrains.vuejs.model.VueInstanceOwner
 import org.jetbrains.vuejs.model.VueTypeProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
@@ -34,7 +34,7 @@ class VuelidateContainerInfoProvider : VueContainerInfoProvider {
     listOfNotNull(
       CompositeVuelidateTypeProvider(instanceOwner.source!!, standardProperties.values.toList())
         .takeIf { it.canCreateType }
-        ?.let { VueImplicitPropertySymbol(name = "\$v", typeProvider = it, isReadOnly = true) }
+        ?.let { VueInstancePropertySymbol(name = "\$v", typeProvider = it, isReadOnly = true) }
     )
 
   private data class CompositeVuelidateTypeProvider(

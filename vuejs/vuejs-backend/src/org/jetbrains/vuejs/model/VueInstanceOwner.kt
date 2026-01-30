@@ -168,10 +168,10 @@ private fun contributeDefaultInstanceProperties(
   else {
     // Fallback to a predefined list of properties without any typings
     VUE_INSTANCE_PROPERTIES.forEach {
-      result[it] = VueImplicitPropertySymbol(it)
+      result[it] = VueInstancePropertySymbol(it)
     }
     VUE_INSTANCE_METHODS.forEach {
-      result[it] = VueImplicitPropertySymbol(it, jsKind = JsSymbolSymbolKind.Method)
+      result[it] = VueInstancePropertySymbol(it, jsKind = JsSymbolSymbolKind.Method)
     }
   }
 }
@@ -407,7 +407,7 @@ private fun replaceStandardProperty(
 ) {
   val originalProperty = result[propName]
   val typeProvider = StandardTypeProvider(instance, method, originalProperty)
-  result[propName] = VueImplicitPropertySymbol(
+  result[propName] = VueInstancePropertySymbol(
     propName, typeProvider, isReadOnly = true,
     navigationTarget = originalProperty?.getNavigationTargets(instance.source!!.project)?.singleOrNull()
   )
@@ -420,7 +420,7 @@ private fun replaceStandardProperty(
   result: MutableMap<String, PolySymbol>,
 ) {
   val originalProperty = result[propName]
-  result[propName] = VueImplicitPropertySymbol(
+  result[propName] = VueInstancePropertySymbol(
     propName, StandardTypeProvider(instance, method), isReadOnly = true,
     navigationTarget = originalProperty?.getNavigationTargets(instance.source!!.project)?.singleOrNull())
 }
@@ -471,7 +471,7 @@ interface VueTypeProvider {
   override fun equals(other: Any?): Boolean
 }
 
-data class VueImplicitPropertySymbol(
+data class VueInstancePropertySymbol(
   override val name: String,
   private val typeProvider: VueTypeProvider? = null,
   private val jsKind: JsSymbolSymbolKind = JsSymbolSymbolKind.Property,
@@ -507,7 +507,7 @@ data class VueImplicitPropertySymbol(
     return Pointer {
       val typeProvider = typeProviderPtr?.let { it.dereference() ?: return@Pointer null }
       val navigationTarget = navigationTargetPtr?.let { it.dereference() ?: return@Pointer null }
-      VueImplicitPropertySymbol(name, typeProvider, jsKind, isReadOnly, navigationTarget)
+      VueInstancePropertySymbol(name, typeProvider, jsKind, isReadOnly, navigationTarget)
     }
   }
 
