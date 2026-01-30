@@ -335,9 +335,6 @@ private data class StandardTypeProvider(
   private val originalProperty: PolySymbol?,
 ) : VueTypeProvider {
 
-  constructor(instance: VueInstanceOwner, method: (VueInstanceOwner) -> JSType?)
-    : this(instance, { instance, _ -> method(instance) }, null)
-
   override fun getType(): JSType? = method(instance, originalProperty?.jsType)
 
   override fun createPointer(): Pointer<out VueTypeProvider> {
@@ -353,7 +350,7 @@ private data class StandardTypeProvider(
   }
 }
 
-private fun buildEmitType(instance: VueInstanceOwner): JSType {
+private fun buildEmitType(instance: VueInstanceOwner, @Suppress("unused") originalType: JSType?): JSType {
   val source = JSTypeSourceFactory.createTypeSource(instance.source!!, true)
     .copyWithNewLanguage(JSTypeSource.SourceLanguage.TS)
   val emitCalls = instance.asSafely<VueContainer>()?.emits ?: emptyList()
@@ -386,7 +383,7 @@ private fun buildEmitType(instance: VueInstanceOwner): JSType {
   }
 }
 
-private fun buildRefsType(instance: VueInstanceOwner): JSType? {
+private fun buildRefsType(instance: VueInstanceOwner, @Suppress("unused") originalType: JSType?): JSType? {
   return VueRefsType(createStrictTypeSource(instance.source ?: return null), instance)
 }
 
@@ -411,18 +408,6 @@ private fun replaceStandardProperty(
     propName, typeProvider, isReadOnly = true,
     navigationTarget = originalProperty?.getNavigationTargets(instance.source!!.project)?.singleOrNull()
   )
-}
-
-private fun replaceStandardProperty(
-  propName: String,
-  instance: VueInstanceOwner,
-  method: (VueInstanceOwner) -> JSType?,
-  result: MutableMap<String, PolySymbol>,
-) {
-  val originalProperty = result[propName]
-  result[propName] = VueInstancePropertySymbol(
-    propName, StandardTypeProvider(instance, method), isReadOnly = true,
-    navigationTarget = originalProperty?.getNavigationTargets(instance.source!!.project)?.singleOrNull())
 }
 
 data class VueDelegatedPropertySymbol(
