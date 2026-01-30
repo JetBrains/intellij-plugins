@@ -3,6 +3,9 @@ package org.jetbrains.astro.polySymbols
 
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.patterns.StandardPatterns
+import com.intellij.patterns.XmlPatterns
+import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolProperty
 import com.intellij.polySymbols.PolySymbolQualifiedKind
 import com.intellij.polySymbols.html.NAMESPACE_HTML
@@ -16,11 +19,7 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.lang.AstroFileImpl
-import org.jetbrains.astro.polySymbols.scope.AstroAvailableComponentsScope
-import org.jetbrains.astro.polySymbols.scope.AstroFrontmatterScope
-import org.jetbrains.astro.polySymbols.scope.AstroScriptDefineVarsScope
-import org.jetbrains.astro.polySymbols.scope.AstroNamespacedComponentsScope
-import org.jetbrains.astro.polySymbols.scope.AstroStyleDefineVarsScope
+import org.jetbrains.astro.polySymbols.scope.*
 
 val ASTRO_COMPONENTS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "astro-components"]
 val ASTRO_COMPONENT_PROPS: PolySymbolQualifiedKind = PolySymbolQualifiedKind[NAMESPACE_HTML, "props"]
@@ -68,15 +67,13 @@ class AstroSymbolQueryScopeContributor : PolySymbolQueryScopeContributor {
           }
 
         // AstroNamespacedComponentsScope
-        forPsiLocation(XmlTag::class.java)
+        forPsiLocation(XmlPatterns.xmlTag().withName(StandardPatterns.string().contains(".")))
+          .inFile(AstroFileImpl::class.java)
           .contributeScopeProvider { element ->
-            if (element.text.contains("."))
-              (element.containingFile as? AstroFileImpl)
-                ?.frontmatterScript()
-                ?.let { listOf(AstroNamespacedComponentsScope(it)) }
-              ?: emptyList()
-            else
-              emptyList()
+            (element.containingFile as AstroFileImpl)
+              .frontmatterScript()
+              ?.let { listOf(AstroNamespacedComponentsScope(it)) }
+            ?: emptyList()
           }
       }
   }
