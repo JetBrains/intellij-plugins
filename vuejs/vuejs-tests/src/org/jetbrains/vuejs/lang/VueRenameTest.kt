@@ -30,6 +30,7 @@ import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.jetbrains.vuejs.VueTestCase
 import org.jetbrains.vuejs.VueTestMode
+import org.jetbrains.vuejs.VueTsConfigFile
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -422,6 +423,10 @@ abstract class VueRenameTestBase(
       dir = true,
       modules = arrayOf(
         VueTestModule.VUE_3_5_0,
+        VueTestModule.VUE_TSCONFIG_0_8_1,
+      ),
+      configurators = listOf(
+        VueTsConfigFile(),
       ),
     )
   }
