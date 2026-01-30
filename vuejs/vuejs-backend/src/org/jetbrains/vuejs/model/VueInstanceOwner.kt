@@ -35,6 +35,7 @@ import com.intellij.polySymbols.query.PolySymbolListSymbolsQueryParams
 import com.intellij.polySymbols.query.PolySymbolQueryStack
 import com.intellij.polySymbols.query.PolySymbolScope
 import com.intellij.polySymbols.query.PolySymbolWithPattern
+import com.intellij.polySymbols.search.PsiSourcedPolySymbol
 import com.intellij.polySymbols.utils.PolySymbolDelegate
 import com.intellij.polySymbols.utils.PolySymbolScopeWithCache
 import com.intellij.psi.PsiElement
@@ -239,7 +240,7 @@ private fun contributeComponentProperties(
       override fun visitInject(inject: VueInject, proximity: Proximity): Boolean {
         if (inject is VueCallInject) return true
 
-        process(VueDelegatedPropertySymbol(inject, VueInjectedTypeProvider(inject, provides)), proximity, injects)
+        process(VueDelegatedPropertySymbol.create(inject, VueInjectedTypeProvider(inject, provides)), proximity, injects)
         return true
       }
 
@@ -249,9 +250,8 @@ private fun contributeComponentProperties(
         dest: MutableMap<String, PolySymbol>,
       ) {
         if ((proximityMap.putIfAbsent(symbol.name, proximity) ?: proximity) >= proximity) {
-
           dest.merge(symbol.name,
-                     if (symbol.kind != JS_PROPERTIES) VueDelegatedPropertySymbol(symbol) else symbol,
+                     if (symbol.kind != JS_PROPERTIES) VueDelegatedPropertySymbol.create(symbol) else symbol,
                      ::mergeSymbols)
         }
       }
@@ -410,10 +410,18 @@ private fun replaceStandardProperty(
   )
 }
 
-data class VueDelegatedPropertySymbol(
+open class VueDelegatedPropertySymbol private constructor(
   override val delegate: PolySymbol,
-  private val typeProvider: VueTypeProvider? = null,
+  protected val typeProvider: VueTypeProvider?,
 ) : PolySymbolDelegate<PolySymbol> {
+
+  companion object {
+    fun create(delegate: PolySymbol, typeProvider: VueTypeProvider? = null): VueDelegatedPropertySymbol =
+      if (delegate is PsiSourcedPolySymbol)
+        VueDelegatedPsiSourcedPropertySymbol(delegate, typeProvider)
+      else
+        VueDelegatedPropertySymbol(delegate, typeProvider)
+  }
 
   private val type by lazy(LazyThreadSafetyMode.NONE) {
     typeProvider?.getType() ?: delegate.jsType
@@ -437,6 +445,18 @@ data class VueDelegatedPropertySymbol(
       else -> delegate[property]
     }
 
+  override fun equals(other: Any?): Boolean =
+    other === this
+    || other is VueDelegatedPropertySymbol
+    && other.delegate == delegate
+    && other.typeProvider == typeProvider
+
+  override fun hashCode(): Int {
+    var result = delegate.hashCode()
+    result = 31 * result + (typeProvider?.hashCode() ?: 0)
+    return result
+  }
+
   override fun createPointer(): Pointer<out PolySymbolDelegate<PolySymbol>> {
     val delegatePtr = delegate.createPointer()
     val typeProviderPtr = typeProvider?.createPointer()
@@ -444,6 +464,35 @@ data class VueDelegatedPropertySymbol(
       val delegate = delegatePtr.dereference() ?: return@Pointer null
       val typeProvider = typeProviderPtr?.let { it.dereference() ?: return@Pointer null }
       VueDelegatedPropertySymbol(delegate, typeProvider)
+    }
+  }
+
+  private class VueDelegatedPsiSourcedPropertySymbol(
+    delegate: PsiSourcedPolySymbol,
+    typeProvider: VueTypeProvider?,
+  ) : VueDelegatedPropertySymbol(delegate, typeProvider), PsiSourcedPolySymbol {
+
+    override val source: PsiElement?
+      get() = (delegate as PsiSourcedPolySymbol).source
+
+    override val psiContext: PsiElement?
+      get() = delegate.psiContext
+
+    override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+      delegate.getNavigationTargets(project)
+
+    override fun isEquivalentTo(symbol: Symbol): Boolean =
+      super<VueDelegatedPropertySymbol>.isEquivalentTo(symbol)
+      || super<VueDelegatedPropertySymbol>.isEquivalentTo(symbol)
+
+    override fun createPointer(): Pointer<VueDelegatedPsiSourcedPropertySymbol> {
+      val delegatePtr = delegate.createPointer()
+      val typeProviderPtr = typeProvider?.createPointer()
+      return Pointer {
+        val delegate = delegatePtr.dereference() ?: return@Pointer null
+        val typeProvider = typeProviderPtr?.let { it.dereference() ?: return@Pointer null }
+        VueDelegatedPsiSourcedPropertySymbol(delegate as PsiSourcedPolySymbol, typeProvider)
+      }
     }
   }
 
