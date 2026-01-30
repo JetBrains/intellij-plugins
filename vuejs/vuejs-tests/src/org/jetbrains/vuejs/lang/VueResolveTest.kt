@@ -1898,10 +1898,9 @@ export default class UsageComponent extends Vue {
   fun testVueDefaultSymbols() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByFile("vueDefaultSymbols.vue")
-    assertEquals("vue.d.ts",
-                 myFixture.resolveReference("\$<caret>slots").containingFile.name)
-    assertEquals("vue.d.ts",
-                 myFixture.resolveReference("\$<caret>emit()").containingFile.name)
+    myFixture.checkGotoDeclaration("\$<caret>slots", "readonly <caret>\$slots", "vue.d.ts")
+    myFixture.configureByFile("vueDefaultSymbols.vue")
+    myFixture.checkGotoDeclaration("\$<caret>emit()", "<caret>\$emit(event:", "vue.d.ts")
   }
 
   @Test

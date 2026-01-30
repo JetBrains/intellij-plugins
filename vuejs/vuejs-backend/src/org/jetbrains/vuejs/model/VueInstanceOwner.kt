@@ -17,9 +17,11 @@ import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.recordImpl.PropertySignatureImpl
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.polySymbols.PolySymbol
 import com.intellij.polySymbols.PolySymbolKind
 import com.intellij.polySymbols.PolySymbolModifier
@@ -45,6 +47,7 @@ import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.VueRefsType
 import org.jetbrains.vuejs.types.createStrictTypeSource
+import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 
 interface VueInstanceOwner : VueScopeElement {
 
@@ -99,7 +102,7 @@ private class VueInstanceOwnerPropertiesScope(
       contributeCustomProperties(source, result)
       contributeDefaultInstanceProperties(source, result)
       contributeComponentProperties(instanceOwner, source, result)
-      replaceStandardProperty(INSTANCE_REFS_PROP, StandardTypeProvider(instanceOwner, ::buildRefsType), result)
+      replaceStandardProperty(INSTANCE_REFS_PROP, instanceOwner, ::buildRefsType, result)
       contributePropertiesFromProviders(instanceOwner, result)
 
       val properties = result.values.toList()
@@ -258,10 +261,10 @@ private fun contributeComponentProperties(
   replaceStandardProperty(INSTANCE_PROPS_PROP, props.values.toList(), source, result)
   replaceStandardProperty(INSTANCE_DATA_PROP, data.values.toList(), source, result)
 
-  replaceStandardProperty(INSTANCE_OPTIONS_PROP, StandardTypeProvider(instance, ::buildOptionsType, result[INSTANCE_OPTIONS_PROP]), result)
-  replaceStandardProperty(INSTANCE_SLOTS_PROP, StandardTypeProvider(instance, ::buildSlotsType, result[INSTANCE_SLOTS_PROP]), result)
+  replaceStandardProperty(INSTANCE_OPTIONS_PROP, instance, ::buildOptionsType, result)
+  replaceStandardProperty(INSTANCE_SLOTS_PROP, instance, ::buildSlotsType, result)
 
-  replaceStandardProperty(INSTANCE_EMIT_METHOD, StandardTypeProvider(instance, ::buildEmitType), result)
+  replaceStandardProperty(INSTANCE_EMIT_METHOD, instance, ::buildEmitType, result)
 
   // Vue will not proxy data properties starting with _ or $
   // https://vuejs.org/v2/api/#data
@@ -398,10 +401,28 @@ private fun replaceStandardProperty(
 
 private fun replaceStandardProperty(
   propName: String,
-  typeProvider: VueTypeProvider,
+  instance: VueInstanceOwner,
+  method: (VueInstanceOwner, JSType?) -> JSType?,
   result: MutableMap<String, PolySymbol>,
 ) {
-  result[propName] = VueImplicitPropertySymbol(propName, typeProvider, isReadOnly = true)
+  val originalProperty = result[propName]
+  val typeProvider = StandardTypeProvider(instance, method, originalProperty)
+  result[propName] = VueImplicitPropertySymbol(
+    propName, typeProvider, isReadOnly = true,
+    navigationTarget = originalProperty?.getNavigationTargets(instance.source!!.project)?.singleOrNull()
+  )
+}
+
+private fun replaceStandardProperty(
+  propName: String,
+  instance: VueInstanceOwner,
+  method: (VueInstanceOwner) -> JSType?,
+  result: MutableMap<String, PolySymbol>,
+) {
+  val originalProperty = result[propName]
+  result[propName] = VueImplicitPropertySymbol(
+    propName, StandardTypeProvider(instance, method), isReadOnly = true,
+    navigationTarget = originalProperty?.getNavigationTargets(instance.source!!.project)?.singleOrNull())
 }
 
 data class VueDelegatedPropertySymbol(
@@ -455,6 +476,7 @@ data class VueImplicitPropertySymbol(
   private val typeProvider: VueTypeProvider? = null,
   private val jsKind: JsSymbolSymbolKind = JsSymbolSymbolKind.Property,
   private val isReadOnly: Boolean = false,
+  private val navigationTarget: NavigationTarget? = null,
 ) : PolySymbol {
 
   private val type by lazy(LazyThreadSafetyMode.NONE) { typeProvider?.getType() }
@@ -473,14 +495,19 @@ data class VueImplicitPropertySymbol(
       else -> super.get(property)
     }
 
+  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+    listOfNotNull(navigationTarget ?: type?.sourceElement?.let { VueComponentSourceNavigationTarget(it) })
+
   override fun createPointer(): Pointer<out PolySymbol> {
     val typeProviderPtr = typeProvider?.createPointer()
     val name = name
     val jsKind = jsKind
     val isReadOnly = isReadOnly
+    val navigationTargetPtr = navigationTarget?.createPointer()
     return Pointer {
       val typeProvider = typeProviderPtr?.let { it.dereference() ?: return@Pointer null }
-      VueImplicitPropertySymbol(name, typeProvider, jsKind, isReadOnly)
+      val navigationTarget = navigationTargetPtr?.let { it.dereference() ?: return@Pointer null }
+      VueImplicitPropertySymbol(name, typeProvider, jsKind, isReadOnly, navigationTarget)
     }
   }
 
