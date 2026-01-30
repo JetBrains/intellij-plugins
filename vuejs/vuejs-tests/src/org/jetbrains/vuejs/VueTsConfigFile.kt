@@ -47,9 +47,9 @@ class VueTsConfigFile :
         "noUncheckedSideEffectImports": true
       },
       "include": [
-        "src/**/*.ts", 
-        "src/**/*.tsx",
-        "src/**/*.vue"
+        "**/*.ts", 
+        "**/*.tsx",
+        "**/*.vue"
       ]
     }
     """.trimIndent()
