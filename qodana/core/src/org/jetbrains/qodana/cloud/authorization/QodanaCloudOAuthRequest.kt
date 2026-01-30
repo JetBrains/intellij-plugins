@@ -12,7 +12,7 @@ import org.jetbrains.qodana.cloud.authorization.credentials.QodanaCloudCredentia
 import org.jetbrains.qodana.cloudclient.QDCloudClient
 import java.util.Base64
 
-private const val CODE_CHALLENGE_METHOD_SHA256 = "SHA256"
+private const val CODE_CHALLENGE_METHOD_SHA256 = "SHA-256"
 
 
 class QodanaCloudOAuthRequest(
@@ -24,16 +24,22 @@ class QodanaCloudOAuthRequest(
 
   private val codeVerifier: String = PkceUtils.generateCodeVerifier()
 
-  private val codeChallenge: String = PkceUtils.generateShaCodeChallenge(codeVerifier, Base64.getEncoder())
+  private val codeChallenge: String = PkceUtils.generateShaCodeChallenge(codeVerifier, Base64.getUrlEncoder().withoutPadding())
 
-  private val stateWithEmbeddedPortAndChallenge = "idea-$port-${DigestUtil.randomToken()}"
+  private val stateWithEmbeddedPortAndChallenge = "idea-$port-${DigestUtil.randomToken()}|pkce:method:$CODE_CHALLENGE_METHOD_SHA256;code:$codeChallenge"
 
   override val authUrlWithParameters: Url = authUrl.addParameters(mapOf(
     "state" to stateWithEmbeddedPortAndChallenge,
   ))
 
   override val authorizationCodeUrl: Url
-    get() = Urls.newFromEncoded("http://localhost:$port/${RestService.PREFIX}/${service<QodanaCloudOAuthService>().name}/authorization_code/")
+    get() {
+      println(codeVerifier)
+      println(codeChallenge)
+      println(stateWithEmbeddedPortAndChallenge)
+      println(authUrlWithParameters)
+      return Urls.newFromEncoded("http://localhost:$port/${RestService.PREFIX}/${service<QodanaCloudOAuthService>().name}/authorization_code/")
+    }
 
   override val credentialsAcquirer: OAuthCredentialsAcquirer<QodanaCloudCredentials>
     get() = QodanaCloudOAuthCredentialsAcquirer(cloudClient, codeVerifier)
